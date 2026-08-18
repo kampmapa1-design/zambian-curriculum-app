@@ -94,6 +94,16 @@ class DatabaseHelper {
             category TEXT
           )
         ''');
+        await db.execute('''
+          CREATE TABLE topic_progress (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            subject_id INTEGER NOT NULL REFERENCES subjects(id) ON DELETE CASCADE,
+            grade_id INTEGER NOT NULL REFERENCES grades(id) ON DELETE CASCADE,
+            last_concluded_topic_id INTEGER NOT NULL REFERENCES topics(id) ON DELETE CASCADE,
+            updated_at TEXT NOT NULL,
+            UNIQUE (subject_id, grade_id)
+          )
+        ''');
       },
     );
   }
@@ -305,6 +315,55 @@ class DatabaseHelper {
       ..sort((a, b) => a.sequenceNumber.compareTo(b.sequenceNumber));
 
     return SyllabusTemplate(subject: subject, grade: grade, terms: terms);
+  }
+
+  /// Records the topic a teacher last concluded for one subject+grade.
+  /// Overwrites any previous mark for that subject+grade (one mark per
+  /// combination) and is stored purely on-device.
+  Future<void> setLastConcludedTopic({
+    required String subjectCode,
+    required int gradeLevel,
+    required int topicId,
+  }) async {
+    final db = await database;
+    final subjectId = await _requireId(db, 'subjects', 'code', subjectCode);
+    final gradeId = await _requireId(db, 'grades', 'level', gradeLevel);
+    await db.insert(
+      'topic_progress',
+      {
+        'subject_id': subjectId,
+        'grade_id': gradeId,
+        'last_concluded_topic_id': topicId,
+        'updated_at': DateTime.now().toIso8601String(),
+      },
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  /// Returns the id of the topic last marked concluded for a subject+grade,
+  /// or null if nothing has been marked yet.
+  Future<int?> getLastConcludedTopicId({
+    required String subjectCode,
+    required int gradeLevel,
+  }) async {
+    final db = await database;
+    final rows = await db.rawQuery('''
+      SELECT topic_progress.last_concluded_topic_id AS topic_id
+      FROM topic_progress
+      JOIN subjects ON subjects.id = topic_progress.subject_id
+      JOIN grades ON grades.id = topic_progress.grade_id
+      WHERE subjects.code = ? AND grades.level = ?
+      LIMIT 1
+    ''', [subjectCode, gradeLevel]);
+    return rows.isEmpty ? null : rows.first['topic_id'] as int;
+  }
+
+  Future<int> _requireId(DatabaseExecutor db, String table, String column, Object value) async {
+    final rows = await db.query(table, columns: ['id'], where: '$column = ?', whereArgs: [value], limit: 1);
+    if (rows.isEmpty) {
+      throw StateError('No row in $table where $column = $value');
+    }
+    return rows.first['id'] as int;
   }
 
   Future<List<SubTopic>> _loadSubTopics(Database db, int topicId) async {

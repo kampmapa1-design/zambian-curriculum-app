@@ -1,0 +1,75 @@
+import 'syllabus_models.dart';
+
+/// One row of a generated scheme of work: either a whole topic (when it has
+/// no sub-topics, or carries its own objectives/competencies directly) or
+/// one of its sub-topics.
+class SchemeOfWorkEntry {
+  final int weekNumber;
+  final Topic topic;
+  final SubTopic? subTopic;
+  final List<LearningObjective> objectives;
+  final List<Competency> competencies;
+
+  const SchemeOfWorkEntry({
+    required this.weekNumber,
+    required this.topic,
+    this.subTopic,
+    required this.objectives,
+    required this.competencies,
+  });
+
+  String get title => subTopic == null ? topic.name : '${topic.name} — ${subTopic!.name}';
+}
+
+/// Flattens a template's topics into one globally ordered list. Terms and
+/// each term's topics are already sequence-sorted by local storage, so this
+/// is just concatenation, not a fresh sort.
+List<Topic> flattenTopics(SyllabusTemplate template) => [
+      for (final term in template.terms) ...term.topics,
+    ];
+
+/// Builds the next stretch of a scheme of work: every topic/sub-topic that
+/// comes strictly after [lastConcludedTopicId] in sequence, numbered as
+/// consecutive weeks starting at 1.
+///
+/// Pass `null` for [lastConcludedTopicId] to generate a scheme from the very
+/// first topic (e.g. a subject the teacher hasn't started yet). If the given
+/// topic id isn't found in this template (stale progress from a template
+/// that changed), the scheme also starts from the beginning rather than
+/// silently omitting it.
+List<SchemeOfWorkEntry> generateSchemeOfWork(
+  SyllabusTemplate template,
+  int? lastConcludedTopicId,
+) {
+  final topics = flattenTopics(template);
+  if (topics.isEmpty) return const [];
+
+  final concludedIndex =
+      lastConcludedTopicId == null ? -1 : topics.indexWhere((t) => t.id == lastConcludedTopicId);
+  final startIndex = concludedIndex + 1;
+  if (startIndex >= topics.length) return const [];
+
+  final entries = <SchemeOfWorkEntry>[];
+  var week = 1;
+  for (final topic in topics.sublist(startIndex)) {
+    final hasOwnContent = topic.objectives.isNotEmpty || topic.competencies.isNotEmpty;
+    if (hasOwnContent || topic.subTopics.isEmpty) {
+      entries.add(SchemeOfWorkEntry(
+        weekNumber: week++,
+        topic: topic,
+        objectives: topic.objectives,
+        competencies: topic.competencies,
+      ));
+    }
+    for (final subTopic in topic.subTopics) {
+      entries.add(SchemeOfWorkEntry(
+        weekNumber: week++,
+        topic: topic,
+        subTopic: subTopic,
+        objectives: subTopic.objectives,
+        competencies: subTopic.competencies,
+      ));
+    }
+  }
+  return entries;
+}

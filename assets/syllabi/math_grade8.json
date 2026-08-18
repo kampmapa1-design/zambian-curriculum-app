@@ -92,6 +92,61 @@
           ]
         }
       ]
+    },
+    {
+      "name": "Term 2",
+      "sequence_number": 2,
+      "topics": [
+        {
+          "name": "Geometry",
+          "sequence_number": 1,
+          "description": "Properties of angles, lines, and shapes.",
+          "competencies": [
+            {
+              "sequence_number": 1,
+              "description": "Apply geometric reasoning to solve spatial problems.",
+              "category": "Problem Solving"
+            }
+          ],
+          "sub_topics": [
+            {
+              "name": "Angles",
+              "sequence_number": 1,
+              "description": "Types of angles and angle relationships.",
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Identify and measure angles using a protractor."
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Classify angles as acute, right, obtuse, or reflex."
+                }
+              ],
+              "competencies": []
+            }
+          ]
+        },
+        {
+          "name": "Perimeter and Area",
+          "sequence_number": 2,
+          "description": "Measuring the boundary and surface of plane shapes.",
+          "sub_topics": [
+            {
+              "name": "Rectangles and Triangles",
+              "sequence_number": 1,
+              "description": "Calculating perimeter and area.",
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Calculate the perimeter and area of rectangles and triangles."
+                }
+              ],
+              "competencies": []
+            }
+          ]
+        }
+      ]
     }
   ]
 }

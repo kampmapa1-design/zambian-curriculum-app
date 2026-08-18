@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/syllabus_models.dart';
 import '../services/template_repository.dart';
+import 'scheme_of_work_screen.dart';
 
 class SubjectSelectorScreen extends StatefulWidget {
   const SubjectSelectorScreen({super.key, this.repository});
@@ -109,6 +110,17 @@ class _SubjectSelectorScreenState extends State<SubjectSelectorScreen> {
           : _seedError != null
               ? Center(child: Text('Could not load bundled syllabi:\n$_seedError'))
               : _buildContent(),
+      floatingActionButton: _template == null
+          ? null
+          : FloatingActionButton.extended(
+              icon: const Icon(Icons.event_note),
+              label: const Text('Plan next term'),
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => SchemeOfWorkScreen(template: _template!)),
+                );
+              },
+            ),
     );
   }
 

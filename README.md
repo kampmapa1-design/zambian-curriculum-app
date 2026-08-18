@@ -25,6 +25,15 @@ generates are missing. See **Setup** below to add them.
   picked, the matching syllabus is fetched from the local database (one
   indexed query) and cached in memory, so switching between already-viewed
   templates is instant.
+- **Scheme of work screen** (`lib/screens/scheme_of_work_screen.dart`),
+  reachable via "Plan next term" once a syllabus is loaded — the teacher taps
+  the topic they concluded last term from the same topic list, and the app
+  generates a week-by-week scheme starting at the *next* topic in sequence
+  (crossing into the next term automatically once the current term's topics
+  run out), pulling each entry's objectives and competencies straight from
+  local storage. The mark is saved on-device (`topic_progress` table) and the
+  scheme regenerates instantly whenever it changes — see
+  `lib/models/scheme_of_work.dart` for the generation logic.
 
 Adding a new bundled template later means: drop a new `assets/syllabi/*.json`
 file (same shape as the existing ones), add an entry to `manifest.json`, and
@@ -55,11 +64,14 @@ list the file under `flutter.assets` in `pubspec.yaml`.
 lib/
   main.dart                       # app entry point
   models/syllabus_models.dart     # Subject, Grade, Term, Topic, SubTopic, ...
-  services/database_helper.dart   # sqflite schema + import + queries
+  models/scheme_of_work.dart      # SchemeOfWorkEntry + generateSchemeOfWork()
+  services/database_helper.dart   # sqflite schema + import + queries + progress
   services/template_repository.dart  # asset loading + seeding + in-memory cache
+  services/progress_repository.dart  # persists the last-concluded-topic mark
   screens/subject_selector_screen.dart  # the Subject Selector UI
+  screens/scheme_of_work_screen.dart    # mark progress + generated scheme UI
 assets/syllabi/
   manifest.json                   # list of bundled subject/grade templates
-  math_grade8.json                # sample template
-  english_grade8.json             # sample template
+  math_grade8.json                # sample template (Term 1 + Term 2)
+  english_grade8.json             # sample template (Term 1)
 ```
