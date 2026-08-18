@@ -60,6 +60,12 @@ generates are missing. See **Setup** below to add them.
   (project creation, Blaze billing, the API key secret) and what anonymous
   auth does and doesn't protect against.
 
+- **CI build** (`codemagic.yaml`) — builds an unsigned debug and release APK
+  on [Codemagic](https://codemagic.io) for sideloading onto a test device,
+  no Play Store signing setup required. Sign up, connect this GitHub repo,
+  and Codemagic picks up `codemagic.yaml` automatically; each build's
+  results page gives a direct APK download link.
+
 Adding a new bundled template later means: drop a new `assets/syllabi/*.json`
 file (same shape as the existing ones), add an entry to `manifest.json`, and
 list the file under `flutter.assets` in `pubspec.yaml`.

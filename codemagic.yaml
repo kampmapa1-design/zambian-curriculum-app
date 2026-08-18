@@ -1,0 +1,30 @@
+workflows:
+  android-apk:
+    name: Android APK (unsigned, sideload build)
+    max_build_duration: 30
+    instance_type: linux_x2
+    environment:
+      flutter: stable
+    cache:
+      cache_paths:
+        - $HOME/.pub-cache
+    scripts:
+      - name: Generate Android platform scaffolding if missing
+        script: |
+          # This repo was written before the android/ folder existed locally
+          # (see README.md). flutter create is safe to re-run against an
+          # existing project — it only fills in missing platform files.
+          if [ ! -d android ]; then
+            flutter create . --platforms=android --project-name zambian_curriculum_app --org com.example.zambiancurriculum
+          fi
+      - name: Get Flutter packages
+        script: flutter pub get
+      - name: Build debug APK
+        script: flutter build apk --debug
+      - name: Build release APK (unsigned)
+        script: |
+          # Uses Flutter's default debug signing config for the release
+          # build type, so no keystore setup is required.
+          flutter build apk --release
+    artifacts:
+      - build/app/outputs/flutter-apk/*.apk
