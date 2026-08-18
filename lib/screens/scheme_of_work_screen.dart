@@ -4,6 +4,7 @@ import '../models/scheme_of_work.dart';
 import '../models/syllabus_models.dart';
 import '../services/entitlement_service.dart';
 import '../services/progress_repository.dart';
+import 'teaching_notes_sheet.dart';
 
 /// Lets a teacher mark the last topic they concluded, then shows the
 /// auto-generated scheme of work for what comes next — entirely from data
@@ -270,9 +271,35 @@ class _SchemeEntryCard extends StatelessWidget {
               Text('Competencies', style: Theme.of(context).textTheme.labelSmall),
               for (final c in entry.competencies) Text('•  ${c.description}'),
             ],
+            const SizedBox(height: 8),
+            Align(
+              alignment: Alignment.centerRight,
+              child: TextButton.icon(
+                onPressed: () => showTeachingNotesSheet(
+                  context,
+                  topic: entry.topic.name,
+                  subtopic: entry.subTopic?.name,
+                  syllabusContext: _syllabusContext(entry),
+                ),
+                icon: const Icon(Icons.auto_awesome, size: 18),
+                label: const Text('Teaching notes'),
+              ),
+            ),
           ],
         ),
       ),
     );
+  }
+
+  String _syllabusContext(SchemeOfWorkEntry entry) {
+    final lines = <String>[
+      'Topic: ${entry.topic.name}',
+      if (entry.topic.description != null) entry.topic.description!,
+      if (entry.subTopic != null) 'Sub-topic: ${entry.subTopic!.name}',
+      if (entry.subTopic?.description != null) entry.subTopic!.description!,
+      for (final o in entry.objectives) 'Learning objective: ${o.description}',
+      for (final c in entry.competencies) 'Competency: ${c.description}',
+    ];
+    return lines.join('\n');
   }
 }
