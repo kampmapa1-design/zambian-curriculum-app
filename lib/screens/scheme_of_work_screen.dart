@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/scheme_of_work.dart';
 import '../models/syllabus_models.dart';
+import '../services/entitlement_service.dart';
 import '../services/progress_repository.dart';
 
 /// Lets a teacher mark the last topic they concluded, then shows the
@@ -25,6 +26,7 @@ class _SchemeOfWorkScreenState extends State<SchemeOfWorkScreen> {
   bool _loading = true;
   int? _selectedTopicId;
   List<SchemeOfWorkEntry> _entries = const [];
+  GenerationAccessResult _access = const GenerationAccessResult(allowed: false);
 
   @override
   void initState() {
@@ -37,24 +39,34 @@ class _SchemeOfWorkScreenState extends State<SchemeOfWorkScreen> {
       subjectCode: widget.template.subject.code,
       gradeLevel: widget.template.grade.level,
     );
+    final access = await EntitlementService.instance.checkGenerationAccess();
     if (!mounted) return;
     setState(() {
       _selectedTopicId = lastConcluded;
       _entries = generateSchemeOfWork(widget.template, lastConcluded);
+      _access = access;
       _loading = false;
     });
   }
 
   Future<void> _onTopicSelected(int topicId) async {
+    final access = await EntitlementService.instance.checkGenerationAccess();
     setState(() {
       _selectedTopicId = topicId;
       _entries = generateSchemeOfWork(widget.template, topicId);
+      _access = access;
     });
     await _repository.markTopicConcluded(
       subjectCode: widget.template.subject.code,
       gradeLevel: widget.template.grade.level,
       topicId: topicId,
     );
+  }
+
+  Future<void> _recheckAccess() async {
+    final access = await EntitlementService.instance.checkGenerationAccess();
+    if (!mounted) return;
+    setState(() => _access = access);
   }
 
   @override
@@ -88,11 +100,106 @@ class _SchemeOfWorkScreenState extends State<SchemeOfWorkScreen> {
         const SizedBox(height: 8),
         if (_selectedTopicId == null)
           const Text('Mark a concluded topic above to generate the scheme.')
+        else if (!_access.allowed)
+          _AccessGate(message: _access.message!, onUnlocked: _recheckAccess)
         else if (_entries.isEmpty)
           const Text('Every bundled topic for this subject and grade is already covered.')
         else
           for (final entry in _entries) _SchemeEntryCard(entry: entry),
       ],
+    );
+  }
+}
+
+class _AccessGate extends StatefulWidget {
+  const _AccessGate({required this.message, required this.onUnlocked});
+
+  final String message;
+  final VoidCallback onUnlocked;
+
+  @override
+  State<_AccessGate> createState() => _AccessGateState();
+}
+
+class _AccessGateState extends State<_AccessGate> {
+  bool _busy = false;
+  bool _online = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _refreshConnectivity();
+  }
+
+  Future<void> _refreshConnectivity() async {
+    final online = await EntitlementService.instance.isOnline;
+    if (!mounted) return;
+    setState(() => _online = online);
+  }
+
+  Future<void> _run(Future<void> Function() action) async {
+    setState(() => _busy = true);
+    try {
+      await action();
+      widget.onUnlocked();
+    } catch (_) {
+      await _refreshConnectivity();
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return Card(
+      color: colorScheme.surfaceContainerHighest,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(_online ? Icons.lock_outline : Icons.wifi_off, color: colorScheme.error),
+                const SizedBox(width: 8),
+                Expanded(child: Text(widget.message)),
+              ],
+            ),
+            if (!_online) ...[
+              const SizedBox(height: 8),
+              Text(
+                "Ads and purchases need an internet connection, so they're unavailable "
+                'right now.',
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+            ],
+            const SizedBox(height: 12),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                OutlinedButton(
+                  onPressed: !_online || _busy
+                      ? null
+                      : () => _run(EntitlementService.instance.watchRewardedAd),
+                  child: const Text('Watch ad to unlock'),
+                ),
+                FilledButton(
+                  onPressed: !_online || _busy
+                      ? null
+                      : () => _run(EntitlementService.instance.verifySubscription),
+                  child: const Text('Subscribe'),
+                ),
+                if (_busy)
+                  const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2)),
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

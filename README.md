@@ -34,6 +34,18 @@ generates are missing. See **Setup** below to add them.
   local storage. The mark is saved on-device (`topic_progress` table) and the
   scheme regenerates instantly whenever it changes — see
   `lib/models/scheme_of_work.dart` for the generation logic.
+- **Entitlement gate** (`lib/services/entitlement_service.dart`) — generating
+  the scheme of work requires a subscription still within its grace period,
+  or an ad-unlock already granted this session. Marking progress stays free;
+  only the generated output is gated. Offline, a still-valid grace period or
+  session unlock lets generation proceed with no connection at all; if
+  neither applies, the screen shows why and offers "Subscribe" / "Watch ad to
+  unlock" buttons that are disabled while offline (both need a connection),
+  with a message explaining that. The actual subscription verification and
+  ad-watching calls are stubs — wire a real store/ad SDK
+  (`in_app_purchase`, `google_mobile_ads`) in behind `verifySubscription()`
+  and `watchRewardedAd()` when ready; the grace-period and offline-gating
+  logic around them is real and doesn't need to change.
 
 Adding a new bundled template later means: drop a new `assets/syllabi/*.json`
 file (same shape as the existing ones), add an entry to `manifest.json`, and
@@ -68,6 +80,7 @@ lib/
   services/database_helper.dart   # sqflite schema + import + queries + progress
   services/template_repository.dart  # asset loading + seeding + in-memory cache
   services/progress_repository.dart  # persists the last-concluded-topic mark
+  services/entitlement_service.dart  # subscription grace period + ad-unlock + offline gating
   screens/subject_selector_screen.dart  # the Subject Selector UI
   screens/scheme_of_work_screen.dart    # mark progress + generated scheme UI
 assets/syllabi/
