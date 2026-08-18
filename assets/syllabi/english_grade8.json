@@ -1,0 +1,71 @@
+{
+  "subject": {
+    "name": "English Language",
+    "code": "ENG",
+    "description": "Junior Secondary English syllabus"
+  },
+  "grade": {
+    "name": "Grade 8",
+    "level": 8,
+    "phase": "Junior Secondary"
+  },
+  "terms": [
+    {
+      "name": "Term 1",
+      "sequence_number": 1,
+      "topics": [
+        {
+          "name": "Listening and Speaking",
+          "sequence_number": 1,
+          "description": "Developing oral communication skills.",
+          "competencies": [
+            {
+              "sequence_number": 1,
+              "description": "Communicate clearly in a range of everyday situations.",
+              "category": "Communication"
+            }
+          ],
+          "sub_topics": [
+            {
+              "name": "Pronunciation",
+              "sequence_number": 1,
+              "description": "Correct articulation of sounds and words.",
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Pronounce commonly confused English sounds correctly."
+                }
+              ],
+              "competencies": []
+            },
+            {
+              "name": "Public Speaking",
+              "sequence_number": 2,
+              "description": "Speaking confidently in front of an audience.",
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Deliver a short prepared talk on a familiar topic."
+                }
+              ],
+              "competencies": []
+            }
+          ]
+        },
+        {
+          "name": "Reading Comprehension",
+          "sequence_number": 2,
+          "description": "Understanding and interpreting written texts.",
+          "competencies": [
+            {
+              "sequence_number": 1,
+              "description": "Read and interpret a variety of texts for meaning.",
+              "category": "Literacy"
+            }
+          ],
+          "sub_topics": []
+        }
+      ]
+    }
+  ]
+}

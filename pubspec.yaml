@@ -1,0 +1,26 @@
+name: zambian_curriculum_app
+description: Offline Zambian curriculum syllabus companion for teachers.
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  sqflite: ^2.3.3
+  path: ^1.9.0
+  path_provider: ^2.1.4
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/syllabi/manifest.json
+    - assets/syllabi/math_grade8.json
+    - assets/syllabi/english_grade8.json

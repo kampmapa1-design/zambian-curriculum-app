@@ -1,0 +1,97 @@
+{
+  "subject": {
+    "name": "Mathematics",
+    "code": "MATH",
+    "description": "Junior Secondary Mathematics syllabus"
+  },
+  "grade": {
+    "name": "Grade 8",
+    "level": 8,
+    "phase": "Junior Secondary"
+  },
+  "terms": [
+    {
+      "name": "Term 1",
+      "sequence_number": 1,
+      "topics": [
+        {
+          "name": "Number Concepts",
+          "sequence_number": 1,
+          "description": "Whole numbers, integers, and their properties.",
+          "competencies": [
+            {
+              "sequence_number": 1,
+              "description": "Apply number concepts to solve everyday problems.",
+              "category": "Problem Solving"
+            }
+          ],
+          "sub_topics": [
+            {
+              "name": "Whole Numbers",
+              "sequence_number": 1,
+              "description": "Place value, rounding, and estimation.",
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Read and write whole numbers up to one million."
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Round whole numbers to the nearest 10, 100, and 1000."
+                }
+              ],
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Estimate quantities using rounding techniques.",
+                  "category": "Numeracy"
+                }
+              ]
+            },
+            {
+              "name": "Integers",
+              "sequence_number": 2,
+              "description": "Operations on positive and negative numbers.",
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Add and subtract integers using a number line."
+                }
+              ],
+              "competencies": []
+            }
+          ]
+        },
+        {
+          "name": "Algebra",
+          "sequence_number": 2,
+          "description": "Introduction to algebraic expressions and simple equations.",
+          "competencies": [
+            {
+              "sequence_number": 1,
+              "description": "Represent real-life situations using algebraic expressions.",
+              "category": "Problem Solving"
+            }
+          ],
+          "sub_topics": [
+            {
+              "name": "Algebraic Expressions",
+              "sequence_number": 1,
+              "description": "Forming and simplifying expressions.",
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Form algebraic expressions from word statements."
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Simplify algebraic expressions by collecting like terms."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
