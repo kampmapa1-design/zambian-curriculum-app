@@ -1,10 +1,37 @@
 # Firebase backend — Zambian Curriculum Companion
 
-A Cloud Function (`generateTeachingNotes`) that calls the Anthropic API to
-generate teaching notes for a topic/sub-topic, grounded in syllabus context
-already stored on-device. It's the one part of this app that needs a
-connection and a backend — everything else is offline-first (see the main
-app's [README](../README.md)).
+Two Cloud Functions, both calling the Anthropic API and both gated behind
+Firebase Auth (see "How it's protected" below):
+
+- **`generateTeachingNotes`** — generates teaching notes for a topic/
+  sub-topic, grounded in syllabus context already stored on-device.
+- **`listCdcResources`** — catalogs Teaching Modules and other documents
+  published on the [CDC Digital Library](https://library.cdcrepository.info/)
+  by having Claude browse the site with the web search/web fetch server
+  tools and return a structured list (title, subject, level, term, URL).
+
+These are the only parts of this app that need a connection — everything
+else is offline-first (see the main app's [README](../README.md)).
+
+## Why `listCdcResources` returns a catalog, not the files
+
+The CDC Digital Library lists 300+ resources across 85 subjects; individual
+Teaching Module PDFs run 1–8+ MB each, so bundling the whole library would
+put the app bundle well into the hundreds of megabytes — impractical for a
+sideloaded APK aimed at teachers on limited storage/data. Instead:
+
+- The app fetches and locally caches a **catalog** (metadata only) via this
+  function, refreshed at most once a week (`CdcResourcesService` in the
+  Flutter app enforces the throttle) — the catalog itself is then viewable
+  offline.
+- Downloading an actual file happens **on demand**, per resource the teacher
+  actually wants, straight from the CDC site — this does require a
+  connection, same as the catalog refresh.
+- Each call is a best-effort partial crawl (bounded by a tool-call budget,
+  not exhaustive), and the app **merges** newly found resources into what
+  it already knows rather than replacing the list — so the known catalog
+  grows across successive weekly refreshes instead of shrinking back to
+  whatever one call happened to find.
 
 ## How it's protected
 
@@ -77,7 +104,9 @@ Flutter app at it during development with
 `FirebaseFunctions.instance.useFunctionsEmulator('localhost', 5001)` (see
 `lib/services/teaching_notes_service.dart` in the app).
 
-## What it returns
+## What each function returns
+
+`generateTeachingNotes`:
 
 ```json
 {
@@ -88,7 +117,25 @@ Flutter app at it during development with
 }
 ```
 
-Errors come back as standard `HttpsError`s: `unauthenticated` (no signed-in
-user), `invalid-argument` (missing/bad request fields),
-`failed-precondition` (the model declined the request), or `internal`
-(the Anthropic call itself failed).
+`listCdcResources` (takes no arguments):
+
+```json
+{
+  "resources": [
+    {
+      "title": "English Language Teaching Module Form 1 - Term 2",
+      "subjectName": "English Language",
+      "level": "Form 1",
+      "term": "Term 2",
+      "url": "https://library.cdcrepository.info/resource.php?id=309"
+    }
+  ],
+  "fetchedAt": "2026-08-19T12:00:00.000Z"
+}
+```
+
+Errors from both come back as standard `HttpsError`s: `unauthenticated`
+(no signed-in user), `invalid-argument` (missing/bad request fields, on
+`generateTeachingNotes`), `failed-precondition` (the model declined the
+request), or `internal` (the Anthropic call itself failed, or —
+`listCdcResources` only — its response wasn't valid JSON).

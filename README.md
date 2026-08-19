@@ -11,15 +11,27 @@ generates are missing. See **Setup** below to add them.
 
 ## How it works
 
-- **Bundled templates** — `assets/syllabi/*.json`, one file per subject+grade,
-  listed in `assets/syllabi/manifest.json`. Shipped inside the app, so they're
-  available with zero network access.
+- **Two parallel curricula** — the local schema has a `curricula` table, and
+  subjects/grades/terms are each scoped to one curriculum (see
+  `lib/services/database_helper.dart`), so the 2023 Competency-Based
+  Curriculum and the 2013 Outcome-Based Curriculum can coexist without
+  collisions even when they reuse a subject code or grade/form number. The
+  Subject Selector currently defaults to `CBC_2023`
+  (`_curriculumCode` in `subject_selector_screen.dart`) — every lookup
+  already takes a curriculum code, so adding the actual toggle UI is the
+  only piece left.
+- **Bundled templates** — `assets/syllabi/*.json`, one file per
+  curriculum+subject+grade, listed in `assets/syllabi/manifest.json`.
+  Shipped inside the app, so they're available with zero network access.
+  `assets/syllabi/obc2013_english_form3_placeholder.json` is a clearly
+  labeled **placeholder** — not transcribed from a real 2013 syllabus — kept
+  only to prove the two-curriculum schema actually works end to end.
+- **Data import** — `TemplateRepository.importUserSuppliedTemplate()` accepts
+  the same JSON shape as the bundled files, for loading real subject data
+  supplied later without a code change.
 - **Local storage** — on launch, every bundled template is imported into an
-  on-device SQLite database (`sqflite`) with the same schema as the
-  [`zambian-curriculum-db`](../zambian-curriculum-db) desktop project:
-  subjects → grades → terms → topics → sub_topics → learning_objectives /
-  competencies. Import is idempotent, so re-running it on every launch never
-  duplicates rows.
+  on-device SQLite database (`sqflite`). Import is idempotent, so re-running
+  it on every launch never duplicates rows.
 - **Subject Selector screen** (`lib/screens/subject_selector_screen.dart`) —
   two dropdowns (Subject, Grade), populated from the manifest. Once both are
   picked, the matching syllabus is fetched from the local database (one
@@ -60,6 +72,32 @@ generates are missing. See **Setup** below to add them.
   (project creation, Blaze billing, the API key secret) and what anonymous
   auth does and doesn't protect against.
 
+- **Lesson plans (offline)** — a "Lesson plan" button on each scheme-of-work
+  entry opens `lib/screens/lesson_plan_screen.dart`, a form for the official
+  CDC lesson plan template (`lib/models/lesson_plan.dart`) — field structure
+  sourced from a real worked example, cited in `defaultCdcLessonPlanTemplate`
+  and shown in the screen itself. Subject/Topic/Sub-topic/competencies are
+  auto-filled from the syllabus; everything else the teacher fills in,
+  including the fixed-order "Lesson Progression" table (Introduction →
+  Lesson Development → Exercise → Homework → Conclusion). "Export PDF" /
+  "Export Word" (`lib/services/lesson_plan_document_service.dart`) render the
+  filled-in template entirely on-device — PDF via the `pdf` package, DOCX via
+  a small hand-built OOXML writer (no template file, no extra package) — then
+  hand the file to the OS share sheet (`share_plus`), which is what actually
+  surfaces WhatsApp, email, Bluetooth, and every other installed share
+  target; the app doesn't integrate each channel separately.
+- **CDC Resources (catalog online, downloads on demand)** —
+  `lib/screens/cdc_resources_screen.dart`, reachable from the Subject
+  Selector's app bar. Lists Teaching Modules and other documents from the
+  [CDC Digital Library](https://library.cdcrepository.info/), fetched via
+  the `listCdcResources` Cloud Function and cached locally
+  (`lib/services/cdc_resources_service.dart`) so the list is browsable
+  offline; a live refresh is throttled to at most once a week and merges
+  newly found resources into what's already cached rather than replacing it.
+  Downloading an individual file still needs a connection — see
+  [`firebase/README.md`](firebase/README.md) for why the full library isn't
+  bundled (hundreds of MB across 300+ resources) and how the catalog fetch
+  works.
 - **CI build** (`codemagic.yaml`) — builds an unsigned debug and release APK
   on [Codemagic](https://codemagic.io) for sideloading onto a test device,
   no Play Store signing setup required. Sign up, connect this GitHub repo,
@@ -106,22 +144,32 @@ list the file under `flutter.assets` in `pubspec.yaml`.
 ```
 lib/
   main.dart                       # app entry point
-  models/syllabus_models.dart     # Subject, Grade, Term, Topic, SubTopic, ...
+  models/syllabus_models.dart     # Curriculum, Subject, Grade, Term, Topic, SubTopic, ...
   models/scheme_of_work.dart      # SchemeOfWorkEntry + generateSchemeOfWork()
-  services/database_helper.dart   # sqflite schema + import + queries + progress
+  models/lesson_plan.dart         # CDC lesson plan template field defs + draft model
+  models/cdc_resource.dart        # CDC Digital Library catalog entry + cached-catalog model
+  services/database_helper.dart   # sqflite schema (curricula → subjects/grades/terms → ...) + import + queries + progress
   services/template_repository.dart  # asset loading + seeding + in-memory cache
   services/progress_repository.dart  # persists the last-concluded-topic mark
   services/entitlement_service.dart  # subscription grace period + ad-unlock + offline gating
   services/auth_service.dart      # anonymous Firebase Auth sign-in
   services/teaching_notes_service.dart  # calls the generateTeachingNotes Cloud Function
+  services/lesson_plan_document_service.dart  # renders a lesson plan draft to PDF / DOCX
+  services/cdc_resources_service.dart   # CDC catalog fetch/cache/throttle + file download
   screens/subject_selector_screen.dart  # the Subject Selector UI
   screens/scheme_of_work_screen.dart    # mark progress + generated scheme UI
   screens/teaching_notes_sheet.dart     # the "Teaching notes" generation UI
+  screens/lesson_plan_screen.dart       # lesson plan form + PDF/Word export + share
+  screens/cdc_resources_screen.dart     # CDC catalog list + download UI
 assets/syllabi/
-  manifest.json                   # list of bundled subject/grade templates
-  math_grade8.json                # sample template (Term 1 + Term 2)
-  english_grade8.json             # sample template (Term 1)
+  manifest.json                   # list of bundled curriculum/subject/grade templates
+  math_grade8.json                # sample template, 2023 CBC (Term 1 + Term 2)
+  english_grade8.json             # sample template, 2023 CBC (Term 1)
+  obc2013_english_form3_placeholder.json  # PLACEHOLDER 2013 OBC sample — not real content
+assets/rules/
+  README.md                       # Stage 5 CDC-constraint rules-file design (not wired up yet)
+  cdc_constraints.example.json    # worked example of that design
 firebase/
-  functions/src/index.ts          # generateTeachingNotes Cloud Function
+  functions/src/index.ts          # generateTeachingNotes + listCdcResources Cloud Functions
   README.md                       # Firebase project setup, secrets, deploy
 ```

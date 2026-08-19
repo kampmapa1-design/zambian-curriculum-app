@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/syllabus_models.dart';
 import '../services/template_repository.dart';
+import 'cdc_resources_screen.dart';
 import 'scheme_of_work_screen.dart';
 
 class SubjectSelectorScreen extends StatefulWidget {
@@ -118,7 +119,18 @@ class _SubjectSelectorScreenState extends State<SubjectSelectorScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Subject Selector')),
+      appBar: AppBar(
+        title: const Text('Subject Selector'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.library_books_outlined),
+            tooltip: 'CDC Resources',
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const CdcResourcesScreen()),
+            ),
+          ),
+        ],
+      ),
       body: _seeding
           ? const Center(child: _LoadingIndicator(label: 'Loading bundled syllabi…'))
           : _seedError != null

@@ -4,6 +4,7 @@ import '../models/scheme_of_work.dart';
 import '../models/syllabus_models.dart';
 import '../services/entitlement_service.dart';
 import '../services/progress_repository.dart';
+import 'lesson_plan_screen.dart';
 import 'teaching_notes_sheet.dart';
 
 /// Lets a teacher mark the last topic they concluded, then shows the
@@ -118,7 +119,8 @@ class _SchemeOfWorkScreenState extends State<SchemeOfWorkScreen> {
         else if (_entries.isEmpty)
           const Text('Every bundled topic for this subject and grade is already covered.')
         else
-          for (final entry in _entries) _SchemeEntryCard(entry: entry),
+          for (final entry in _entries)
+            _SchemeEntryCard(entry: entry, subjectName: widget.template.subject.name),
       ],
     );
   }
@@ -258,9 +260,10 @@ class _ProgressPicker extends StatelessWidget {
 }
 
 class _SchemeEntryCard extends StatelessWidget {
-  const _SchemeEntryCard({required this.entry});
+  const _SchemeEntryCard({required this.entry, required this.subjectName});
 
   final SchemeOfWorkEntry entry;
+  final String subjectName;
 
   @override
   Widget build(BuildContext context) {
@@ -284,18 +287,29 @@ class _SchemeEntryCard extends StatelessWidget {
               for (final c in entry.competencies) Text('•  ${c.description}'),
             ],
             const SizedBox(height: 8),
-            Align(
-              alignment: Alignment.centerRight,
-              child: TextButton.icon(
-                onPressed: () => showTeachingNotesSheet(
-                  context,
-                  topic: entry.topic.name,
-                  subtopic: entry.subTopic?.name,
-                  syllabusContext: _syllabusContext(entry),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton.icon(
+                  onPressed: () => Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => LessonPlanScreen(subjectName: subjectName, entry: entry),
+                    ),
+                  ),
+                  icon: const Icon(Icons.assignment_outlined, size: 18),
+                  label: const Text('Lesson plan'),
                 ),
-                icon: const Icon(Icons.auto_awesome, size: 18),
-                label: const Text('Teaching notes'),
-              ),
+                TextButton.icon(
+                  onPressed: () => showTeachingNotesSheet(
+                    context,
+                    topic: entry.topic.name,
+                    subtopic: entry.subTopic?.name,
+                    syllabusContext: _syllabusContext(entry),
+                  ),
+                  icon: const Icon(Icons.auto_awesome, size: 18),
+                  label: const Text('Teaching notes'),
+                ),
+              ],
             ),
           ],
         ),
