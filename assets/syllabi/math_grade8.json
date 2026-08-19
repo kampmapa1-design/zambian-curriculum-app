@@ -1,4 +1,9 @@
 {
+  "curriculum": {
+    "code": "CBC_2023",
+    "name": "2023 Competency-Based Curriculum",
+    "description": "Zambia's current competency-based curriculum."
+  },
   "subject": {
     "name": "Mathematics",
     "code": "MATH",
@@ -6,6 +11,7 @@
   },
   "grade": {
     "name": "Grade 8",
+    "code": "G8",
     "level": 8,
     "phase": "Junior Secondary"
   },

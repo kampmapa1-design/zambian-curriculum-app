@@ -1,11 +1,38 @@
+/// A curriculum system, e.g. the 2023 Competency-Based Curriculum or the
+/// 2013 Outcome-Based Curriculum. Every subject and grade belongs to exactly
+/// one curriculum, so the two can coexist in local storage without their
+/// data ever mixing.
+class Curriculum {
+  final int id;
+  final String code;
+  final String name;
+  final String? description;
+
+  const Curriculum({
+    required this.id,
+    required this.code,
+    required this.name,
+    this.description,
+  });
+
+  factory Curriculum.fromMap(Map<String, Object?> map) => Curriculum(
+        id: map['id'] as int,
+        code: map['code'] as String,
+        name: map['name'] as String,
+        description: map['description'] as String?,
+      );
+}
+
 class Subject {
   final int id;
+  final int curriculumId;
   final String name;
   final String code;
   final String? description;
 
   const Subject({
     required this.id,
+    required this.curriculumId,
     required this.name,
     required this.code,
     this.description,
@@ -13,6 +40,7 @@ class Subject {
 
   factory Subject.fromMap(Map<String, Object?> map) => Subject(
         id: map['id'] as int,
+        curriculumId: map['curriculum_id'] as int,
         name: map['name'] as String,
         code: map['code'] as String,
         description: map['description'] as String?,
@@ -21,21 +49,32 @@ class Subject {
 
 class Grade {
   final int id;
+  final int curriculumId;
   final String name;
+  final String code;
+
+  /// Ordering within the curriculum (e.g. 1-12 for CBC grades, 1-6 for a
+  /// secondary "Form" system). Stored as `sequence_number` in the database —
+  /// kept as `level` here since most call sites predate multi-curriculum
+  /// support and "level" reads naturally for both grades and forms.
   final int level;
   final String? phase;
 
   const Grade({
     required this.id,
+    required this.curriculumId,
     required this.name,
+    required this.code,
     required this.level,
     this.phase,
   });
 
   factory Grade.fromMap(Map<String, Object?> map) => Grade(
         id: map['id'] as int,
+        curriculumId: map['curriculum_id'] as int,
         name: map['name'] as String,
-        level: map['level'] as int,
+        code: map['code'] as String,
+        level: map['sequence_number'] as int,
         phase: map['phase'] as String?,
       );
 }
@@ -132,11 +171,13 @@ class Term {
 }
 
 class SyllabusTemplate {
+  final Curriculum curriculum;
   final Subject subject;
   final Grade grade;
   final List<Term> terms;
 
   const SyllabusTemplate({
+    required this.curriculum,
     required this.subject,
     required this.grade,
     required this.terms,
@@ -144,8 +185,11 @@ class SyllabusTemplate {
 }
 
 /// One entry in assets/syllabi/manifest.json — lets the selector screen list
-/// bundled subject/grade combinations without parsing every template file.
+/// bundled curriculum/subject/grade combinations without parsing every
+/// template file.
 class TemplateManifestEntry {
+  final String curriculumCode;
+  final String curriculumName;
   final String subjectCode;
   final String subjectName;
   final int gradeLevel;
@@ -153,6 +197,8 @@ class TemplateManifestEntry {
   final String file;
 
   const TemplateManifestEntry({
+    required this.curriculumCode,
+    required this.curriculumName,
     required this.subjectCode,
     required this.subjectName,
     required this.gradeLevel,
@@ -161,6 +207,8 @@ class TemplateManifestEntry {
   });
 
   factory TemplateManifestEntry.fromJson(Map<String, dynamic> json) => TemplateManifestEntry(
+        curriculumCode: json['curriculum_code'] as String,
+        curriculumName: json['curriculum_name'] as String,
         subjectCode: json['subject_code'] as String,
         subjectName: json['subject_name'] as String,
         gradeLevel: json['grade_level'] as int,

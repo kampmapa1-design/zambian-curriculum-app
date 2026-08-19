@@ -1,0 +1,47 @@
+{
+  "_note": "PLACEHOLDER DATA. Not transcribed from an official CDC document — it exists only to prove the app's schema and import pipeline handle a second, parallel curriculum correctly. Replace this file with real 2013 Outcome-Based Curriculum content (e.g. sourced from library.cdcrepository.info or a document you supply) before relying on it for lesson planning.",
+  "curriculum": {
+    "code": "OBC_2013",
+    "name": "2013 Outcome-Based Curriculum",
+    "description": "Zambia's previous outcome-based curriculum, kept available alongside the 2023 CBC for schools still transitioning."
+  },
+  "subject": {
+    "name": "English Language",
+    "code": "ENG",
+    "description": "[PLACEHOLDER] Secondary English syllabus under the 2013 curriculum."
+  },
+  "grade": {
+    "name": "Form 3",
+    "code": "F3",
+    "level": 3,
+    "phase": "Secondary"
+  },
+  "terms": [
+    {
+      "name": "Term 1",
+      "sequence_number": 1,
+      "topics": [
+        {
+          "name": "[PLACEHOLDER] Comprehension",
+          "sequence_number": 1,
+          "description": "[PLACEHOLDER] Replace with the real 2013 topic list for this subject and form.",
+          "competencies": [],
+          "sub_topics": [
+            {
+              "name": "[PLACEHOLDER] Reading for detail",
+              "sequence_number": 1,
+              "description": "[PLACEHOLDER]",
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "[PLACEHOLDER] Replace with a real learning outcome from the source syllabus."
+                }
+              ],
+              "competencies": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

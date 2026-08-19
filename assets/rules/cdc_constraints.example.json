@@ -1,0 +1,58 @@
+{
+  "_note": "Worked example for the Stage 5 rules-file design (see README.md in this folder). Not wired into the app yet — Stage 5 builds the engine that reads files shaped like this.",
+  "curriculum_code": "CBC_2023",
+  "version": 1,
+  "locked_template_sections": [
+    "topic",
+    "objectives",
+    "competencies",
+    "evaluation",
+    "conclusion"
+  ],
+  "rules": [
+    {
+      "id": "activity-must-preserve-competency",
+      "applies_to_field": "activities",
+      "type": "requires_competency_overlap",
+      "severity": "block",
+      "description": "A substituted activity must still map to at least one competency already listed for this topic or sub-topic.",
+      "params": {}
+    },
+    {
+      "id": "group-size-range",
+      "applies_to_field": "group_size",
+      "type": "range",
+      "severity": "block",
+      "description": "Group size must stay between 2 and 8 learners regardless of the class-size answer given, so it remains a workable group activity.",
+      "params": { "min": 2, "max": 8 }
+    },
+    {
+      "id": "aids-availability-fallback",
+      "applies_to_field": "activities",
+      "type": "requires_flag_when_condition",
+      "severity": "block",
+      "description": "If the teacher reports no teaching aids are available, only activities tagged for no special aids (or ones on the locked list) may be selected.",
+      "params": {
+        "condition_answer_key": "available_teaching_aids",
+        "condition_answer_value": "none",
+        "required_activity_tag": "requires_no_special_aids"
+      }
+    },
+    {
+      "id": "cannot-skip-foundational-subtopic",
+      "applies_to_field": "sub_topic_inclusion",
+      "type": "locked_if_tagged",
+      "severity": "block",
+      "description": "A sub-topic marked foundational in the curriculum data can never be skipped, even when the teacher reports high prior mastery for the class.",
+      "params": { "tag": "foundational" }
+    },
+    {
+      "id": "activity-style-is-advisory-only",
+      "applies_to_field": "activities",
+      "type": "preference_hint",
+      "severity": "warn",
+      "description": "Preferred activity style (e.g. group work vs individual) may reorder candidate activities but never removes the only activity covering a mandatory competency.",
+      "params": {}
+    }
+  ]
+}

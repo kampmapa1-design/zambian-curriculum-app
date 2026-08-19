@@ -17,6 +17,11 @@ class SubjectSelectorScreen extends StatefulWidget {
 class _SubjectSelectorScreenState extends State<SubjectSelectorScreen> {
   late final TemplateRepository _repository = widget.repository ?? TemplateRepository();
 
+  // TODO(stage-4): replace with a curriculum toggle on this screen. Every
+  // lookup below already takes a curriculum code, so wiring the toggle is
+  // just swapping this constant for state.
+  static const _curriculumCode = 'CBC_2023';
+
   bool _seeding = true;
   bool _loadingSyllabus = false;
   String? _seedError;
@@ -48,10 +53,16 @@ class _SubjectSelectorScreenState extends State<SubjectSelectorScreen> {
     }
   }
 
+  /// Manifest entries for the active curriculum only. Two curricula can
+  /// bundle a subject with the same code (e.g. both use "MATH") without
+  /// their entries colliding here.
+  List<TemplateManifestEntry> get _manifestForCurriculum =>
+      _manifest.where((e) => e.curriculumCode == _curriculumCode).toList();
+
   List<TemplateManifestEntry> get _subjectOptions {
     final seen = <String>{};
     final options = <TemplateManifestEntry>[];
-    for (final entry in _manifest) {
+    for (final entry in _manifestForCurriculum) {
       if (seen.add(entry.subjectCode)) options.add(entry);
     }
     options.sort((a, b) => a.subjectName.compareTo(b.subjectName));
@@ -61,7 +72,7 @@ class _SubjectSelectorScreenState extends State<SubjectSelectorScreen> {
   List<TemplateManifestEntry> get _gradeOptionsForSelectedSubject {
     if (_selectedSubjectCode == null) return const [];
     final options =
-        _manifest.where((e) => e.subjectCode == _selectedSubjectCode).toList()
+        _manifestForCurriculum.where((e) => e.subjectCode == _selectedSubjectCode).toList()
           ..sort((a, b) => a.gradeLevel.compareTo(b.gradeLevel));
     return options;
   }
@@ -92,8 +103,11 @@ class _SubjectSelectorScreenState extends State<SubjectSelectorScreen> {
     if (subjectCode == null || gradeLevel == null) return;
 
     setState(() => _loadingSyllabus = true);
-    final template =
-        await _repository.loadSyllabus(subjectCode: subjectCode, gradeLevel: gradeLevel);
+    final template = await _repository.loadSyllabus(
+      curriculumCode: _curriculumCode,
+      subjectCode: subjectCode,
+      gradeLevel: gradeLevel,
+    );
     if (!mounted) return;
     setState(() {
       _template = template;
@@ -202,7 +216,7 @@ class _SyllabusView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView(
-      key: ValueKey('${template.subject.code}-${template.grade.level}'),
+      key: ValueKey('${template.curriculum.code}-${template.subject.code}-${template.grade.level}'),
       children: [
         for (final term in template.terms)
           ExpansionTile(

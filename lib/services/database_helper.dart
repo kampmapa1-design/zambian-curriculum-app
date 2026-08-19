@@ -4,13 +4,18 @@ import 'package:sqflite/sqflite.dart';
 
 import '../models/syllabus_models.dart';
 
-/// Local SQLite storage for syllabus templates. Schema mirrors the desktop
-/// zambian-curriculum-db project: subjects -> grades -> terms -> topics ->
-/// sub_topics -> learning_objectives / competencies. Everything lives on
-/// device, so lookups work fully offline.
+/// Local SQLite storage for syllabus templates. Schema: curricula ->
+/// subjects/grades/terms -> topics -> sub_topics -> learning_objectives /
+/// competencies. A curriculum (e.g. the 2023 Competency-Based Curriculum or
+/// the 2013 Outcome-Based Curriculum) owns its own subjects, grades, and
+/// terms, so two curricula never share rows even when they reuse the same
+/// subject code or grade name. Everything lives on device, so lookups work
+/// fully offline.
 class DatabaseHelper {
   DatabaseHelper._internal();
   static final DatabaseHelper instance = DatabaseHelper._internal();
+
+  static const _schemaVersion = 2;
 
   Database? _db;
 
@@ -24,88 +29,131 @@ class DatabaseHelper {
     final path = join(dir.path, 'curriculum.db');
     return openDatabase(
       path,
-      version: 1,
+      version: _schemaVersion,
       onConfigure: (db) => db.execute('PRAGMA foreign_keys = ON'),
-      onCreate: (db, version) async {
-        await db.execute('''
-          CREATE TABLE subjects (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            code TEXT NOT NULL UNIQUE,
-            description TEXT
-          )
-        ''');
-        await db.execute('''
-          CREATE TABLE grades (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL UNIQUE,
-            level INTEGER NOT NULL UNIQUE,
-            phase TEXT
-          )
-        ''');
-        await db.execute('''
-          CREATE TABLE terms (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL UNIQUE,
-            sequence_number INTEGER NOT NULL UNIQUE
-          )
-        ''');
-        await db.execute('''
-          CREATE TABLE topics (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            subject_id INTEGER NOT NULL REFERENCES subjects(id) ON DELETE CASCADE,
-            grade_id INTEGER NOT NULL REFERENCES grades(id) ON DELETE CASCADE,
-            term_id INTEGER NOT NULL REFERENCES terms(id) ON DELETE CASCADE,
-            name TEXT NOT NULL,
-            sequence_number INTEGER NOT NULL,
-            description TEXT,
-            UNIQUE (subject_id, grade_id, term_id, name)
-          )
-        ''');
-        await db.execute(
-          'CREATE INDEX idx_topics_scope_order ON topics (subject_id, grade_id, term_id, sequence_number)',
-        );
-        await db.execute('''
-          CREATE TABLE sub_topics (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            topic_id INTEGER NOT NULL REFERENCES topics(id) ON DELETE CASCADE,
-            name TEXT NOT NULL,
-            sequence_number INTEGER NOT NULL,
-            description TEXT,
-            UNIQUE (topic_id, name)
-          )
-        ''');
-        await db.execute('''
-          CREATE TABLE learning_objectives (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            topic_id INTEGER REFERENCES topics(id) ON DELETE CASCADE,
-            sub_topic_id INTEGER REFERENCES sub_topics(id) ON DELETE CASCADE,
-            sequence_number INTEGER NOT NULL,
-            description TEXT NOT NULL
-          )
-        ''');
-        await db.execute('''
-          CREATE TABLE competencies (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            topic_id INTEGER REFERENCES topics(id) ON DELETE CASCADE,
-            sub_topic_id INTEGER REFERENCES sub_topics(id) ON DELETE CASCADE,
-            sequence_number INTEGER NOT NULL,
-            description TEXT NOT NULL,
-            category TEXT
-          )
-        ''');
-        await db.execute('''
-          CREATE TABLE topic_progress (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            subject_id INTEGER NOT NULL REFERENCES subjects(id) ON DELETE CASCADE,
-            grade_id INTEGER NOT NULL REFERENCES grades(id) ON DELETE CASCADE,
-            last_concluded_topic_id INTEGER NOT NULL REFERENCES topics(id) ON DELETE CASCADE,
-            updated_at TEXT NOT NULL,
-            UNIQUE (subject_id, grade_id)
-          )
-        ''');
+      onCreate: (db, version) => _createSchema(db),
+      onUpgrade: (db, oldVersion, newVersion) async {
+        // This app has no released user base yet, and the only local state
+        // worth preserving (which topic a teacher last marked concluded) is
+        // trivial to re-enter. Rather than hand-write incremental ALTER
+        // TABLE migrations against SQLite's limited support for them
+        // (can't add a UNIQUE constraint or a FK after the fact), just
+        // rebuild the schema from scratch on every version bump.
+        for (final table in _tableNamesNewestFirst) {
+          await db.execute('DROP TABLE IF EXISTS $table');
+        }
+        await _createSchema(db);
       },
     );
+  }
+
+  // Drop order matters for foreign keys: children before parents.
+  static const _tableNamesNewestFirst = [
+    'topic_progress',
+    'learning_objectives',
+    'competencies',
+    'sub_topics',
+    'topics',
+    'terms',
+    'grades',
+    'subjects',
+    'curricula',
+  ];
+
+  Future<void> _createSchema(Database db) async {
+    await db.execute('''
+      CREATE TABLE curricula (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        code TEXT NOT NULL UNIQUE,
+        name TEXT NOT NULL,
+        description TEXT
+      )
+    ''');
+    await db.execute('''
+      CREATE TABLE subjects (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        curriculum_id INTEGER NOT NULL REFERENCES curricula(id) ON DELETE CASCADE,
+        name TEXT NOT NULL,
+        code TEXT NOT NULL,
+        description TEXT,
+        UNIQUE (curriculum_id, code)
+      )
+    ''');
+    await db.execute('''
+      CREATE TABLE grades (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        curriculum_id INTEGER NOT NULL REFERENCES curricula(id) ON DELETE CASCADE,
+        name TEXT NOT NULL,
+        code TEXT NOT NULL,
+        sequence_number INTEGER NOT NULL,
+        phase TEXT,
+        UNIQUE (curriculum_id, code)
+      )
+    ''');
+    await db.execute('''
+      CREATE TABLE terms (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        curriculum_id INTEGER NOT NULL REFERENCES curricula(id) ON DELETE CASCADE,
+        name TEXT NOT NULL,
+        code TEXT NOT NULL,
+        sequence_number INTEGER NOT NULL,
+        UNIQUE (curriculum_id, code)
+      )
+    ''');
+    await db.execute('''
+      CREATE TABLE topics (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        subject_id INTEGER NOT NULL REFERENCES subjects(id) ON DELETE CASCADE,
+        grade_id INTEGER NOT NULL REFERENCES grades(id) ON DELETE CASCADE,
+        term_id INTEGER NOT NULL REFERENCES terms(id) ON DELETE CASCADE,
+        name TEXT NOT NULL,
+        sequence_number INTEGER NOT NULL,
+        description TEXT,
+        UNIQUE (subject_id, grade_id, term_id, name)
+      )
+    ''');
+    await db.execute(
+      'CREATE INDEX idx_topics_scope_order ON topics (subject_id, grade_id, term_id, sequence_number)',
+    );
+    await db.execute('''
+      CREATE TABLE sub_topics (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        topic_id INTEGER NOT NULL REFERENCES topics(id) ON DELETE CASCADE,
+        name TEXT NOT NULL,
+        sequence_number INTEGER NOT NULL,
+        description TEXT,
+        UNIQUE (topic_id, name)
+      )
+    ''');
+    await db.execute('''
+      CREATE TABLE learning_objectives (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        topic_id INTEGER REFERENCES topics(id) ON DELETE CASCADE,
+        sub_topic_id INTEGER REFERENCES sub_topics(id) ON DELETE CASCADE,
+        sequence_number INTEGER NOT NULL,
+        description TEXT NOT NULL
+      )
+    ''');
+    await db.execute('''
+      CREATE TABLE competencies (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        topic_id INTEGER REFERENCES topics(id) ON DELETE CASCADE,
+        sub_topic_id INTEGER REFERENCES sub_topics(id) ON DELETE CASCADE,
+        sequence_number INTEGER NOT NULL,
+        description TEXT NOT NULL,
+        category TEXT
+      )
+    ''');
+    await db.execute('''
+      CREATE TABLE topic_progress (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        subject_id INTEGER NOT NULL REFERENCES subjects(id) ON DELETE CASCADE,
+        grade_id INTEGER NOT NULL REFERENCES grades(id) ON DELETE CASCADE,
+        last_concluded_topic_id INTEGER NOT NULL REFERENCES topics(id) ON DELETE CASCADE,
+        updated_at TEXT NOT NULL,
+        UNIQUE (subject_id, grade_id)
+      )
+    ''');
   }
 
   Future<int> _getOrCreate(
@@ -147,15 +195,25 @@ class DatabaseHelper {
 
   /// Imports one bundled template JSON (see assets/syllabi/*.json) into the
   /// local database. Idempotent: safe to call every app launch without
-  /// creating duplicate rows.
+  /// creating duplicate rows. Expects a top-level "curriculum" object
+  /// ({code, name, description}) in addition to the existing subject/grade/
+  /// terms shape.
   Future<void> importTemplate(Map<String, dynamic> json) async {
     final db = await database;
     await db.transaction((txn) async {
+      final curriculumJson = json['curriculum'] as Map<String, dynamic>;
+      final curriculumId = await _getOrCreate(
+        txn,
+        'curricula',
+        {'code': curriculumJson['code']},
+        {'name': curriculumJson['name'], 'description': curriculumJson['description']},
+      );
+
       final subjectJson = json['subject'] as Map<String, dynamic>;
       final subjectId = await _getOrCreate(
         txn,
         'subjects',
-        {'code': subjectJson['code']},
+        {'curriculum_id': curriculumId, 'code': subjectJson['code']},
         {'name': subjectJson['name'], 'description': subjectJson['description']},
       );
 
@@ -163,16 +221,20 @@ class DatabaseHelper {
       final gradeId = await _getOrCreate(
         txn,
         'grades',
-        {'name': gradeJson['name']},
-        {'level': gradeJson['level'], 'phase': gradeJson['phase']},
+        {'curriculum_id': curriculumId, 'code': gradeJson['code']},
+        {
+          'name': gradeJson['name'],
+          'sequence_number': gradeJson['level'],
+          'phase': gradeJson['phase'],
+        },
       );
 
       for (final termJson in (json['terms'] as List).cast<Map<String, dynamic>>()) {
         final termId = await _getOrCreate(
           txn,
           'terms',
-          {'name': termJson['name']},
-          {'sequence_number': termJson['sequence_number']},
+          {'curriculum_id': curriculumId, 'code': termJson['code'] ?? termJson['name']},
+          {'name': termJson['name'], 'sequence_number': termJson['sequence_number']},
         );
 
         for (final topicJson in (termJson['topics'] as List).cast<Map<String, dynamic>>()) {
@@ -254,16 +316,39 @@ class DatabaseHelper {
     });
   }
 
-  /// Loads the full syllabus tree for one subject+grade from local storage.
-  /// Returns null if that combination hasn't been imported yet.
+  /// Lists every curriculum that has at least been imported (usually all
+  /// bundled ones, since [TemplateRepository.ensureAllSeeded] imports them
+  /// on every launch).
+  Future<List<Curriculum>> listCurricula() async {
+    final db = await database;
+    final rows = await db.query('curricula', orderBy: 'name');
+    return rows.map(Curriculum.fromMap).toList();
+  }
+
+  /// Loads the full syllabus tree for one subject+grade within one
+  /// curriculum from local storage. Returns null if that combination hasn't
+  /// been imported yet.
   Future<SyllabusTemplate?> getSyllabus({
+    required String curriculumCode,
     required String subjectCode,
     required int gradeLevel,
   }) async {
     final db = await database;
 
-    final subjectRows = await db.query('subjects', where: 'code = ?', whereArgs: [subjectCode]);
-    final gradeRows = await db.query('grades', where: 'level = ?', whereArgs: [gradeLevel]);
+    final curriculumRows = await db.query('curricula', where: 'code = ?', whereArgs: [curriculumCode]);
+    if (curriculumRows.isEmpty) return null;
+    final curriculum = Curriculum.fromMap(curriculumRows.first);
+
+    final subjectRows = await db.query(
+      'subjects',
+      where: 'curriculum_id = ? AND code = ?',
+      whereArgs: [curriculum.id, subjectCode],
+    );
+    final gradeRows = await db.query(
+      'grades',
+      where: 'curriculum_id = ? AND sequence_number = ?',
+      whereArgs: [curriculum.id, gradeLevel],
+    );
     if (subjectRows.isEmpty || gradeRows.isEmpty) return null;
 
     final subject = Subject.fromMap(subjectRows.first);
@@ -278,7 +363,9 @@ class DatabaseHelper {
       ORDER BY terms.sequence_number, topics.sequence_number
     ''', [subject.id, grade.id]);
 
-    if (topicRows.isEmpty) return SyllabusTemplate(subject: subject, grade: grade, terms: const []);
+    if (topicRows.isEmpty) {
+      return SyllabusTemplate(curriculum: curriculum, subject: subject, grade: grade, terms: const []);
+    }
 
     final termsById = <int, List<Topic>>{};
     final termMeta = <int, Map<String, Object?>>{};
@@ -314,20 +401,26 @@ class DatabaseHelper {
     }).toList()
       ..sort((a, b) => a.sequenceNumber.compareTo(b.sequenceNumber));
 
-    return SyllabusTemplate(subject: subject, grade: grade, terms: terms);
+    return SyllabusTemplate(curriculum: curriculum, subject: subject, grade: grade, terms: terms);
   }
 
-  /// Records the topic a teacher last concluded for one subject+grade.
-  /// Overwrites any previous mark for that subject+grade (one mark per
-  /// combination) and is stored purely on-device.
+  /// Records the topic a teacher last concluded for one subject+grade within
+  /// one curriculum. Overwrites any previous mark for that exact
+  /// curriculum+subject+grade combination — a mark made under one curriculum
+  /// never collides with the same subject+grade under the other, since
+  /// subject_id/grade_id are themselves curriculum-scoped rows. Stored
+  /// purely on-device.
   Future<void> setLastConcludedTopic({
+    required String curriculumCode,
     required String subjectCode,
     required int gradeLevel,
     required int topicId,
   }) async {
     final db = await database;
-    final subjectId = await _requireId(db, 'subjects', 'code', subjectCode);
-    final gradeId = await _requireId(db, 'grades', 'level', gradeLevel);
+    final curriculumId = await _requireId(db, 'curricula', {'code': curriculumCode});
+    final subjectId = await _requireId(db, 'subjects', {'curriculum_id': curriculumId, 'code': subjectCode});
+    final gradeId =
+        await _requireId(db, 'grades', {'curriculum_id': curriculumId, 'sequence_number': gradeLevel});
     await db.insert(
       'topic_progress',
       {
@@ -340,9 +433,10 @@ class DatabaseHelper {
     );
   }
 
-  /// Returns the id of the topic last marked concluded for a subject+grade,
-  /// or null if nothing has been marked yet.
+  /// Returns the id of the topic last marked concluded for a subject+grade
+  /// within one curriculum, or null if nothing has been marked yet.
   Future<int?> getLastConcludedTopicId({
+    required String curriculumCode,
     required String subjectCode,
     required int gradeLevel,
   }) async {
@@ -352,16 +446,18 @@ class DatabaseHelper {
       FROM topic_progress
       JOIN subjects ON subjects.id = topic_progress.subject_id
       JOIN grades ON grades.id = topic_progress.grade_id
-      WHERE subjects.code = ? AND grades.level = ?
+      JOIN curricula ON curricula.id = subjects.curriculum_id
+      WHERE curricula.code = ? AND subjects.code = ? AND grades.sequence_number = ?
       LIMIT 1
-    ''', [subjectCode, gradeLevel]);
+    ''', [curriculumCode, subjectCode, gradeLevel]);
     return rows.isEmpty ? null : rows.first['topic_id'] as int;
   }
 
-  Future<int> _requireId(DatabaseExecutor db, String table, String column, Object value) async {
-    final rows = await db.query(table, columns: ['id'], where: '$column = ?', whereArgs: [value], limit: 1);
+  Future<int> _requireId(DatabaseExecutor db, String table, Map<String, Object?> match) async {
+    final where = match.keys.map((k) => '$k = ?').join(' AND ');
+    final rows = await db.query(table, columns: ['id'], where: where, whereArgs: match.values.toList(), limit: 1);
     if (rows.isEmpty) {
-      throw StateError('No row in $table where $column = $value');
+      throw StateError('No row in $table matching $match');
     }
     return rows.first['id'] as int;
   }

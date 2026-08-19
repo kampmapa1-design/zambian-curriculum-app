@@ -28,3 +28,4 @@ flutter:
     - assets/syllabi/manifest.json
     - assets/syllabi/math_grade8.json
     - assets/syllabi/english_grade8.json
+    - assets/syllabi/obc2013_english_form3_placeholder.json

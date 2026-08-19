@@ -37,6 +37,7 @@ class _SchemeOfWorkScreenState extends State<SchemeOfWorkScreen> {
 
   Future<void> _load() async {
     final lastConcluded = await _repository.getLastConcludedTopicId(
+      curriculumCode: widget.template.curriculum.code,
       subjectCode: widget.template.subject.code,
       gradeLevel: widget.template.grade.level,
     );
@@ -58,6 +59,7 @@ class _SchemeOfWorkScreenState extends State<SchemeOfWorkScreen> {
       _access = access;
     });
     await _repository.markTopicConcluded(
+      curriculumCode: widget.template.curriculum.code,
       subjectCode: widget.template.subject.code,
       gradeLevel: widget.template.grade.level,
       topicId: topicId,
@@ -75,6 +77,16 @@ class _SchemeOfWorkScreenState extends State<SchemeOfWorkScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('${widget.template.subject.name} · ${widget.template.grade.name}'),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(20),
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 6),
+            child: Text(
+              widget.template.curriculum.name,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.white70),
+            ),
+          ),
+        ),
       ),
       body: _loading ? const Center(child: CircularProgressIndicator()) : _buildContent(context),
     );
