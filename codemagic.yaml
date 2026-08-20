@@ -21,14 +21,24 @@ workflows:
         script: |
           # flutter create's default (flutter.compileSdkVersion, currently 34
           # on this Flutter channel) is older than what file_picker's
-          # flutter_plugin_android_lifecycle dependency requires. macOS's
-          # sed needs an argument to -i (hence -i.bak, not just -i).
+          # flutter_plugin_android_lifecycle dependency requires. Diagnostic
+          # echoes are deliberate: this line is one of the few things about
+          # the freshly-generated android/ folder we can't inspect locally
+          # (Flutter isn't installed on the machine developing this app), so
+          # the build log is the only window into its exact contents.
+          echo "--- before ---"
+          grep -n "compileSdk" android/app/build.gradle.kts android/app/build.gradle 2>/dev/null || echo "no compileSdk line found in either file"
+          # macOS's sed needs an argument to -i (hence -i.bak, not just -i).
+          # Matches any line containing both compileSdk and
+          # flutter.compileSdkVersion, regardless of exact spacing/prefix.
           if [ -f android/app/build.gradle.kts ]; then
-            sed -i.bak 's/compileSdk = flutter.compileSdkVersion/compileSdk = 36/' android/app/build.gradle.kts
+            sed -i.bak '/compileSdk.*flutter\.compileSdkVersion/s/flutter\.compileSdkVersion/36/' android/app/build.gradle.kts
           fi
           if [ -f android/app/build.gradle ]; then
-            sed -i.bak 's/compileSdkVersion flutter.compileSdkVersion/compileSdkVersion 36/' android/app/build.gradle
+            sed -i.bak '/compileSdk.*flutter\.compileSdkVersion/s/flutter\.compileSdkVersion/36/' android/app/build.gradle
           fi
+          echo "--- after ---"
+          grep -n "compileSdk" android/app/build.gradle.kts android/app/build.gradle 2>/dev/null || echo "no compileSdk line found in either file"
       - name: Get Flutter packages
         script: flutter pub get
       - name: Build debug APK
