@@ -149,6 +149,17 @@ generates are missing. See **Setup** below to add them.
   catalog and downloading an individual file (plain HTTP) don't. See
   [`firebase/README.md`](firebase/README.md) for why the full library isn't
   bundled (hundreds of MB across 300+ resources).
+- **App theme, icon, and splash screen (Stage 8)** — `lib/theme/app_theme.dart`
+  is the single source of the app's visual identity: one seeded
+  `ColorScheme` (deep green, matching the app icon) plus consistent
+  AppBar/Card/button/input/chip styling, applied once in `main.dart` so
+  every screen picks it up automatically — light and dark mode both
+  follow the system setting. `assets/icon/icon.png` /
+  `icon_foreground.png` are the launcher icon and adaptive-icon
+  foreground; `flutter_launcher_icons` and `flutter_native_splash`
+  (config in `pubspec.yaml`) generate the actual platform icon/splash
+  files — see Setup step 3 below, since that needs the `android/`/`ios/`
+  folders `flutter create` generates.
 - **CI build** (`codemagic.yaml`) — builds an unsigned debug and release APK
   on [Codemagic](https://codemagic.io) for sideloading onto a test device,
   no Play Store signing setup required. Sign up, connect this GitHub repo,
@@ -169,9 +180,13 @@ list the file under `flutter.assets` in `pubspec.yaml`.
    ```bash
    flutter create --project-name zambian_curriculum_app .
    ```
-3. Fetch dependencies:
+3. Fetch dependencies, then generate the launcher icon and splash screen
+   from `assets/icon/` (config already in `pubspec.yaml` — see Stage 8
+   above):
    ```bash
    flutter pub get
+   flutter pub run flutter_launcher_icons
+   flutter pub run flutter_native_splash:create
    ```
 4. **Only needed for the "Teaching notes" feature** — everything else works
    without this step. Set up the Firebase backend per
@@ -213,6 +228,7 @@ lib/
   services/guided_planning_engine.dart  # Stage 5: rule-checked activity/group-size adjustments
   services/guided_planning_repository.dart  # loads activity banks + CDC constraint rules
   services/lesson_checkpoint_repository.dart  # Stage 6: persists mid-lesson checkpoints
+  theme/app_theme.dart            # Stage 8: single source of the app's colors/typography/components
   screens/subject_selector_screen.dart  # the Subject Selector UI
   screens/scheme_of_work_screen.dart    # mark progress + generated scheme UI
   screens/scheme_of_work_document_screen.dart  # scheme-of-work PDF/Word export + share
@@ -237,6 +253,9 @@ assets/rules/
   cdc_constraints.example.json    # original worked example, used as a fallback
 assets/cdc_resources/
   seed_catalog.json               # REAL catalog snapshot from library.cdcrepository.info
+assets/icon/
+  icon.png                        # launcher icon (also the source for flutter_launcher_icons)
+  icon_foreground.png             # Android adaptive-icon foreground layer + splash image
 firebase/
   functions/src/index.ts          # generateTeachingNotes + listCdcResources Cloud Functions
   README.md                       # Firebase project setup, secrets, deploy

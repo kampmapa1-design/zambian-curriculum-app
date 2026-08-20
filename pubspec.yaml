@@ -28,6 +28,8 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^4.0.0
+  flutter_launcher_icons: ^0.14.1
+  flutter_native_splash: ^2.4.3
 
 flutter:
   uses-material-design: true
@@ -42,3 +44,25 @@ flutter:
     - assets/rules/cdc_constraints.example.json
     - assets/rules/cbc_2023_constraints.json
     - assets/cdc_resources/seed_catalog.json
+
+# Run `flutter pub run flutter_launcher_icons` after `flutter create` (see
+# README Setup) to generate android/ios launcher icons from assets/icon/.
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: assets/icon/icon.png
+  adaptive_icon_background: "#155C3D"
+  adaptive_icon_foreground: assets/icon/icon_foreground.png
+
+# Run `flutter pub run flutter_native_splash:create` after `flutter create`
+# to generate the native splash screen from this config.
+flutter_native_splash:
+  color: "#155C3D"
+  image: assets/icon/icon_foreground.png
+  color_dark: "#0E2B1E"
+  image_dark: assets/icon/icon_foreground.png
+  android_12:
+    color: "#155C3D"
+    image: assets/icon/icon_foreground.png
+    color_dark: "#0E2B1E"
+    image_dark: assets/icon/icon_foreground.png
