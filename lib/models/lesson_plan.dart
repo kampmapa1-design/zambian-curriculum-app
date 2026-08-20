@@ -23,6 +23,24 @@ class LessonPlanFieldDef {
     this.autoFilled = false,
     this.helpText,
   });
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'label': label,
+        'type': type.name,
+        'required': required,
+        'autoFilled': autoFilled,
+        'helpText': helpText,
+      };
+
+  factory LessonPlanFieldDef.fromJson(Map<String, dynamic> json) => LessonPlanFieldDef(
+        id: json['id'] as String,
+        label: json['label'] as String,
+        type: LessonPlanFieldType.values.byName(json['type'] as String),
+        required: json['required'] as bool? ?? false,
+        autoFilled: json['autoFilled'] as bool? ?? false,
+        helpText: json['helpText'] as String?,
+      );
 }
 
 class LessonPlanSectionDef {
@@ -31,6 +49,20 @@ class LessonPlanSectionDef {
   final List<LessonPlanFieldDef> fields;
 
   const LessonPlanSectionDef({required this.id, required this.title, required this.fields});
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'title': title,
+        'fields': [for (final f in fields) f.toJson()],
+      };
+
+  factory LessonPlanSectionDef.fromJson(Map<String, dynamic> json) => LessonPlanSectionDef(
+        id: json['id'] as String,
+        title: json['title'] as String,
+        fields: [
+          for (final f in (json['fields'] as List).cast<Map<String, dynamic>>()) LessonPlanFieldDef.fromJson(f)
+        ],
+      );
 }
 
 /// A lesson plan template: header/body field definitions plus the ordered
@@ -56,6 +88,25 @@ class LessonPlanTemplate {
   });
 
   Iterable<LessonPlanFieldDef> get allFields => sections.expand((s) => s.fields);
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'name': name,
+        'source': source,
+        'sections': [for (final s in sections) s.toJson()],
+        'progressionStages': progressionStages,
+      };
+
+  factory LessonPlanTemplate.fromJson(Map<String, dynamic> json) => LessonPlanTemplate(
+        id: json['id'] as String,
+        name: json['name'] as String,
+        source: json['source'] as String,
+        sections: [
+          for (final s in (json['sections'] as List).cast<Map<String, dynamic>>())
+            LessonPlanSectionDef.fromJson(s)
+        ],
+        progressionStages: (json['progressionStages'] as List).cast<String>(),
+      );
 }
 
 /// The Zambian Ministry of Education / Curriculum Development Centre lesson

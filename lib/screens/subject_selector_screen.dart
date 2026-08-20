@@ -4,6 +4,7 @@ import '../models/syllabus_models.dart';
 import '../services/template_repository.dart';
 import 'cdc_resources_screen.dart';
 import 'scheme_of_work_screen.dart';
+import 'settings_screen.dart';
 
 class SubjectSelectorScreen extends StatefulWidget {
   const SubjectSelectorScreen({super.key, this.repository});
@@ -127,6 +128,13 @@ class _SubjectSelectorScreenState extends State<SubjectSelectorScreen> {
             tooltip: 'CDC Resources',
             onPressed: () => Navigator.of(context).push(
               MaterialPageRoute(builder: (_) => const CdcResourcesScreen()),
+            ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.settings_outlined),
+            tooltip: 'Settings',
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const SettingsScreen()),
             ),
           ),
         ],

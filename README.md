@@ -91,6 +91,19 @@ generates are missing. See **Setup** below to add them.
   hand the file to the OS share sheet (`share_plus`), which is what actually
   surfaces WhatsApp, email, Bluetooth, and every other installed share
   target; the app doesn't integrate each channel separately.
+- **Upload My Own Template (Settings)** — `lib/screens/settings_screen.dart`,
+  reachable from the Subject Selector's app bar. "Upload My Own Template"
+  opens `lib/screens/template_upload_screen.dart`: pick a `.docx` file,
+  `DocxHeadingExtractor` (`lib/services/docx_heading_extractor.dart`) reads
+  its section headings straight from the OOXML (unzips it with the same
+  `archive` dependency the document services already use — no PDF support
+  yet, that needs a heavier dependency this app doesn't take on). Map each
+  heading to an app field that auto-fills from the syllabus (Subject,
+  Topic, Sub-topic, competences) or keep it as a plain field you fill in
+  yourself; the result saves as an ordinary `LessonPlanTemplate`
+  (`CustomTemplateRepository`, on-device via `shared_preferences`) and
+  shows up as a selectable alternative — alongside the bundled CDC one —
+  the next time you open a lesson plan.
 - **CDC Resources (catalog online, downloads on demand)** —
   `lib/screens/cdc_resources_screen.dart`, reachable from the Subject
   Selector's app bar. Lists Teaching Modules and other documents from the
@@ -161,11 +174,17 @@ lib/
   services/teaching_notes_service.dart  # calls the generateTeachingNotes Cloud Function
   services/lesson_plan_document_service.dart  # renders a lesson plan draft to PDF / DOCX
   services/cdc_resources_service.dart   # CDC catalog fetch/cache/throttle + file download
+  services/docx_heading_extractor.dart  # reads section headings from an uploaded .docx
+  services/custom_template_repository.dart  # persists uploaded lesson plan templates
+  services/offline_teaching_notes_service.dart  # free, on-device teaching notes (no API)
   screens/subject_selector_screen.dart  # the Subject Selector UI
   screens/scheme_of_work_screen.dart    # mark progress + generated scheme UI
+  screens/scheme_of_work_document_screen.dart  # scheme-of-work PDF/Word export + share
   screens/teaching_notes_sheet.dart     # the "Teaching notes" generation UI
   screens/lesson_plan_screen.dart       # lesson plan form + PDF/Word export + share
   screens/cdc_resources_screen.dart     # CDC catalog list + download UI
+  screens/settings_screen.dart          # Settings — manage uploaded templates
+  screens/template_upload_screen.dart   # "Upload My Own Template" flow
 assets/syllabi/
   manifest.json                   # list of bundled curriculum/subject/grade templates
   math_grade8.json                # sample template, 2023 CBC (Term 1 + Term 2)

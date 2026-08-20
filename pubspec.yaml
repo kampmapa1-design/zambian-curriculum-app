@@ -21,6 +21,8 @@ dependencies:
   share_plus: ^10.1.2
   http: ^1.2.2
   shared_preferences: ^2.3.2
+  file_picker: ^8.1.2
+  xml: ^6.5.0
 
 dev_dependencies:
   flutter_test:

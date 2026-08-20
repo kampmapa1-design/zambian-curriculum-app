@@ -3,11 +3,17 @@ import 'package:share_plus/share_plus.dart';
 
 import '../models/lesson_plan.dart';
 import '../models/scheme_of_work.dart';
+import '../services/custom_template_repository.dart';
 import '../services/lesson_plan_document_service.dart';
 
-/// Lets a teacher fill in the CDC lesson plan template for one scheme-of-work
+/// Lets a teacher fill in a lesson plan template for one scheme-of-work
 /// entry (topic/sub-topic already known from the syllabus), then export it
 /// as PDF or Word and share it — entirely on-device, no network required.
+///
+/// Defaults to the bundled CDC template, but also offers any templates the
+/// teacher uploaded themselves (Stage 3: "Upload My Own Template",
+/// see [CustomTemplateRepository]) — switching templates rebuilds the form
+/// around the newly selected field definitions.
 class LessonPlanScreen extends StatefulWidget {
   const LessonPlanScreen({
     super.key,
@@ -15,12 +21,14 @@ class LessonPlanScreen extends StatefulWidget {
     required this.entry,
     this.template = defaultCdcLessonPlanTemplate,
     this.documentService,
+    this.customTemplateRepository,
   });
 
   final String subjectName;
   final SchemeOfWorkEntry entry;
   final LessonPlanTemplate template;
   final LessonPlanDocumentService? documentService;
+  final CustomTemplateRepository? customTemplateRepository;
 
   @override
   State<LessonPlanScreen> createState() => _LessonPlanScreenState();
@@ -28,6 +36,11 @@ class LessonPlanScreen extends StatefulWidget {
 
 class _LessonPlanScreenState extends State<LessonPlanScreen> {
   late final LessonPlanDocumentService _documentService = widget.documentService ?? LessonPlanDocumentService();
+  late final CustomTemplateRepository _customTemplateRepository =
+      widget.customTemplateRepository ?? CustomTemplateRepository();
+
+  List<LessonPlanTemplate> _availableTemplates = const [];
+  late LessonPlanTemplate _activeTemplate;
   late LessonPlanDraft _draft;
   final Map<String, TextEditingController> _controllers = {};
   bool _exporting = false;
@@ -35,26 +48,44 @@ class _LessonPlanScreenState extends State<LessonPlanScreen> {
   @override
   void initState() {
     super.initState();
-    _draft = LessonPlanDraft.empty(widget.template).withValue('subject', widget.subjectName).withValue(
-          'topic',
-          widget.entry.topic.name,
-        );
+    _activeTemplate = widget.template;
+    _availableTemplates = [widget.template];
+    _rebuildForActiveTemplate();
+    _loadCustomTemplates();
+  }
+
+  Future<void> _loadCustomTemplates() async {
+    final custom = await _customTemplateRepository.list();
+    if (!mounted || custom.isEmpty) return;
+    setState(() => _availableTemplates = [widget.template, ...custom]);
+  }
+
+  void _rebuildForActiveTemplate() {
+    for (final c in _controllers.values) {
+      c.dispose();
+    }
+    _controllers.clear();
+
+    var draft = LessonPlanDraft.empty(_activeTemplate)
+        .withValue('subject', widget.subjectName)
+        .withValue('topic', widget.entry.topic.name);
     if (widget.entry.subTopic != null) {
-      _draft = _draft.withValue('subTopic', widget.entry.subTopic!.name);
+      draft = draft.withValue('subTopic', widget.entry.subTopic!.name);
     }
     final generalCompetences = widget.entry.topic.competencies.map((c) => c.description).join('\n');
     if (generalCompetences.isNotEmpty) {
-      _draft = _draft.withValue('generalCompetences', generalCompetences);
+      draft = draft.withValue('generalCompetences', generalCompetences);
     }
     final specificCompetences = widget.entry.competencies.map((c) => c.description).join('\n');
     if (specificCompetences.isNotEmpty) {
-      _draft = _draft.withValue('specificCompetences', specificCompetences);
+      draft = draft.withValue('specificCompetences', specificCompetences);
     }
     if (widget.entry.objectives.isNotEmpty) {
-      _draft = _draft.withValue('expectedStandard', widget.entry.objectives.first.description);
+      draft = draft.withValue('expectedStandard', widget.entry.objectives.first.description);
     }
+    _draft = draft;
 
-    for (final field in widget.template.allFields) {
+    for (final field in _activeTemplate.allFields) {
       _controllers[field.id] = TextEditingController(text: _draft.value(field.id));
     }
     for (var i = 0; i < _draft.progression.length; i++) {
@@ -66,6 +97,14 @@ class _LessonPlanScreenState extends State<LessonPlanScreen> {
     }
   }
 
+  void _onTemplateChanged(LessonPlanTemplate? template) {
+    if (template == null || template.id == _activeTemplate.id) return;
+    setState(() {
+      _activeTemplate = template;
+      _rebuildForActiveTemplate();
+    });
+  }
+
   @override
   void dispose() {
     for (final c in _controllers.values) {
@@ -75,7 +114,7 @@ class _LessonPlanScreenState extends State<LessonPlanScreen> {
   }
 
   void _syncDraftFromControllers() {
-    for (final field in widget.template.allFields) {
+    for (final field in _activeTemplate.allFields) {
       _draft = _draft.withValue(field.id, _controllers[field.id]!.text);
     }
     for (var i = 0; i < _draft.progression.length; i++) {
@@ -96,8 +135,8 @@ class _LessonPlanScreenState extends State<LessonPlanScreen> {
     setState(() => _exporting = true);
     try {
       final file = asPdf
-          ? await _documentService.generatePdf(widget.template, _draft)
-          : await _documentService.generateDocx(widget.template, _draft);
+          ? await _documentService.generatePdf(_activeTemplate, _draft)
+          : await _documentService.generateDocx(_activeTemplate, _draft);
       if (!mounted) return;
       // The OS share sheet is what actually surfaces WhatsApp, email,
       // Bluetooth, and every other installed share target — one call here
@@ -123,25 +162,38 @@ class _LessonPlanScreenState extends State<LessonPlanScreen> {
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
         children: [
+          if (_availableTemplates.length > 1) ...[
+            DropdownButtonFormField<LessonPlanTemplate>(
+              decoration: const InputDecoration(labelText: 'Template', border: OutlineInputBorder()),
+              value: _activeTemplate,
+              items: [
+                for (final t in _availableTemplates) DropdownMenuItem(value: t, child: Text(t.name)),
+              ],
+              onChanged: _onTemplateChanged,
+            ),
+            const SizedBox(height: 12),
+          ],
           Text(
-            'Based on: ${widget.template.source}',
+            'Based on: ${_activeTemplate.source}',
             style: Theme.of(context).textTheme.bodySmall?.copyWith(fontStyle: FontStyle.italic),
           ),
           const SizedBox(height: 16),
-          for (final section in widget.template.sections) ...[
+          for (final section in _activeTemplate.sections) ...[
             Text(section.title, style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 8),
             for (final field in section.fields) _buildField(field),
             const SizedBox(height: 16),
           ],
-          Text('Lesson Progression', style: Theme.of(context).textTheme.titleMedium),
-          const SizedBox(height: 4),
-          Text(
-            'Fixed stage order from the CDC template — filled in per stage below.',
-            style: Theme.of(context).textTheme.bodySmall,
-          ),
-          const SizedBox(height: 8),
-          for (var i = 0; i < _draft.progression.length; i++) _buildProgressionCard(i),
+          if (_draft.progression.isNotEmpty) ...[
+            Text('Lesson Progression', style: Theme.of(context).textTheme.titleMedium),
+            const SizedBox(height: 4),
+            Text(
+              'Fixed stage order from the template — filled in per stage below.',
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+            const SizedBox(height: 8),
+            for (var i = 0; i < _draft.progression.length; i++) _buildProgressionCard(i),
+          ],
         ],
       ),
       bottomNavigationBar: SafeArea(
