@@ -62,7 +62,7 @@ class _TemplateUploadScreenState extends State<TemplateUploadScreen> {
       _error = null;
     });
     try {
-      final result = await FilePicker.platform.pickFiles(
+      final result = await FilePicker.pickFiles(
         type: FileType.custom,
         allowedExtensions: ['docx'],
         withData: true,
