@@ -19,10 +19,7 @@ class SubjectSelectorScreen extends StatefulWidget {
 class _SubjectSelectorScreenState extends State<SubjectSelectorScreen> {
   late final TemplateRepository _repository = widget.repository ?? TemplateRepository();
 
-  // TODO(stage-4): replace with a curriculum toggle on this screen. Every
-  // lookup below already takes a curriculum code, so wiring the toggle is
-  // just swapping this constant for state.
-  static const _curriculumCode = 'CBC_2023';
+  String _curriculumCode = 'CBC_2023';
 
   bool _seeding = true;
   bool _loadingSyllabus = false;
@@ -45,6 +42,11 @@ class _SubjectSelectorScreenState extends State<SubjectSelectorScreen> {
       final manifest = await _repository.loadManifest();
       setState(() {
         _manifest = manifest;
+        // Fall back to whatever curriculum is actually bundled, in case the
+        // default code above isn't among them.
+        if (_curricula.isNotEmpty && !_curricula.any((c) => c.code == _curriculumCode)) {
+          _curriculumCode = _curricula.first.code;
+        }
         _seeding = false;
       });
     } catch (error) {
@@ -53,6 +55,30 @@ class _SubjectSelectorScreenState extends State<SubjectSelectorScreen> {
         _seeding = false;
       });
     }
+  }
+
+  /// Distinct curricula present in the bundled manifest — not a fixed list,
+  /// so a third curriculum shows up here automatically once its templates
+  /// are added to manifest.json.
+  List<({String code, String name})> get _curricula {
+    final seen = <String>{};
+    final result = <({String code, String name})>[];
+    for (final entry in _manifest) {
+      if (seen.add(entry.curriculumCode)) {
+        result.add((code: entry.curriculumCode, name: entry.curriculumName));
+      }
+    }
+    return result;
+  }
+
+  void _onCurriculumChanged(String code) {
+    if (code == _curriculumCode) return;
+    setState(() {
+      _curriculumCode = code;
+      _selectedSubjectCode = null;
+      _selectedGradeLevel = null;
+      _template = null;
+    });
   }
 
   /// Manifest entries for the active curriculum only. Two curricula can
@@ -164,6 +190,20 @@ class _SubjectSelectorScreenState extends State<SubjectSelectorScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          if (_curricula.length > 1) ...[
+            SegmentedButton<String>(
+              segments: [
+                for (final c in _curricula)
+                  ButtonSegment(
+                    value: c.code,
+                    label: Text(c.name, overflow: TextOverflow.ellipsis, maxLines: 1),
+                  ),
+              ],
+              selected: {_curriculumCode},
+              onSelectionChanged: (selection) => _onCurriculumChanged(selection.first),
+            ),
+            const SizedBox(height: 16),
+          ],
           Row(
             children: [
               Expanded(

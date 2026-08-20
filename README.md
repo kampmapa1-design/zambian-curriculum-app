@@ -16,10 +16,11 @@ generates are missing. See **Setup** below to add them.
   `lib/services/database_helper.dart`), so the 2023 Competency-Based
   Curriculum and the 2013 Outcome-Based Curriculum can coexist without
   collisions even when they reuse a subject code or grade/form number. The
-  Subject Selector currently defaults to `CBC_2023`
-  (`_curriculumCode` in `subject_selector_screen.dart`) — every lookup
-  already takes a curriculum code, so adding the actual toggle UI is the
-  only piece left. Note: whether a level is labeled "Grade N" or "Form N" is
+  Subject Selector shows a toggle between whichever curricula are actually
+  present in `manifest.json` — not a fixed two-way switch, so a third
+  curriculum would show up automatically once its templates are bundled —
+  and the Subject/Grade dropdowns below it re-populate from the selected
+  curriculum only. Note: whether a level is labeled "Grade N" or "Form N" is
   a property of the source document, not the curriculum — the real 2024 CDC
   History syllabus uses "Form 1-4" for Ordinary Level Secondary under the
   2023 CBC itself, so don't assume "Form" implies the 2013 curriculum.
