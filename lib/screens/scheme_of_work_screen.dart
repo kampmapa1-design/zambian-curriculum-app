@@ -5,6 +5,7 @@ import '../models/syllabus_models.dart';
 import '../services/entitlement_service.dart';
 import '../services/progress_repository.dart';
 import 'lesson_plan_screen.dart';
+import 'scheme_of_work_document_screen.dart';
 import 'teaching_notes_sheet.dart';
 
 /// Lets a teacher mark the last topic they concluded, then shows the
@@ -78,6 +79,18 @@ class _SchemeOfWorkScreenState extends State<SchemeOfWorkScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('${widget.template.subject.name} · ${widget.template.grade.name}'),
+        actions: [
+          if (_access.allowed && _entries.isNotEmpty)
+            IconButton(
+              icon: const Icon(Icons.ios_share),
+              tooltip: 'Export scheme of work',
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => SchemeOfWorkDocumentScreen(template: widget.template, entries: _entries),
+                ),
+              ),
+            ),
+        ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(20),
           child: Padding(
