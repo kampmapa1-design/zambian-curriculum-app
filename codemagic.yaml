@@ -17,6 +17,18 @@ workflows:
           if [ ! -d android ]; then
             flutter create . --platforms=android --project-name zambian_curriculum_app --org com.example.zambiancurriculum
           fi
+      - name: Bump Android compileSdk (file_picker's transitive deps need 36+)
+        script: |
+          # flutter create's default (flutter.compileSdkVersion, currently 34
+          # on this Flutter channel) is older than what file_picker's
+          # flutter_plugin_android_lifecycle dependency requires. macOS's
+          # sed needs an argument to -i (hence -i.bak, not just -i).
+          if [ -f android/app/build.gradle.kts ]; then
+            sed -i.bak 's/compileSdk = flutter.compileSdkVersion/compileSdk = 36/' android/app/build.gradle.kts
+          fi
+          if [ -f android/app/build.gradle ]; then
+            sed -i.bak 's/compileSdkVersion flutter.compileSdkVersion/compileSdkVersion 36/' android/app/build.gradle
+          fi
       - name: Get Flutter packages
         script: flutter pub get
       - name: Build debug APK
