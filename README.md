@@ -151,7 +151,7 @@ generates are missing. See **Setup** below to add them.
   bundled (hundreds of MB across 300+ resources).
 - **App theme, icon, and splash screen (Stage 8)** — `lib/theme/app_theme.dart`
   is the single source of the app's visual identity: one seeded
-  `ColorScheme` (deep green, matching the app icon) plus consistent
+  `ColorScheme` (deep blue, matching the app icon) plus consistent
   AppBar/Card/button/input/chip styling, applied once in `main.dart` so
   every screen picks it up automatically — light and dark mode both
   follow the system setting. `assets/icon/icon.png` /

@@ -7,9 +7,9 @@ import 'package:flutter/material.dart';
 class AppTheme {
   AppTheme._();
 
-  /// Deep green — matches assets/icon/icon.png and the launcher icon
+  /// Deep blue — matches assets/icon/icon.png and the launcher icon
   /// background, so the in-app palette and the icon read as one identity.
-  static const Color seed = Color(0xFF155C3D);
+  static const Color seed = Color(0xFF1565C0);
   static const Color accent = Color(0xFFF5A623);
 
   static ThemeData light() {
