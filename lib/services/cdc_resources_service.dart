@@ -99,6 +99,18 @@ class CdcResourcesService {
       final result = await callable.call<Map<Object?, Object?>>();
       data = result.data;
     } on FirebaseFunctionsException catch (e) {
+      // 'not-found'/'internal' here almost always means the function hasn't
+      // been deployed yet — most likely because the Firebase project is
+      // still on the free Spark plan (Cloud Functions can't make outbound
+      // calls, like the one this function needs, until Blaze is enabled).
+      // Distinguish that from a real network/server error so the message
+      // doesn't read like something is broken.
+      if (e.code == 'not-found' || e.code == 'internal' || e.code == 'unavailable') {
+        throw const CdcResourcesUnavailable(
+          'Live catalog updates need the paid Firebase plan, which isn\'t enabled yet — '
+          'postponed for now. Downloading individual resources will work once it is.',
+        );
+      }
       throw CdcResourcesUnavailable(e.message ?? 'Failed to fetch the CDC catalog.');
     }
 

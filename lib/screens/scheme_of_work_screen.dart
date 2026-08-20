@@ -313,12 +313,7 @@ class _SchemeEntryCard extends StatelessWidget {
                   label: const Text('Lesson plan'),
                 ),
                 TextButton.icon(
-                  onPressed: () => showTeachingNotesSheet(
-                    context,
-                    topic: entry.topic.name,
-                    subtopic: entry.subTopic?.name,
-                    syllabusContext: _syllabusContext(entry),
-                  ),
+                  onPressed: () => showTeachingNotesSheet(context, entry: entry),
                   icon: const Icon(Icons.auto_awesome, size: 18),
                   label: const Text('Teaching notes'),
                 ),
@@ -328,17 +323,5 @@ class _SchemeEntryCard extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  String _syllabusContext(SchemeOfWorkEntry entry) {
-    final lines = <String>[
-      'Topic: ${entry.topic.name}',
-      if (entry.topic.description != null) entry.topic.description!,
-      if (entry.subTopic != null) 'Sub-topic: ${entry.subTopic!.name}',
-      if (entry.subTopic?.description != null) entry.subTopic!.description!,
-      for (final o in entry.objectives) 'Learning objective: ${o.description}',
-      for (final c in entry.competencies) 'Competency: ${c.description}',
-    ];
-    return lines.join('\n');
   }
 }

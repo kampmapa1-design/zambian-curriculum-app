@@ -1,68 +1,90 @@
 import 'package:flutter/material.dart';
 
+import '../models/scheme_of_work.dart';
+import '../services/offline_teaching_notes_service.dart';
 import '../services/teaching_notes_service.dart';
 
-/// Opens the teaching-notes generator for one topic/sub-topic. Calls the
-/// `generateTeachingNotes` Cloud Function — only works online, per
-/// [TeachingNotesService].
-Future<void> showTeachingNotesSheet(
-  BuildContext context, {
-  required String topic,
-  String? subtopic,
-  required String syllabusContext,
-}) {
+/// Opens the teaching-notes generator for one scheme-of-work entry. Shows
+/// notes composed offline from syllabus data immediately (free, no network),
+/// with an optional AI-enhanced version behind a button that calls the
+/// `generateTeachingNotes` Cloud Function — that path needs Firebase's paid
+/// Blaze plan, which isn't enabled yet, so it's offered but not relied on.
+Future<void> showTeachingNotesSheet(BuildContext context, {required SchemeOfWorkEntry entry}) {
   return showModalBottomSheet(
     context: context,
     isScrollControlled: true,
-    builder: (_) => _TeachingNotesSheet(
-      topic: topic,
-      subtopic: subtopic,
-      syllabusContext: syllabusContext,
-    ),
+    builder: (_) => _TeachingNotesSheet(entry: entry),
   );
 }
 
-class _TeachingNotesSheet extends StatefulWidget {
-  const _TeachingNotesSheet({
-    required this.topic,
-    this.subtopic,
-    required this.syllabusContext,
-  });
+String _syllabusContext(SchemeOfWorkEntry entry) {
+  final lines = <String>[
+    'Topic: ${entry.topic.name}',
+    if (entry.topic.description != null) entry.topic.description!,
+    if (entry.subTopic != null) 'Sub-topic: ${entry.subTopic!.name}',
+    if (entry.subTopic?.description != null) entry.subTopic!.description!,
+    for (final o in entry.objectives) 'Learning objective: ${o.description}',
+    for (final c in entry.competencies) 'Competency: ${c.description}',
+  ];
+  return lines.join('\n');
+}
 
-  final String topic;
-  final String? subtopic;
-  final String syllabusContext;
+class _TeachingNotesSheet extends StatefulWidget {
+  const _TeachingNotesSheet({required this.entry});
+
+  final SchemeOfWorkEntry entry;
 
   @override
   State<_TeachingNotesSheet> createState() => _TeachingNotesSheetState();
 }
 
 class _TeachingNotesSheetState extends State<_TeachingNotesSheet> {
-  final _service = TeachingNotesService();
-  String _format = 'bullet';
-  bool _loading = false;
-  String? _error;
-  TeachingNotesResult? _result;
+  final _offlineService = OfflineTeachingNotesService();
+  final _aiService = TeachingNotesService();
 
-  Future<void> _generate() async {
+  String _format = 'bullet';
+  String _notes = '';
+  bool _isAiGenerated = false;
+  bool _loadingAi = false;
+  String? _aiError;
+
+  @override
+  void initState() {
+    super.initState();
+    _regenerateOffline();
+  }
+
+  void _regenerateOffline() {
     setState(() {
-      _loading = true;
-      _error = null;
+      _notes = _offlineService.compose(entry: widget.entry, format: _format);
+      _isAiGenerated = false;
+      _aiError = null;
+    });
+  }
+
+  Future<void> _tryAiVersion() async {
+    setState(() {
+      _loadingAi = true;
+      _aiError = null;
     });
     try {
-      final result = await _service.generate(
-        topic: widget.topic,
-        subtopic: widget.subtopic,
-        syllabusContext: widget.syllabusContext,
+      final result = await _aiService.generate(
+        topic: widget.entry.topic.name,
+        subtopic: widget.entry.subTopic?.name,
+        syllabusContext: _syllabusContext(widget.entry),
         format: _format,
       );
       if (!mounted) return;
-      setState(() => _result = result);
+      setState(() {
+        _notes = result.notes;
+        _isAiGenerated = true;
+      });
     } catch (e) {
       if (!mounted) return;
-      setState(() => _error = e.toString());
+      setState(() => _aiError = 'AI-enhanced notes aren\'t available yet ($e). Showing notes from your '
+          'syllabus data instead.');
     } finally {
-      if (mounted) setState(() => _loading = false);
+      if (mounted) setState(() => _loadingAi = false);
     }
   }
 
@@ -87,10 +109,7 @@ class _TeachingNotesSheetState extends State<_TeachingNotesSheet> {
             children: [
               Text('Teaching notes', style: Theme.of(context).textTheme.titleLarge),
               const SizedBox(height: 4),
-              Text(
-                widget.subtopic == null ? widget.topic : '${widget.topic} — ${widget.subtopic}',
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
+              Text(widget.entry.title, style: Theme.of(context).textTheme.bodyMedium),
               const SizedBox(height: 12),
               SegmentedButton<String>(
                 segments: const [
@@ -98,38 +117,38 @@ class _TeachingNotesSheetState extends State<_TeachingNotesSheet> {
                   ButtonSegment(value: 'paragraph', label: Text('Paragraphs')),
                 ],
                 selected: {_format},
-                onSelectionChanged: _loading
+                onSelectionChanged: _loadingAi
                     ? null
-                    : (selection) => setState(() => _format = selection.first),
+                    : (selection) {
+                        setState(() => _format = selection.first);
+                        if (!_isAiGenerated) _regenerateOffline();
+                      },
               ),
               const SizedBox(height: 12),
-              FilledButton.icon(
-                onPressed: _loading ? null : _generate,
-                icon: _loading
-                    ? const SizedBox(
-                        width: 16,
-                        height: 16,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
+              OutlinedButton.icon(
+                onPressed: _loadingAi ? null : _tryAiVersion,
+                icon: _loadingAi
+                    ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
                     : const Icon(Icons.auto_awesome),
-                label: Text(_loading ? 'Generating…' : 'Generate teaching notes'),
+                label: Text(_loadingAi ? 'Trying AI-enhanced version…' : 'Try AI-enhanced version (needs internet)'),
               ),
               const SizedBox(height: 12),
-              if (_error != null)
+              if (_aiError != null)
                 Padding(
                   padding: const EdgeInsets.only(bottom: 12),
-                  child: Text(
-                    _error!,
-                    style: TextStyle(color: Theme.of(context).colorScheme.error),
-                  ),
+                  child: Text(_aiError!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
                 ),
-              if (_result != null)
-                Flexible(
-                  child: SingleChildScrollView(
-                    controller: scrollController,
-                    child: SelectableText(_result!.notes),
-                  ),
+              Text(
+                _isAiGenerated ? 'AI-generated (Claude)' : 'From your syllabus data (offline, free)',
+                style: Theme.of(context).textTheme.labelSmall,
+              ),
+              const SizedBox(height: 6),
+              Flexible(
+                child: SingleChildScrollView(
+                  controller: scrollController,
+                  child: SelectableText(_notes),
                 ),
+              ),
             ],
           ),
         );

@@ -139,3 +139,34 @@ Errors from both come back as standard `HttpsError`s: `unauthenticated`
 `generateTeachingNotes`), `failed-precondition` (the model declined the
 request), or `internal` (the Anthropic call itself failed, or —
 `listCdcResources` only — its response wasn't valid JSON).
+
+## Postponed until Blaze is enabled — and what it costs
+
+Neither function is deployed yet, since the project is still on the free
+Spark plan (see step 3 above) — Spark blocks the outbound network calls
+both functions need. Rather than block the rest of the app on that:
+
+- **Teaching notes** now default to `OfflineTeachingNotesService`
+  (`lib/services/offline_teaching_notes_service.dart` in the Flutter app),
+  which composes notes directly from on-device syllabus data — free,
+  instant, and zero fabrication risk since nothing is generated, only
+  reformatted. The sheet still offers "Try AI-enhanced version" — it calls
+  this Cloud Function once deployed, and clearly falls back with an
+  explanatory message if it isn't.
+- **CDC Resources** catalog refresh shows a clear "needs the paid plan,
+  postponed for now" message instead of a raw error
+  (`cdc_resources_service.dart`); browsing any already-cached catalog and
+  downloading individual files (plain HTTP, no Firebase involved) are
+  unaffected.
+
+Rough costs, for when you're ready to enable this (check current pricing
+before committing — these are ballpark, not quotes):
+
+| What | Type | Rough cost |
+|---|---|---|
+| Firebase **Blaze** plan | Pay-as-you-go, no subscription fee | Likely $0–a few $/month at this app's low call volume — Blaze keeps Spark's free quota, you're only billed above it. Requires a payment method on file. |
+| **Anthropic API** usage (the actual model calls) | Pay-per-token, billed to whichever Anthropic account funds the `ANTHROPIC_API_KEY` secret | Usage-based — see [anthropic.com/pricing](https://www.anthropic.com/pricing) for current rates. `claude-opus-5` is the priciest tier; swapping to a cheaper model in `functions/src/index.ts` is a one-line change if cost matters more than quality here. |
+| **Google Play Developer** account | One-time fee, not recurring | ~$25 USD once — only needed when publishing to the Play Store, not for the current Codemagic sideloaded APK builds. Real in-app subscriptions/ads (`entitlement_service.dart`'s stubs) also need this account eventually. |
+| **Codemagic** builds | Free tier has a monthly build-minutes allowance | $0 unless build volume grows past the free allowance — not close to that yet. |
+
+None of these are required to keep using the app as it stands today.
