@@ -262,10 +262,10 @@ class _LessonPlanScreenState extends State<LessonPlanScreen> {
       // The OS share sheet is what actually surfaces WhatsApp, email,
       // Bluetooth, and every other installed share target — one call here
       // covers all of them rather than integrating each one separately.
-      await Share.shareXFiles(
-        [XFile(file.path)],
+      await SharePlus.instance.share(ShareParams(
+        files: [XFile(file.path)],
         subject: 'Lesson Plan — ${widget.entry.topic.name}',
-      );
+      ));
     } catch (error) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(

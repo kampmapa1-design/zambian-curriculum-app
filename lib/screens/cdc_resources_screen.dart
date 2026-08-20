@@ -77,7 +77,7 @@ class _CdcResourcesScreenState extends State<CdcResourcesScreen> {
     try {
       final file = await _service.downloadResource(resource);
       if (!mounted) return;
-      await Share.shareXFiles([XFile(file.path)], subject: resource.title);
+      await SharePlus.instance.share(ShareParams(files: [XFile(file.path)], subject: resource.title));
     } on CdcResourcesUnavailable catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message)));

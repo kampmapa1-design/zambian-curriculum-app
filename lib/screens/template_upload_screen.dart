@@ -62,18 +62,13 @@ class _TemplateUploadScreenState extends State<TemplateUploadScreen> {
       _error = null;
     });
     try {
-      final result = await FilePicker.pickFiles(
+      final results = await FilePicker.pickFiles(
         type: FileType.custom,
         allowedExtensions: ['docx'],
-        withData: true,
       );
-      if (result == null || result.files.isEmpty) return;
-      final file = result.files.single;
-      final bytes = file.bytes;
-      if (bytes == null) {
-        setState(() => _error = 'Could not read that file.');
-        return;
-      }
+      if (results.isEmpty) return;
+      final file = results.single;
+      final bytes = await file.readAsBytes();
       final headings = _extractor.extractHeadings(bytes);
       if (headings.isEmpty) {
         setState(() => _error = 'No section headings were found in that document.');

@@ -18,10 +18,10 @@ dependencies:
   cloud_functions: ^5.1.4
   pdf: ^3.11.1
   archive: ^3.6.1
-  share_plus: ^10.1.2
+  share_plus: ^13.3.0
   http: ^1.2.2
   shared_preferences: ^2.3.2
-  file_picker: ^11.0.3
+  file_picker: ^12.0.0
   xml: ^6.5.0
 
 dev_dependencies:
