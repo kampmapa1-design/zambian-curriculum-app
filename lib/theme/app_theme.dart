@@ -47,7 +47,7 @@ class AppTheme {
       inputDecorationTheme: InputDecorationTheme(
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
         filled: true,
-        fillColor: colorScheme.surfaceContainerHighest.withOpacity(0.35),
+        fillColor: colorScheme.surfaceContainerHighest.withValues(alpha: 0.35),
       ),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(

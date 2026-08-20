@@ -5,9 +5,6 @@ workflows:
     instance_type: mac_mini_m2
     environment:
       flutter: stable
-    cache:
-      cache_paths:
-        - $HOME/.pub-cache
     scripts:
       - name: Generate Android platform scaffolding if missing
         script: |
