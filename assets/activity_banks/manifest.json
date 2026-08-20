@@ -1,0 +1,10 @@
+{
+  "banks": [
+    {
+      "curriculum_code": "CBC_2023",
+      "subject_code": "HIST",
+      "sub_topic_name": "1.1.1 Reasons for Learning History",
+      "file": "hist_f1_1_1_1.json"
+    }
+  ]
+}

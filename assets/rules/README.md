@@ -1,14 +1,17 @@
-# CDC constraint rules (Stage 5 design)
+# CDC constraint rules (Stage 5)
 
-This folder will hold the rules files that the offline guided Q&A engine
-(Stage 5) checks every proposed lesson-plan adjustment against, before
-applying it. The Q&A engine itself doesn't exist yet — this is the data
-shape it will consume, fixed now so Stage 5 has something concrete to build
-against instead of inventing the format under time pressure later.
+This folder holds the rules files that the offline guided Q&A engine
+(`GuidedPlanningEngine`, `lib/services/guided_planning_engine.dart`) checks
+every proposed activity/group-size adjustment against before applying it —
+see the main [README](../../README.md)'s "Guided planning" section for how
+it's wired into the app.
 
 One rules file per curriculum (`curriculum_code` matches the `curricula`
 table), since what's mandatory can differ between the 2023 CBC and the 2013
-OBC. See `cdc_constraints.example.json` for a worked example.
+OBC. `cbc_2023_constraints.json` is the real file used for the 2023 CBC;
+`cdc_constraints.example.json` is the original worked example, still used
+as a fallback for any curriculum without its own rules file yet (see
+`GuidedPlanningRepository.loadRulesFor`).
 
 ## Shape
 
@@ -55,12 +58,16 @@ OBC. See `cdc_constraints.example.json` for a worked example.
 - **`warn`** — the adjustment is applied, but surfaced to the teacher as a
   call-out rather than silently accepted.
 
-## Dependency this creates for Stage 2
+## Where the tagged data lives
 
 For `requires_competency_overlap`, `requires_flag_when_condition`, and
 `locked_if_tagged` to mean anything, the underlying curriculum data needs
-tags to check against — e.g. an activity bank where each activity lists
-which competency IDs it covers and whether it needs special aids, and a
-`foundational: true` flag on sub-topics that must never be skipped. That
-tagging lives in the Template Engine's field definitions (Stage 2), not
-here — this file only describes how those tags get *enforced*.
+tags to check against — an activity bank where each activity lists which
+competencies it covers, whether it needs special aids, and a
+`foundational: true` flag for activities that must never be dropped. That
+data lives in `assets/activity_banks/*.json` (see `lib/models/activity_bank.dart`),
+not here — this file only describes how those tags get *enforced*.
+Coverage is intentionally small so far: only History Form 1 → 1.1.1 has a
+real, sourced activity bank (transcribed from the CDC Teaching Module), so
+guided planning only offers itself for that one sub-topic today — see
+`GuidedPlanningScreen`'s "not available yet" fallback for everything else.

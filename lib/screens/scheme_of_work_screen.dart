@@ -4,6 +4,7 @@ import '../models/scheme_of_work.dart';
 import '../models/syllabus_models.dart';
 import '../services/entitlement_service.dart';
 import '../services/progress_repository.dart';
+import 'guided_planning_screen.dart';
 import 'lesson_plan_screen.dart';
 import 'scheme_of_work_document_screen.dart';
 import 'teaching_notes_sheet.dart';
@@ -133,7 +134,12 @@ class _SchemeOfWorkScreenState extends State<SchemeOfWorkScreen> {
           const Text('Every bundled topic for this subject and grade is already covered.')
         else
           for (final entry in _entries)
-            _SchemeEntryCard(entry: entry, subjectName: widget.template.subject.name),
+            _SchemeEntryCard(
+              entry: entry,
+              subjectName: widget.template.subject.name,
+              curriculumCode: widget.template.curriculum.code,
+              subjectCode: widget.template.subject.code,
+            ),
       ],
     );
   }
@@ -273,10 +279,17 @@ class _ProgressPicker extends StatelessWidget {
 }
 
 class _SchemeEntryCard extends StatelessWidget {
-  const _SchemeEntryCard({required this.entry, required this.subjectName});
+  const _SchemeEntryCard({
+    required this.entry,
+    required this.subjectName,
+    required this.curriculumCode,
+    required this.subjectCode,
+  });
 
   final SchemeOfWorkEntry entry;
   final String subjectName;
+  final String curriculumCode;
+  final String subjectCode;
 
   @override
   Widget build(BuildContext context) {
@@ -300,9 +313,24 @@ class _SchemeEntryCard extends StatelessWidget {
               for (final c in entry.competencies) Text('•  ${c.description}'),
             ],
             const SizedBox(height: 8),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
+            Wrap(
+              alignment: WrapAlignment.end,
+              spacing: 4,
               children: [
+                TextButton.icon(
+                  onPressed: () => Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => GuidedPlanningScreen(
+                        subjectName: subjectName,
+                        curriculumCode: curriculumCode,
+                        subjectCode: subjectCode,
+                        entry: entry,
+                      ),
+                    ),
+                  ),
+                  icon: const Icon(Icons.rule, size: 18),
+                  label: const Text('Guided planning'),
+                ),
                 TextButton.icon(
                   onPressed: () => Navigator.of(context).push(
                     MaterialPageRoute(

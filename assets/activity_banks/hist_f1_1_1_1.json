@@ -1,0 +1,45 @@
+{
+  "_source": "Descriptions and materials for all four activities are transcribed from the real CDC 'History Teaching Module, Form 1 - Term 1' (2025), Sub-topic 1.1.1: Reasons for Learning History, Specific Competence 1.1.1.1. The 'foundational', 'requires_special_aids', and 'style_tags' labels are this app's own curatorial tags for the guided Q&A engine (Stage 5) — not official CDC designations.",
+  "curriculum_code": "CBC_2023",
+  "subject_code": "HIST",
+  "sub_topic_name": "1.1.1 Reasons for Learning History",
+  "competency_tags": ["Communicate relevance of past events"],
+  "activities": [
+    {
+      "id": "hist_1_1_1_act1",
+      "description": "Explaining the meaning of History using an old building or object associated with the past within the school or its vicinity — learners research and discuss why it mattered then and why it matters today.",
+      "materials": "An old building within the school or surrounding area; blank pieces of paper",
+      "competency_tags": ["Communicate relevance of past events"],
+      "requires_special_aids": true,
+      "style_tags": ["group_work"],
+      "foundational": false
+    },
+    {
+      "id": "hist_1_1_1_act2",
+      "description": "Describing past events in the family (funerals, weddings, outings) using a table of important family events and why each mattered.",
+      "materials": "Chart showing a table of important events in the family",
+      "competency_tags": ["Communicate relevance of past events"],
+      "requires_special_aids": false,
+      "style_tags": ["individual"],
+      "foundational": true
+    },
+    {
+      "id": "hist_1_1_1_act3",
+      "description": "Describing the importance of past events in small groups, each group discussing a different document about why past events matter, then reporting back to the class.",
+      "materials": "Flashcards; written documents showing the importance of past events; pictures of past events",
+      "competency_tags": ["Communicate relevance of past events"],
+      "requires_special_aids": true,
+      "style_tags": ["group_work"],
+      "foundational": false
+    },
+    {
+      "id": "hist_1_1_1_act4",
+      "description": "Showing the importance of history in different fields (medicine, law, music, sport, agriculture) using field-specific records and pictures, then identifying other fields where history matters.",
+      "materials": "Hospital records; court rulings; pictures of sports events; pictures/charts of agricultural implements; computers; charts of transport and communication",
+      "competency_tags": ["Communicate relevance of past events"],
+      "requires_special_aids": true,
+      "style_tags": ["group_work"],
+      "foundational": false
+    }
+  ]
+}

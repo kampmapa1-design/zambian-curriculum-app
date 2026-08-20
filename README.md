@@ -92,6 +92,24 @@ generates are missing. See **Setup** below to add them.
   hand the file to the OS share sheet (`share_plus`), which is what actually
   surfaces WhatsApp, email, Bluetooth, and every other installed share
   target; the app doesn't integrate each channel separately.
+- **Guided planning (Stage 5, offline, rule-based)** — a "Guided planning"
+  button on each scheme-of-work entry opens
+  `lib/screens/guided_planning_screen.dart`: the teacher answers a few
+  structured questions (class size, whether teaching aids are available,
+  prior mastery, preferred activity style — no AI model involved), and
+  `GuidedPlanningEngine` (`lib/services/guided_planning_engine.dart`)
+  adjusts the suggested activities and group size, checking every
+  adjustment against a curriculum's CDC constraint rules
+  (`assets/rules/cbc_2023_constraints.json`, design in
+  `assets/rules/README.md`) so no answer can silently drop the topic's
+  required competency or override a locked/foundational activity — blocked
+  or flagged adjustments are shown to the teacher, not applied silently.
+  "Use in Lesson Plan" carries the result into the Lesson Plan screen's
+  Lesson Development stage. Only offers itself where a real, sourced
+  activity bank exists (`assets/activity_banks/*.json`) — currently just
+  History Form 1 → 1.1.1 Reasons for Learning History, transcribed from the
+  CDC Teaching Module; every other topic falls back to the plain Lesson
+  Plan screen rather than fabricating activities it doesn't have.
 - **Upload My Own Template (Settings)** — `lib/screens/settings_screen.dart`,
   reachable from the Subject Selector's app bar. "Upload My Own Template"
   opens `lib/screens/template_upload_screen.dart`: pick a `.docx` file,
@@ -178,9 +196,12 @@ lib/
   services/docx_heading_extractor.dart  # reads section headings from an uploaded .docx
   services/custom_template_repository.dart  # persists uploaded lesson plan templates
   services/offline_teaching_notes_service.dart  # free, on-device teaching notes (no API)
+  services/guided_planning_engine.dart  # Stage 5: rule-checked activity/group-size adjustments
+  services/guided_planning_repository.dart  # loads activity banks + CDC constraint rules
   screens/subject_selector_screen.dart  # the Subject Selector UI
   screens/scheme_of_work_screen.dart    # mark progress + generated scheme UI
   screens/scheme_of_work_document_screen.dart  # scheme-of-work PDF/Word export + share
+  screens/guided_planning_screen.dart   # Stage 5 guided Q&A UI
   screens/teaching_notes_sheet.dart     # the "Teaching notes" generation UI
   screens/lesson_plan_screen.dart       # lesson plan form + PDF/Word export + share
   screens/cdc_resources_screen.dart     # CDC catalog list + download UI
@@ -192,9 +213,13 @@ assets/syllabi/
   english_grade8.json             # sample template, 2023 CBC (Term 1)
   obc2013_english_form3_placeholder.json  # PLACEHOLDER 2013 OBC sample — not real content
   history_form1.json              # REAL content: CBC 2023, Form 1, Term 1 — see its _source field
+assets/activity_banks/
+  manifest.json                   # list of bundled sub-topic activity banks
+  hist_f1_1_1_1.json               # REAL activity bank: History F1, 1.1.1 (from the CDC Teaching Module)
 assets/rules/
-  README.md                       # Stage 5 CDC-constraint rules-file design (not wired up yet)
-  cdc_constraints.example.json    # worked example of that design
+  README.md                       # Stage 5 CDC-constraint rules-file design
+  cbc_2023_constraints.json       # the rules actually used for the 2023 CBC
+  cdc_constraints.example.json    # original worked example, used as a fallback
 firebase/
   functions/src/index.ts          # generateTeachingNotes + listCdcResources Cloud Functions
   README.md                       # Firebase project setup, secrets, deploy

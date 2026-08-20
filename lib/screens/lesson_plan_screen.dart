@@ -22,6 +22,8 @@ class LessonPlanScreen extends StatefulWidget {
     this.template = defaultCdcLessonPlanTemplate,
     this.documentService,
     this.customTemplateRepository,
+    this.guidedActivitiesText,
+    this.guidedNoteText,
   });
 
   final String subjectName;
@@ -29,6 +31,18 @@ class LessonPlanScreen extends StatefulWidget {
   final LessonPlanTemplate template;
   final LessonPlanDocumentService? documentService;
   final CustomTemplateRepository? customTemplateRepository;
+
+  /// Pre-fills the "Lesson Development" progression stage's Learners' Role
+  /// (or the first stage, if none is named "Development") — set when
+  /// arriving from Stage 5's guided planning with a chosen set of
+  /// activities. Ignored for templates with no progression stages (e.g. a
+  /// custom uploaded one).
+  final String? guidedActivitiesText;
+
+  /// Paired with [guidedActivitiesText]: suggested group size and any rule
+  /// notices from guided planning, pre-filled into the same stage's
+  /// Teacher's Role.
+  final String? guidedNoteText;
 
   @override
   State<LessonPlanScreen> createState() => _LessonPlanScreenState();
@@ -82,6 +96,17 @@ class _LessonPlanScreenState extends State<LessonPlanScreen> {
     }
     if (widget.entry.objectives.isNotEmpty) {
       draft = draft.withValue('expectedStandard', widget.entry.objectives.first.description);
+    }
+    if (widget.guidedActivitiesText != null && draft.progression.isNotEmpty) {
+      final idx = draft.progression.indexWhere((r) => r.stage.toLowerCase().contains('development'));
+      final targetIndex = idx == -1 ? 0 : idx;
+      draft = draft.withProgressionRow(
+        targetIndex,
+        draft.progression[targetIndex].copyWith(
+          learnersRole: widget.guidedActivitiesText,
+          teacherRole: widget.guidedNoteText,
+        ),
+      );
     }
     _draft = draft;
 
