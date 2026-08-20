@@ -180,6 +180,9 @@ class SchemeOfWorkDocumentService {
     addXml('word/document.xml', _buildDocumentXml(context, draft));
 
     final zipped = ZipEncoder().encode(archive);
+    if (zipped == null) {
+      throw StateError('Failed to encode the .docx archive.');
+    }
     return _writeToTempFile('docx', zipped, context);
   }
 

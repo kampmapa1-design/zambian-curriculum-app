@@ -145,6 +145,9 @@ class LessonPlanDocumentService {
     addXml('word/document.xml', _buildDocumentXml(template, draft));
 
     final zipped = ZipEncoder().encode(archive);
+    if (zipped == null) {
+      throw StateError('Failed to encode the .docx archive.');
+    }
     return _writeToTempFile('docx', zipped, draft);
   }
 
