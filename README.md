@@ -136,15 +136,19 @@ generates are missing. See **Setup** below to add them.
 - **CDC Resources (catalog online, downloads on demand)** —
   `lib/screens/cdc_resources_screen.dart`, reachable from the Subject
   Selector's app bar. Lists Teaching Modules and other documents from the
-  [CDC Digital Library](https://library.cdcrepository.info/), fetched via
-  the `listCdcResources` Cloud Function and cached locally
-  (`lib/services/cdc_resources_service.dart`) so the list is browsable
-  offline; a live refresh is throttled to at most once a week and merges
-  newly found resources into what's already cached rather than replacing it.
-  Downloading an individual file still needs a connection — see
+  [CDC Digital Library](https://library.cdcrepository.info/), cached
+  locally (`lib/services/cdc_resources_service.dart`) so the list is
+  browsable offline. On first launch it seeds from
+  `assets/cdc_resources/seed_catalog.json` — 84 real resources (title,
+  subject, level, term, direct link) read directly off the CDC site's own
+  listing pages, not generated; see that file's `_source` field for exactly
+  which pages. A live refresh via the `listCdcResources` Cloud Function is
+  throttled to at most once a week and merges newly found resources into
+  what's already cached rather than replacing it — that part needs the paid
+  Firebase plan (see the "Postponed" section below), but browsing the seed
+  catalog and downloading an individual file (plain HTTP) don't. See
   [`firebase/README.md`](firebase/README.md) for why the full library isn't
-  bundled (hundreds of MB across 300+ resources) and how the catalog fetch
-  works.
+  bundled (hundreds of MB across 300+ resources).
 - **CI build** (`codemagic.yaml`) — builds an unsigned debug and release APK
   on [Codemagic](https://codemagic.io) for sideloading onto a test device,
   no Play Store signing setup required. Sign up, connect this GitHub repo,
@@ -231,6 +235,8 @@ assets/rules/
   README.md                       # Stage 5 CDC-constraint rules-file design
   cbc_2023_constraints.json       # the rules actually used for the 2023 CBC
   cdc_constraints.example.json    # original worked example, used as a fallback
+assets/cdc_resources/
+  seed_catalog.json               # REAL catalog snapshot from library.cdcrepository.info
 firebase/
   functions/src/index.ts          # generateTeachingNotes + listCdcResources Cloud Functions
   README.md                       # Firebase project setup, secrets, deploy

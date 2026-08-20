@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
@@ -50,16 +51,34 @@ class CdcResourcesService {
     return File(p.join(dir.path, _cacheFileName));
   }
 
-  /// The last successfully cached catalog, or an empty one if nothing has
-  /// been fetched yet.
+  /// The last successfully cached catalog. On first-ever launch (no cache
+  /// file yet), seeds from a bundled snapshot fetched directly from the CDC
+  /// Digital Library (assets/cdc_resources/seed_catalog.json — see its
+  /// `_source` field) rather than starting empty, so the catalog is useful
+  /// offline even before the paid `listCdcResources` refresh is available.
+  /// A live refresh later merges into this rather than replacing it.
   Future<CdcCatalog> loadCached() async {
     final file = await _cacheFile();
-    if (!await file.exists()) return CdcCatalog.empty();
+    if (!await file.exists()) {
+      final seeded = await _loadBundledSeed();
+      if (seeded != null) await _saveCache(seeded);
+      return seeded ?? CdcCatalog.empty();
+    }
     try {
       final json = jsonDecode(await file.readAsString()) as Map<String, dynamic>;
       return CdcCatalog.fromJson(json);
     } catch (_) {
       return CdcCatalog.empty();
+    }
+  }
+
+  Future<CdcCatalog?> _loadBundledSeed() async {
+    try {
+      final raw = await rootBundle.loadString('assets/cdc_resources/seed_catalog.json');
+      final json = jsonDecode(raw) as Map<String, dynamic>;
+      return CdcCatalog.fromJson({'resources': json['resources'], 'fetchedAt': json['fetchedAt']});
+    } catch (_) {
+      return null;
     }
   }
 

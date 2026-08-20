@@ -41,3 +41,4 @@ flutter:
     - assets/activity_banks/hist_f1_1_1_1.json
     - assets/rules/cdc_constraints.example.json
     - assets/rules/cbc_2023_constraints.json
+    - assets/cdc_resources/seed_catalog.json
