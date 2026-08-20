@@ -163,8 +163,13 @@ generates are missing. See **Setup** below to add them.
 - **CI build** (`codemagic.yaml`) — builds an unsigned debug and release APK
   on [Codemagic](https://codemagic.io) for sideloading onto a test device,
   no Play Store signing setup required. Sign up, connect this GitHub repo,
-  and Codemagic picks up `codemagic.yaml` automatically; each build's
-  results page gives a direct APK download link.
+  and Codemagic picks up `codemagic.yaml` automatically. The dashboard's
+  own "Download artifact" links only work inside a logged-in Codemagic
+  session (they 403 for anyone else, including on a phone) — every
+  successful build instead emails a genuinely public download link
+  (`publishing.email` in `codemagic.yaml`, valid 24h by default) to the
+  configured address, which is what actually works for installing on a
+  device.
 
 Adding a new bundled template later means: drop a new `assets/syllabi/*.json`
 file (same shape as the existing ones), add an entry to `manifest.json`, and
