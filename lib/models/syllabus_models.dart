@@ -53,10 +53,14 @@ class Grade {
   final String name;
   final String code;
 
-  /// Ordering within the curriculum (e.g. 1-12 for CBC grades, 1-6 for a
-  /// secondary "Form" system). Stored as `sequence_number` in the database —
-  /// kept as `level` here since most call sites predate multi-curriculum
-  /// support and "level" reads naturally for both grades and forms.
+  /// Ordering within the curriculum. Whether a given level is called
+  /// "Grade N" or "Form N" is decided by the source document, not by which
+  /// curriculum it belongs to — e.g. the real 2024 CDC History syllabus uses
+  /// "Form 1-4" for Ordinary Level Secondary under the 2023 CBC itself, so
+  /// "Form" is not exclusive to the 2013 curriculum. Stored as
+  /// `sequence_number` in the database — kept as `level` here since most
+  /// call sites predate multi-curriculum support and "level" reads
+  /// naturally for both grades and forms.
   final int level;
   final String? phase;
 

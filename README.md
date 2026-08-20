@@ -19,13 +19,18 @@ generates are missing. See **Setup** below to add them.
   Subject Selector currently defaults to `CBC_2023`
   (`_curriculumCode` in `subject_selector_screen.dart`) — every lookup
   already takes a curriculum code, so adding the actual toggle UI is the
-  only piece left.
+  only piece left. Note: whether a level is labeled "Grade N" or "Form N" is
+  a property of the source document, not the curriculum — the real 2024 CDC
+  History syllabus uses "Form 1-4" for Ordinary Level Secondary under the
+  2023 CBC itself, so don't assume "Form" implies the 2013 curriculum.
 - **Bundled templates** — `assets/syllabi/*.json`, one file per
   curriculum+subject+grade, listed in `assets/syllabi/manifest.json`.
   Shipped inside the app, so they're available with zero network access.
   `assets/syllabi/obc2013_english_form3_placeholder.json` is a clearly
   labeled **placeholder** — not transcribed from a real 2013 syllabus — kept
   only to prove the two-curriculum schema actually works end to end.
+  `assets/syllabi/history_form1.json` (CBC 2023, Form 1, Term 1) is real,
+  sourced content — see its `_source` field and the citation below.
 - **Data import** — `TemplateRepository.importUserSuppliedTemplate()` accepts
   the same JSON shape as the bundled files, for loading real subject data
   supplied later without a code change.
@@ -166,6 +171,7 @@ assets/syllabi/
   math_grade8.json                # sample template, 2023 CBC (Term 1 + Term 2)
   english_grade8.json             # sample template, 2023 CBC (Term 1)
   obc2013_english_form3_placeholder.json  # PLACEHOLDER 2013 OBC sample — not real content
+  history_form1.json              # REAL content: CBC 2023, Form 1, Term 1 — see its _source field
 assets/rules/
   README.md                       # Stage 5 CDC-constraint rules-file design (not wired up yet)
   cdc_constraints.example.json    # worked example of that design

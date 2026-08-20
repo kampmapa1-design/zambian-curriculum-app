@@ -26,6 +26,15 @@
       "grade_level": 3,
       "grade_name": "Form 3",
       "file": "obc2013_english_form3_placeholder.json"
+    },
+    {
+      "curriculum_code": "CBC_2023",
+      "curriculum_name": "2023 Competency-Based Curriculum",
+      "subject_code": "HIST",
+      "subject_name": "History",
+      "grade_level": 1,
+      "grade_name": "Form 1",
+      "file": "history_form1.json"
     }
   ]
 }
