@@ -225,6 +225,22 @@ class LessonProgressionRow {
         assessmentCriteria: assessmentCriteria ?? this.assessmentCriteria,
         durationMinutes: durationMinutes ?? this.durationMinutes,
       );
+
+  Map<String, dynamic> toJson() => {
+        'stage': stage,
+        'teacherRole': teacherRole,
+        'learnersRole': learnersRole,
+        'assessmentCriteria': assessmentCriteria,
+        'durationMinutes': durationMinutes,
+      };
+
+  factory LessonProgressionRow.fromJson(Map<String, dynamic> json) => LessonProgressionRow(
+        stage: json['stage'] as String,
+        teacherRole: json['teacherRole'] as String? ?? '',
+        learnersRole: json['learnersRole'] as String? ?? '',
+        assessmentCriteria: json['assessmentCriteria'] as String? ?? '',
+        durationMinutes: json['durationMinutes'] as String? ?? '',
+      );
 }
 
 /// A teacher's in-progress or finished lesson plan: values for every
@@ -249,5 +265,18 @@ class LessonPlanDraft {
   factory LessonPlanDraft.empty(LessonPlanTemplate template) => LessonPlanDraft(
         values: const {},
         progression: [for (final stage in template.progressionStages) LessonProgressionRow(stage: stage)],
+      );
+
+  Map<String, dynamic> toJson() => {
+        'values': values,
+        'progression': [for (final r in progression) r.toJson()],
+      };
+
+  factory LessonPlanDraft.fromJson(Map<String, dynamic> json) => LessonPlanDraft(
+        values: (json['values'] as Map).cast<String, String>(),
+        progression: [
+          for (final r in (json['progression'] as List).cast<Map<String, dynamic>>())
+            LessonProgressionRow.fromJson(r)
+        ],
       );
 }

@@ -139,6 +139,7 @@ class _SchemeOfWorkScreenState extends State<SchemeOfWorkScreen> {
               subjectName: widget.template.subject.name,
               curriculumCode: widget.template.curriculum.code,
               subjectCode: widget.template.subject.code,
+              gradeLevel: widget.template.grade.level,
             ),
       ],
     );
@@ -284,12 +285,14 @@ class _SchemeEntryCard extends StatelessWidget {
     required this.subjectName,
     required this.curriculumCode,
     required this.subjectCode,
+    required this.gradeLevel,
   });
 
   final SchemeOfWorkEntry entry;
   final String subjectName;
   final String curriculumCode;
   final String subjectCode;
+  final int gradeLevel;
 
   @override
   Widget build(BuildContext context) {
@@ -324,6 +327,7 @@ class _SchemeEntryCard extends StatelessWidget {
                         subjectName: subjectName,
                         curriculumCode: curriculumCode,
                         subjectCode: subjectCode,
+                        gradeLevel: gradeLevel,
                         entry: entry,
                       ),
                     ),
@@ -334,7 +338,13 @@ class _SchemeEntryCard extends StatelessWidget {
                 TextButton.icon(
                   onPressed: () => Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (_) => LessonPlanScreen(subjectName: subjectName, entry: entry),
+                      builder: (_) => LessonPlanScreen(
+                        subjectName: subjectName,
+                        curriculumCode: curriculumCode,
+                        subjectCode: subjectCode,
+                        gradeLevel: gradeLevel,
+                        entry: entry,
+                      ),
                     ),
                   ),
                   icon: const Icon(Icons.assignment_outlined, size: 18),

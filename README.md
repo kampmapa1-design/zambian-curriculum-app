@@ -110,6 +110,16 @@ generates are missing. See **Setup** below to add them.
   History Form 1 → 1.1.1 Reasons for Learning History, transcribed from the
   CDC Teaching Module; every other topic falls back to the plain Lesson
   Plan screen rather than fabricating activities it doesn't have.
+- **Resume Lesson (Stage 6)** — in the Lesson Plan screen, below the
+  progression stages, the teacher can mark which stage they actually
+  reached ("Resume Lesson" chips) and tap "Save progress here". The
+  checkpoint (`lib/models/lesson_checkpoint.dart`, persisted on-device via
+  `LessonCheckpointRepository`) captures the exact draft — every field and
+  progression row typed in, not just the stage — keyed to that specific
+  curriculum + subject + grade + topic + sub-topic. Opening the same
+  lesson again (via "Lesson plan" or "Guided planning" on that same
+  scheme-of-work entry) offers "Resume this lesson?" before showing the
+  form, carrying forward the same topic/context exactly as it was left.
 - **Upload My Own Template (Settings)** — `lib/screens/settings_screen.dart`,
   reachable from the Subject Selector's app bar. "Upload My Own Template"
   opens `lib/screens/template_upload_screen.dart`: pick a `.docx` file,
@@ -198,6 +208,7 @@ lib/
   services/offline_teaching_notes_service.dart  # free, on-device teaching notes (no API)
   services/guided_planning_engine.dart  # Stage 5: rule-checked activity/group-size adjustments
   services/guided_planning_repository.dart  # loads activity banks + CDC constraint rules
+  services/lesson_checkpoint_repository.dart  # Stage 6: persists mid-lesson checkpoints
   screens/subject_selector_screen.dart  # the Subject Selector UI
   screens/scheme_of_work_screen.dart    # mark progress + generated scheme UI
   screens/scheme_of_work_document_screen.dart  # scheme-of-work PDF/Word export + share

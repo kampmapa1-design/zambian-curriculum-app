@@ -23,6 +23,7 @@ class GuidedPlanningScreen extends StatefulWidget {
     required this.subjectName,
     required this.curriculumCode,
     required this.subjectCode,
+    required this.gradeLevel,
     required this.entry,
     this.repository,
     this.engine,
@@ -31,6 +32,7 @@ class GuidedPlanningScreen extends StatefulWidget {
   final String subjectName;
   final String curriculumCode;
   final String subjectCode;
+  final int gradeLevel;
   final SchemeOfWorkEntry entry;
   final GuidedPlanningRepository? repository;
   final GuidedPlanningEngine? engine;
@@ -112,6 +114,9 @@ class _GuidedPlanningScreenState extends State<GuidedPlanningScreen> {
     Navigator.of(context).push(MaterialPageRoute(
       builder: (_) => LessonPlanScreen(
         subjectName: widget.subjectName,
+        curriculumCode: widget.curriculumCode,
+        subjectCode: widget.subjectCode,
+        gradeLevel: widget.gradeLevel,
         entry: widget.entry,
         guidedActivitiesText: activitiesText,
         guidedNoteText: noteLines.isEmpty ? null : noteLines.join('\n'),
@@ -121,7 +126,13 @@ class _GuidedPlanningScreenState extends State<GuidedPlanningScreen> {
 
   void _openPlainLessonPlan() {
     Navigator.of(context).push(MaterialPageRoute(
-      builder: (_) => LessonPlanScreen(subjectName: widget.subjectName, entry: widget.entry),
+      builder: (_) => LessonPlanScreen(
+        subjectName: widget.subjectName,
+        curriculumCode: widget.curriculumCode,
+        subjectCode: widget.subjectCode,
+        gradeLevel: widget.gradeLevel,
+        entry: widget.entry,
+      ),
     ));
   }
 
