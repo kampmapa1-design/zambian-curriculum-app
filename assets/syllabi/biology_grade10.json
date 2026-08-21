@@ -1,0 +1,203 @@
+{
+  "_source": "Ministry of Education / Curriculum Development Centre, Zambia. 'Biology Syllabus, Grade 10-12' (2013, published by CDC) — Grade 10, Topics 10.1-10.9. Topic, sub-topic and Specific Outcome statements only; the 'Content' (Knowledge/Skills/Values) columns are omitted, consistent with the approach used for the other 2013 OBC subjects in this app. The syllabus's own front-matter Table of Contents lists 12 separate 'Units' for Grade 10 (Organisms and life processes; Animal and plant cells; Cells and water; Nutrients; Enzymes; Dentition in mammals; Nutrition in animals; The Soil; Photosynthesis; Saprophytic nutrition; Respiration; Gaseous exchange), but the actual instructional table body groups and orders this content differently under 9 Topics (10.1-10.9) — for example, body Topic 10.2 merges what the front matter calls 'Animal and plant cells' and 'Cells and water' into one topic, and 'The Soil' does not appear anywhere in the Grade 10 body table at all; it is taught instead as Topic 12.6 in Grade 12, per the body. This file follows the instructional table body throughout, since it is the actual outcome content, not the front-matter listing. The syllabus organizes content by Grade only, not by Term, so all of Grade 10 is modeled as a single term here.",
+  "curriculum": {
+    "code": "OBC_2013",
+    "name": "2013 Outcome-Based Curriculum",
+    "description": "Zambia's 2013 outcome-based curriculum for Grades 10-12 (Senior Secondary)."
+  },
+  "subject": {
+    "name": "Biology",
+    "code": "BIO",
+    "description": "Senior Secondary Biology syllabus, Grade 10-12 (Curriculum Development Centre, 2013)."
+  },
+  "grade": {
+    "name": "Grade 10",
+    "code": "G10_OBC",
+    "level": 10,
+    "phase": "Senior Secondary"
+  },
+  "terms": [
+    {
+      "name": "Year (not term-divided in the source syllabus)",
+      "sequence_number": 1,
+      "topics": [
+        {
+          "name": "10.1 Living Organisms and Life Processes",
+          "sequence_number": 1,
+          "sub_topics": [
+            { "name": "10.1.1 Characteristics of Living Organisms", "sequence_number": 1, "competencies": [
+              { "sequence_number": 1, "description": "Identify the characteristics of living organisms", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Distinguish between living organisms and non-living things", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Describe life processes of living organisms", "category": "Specific Outcome" }
+            ]}
+          ]
+        },
+        {
+          "name": "10.2 Cell Structure and Organisation",
+          "sequence_number": 2,
+          "sub_topics": [
+            { "name": "10.2.1 Microscopes", "sequence_number": 1, "competencies": [
+              { "sequence_number": 1, "description": "Demonstrate the correct use of a microscope", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Prepare specimen using a microscope", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Calculate magnification of specimen", "category": "Specific Outcome" }
+            ]},
+            { "name": "10.2.2 Cell Structure and Function", "sequence_number": 2, "competencies": [
+              { "sequence_number": 1, "description": "Investigate the structure of cells and functions of the organelles", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Distinguish between plant and animal cell structure", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Relate cell structure to functions", "category": "Specific Outcome" }
+            ]},
+            { "name": "10.2.3 Cell Organisation", "sequence_number": 3, "competencies": [
+              { "sequence_number": 1, "description": "Describe cell organisation in multicellular organisms", "category": "Specific Outcome" }
+            ]},
+            { "name": "10.2.4 Tissues", "sequence_number": 4, "competencies": [
+              { "sequence_number": 1, "description": "Identify tissues in plants and animals", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Explain the general functions of each tissue", "category": "Specific Outcome" }
+            ]},
+            { "name": "10.2.5 Organs", "sequence_number": 5, "competencies": [
+              { "sequence_number": 1, "description": "Identify organs in plants and animals", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Explain the general function of each organ", "category": "Specific Outcome" }
+            ]},
+            { "name": "10.2.6 Diffusion, Osmosis and Active Transport", "sequence_number": 6, "competencies": [
+              { "sequence_number": 1, "description": "Describe the processes of diffusion and osmosis", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Explain the effects and importance of diffusion and osmosis in living organisms", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Describe what active transport is", "category": "Specific Outcome" }
+            ]}
+          ]
+        },
+        {
+          "name": "10.3 Enzymes",
+          "sequence_number": 3,
+          "sub_topics": [
+            { "name": "10.3.1 Characteristics of Enzymes", "sequence_number": 1, "competencies": [
+              { "sequence_number": 1, "description": "Investigate characteristics of enzymes", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Demonstrate the effects of temperature and pH on enzyme action", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Explain industrial application of enzymes", "category": "Specific Outcome" }
+            ]}
+          ]
+        },
+        {
+          "name": "10.4 Nutrients",
+          "sequence_number": 4,
+          "sub_topics": [
+            { "name": "10.4.1 Classes of Nutrients", "sequence_number": 1, "competencies": [
+              { "sequence_number": 1, "description": "Investigate the presence of nutrients in food samples", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Identify good sources of nutrients", "category": "Specific Outcome" }
+            ]},
+            { "name": "10.4.2 Disorders", "sequence_number": 2, "competencies": [
+              { "sequence_number": 1, "description": "Describe the importance of nutrients, salts, vitamins and roughage to the body", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Identify nutritional related disorders/conditions", "category": "Specific Outcome" }
+            ]},
+            { "name": "10.4.3 Dietary Needs", "sequence_number": 3, "competencies": [
+              { "sequence_number": 1, "description": "Design a balanced diet for people with different conditions", "category": "Specific Outcome" }
+            ]},
+            { "name": "10.4.4 Plant Nutrients", "sequence_number": 4, "competencies": [
+              { "sequence_number": 1, "description": "Describe the micro and macro plant nutrients", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Describe deficiency diseases of macro and micro plant nutrients", "category": "Specific Outcome" }
+            ]}
+          ]
+        },
+        {
+          "name": "10.5 Nutrition in Plants",
+          "sequence_number": 5,
+          "sub_topics": [
+            { "name": "10.5.1 External and Internal Structure of a Leaf", "sequence_number": 1, "competencies": [
+              { "sequence_number": 1, "description": "Describe the external and internal structure of a leaf", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Investigate factors necessary for photosynthesis", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Describe the light and dark reactions of photosynthesis", "category": "Specific Outcome" },
+              { "sequence_number": 4, "description": "Describe the chemical reactions for photosynthesis", "category": "Specific Outcome" },
+              { "sequence_number": 5, "description": "Describe the fate of glucose in plants", "category": "Specific Outcome" },
+              { "sequence_number": 6, "description": "Describe the importance of nutrients in plants", "category": "Specific Outcome" },
+              { "sequence_number": 7, "description": "Identify storage organs of plants", "category": "Specific Outcome" }
+            ]}
+          ]
+        },
+        {
+          "name": "10.6 Saprophytic Nutrition",
+          "sequence_number": 6,
+          "sub_topics": [
+            { "name": "10.6.1 Rhizopus", "sequence_number": 1, "competencies": [
+              { "sequence_number": 1, "description": "Investigate the structure of Rhizopus or Mucor", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "State the functions of the parts of Rhizopus", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Describe what saprophytic nutrition is", "category": "Specific Outcome" },
+              { "sequence_number": 4, "description": "Explain the importance of saprophytic nutrition", "category": "Specific Outcome" },
+              { "sequence_number": 5, "description": "State other types of saprophytic nutrition", "category": "Specific Outcome" }
+            ]}
+          ]
+        },
+        {
+          "name": "10.7 Nutrition in Animals",
+          "sequence_number": 7,
+          "sub_topics": [
+            { "name": "10.7.1 Dentition in Mammals", "sequence_number": 1, "competencies": [
+              { "sequence_number": 1, "description": "Identify the external structure and function of the human teeth", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Describe the internal structure and function of the human tooth", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Describe the dental formulae of a dog and human being", "category": "Specific Outcome" },
+              { "sequence_number": 4, "description": "Identify the differences in dentition of carnivores, herbivores and omnivores", "category": "Specific Outcome" },
+              { "sequence_number": 5, "description": "Describe causes, signs and symptoms of gum disease and tooth decay", "category": "Specific Outcome" }
+            ]},
+            { "name": "10.7.2 Holozoic Nutrition", "sequence_number": 2, "competencies": [
+              { "sequence_number": 1, "description": "State the main processes in holozoic nutrition", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Identify the main regions of the alimentary canal and associated organs", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Describe the processes of digestion, absorption and assimilation of nutrients", "category": "Specific Outcome" },
+              { "sequence_number": 4, "description": "Investigate the common ailments of the alimentary canal", "category": "Specific Outcome" },
+              { "sequence_number": 5, "description": "Describe the metabolic functions of the liver", "category": "Specific Outcome" },
+              { "sequence_number": 6, "description": "Describe the effects of common ailments of the liver", "category": "Specific Outcome" }
+            ]}
+          ]
+        },
+        {
+          "name": "10.8 Respiratory System",
+          "sequence_number": 8,
+          "sub_topics": [
+            { "name": "10.8.1 Gaseous Exchange", "sequence_number": 1, "competencies": [
+              { "sequence_number": 1, "description": "Describe the respiratory organs of animals", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Describe the mechanism of gaseous exchange in animals", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Describe the composition of inspired and expired air", "category": "Specific Outcome" },
+              { "sequence_number": 4, "description": "Describe the adverse effects of air pollutants on the health of human beings", "category": "Specific Outcome" },
+              { "sequence_number": 5, "description": "Explain gaseous exchange in green plants", "category": "Specific Outcome" }
+            ]},
+            { "name": "10.8.2 Types of Respiration", "sequence_number": 2, "competencies": [
+              { "sequence_number": 1, "description": "Describe types of tissue respiration", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Describe the production of adenosine triphosphate", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Investigate the production of carbon dioxide during respiration", "category": "Specific Outcome" },
+              { "sequence_number": 4, "description": "State ways in which respiration is important", "category": "Specific Outcome" },
+              { "sequence_number": 5, "description": "Explain the industrial applications of respiration", "category": "Specific Outcome" }
+            ]}
+          ]
+        },
+        {
+          "name": "10.9 Health",
+          "sequence_number": 9,
+          "sub_topics": [
+            { "name": "10.9.1 Diseases", "sequence_number": 1, "competencies": [
+              { "sequence_number": 1, "description": "Describe what good health is", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Define disease", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Describe various types of diseases", "category": "Specific Outcome" },
+              { "sequence_number": 4, "description": "Describe causative agents, signs and symptoms, methods of transmission and control", "category": "Specific Outcome" }
+            ]},
+            { "name": "10.9.2 HIV and AIDS", "sequence_number": 2, "competencies": [
+              { "sequence_number": 1, "description": "Describe ways of HIV transmission", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Explain the dangers of having multiple sexual partners", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Describe ways of safe sexual practices", "category": "Specific Outcome" },
+              { "sequence_number": 4, "description": "Identify the causes of stigma to people living with HIV and AIDS", "category": "Specific Outcome" },
+              { "sequence_number": 5, "description": "Describe ways of reducing discrimination to people living with HIV and AIDS", "category": "Specific Outcome" }
+            ]},
+            { "name": "10.9.3 Immunity", "sequence_number": 3, "competencies": [
+              { "sequence_number": 1, "description": "Explain the term immunity to disease", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Investigate the importance of the immune system", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Describe the factors that reduce immunity to pathogenic diseases", "category": "Specific Outcome" },
+              { "sequence_number": 4, "description": "Explain the importance of immunisation", "category": "Specific Outcome" }
+            ]},
+            { "name": "10.9.4 The Life Cycle of the Housefly and the Mosquito", "sequence_number": 4, "competencies": [
+              { "sequence_number": 1, "description": "Describe the life cycle of a housefly", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Describe the life cycle of a mosquito", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Explain the role of houseflies and mosquitoes in the spreading of diseases", "category": "Specific Outcome" },
+              { "sequence_number": 4, "description": "Relate the control of malaria to the life cycle of the mosquito", "category": "Specific Outcome" },
+              { "sequence_number": 5, "description": "Relate the control of water borne diseases to the life cycle of the housefly", "category": "Specific Outcome" }
+            ]}
+          ]
+        }
+      ]
+    }
+  ]
+}

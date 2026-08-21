@@ -1,0 +1,217 @@
+{
+  "_source": "Ministry of Education / Curriculum Development Centre, Zambia. 'Biology Syllabus, Grade 10-12' (2013, published by CDC) — Grade 11, Topics 11.1-11.9. Topic, sub-topic and Specific Outcome statements only; the 'Content' column is omitted for the reasons documented in the Grade 10 file. As in Grade 10, the body's own Topic numbering and ordering does not match the front-matter Table of Contents exactly — notably, 'The Skeleton and Locomotion' is listed in the ToC as Grade 12 Unit 1 but appears in the instructional body table as Grade 11 Topic 11.7; this file follows the body throughout since it is the authoritative outcome content. A small numbering skip exists in the source under 11.6.2 (Sense Organs), where the printed outcome codes jump from .5 to .7 with no .6; outcomes are numbered sequentially here rather than reproducing that gap. The syllabus organizes content by Grade only, not by Term, so all of Grade 11 is modeled as a single term here.",
+  "curriculum": {
+    "code": "OBC_2013",
+    "name": "2013 Outcome-Based Curriculum",
+    "description": "Zambia's 2013 outcome-based curriculum for Grades 10-12 (Senior Secondary)."
+  },
+  "subject": {
+    "name": "Biology",
+    "code": "BIO",
+    "description": "Senior Secondary Biology syllabus, Grade 10-12 (Curriculum Development Centre, 2013)."
+  },
+  "grade": {
+    "name": "Grade 11",
+    "code": "G11_OBC",
+    "level": 11,
+    "phase": "Senior Secondary"
+  },
+  "terms": [
+    {
+      "name": "Year (not term-divided in the source syllabus)",
+      "sequence_number": 1,
+      "topics": [
+        {
+          "name": "11.1 Transport and Storage in Plants",
+          "sequence_number": 1,
+          "sub_topics": [
+            { "name": "11.1.1 Transport in Plants", "sequence_number": 1, "competencies": [
+              { "sequence_number": 1, "description": "Describe the external and internal structure of roots and stems", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Describe absorption of water and uptake of mineral salts by roots", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Describe the movement of water and transport of mineral salts from the roots to the leaves", "category": "Specific Outcome" },
+              { "sequence_number": 4, "description": "Describe the movement of organic solutes in phloem", "category": "Specific Outcome" },
+              { "sequence_number": 5, "description": "Demonstrate the process of transpiration", "category": "Specific Outcome" },
+              { "sequence_number": 6, "description": "Investigate factors that affect the rate of transpiration", "category": "Specific Outcome" },
+              { "sequence_number": 7, "description": "Describe adaptive features of a leaf to reduce excess loss of water", "category": "Specific Outcome" },
+              { "sequence_number": 8, "description": "Explain the significance of transpiration in plants", "category": "Specific Outcome" }
+            ]}
+          ]
+        },
+        {
+          "name": "11.2 Transport in Man",
+          "sequence_number": 2,
+          "sub_topics": [
+            { "name": "11.2.1 Blood", "sequence_number": 1, "competencies": [
+              { "sequence_number": 1, "description": "Identify the composition of blood", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Explain the functions of blood", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Distinguish between the red and the white blood cells", "category": "Specific Outcome" },
+              { "sequence_number": 4, "description": "Identify the sites where the blood cells are produced", "category": "Specific Outcome" },
+              { "sequence_number": 5, "description": "Explain the process of blood clotting", "category": "Specific Outcome" }
+            ]},
+            { "name": "11.2.2 Blood Groups", "sequence_number": 2, "competencies": [
+              { "sequence_number": 1, "description": "Describe the ABO blood groups", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Explain the importance of determining the blood groups and Rhesus factors", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Explain the donor-recipient compatibility of blood groups", "category": "Specific Outcome" },
+              { "sequence_number": 4, "description": "Explain the importance of screening the blood for the purpose of transfusion", "category": "Specific Outcome" }
+            ]},
+            { "name": "11.2.3 Blood Disorders", "sequence_number": 3, "competencies": [
+              { "sequence_number": 1, "description": "Investigate common blood disorders", "category": "Specific Outcome" }
+            ]},
+            { "name": "11.2.4 The Heart", "sequence_number": 4, "competencies": [
+              { "sequence_number": 1, "description": "Describe the structure of the human heart", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Describe how the heart functions", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Explain the causes of coronary heart disease", "category": "Specific Outcome" },
+              { "sequence_number": 4, "description": "Describe ways of preventing coronary heart diseases", "category": "Specific Outcome" }
+            ]},
+            { "name": "11.2.5 Lymphatic System", "sequence_number": 5, "competencies": [
+              { "sequence_number": 1, "description": "Describe the structure of the lymphatic system in relation to the blood circulatory system", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Compare tissue fluid and lymph to blood", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Describe the flow of lymph", "category": "Specific Outcome" },
+              { "sequence_number": 4, "description": "Describe the function of lymph nodes in disease prevention", "category": "Specific Outcome" }
+            ]},
+            { "name": "11.2.6 Circulatory Systems", "sequence_number": 6, "competencies": [
+              { "sequence_number": 1, "description": "Describe types of blood circulatory systems", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Describe double circulation", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Distinguish between single and double circulation", "category": "Specific Outcome" },
+              { "sequence_number": 4, "description": "Identify the main blood vessels in the double circulatory system", "category": "Specific Outcome" },
+              { "sequence_number": 5, "description": "Compare the structure and functions of arteries, veins and capillaries", "category": "Specific Outcome" },
+              { "sequence_number": 6, "description": "Describe the structure of lymph vessels", "category": "Specific Outcome" }
+            ]}
+          ]
+        },
+        {
+          "name": "11.3 Excretion",
+          "sequence_number": 3,
+          "sub_topics": [
+            { "name": "11.3.1 Excretion", "sequence_number": 1, "competencies": [
+              { "sequence_number": 1, "description": "Describe the process of excretion", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Explain the importance of excretion to animals", "category": "Specific Outcome" }
+            ]},
+            { "name": "11.3.2 The Kidney", "sequence_number": 2, "competencies": [
+              { "sequence_number": 1, "description": "Identify the internal structure of the kidneys", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Explain the mechanism of excretion in the kidney", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Identify common disorders and diseases associated with the kidney", "category": "Specific Outcome" }
+            ]},
+            { "name": "11.3.3 The Lungs", "sequence_number": 3, "competencies": [
+              { "sequence_number": 1, "description": "Investigate the role of lungs in excretion", "category": "Specific Outcome" }
+            ]},
+            { "name": "11.3.4 The Human Skin", "sequence_number": 4, "competencies": [
+              { "sequence_number": 1, "description": "Identify the structure of the human skin", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Describe the role of the human skin in excretion", "category": "Specific Outcome" }
+            ]}
+          ]
+        },
+        {
+          "name": "11.4 Homeostasis and Osmoregulation",
+          "sequence_number": 4,
+          "sub_topics": [
+            { "name": "11.4.1 Homeostasis", "sequence_number": 1, "competencies": [
+              { "sequence_number": 1, "description": "Describe what homeostasis is", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Identify important organs in homeostasis", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Describe the role of the kidney in maintaining the balance of water and salt ions", "category": "Specific Outcome" },
+              { "sequence_number": 4, "description": "Describe the mechanism of thermoregulation by the skin", "category": "Specific Outcome" },
+              { "sequence_number": 5, "description": "Describe the role of the liver in the regulation of blood sugar and body temperature", "category": "Specific Outcome" }
+            ]}
+          ]
+        },
+        {
+          "name": "11.5 The Endocrine System",
+          "sequence_number": 5,
+          "sub_topics": [
+            { "name": "11.5.1 Hormones", "sequence_number": 1, "competencies": [
+              { "sequence_number": 1, "description": "Describe what hormones are", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Identify the endocrine glands in a human being", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Identify the hormones produced by the pancreas, adrenal, thyroid and pituitary glands", "category": "Specific Outcome" },
+              { "sequence_number": 4, "description": "Describe the functions of thyroxine, insulin, glucagon and adrenaline", "category": "Specific Outcome" }
+            ]}
+          ]
+        },
+        {
+          "name": "11.6 The Nervous System and Sense Organs",
+          "sequence_number": 6,
+          "sub_topics": [
+            { "name": "11.6.1 The Nervous System", "sequence_number": 1, "competencies": [
+              { "sequence_number": 1, "description": "Identify main parts of the nervous system in a human being", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Describe what neurones are", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Explain the path taken by an impulse through a spinal reflex arc", "category": "Specific Outcome" },
+              { "sequence_number": 4, "description": "Describe what the spinal, cranial and the conditioned reflex actions are", "category": "Specific Outcome" },
+              { "sequence_number": 5, "description": "Identify the main parts of the brain of a human being", "category": "Specific Outcome" },
+              { "sequence_number": 6, "description": "Explain the functions of the forebrain and the hindbrain", "category": "Specific Outcome" },
+              { "sequence_number": 7, "description": "Describe the effects of abuse of drugs on the nervous system", "category": "Specific Outcome" },
+              { "sequence_number": 8, "description": "Explain the effects of tetanus infection", "category": "Specific Outcome" }
+            ]},
+            { "name": "11.6.2 Sense Organs", "sequence_number": 2, "competencies": [
+              { "sequence_number": 1, "description": "Identify the external and internal structures of the human eye", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Explain the functions of the parts of the eye", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Describe the accommodation of the eye", "category": "Specific Outcome" },
+              { "sequence_number": 4, "description": "Describe the causes of short and long sightedness", "category": "Specific Outcome" },
+              { "sequence_number": 5, "description": "Explain the correction of short and long sight", "category": "Specific Outcome" },
+              { "sequence_number": 6, "description": "Investigate the common causes and methods of preventing blindness", "category": "Specific Outcome" },
+              { "sequence_number": 7, "description": "Describe the structure of the human ears", "category": "Specific Outcome" },
+              { "sequence_number": 8, "description": "Explain the functions of the parts of the ear", "category": "Specific Outcome" },
+              { "sequence_number": 9, "description": "Describe causes and methods of preventing deafness", "category": "Specific Outcome" },
+              { "sequence_number": 10, "description": "Describe the role of the skin as a sense organ", "category": "Specific Outcome" }
+            ]}
+          ]
+        },
+        {
+          "name": "11.7 The Skeleton and Locomotion",
+          "sequence_number": 7,
+          "sub_topics": [
+            { "name": "11.7.1 Skeleton", "sequence_number": 1, "competencies": [
+              { "sequence_number": 1, "description": "Identify various types of skeleton", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Describe the functions of the skeleton", "category": "Specific Outcome" }
+            ]},
+            { "name": "11.7.2 The Skeleton of an Insect", "sequence_number": 2, "competencies": [
+              { "sequence_number": 1, "description": "Investigate the structure and composition of an exoskeleton", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Identify joints and muscles in the limbs of a grasshopper", "category": "Specific Outcome" }
+            ]},
+            { "name": "11.7.3 The Mammalian Skeleton", "sequence_number": 3, "competencies": [
+              { "sequence_number": 1, "description": "Identify the bones of the axial and the appendicular skeletons", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Explain a bone as a living tissue", "category": "Specific Outcome" }
+            ]},
+            { "name": "11.7.4 Muscles and Joints", "sequence_number": 4, "competencies": [
+              { "sequence_number": 1, "description": "Describe the structure of a skeletal muscle", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Demonstrate the action of antagonistic muscles", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Compare the ball and socket joint and the hinge joint", "category": "Specific Outcome" },
+              { "sequence_number": 4, "description": "Identify the parts and functions of the synovial joint", "category": "Specific Outcome" },
+              { "sequence_number": 5, "description": "Compare the joints, muscle attachment and movement in endoskeletons with those of exoskeletons", "category": "Specific Outcome" }
+            ]}
+          ]
+        },
+        {
+          "name": "11.8 Tropic and Taxic Responses",
+          "sequence_number": 8,
+          "sub_topics": [
+            { "name": "11.8.1 Tropic Responses", "sequence_number": 1, "competencies": [
+              { "sequence_number": 1, "description": "Describe what tropic response is", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Demonstrate growth responses exhibited by plants", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Explain the effects of light energy and gravity on the growth of plants", "category": "Specific Outcome" }
+            ]},
+            { "name": "11.8.2 Taxic Responses", "sequence_number": 2, "competencies": [
+              { "sequence_number": 1, "description": "Describe what taxic response is", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Explain responses exhibited by invertebrates", "category": "Specific Outcome" }
+            ]}
+          ]
+        },
+        {
+          "name": "11.9 Growth and Development",
+          "sequence_number": 9,
+          "sub_topics": [
+            { "name": "11.9.1 Growth in Plants", "sequence_number": 1, "competencies": [
+              { "sequence_number": 1, "description": "Explain the meaning of growth", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Identify the regions of growth in stems and roots", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Identify differentiated cells in plants", "category": "Specific Outcome" },
+              { "sequence_number": 4, "description": "Explain the differentiation of primary and secondary tissues in plants", "category": "Specific Outcome" }
+            ]},
+            { "name": "11.9.2 Germination and Development", "sequence_number": 2, "competencies": [
+              { "sequence_number": 1, "description": "Distinguish the structure of a dicotyledonous and a monocotyledonous seed", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Investigate conditions necessary for germination", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Demonstrate hypogeal and epigeal germination", "category": "Specific Outcome" }
+            ]}
+          ]
+        }
+      ]
+    }
+  ]
+}

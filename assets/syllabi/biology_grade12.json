@@ -1,0 +1,187 @@
+{
+  "_source": "Ministry of Education / Curriculum Development Centre, Zambia. 'Biology Syllabus, Grade 10-12' (2013, published by CDC) — Grade 12, Topics 12.1-12.7. Topic, sub-topic and Specific Outcome statements only; the 'Content' column is omitted for the reasons documented in the Grade 10 file. As in Grade 10 and 11, the body's own Topic numbering and ordering differs from the front-matter Table of Contents: the ToC lists 'The Soil' under Grade 10, but the instructional body table places it here as Grade 12 Topic 12.6; the ToC also lists 'Population' (Unit 7) and 'Ecology' (Unit 8) as separate units, while the body nests Population as sub-topic 12.7.3 within one larger Topic 12.7 Ecology. This file follows the body throughout since it is the authoritative outcome content. A few small numbering skips exist in the source (printed outcome codes occasionally jump a digit, e.g. under 12.2.2, 12.4.2 and 12.4.4); outcomes are numbered sequentially here rather than reproducing those gaps. The syllabus organizes content by Grade only, not by Term, so all of Grade 12 is modeled as a single term here.",
+  "curriculum": {
+    "code": "OBC_2013",
+    "name": "2013 Outcome-Based Curriculum",
+    "description": "Zambia's 2013 outcome-based curriculum for Grades 10-12 (Senior Secondary)."
+  },
+  "subject": {
+    "name": "Biology",
+    "code": "BIO",
+    "description": "Senior Secondary Biology syllabus, Grade 10-12 (Curriculum Development Centre, 2013)."
+  },
+  "grade": {
+    "name": "Grade 12",
+    "code": "G12_OBC",
+    "level": 12,
+    "phase": "Senior Secondary"
+  },
+  "terms": [
+    {
+      "name": "Year (not term-divided in the source syllabus)",
+      "sequence_number": 1,
+      "topics": [
+        {
+          "name": "12.1 Asexual Reproduction",
+          "sequence_number": 1,
+          "sub_topics": [
+            { "name": "12.1.1 Reproduction in Fungi, Amoeba and Bacteria", "sequence_number": 1, "competencies": [
+              { "sequence_number": 1, "description": "Describe the different types of reproduction", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Describe asexual reproduction in unicellular organisms", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Describe the sexual and asexual reproduction in fungus", "category": "Specific Outcome" },
+              { "sequence_number": 4, "description": "Explain the importance of fungi and bacteria", "category": "Specific Outcome" }
+            ]},
+            { "name": "12.1.2 Vegetative Reproduction", "sequence_number": 2, "competencies": [
+              { "sequence_number": 1, "description": "Describe different methods of natural propagation", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Investigate different methods of artificial propagation", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Explain the advantages and disadvantages of vegetative propagation", "category": "Specific Outcome" }
+            ]}
+          ]
+        },
+        {
+          "name": "12.2 Sexual Reproduction in Flowering Plants",
+          "sequence_number": 2,
+          "sub_topics": [
+            { "name": "12.2.1 Reproduction in Plants", "sequence_number": 1, "competencies": [
+              { "sequence_number": 1, "description": "Identify the parts of a typical flower", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Describe the functions of various parts of a flower", "category": "Specific Outcome" }
+            ]},
+            { "name": "12.2.2 Pollination", "sequence_number": 2, "competencies": [
+              { "sequence_number": 1, "description": "Distinguish between two different types of pollination", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Distinguish between wind and insect pollination", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Describe the process of fertilization in flowers", "category": "Specific Outcome" },
+              { "sequence_number": 4, "description": "Investigate ways in which seeds are dispersed", "category": "Specific Outcome" },
+              { "sequence_number": 5, "description": "Explain the adaptation of fruits and seeds to mode of dispersal", "category": "Specific Outcome" },
+              { "sequence_number": 6, "description": "Explain the importance of fruit and seed dispersal", "category": "Specific Outcome" }
+            ]}
+          ]
+        },
+        {
+          "name": "12.3 Reproduction in Animals",
+          "sequence_number": 3,
+          "sub_topics": [
+            { "name": "12.3.1 Sexual Reproduction in Animals", "sequence_number": 1, "competencies": [
+              { "sequence_number": 1, "description": "Describe the process of reproduction in a frog", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Identify male and female reproductive organs in human beings", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Explain the functions of the different organs of the human reproductive system", "category": "Specific Outcome" },
+              { "sequence_number": 4, "description": "Describe the biological changes associated with sexual development in human beings", "category": "Specific Outcome" },
+              { "sequence_number": 5, "description": "Describe the menstrual cycle", "category": "Specific Outcome" },
+              { "sequence_number": 6, "description": "Explain the processes of fertilisation and implantation in human beings", "category": "Specific Outcome" },
+              { "sequence_number": 7, "description": "Identify causes of infertility in human beings", "category": "Specific Outcome" },
+              { "sequence_number": 8, "description": "Describe development of the embryo in the uterus", "category": "Specific Outcome" },
+              { "sequence_number": 9, "description": "Describe health risks associated with foetal development", "category": "Specific Outcome" },
+              { "sequence_number": 10, "description": "Describe healthy pregnancy and safe child birth", "category": "Specific Outcome" }
+            ]},
+            { "name": "12.3.2 Birth Control", "sequence_number": 2, "competencies": [
+              { "sequence_number": 1, "description": "Explain some methods of birth control", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Describe the benefits and possible risks of using contraceptives", "category": "Specific Outcome" }
+            ]}
+          ]
+        },
+        {
+          "name": "12.4 Genetics",
+          "sequence_number": 4,
+          "sub_topics": [
+            { "name": "12.4.1 Variation in Plant and Animal Species", "sequence_number": 1, "competencies": [
+              { "sequence_number": 1, "description": "Describe terms used in the study of genetics", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Describe the variations in human beings", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Observe variations in flowering plants", "category": "Specific Outcome" },
+              { "sequence_number": 4, "description": "Distinguish between continuous and discontinuous variations", "category": "Specific Outcome" },
+              { "sequence_number": 5, "description": "Describe the factors that cause variations among plants and animals of the same species", "category": "Specific Outcome" }
+            ]},
+            { "name": "12.4.2 Cell Division and Chromosomes", "sequence_number": 2, "competencies": [
+              { "sequence_number": 1, "description": "Describe the stages of cell division", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Explain the importance of mitosis and meiosis", "category": "Specific Outcome" }
+            ]},
+            { "name": "12.4.3 Inheritance", "sequence_number": 3, "competencies": [
+              { "sequence_number": 1, "description": "Explain what monohybrid inheritance is", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Demonstrate the inheritance of human characteristics using crosses", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Explain the factors that determine the sex of a human being", "category": "Specific Outcome" },
+              { "sequence_number": 4, "description": "Explain the inheritance of sex linked characteristics", "category": "Specific Outcome" },
+              { "sequence_number": 5, "description": "Describe the mechanism of ABO blood groups inheritance", "category": "Specific Outcome" }
+            ]},
+            { "name": "12.4.4 Mutation", "sequence_number": 4, "competencies": [
+              { "sequence_number": 1, "description": "Describe what mutation is", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Identify the causes of mutation", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Explain effects of mutation", "category": "Specific Outcome" },
+              { "sequence_number": 4, "description": "Describe the uses of mutations", "category": "Specific Outcome" }
+            ]}
+          ]
+        },
+        {
+          "name": "12.5 Classification of Plants and Animals",
+          "sequence_number": 5,
+          "sub_topics": [
+            { "name": "12.5.1 Classification", "sequence_number": 1, "competencies": [
+              { "sequence_number": 1, "description": "Identify various types of plants", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Identify various types of animals", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Formulate a simple key for classification of plants and animals", "category": "Specific Outcome" },
+              { "sequence_number": 4, "description": "Use a simple classification key to identify plants and animals", "category": "Specific Outcome" }
+            ]}
+          ]
+        },
+        {
+          "name": "12.6 The Soil",
+          "sequence_number": 6,
+          "sub_topics": [
+            { "name": "12.6.1 Soil Composition and Fertility", "sequence_number": 1, "competencies": [
+              { "sequence_number": 1, "description": "Demonstrate soil composition", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Describe the types of soil and their properties", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Describe factors that make soil fertile", "category": "Specific Outcome" },
+              { "sequence_number": 4, "description": "Investigate causes of loss of fertility in soil", "category": "Specific Outcome" },
+              { "sequence_number": 5, "description": "Explain methods of improving and retaining soil fertility", "category": "Specific Outcome" },
+              { "sequence_number": 6, "description": "Determine the distribution of earthworms in different types of soils", "category": "Specific Outcome" }
+            ]}
+          ]
+        },
+        {
+          "name": "12.7 Ecology",
+          "sequence_number": 7,
+          "sub_topics": [
+            { "name": "12.7.1 Biotic and Abiotic Interactions", "sequence_number": 1, "competencies": [
+              { "sequence_number": 1, "description": "Explain the term ecology", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Explain the terms used in ecology", "category": "Specific Outcome" }
+            ]},
+            { "name": "12.7.2 Feeding Relationships and Energy Flow", "sequence_number": 2, "competencies": [
+              { "sequence_number": 1, "description": "Design a food chain", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Design a food web", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Describe the way energy flows along food chains and food webs", "category": "Specific Outcome" },
+              { "sequence_number": 4, "description": "Describe the efficiency of energy transfer between trophic levels", "category": "Specific Outcome" },
+              { "sequence_number": 5, "description": "Construct pyramids of numbers, bio-mass and energy", "category": "Specific Outcome" }
+            ]},
+            { "name": "12.7.3 Population", "sequence_number": 3, "competencies": [
+              { "sequence_number": 1, "description": "Explain the term population", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Investigate factors that cause change in population size", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Interpret population data", "category": "Specific Outcome" }
+            ]},
+            { "name": "12.7.4 Carbon, Nitrogen and Water Cycles", "sequence_number": 4, "competencies": [
+              { "sequence_number": 1, "description": "Describe how carbon and nitrogen are cycled within an ecosystem", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Describe what the water cycle is", "category": "Specific Outcome" }
+            ]},
+            { "name": "12.7.5 Ecosystem", "sequence_number": 5, "competencies": [
+              { "sequence_number": 1, "description": "Investigate key features of an ecosystem", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Explain the effects of agriculture on an ecosystem", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Describe the effects of deforestation on soil stability and climate", "category": "Specific Outcome" }
+            ]},
+            { "name": "12.7.6 Pollution", "sequence_number": 6, "competencies": [
+              { "sequence_number": 1, "description": "Describe the undesirable effects of pollution", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Determine measures to prevent pollution", "category": "Specific Outcome" }
+            ]},
+            { "name": "12.7.7 Conservation", "sequence_number": 7, "competencies": [
+              { "sequence_number": 1, "description": "Identify the importance of conserving plant and animal species", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Explain how to reuse, reduce and recycle materials", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Investigate the importance of sustainable use of resources", "category": "Specific Outcome" }
+            ]},
+            { "name": "12.7.8 Bio-diversity", "sequence_number": 8, "competencies": [
+              { "sequence_number": 1, "description": "Investigate diversity of organisms in a given locality", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Investigate the importance of diversity of organisms in a given locality", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Explain how some organisms are adapted to the environment", "category": "Specific Outcome" },
+              { "sequence_number": 4, "description": "Investigate the impact of human activity on organisms", "category": "Specific Outcome" },
+              { "sequence_number": 5, "description": "Describe the economic reasons for maintaining bio-diversity", "category": "Specific Outcome" }
+            ]}
+          ]
+        }
+      ]
+    }
+  ]
+}
