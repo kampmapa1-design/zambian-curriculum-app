@@ -1,0 +1,181 @@
+{
+  "_source": "Ministry of Education / Curriculum Development Centre, Zambia. 'Physics Syllabus, Grade 10-12' (2013, published by CDC) — Grade 11, Topics 11.3-11.7. Topic, sub-topic and Specific Outcome statements only; the 'Content' column is omitted for the reasons documented in the Grade 10 file. Physics topic numbers continue sequentially across grades in this syllabus (Grade 10 ends at Topic 10.2, Grade 11 runs 11.3-11.7, Grade 12 begins at 12.8) — this matches the Grade's own general-outcomes statement, which names exactly five areas: thermal physics, wave motion, sound, light and magnetism. A couple of small printed-code typos exist (e.g. one outcome under 11.3.3 is printed '11.3.5.6' instead of '11.3.3.6'); these are reproduced in their correct logical position rather than literally. The syllabus organizes content by Grade only, not by Term, so all of Grade 11 is modeled as a single term here.",
+  "curriculum": {
+    "code": "OBC_2013",
+    "name": "2013 Outcome-Based Curriculum",
+    "description": "Zambia's 2013 outcome-based curriculum for Grades 10-12 (Senior Secondary)."
+  },
+  "subject": {
+    "name": "Physics",
+    "code": "PHY",
+    "description": "Senior Secondary Physics syllabus, Grade 10-12 (Curriculum Development Centre, 2013)."
+  },
+  "grade": {
+    "name": "Grade 11",
+    "code": "G11_OBC",
+    "level": 11,
+    "phase": "Senior Secondary"
+  },
+  "terms": [
+    {
+      "name": "Year (not term-divided in the source syllabus)",
+      "sequence_number": 1,
+      "topics": [
+        {
+          "name": "11.3 Thermal Physics",
+          "sequence_number": 1,
+          "sub_topics": [
+            { "name": "11.3.1 Simple Kinetic Theory of Matter", "sequence_number": 1, "competencies": [
+              { "sequence_number": 1, "description": "Explain what the kinetic theory is", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Describe qualitatively the molecular model of matter", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Explain changes of state in terms of the kinetic theory of matter", "category": "Specific Outcome" },
+              { "sequence_number": 4, "description": "Apply kinetic theory to explain rates of diffusion, Brownian motion, evaporation and cooling effect of evaporation", "category": "Specific Outcome" },
+              { "sequence_number": 5, "description": "Apply the kinetic theory to explain gas pressure", "category": "Specific Outcome" }
+            ]},
+            { "name": "11.3.2 Measurement of Temperature", "sequence_number": 2, "competencies": [
+              { "sequence_number": 1, "description": "Explain what temperature is", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Describe physical properties of substances which change with temperature", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Measure the temperature with thermometers", "category": "Specific Outcome" },
+              { "sequence_number": 4, "description": "Describe suitability of alcohol and mercury for use in liquid-in-glass thermometers", "category": "Specific Outcome" },
+              { "sequence_number": 5, "description": "Describe the relationship between the Celsius and Kelvin scales", "category": "Specific Outcome" },
+              { "sequence_number": 6, "description": "Describe the structure and use of a thermocouple thermometer", "category": "Specific Outcome" },
+              { "sequence_number": 7, "description": "Demonstrate the measurement of temperature using an appropriate thermometer", "category": "Specific Outcome" }
+            ]},
+            { "name": "11.3.3 Expansion of Solids, Liquids and Gases", "sequence_number": 3, "competencies": [
+              { "sequence_number": 1, "description": "Describe qualitatively the thermal expansion of solids, liquids and gases", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Explain the effects of expansion of water on aquatic life", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Demonstrate that solids, liquids and gases expand at different rates", "category": "Specific Outcome" },
+              { "sequence_number": 4, "description": "Demonstrate how to determine the boiling and melting point of different substances", "category": "Specific Outcome" },
+              { "sequence_number": 5, "description": "Explain effects of pressure on the melting and boiling points", "category": "Specific Outcome" },
+              { "sequence_number": 6, "description": "Investigate effects of impurities on the melting and boiling points of substances", "category": "Specific Outcome" },
+              { "sequence_number": 7, "description": "Demonstrate the effect of varying pressure on volume of a gas", "category": "Specific Outcome" },
+              { "sequence_number": 8, "description": "Describe the relationship between temperature and volume of a gas", "category": "Specific Outcome" },
+              { "sequence_number": 9, "description": "Explain the Kelvin scale from the relationship between temperature and volume", "category": "Specific Outcome" },
+              { "sequence_number": 10, "description": "Demonstrate the use of the ideal gas equation to solve simple numerical problems", "category": "Specific Outcome" }
+            ]},
+            { "name": "11.3.4 The Engine", "sequence_number": 4, "competencies": [
+              { "sequence_number": 1, "description": "Explain what an internal combustion engine is", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Identify the different parts of an internal combustion engine", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Describe the operation of the spark plug", "category": "Specific Outcome" },
+              { "sequence_number": 4, "description": "Describe the different strokes in a four stroke internal combustion engine", "category": "Specific Outcome" },
+              { "sequence_number": 5, "description": "Describe efficiency of a diesel and petrol engine", "category": "Specific Outcome" }
+            ]},
+            { "name": "11.3.5 Heat Transfer by Conduction, Convection and Radiation", "sequence_number": 5, "competencies": [
+              { "sequence_number": 1, "description": "Explain methods of heat transfer", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Use kinetic theory to explain heat transfer", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Demonstrate heat conduction in different substances", "category": "Specific Outcome" },
+              { "sequence_number": 4, "description": "Demonstrate the uses of bad and good conductors of heat", "category": "Specific Outcome" },
+              { "sequence_number": 5, "description": "Demonstrate convection in liquids and gases", "category": "Specific Outcome" },
+              { "sequence_number": 6, "description": "Demonstrate the differences between bad and good absorbers of radiant energy", "category": "Specific Outcome" },
+              { "sequence_number": 7, "description": "Demonstrate the differences between good and bad heat emitters", "category": "Specific Outcome" },
+              { "sequence_number": 8, "description": "Explain everyday applications of knowledge on conduction, convection and radiation", "category": "Specific Outcome" }
+            ]},
+            { "name": "11.3.6 Measurements of Heat", "sequence_number": 6, "competencies": [
+              { "sequence_number": 1, "description": "Demonstrate the difference between temperature and heat energy", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Describe the terms heat capacity and specific heat capacity", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Identify the SI units of specific heat capacity", "category": "Specific Outcome" },
+              { "sequence_number": 4, "description": "Demonstrate how to measure specific heat capacity of solids and liquids", "category": "Specific Outcome" },
+              { "sequence_number": 5, "description": "Describe the terms latent heat, specific latent heat of fusion and of vaporisation", "category": "Specific Outcome" },
+              { "sequence_number": 6, "description": "Demonstrate the solving of numerical problems on heat measurements", "category": "Specific Outcome" }
+            ]}
+          ]
+        },
+        {
+          "name": "11.4 Wave Motion",
+          "sequence_number": 2,
+          "sub_topics": [
+            { "name": "11.4.1 Simple Ideas of the Wave Motion Theory", "sequence_number": 1, "competencies": [
+              { "sequence_number": 1, "description": "Demonstrate wave motion", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Distinguish between longitudinal and transverse waves", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Describe the terms associated with waves", "category": "Specific Outcome" },
+              { "sequence_number": 4, "description": "Apply the wave equation in solving wave motion problems", "category": "Specific Outcome" },
+              { "sequence_number": 5, "description": "Explain the use of waves in everyday life", "category": "Specific Outcome" }
+            ]},
+            { "name": "11.4.2 Propagation of Waves", "sequence_number": 2, "competencies": [
+              { "sequence_number": 1, "description": "Explain what propagation, reflection, refraction and diffraction of waves are", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Demonstrate constructive and destructive interference of waves", "category": "Specific Outcome" }
+            ]},
+            { "name": "11.4.3 Electromagnetic Spectrum", "sequence_number": 3, "competencies": [
+              { "sequence_number": 1, "description": "Describe main components of the electromagnetic spectrum", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Describe the properties of electromagnetic waves", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Identify the sources of each of the rays in the electromagnetic spectrum", "category": "Specific Outcome" },
+              { "sequence_number": 4, "description": "Describe the method of detecting each of the main components of the electromagnetic spectrum", "category": "Specific Outcome" },
+              { "sequence_number": 5, "description": "Explain the use of each of the waves in the electromagnetic radiation spectrum", "category": "Specific Outcome" },
+              { "sequence_number": 6, "description": "Explain the harmful effects of ultra violet radiation, gamma rays and x-rays to life", "category": "Specific Outcome" }
+            ]}
+          ]
+        },
+        {
+          "name": "11.5 Sound",
+          "sequence_number": 3,
+          "sub_topics": [
+            { "name": "11.5.1 Properties of Sound", "sequence_number": 1, "competencies": [
+              { "sequence_number": 1, "description": "Explain how sound is produced", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Describe what rarefactions and compressions are", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Describe the approximate range of audible frequencies", "category": "Specific Outcome" },
+              { "sequence_number": 4, "description": "Investigate that sound requires a medium for transmission", "category": "Specific Outcome" },
+              { "sequence_number": 5, "description": "Determine the speed of sound in air", "category": "Specific Outcome" },
+              { "sequence_number": 6, "description": "Describe the relative speed of sound in solid, liquid and gas", "category": "Specific Outcome" },
+              { "sequence_number": 7, "description": "Demonstrate the characteristics of sound waves", "category": "Specific Outcome" },
+              { "sequence_number": 8, "description": "Describe the factors which influence the quality of sound", "category": "Specific Outcome" },
+              { "sequence_number": 9, "description": "Describe what ultrasonic is", "category": "Specific Outcome" },
+              { "sequence_number": 10, "description": "Describe the uses of ultrasonic", "category": "Specific Outcome" },
+              { "sequence_number": 11, "description": "State how to minimise sound pollution", "category": "Specific Outcome" }
+            ]}
+          ]
+        },
+        {
+          "name": "11.6 Light",
+          "sequence_number": 4,
+          "sub_topics": [
+            { "name": "11.6.1 Rectilinear Propagation of Light", "sequence_number": 1, "competencies": [
+              { "sequence_number": 1, "description": "Describe the rectilinear propagation of light", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Investigate the formation of shadows and eclipse", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Describe reflection of light", "category": "Specific Outcome" },
+              { "sequence_number": 4, "description": "Investigate the laws of reflection of light", "category": "Specific Outcome" },
+              { "sequence_number": 5, "description": "Demonstrate the formation of images by plane mirrors", "category": "Specific Outcome" },
+              { "sequence_number": 6, "description": "Identify the position of an image using plane mirrors", "category": "Specific Outcome" }
+            ]},
+            { "name": "11.6.2 Refraction of Light", "sequence_number": 2, "competencies": [
+              { "sequence_number": 1, "description": "Describe what refraction of light is", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Explain the terms of refraction of light", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Verify the laws of refraction of light", "category": "Specific Outcome" },
+              { "sequence_number": 4, "description": "Describe what refractive index is", "category": "Specific Outcome" },
+              { "sequence_number": 5, "description": "Investigate the refractive index of a glass block", "category": "Specific Outcome" },
+              { "sequence_number": 6, "description": "Calculate refractive index of a substance using real and apparent depth", "category": "Specific Outcome" },
+              { "sequence_number": 7, "description": "Explain the term 'critical angle'", "category": "Specific Outcome" },
+              { "sequence_number": 8, "description": "Describe the relationship between critical angle and refractive index", "category": "Specific Outcome" },
+              { "sequence_number": 9, "description": "Explain how total internal reflection occurs", "category": "Specific Outcome" },
+              { "sequence_number": 10, "description": "Explain how total internal reflection is used", "category": "Specific Outcome" }
+            ]},
+            { "name": "11.6.3 Lenses", "sequence_number": 3, "competencies": [
+              { "sequence_number": 1, "description": "Describe different types of lenses", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Explain the action of lenses on beams of light", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Demonstrate how to determine the focal length", "category": "Specific Outcome" },
+              { "sequence_number": 4, "description": "Calculate the power of the converging lens", "category": "Specific Outcome" },
+              { "sequence_number": 5, "description": "Demonstrate how to obtain images formed by converging lenses", "category": "Specific Outcome" },
+              { "sequence_number": 6, "description": "Describe the uses of lenses in everyday life", "category": "Specific Outcome" }
+            ]}
+          ]
+        },
+        {
+          "name": "11.7 Magnetism",
+          "sequence_number": 5,
+          "sub_topics": [
+            { "name": "11.7.1 Simple Phenomenon of Magnetism", "sequence_number": 1, "competencies": [
+              { "sequence_number": 1, "description": "Describe properties of magnets", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Explain the domain theory of magnetism", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Demonstrate induced magnetism", "category": "Specific Outcome" },
+              { "sequence_number": 4, "description": "Demonstrate the making of a magnet", "category": "Specific Outcome" },
+              { "sequence_number": 5, "description": "Demonstrate the way to destroy a magnet", "category": "Specific Outcome" },
+              { "sequence_number": 6, "description": "Demonstrate the plotting of magnetic field lines", "category": "Specific Outcome" },
+              { "sequence_number": 7, "description": "Distinguish the magnetic properties of iron and steel", "category": "Specific Outcome" },
+              { "sequence_number": 8, "description": "Explain the use of magnetic screening and magnetic keepers", "category": "Specific Outcome" },
+              { "sequence_number": 9, "description": "Describe the uses of magnets", "category": "Specific Outcome" }
+            ]}
+          ]
+        }
+      ]
+    }
+  ]
+}

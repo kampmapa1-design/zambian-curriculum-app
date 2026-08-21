@@ -57,6 +57,9 @@ flutter:
     - assets/syllabi/mathematics_grade10.json
     - assets/syllabi/mathematics_grade11.json
     - assets/syllabi/mathematics_grade12.json
+    - assets/syllabi/physics_grade10.json
+    - assets/syllabi/physics_grade11.json
+    - assets/syllabi/physics_grade12.json
     - assets/activity_banks/manifest.json
     - assets/activity_banks/hist_f1_1_1_1.json
     - assets/rules/cdc_constraints.example.json
