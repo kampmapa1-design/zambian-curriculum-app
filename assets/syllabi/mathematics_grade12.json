@@ -1,0 +1,161 @@
+{
+  "_source": "Ministry of Education / Curriculum Development Centre, Zambia. 'O-Level Mathematics Syllabus, Grade 10-12' (2013, published by CDC) — Grade 12, Topics 12.1-12.7. Topic, sub-topic and Specific Outcome statements only; the 'Content' column is omitted for the reasons documented in the Grade 10 file. Cross-checked against the syllabus's own 'Grades 10-12 O-Level Mathematics Sequence' chart (pages 20 onward), which independently confirms every topic and outcome extracted here — nothing in the chart was found that isn't already captured in the instructional table body. Under 12.7 (Introduction to Calculus), the printed outcome codes have small gaps and one duplicate; outcomes are numbered sequentially here in the source's own logical order rather than reproducing that. The syllabus organizes content by Grade only, not by Term, so all of Grade 12 is modeled as a single term here.",
+  "curriculum": {
+    "code": "OBC_2013",
+    "name": "2013 Outcome-Based Curriculum",
+    "description": "Zambia's 2013 outcome-based curriculum for Grades 10-12 (Senior Secondary)."
+  },
+  "subject": {
+    "name": "Mathematics",
+    "code": "MATH",
+    "description": "Senior Secondary O-Level Mathematics syllabus, Grade 10-12 (Curriculum Development Centre, 2013)."
+  },
+  "grade": {
+    "name": "Grade 12",
+    "code": "G12_OBC",
+    "level": 12,
+    "phase": "Senior Secondary"
+  },
+  "terms": [
+    {
+      "name": "Year (not term-divided in the source syllabus)",
+      "sequence_number": 1,
+      "topics": [
+        {
+          "name": "12.1 Graphs of Functions",
+          "sequence_number": 1,
+          "sub_topics": [
+            { "name": "12.1.1 Cubic Functions", "sequence_number": 1, "competencies": [
+              { "sequence_number": 1, "description": "Draw graphs of cubic functions", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Use graphs to find solutions", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Determine gradients of curves", "category": "Specific Outcome" },
+              { "sequence_number": 4, "description": "Estimate areas under curves", "category": "Specific Outcome" }
+            ]},
+            { "name": "12.1.2 Inverse Functions", "sequence_number": 2, "competencies": [
+              { "sequence_number": 1, "description": "Draw graphs of inverse functions", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Apply graphs of functions", "category": "Specific Outcome" }
+            ]}
+          ]
+        },
+        {
+          "name": "12.2 Linear Programming",
+          "sequence_number": 2,
+          "sub_topics": [
+            { "name": "12.2.1 Linear Programming", "sequence_number": 1, "competencies": [
+              { "sequence_number": 1, "description": "Draw graphs of linear equations and inequations in one and two variables (as a recap)", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Shade the wanted and unwanted regions", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Describe the wanted or unwanted regions", "category": "Specific Outcome" },
+              { "sequence_number": 4, "description": "Determine maximum and minimum values", "category": "Specific Outcome" },
+              { "sequence_number": 5, "description": "Use the search line to determine the maximum and minimum values", "category": "Specific Outcome" },
+              { "sequence_number": 6, "description": "Apply knowledge of linear programming in real life", "category": "Specific Outcome" }
+            ]}
+          ]
+        },
+        {
+          "name": "12.3 Travel Graphs",
+          "sequence_number": 3,
+          "sub_topics": [
+            { "name": "12.3.1 Velocity-Time Graphs (Curves)", "sequence_number": 1, "competencies": [
+              { "sequence_number": 1, "description": "Calculate the displacement in a velocity-time graph", "category": "Specific Outcome" }
+            ]}
+          ]
+        },
+        {
+          "name": "12.4 Vectors in Two Dimensions",
+          "sequence_number": 4,
+          "sub_topics": [
+            { "name": "12.4.1 Introduction to Vectors", "sequence_number": 1, "competencies": [
+              { "sequence_number": 1, "description": "Describe a vector", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Represent and denote a vector", "category": "Specific Outcome" }
+            ]},
+            { "name": "12.4.2 Addition and Subtraction", "sequence_number": 2, "competencies": [
+              { "sequence_number": 1, "description": "Add and subtract vectors", "category": "Specific Outcome" }
+            ]},
+            { "name": "12.4.3 Translations", "sequence_number": 3, "competencies": [
+              { "sequence_number": 1, "description": "Apply translations on vectors and find magnitude", "category": "Specific Outcome" }
+            ]},
+            { "name": "12.4.4 Scalar Multiplication", "sequence_number": 4, "competencies": [
+              { "sequence_number": 1, "description": "Multiply vectors by scalars", "category": "Specific Outcome" }
+            ]},
+            { "name": "12.4.5 Collinearity", "sequence_number": 5, "competencies": [
+              { "sequence_number": 1, "description": "Determine collinearity of points", "category": "Specific Outcome" }
+            ]},
+            { "name": "12.4.6 Vector Geometry", "sequence_number": 6, "competencies": [
+              { "sequence_number": 1, "description": "Solve geometrical problems involving vectors", "category": "Specific Outcome" }
+            ]}
+          ]
+        },
+        {
+          "name": "12.5 Geometrical Transformations",
+          "sequence_number": 5,
+          "sub_topics": [
+            { "name": "12.5.1 Introduction to Transformation", "sequence_number": 1, "competencies": [
+              { "sequence_number": 1, "description": "Explain the concept of transformation", "category": "Specific Outcome" }
+            ]},
+            { "name": "12.5.2 Translation", "sequence_number": 2, "competencies": [
+              { "sequence_number": 1, "description": "Use a column vector to translate an object", "category": "Specific Outcome" }
+            ]},
+            { "name": "12.5.3 Reflection", "sequence_number": 3, "competencies": [
+              { "sequence_number": 1, "description": "Reflect objects by different methods", "category": "Specific Outcome" }
+            ]},
+            { "name": "12.5.4 Rotation", "sequence_number": 4, "competencies": [
+              { "sequence_number": 1, "description": "Rotate objects by different methods", "category": "Specific Outcome" }
+            ]},
+            { "name": "12.5.5 Enlargement", "sequence_number": 5, "competencies": [
+              { "sequence_number": 1, "description": "Enlarge objects by different methods", "category": "Specific Outcome" }
+            ]},
+            { "name": "12.5.6 Stretch", "sequence_number": 6, "competencies": [
+              { "sequence_number": 1, "description": "Stretch objects by different methods", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Find area, scale factors of a stretch by determinant method", "category": "Specific Outcome" }
+            ]},
+            { "name": "12.5.7 Shear", "sequence_number": 7, "competencies": [
+              { "sequence_number": 1, "description": "Shear objects by different methods", "category": "Specific Outcome" }
+            ]},
+            { "name": "12.5.8 Combined Transformations", "sequence_number": 8, "competencies": [
+              { "sequence_number": 1, "description": "Solve problems involving combined transformations", "category": "Specific Outcome" }
+            ]}
+          ]
+        },
+        {
+          "name": "12.6 Earth Geometry",
+          "sequence_number": 6,
+          "sub_topics": [
+            { "name": "12.6.1 Introduction to Earth Geometry", "sequence_number": 1, "competencies": [
+              { "sequence_number": 1, "description": "Explain the concept of Earth Geometry", "category": "Specific Outcome" }
+            ]},
+            { "name": "12.6.2 Small and Great Circles", "sequence_number": 2, "competencies": [
+              { "sequence_number": 1, "description": "Distinguish between small and great circles", "category": "Specific Outcome" }
+            ]},
+            { "name": "12.6.3 Latitudes and Longitudes", "sequence_number": 3, "competencies": [
+              { "sequence_number": 1, "description": "Calculate distance along parallels of latitude and longitude in kilometres and nautical miles", "category": "Specific Outcome" }
+            ]},
+            { "name": "12.6.4 Distance Along Latitudes and Longitudes", "sequence_number": 4, "competencies": [
+              { "sequence_number": 1, "description": "Calculate the shortest distance between two points on the surface of the earth", "category": "Specific Outcome" }
+            ]},
+            { "name": "12.6.5 Speed in Knots and Time", "sequence_number": 5, "competencies": [
+              { "sequence_number": 1, "description": "Calculate speed in knots and time", "category": "Specific Outcome" }
+            ]}
+          ]
+        },
+        {
+          "name": "12.7 Introduction to Calculus",
+          "sequence_number": 7,
+          "sub_topics": [
+            { "name": "12.7.1 Differentiation", "sequence_number": 1, "competencies": [
+              { "sequence_number": 1, "description": "Explain the concept of differentiation", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Differentiate functions from first principles", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Use the formula for differentiation", "category": "Specific Outcome" },
+              { "sequence_number": 4, "description": "Calculate equations of tangents and normals", "category": "Specific Outcome" }
+            ]},
+            { "name": "12.7.2 Integration", "sequence_number": 2, "competencies": [
+              { "sequence_number": 1, "description": "Explain integration", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Find indefinite integrals", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Evaluate simple definite integrals", "category": "Specific Outcome" },
+              { "sequence_number": 4, "description": "Find the area under the curve", "category": "Specific Outcome" }
+            ]}
+          ]
+        }
+      ]
+    }
+  ]
+}
