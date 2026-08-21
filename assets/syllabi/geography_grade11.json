@@ -1,0 +1,86 @@
+{
+  "_source": "Ministry of Education / Curriculum Development Centre, Zambia. 'Grade 10-12 Geography Syllabus' (2013, published by CDC), Section C (Elements of Human Geography) — all of Grade 11. Topic/sub-topic names and Specific Outcome statements only; the 'Content' (Knowledge/Skills/Values) columns are omitted for the same column-extraction-reliability reason documented in the Grade 10 file. Outcome text and order were manually traced against each sub-topic heading rather than trusted from the printed codes alone. The syllabus organizes content by Grade only, not by Term, so all of Grade 11 is modeled as a single term here.",
+  "curriculum": {
+    "code": "OBC_2013",
+    "name": "2013 Outcome-Based Curriculum",
+    "description": "Zambia's 2013 outcome-based curriculum for Grades 10-12 (Senior Secondary)."
+  },
+  "subject": {
+    "name": "Geography",
+    "code": "GEOG",
+    "description": "Senior Secondary Geography syllabus, Grade 10-12 (Curriculum Development Centre, 2013)."
+  },
+  "grade": {
+    "name": "Grade 11",
+    "code": "G11_OBC",
+    "level": 11,
+    "phase": "Senior Secondary"
+  },
+  "terms": [
+    {
+      "name": "Year (not term-divided in the source syllabus)",
+      "sequence_number": 1,
+      "topics": [
+        {
+          "name": "11.1 Farming",
+          "sequence_number": 1,
+          "description": "Section C: Elements of Human Geography.",
+          "sub_topics": [
+            {
+              "name": "11.1.1 Types of Farming",
+              "sequence_number": 1,
+              "competencies": [
+                { "sequence_number": 1, "description": "Locate major farming types on the map of the world", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Describe factors that influence farming", "category": "Specific Outcome" },
+                { "sequence_number": 3, "description": "Describe major farming types", "category": "Specific Outcome" }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "11.2 Fuel and Energy",
+          "sequence_number": 2,
+          "description": "Section C: Elements of Human Geography.",
+          "sub_topics": [
+            {
+              "name": "11.2.1 Sources of Fuel and Energy",
+              "sequence_number": 1,
+              "competencies": [
+                { "sequence_number": 1, "description": "Explain different sources of fuel and energy", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Distinguish methods of transportation of fuel and energy", "category": "Specific Outcome" },
+                { "sequence_number": 3, "description": "Describe uses of different forms of fuel and energy", "category": "Specific Outcome" }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "11.3 World Population",
+          "sequence_number": 3,
+          "description": "Section C: Elements of Human Geography.",
+          "sub_topics": [
+            {
+              "name": "11.3.1 World Population Distribution",
+              "sequence_number": 1,
+              "competencies": [
+                { "sequence_number": 1, "description": "Locate on a world map areas of high, medium and low population densities", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Describe major factors influencing world population distribution and density", "category": "Specific Outcome" }
+              ]
+            },
+            {
+              "name": "11.3.2 Population Change",
+              "sequence_number": 2,
+              "competencies": [
+                { "sequence_number": 1, "description": "Explain factors influencing population change and structure", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Explain factors which have contributed to rapid population growth", "category": "Specific Outcome" },
+                { "sequence_number": 3, "description": "Describe the consequences of increased world population", "category": "Specific Outcome" },
+                { "sequence_number": 4, "description": "Describe possible solutions to over-population", "category": "Specific Outcome" },
+                { "sequence_number": 5, "description": "Explain reasons and implications for migrations", "category": "Specific Outcome" },
+                { "sequence_number": 6, "description": "Describe human survival strategies in relation to resource availability and utilization", "category": "Specific Outcome" }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -44,6 +44,24 @@
       "grade_level": 10,
       "grade_name": "Grade 10",
       "file": "geography_grade10.json"
+    },
+    {
+      "curriculum_code": "OBC_2013",
+      "curriculum_name": "2013 Outcome-Based Curriculum",
+      "subject_code": "GEOG",
+      "subject_name": "Geography",
+      "grade_level": 11,
+      "grade_name": "Grade 11",
+      "file": "geography_grade11.json"
+    },
+    {
+      "curriculum_code": "OBC_2013",
+      "curriculum_name": "2013 Outcome-Based Curriculum",
+      "subject_code": "GEOG",
+      "subject_name": "Geography",
+      "grade_level": 12,
+      "grade_name": "Grade 12",
+      "file": "geography_grade12.json"
     }
   ]
 }
