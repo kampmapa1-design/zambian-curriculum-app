@@ -1,13 +1,17 @@
-# Zambian Curriculum Companion (Flutter)
+# Smart Teacher (Flutter)
 
-An offline mobile app for teachers: pick a **Subject** and **Grade**, and the
-matching syllabus template (terms → topics → sub-topics → learning objectives
-→ competencies) loads instantly from local storage. No network required.
+Formerly "Zambian Curriculum Companion" — still what the app *is* (an
+offline Zambian curriculum companion for teachers), now under its
+user-facing name. An offline mobile app for teachers: pick a **Subject**
+and **Grade**, and the matching syllabus template (terms → topics →
+sub-topics → learning objectives → competencies) loads instantly from
+local storage. No network required.
 
-This was written before Flutter was installed on this machine, so only the
-Dart application code exists yet (`lib/`, `assets/`, `pubspec.yaml`) — the
-`android/`, `ios/`, etc. platform folders that `flutter create` normally
-generates are missing. See **Setup** below to add them.
+The `android/`, `ios/`, etc. platform folders that `flutter create`
+normally generates aren't checked into this repo (`codemagic.yaml`
+generates them fresh on every CI build instead — see **Setup** below to
+generate them locally too). Flutter is installed locally at `C:\flutter`
+for compile-checking (`flutter analyze`) before pushing.
 
 ## How it works
 

@@ -14,15 +14,22 @@ workflows:
           if [ ! -d android ]; then
             flutter create . --platforms=android --project-name zambian_curriculum_app --org com.example.zambiancurriculum
           fi
+      - name: Set the Android app label to "Smart Teacher"
+        script: |
+          # flutter create always sets android:label to the raw
+          # --project-name value (literally "zambian_curriculum_app") —
+          # that's what shows under the launcher icon on the device unless
+          # overridden here.
+          sed -i.bak 's/android:label="zambian_curriculum_app"/android:label="Smart Teacher"/' android/app/src/main/AndroidManifest.xml
       - name: Bump Android compileSdk (file_picker's transitive deps need 36+)
         script: |
           # flutter create's default (flutter.compileSdkVersion, currently 34
           # on this Flutter channel) is older than what file_picker's
           # flutter_plugin_android_lifecycle dependency requires. Diagnostic
           # echoes are deliberate: this line is one of the few things about
-          # the freshly-generated android/ folder we can't inspect locally
-          # (Flutter isn't installed on the machine developing this app), so
-          # the build log is the only window into its exact contents.
+          # the freshly-generated android/ folder that's awkward to inspect
+          # without actually running a build, so the build log is the
+          # clearest window into its exact contents.
           echo "--- before ---"
           grep -n "compileSdk" android/app/build.gradle.kts android/app/build.gradle 2>/dev/null || echo "no compileSdk line found in either file"
           # macOS's sed needs an argument to -i (hence -i.bak, not just -i).

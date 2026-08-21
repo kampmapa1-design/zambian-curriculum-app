@@ -44,6 +44,7 @@ flutter:
     - assets/rules/cdc_constraints.example.json
     - assets/rules/cbc_2023_constraints.json
     - assets/cdc_resources/seed_catalog.json
+    - assets/icon/icon.png
 
 # Run `flutter pub run flutter_launcher_icons` after `flutter create` (see
 # README Setup) to generate android/ios launcher icons from assets/icon/.

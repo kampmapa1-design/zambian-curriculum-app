@@ -27,7 +27,7 @@ class CurriculumApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Zambian Curriculum Companion',
+      title: 'Smart Teacher',
       theme: AppTheme.light(),
       darkTheme: AppTheme.dark(),
       themeMode: ThemeMode.system,
