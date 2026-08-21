@@ -1,0 +1,132 @@
+{
+  "_source": "Ministry of Education / Curriculum Development Centre, Zambia. 'English Syllabus, Grade 10-12' (2013, published by CDC) — Grade 11, Topics 11.1-11.5. Topic, sub-topic and Specific Outcome statements only; the 'Content' column is omitted for the reasons documented in the Grade 10 file. Two sub-topics under 11.3 (Composition) — 'Writing Minutes' and 'Writing Speeches' — have no directly visible numbered outcome sentence in the source extraction (the printed table cell appears to have lost the outcome text while keeping its Skills/Values columns); their outcomes were reconstructed from the clearly attributable skill statements ('Application of knowledge on writing minutes' and 'Application of knowledge on making a vote of thanks'), matching the equivalent Grade 10 sub-topics. Under 11.5.1 (Relative Clauses), the source prints the exact same outcome sentence and example twice (as outcomes 1 and 6); the duplicate is not reproduced. The syllabus organizes content by Grade only, not by Term, so all of Grade 11 is modeled as a single term here.",
+  "curriculum": {
+    "code": "OBC_2013",
+    "name": "2013 Outcome-Based Curriculum",
+    "description": "Zambia's 2013 outcome-based curriculum for Grades 10-12 (Senior Secondary)."
+  },
+  "subject": {
+    "name": "English Language",
+    "code": "ENG",
+    "description": "Senior Secondary English Language syllabus, Grade 10-12 (Curriculum Development Centre, 2013)."
+  },
+  "grade": {
+    "name": "Grade 11",
+    "code": "G11_OBC",
+    "level": 11,
+    "phase": "Senior Secondary"
+  },
+  "terms": [
+    {
+      "name": "Year (not term-divided in the source syllabus)",
+      "sequence_number": 1,
+      "topics": [
+        {
+          "name": "11.1 Listening and Speaking",
+          "sequence_number": 1,
+          "sub_topics": [
+            { "name": "11.1.1 Oral Communication", "sequence_number": 1, "competencies": [
+              { "sequence_number": 1, "description": "Impart and seek factual information in giving verbal reports and oral messages", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Express and find out intellectual attitudes when making inquiries", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Express and find out emotional attitudes when addressing people of different classes, age groups and sexes", "category": "Specific Outcome" },
+              { "sequence_number": 4, "description": "Interpret, express and find out moral attitudes when expressing beliefs and strongly held opinions without giving offence", "category": "Specific Outcome" },
+              { "sequence_number": 5, "description": "Get things done", "category": "Specific Outcome" },
+              { "sequence_number": 6, "description": "Use socially appropriate language in different situations", "category": "Specific Outcome" }
+            ]}
+          ]
+        },
+        {
+          "name": "11.2 Reading and Comprehension",
+          "sequence_number": 2,
+          "sub_topics": [
+            { "name": "11.2.1 Efficient Reading", "sequence_number": 1, "competencies": [
+              { "sequence_number": 1, "description": "Read passages with understanding and recall the details", "category": "Specific Outcome" }
+            ]},
+            { "name": "11.2.2 Intensive Reading", "sequence_number": 2, "competencies": [
+              { "sequence_number": 1, "description": "Locate details and answer factual questions", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Show understanding of the underlying meaning of texts", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Describe the feelings, qualities and motives of characters in stories", "category": "Specific Outcome" }
+            ]},
+            { "name": "11.2.3 Extensive Reading", "sequence_number": 3, "competencies": [
+              { "sequence_number": 1, "description": "Read appropriate unabridged books", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Read a wide variety of texts: newspapers, magazines, journals etc", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Read critically and make discriminating judgements", "category": "Specific Outcome" },
+              { "sequence_number": 4, "description": "Practise reading for purpose (e.g. newscast)", "category": "Specific Outcome" }
+            ]}
+          ]
+        },
+        {
+          "name": "11.3 Composition",
+          "sequence_number": 3,
+          "sub_topics": [
+            { "name": "11.3.1 Descriptive Writing", "sequence_number": 1, "competencies": [
+              { "sequence_number": 1, "description": "Write advanced descriptive compositions", "category": "Specific Outcome" }
+            ]},
+            { "name": "11.3.2 Narrative Writing", "sequence_number": 2, "competencies": [
+              { "sequence_number": 1, "description": "Write advanced narrative compositions", "category": "Specific Outcome" }
+            ]},
+            { "name": "11.3.3 Essay Writing", "sequence_number": 3, "competencies": [
+              { "sequence_number": 1, "description": "Write advanced essays in other subjects", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Write essays on given topics from other subjects", "category": "Specific Outcome" }
+            ]},
+            { "name": "11.3.4 Article Writing", "sequence_number": 4, "competencies": [
+              { "sequence_number": 1, "description": "Write newspaper and magazine articles", "category": "Specific Outcome" }
+            ]},
+            { "name": "11.3.5 Book Report", "sequence_number": 5, "competencies": [
+              { "sequence_number": 1, "description": "Write book reports", "category": "Specific Outcome" }
+            ]},
+            { "name": "11.3.6 Writing Minutes", "sequence_number": 6, "competencies": [
+              { "sequence_number": 1, "description": "Write minutes of a meeting", "category": "Specific Outcome" }
+            ]},
+            { "name": "11.3.7 Writing Speeches", "sequence_number": 7, "competencies": [
+              { "sequence_number": 1, "description": "Write a vote of thanks", "category": "Specific Outcome" }
+            ]}
+          ]
+        },
+        {
+          "name": "11.4 Summary",
+          "sequence_number": 4,
+          "sub_topics": [
+            { "name": "11.4.1 Verbal Summaries", "sequence_number": 1, "competencies": [
+              { "sequence_number": 1, "description": "Report a message summarizing main points", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Give a speech summarizing main points (e.g. making announcements)", "category": "Specific Outcome" }
+            ]},
+            { "name": "11.4.2 Tabulation Skills", "sequence_number": 2, "competencies": [
+              { "sequence_number": 1, "description": "Tabulate specific information in the text or other print materials such as maps, graphs, tables and charts", "category": "Specific Outcome" }
+            ]},
+            { "name": "11.4.3 Prose Summaries", "sequence_number": 3, "competencies": [
+              { "sequence_number": 1, "description": "Summarise given texts", "category": "Specific Outcome" }
+            ]}
+          ]
+        },
+        {
+          "name": "11.5 Structure",
+          "sequence_number": 5,
+          "sub_topics": [
+            { "name": "11.5.1 Relative Clauses", "sequence_number": 1, "competencies": [
+              { "sequence_number": 1, "description": "Use 'which' or 'that' with subjects that are people", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Use 'which' or 'that' with subjects that are things", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Use 'whom', 'who' or nothing with objects that are things", "category": "Specific Outcome" },
+              { "sequence_number": 4, "description": "Use preposition + relative pronoun with objects that are people", "category": "Specific Outcome" },
+              { "sequence_number": 5, "description": "Use 'which', 'that' or nothing with objects that are things", "category": "Specific Outcome" }
+            ]},
+            { "name": "11.5.2 Condition", "sequence_number": 2, "competencies": [
+              { "sequence_number": 1, "description": "Use likely/probable conditional sentences", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Use unlikely/improbable conditional sentences", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Use impossible conditional sentences", "category": "Specific Outcome" },
+              { "sequence_number": 4, "description": "Use common variations of conditional sentences", "category": "Specific Outcome" },
+              { "sequence_number": 5, "description": "Use 'unless' in conditional sentences", "category": "Specific Outcome" },
+              { "sequence_number": 6, "description": "Use 'even if' to indicate condition and implied contrast", "category": "Specific Outcome" }
+            ]},
+            { "name": "11.5.3 Direct Speech", "sequence_number": 3, "competencies": [
+              { "sequence_number": 1, "description": "Use direct speech", "category": "Specific Outcome" }
+            ]},
+            { "name": "11.5.4 Reported Speech", "sequence_number": 4, "competencies": [
+              { "sequence_number": 1, "description": "Change direct speech into reported speech", "category": "Specific Outcome" }
+            ]}
+          ]
+        }
+      ]
+    }
+  ]
+}

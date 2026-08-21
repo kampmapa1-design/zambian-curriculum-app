@@ -1,0 +1,122 @@
+{
+  "_source": "Ministry of Education / Curriculum Development Centre, Zambia. 'English Syllabus, Grade 10-12' (2013, published by CDC) — Grade 12, Topics 12.1-12.5. Topic, sub-topic and Specific Outcome statements only; the 'Content' column is omitted for the reasons documented in the Grade 10 file. Topics 12.5.3 ('Verbs Followed by Object + Infinitive') and 12.5.4 ('Verbs Followed by Object + Infinitive', covering verbs of sensation) are printed in the source with the same sub-topic heading despite being distinct entries with distinct example verbs; both are reproduced here as separate sub-topics per the source's own numbering (12.5.3 and 12.5.4). The document ends after 12.5.6 (Intensifiers/Adverbs of Degree) — the remaining pages of the source PDF (73-75) are blank, confirming this is the final topic of the entire Grade 10-12 English syllabus, with no practical/appendix section (unlike some other subjects in this curriculum). The syllabus organizes content by Grade only, not by Term, so all of Grade 12 is modeled as a single term here.",
+  "curriculum": {
+    "code": "OBC_2013",
+    "name": "2013 Outcome-Based Curriculum",
+    "description": "Zambia's 2013 outcome-based curriculum for Grades 10-12 (Senior Secondary)."
+  },
+  "subject": {
+    "name": "English Language",
+    "code": "ENG",
+    "description": "Senior Secondary English Language syllabus, Grade 10-12 (Curriculum Development Centre, 2013)."
+  },
+  "grade": {
+    "name": "Grade 12",
+    "code": "G12_OBC",
+    "level": 12,
+    "phase": "Senior Secondary"
+  },
+  "terms": [
+    {
+      "name": "Year (not term-divided in the source syllabus)",
+      "sequence_number": 1,
+      "topics": [
+        {
+          "name": "12.1 Listening and Speaking",
+          "sequence_number": 1,
+          "sub_topics": [
+            { "name": "12.1.1 Oral Communication", "sequence_number": 1, "competencies": [
+              { "sequence_number": 1, "description": "Impart and seek factual information when paraphrasing and exposing points", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Express and find out intellectual attitudes in arguing and presenting facts", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Use socially appropriate language in different situations", "category": "Specific Outcome" },
+              { "sequence_number": 4, "description": "Give talks on different topics", "category": "Specific Outcome" }
+            ]}
+          ]
+        },
+        {
+          "name": "12.2 Reading and Comprehension",
+          "sequence_number": 2,
+          "sub_topics": [
+            { "name": "12.2.1 Efficient Reading", "sequence_number": 1, "competencies": [
+              { "sequence_number": 1, "description": "Read passages with understanding and recall the details", "category": "Specific Outcome" }
+            ]},
+            { "name": "12.2.2 Extensive Reading", "sequence_number": 2, "competencies": [
+              { "sequence_number": 1, "description": "Read efficiently unabridged different reading materials", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Read critically and make discriminating judgements", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Practise reading for purpose (e.g. newscast)", "category": "Specific Outcome" }
+            ]}
+          ]
+        },
+        {
+          "name": "12.3 Composition",
+          "sequence_number": 3,
+          "sub_topics": [
+            { "name": "12.3.1 Advanced Descriptive Writing", "sequence_number": 1, "competencies": [
+              { "sequence_number": 1, "description": "Write advanced descriptive compositions", "category": "Specific Outcome" }
+            ]},
+            { "name": "12.3.2 Advanced Narrative Writing", "sequence_number": 2, "competencies": [
+              { "sequence_number": 1, "description": "Write advanced narrative compositions", "category": "Specific Outcome" }
+            ]},
+            { "name": "12.3.3 Advanced Essay Writing", "sequence_number": 3, "competencies": [
+              { "sequence_number": 1, "description": "Write advanced essays in other subjects", "category": "Specific Outcome" }
+            ]},
+            { "name": "12.3.4 Writing Curriculum Vitae", "sequence_number": 4, "competencies": [
+              { "sequence_number": 1, "description": "Write a Curriculum Vitae", "category": "Specific Outcome" }
+            ]},
+            { "name": "12.3.5 Letter Writing", "sequence_number": 5, "competencies": [
+              { "sequence_number": 1, "description": "Write advanced application letters", "category": "Specific Outcome" }
+            ]},
+            { "name": "12.3.6 Writing Advanced Minutes", "sequence_number": 6, "competencies": [
+              { "sequence_number": 1, "description": "Write minutes of a meeting", "category": "Specific Outcome" }
+            ]},
+            { "name": "12.3.7 Writing Speeches", "sequence_number": 7, "competencies": [
+              { "sequence_number": 1, "description": "Write speeches on given topics", "category": "Specific Outcome" }
+            ]}
+          ]
+        },
+        {
+          "name": "12.4 Summary",
+          "sequence_number": 4,
+          "sub_topics": [
+            { "name": "12.4.1 Note Summaries", "sequence_number": 1, "competencies": [
+              { "sequence_number": 1, "description": "Make note summaries from given texts", "category": "Specific Outcome" }
+            ]},
+            { "name": "12.4.2 Prose Summaries", "sequence_number": 2, "competencies": [
+              { "sequence_number": 1, "description": "Write prose summaries", "category": "Specific Outcome" }
+            ]},
+            { "name": "12.4.3 Tabulation Skills", "sequence_number": 3, "competencies": [
+              { "sequence_number": 1, "description": "Tabulate given information into graphic representations such as tables, charts, graphs and maps", "category": "Specific Outcome" }
+            ]}
+          ]
+        },
+        {
+          "name": "12.5 Structure",
+          "sequence_number": 5,
+          "sub_topics": [
+            { "name": "12.5.1 Phrasal Verbs", "sequence_number": 1, "competencies": [
+              { "sequence_number": 1, "description": "Use phrasal verbs", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Use phrasal verbs formed with adverb particles before or after the object", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Use phrasal verbs formed by verb + preposition + adverb", "category": "Specific Outcome" }
+            ]},
+            { "name": "12.5.2 Verbs and Expressions Followed by -ing", "sequence_number": 2, "competencies": [
+              { "sequence_number": 1, "description": "Use the VERB + -ING construction", "category": "Specific Outcome" }
+            ]},
+            { "name": "12.5.3 Verbs Followed by Object + Infinitive", "sequence_number": 3, "competencies": [
+              { "sequence_number": 1, "description": "Use the VERB + OBJECT + INFINITIVE construction", "category": "Specific Outcome" }
+            ]},
+            { "name": "12.5.4 Verbs Followed by Object + Infinitive (Verbs of Sensation)", "sequence_number": 4, "competencies": [
+              { "sequence_number": 1, "description": "Use the VERB + OBJECT + INFINITIVE construction with verbs of sensation", "category": "Specific Outcome" }
+            ]},
+            { "name": "12.5.5 Verbs Followed by the Infinitive", "sequence_number": 5, "competencies": [
+              { "sequence_number": 1, "description": "Use the VERB + INFINITIVE construction", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Use the 'VERB + HOW TO' construction", "category": "Specific Outcome" }
+            ]},
+            { "name": "12.5.6 Intensifiers (Adverbs of Degree)", "sequence_number": 6, "competencies": [
+              { "sequence_number": 1, "description": "Use adverbs of degree (very, much, too, fairly, rather, quite, hardly, barely, scarcely, almost, nearly, just)", "category": "Specific Outcome" }
+            ]}
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -251,6 +251,33 @@
       "grade_level": 12,
       "grade_name": "Grade 12",
       "file": "chemistry_grade12.json"
+    },
+    {
+      "curriculum_code": "OBC_2013",
+      "curriculum_name": "2013 Outcome-Based Curriculum",
+      "subject_code": "ENG",
+      "subject_name": "English Language",
+      "grade_level": 10,
+      "grade_name": "Grade 10",
+      "file": "english_grade10_obc.json"
+    },
+    {
+      "curriculum_code": "OBC_2013",
+      "curriculum_name": "2013 Outcome-Based Curriculum",
+      "subject_code": "ENG",
+      "subject_name": "English Language",
+      "grade_level": 11,
+      "grade_name": "Grade 11",
+      "file": "english_grade11_obc.json"
+    },
+    {
+      "curriculum_code": "OBC_2013",
+      "curriculum_name": "2013 Outcome-Based Curriculum",
+      "subject_code": "ENG",
+      "subject_name": "English Language",
+      "grade_level": 12,
+      "grade_name": "Grade 12",
+      "file": "english_grade12_obc.json"
     }
   ]
 }
