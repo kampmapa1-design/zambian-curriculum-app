@@ -1,0 +1,119 @@
+{
+  "_source": "Ministry of Education / Curriculum Development Centre, Zambia. 'Grade 10-12 Geography Syllabus' (2013, published by CDC). Topic/sub-topic names and Specific Outcome statements for Topics 10.1 (Map Work) and 10.2 (The Solar System) only — the source PDF's table has 6 columns (Topic/Sub-topic/Specific Outcomes/Content split into Knowledge, Skills, Values) and text-extracts with columns interleaved out of order for the remaining Grade 10 topics (10.3-10.8), which risks misattributing content between sub-topics if reconstructed automatically; those are intentionally left out until they can be verified more carefully rather than guessed. The 'Content' (Knowledge/Skills/Values) columns are omitted even for 10.1-10.2 for the same reason — only the numbered Specific Outcomes are included, since their sub-topic association is unambiguous from the outcome's own code prefix. One exception: sub-topics 10.2.6 and 10.2.7 both carry the code prefix '10.2.7.x' in the source document itself (an apparent numbering error in the original, not an extraction artifact) — their outcome statements are included without that ambiguous code. The syllabus organizes content by Grade only, not by Term, so all of Grade 10 is modeled as a single term here.",
+  "curriculum": {
+    "code": "OBC_2013",
+    "name": "2013 Outcome-Based Curriculum",
+    "description": "Zambia's 2013 outcome-based curriculum for Grades 10-12 (Senior Secondary)."
+  },
+  "subject": {
+    "name": "Geography",
+    "code": "GEOG",
+    "description": "Senior Secondary Geography syllabus, Grade 10-12 (Curriculum Development Centre, 2013)."
+  },
+  "grade": {
+    "name": "Grade 10",
+    "code": "G10_OBC",
+    "level": 10,
+    "phase": "Senior Secondary"
+  },
+  "terms": [
+    {
+      "name": "Year (not term-divided in the source syllabus)",
+      "sequence_number": 1,
+      "topics": [
+        {
+          "name": "10.1 Map Work: Basic Techniques and Skills",
+          "sequence_number": 1,
+          "description": "Section A: Map Work.",
+          "sub_topics": [
+            {
+              "name": "10.1.1 Map Reading and Interpretation",
+              "sequence_number": 1,
+              "competencies": [
+                { "sequence_number": 1, "description": "Match conventional signs with ground features", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Measure real distances between objects in the field", "category": "Specific Outcome" },
+                { "sequence_number": 3, "description": "Translate map distances into real distances", "category": "Specific Outcome" },
+                { "sequence_number": 4, "description": "Compute the gradient (slope) between two features on the map", "category": "Specific Outcome" },
+                { "sequence_number": 5, "description": "Identify relief features and drainage patterns using contour lines on a map", "category": "Specific Outcome" },
+                { "sequence_number": 6, "description": "Identify factors which influence human settlements and activities on a map", "category": "Specific Outcome" },
+                { "sequence_number": 7, "description": "Identify vegetation and land-use types", "category": "Specific Outcome" },
+                { "sequence_number": 8, "description": "Account for observed vegetation and land use patterns", "category": "Specific Outcome" },
+                { "sequence_number": 9, "description": "Identify and present variables on a graphical axis", "category": "Specific Outcome" }
+              ]
+            },
+            {
+              "name": "10.1.2 Sketch Maps and Diagrams",
+              "sequence_number": 2,
+              "competencies": [
+                { "sequence_number": 1, "description": "Draw a sketch map from topographic maps", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Draw a cross-section between two points on a map", "category": "Specific Outcome" }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "10.2 The Solar System",
+          "sequence_number": 2,
+          "description": "Section B: Elements of Physical Geography.",
+          "sub_topics": [
+            {
+              "name": "10.2.1 The Solar System",
+              "sequence_number": 1,
+              "competencies": [
+                { "sequence_number": 1, "description": "Describe the solar system", "category": "Specific Outcome" }
+              ]
+            },
+            {
+              "name": "10.2.2 The Earth as a Planet",
+              "sequence_number": 2,
+              "competencies": [
+                { "sequence_number": 1, "description": "Describe the shape of the Earth", "category": "Specific Outcome" }
+              ]
+            },
+            {
+              "name": "10.2.3 Latitude and Longitude",
+              "sequence_number": 3,
+              "competencies": [
+                { "sequence_number": 1, "description": "Explain latitude and longitude", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Locate places on the Earth's surface using latitudes and longitudes", "category": "Specific Outcome" },
+                { "sequence_number": 3, "description": "Calculate distances using latitudes", "category": "Specific Outcome" }
+              ]
+            },
+            {
+              "name": "10.2.4 Local and Standard Time",
+              "sequence_number": 4,
+              "competencies": [
+                { "sequence_number": 1, "description": "Calculate local time using longitudes", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Calculate longitude from local time", "category": "Specific Outcome" }
+              ]
+            },
+            {
+              "name": "10.2.5 International Date Line",
+              "sequence_number": 5,
+              "competencies": [
+                { "sequence_number": 1, "description": "Explain the International Date Line", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Calculate time and date east or west of the International Date Line", "category": "Specific Outcome" }
+              ]
+            },
+            {
+              "name": "10.2.6 Apparent Movement of the Sun (Angle of Elevation)",
+              "sequence_number": 6,
+              "competencies": [
+                { "sequence_number": 1, "description": "Calculate the position of the midday sun (angle of elevation) at a given latitude at different times of the year", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Calculate the latitude of a place using the position of the midday sun (angle of elevation)", "category": "Specific Outcome" }
+              ]
+            },
+            {
+              "name": "10.2.7 Rotation and Revolution of the Earth",
+              "sequence_number": 7,
+              "competencies": [
+                { "sequence_number": 1, "description": "Explain the effects of rotation of the earth", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Explain the effects of the earth's revolution", "category": "Specific Outcome" }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

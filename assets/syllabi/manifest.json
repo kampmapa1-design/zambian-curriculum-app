@@ -35,6 +35,15 @@
       "grade_level": 1,
       "grade_name": "Form 1",
       "file": "history_form1.json"
+    },
+    {
+      "curriculum_code": "OBC_2013",
+      "curriculum_name": "2013 Outcome-Based Curriculum",
+      "subject_code": "GEOG",
+      "subject_name": "Geography",
+      "grade_level": 10,
+      "grade_name": "Grade 10",
+      "file": "geography_grade10.json"
     }
   ]
 }
