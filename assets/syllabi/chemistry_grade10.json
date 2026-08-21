@@ -1,0 +1,123 @@
+{
+  "_source": "Ministry of Education / Curriculum Development Centre, Zambia. 'Chemistry Syllabus (5070), Grade 10-12' (2013, published by CDC) — Grade 10, Topics 10.1-10.4. Topic, sub-topic and Specific Outcome statements only; the 'Content' (Knowledge/Skills/Values) columns are omitted, consistent with the approach used for the other 2013 OBC subjects in this app. This document's outcome numbering is reliable and matches its sub-topic structure. One outcome (10.4.2.11) is split awkwardly across a page break in the source PDF's text extraction ('Identify the...' followed on the next page by 'differences in properties of ionic and covalent compounds'); it is reproduced here as the single joined sentence it clearly is. The syllabus organizes content by Grade only, not by Term, so all of Grade 10 is modeled as a single term here.",
+  "curriculum": {
+    "code": "OBC_2013",
+    "name": "2013 Outcome-Based Curriculum",
+    "description": "Zambia's 2013 outcome-based curriculum for Grades 10-12 (Senior Secondary)."
+  },
+  "subject": {
+    "name": "Chemistry",
+    "code": "CHEM",
+    "description": "Senior Secondary Chemistry syllabus (5070), Grade 10-12 (Curriculum Development Centre, 2013)."
+  },
+  "grade": {
+    "name": "Grade 10",
+    "code": "G10_OBC",
+    "level": 10,
+    "phase": "Senior Secondary"
+  },
+  "terms": [
+    {
+      "name": "Year (not term-divided in the source syllabus)",
+      "sequence_number": 1,
+      "topics": [
+        {
+          "name": "10.1 Introduction to Chemistry",
+          "sequence_number": 1,
+          "sub_topics": [
+            { "name": "10.1.1 Introduction to Chemistry", "sequence_number": 1, "competencies": [
+              { "sequence_number": 1, "description": "Describe Chemistry", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Classify the branches of chemistry", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Explain the importance of chemistry", "category": "Specific Outcome" },
+              { "sequence_number": 4, "description": "Describe the challenges of chemical industrial activities", "category": "Specific Outcome" },
+              { "sequence_number": 5, "description": "Demonstrate an appreciation of safety in the laboratory", "category": "Specific Outcome" }
+            ]}
+          ]
+        },
+        {
+          "name": "10.2 The Particulate Nature of Matter",
+          "sequence_number": 2,
+          "sub_topics": [
+            { "name": "10.2.1 Matter and the Kinetic Theory", "sequence_number": 1, "competencies": [
+              { "sequence_number": 1, "description": "Describe matter", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Classify the basic units of matter", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Classify the states of matter", "category": "Specific Outcome" },
+              { "sequence_number": 4, "description": "Illustrate changes of states of matter", "category": "Specific Outcome" },
+              { "sequence_number": 5, "description": "Describe the absorption and release of heat during changes of states of matter", "category": "Specific Outcome" }
+            ]},
+            { "name": "10.2.2 Diffusion", "sequence_number": 2, "competencies": [
+              { "sequence_number": 1, "description": "Describe diffusion", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Demonstrate diffusion in fluids", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Describe the factors that affect the rate of diffusion", "category": "Specific Outcome" }
+            ]}
+          ]
+        },
+        {
+          "name": "10.3 Experimental Techniques",
+          "sequence_number": 3,
+          "sub_topics": [
+            { "name": "10.3.1 Measuring of Quantities", "sequence_number": 1, "competencies": [
+              { "sequence_number": 1, "description": "Demonstrate how different quantities are measured", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Identify different measuring apparatus used in chemistry", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Identify various measuring instruments and other apparatus used in chemistry", "category": "Specific Outcome" }
+            ]},
+            { "name": "10.3.2 Criteria of Purity", "sequence_number": 2, "competencies": [
+              { "sequence_number": 1, "description": "Describe the differences between a pure substance and a mixture", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Demonstrate how to determine the purity of a substance", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Explain the importance of purity of a substance", "category": "Specific Outcome" }
+            ]},
+            { "name": "10.3.3 Separating Mixtures", "sequence_number": 3, "competencies": [
+              { "sequence_number": 1, "description": "Distinguish between physical and chemical changes", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Demonstrate different methods of separating mixtures", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Interpret simple paper chromatograms", "category": "Specific Outcome" }
+            ]}
+          ]
+        },
+        {
+          "name": "10.4 Atoms, Elements, Compounds and Molecules",
+          "sequence_number": 4,
+          "sub_topics": [
+            { "name": "10.4.1 Atomic Structure and Periodic Table", "sequence_number": 1, "competencies": [
+              { "sequence_number": 1, "description": "Describe an atom and its structure", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Describe the relative charges and approximate relative masses of protons, neutrons and electrons", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Describe the proton (atomic) number and nucleon (mass) number and nuclide notation", "category": "Specific Outcome" },
+              { "sequence_number": 4, "description": "Describe what an element is", "category": "Specific Outcome" },
+              { "sequence_number": 5, "description": "Identify elements using their chemical symbols", "category": "Specific Outcome" },
+              { "sequence_number": 6, "description": "Describe the basis of the Periodic Table", "category": "Specific Outcome" },
+              { "sequence_number": 7, "description": "Describe what isotopes are", "category": "Specific Outcome" },
+              { "sequence_number": 8, "description": "Calculate relative atomic mass of an element given the percentage abundances of isotopes and from a mass spectrum", "category": "Specific Outcome" },
+              { "sequence_number": 9, "description": "Describe the use of radioactive isotopes", "category": "Specific Outcome" },
+              { "sequence_number": 10, "description": "Demonstrate the build-up of electrons in shells", "category": "Specific Outcome" }
+            ]},
+            { "name": "10.4.2 Bonding", "sequence_number": 2, "competencies": [
+              { "sequence_number": 1, "description": "Describe what a compound is", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Describe the formation of ions (radicals)", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Describe the formation of ionic (electrovalent) bonds", "category": "Specific Outcome" },
+              { "sequence_number": 4, "description": "Describe the formation of covalent bonds", "category": "Specific Outcome" },
+              { "sequence_number": 5, "description": "Describe the electronic arrangement in simple multiple covalent molecules", "category": "Specific Outcome" },
+              { "sequence_number": 6, "description": "Describe the uses of ionic and covalent compounds", "category": "Specific Outcome" },
+              { "sequence_number": 7, "description": "Describe what a molecule is", "category": "Specific Outcome" },
+              { "sequence_number": 8, "description": "Describe what valency and valence electrons are", "category": "Specific Outcome" },
+              { "sequence_number": 9, "description": "Demonstrate how to deduce valency of an element", "category": "Specific Outcome" },
+              { "sequence_number": 10, "description": "Formulate chemical formulae of compounds", "category": "Specific Outcome" },
+              { "sequence_number": 11, "description": "Identify the differences in properties of ionic and covalent compounds", "category": "Specific Outcome" },
+              { "sequence_number": 12, "description": "Describe metallic bonding", "category": "Specific Outcome" },
+              { "sequence_number": 13, "description": "Describe the electrical/thermal conductivity of metals", "category": "Specific Outcome" }
+            ]},
+            { "name": "10.4.3 Macromolecules", "sequence_number": 3, "competencies": [
+              { "sequence_number": 1, "description": "Describe the giant covalent structures of graphite and diamond", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Describe the uses of graphite and diamond in relation to their structures", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Describe the macromolecular structure of silicon (IV) oxide (silicon dioxide)", "category": "Specific Outcome" },
+              { "sequence_number": 4, "description": "Identify the similarities in properties between diamond and silicon dioxide", "category": "Specific Outcome" }
+            ]},
+            { "name": "10.4.4 Chemical Formulae and Equations", "sequence_number": 4, "competencies": [
+              { "sequence_number": 1, "description": "Demonstrate how to construct word equations", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Formulate balanced chemical equations", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Construct net ionic equations from balanced chemical equations", "category": "Specific Outcome" }
+            ]}
+          ]
+        }
+      ]
+    }
+  ]
+}
