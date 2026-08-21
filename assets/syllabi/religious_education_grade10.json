@@ -1,0 +1,233 @@
+{
+  "_source": "Ministry of Education / Curriculum Development Centre, Zambia. 'Religious Education 2046 Syllabus, Grade 10-12' (2013, published by CDC) — Grade 10, Units 1-7 (Topics 10.1-10.7), Part One: Themes from the Gospels (based on the Gospel of Luke). Cross-referenced against a parallel provincial Religious Education teaching-notes booklet covering the same unit structure, prepared for provincial use with no usage restriction; per standing instruction, no individual name is cited from either source, credit given only to CDC / Ministry of Education. Topic, sub-topic and Specific Outcome statements only; the 'Content' column (Bible passage references, knowledge points, skills, values) is omitted, consistent with the approach used for the other 2013 OBC subjects in this app, since it text-extracts unreliably from the source's multi-column table and is extremely dense with scripture citations. This document's outcome numbering codes are unreliable throughout — worse than the other OBC syllabi processed so far, with codes frequently drifting, duplicating or missing a digit (e.g. an outcome under a 10.1.x sub-topic printed as plain '10.1.1' with no fourth part, or as '0.1.5.1' missing its leading digit). Rather than catalogue each individual instance, every sub-topic and outcome below was reconstructed by position — matching each outcome to the sub-topic heading it appears directly under in the source table, in the table's own reading order — and given clean sequential numbering (Topic.SubTopic.Outcome) rather than reproducing the unreliable printed codes. Sub-topic names are reproduced as printed (often without their own topic-prefixed numbering in the source). The syllabus organizes content by Grade only, not by Term in this file (a suggested termly Scheme of Work exists in the syllabus introduction assigning Units to terms, which could inform term-splitting in a future revision), so all of Grade 10 is modeled as a single term here.",
+  "curriculum": {
+    "code": "OBC_2013",
+    "name": "2013 Outcome-Based Curriculum",
+    "description": "Zambia's 2013 outcome-based curriculum for Grades 10-12 (Senior Secondary)."
+  },
+  "subject": {
+    "name": "Religious Education",
+    "code": "RE",
+    "description": "Senior Secondary Religious Education (2046) syllabus, Grade 10-12 (Curriculum Development Centre, 2013)."
+  },
+  "grade": {
+    "name": "Grade 10",
+    "code": "G10_OBC",
+    "level": 10,
+    "phase": "Senior Secondary"
+  },
+  "terms": [
+    {
+      "name": "Year (not term-divided in this file; see _source)",
+      "sequence_number": 1,
+      "topics": [
+        {
+          "name": "10.1 Birth and Infancy of John the Baptist and Jesus",
+          "sequence_number": 1,
+          "sub_topics": [
+            { "name": "Zambian Birth Traditions", "sequence_number": 1, "competencies": [
+              { "sequence_number": 1, "description": "Describe what happens after a baby has been born in their families", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Explain how names are chosen and given to infants in their families", "category": "Specific Outcome" }
+            ]},
+            { "name": "Birth of John the Baptist", "sequence_number": 2, "competencies": [
+              { "sequence_number": 1, "description": "Relate from Luke's Gospel the stories of the announcement of the birth of John and his naming", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Explain John the Baptist's life and ministry", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Narrate how the life and ministry of John the Baptist were a fulfilment of the Old Testament prophecy", "category": "Specific Outcome" }
+            ]},
+            { "name": "Birth of Jesus", "sequence_number": 3, "competencies": [
+              { "sequence_number": 1, "description": "Describe the announcement of the birth of Jesus to various people", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Describe the birth of Jesus Christ", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Explain how these stories were a fulfilment of the Old Testament prophecies", "category": "Specific Outcome" }
+            ]},
+            { "name": "Parent/Child Conflict", "sequence_number": 4, "competencies": [
+              { "sequence_number": 1, "description": "Identify sources of misunderstanding and conflict between parents and children", "category": "Specific Outcome" }
+            ]},
+            { "name": "Incidents from Jesus' Childhood", "sequence_number": 5, "competencies": [
+              { "sequence_number": 1, "description": "Relate from Luke's Gospel the stories about Jesus in the Temple as a baby and at 12 years", "category": "Specific Outcome" }
+            ]},
+            { "name": "How God Directs Human Lives", "sequence_number": 6, "competencies": [
+              { "sequence_number": 1, "description": "Explain what the infancy narratives in the Gospel of Luke and Matthew teach about God's direction of human lives", "category": "Specific Outcome" }
+            ]},
+            { "name": "How Christians Can Identify and Respond to God's Direction", "sequence_number": 7, "competencies": [
+              { "sequence_number": 1, "description": "Discuss how Christians today can identify and respond to God's direction of their lives", "category": "Specific Outcome" }
+            ]},
+            { "name": "Christian, Muslim and Hindu Teachings on How God Directs Human Lives", "sequence_number": 8, "competencies": [
+              { "sequence_number": 1, "description": "Compare Christian, Muslim and Hindu teaching on how God directs human lives", "category": "Specific Outcome" }
+            ]}
+          ]
+        },
+        {
+          "name": "10.2 Ministry and Death of John the Baptist",
+          "sequence_number": 2,
+          "sub_topics": [
+            { "name": "Speaking Against Sin and Evil", "sequence_number": 1, "competencies": [
+              { "sequence_number": 1, "description": "Identify organizations and people in Zambia who denounce sin and evil in the nation", "category": "Specific Outcome" }
+            ]},
+            { "name": "The Message of John the Baptist", "sequence_number": 2, "competencies": [
+              { "sequence_number": 1, "description": "Outline the main message of John the Baptist", "category": "Specific Outcome" }
+            ]},
+            { "name": "Right Behaviour in Zambia Today", "sequence_number": 3, "competencies": [
+              { "sequence_number": 1, "description": "Explain how John the Baptist's instructions about right behaviour could be applied in Zambia today", "category": "Specific Outcome" }
+            ]},
+            { "name": "The Work of John and That of Jesus", "sequence_number": 4, "competencies": [
+              { "sequence_number": 1, "description": "Compare the work of John with that of Jesus", "category": "Specific Outcome" }
+            ]},
+            { "name": "Responses to Religious and Moral Messages in Zambia", "sequence_number": 5, "competencies": [
+              { "sequence_number": 1, "description": "Explain how people in Zambia respond to people who publicly proclaim religious and moral messages", "category": "Specific Outcome" }
+            ]},
+            { "name": "Imprisonment and Death of John the Baptist", "sequence_number": 6, "competencies": [
+              { "sequence_number": 1, "description": "Explain why John the Baptist was imprisoned and killed", "category": "Specific Outcome" }
+            ]},
+            { "name": "Other People Who Suffered for Their Beliefs", "sequence_number": 7, "competencies": [
+              { "sequence_number": 1, "description": "Mention people who suffered or died because of their beliefs", "category": "Specific Outcome" }
+            ]}
+          ]
+        },
+        {
+          "name": "10.3 Baptism",
+          "sequence_number": 3,
+          "sub_topics": [
+            { "name": "Zambian Initiation Practices and Their Significance", "sequence_number": 1, "competencies": [
+              { "sequence_number": 1, "description": "State Zambian initiation practices", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Explain the significance of traditional Zambian initiation practices", "category": "Specific Outcome" }
+            ]},
+            { "name": "Meaning and Procedure of Christian Baptism", "sequence_number": 2, "competencies": [
+              { "sequence_number": 1, "description": "Describe Baptism and outline the procedure of Christian Baptism", "category": "Specific Outcome" }
+            ]},
+            { "name": "Christian Teachings on Baptism Today in Different Churches", "sequence_number": 3, "competencies": [
+              { "sequence_number": 1, "description": "Describe various teachings on baptism found in Christian churches in Zambia today", "category": "Specific Outcome" }
+            ]},
+            { "name": "Jesus' Baptism and Its Significance", "sequence_number": 4, "competencies": [
+              { "sequence_number": 1, "description": "Relate the story of Jesus' Baptism by John the Baptist", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "State the significance of Jesus' Baptism", "category": "Specific Outcome" }
+            ]},
+            { "name": "Baptism in New Testament Times and Its Continued Importance Today", "sequence_number": 5, "competencies": [
+              { "sequence_number": 1, "description": "Explain the meaning of baptism for Christians in New Testament times and its continued importance today", "category": "Specific Outcome" }
+            ]},
+            { "name": "Circumcision in the Old Testament", "sequence_number": 6, "competencies": [
+              { "sequence_number": 1, "description": "Illustrate with appropriate Bible passages the meaning of circumcision in the Old Testament", "category": "Specific Outcome" }
+            ]},
+            { "name": "Christian Baptism Compared with Admission Practices in Other Religions", "sequence_number": 7, "competencies": [
+              { "sequence_number": 1, "description": "Compare Christian Baptism with admission practices in other religions", "category": "Specific Outcome" }
+            ]}
+          ]
+        },
+        {
+          "name": "10.4 Temptation",
+          "sequence_number": 4,
+          "sub_topics": [
+            { "name": "Temptation, Testing and Sin", "sequence_number": 1, "competencies": [
+              { "sequence_number": 1, "description": "Illustrate with appropriate Bible passages the meaning of Temptation, Testing and Sin", "category": "Specific Outcome" }
+            ]},
+            { "name": "Ways of Temptation and Examples of People Who Were Tempted in the Bible", "sequence_number": 2, "competencies": [
+              { "sequence_number": 1, "description": "Illustrate with appropriate Bible passages ways in which temptations come", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Give examples of people who were tempted in the Bible", "category": "Specific Outcome" }
+            ]},
+            { "name": "Temptations of Jesus", "sequence_number": 3, "competencies": [
+              { "sequence_number": 1, "description": "Relate the temptations of Jesus", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Explain Jesus' use of Old Testament scriptures in resisting these temptations", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Explain how Jesus met and resisted temptations on other occasions in His life", "category": "Specific Outcome" }
+            ]},
+            { "name": "Temptations Met by Christians in Zambia and How They Can Overcome Them", "sequence_number": 4, "competencies": [
+              { "sequence_number": 1, "description": "Identify situations that may lead Christians in Zambia into temptations", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Illustrate with appropriate Bible passages how Christians can overcome temptations", "category": "Specific Outcome" }
+            ]},
+            { "name": "Temptations in Christianity and Other Religions", "sequence_number": 5, "competencies": [
+              { "sequence_number": 1, "description": "Compare temptation in Christianity with other religions", "category": "Specific Outcome" }
+            ]}
+          ]
+        },
+        {
+          "name": "10.5 Jesus' Power Over Disease and Nature",
+          "sequence_number": 5,
+          "sub_topics": [
+            { "name": "Miracles", "sequence_number": 1, "competencies": [
+              { "sequence_number": 1, "description": "State teachings on miracles in modern society", "category": "Specific Outcome" }
+            ]},
+            { "name": "Why Jesus Performed Miracles", "sequence_number": 2, "competencies": [
+              { "sequence_number": 1, "description": "Illustrate with appropriate Bible passages why Jesus performed miracles", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Relate from Luke's Gospel the miracles about Jesus healing sick people", "category": "Specific Outcome" }
+            ]},
+            { "name": "Jesus Heals Lepers and His Attitude to Them", "sequence_number": 3, "competencies": [
+              { "sequence_number": 1, "description": "Relate the stories from Luke's Gospel of Jesus healing lepers", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "State Jewish attitudes towards lepers", "category": "Specific Outcome" }
+            ]},
+            { "name": "Jesus Calms the Storm and Feeds Five Thousand People", "sequence_number": 4, "competencies": [
+              { "sequence_number": 1, "description": "Relate the stories of Jesus calming the storm and feeding five thousand people", "category": "Specific Outcome" }
+            ]},
+            { "name": "Miracles in Modern Christian Faith", "sequence_number": 5, "competencies": [
+              { "sequence_number": 1, "description": "Explain why people have different views about miracles", "category": "Specific Outcome" }
+            ]},
+            { "name": "Miracles in Christianity and Other Religions", "sequence_number": 6, "competencies": [
+              { "sequence_number": 1, "description": "Compare Christian beliefs in miracles with those of other religions", "category": "Specific Outcome" }
+            ]}
+          ]
+        },
+        {
+          "name": "10.6 Jesus' Power Over Evil Spirits",
+          "sequence_number": 6,
+          "sub_topics": [
+            { "name": "Spirit Possession in Zambian Tradition", "sequence_number": 1, "competencies": [
+              { "sequence_number": 1, "description": "Describe various kinds of spirits believed in traditionally in Zambia", "category": "Specific Outcome" }
+            ]},
+            { "name": "Treatment of Spirits in Traditional Zambia", "sequence_number": 2, "competencies": [
+              { "sequence_number": 1, "description": "Explain methods of treating spirit possession in Zambian tradition", "category": "Specific Outcome" }
+            ]},
+            { "name": "Jesus Heals Demon-Possessed People", "sequence_number": 3, "competencies": [
+              { "sequence_number": 1, "description": "Relate from Luke's Gospel the stories of Jesus casting out demons", "category": "Specific Outcome" }
+            ]},
+            { "name": "The Two Kingdoms of the Spiritual Realm", "sequence_number": 4, "competencies": [
+              { "sequence_number": 1, "description": "Relate the connection between Jesus casting out evil spirits and the coming of the Kingdom of God", "category": "Specific Outcome" }
+            ]},
+            { "name": "Types of Spirits in Christian Teaching", "sequence_number": 5, "competencies": [
+              { "sequence_number": 1, "description": "Distinguish between the Holy Spirit and other kinds of spirits", "category": "Specific Outcome" }
+            ]},
+            { "name": "Christian Attitudes to and Treatment of Spirit Possession", "sequence_number": 6, "competencies": [
+              { "sequence_number": 1, "description": "State attitudes to and treatment of spirit possession in Christianity", "category": "Specific Outcome" }
+            ]},
+            { "name": "Forms of Demon Practices to Be Avoided", "sequence_number": 7, "competencies": [
+              { "sequence_number": 1, "description": "Illustrate with appropriate Bible passages the forms of demon practices to be avoided", "category": "Specific Outcome" }
+            ]},
+            { "name": "Attitudes to and Treatment of Spirit Possession in Christianity and Other Religions", "sequence_number": 8, "competencies": [
+              { "sequence_number": 1, "description": "Compare attitudes to and treatment of spirit possession in Christianity with Zambian tradition", "category": "Specific Outcome" }
+            ]}
+          ]
+        },
+        {
+          "name": "10.7 The Kingdom of God",
+          "sequence_number": 7,
+          "sub_topics": [
+            { "name": "God's Kingdom", "sequence_number": 1, "competencies": [
+              { "sequence_number": 1, "description": "Describe the Kingdom of God", "category": "Specific Outcome" }
+            ]},
+            { "name": "Signs of the Kingdom of God and Why Jesus Came", "sequence_number": 2, "competencies": [
+              { "sequence_number": 1, "description": "Illustrate from the Gospels the signs that the Kingdom of God had come", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Explain why Jesus came", "category": "Specific Outcome" }
+            ]},
+            { "name": "Entering the Kingdom of God", "sequence_number": 3, "competencies": [
+              { "sequence_number": 1, "description": "Illustrate from the Gospels the entry requirements into the Kingdom of God", "category": "Specific Outcome" }
+            ]},
+            { "name": "Effects of the Kingdom of God", "sequence_number": 4, "competencies": [
+              { "sequence_number": 1, "description": "Illustrate from the Gospels the effects of the Kingdom of God on a person's life", "category": "Specific Outcome" }
+            ]},
+            { "name": "For Whom Is the Kingdom", "sequence_number": 5, "competencies": [
+              { "sequence_number": 1, "description": "Illustrate from the Gospels the teaching that the Kingdom of God is for the humble, hungry, poor and persecuted", "category": "Specific Outcome" }
+            ]},
+            { "name": "God's Kingdom Now?", "sequence_number": 6, "competencies": [
+              { "sequence_number": 1, "description": "Illustrate from the Gospels the teaching that the Kingdom of God is present in the world and is growing", "category": "Specific Outcome" }
+            ]},
+            { "name": "God's Kingdom and Christians Today", "sequence_number": 7, "competencies": [
+              { "sequence_number": 1, "description": "Show how Christians in Zambia today can show that God's Kingdom is the most important thing in their lives", "category": "Specific Outcome" }
+            ]},
+            { "name": "God's Kingdom and Modern States", "sequence_number": 8, "competencies": [
+              { "sequence_number": 1, "description": "Contrast the characteristics of God's Kingdom with the characteristics of a modern state", "category": "Specific Outcome" }
+            ]},
+            { "name": "Beliefs About God's Kingdom", "sequence_number": 9, "competencies": [
+              { "sequence_number": 1, "description": "Compare the central beliefs about the Kingdom of God in Christianity with those of other religions", "category": "Specific Outcome" }
+            ]}
+          ]
+        }
+      ]
+    }
+  ]
+}
