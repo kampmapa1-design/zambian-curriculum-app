@@ -1,0 +1,255 @@
+{
+  "_source": "Ministry of Education / Curriculum Development Centre, Zambia. 'Religious Education 2046 Syllabus, Grade 10-12' (2013, published by CDC) — Grade 12, Units 1-10 (Topics 12.1-12.10), Part Two: Themes on Christian Witness and Behaviour. Cross-referenced against a parallel provincial Religious Education teaching-notes booklet covering the same unit structure, prepared for provincial use with no usage restriction; per standing instruction, no individual name is cited from either source, credit given only to CDC / Ministry of Education. Topic, sub-topic and Specific Outcome statements only; the 'Content' column (Bible passage references, knowledge points, skills, values) is omitted for the reasons documented in the Grade 10 file. As with Grade 10 and 11, this document's printed outcome numbering codes are unreliable throughout, so every sub-topic and outcome below was reconstructed by position — matching each outcome to the sub-topic heading it appears directly under in the source table, in the table's own reading order. A small number of outcomes in Units 2, 9 and 10 have no distinct sub-topic heading printed in the source table (the outcome follows directly after the previous sub-topic's outcomes with no new heading); these are marked 'implicit subtopic' and were grouped by their evident theme rather than invented. The syllabus organizes content by Grade only, not by Term in this file (a suggested termly Scheme of Work exists in the syllabus introduction assigning Units to terms), so all of Grade 12 is modeled as a single term here.",
+  "curriculum": {
+    "code": "OBC_2013",
+    "name": "2013 Outcome-Based Curriculum",
+    "description": "Zambia's 2013 outcome-based curriculum for Grades 10-12 (Senior Secondary)."
+  },
+  "subject": {
+    "name": "Religious Education",
+    "code": "RE",
+    "description": "Senior Secondary Religious Education (2046) syllabus, Grade 10-12 (Curriculum Development Centre, 2013)."
+  },
+  "grade": {
+    "name": "Grade 12",
+    "code": "G12_OBC",
+    "level": 12,
+    "phase": "Senior Secondary"
+  },
+  "terms": [
+    {
+      "name": "Year (not term-divided in this file; see _source)",
+      "sequence_number": 1,
+      "topics": [
+        {
+          "name": "12.1 The Early Church",
+          "sequence_number": 1,
+          "sub_topics": [
+            { "name": "Relationships Between Different People", "sequence_number": 1, "competencies": [
+              { "sequence_number": 1, "description": "Identify difficulties in relationships between people of different languages, cultures and races", "category": "Specific Outcome" }
+            ]},
+            { "name": "Overcoming Language Barriers", "sequence_number": 2, "competencies": [
+              { "sequence_number": 1, "description": "Describe how language barriers were overcome among the first Christians in Jerusalem", "category": "Specific Outcome" }
+            ]},
+            { "name": "Racial and Cultural Barriers Overcome", "sequence_number": 3, "competencies": [
+              { "sequence_number": 1, "description": "Describe how racial and cultural barriers were overcome", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Explain how Philip helped the church to include Samaritans and Gentiles", "category": "Specific Outcome" }
+            ]},
+            { "name": "Paul's Witness to Various Cultures", "sequence_number": 4, "competencies": [
+              { "sequence_number": 1, "description": "Explain how Paul witnessed to various cultures", "category": "Specific Outcome" }
+            ]}
+          ]
+        },
+        {
+          "name": "12.2 Christian Witness",
+          "sequence_number": 2,
+          "sub_topics": [
+            { "name": "Witnessing in the Face of Opposition", "sequence_number": 1, "competencies": [
+              { "sequence_number": 1, "description": "Identify reasons for the persecution of the Apostles", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Show how the apostles reacted to these persecutions", "category": "Specific Outcome" }
+            ]},
+            { "name": "Various Persecution Faced by the Apostles", "sequence_number": 2, "competencies": [
+              { "sequence_number": 1, "description": "State reasons for the persecution of Christians by Herod Antipas", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Give reasons why the apostles were persecuted by the magicians and how they reacted", "category": "Specific Outcome" }
+            ]},
+            { "name": "Christians' Reaction to Persecution Today (implicit subtopic)", "sequence_number": 3, "competencies": [
+              { "sequence_number": 1, "description": "Show how Christians today react to persecution", "category": "Specific Outcome" }
+            ]},
+            { "name": "Reactions to Persecution in Christianity and Other Religions", "sequence_number": 4, "competencies": [
+              { "sequence_number": 1, "description": "Compare Christian reactions to persecution with those of other religions", "category": "Specific Outcome" }
+            ]}
+          ]
+        },
+        {
+          "name": "12.3 Life in the Early Church",
+          "sequence_number": 3,
+          "sub_topics": [
+            { "name": "Causes of Conflict Among People", "sequence_number": 1, "competencies": [
+              { "sequence_number": 1, "description": "Identify causes of conflicts in the early Church", "category": "Specific Outcome" }
+            ]},
+            { "name": "Characteristics of Community Life in the Early Church", "sequence_number": 2, "competencies": [
+              { "sequence_number": 1, "description": "State the characteristics of life among the early Christians", "category": "Specific Outcome" }
+            ]},
+            { "name": "Problems in the Early Church", "sequence_number": 3, "competencies": [
+              { "sequence_number": 1, "description": "Describe disagreements which arose in the early church", "category": "Specific Outcome" }
+            ]},
+            { "name": "Resolving Disagreements Among Christians in Zambia Today", "sequence_number": 4, "competencies": [
+              { "sequence_number": 1, "description": "State how Christians should resolve disagreements in Zambia today", "category": "Specific Outcome" }
+            ]},
+            { "name": "Solving Problems in Traditional Zambia", "sequence_number": 5, "competencies": [
+              { "sequence_number": 1, "description": "Explain how problems are solved in traditional Zambia", "category": "Specific Outcome" }
+            ]},
+            { "name": "How Different Religions Solve Community Problems", "sequence_number": 6, "competencies": [
+              { "sequence_number": 1, "description": "Compare how community problems are solved in different religions", "category": "Specific Outcome" }
+            ]}
+          ]
+        },
+        {
+          "name": "12.4 Christian Attitudes to Work",
+          "sequence_number": 4,
+          "sub_topics": [
+            { "name": "Goals, Dreams and Values", "sequence_number": 1, "competencies": [
+              { "sequence_number": 1, "description": "Identify goals, dreams and values in life", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Explain how sexual behaviour can affect one's goals, dreams and values", "category": "Specific Outcome" }
+            ]},
+            { "name": "Reasons Why People Work", "sequence_number": 2, "competencies": [
+              { "sequence_number": 1, "description": "State different reasons why people in Zambia work", "category": "Specific Outcome" }
+            ]},
+            { "name": "People Have Different Gifts to Help Them Work", "sequence_number": 3, "competencies": [
+              { "sequence_number": 1, "description": "Identify from the Bible passage how work can be used to develop a natural God-given ability", "category": "Specific Outcome" }
+            ]},
+            { "name": "Bible Reasons for Work", "sequence_number": 4, "competencies": [
+              { "sequence_number": 1, "description": "Explain Bible reasons for people to work", "category": "Specific Outcome" }
+            ]},
+            { "name": "All Workers Should Be Respected", "sequence_number": 5, "competencies": [
+              { "sequence_number": 1, "description": "Explain from appropriate Bible passages the teaching that all workers should be respected", "category": "Specific Outcome" }
+            ]},
+            { "name": "Conflicts Over Work Values", "sequence_number": 6, "competencies": [
+              { "sequence_number": 1, "description": "Illustrate with appropriate Bible passages that exploitation of workers is wrong", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "State the essential principles of Christian behaviour in conflicts over work values", "category": "Specific Outcome" }
+            ]},
+            { "name": "Attitudes Towards Work in Zambia Today", "sequence_number": 7, "competencies": [
+              { "sequence_number": 1, "description": "Identify different attitudes towards work in Zambia", "category": "Specific Outcome" }
+            ]},
+            { "name": "Attitudes Towards Work in Christianity and Other Religions", "sequence_number": 8, "competencies": [
+              { "sequence_number": 1, "description": "Compare Christian attitudes to work with those of other religions", "category": "Specific Outcome" }
+            ]}
+          ]
+        },
+        {
+          "name": "12.5 Christian Attitudes to Leisure",
+          "sequence_number": 5,
+          "sub_topics": [
+            { "name": "Leisure in Zambia Today", "sequence_number": 1, "competencies": [
+              { "sequence_number": 1, "description": "Describe leisure time in Zambia", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Describe ways of spending leisure time", "category": "Specific Outcome" }
+            ]},
+            { "name": "Leisure in the Bible", "sequence_number": 2, "competencies": [
+              { "sequence_number": 1, "description": "State Bible reasons for leisure", "category": "Specific Outcome" }
+            ]},
+            { "name": "Christian Behaviour in Leisure Time Activities", "sequence_number": 3, "competencies": [
+              { "sequence_number": 1, "description": "State the New Testament standards for Christians in leisure", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Suggest how Christians should behave in leisure time situations which conflict with their belief", "category": "Specific Outcome" }
+            ]},
+            { "name": "Leisure in Christianity and Other Religions", "sequence_number": 4, "competencies": [
+              { "sequence_number": 1, "description": "Compare ideas and attitudes to leisure in Christianity with those of other religions", "category": "Specific Outcome" }
+            ]}
+          ]
+        },
+        {
+          "name": "12.6 Christian Attitudes to Money and Possessions",
+          "sequence_number": 6,
+          "sub_topics": [
+            { "name": "Attitudes to Money and Possessions in Zambia", "sequence_number": 1, "competencies": [
+              { "sequence_number": 1, "description": "Identify different attitudes to money and possessions in Zambia", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Identify different ways in which people acquire money and possessions", "category": "Specific Outcome" }
+            ]},
+            { "name": "Bible Teachings on Money and Possessions", "sequence_number": 2, "competencies": [
+              { "sequence_number": 1, "description": "Identify Bible attitudes to wealth and possessions", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Illustrate biblical teaching about God's judgment for wrong use of wealth", "category": "Specific Outcome" }
+            ]},
+            { "name": "Christian Behaviour in Situations Concerning Money", "sequence_number": 3, "competencies": [
+              { "sequence_number": 1, "description": "Suggest ways Christians should behave in conflicting situations concerning money and possessions", "category": "Specific Outcome" }
+            ]},
+            { "name": "The Rich Find It Difficult to Enter God's Kingdom", "sequence_number": 4, "competencies": [
+              { "sequence_number": 1, "description": "Explain why it is difficult for a rich man to enter the Kingdom of God", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Discuss the effects of wealth on a person's life", "category": "Specific Outcome" }
+            ]},
+            { "name": "Attitudes and Use of Wealth in Christianity Compared with Other Religions", "sequence_number": 5, "competencies": [
+              { "sequence_number": 1, "description": "Compare Biblical attitudes to wealth and its use with those of other religions", "category": "Specific Outcome" }
+            ]}
+          ]
+        },
+        {
+          "name": "12.7 Christian Attitudes to Leadership",
+          "sequence_number": 7,
+          "sub_topics": [
+            { "name": "Bible Teachings on Leadership", "sequence_number": 1, "competencies": [
+              { "sequence_number": 1, "description": "Give an account of Israel's rejection of God in their early history", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Describe leadership in the Bible", "category": "Specific Outcome" }
+            ]},
+            { "name": "Christian Attitudes to Rulers", "sequence_number": 2, "competencies": [
+              { "sequence_number": 1, "description": "Identify different attitudes towards rulers", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Compare Christian attitudes to rulers with those of other religions", "category": "Specific Outcome" }
+            ]}
+          ]
+        },
+        {
+          "name": "12.8 Christian Attitude to Sex and Marriage",
+          "sequence_number": 8,
+          "sub_topics": [
+            { "name": "Attitudes to Marriage in Zambia", "sequence_number": 1, "competencies": [
+              { "sequence_number": 1, "description": "Discuss ideas and purposes for marriage", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Describe different family structures", "category": "Specific Outcome" },
+              { "sequence_number": 3, "description": "Discuss the effects of small and large families", "category": "Specific Outcome" }
+            ]},
+            { "name": "Biblical Purposes for Marriage", "sequence_number": 2, "competencies": [
+              { "sequence_number": 1, "description": "Explain the purpose of marriage", "category": "Specific Outcome" }
+            ]},
+            { "name": "Purposes for Marriage in Christianity and Other Religions", "sequence_number": 3, "competencies": [
+              { "sequence_number": 1, "description": "Compare ideas and purposes for marriage in Christianity with those of other religions", "category": "Specific Outcome" }
+            ]},
+            { "name": "Choosing Marriage Partners in Christianity and Other Religions", "sequence_number": 4, "competencies": [
+              { "sequence_number": 1, "description": "Illustrate with appropriate Bible passages principles that should guide a Christian in choosing a marriage partner", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Compare Christian standards of choosing marriage partners with those found in other religions", "category": "Specific Outcome" }
+            ]},
+            { "name": "Why Some Christians Do Not Marry", "sequence_number": 5, "competencies": [
+              { "sequence_number": 1, "description": "Explain why some Christians do not marry", "category": "Specific Outcome" }
+            ]},
+            { "name": "Various Attitudes to Unmarried Adults in Christianity and Other Religions", "sequence_number": 6, "competencies": [
+              { "sequence_number": 1, "description": "Compare various attitudes to the unmarried adult in Christianity and other religions", "category": "Specific Outcome" }
+            ]}
+          ]
+        },
+        {
+          "name": "12.9 Husband and Wife Relationship",
+          "sequence_number": 9,
+          "sub_topics": [
+            { "name": "Responsibilities of Husband and Wife in Christian Marriages", "sequence_number": 1, "competencies": [
+              { "sequence_number": 1, "description": "Describe the qualities and responsibilities the Bible demands of a good husband", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Describe qualities and responsibilities the Bible demands of a good wife", "category": "Specific Outcome" }
+            ]},
+            { "name": "Husband and Wife Relationships in Christianity and Other Religions", "sequence_number": 2, "competencies": [
+              { "sequence_number": 1, "description": "Compare different attitudes to husband/wife relationships found in Christianity with those of other religions", "category": "Specific Outcome" }
+            ]},
+            { "name": "Bible Teaching on Sex and Sexual Behaviour (implicit subtopic)", "sequence_number": 3, "competencies": [
+              { "sequence_number": 1, "description": "Relate sexual behaviour to spiritual and psychological influences", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "State Bible teaching about sex", "category": "Specific Outcome" }
+            ]},
+            { "name": "Christian Standards for Sexual Behaviour Compared with Modern Zambia (implicit subtopic)", "sequence_number": 4, "competencies": [
+              { "sequence_number": 1, "description": "Compare Christian standards for sexual behaviour with those of modern Zambia", "category": "Specific Outcome" }
+            ]}
+          ]
+        },
+        {
+          "name": "12.10 Relationships Between Parents and Children",
+          "sequence_number": 10,
+          "sub_topics": [
+            { "name": "Attitudes to Family Life in Zambia", "sequence_number": 1, "competencies": [
+              { "sequence_number": 1, "description": "State different attitudes to family life in modern Zambia", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "State different attitudes to family life in traditional Zambia", "category": "Specific Outcome" }
+            ]},
+            { "name": "The Christian Home", "sequence_number": 2, "competencies": [
+              { "sequence_number": 1, "description": "Identify the characteristics of a Christian home", "category": "Specific Outcome" }
+            ]},
+            { "name": "Duties of Parents to Their Children", "sequence_number": 3, "competencies": [
+              { "sequence_number": 1, "description": "Explain duties of parents to their children", "category": "Specific Outcome" }
+            ]},
+            { "name": "Duties of Children to Their Parents", "sequence_number": 4, "competencies": [
+              { "sequence_number": 1, "description": "Explain the duties of children to their parents", "category": "Specific Outcome" }
+            ]},
+            { "name": "Loyalty to God Comes First in the Family", "sequence_number": 5, "competencies": [
+              { "sequence_number": 1, "description": "Describe how Jesus demonstrated that loyalty to God comes first", "category": "Specific Outcome" }
+            ]},
+            { "name": "Attitudes to Child-Parent Relationships in Christianity and Other Religions (implicit subtopic)", "sequence_number": 6, "competencies": [
+              { "sequence_number": 1, "description": "Compare attitudes to child-parent relationships in Christianity and those of other religions", "category": "Specific Outcome" }
+            ]},
+            { "name": "Effects of Separation, Death and Divorce in Families (implicit subtopic)", "sequence_number": 7, "competencies": [
+              { "sequence_number": 1, "description": "Describe the effects of separation, death and divorce in families", "category": "Specific Outcome" }
+            ]}
+          ]
+        }
+      ]
+    }
+  ]
+}
