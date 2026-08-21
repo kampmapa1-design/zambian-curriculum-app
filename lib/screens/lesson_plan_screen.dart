@@ -35,6 +35,7 @@ class LessonPlanScreen extends StatefulWidget {
     this.checkpointRepository,
     this.guidedActivitiesText,
     this.guidedNoteText,
+    this.initialFocusStageIndex,
   });
 
   final String subjectName;
@@ -60,6 +61,13 @@ class LessonPlanScreen extends StatefulWidget {
   /// Teacher's Role.
   final String? guidedNoteText;
 
+  /// Scrolls to and highlights this progression stage on open — set by the
+  /// "Generate Lesson Plan" entry flow when the teacher picked which of the
+  /// three simplified stages (Introduction/Development/Conclusion) to start
+  /// a fresh lesson from. Ignored when resuming a checkpoint (that flow
+  /// already shows which real stage was reached).
+  final int? initialFocusStageIndex;
+
   @override
   State<LessonPlanScreen> createState() => _LessonPlanScreenState();
 }
@@ -77,6 +85,7 @@ class _LessonPlanScreenState extends State<LessonPlanScreen> {
   final Map<String, TextEditingController> _controllers = {};
   bool _exporting = false;
   int? _reachedStageIndex;
+  final Map<int, GlobalKey> _progressionCardKeys = {};
 
   @override
   void initState() {
@@ -85,7 +94,20 @@ class _LessonPlanScreenState extends State<LessonPlanScreen> {
     _availableTemplates = [widget.template];
     _rebuildForActiveTemplate();
     _loadCustomTemplates();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _checkForCheckpoint());
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await _checkForCheckpoint();
+      if (mounted) _scrollToInitialFocusStage();
+    });
+  }
+
+  void _scrollToInitialFocusStage() {
+    final index = widget.initialFocusStageIndex;
+    if (index == null) return;
+    final key = _progressionCardKeys[index];
+    final cardContext = key?.currentContext;
+    if (cardContext != null) {
+      Scrollable.ensureVisible(cardContext, duration: const Duration(milliseconds: 300), alignment: 0.1);
+    }
   }
 
   Future<void> _loadCustomTemplates() async {
@@ -406,8 +428,17 @@ class _LessonPlanScreenState extends State<LessonPlanScreen> {
 
   Widget _buildProgressionCard(int index) {
     final stage = _draft.progression[index].stage;
+    final isInitialFocus = widget.initialFocusStageIndex == index;
+    final key = _progressionCardKeys.putIfAbsent(index, () => GlobalKey());
     return Card(
+      key: key,
       margin: const EdgeInsets.only(bottom: 10),
+      shape: isInitialFocus
+          ? RoundedRectangleBorder(
+              side: BorderSide(color: Theme.of(context).colorScheme.primary, width: 2),
+              borderRadius: BorderRadius.circular(12),
+            )
+          : null,
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(
@@ -416,7 +447,15 @@ class _LessonPlanScreenState extends State<LessonPlanScreen> {
             Row(
               children: [
                 Expanded(
-                  child: Text(stage, style: Theme.of(context).textTheme.titleSmall),
+                  child: Row(
+                    children: [
+                      Flexible(child: Text(stage, style: Theme.of(context).textTheme.titleSmall)),
+                      if (isInitialFocus) ...[
+                        const SizedBox(width: 6),
+                        Icon(Icons.flag, size: 16, color: Theme.of(context).colorScheme.primary),
+                      ],
+                    ],
+                  ),
                 ),
                 SizedBox(
                   width: 110,

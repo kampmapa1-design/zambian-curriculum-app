@@ -2,89 +2,677 @@
   "_source": "Fetched directly from the official CDC Digital Library (https://library.cdcrepository.info/) by browsing its listing pages — browse.php?level=secondary (pages 1-4), browse.php?level=primary (page 1), browse.php?level=syllabi (page 1), and browse.php?level=ece. Every title/subject/level/term/URL below is real and was read straight off those pages, not generated. This is a breadth-first starting catalog, not exhaustive — the site listed 69 syllabi and 103 primary resources alone, far more than sampled here.",
   "fetchedAt": "2026-08-20T00:00:00.000Z",
   "resources": [
-    { "title": "Travel and Tourism Teaching Module Form 1 - Term 2", "subjectName": "Travel and Tourism", "level": "Form 1", "term": "Term 2", "url": "https://library.cdcrepository.info/resource.php?id=316" },
-    { "title": "Food and Nutrition Teaching Module Form 1 - Term 2", "subjectName": "Food and Nutrition", "level": "Form 1", "term": "Term 2", "url": "https://library.cdcrepository.info/resource.php?id=315" },
-    { "title": "French Language Teaching Module Form 1 - Term 2", "subjectName": "French", "level": "Form 1", "term": "Term 2", "url": "https://library.cdcrepository.info/resource.php?id=314" },
-    { "title": "Principles of Accounts Teaching Module Form 1 - Term 2", "subjectName": "Principles of Accounts", "level": "Form 1", "term": "Term 2", "url": "https://library.cdcrepository.info/resource.php?id=311" },
-    { "title": "Fashion and Fabrics Teaching Module Form 1 - Term 2", "subjectName": "Fashion and Fabrics", "level": "Form 1", "term": "Term 2", "url": "https://library.cdcrepository.info/resource.php?id=310" },
-    { "title": "English Language Teaching Module Form 1 - Term 2", "subjectName": "English Language", "level": "Form 1", "term": "Term 2", "url": "https://library.cdcrepository.info/resource.php?id=309" },
-    { "title": "Litilica M'cinyanja Buku Lothandizila Mphunzitsi Fomu 1 - Temu 2", "subjectName": "Literature in Zambian Languages", "level": "Form 1", "term": "Term 2", "url": "https://library.cdcrepository.info/resource.php?id=308" },
-    { "title": "Physical Education and Sport Teaching Module Form 1 - Term 2", "subjectName": "Physical Education", "level": "Form 1", "term": "Term 2", "url": "https://library.cdcrepository.info/resource.php?id=307" },
-    { "title": "Literature in English Teaching Module Form 1 - Term 2", "subjectName": "Literature in English", "level": "Form 1", "term": "Term 2", "url": "https://library.cdcrepository.info/resource.php?id=305" },
-    { "title": "Design and Technology Teaching Module Form 1 - Term 2", "subjectName": "Design and Technology", "level": "Form 1", "term": "Term 2", "url": "https://library.cdcrepository.info/resource.php?id=304" },
-    { "title": "Hospitality Management Teaching Module Form1 - Term 2", "subjectName": "Hospitality Management", "level": "Form 1", "term": "Term 2", "url": "https://library.cdcrepository.info/resource.php?id=302" },
-    { "title": "Kikaonde Buuku Wakutangijila Mufunjishi Teaching Module Fomu 1 - Temu 2", "subjectName": "Zambian Languages", "level": "Form 1", "term": "Term 2", "url": "https://library.cdcrepository.info/resource.php?id=301" },
-    { "title": "Commerce Teaching Module Form 1 - Term 2", "subjectName": "Commerce", "level": "Form 1", "term": "Term 2", "url": "https://library.cdcrepository.info/resource.php?id=300" },
-    { "title": "Mathematics I Teaching Module Form 1 - Term 2", "subjectName": "Mathematics", "level": "Form 1", "term": "Term 2", "url": "https://library.cdcrepository.info/resource.php?id=299" },
-    { "title": "History Teaching Module Form 1 - Term 2", "subjectName": "History", "level": "Form 1", "term": "Term 2", "url": "https://library.cdcrepository.info/resource.php?id=298" },
-    { "title": "Civic Education Teaching Module Form 1 - Term 2", "subjectName": "Civic Education", "level": "Form 1", "term": "Term 2", "url": "https://library.cdcrepository.info/resource.php?id=297" },
-    { "title": "Information and Communication Technology Teaching Module Form 1 - Term 2", "subjectName": "ICT", "level": "Form 1", "term": "Term 2", "url": "https://library.cdcrepository.info/resource.php?id=296" },
-    { "title": "Cinyanja Buku Lothandizila Mphunzitsi Fomu 1 - Temu 2", "subjectName": "Zambian Languages", "level": "Form 1", "term": "Term 2", "url": "https://library.cdcrepository.info/resource.php?id=295" },
-    { "title": "Computer Science Teaching Module Form 1 - Term 2", "subjectName": "Computer Science", "level": "Form 1", "term": "Term 2", "url": "https://library.cdcrepository.info/resource.php?id=294" },
-    { "title": "Litilica mu Cibemba Icitabo Icakubomfya Kafundisha Fomu 1 - Temu 2", "subjectName": "Literature in Zambian Languages", "level": "Form 1", "term": "Term 2", "url": "https://library.cdcrepository.info/resource.php?id=293" },
-    { "title": "Geography Teaching Module Form 1 - Term 2", "subjectName": "Geography", "level": "Form 1", "term": "Term 2", "url": "https://library.cdcrepository.info/resource.php?id=292" },
-    { "title": "Agricultural Science Teaching Module Form 1 - Term 2", "subjectName": "Agricultural Science", "level": "Form 1", "term": "Term 2", "url": "https://library.cdcrepository.info/resource.php?id=291" },
-    { "title": "Icibemba Icitabo Icakubomfya Kafundisha Teaching Module Form 1 - Term 2", "subjectName": "Zambian Languages", "level": "Form 1", "term": "Term 2", "url": "https://library.cdcrepository.info/resource.php?id=290" },
-    { "title": "Biology Teaching Module Form 1 - Term 2", "subjectName": "Biology", "level": "Form 1", "term": "Term 2", "url": "https://library.cdcrepository.info/resource.php?id=289" },
-    { "title": "Zambian Sign Language 2333 Teaching Module", "subjectName": "Zambian Languages", "level": "Form 1", "term": "Term 3", "url": "https://library.cdcrepository.info/resource.php?id=279" },
-    { "title": "Travel and Tourism Teaching Module Form 1", "subjectName": "Travel and Tourism", "level": "Form 1", "term": "Term 3", "url": "https://library.cdcrepository.info/resource.php?id=278" },
-    { "title": "Religious Education Teaching Module", "subjectName": "Religious Education", "level": "Form 1", "term": "Term 3", "url": "https://library.cdcrepository.info/resource.php?id=277" },
-    { "title": "Principles of Accounts Teaching Module", "subjectName": "Principles of Accounts", "level": "Form 1", "term": "Term 3", "url": "https://library.cdcrepository.info/resource.php?id=276" },
-    { "title": "Physics form 1 Teaching Module", "subjectName": "Physics", "level": "Form 1", "term": "Term 3", "url": "https://library.cdcrepository.info/resource.php?id=275" },
-    { "title": "Musical Art Education teaching module", "subjectName": "Music", "level": "Form 1", "term": "Term 3", "url": "https://library.cdcrepository.info/resource.php?id=274" },
-    { "title": "Icibemba Teaching Module", "subjectName": "Zambian Languages", "level": "Form 1", "term": "Term 3", "url": "https://library.cdcrepository.info/resource.php?id=271" },
-    { "title": "History Teaching Module", "subjectName": "History", "level": "Form 1", "term": "Term 3", "url": "https://library.cdcrepository.info/resource.php?id=269" },
-    { "title": "Geography Teaching Module", "subjectName": "Geography", "level": "Form 1", "term": "Term 3", "url": "https://library.cdcrepository.info/resource.php?id=268" },
-    { "title": "French TModule", "subjectName": "French", "level": "Form 1", "term": "Term 3", "url": "https://library.cdcrepository.info/resource.php?id=267" },
-    { "title": "Literature In English teaching module", "subjectName": "Literature in English", "level": "Form 1", "term": "Term 3", "url": "https://library.cdcrepository.info/resource.php?id=266" },
-    { "title": "Food and Nutrition Teaching module", "subjectName": "Food and Nutrition", "level": "Form 1", "term": "Term 3", "url": "https://library.cdcrepository.info/resource.php?id=265" },
-    { "title": "English Teaching Module", "subjectName": "English Language", "level": "Form 1", "term": "Term 3", "url": "https://library.cdcrepository.info/resource.php?id=264" },
-    { "title": "Commerce teaching Module", "subjectName": "Commerce", "level": "Form 1", "term": "Term 3", "url": "https://library.cdcrepository.info/resource.php?id=262" },
-    { "title": "Civic Education Module", "subjectName": "Civic Education", "level": "Form 1", "term": "Term 3", "url": "https://library.cdcrepository.info/resource.php?id=261" },
-    { "title": "Art and Design Module", "subjectName": "Art and Design", "level": "Form 1", "term": "Term 3", "url": "https://library.cdcrepository.info/resource.php?id=260" },
-    { "title": "Official Computer Science Module", "subjectName": "Computer Science", "level": "Form 1", "term": "Term 1", "url": "https://library.cdcrepository.info/resource.php?id=259" },
-    { "title": "Information and Communication Technology Form 1 Module", "subjectName": "ICT", "level": "Form 1", "term": "Term 1", "url": "https://library.cdcrepository.info/resource.php?id=258" },
-    { "title": "Adapted Braille Form 2 Term 2", "subjectName": "Braille", "level": "Form 2", "term": "Term 2", "url": "https://library.cdcrepository.info/resource.php?id=175" },
-    { "title": "Adapted Physics Form 2 Term 2", "subjectName": "Physics", "level": "Form 2", "term": "Term 2", "url": "https://library.cdcrepository.info/resource.php?id=174" },
-    { "title": "Adapted Mathematics Form 2 Term 2", "subjectName": "Mathematics", "level": "Form 2", "term": "Term 2", "url": "https://library.cdcrepository.info/resource.php?id=173" },
-    { "title": "Adapted Chemistry Form 2 Term 2", "subjectName": "Chemistry", "level": "Form 2", "term": "Term 2", "url": "https://library.cdcrepository.info/resource.php?id=172" },
-    { "title": "Adapted Agriculture Science Form 2 Term 2", "subjectName": "Agricultural Science", "level": "Form 2", "term": "Term 2", "url": "https://library.cdcrepository.info/resource.php?id=171" },
-    { "title": "Adapted Braille Form 2 Term 3", "subjectName": "Braille", "level": "Form 2", "term": "Term 3", "url": "https://library.cdcrepository.info/resource.php?id=170" },
-    { "title": "Lunda - Grade 1 Term 2 - Teaching Module", "subjectName": "Zambian Language", "level": "Grade 1", "term": "Term 2", "url": "https://library.cdcrepository.info/resource.php?id=381" },
-    { "title": "Silozi - Grade 1 Term 2 - Teaching Module", "subjectName": "Zambian Language", "level": "Grade 1", "term": "Term 2", "url": "https://library.cdcrepository.info/resource.php?id=380" },
-    { "title": "Oral English - Grade 1 Term 2 - Teaching Module", "subjectName": "English Language", "level": "Grade 1", "term": "Term 2", "url": "https://library.cdcrepository.info/resource.php?id=379" },
-    { "title": "Mathematics and Science - Grade 1 Term 2 - Teaching Module", "subjectName": "Mathematics and Science", "level": "Grade 1", "term": "Term 2", "url": "https://library.cdcrepository.info/resource.php?id=378" },
-    { "title": "Luvale - Grade 1 Term 2 - Teaching Module", "subjectName": "Zambian Language", "level": "Grade 1", "term": "Term 2", "url": "https://library.cdcrepository.info/resource.php?id=377" },
-    { "title": "Literacy in English Language - Grade 1 Term 2 - Teaching Module", "subjectName": "Literacy and Language", "level": "Grade 1", "term": "Term 2", "url": "https://library.cdcrepository.info/resource.php?id=376" },
-    { "title": "Kikaonde - Grade 1 Term 2 - Teaching Module", "subjectName": "Zambian Language", "level": "Grade 1", "term": "Term 2", "url": "https://library.cdcrepository.info/resource.php?id=375" },
-    { "title": "Icibemba - Grade 1 Term 2 - Teaching Module", "subjectName": "Zambian Language", "level": "Grade 1", "term": "Term 2", "url": "https://library.cdcrepository.info/resource.php?id=374" },
-    { "title": "CTS - Grade 1 Term 2 - Teaching Module", "subjectName": "Creative and Technology Studies", "level": "Grade 1", "term": "Term 2", "url": "https://library.cdcrepository.info/resource.php?id=373" },
-    { "title": "Chitonga - Grade 1 Term 2 - Teaching Module", "subjectName": "Zambian Language", "level": "Grade 1", "term": "Term 2", "url": "https://library.cdcrepository.info/resource.php?id=372" },
-    { "title": "Chinyanja - Grade 1 Term 2 - Teaching Module", "subjectName": "Zambian Language", "level": "Grade 1", "term": "Term 2", "url": "https://library.cdcrepository.info/resource.php?id=371" },
-    { "title": "Luvale, Grade 1 Teaching Module for Grade 1 Term 3", "subjectName": "Zambian Language", "level": "Grade 1", "term": "Term 3", "url": "https://library.cdcrepository.info/resource.php?id=370" },
-    { "title": "Textile Design and Technology", "subjectName": "Textile Design and Technology", "level": "A-Level", "term": null, "url": "https://library.cdcrepository.info/resource.php?id=356" },
-    { "title": "Zambian Languages Advanced Level Syllabus", "subjectName": "Zambian Languages", "level": "A-Level", "term": null, "url": "https://library.cdcrepository.info/resource.php?id=355" },
-    { "title": "Religious Studies Advanced Level Syllabus", "subjectName": "Religious Education", "level": "A-Level", "term": null, "url": "https://library.cdcrepository.info/resource.php?id=354" },
-    { "title": "Physics Advanced Level Syllabus", "subjectName": "Physics", "level": "A-Level", "term": null, "url": "https://library.cdcrepository.info/resource.php?id=353" },
-    { "title": "Physical Education Advanced Level Syllabus", "subjectName": "Physical Education", "level": "A-Level", "term": null, "url": "https://library.cdcrepository.info/resource.php?id=352" },
-    { "title": "Literature in Zambian Languages Advanced Level Syllabus", "subjectName": "Literature in Zambian Languages", "level": "A-Level", "term": null, "url": "https://library.cdcrepository.info/resource.php?id=351" },
-    { "title": "Literature in English Advanced Level Syllabus", "subjectName": "Literature in English", "level": "A-Level", "term": null, "url": "https://library.cdcrepository.info/resource.php?id=349" },
-    { "title": "History Advanced Level Syllabus", "subjectName": "History", "level": "A-Level", "term": null, "url": "https://library.cdcrepository.info/resource.php?id=347" },
-    { "title": "Geography Advanced Level Syllabus", "subjectName": "Geography", "level": "A-Level", "term": null, "url": "https://library.cdcrepository.info/resource.php?id=345" },
-    { "title": "French Language and Literature", "subjectName": "French", "level": "A-Level", "term": null, "url": "https://library.cdcrepository.info/resource.php?id=344" },
-    { "title": "Food and Nutrition Advanced Level Syllabus", "subjectName": "Food and Nutrition", "level": "A-Level", "term": null, "url": "https://library.cdcrepository.info/resource.php?id=342" },
-    { "title": "English Language Advanced Level Syllabus", "subjectName": "English Language", "level": "A-Level", "term": null, "url": "https://library.cdcrepository.info/resource.php?id=340" },
-    { "title": "Silozi ECE Teaching Module Term 2", "subjectName": "Pre-Literacy and Language", "level": "ECE Level 1", "term": "Term 2", "url": "https://library.cdcrepository.info/resource.php?id=391" },
-    { "title": "Pre-Mathematics & Science Module", "subjectName": "Pre-Mathematics and Science", "level": "ECE Level 1", "term": "Term 2", "url": "https://library.cdcrepository.info/resource.php?id=390" },
-    { "title": "Pre-Literacy in English Language ECE Term 2 Teaching Module", "subjectName": "Pre-Literacy and Language", "level": "ECE Level 1", "term": "Term 2", "url": "https://library.cdcrepository.info/resource.php?id=389" },
-    { "title": "Luvale ECE Teaching Module Term 2", "subjectName": "Pre-Literacy and Language", "level": "ECE Level 1", "term": "Term 2", "url": "https://library.cdcrepository.info/resource.php?id=388" },
-    { "title": "Lunda ECE Module Term 2 Final", "subjectName": "Pre-Literacy and Language", "level": "ECE Level 1", "term": "Term 2", "url": "https://library.cdcrepository.info/resource.php?id=387" },
-    { "title": "Kikaonde ECE Module 3-4 Term 2", "subjectName": "Pre-Literacy and Language", "level": "ECE Level 1", "term": "Term 2", "url": "https://library.cdcrepository.info/resource.php?id=386" },
-    { "title": "Creative and Technology Studies Teaching Module Term 2", "subjectName": "Creative and Technology Studies", "level": "ECE Level 1", "term": "Term 2", "url": "https://library.cdcrepository.info/resource.php?id=385" },
-    { "title": "Cinyanja ECE Term 2 Final Module", "subjectName": "Pre-Literacy and Language", "level": "ECE Level 1", "term": "Term 2", "url": "https://library.cdcrepository.info/resource.php?id=384" },
-    { "title": "Chitonga ECE Teaching Module Term 2", "subjectName": "Pre-Literacy and Language", "level": "ECE Level 1", "term": "Term 2", "url": "https://library.cdcrepository.info/resource.php?id=383" },
-    { "title": "Icibemba ECE 3-4 Years Temu 2 Teaching Module", "subjectName": "Pre-Literacy and Language", "level": "ECE Level 1", "term": "Term 2", "url": "https://library.cdcrepository.info/resource.php?id=382" },
-    { "title": "Chitonga (Term 3)", "subjectName": "Pre-Literacy and Language", "level": "ECE Level 1", "term": "Term 3", "url": "https://library.cdcrepository.info/resource.php?id=350" },
-    { "title": "Silozi (Term 3)", "subjectName": "Pre-Literacy and Language", "level": "ECE Level 1", "term": "Term 3", "url": "https://library.cdcrepository.info/resource.php?id=348" }
+    {
+      "title": "Travel and Tourism Teaching Module Form 1 - Term 2",
+      "subjectName": "Travel and Tourism",
+      "level": "Form 1",
+      "term": "Term 2",
+      "url": "https://library.cdcrepository.info/resource.php?id=316",
+      "resourceType": "module"
+    },
+    {
+      "title": "Food and Nutrition Teaching Module Form 1 - Term 2",
+      "subjectName": "Food and Nutrition",
+      "level": "Form 1",
+      "term": "Term 2",
+      "url": "https://library.cdcrepository.info/resource.php?id=315",
+      "resourceType": "module"
+    },
+    {
+      "title": "French Language Teaching Module Form 1 - Term 2",
+      "subjectName": "French",
+      "level": "Form 1",
+      "term": "Term 2",
+      "url": "https://library.cdcrepository.info/resource.php?id=314",
+      "resourceType": "module"
+    },
+    {
+      "title": "Principles of Accounts Teaching Module Form 1 - Term 2",
+      "subjectName": "Principles of Accounts",
+      "level": "Form 1",
+      "term": "Term 2",
+      "url": "https://library.cdcrepository.info/resource.php?id=311",
+      "resourceType": "module"
+    },
+    {
+      "title": "Fashion and Fabrics Teaching Module Form 1 - Term 2",
+      "subjectName": "Fashion and Fabrics",
+      "level": "Form 1",
+      "term": "Term 2",
+      "url": "https://library.cdcrepository.info/resource.php?id=310",
+      "resourceType": "module"
+    },
+    {
+      "title": "English Language Teaching Module Form 1 - Term 2",
+      "subjectName": "English Language",
+      "level": "Form 1",
+      "term": "Term 2",
+      "url": "https://library.cdcrepository.info/resource.php?id=309",
+      "resourceType": "module"
+    },
+    {
+      "title": "Litilica M'cinyanja Buku Lothandizila Mphunzitsi Fomu 1 - Temu 2",
+      "subjectName": "Literature in Zambian Languages",
+      "level": "Form 1",
+      "term": "Term 2",
+      "url": "https://library.cdcrepository.info/resource.php?id=308",
+      "resourceType": "module"
+    },
+    {
+      "title": "Physical Education and Sport Teaching Module Form 1 - Term 2",
+      "subjectName": "Physical Education",
+      "level": "Form 1",
+      "term": "Term 2",
+      "url": "https://library.cdcrepository.info/resource.php?id=307",
+      "resourceType": "module"
+    },
+    {
+      "title": "Literature in English Teaching Module Form 1 - Term 2",
+      "subjectName": "Literature in English",
+      "level": "Form 1",
+      "term": "Term 2",
+      "url": "https://library.cdcrepository.info/resource.php?id=305",
+      "resourceType": "module"
+    },
+    {
+      "title": "Design and Technology Teaching Module Form 1 - Term 2",
+      "subjectName": "Design and Technology",
+      "level": "Form 1",
+      "term": "Term 2",
+      "url": "https://library.cdcrepository.info/resource.php?id=304",
+      "resourceType": "module"
+    },
+    {
+      "title": "Hospitality Management Teaching Module Form1 - Term 2",
+      "subjectName": "Hospitality Management",
+      "level": "Form 1",
+      "term": "Term 2",
+      "url": "https://library.cdcrepository.info/resource.php?id=302",
+      "resourceType": "module"
+    },
+    {
+      "title": "Kikaonde Buuku Wakutangijila Mufunjishi Teaching Module Fomu 1 - Temu 2",
+      "subjectName": "Zambian Languages",
+      "level": "Form 1",
+      "term": "Term 2",
+      "url": "https://library.cdcrepository.info/resource.php?id=301",
+      "resourceType": "module"
+    },
+    {
+      "title": "Commerce Teaching Module Form 1 - Term 2",
+      "subjectName": "Commerce",
+      "level": "Form 1",
+      "term": "Term 2",
+      "url": "https://library.cdcrepository.info/resource.php?id=300",
+      "resourceType": "module"
+    },
+    {
+      "title": "Mathematics I Teaching Module Form 1 - Term 2",
+      "subjectName": "Mathematics",
+      "level": "Form 1",
+      "term": "Term 2",
+      "url": "https://library.cdcrepository.info/resource.php?id=299",
+      "resourceType": "module"
+    },
+    {
+      "title": "History Teaching Module Form 1 - Term 2",
+      "subjectName": "History",
+      "level": "Form 1",
+      "term": "Term 2",
+      "url": "https://library.cdcrepository.info/resource.php?id=298",
+      "resourceType": "module"
+    },
+    {
+      "title": "Civic Education Teaching Module Form 1 - Term 2",
+      "subjectName": "Civic Education",
+      "level": "Form 1",
+      "term": "Term 2",
+      "url": "https://library.cdcrepository.info/resource.php?id=297",
+      "resourceType": "module"
+    },
+    {
+      "title": "Information and Communication Technology Teaching Module Form 1 - Term 2",
+      "subjectName": "ICT",
+      "level": "Form 1",
+      "term": "Term 2",
+      "url": "https://library.cdcrepository.info/resource.php?id=296",
+      "resourceType": "module"
+    },
+    {
+      "title": "Cinyanja Buku Lothandizila Mphunzitsi Fomu 1 - Temu 2",
+      "subjectName": "Zambian Languages",
+      "level": "Form 1",
+      "term": "Term 2",
+      "url": "https://library.cdcrepository.info/resource.php?id=295",
+      "resourceType": "module"
+    },
+    {
+      "title": "Computer Science Teaching Module Form 1 - Term 2",
+      "subjectName": "Computer Science",
+      "level": "Form 1",
+      "term": "Term 2",
+      "url": "https://library.cdcrepository.info/resource.php?id=294",
+      "resourceType": "module"
+    },
+    {
+      "title": "Litilica mu Cibemba Icitabo Icakubomfya Kafundisha Fomu 1 - Temu 2",
+      "subjectName": "Literature in Zambian Languages",
+      "level": "Form 1",
+      "term": "Term 2",
+      "url": "https://library.cdcrepository.info/resource.php?id=293",
+      "resourceType": "module"
+    },
+    {
+      "title": "Geography Teaching Module Form 1 - Term 2",
+      "subjectName": "Geography",
+      "level": "Form 1",
+      "term": "Term 2",
+      "url": "https://library.cdcrepository.info/resource.php?id=292",
+      "resourceType": "module"
+    },
+    {
+      "title": "Agricultural Science Teaching Module Form 1 - Term 2",
+      "subjectName": "Agricultural Science",
+      "level": "Form 1",
+      "term": "Term 2",
+      "url": "https://library.cdcrepository.info/resource.php?id=291",
+      "resourceType": "module"
+    },
+    {
+      "title": "Icibemba Icitabo Icakubomfya Kafundisha Teaching Module Form 1 - Term 2",
+      "subjectName": "Zambian Languages",
+      "level": "Form 1",
+      "term": "Term 2",
+      "url": "https://library.cdcrepository.info/resource.php?id=290",
+      "resourceType": "module"
+    },
+    {
+      "title": "Biology Teaching Module Form 1 - Term 2",
+      "subjectName": "Biology",
+      "level": "Form 1",
+      "term": "Term 2",
+      "url": "https://library.cdcrepository.info/resource.php?id=289",
+      "resourceType": "module"
+    },
+    {
+      "title": "Zambian Sign Language 2333 Teaching Module",
+      "subjectName": "Zambian Languages",
+      "level": "Form 1",
+      "term": "Term 3",
+      "url": "https://library.cdcrepository.info/resource.php?id=279",
+      "resourceType": "module"
+    },
+    {
+      "title": "Travel and Tourism Teaching Module Form 1",
+      "subjectName": "Travel and Tourism",
+      "level": "Form 1",
+      "term": "Term 3",
+      "url": "https://library.cdcrepository.info/resource.php?id=278",
+      "resourceType": "module"
+    },
+    {
+      "title": "Religious Education Teaching Module",
+      "subjectName": "Religious Education",
+      "level": "Form 1",
+      "term": "Term 3",
+      "url": "https://library.cdcrepository.info/resource.php?id=277",
+      "resourceType": "module"
+    },
+    {
+      "title": "Principles of Accounts Teaching Module",
+      "subjectName": "Principles of Accounts",
+      "level": "Form 1",
+      "term": "Term 3",
+      "url": "https://library.cdcrepository.info/resource.php?id=276",
+      "resourceType": "module"
+    },
+    {
+      "title": "Physics form 1 Teaching Module",
+      "subjectName": "Physics",
+      "level": "Form 1",
+      "term": "Term 3",
+      "url": "https://library.cdcrepository.info/resource.php?id=275",
+      "resourceType": "module"
+    },
+    {
+      "title": "Musical Art Education teaching module",
+      "subjectName": "Music",
+      "level": "Form 1",
+      "term": "Term 3",
+      "url": "https://library.cdcrepository.info/resource.php?id=274",
+      "resourceType": "module"
+    },
+    {
+      "title": "Icibemba Teaching Module",
+      "subjectName": "Zambian Languages",
+      "level": "Form 1",
+      "term": "Term 3",
+      "url": "https://library.cdcrepository.info/resource.php?id=271",
+      "resourceType": "module"
+    },
+    {
+      "title": "History Teaching Module",
+      "subjectName": "History",
+      "level": "Form 1",
+      "term": "Term 3",
+      "url": "https://library.cdcrepository.info/resource.php?id=269",
+      "resourceType": "module"
+    },
+    {
+      "title": "Geography Teaching Module",
+      "subjectName": "Geography",
+      "level": "Form 1",
+      "term": "Term 3",
+      "url": "https://library.cdcrepository.info/resource.php?id=268",
+      "resourceType": "module"
+    },
+    {
+      "title": "French TModule",
+      "subjectName": "French",
+      "level": "Form 1",
+      "term": "Term 3",
+      "url": "https://library.cdcrepository.info/resource.php?id=267",
+      "resourceType": "module"
+    },
+    {
+      "title": "Literature In English teaching module",
+      "subjectName": "Literature in English",
+      "level": "Form 1",
+      "term": "Term 3",
+      "url": "https://library.cdcrepository.info/resource.php?id=266",
+      "resourceType": "module"
+    },
+    {
+      "title": "Food and Nutrition Teaching module",
+      "subjectName": "Food and Nutrition",
+      "level": "Form 1",
+      "term": "Term 3",
+      "url": "https://library.cdcrepository.info/resource.php?id=265",
+      "resourceType": "module"
+    },
+    {
+      "title": "English Teaching Module",
+      "subjectName": "English Language",
+      "level": "Form 1",
+      "term": "Term 3",
+      "url": "https://library.cdcrepository.info/resource.php?id=264",
+      "resourceType": "module"
+    },
+    {
+      "title": "Commerce teaching Module",
+      "subjectName": "Commerce",
+      "level": "Form 1",
+      "term": "Term 3",
+      "url": "https://library.cdcrepository.info/resource.php?id=262",
+      "resourceType": "module"
+    },
+    {
+      "title": "Civic Education Module",
+      "subjectName": "Civic Education",
+      "level": "Form 1",
+      "term": "Term 3",
+      "url": "https://library.cdcrepository.info/resource.php?id=261",
+      "resourceType": "module"
+    },
+    {
+      "title": "Art and Design Module",
+      "subjectName": "Art and Design",
+      "level": "Form 1",
+      "term": "Term 3",
+      "url": "https://library.cdcrepository.info/resource.php?id=260",
+      "resourceType": "module"
+    },
+    {
+      "title": "Official Computer Science Module",
+      "subjectName": "Computer Science",
+      "level": "Form 1",
+      "term": "Term 1",
+      "url": "https://library.cdcrepository.info/resource.php?id=259",
+      "resourceType": "module"
+    },
+    {
+      "title": "Information and Communication Technology Form 1 Module",
+      "subjectName": "ICT",
+      "level": "Form 1",
+      "term": "Term 1",
+      "url": "https://library.cdcrepository.info/resource.php?id=258",
+      "resourceType": "module"
+    },
+    {
+      "title": "Adapted Braille Form 2 Term 2",
+      "subjectName": "Braille",
+      "level": "Form 2",
+      "term": "Term 2",
+      "url": "https://library.cdcrepository.info/resource.php?id=175",
+      "resourceType": "module"
+    },
+    {
+      "title": "Adapted Physics Form 2 Term 2",
+      "subjectName": "Physics",
+      "level": "Form 2",
+      "term": "Term 2",
+      "url": "https://library.cdcrepository.info/resource.php?id=174",
+      "resourceType": "module"
+    },
+    {
+      "title": "Adapted Mathematics Form 2 Term 2",
+      "subjectName": "Mathematics",
+      "level": "Form 2",
+      "term": "Term 2",
+      "url": "https://library.cdcrepository.info/resource.php?id=173",
+      "resourceType": "module"
+    },
+    {
+      "title": "Adapted Chemistry Form 2 Term 2",
+      "subjectName": "Chemistry",
+      "level": "Form 2",
+      "term": "Term 2",
+      "url": "https://library.cdcrepository.info/resource.php?id=172",
+      "resourceType": "module"
+    },
+    {
+      "title": "Adapted Agriculture Science Form 2 Term 2",
+      "subjectName": "Agricultural Science",
+      "level": "Form 2",
+      "term": "Term 2",
+      "url": "https://library.cdcrepository.info/resource.php?id=171",
+      "resourceType": "module"
+    },
+    {
+      "title": "Adapted Braille Form 2 Term 3",
+      "subjectName": "Braille",
+      "level": "Form 2",
+      "term": "Term 3",
+      "url": "https://library.cdcrepository.info/resource.php?id=170",
+      "resourceType": "module"
+    },
+    {
+      "title": "Lunda - Grade 1 Term 2 - Teaching Module",
+      "subjectName": "Zambian Language",
+      "level": "Grade 1",
+      "term": "Term 2",
+      "url": "https://library.cdcrepository.info/resource.php?id=381",
+      "resourceType": "module"
+    },
+    {
+      "title": "Silozi - Grade 1 Term 2 - Teaching Module",
+      "subjectName": "Zambian Language",
+      "level": "Grade 1",
+      "term": "Term 2",
+      "url": "https://library.cdcrepository.info/resource.php?id=380",
+      "resourceType": "module"
+    },
+    {
+      "title": "Oral English - Grade 1 Term 2 - Teaching Module",
+      "subjectName": "English Language",
+      "level": "Grade 1",
+      "term": "Term 2",
+      "url": "https://library.cdcrepository.info/resource.php?id=379",
+      "resourceType": "module"
+    },
+    {
+      "title": "Mathematics and Science - Grade 1 Term 2 - Teaching Module",
+      "subjectName": "Mathematics and Science",
+      "level": "Grade 1",
+      "term": "Term 2",
+      "url": "https://library.cdcrepository.info/resource.php?id=378",
+      "resourceType": "module"
+    },
+    {
+      "title": "Luvale - Grade 1 Term 2 - Teaching Module",
+      "subjectName": "Zambian Language",
+      "level": "Grade 1",
+      "term": "Term 2",
+      "url": "https://library.cdcrepository.info/resource.php?id=377",
+      "resourceType": "module"
+    },
+    {
+      "title": "Literacy in English Language - Grade 1 Term 2 - Teaching Module",
+      "subjectName": "Literacy and Language",
+      "level": "Grade 1",
+      "term": "Term 2",
+      "url": "https://library.cdcrepository.info/resource.php?id=376",
+      "resourceType": "module"
+    },
+    {
+      "title": "Kikaonde - Grade 1 Term 2 - Teaching Module",
+      "subjectName": "Zambian Language",
+      "level": "Grade 1",
+      "term": "Term 2",
+      "url": "https://library.cdcrepository.info/resource.php?id=375",
+      "resourceType": "module"
+    },
+    {
+      "title": "Icibemba - Grade 1 Term 2 - Teaching Module",
+      "subjectName": "Zambian Language",
+      "level": "Grade 1",
+      "term": "Term 2",
+      "url": "https://library.cdcrepository.info/resource.php?id=374",
+      "resourceType": "module"
+    },
+    {
+      "title": "CTS - Grade 1 Term 2 - Teaching Module",
+      "subjectName": "Creative and Technology Studies",
+      "level": "Grade 1",
+      "term": "Term 2",
+      "url": "https://library.cdcrepository.info/resource.php?id=373",
+      "resourceType": "module"
+    },
+    {
+      "title": "Chitonga - Grade 1 Term 2 - Teaching Module",
+      "subjectName": "Zambian Language",
+      "level": "Grade 1",
+      "term": "Term 2",
+      "url": "https://library.cdcrepository.info/resource.php?id=372",
+      "resourceType": "module"
+    },
+    {
+      "title": "Chinyanja - Grade 1 Term 2 - Teaching Module",
+      "subjectName": "Zambian Language",
+      "level": "Grade 1",
+      "term": "Term 2",
+      "url": "https://library.cdcrepository.info/resource.php?id=371",
+      "resourceType": "module"
+    },
+    {
+      "title": "Luvale, Grade 1 Teaching Module for Grade 1 Term 3",
+      "subjectName": "Zambian Language",
+      "level": "Grade 1",
+      "term": "Term 3",
+      "url": "https://library.cdcrepository.info/resource.php?id=370",
+      "resourceType": "module"
+    },
+    {
+      "title": "Textile Design and Technology",
+      "subjectName": "Textile Design and Technology",
+      "level": "A-Level",
+      "term": null,
+      "url": "https://library.cdcrepository.info/resource.php?id=356",
+      "resourceType": "syllabus"
+    },
+    {
+      "title": "Zambian Languages Advanced Level Syllabus",
+      "subjectName": "Zambian Languages",
+      "level": "A-Level",
+      "term": null,
+      "url": "https://library.cdcrepository.info/resource.php?id=355",
+      "resourceType": "syllabus"
+    },
+    {
+      "title": "Religious Studies Advanced Level Syllabus",
+      "subjectName": "Religious Education",
+      "level": "A-Level",
+      "term": null,
+      "url": "https://library.cdcrepository.info/resource.php?id=354",
+      "resourceType": "syllabus"
+    },
+    {
+      "title": "Physics Advanced Level Syllabus",
+      "subjectName": "Physics",
+      "level": "A-Level",
+      "term": null,
+      "url": "https://library.cdcrepository.info/resource.php?id=353",
+      "resourceType": "syllabus"
+    },
+    {
+      "title": "Physical Education Advanced Level Syllabus",
+      "subjectName": "Physical Education",
+      "level": "A-Level",
+      "term": null,
+      "url": "https://library.cdcrepository.info/resource.php?id=352",
+      "resourceType": "syllabus"
+    },
+    {
+      "title": "Literature in Zambian Languages Advanced Level Syllabus",
+      "subjectName": "Literature in Zambian Languages",
+      "level": "A-Level",
+      "term": null,
+      "url": "https://library.cdcrepository.info/resource.php?id=351",
+      "resourceType": "syllabus"
+    },
+    {
+      "title": "Literature in English Advanced Level Syllabus",
+      "subjectName": "Literature in English",
+      "level": "A-Level",
+      "term": null,
+      "url": "https://library.cdcrepository.info/resource.php?id=349",
+      "resourceType": "syllabus"
+    },
+    {
+      "title": "History Advanced Level Syllabus",
+      "subjectName": "History",
+      "level": "A-Level",
+      "term": null,
+      "url": "https://library.cdcrepository.info/resource.php?id=347",
+      "resourceType": "syllabus"
+    },
+    {
+      "title": "Geography Advanced Level Syllabus",
+      "subjectName": "Geography",
+      "level": "A-Level",
+      "term": null,
+      "url": "https://library.cdcrepository.info/resource.php?id=345",
+      "resourceType": "syllabus"
+    },
+    {
+      "title": "French Language and Literature",
+      "subjectName": "French",
+      "level": "A-Level",
+      "term": null,
+      "url": "https://library.cdcrepository.info/resource.php?id=344",
+      "resourceType": "syllabus"
+    },
+    {
+      "title": "Food and Nutrition Advanced Level Syllabus",
+      "subjectName": "Food and Nutrition",
+      "level": "A-Level",
+      "term": null,
+      "url": "https://library.cdcrepository.info/resource.php?id=342",
+      "resourceType": "syllabus"
+    },
+    {
+      "title": "English Language Advanced Level Syllabus",
+      "subjectName": "English Language",
+      "level": "A-Level",
+      "term": null,
+      "url": "https://library.cdcrepository.info/resource.php?id=340",
+      "resourceType": "syllabus"
+    },
+    {
+      "title": "Silozi ECE Teaching Module Term 2",
+      "subjectName": "Pre-Literacy and Language",
+      "level": "ECE Level 1",
+      "term": "Term 2",
+      "url": "https://library.cdcrepository.info/resource.php?id=391",
+      "resourceType": "module"
+    },
+    {
+      "title": "Pre-Mathematics & Science Module",
+      "subjectName": "Pre-Mathematics and Science",
+      "level": "ECE Level 1",
+      "term": "Term 2",
+      "url": "https://library.cdcrepository.info/resource.php?id=390",
+      "resourceType": "module"
+    },
+    {
+      "title": "Pre-Literacy in English Language ECE Term 2 Teaching Module",
+      "subjectName": "Pre-Literacy and Language",
+      "level": "ECE Level 1",
+      "term": "Term 2",
+      "url": "https://library.cdcrepository.info/resource.php?id=389",
+      "resourceType": "module"
+    },
+    {
+      "title": "Luvale ECE Teaching Module Term 2",
+      "subjectName": "Pre-Literacy and Language",
+      "level": "ECE Level 1",
+      "term": "Term 2",
+      "url": "https://library.cdcrepository.info/resource.php?id=388",
+      "resourceType": "module"
+    },
+    {
+      "title": "Lunda ECE Module Term 2 Final",
+      "subjectName": "Pre-Literacy and Language",
+      "level": "ECE Level 1",
+      "term": "Term 2",
+      "url": "https://library.cdcrepository.info/resource.php?id=387",
+      "resourceType": "module"
+    },
+    {
+      "title": "Kikaonde ECE Module 3-4 Term 2",
+      "subjectName": "Pre-Literacy and Language",
+      "level": "ECE Level 1",
+      "term": "Term 2",
+      "url": "https://library.cdcrepository.info/resource.php?id=386",
+      "resourceType": "module"
+    },
+    {
+      "title": "Creative and Technology Studies Teaching Module Term 2",
+      "subjectName": "Creative and Technology Studies",
+      "level": "ECE Level 1",
+      "term": "Term 2",
+      "url": "https://library.cdcrepository.info/resource.php?id=385",
+      "resourceType": "module"
+    },
+    {
+      "title": "Cinyanja ECE Term 2 Final Module",
+      "subjectName": "Pre-Literacy and Language",
+      "level": "ECE Level 1",
+      "term": "Term 2",
+      "url": "https://library.cdcrepository.info/resource.php?id=384",
+      "resourceType": "module"
+    },
+    {
+      "title": "Chitonga ECE Teaching Module Term 2",
+      "subjectName": "Pre-Literacy and Language",
+      "level": "ECE Level 1",
+      "term": "Term 2",
+      "url": "https://library.cdcrepository.info/resource.php?id=383",
+      "resourceType": "module"
+    },
+    {
+      "title": "Icibemba ECE 3-4 Years Temu 2 Teaching Module",
+      "subjectName": "Pre-Literacy and Language",
+      "level": "ECE Level 1",
+      "term": "Term 2",
+      "url": "https://library.cdcrepository.info/resource.php?id=382",
+      "resourceType": "module"
+    },
+    {
+      "title": "Chitonga (Term 3)",
+      "subjectName": "Pre-Literacy and Language",
+      "level": "ECE Level 1",
+      "term": "Term 3",
+      "url": "https://library.cdcrepository.info/resource.php?id=350",
+      "resourceType": "module"
+    },
+    {
+      "title": "Silozi (Term 3)",
+      "subjectName": "Pre-Literacy and Language",
+      "level": "ECE Level 1",
+      "term": "Term 3",
+      "url": "https://library.cdcrepository.info/resource.php?id=348",
+      "resourceType": "module"
+    }
   ]
 }

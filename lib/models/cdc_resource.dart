@@ -9,12 +9,19 @@ class CdcResource {
   final String? term;
   final String url;
 
+  /// 'module' (a Teaching Module) or 'syllabus' — lets the CDC Resources
+  /// screen split into separate "Teaching Modules" / "Syllabi" views rather
+  /// than one mixed list. Older cached entries (fetched before this field
+  /// existed) fall back to 'module', the more common case.
+  final String resourceType;
+
   const CdcResource({
     required this.title,
     this.subjectName,
     this.level,
     this.term,
     required this.url,
+    this.resourceType = 'module',
   });
 
   factory CdcResource.fromJson(Map<String, dynamic> json) => CdcResource(
@@ -23,6 +30,7 @@ class CdcResource {
         level: json['level'] as String?,
         term: json['term'] as String?,
         url: json['url'] as String,
+        resourceType: json['resourceType'] as String? ?? 'module',
       );
 
   Map<String, dynamic> toJson() => {
@@ -31,6 +39,7 @@ class CdcResource {
         'level': level,
         'term': term,
         'url': url,
+        'resourceType': resourceType,
       };
 }
 

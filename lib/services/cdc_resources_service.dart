@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as p;
@@ -67,8 +68,13 @@ class CdcResourcesService {
     try {
       final json = jsonDecode(await file.readAsString()) as Map<String, dynamic>;
       return CdcCatalog.fromJson(json);
-    } catch (_) {
-      return CdcCatalog.empty();
+    } catch (error) {
+      // A corrupt cache file shouldn't be a dead end — fall back to the
+      // bundled seed rather than an empty catalog. debugPrint (not a
+      // silent catch) so a real bug here shows up in `flutter logs`
+      // instead of just reading as "no resources catalogued yet".
+      debugPrint('CdcResourcesService: cache file was unreadable ($error), falling back to bundled seed');
+      return await _loadBundledSeed() ?? CdcCatalog.empty();
     }
   }
 
@@ -77,7 +83,8 @@ class CdcResourcesService {
       final raw = await rootBundle.loadString('assets/cdc_resources/seed_catalog.json');
       final json = jsonDecode(raw) as Map<String, dynamic>;
       return CdcCatalog.fromJson({'resources': json['resources'], 'fetchedAt': json['fetchedAt']});
-    } catch (_) {
+    } catch (error, stackTrace) {
+      debugPrint('CdcResourcesService: failed to load bundled seed catalog: $error\n$stackTrace');
       return null;
     }
   }

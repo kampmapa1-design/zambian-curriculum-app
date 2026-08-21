@@ -40,6 +40,24 @@ class LessonCheckpointRepository {
     )];
   }
 
+  /// The most recently saved checkpoint for this subject+grade, regardless
+  /// of which topic/sub-topic it belongs to — used by the "Resume paused
+  /// lesson" entry point, which doesn't ask the teacher to pick a topic
+  /// first (that's the whole point of resuming).
+  Future<LessonCheckpoint?> findMostRecentForSubject({
+    required String curriculumCode,
+    required String subjectCode,
+    required int gradeLevel,
+  }) async {
+    final all = await _all();
+    final matches = all.values
+        .where((c) =>
+            c.curriculumCode == curriculumCode && c.subjectCode == subjectCode && c.gradeLevel == gradeLevel)
+        .toList()
+      ..sort((a, b) => b.savedAt.compareTo(a.savedAt));
+    return matches.isEmpty ? null : matches.first;
+  }
+
   Future<void> save(LessonCheckpoint checkpoint) async {
     final all = await _all();
     all[checkpoint.lessonKey] = checkpoint;

@@ -11,9 +11,19 @@ import '../services/cdc_resources_service.dart';
 /// cached locally so it's browsable offline; downloading an actual file
 /// still needs a connection — see [CdcResourcesService].
 class CdcResourcesScreen extends StatefulWidget {
-  const CdcResourcesScreen({super.key, this.service});
+  const CdcResourcesScreen({
+    super.key,
+    this.service,
+    this.resourceType,
+    this.title = 'CDC Resources',
+  });
 
   final CdcResourcesService? service;
+
+  /// 'module' or 'syllabus' to show only that kind (see [CdcResource.resourceType]),
+  /// or null to show everything.
+  final String? resourceType;
+  final String title;
 
   @override
   State<CdcResourcesScreen> createState() => _CdcResourcesScreenState();
@@ -89,6 +99,10 @@ class _CdcResourcesScreenState extends State<CdcResourcesScreen> {
     }
   }
 
+  List<CdcResource> get _visibleResources => widget.resourceType == null
+      ? _catalog.resources
+      : _catalog.resources.where((r) => r.resourceType == widget.resourceType).toList();
+
   String _relativeTime(DateTime time) {
     final diff = DateTime.now().difference(time);
     if (diff.inMinutes < 1) return 'just now';
@@ -101,7 +115,7 @@ class _CdcResourcesScreenState extends State<CdcResourcesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('CDC Resources'),
+        title: Text(widget.title),
         actions: [
           IconButton(
             icon: _refreshing
@@ -152,7 +166,7 @@ class _CdcResourcesScreenState extends State<CdcResourcesScreen> {
             ),
           ),
           const SizedBox(height: 12),
-          if (_catalog.resources.isEmpty)
+          if (_visibleResources.isEmpty)
             const Padding(
               padding: EdgeInsets.symmetric(vertical: 32),
               child: Center(
@@ -160,7 +174,7 @@ class _CdcResourcesScreenState extends State<CdcResourcesScreen> {
               ),
             )
           else
-            for (final resource in _catalog.resources) _buildResourceTile(resource),
+            for (final resource in _visibleResources) _buildResourceTile(resource),
         ],
       ),
     );

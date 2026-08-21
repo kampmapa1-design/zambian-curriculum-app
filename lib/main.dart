@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 
-import 'screens/subject_selector_screen.dart';
+import 'screens/home_screen.dart';
 import 'theme/app_theme.dart';
 
 void main() async {
@@ -31,7 +31,7 @@ class CurriculumApp extends StatelessWidget {
       theme: AppTheme.light(),
       darkTheme: AppTheme.dark(),
       themeMode: ThemeMode.system,
-      home: const SubjectSelectorScreen(),
+      home: const HomeScreen(),
     );
   }
 }
