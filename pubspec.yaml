@@ -42,6 +42,9 @@ flutter:
     - assets/syllabi/geography_grade10.json
     - assets/syllabi/geography_grade11.json
     - assets/syllabi/geography_grade12.json
+    - assets/syllabi/civic_education_grade10.json
+    - assets/syllabi/civic_education_grade11.json
+    - assets/syllabi/civic_education_grade12.json
     - assets/activity_banks/manifest.json
     - assets/activity_banks/hist_f1_1_1_1.json
     - assets/rules/cdc_constraints.example.json

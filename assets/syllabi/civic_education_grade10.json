@@ -1,0 +1,155 @@
+{
+  "_source": "Ministry of Education / Curriculum Development Centre, Zambia. 'Civic Education Syllabus Grade 10-12' (2013, published by CDC) — Grade 10, Topics 10.1-10.7. Topic and Specific Outcome statements only; the 'Content' (Knowledge/Skills/Values) columns are omitted, consistent with the approach used for the other 2013 OBC subjects in this app, since they text-extract unreliably from the source's multi-column table. Unlike Geography, Grade 10's table has no separate 'Sub-topic' column populated — outcomes are numbered directly under each Topic — so each topic here is modeled with a single sub-topic bearing the same name as the topic, purely to satisfy this app's data schema, not because the source names a distinct sub-topic. Two genuine duplicate-numbering slips were found in the source document itself and corrected by renumbering sequentially from the point of duplication: under 10.6 Cultural Studies, outcome code 10.6.4 is printed twice for two different outcomes ('Discuss the importance of culture' and 'Explain types of culture'); under 10.7 Substance Abuse, outcome code 10.7.2 is printed twice ('Discuss substances and their effects' and 'Explain reasons for substance abuse'). The syllabus organizes content by Grade only, not by Term, so all of Grade 10 is modeled as a single term here.",
+  "curriculum": {
+    "code": "OBC_2013",
+    "name": "2013 Outcome-Based Curriculum",
+    "description": "Zambia's 2013 outcome-based curriculum for Grades 10-12 (Senior Secondary)."
+  },
+  "subject": {
+    "name": "Civic Education",
+    "code": "CIVIC",
+    "description": "Senior Secondary Civic Education syllabus, Grade 10-12 (Curriculum Development Centre, 2013)."
+  },
+  "grade": {
+    "name": "Grade 10",
+    "code": "G10_OBC",
+    "level": 10,
+    "phase": "Senior Secondary"
+  },
+  "terms": [
+    {
+      "name": "Year (not term-divided in the source syllabus)",
+      "sequence_number": 1,
+      "topics": [
+        {
+          "name": "10.1 Constitution",
+          "sequence_number": 1,
+          "sub_topics": [
+            {
+              "name": "10.1 Constitution",
+              "sequence_number": 1,
+              "competencies": [
+                { "sequence_number": 1, "description": "Describe types of constitution", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Explain the main parts of the Zambian constitution", "category": "Specific Outcome" },
+                { "sequence_number": 3, "description": "Describe the process of constitution making and adoption", "category": "Specific Outcome" },
+                { "sequence_number": 4, "description": "Discuss the characteristics of a good constitution", "category": "Specific Outcome" },
+                { "sequence_number": 5, "description": "Explain the importance of a constitution to a nation", "category": "Specific Outcome" }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "10.2 Governance System in Zambia",
+          "sequence_number": 2,
+          "sub_topics": [
+            {
+              "name": "10.2 Governance System in Zambia",
+              "sequence_number": 1,
+              "competencies": [
+                { "sequence_number": 1, "description": "Explain governance", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Discuss the characteristics of good and bad governance", "category": "Specific Outcome" },
+                { "sequence_number": 3, "description": "Analyse different Electoral systems", "category": "Specific Outcome" },
+                { "sequence_number": 4, "description": "Explain Zambia's Electoral system", "category": "Specific Outcome" },
+                { "sequence_number": 5, "description": "Describe the Local Government system in Zambia", "category": "Specific Outcome" },
+                { "sequence_number": 6, "description": "Discuss the role of traditional leaders in governance", "category": "Specific Outcome" }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "10.3 Citizenship",
+          "sequence_number": 3,
+          "sub_topics": [
+            {
+              "name": "10.3 Citizenship",
+              "sequence_number": 1,
+              "competencies": [
+                { "sequence_number": 1, "description": "Explain citizenship", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "State qualifications of a Zambian citizen", "category": "Specific Outcome" },
+                { "sequence_number": 3, "description": "Describe qualities of a good citizen", "category": "Specific Outcome" },
+                { "sequence_number": 4, "description": "Identify factors that hinder good citizenship", "category": "Specific Outcome" },
+                { "sequence_number": 5, "description": "Explain the rights and freedoms of a citizen", "category": "Specific Outcome" },
+                { "sequence_number": 6, "description": "Explain duties and responsibilities of a citizen", "category": "Specific Outcome" },
+                { "sequence_number": 7, "description": "Identify groups of people and citizens with special needs", "category": "Specific Outcome" }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "10.4 Introduction to Human Rights",
+          "sequence_number": 4,
+          "sub_topics": [
+            {
+              "name": "10.4 Introduction to Human Rights",
+              "sequence_number": 1,
+              "competencies": [
+                { "sequence_number": 1, "description": "Describe Human Rights", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Discuss characteristics of Human Rights", "category": "Specific Outcome" },
+                { "sequence_number": 3, "description": "Explain categories of Human Rights", "category": "Specific Outcome" },
+                { "sequence_number": 4, "description": "Identify ways in which human rights are violated", "category": "Specific Outcome" },
+                { "sequence_number": 5, "description": "Discuss the significance of human rights", "category": "Specific Outcome" }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "10.5 Corruption",
+          "sequence_number": 5,
+          "sub_topics": [
+            {
+              "name": "10.5 Corruption",
+              "sequence_number": 1,
+              "competencies": [
+                { "sequence_number": 1, "description": "Describe corruption", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Discuss types of corruption", "category": "Specific Outcome" },
+                { "sequence_number": 3, "description": "Explain causes of corruption", "category": "Specific Outcome" },
+                { "sequence_number": 4, "description": "Explain effects of corruption", "category": "Specific Outcome" },
+                { "sequence_number": 5, "description": "State institutions that fight against corruption in Zambia", "category": "Specific Outcome" },
+                { "sequence_number": 6, "description": "Identify the role of public officers, community and the youth in fighting corruption", "category": "Specific Outcome" }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "10.6 Cultural Studies",
+          "sequence_number": 6,
+          "sub_topics": [
+            {
+              "name": "10.6 Cultural Studies",
+              "sequence_number": 1,
+              "competencies": [
+                { "sequence_number": 1, "description": "Describe Culture", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Outline components of culture", "category": "Specific Outcome" },
+                { "sequence_number": 3, "description": "Explain characteristics of culture", "category": "Specific Outcome" },
+                { "sequence_number": 4, "description": "Discuss the importance of culture", "category": "Specific Outcome" },
+                { "sequence_number": 5, "description": "Explain types of culture", "category": "Specific Outcome" },
+                { "sequence_number": 6, "description": "Identify Zambia's societal core values", "category": "Specific Outcome" },
+                { "sequence_number": 7, "description": "Discuss Zambia's cultural practices", "category": "Specific Outcome" },
+                { "sequence_number": 8, "description": "Identify factors that affect the appreciation of cultural diversity in Zambia", "category": "Specific Outcome" },
+                { "sequence_number": 9, "description": "Describe global culture", "category": "Specific Outcome" },
+                { "sequence_number": 10, "description": "Identify institutions that preserve cultural heritage in Zambia", "category": "Specific Outcome" }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "10.7 Substance Abuse",
+          "sequence_number": 7,
+          "sub_topics": [
+            {
+              "name": "10.7 Substance Abuse",
+              "sequence_number": 1,
+              "competencies": [
+                { "sequence_number": 1, "description": "Describe types of substances often abused by people", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Discuss substances and their effects", "category": "Specific Outcome" },
+                { "sequence_number": 3, "description": "Explain reasons for substance abuse", "category": "Specific Outcome" },
+                { "sequence_number": 4, "description": "Discuss effects of substance abuse on individuals, community, national and international levels", "category": "Specific Outcome" },
+                { "sequence_number": 5, "description": "Identify institutions involved in fighting substance abuse in Zambia", "category": "Specific Outcome" }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

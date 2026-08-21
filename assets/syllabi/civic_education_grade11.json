@@ -1,0 +1,182 @@
+{
+  "_source": "Ministry of Education / Curriculum Development Centre, Zambia. 'Civic Education Syllabus Grade 10-12' (2013, published by CDC) — Grade 11, Topics 11.1-11.7. Topic/sub-topic names and Specific Outcome statements only; the 'Content' (Knowledge/Skills/Values) columns are omitted for the same reason documented in the Grade 10 file. This grade has a systemic numbering-prefix problem in the source document: entire blocks of outcomes are printed under the wrong topic code, consistently shifted from their true topic. Every outcome below has been renumbered to match its true topic (identified from the printed Topic heading itself, and cross-checked against the syllabus's own Appendix One 'Scope and Sequence Chart', which independently confirms each topic's real theme and grade placement); the printed source code is noted per case. Topic 11.1 (The Zambian Bill of Rights): outcomes printed as 12.1.1-12.1.4, renumbered 11.1.1-11.1.4. Topic 11.2 (Civil Society and Media in Governance): outcomes printed as 11.1.1-11.1.7 (with 11.1.7 itself printed twice for two different outcomes), renumbered 11.2.1-11.2.8; this topic does have two real named sub-topics in the source table ('Civil Society and governance' and 'Media and Governance'), reproduced here. Topic 11.3 (Economic and Social Development): outcomes printed as 11.2.1-11.2.8, renumbered 11.3.1-11.3.8. Topic 11.4 (Zambia's Legal System): outcomes printed with several internal duplicates/out-of-order codes (11.4.1 x2, 11.4.3 x2, then 11.4.6, 11.4.7, 11.4.5 printed in that order at the end), renumbered 11.4.1-11.4.9 in the document's own printed reading order, which content-cross-checks cleanly against the adjacent Content column. Topic 11.7 (Child Abuse): outcomes printed as 11.6.1-11.6.9, renumbered 11.7.1-11.7.9; this topic has three real named sub-topics in the source table ('Child abuse', 'Sexual harassment', 'Teenage pregnancies'), reproduced here. Topics 11.5 (Gender Equity and Equality) and 11.6 (Culture of Peace) were printed correctly with no numbering issues. The syllabus organizes content by Grade only, not by Term, so all of Grade 11 is modeled as a single term here.",
+  "curriculum": {
+    "code": "OBC_2013",
+    "name": "2013 Outcome-Based Curriculum",
+    "description": "Zambia's 2013 outcome-based curriculum for Grades 10-12 (Senior Secondary)."
+  },
+  "subject": {
+    "name": "Civic Education",
+    "code": "CIVIC",
+    "description": "Senior Secondary Civic Education syllabus, Grade 10-12 (Curriculum Development Centre, 2013)."
+  },
+  "grade": {
+    "name": "Grade 11",
+    "code": "G11_OBC",
+    "level": 11,
+    "phase": "Senior Secondary"
+  },
+  "terms": [
+    {
+      "name": "Year (not term-divided in the source syllabus)",
+      "sequence_number": 1,
+      "topics": [
+        {
+          "name": "11.1 The Zambian Bill of Rights",
+          "sequence_number": 1,
+          "sub_topics": [
+            {
+              "name": "11.1 The Zambian Bill of Rights",
+              "sequence_number": 1,
+              "competencies": [
+                { "sequence_number": 1, "description": "Describe the Bill of Rights", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "State the elements of the Bill of Rights in the Zambian Constitution", "category": "Specific Outcome" },
+                { "sequence_number": 3, "description": "Describe ways of enforcing the Zambian Bill of Rights", "category": "Specific Outcome" },
+                { "sequence_number": 4, "description": "Discuss the role of the Institutions that promote Human Rights in Zambia", "category": "Specific Outcome" }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "11.2 Civil Society and Media in Governance",
+          "sequence_number": 2,
+          "sub_topics": [
+            {
+              "name": "Civil Society and Governance",
+              "sequence_number": 1,
+              "competencies": [
+                { "sequence_number": 1, "description": "Describe Civil Society Organisations", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Classify Civil Society Organisations in Zambia", "category": "Specific Outcome" },
+                { "sequence_number": 3, "description": "Analyse the roles of Civil Society in governance", "category": "Specific Outcome" },
+                { "sequence_number": 4, "description": "Discuss forms of Citizen participation in governance", "category": "Specific Outcome" }
+              ]
+            },
+            {
+              "name": "Media and Governance",
+              "sequence_number": 2,
+              "competencies": [
+                { "sequence_number": 1, "description": "Identify different types of media", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Explain the role of the media in governance", "category": "Specific Outcome" },
+                { "sequence_number": 3, "description": "Analyze factors that limit media coverage", "category": "Specific Outcome" },
+                { "sequence_number": 4, "description": "Identify factors that hinder the media from disseminating correct information", "category": "Specific Outcome" }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "11.3 Economic and Social Development",
+          "sequence_number": 3,
+          "sub_topics": [
+            {
+              "name": "11.3 Economic and Social Development",
+              "sequence_number": 1,
+              "competencies": [
+                { "sequence_number": 1, "description": "Explain economic and social development", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Discuss basic human needs", "category": "Specific Outcome" },
+                { "sequence_number": 3, "description": "Describe factors that affect production", "category": "Specific Outcome" },
+                { "sequence_number": 4, "description": "Explain the importance of standards in economic and social development", "category": "Specific Outcome" },
+                { "sequence_number": 5, "description": "Analyse the contributions of financial institutions to economic and social development", "category": "Specific Outcome" },
+                { "sequence_number": 6, "description": "State the role of the informal sector in national development", "category": "Specific Outcome" },
+                { "sequence_number": 7, "description": "Explain the importance of positive work culture in economic and social development", "category": "Specific Outcome" },
+                { "sequence_number": 8, "description": "Identify factors that hinder positive work culture", "category": "Specific Outcome" }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "11.4 Zambia's Legal System",
+          "sequence_number": 4,
+          "sub_topics": [
+            {
+              "name": "11.4 Zambia's Legal System",
+              "sequence_number": 1,
+              "competencies": [
+                { "sequence_number": 1, "description": "Describe Law", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Explain Legal system", "category": "Specific Outcome" },
+                { "sequence_number": 3, "description": "Discuss elements of a good legal system", "category": "Specific Outcome" },
+                { "sequence_number": 4, "description": "Describe sources of Law in Zambia", "category": "Specific Outcome" },
+                { "sequence_number": 5, "description": "Explain criminal and civil cases", "category": "Specific Outcome" },
+                { "sequence_number": 6, "description": "Describe the trial stages in the Zambian Legal System", "category": "Specific Outcome" },
+                { "sequence_number": 7, "description": "Discuss capital punishment", "category": "Specific Outcome" },
+                { "sequence_number": 8, "description": "Explain factors that hinder the administration of justice", "category": "Specific Outcome" },
+                { "sequence_number": 9, "description": "Identify legal institutions and organisations that promote justice", "category": "Specific Outcome" }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "11.5 Gender Equity and Equality",
+          "sequence_number": 5,
+          "sub_topics": [
+            {
+              "name": "11.5 Gender Equity and Equality",
+              "sequence_number": 1,
+              "competencies": [
+                { "sequence_number": 1, "description": "Explain gender equity and gender equality", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Outline the historical background to gender equity and equality", "category": "Specific Outcome" },
+                { "sequence_number": 3, "description": "Distinguish gender roles from sex roles", "category": "Specific Outcome" },
+                { "sequence_number": 4, "description": "Explain the social construction of gender", "category": "Specific Outcome" },
+                { "sequence_number": 5, "description": "Discuss gender issues in traditional and modern society", "category": "Specific Outcome" },
+                { "sequence_number": 6, "description": "Describe gender based violence", "category": "Specific Outcome" },
+                { "sequence_number": 7, "description": "Analyse the Intestate Succession Act of 1989", "category": "Specific Outcome" },
+                { "sequence_number": 8, "description": "Describe Government Institutions and Civil Society Organisations that promote gender equity and equality", "category": "Specific Outcome" }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "11.6 Culture of Peace",
+          "sequence_number": 6,
+          "sub_topics": [
+            {
+              "name": "11.6 Culture of Peace",
+              "sequence_number": 1,
+              "competencies": [
+                { "sequence_number": 1, "description": "Explain culture of peace", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Describe methods of promoting peace", "category": "Specific Outcome" },
+                { "sequence_number": 3, "description": "Identify levels of conflict", "category": "Specific Outcome" },
+                { "sequence_number": 4, "description": "Analyse causes of conflict", "category": "Specific Outcome" },
+                { "sequence_number": 5, "description": "Discuss effects of conflict on society", "category": "Specific Outcome" },
+                { "sequence_number": 6, "description": "Describe conflict resolution strategies", "category": "Specific Outcome" },
+                { "sequence_number": 7, "description": "Discuss the role of the United Nations in promoting peace", "category": "Specific Outcome" }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "11.7 Child Abuse",
+          "sequence_number": 7,
+          "sub_topics": [
+            {
+              "name": "Child Abuse",
+              "sequence_number": 1,
+              "competencies": [
+                { "sequence_number": 1, "description": "Describe child abuse", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Explain different forms of child abuse", "category": "Specific Outcome" },
+                { "sequence_number": 3, "description": "Discuss ways of addressing child abuse", "category": "Specific Outcome" }
+              ]
+            },
+            {
+              "name": "Sexual Harassment",
+              "sequence_number": 2,
+              "competencies": [
+                { "sequence_number": 1, "description": "Describe sexual harassment", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Discuss ways of protection against sexual harassment and rape", "category": "Specific Outcome" }
+              ]
+            },
+            {
+              "name": "Teenage Pregnancies",
+              "sequence_number": 3,
+              "competencies": [
+                { "sequence_number": 1, "description": "Explain causes of teenage pregnancies", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Explain the effects of teenage pregnancies", "category": "Specific Outcome" },
+                { "sequence_number": 3, "description": "Identify ways of preventing teenage pregnancies", "category": "Specific Outcome" },
+                { "sequence_number": 4, "description": "Discuss institutions that address social challenges", "category": "Specific Outcome" }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

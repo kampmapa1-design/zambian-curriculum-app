@@ -1,0 +1,131 @@
+{
+  "_source": "Ministry of Education / Curriculum Development Centre, Zambia. 'Civic Education Syllabus Grade 10-12' (2013, published by CDC) — Grade 12, Topics 12.1-12.6. Topic and Specific Outcome statements only; the 'Content' (Knowledge/Skills/Values) columns are omitted for the same reason documented in the Grade 10 file. Sub-topics are not separately named in the source table for this grade, so each topic is modeled with a single sub-topic bearing the same name as the topic, purely to satisfy this app's data schema (same approach as Grade 10). Two of the same kind of source-document numbering slip found in Grade 11 recur here and were corrected the same way, cross-checked against the syllabus's own Appendix One 'Scope and Sequence Chart': Topic 12.1 (International Human Rights Instruments) has its outcomes printed as 11.3.1-11.3.5, renumbered 12.1.1-12.1.5. Topic 12.6 (Global Issues) has its outcomes printed as 12.7.1-12.7.8, renumbered 12.6.1-12.6.8. Additionally, under 12.5 Poverty Reduction in Zambia, outcome code 12.5.3 is printed twice for two different outcomes ('Assess the effects of poverty' and 'Discuss poverty alleviation strategies') and was renumbered sequentially from the point of duplication. Topics 12.2 (Rights of a Child), 12.3 (Family Law) and 12.4 (Development Planning) were printed correctly with no numbering issues. The syllabus organizes content by Grade only, not by Term, so all of Grade 12 is modeled as a single term here.",
+  "curriculum": {
+    "code": "OBC_2013",
+    "name": "2013 Outcome-Based Curriculum",
+    "description": "Zambia's 2013 outcome-based curriculum for Grades 10-12 (Senior Secondary)."
+  },
+  "subject": {
+    "name": "Civic Education",
+    "code": "CIVIC",
+    "description": "Senior Secondary Civic Education syllabus, Grade 10-12 (Curriculum Development Centre, 2013)."
+  },
+  "grade": {
+    "name": "Grade 12",
+    "code": "G12_OBC",
+    "level": 12,
+    "phase": "Senior Secondary"
+  },
+  "terms": [
+    {
+      "name": "Year (not term-divided in the source syllabus)",
+      "sequence_number": 1,
+      "topics": [
+        {
+          "name": "12.1 International Human Rights Instruments",
+          "sequence_number": 1,
+          "sub_topics": [
+            {
+              "name": "12.1 International Human Rights Instruments",
+              "sequence_number": 1,
+              "competencies": [
+                { "sequence_number": 1, "description": "Describe the International Bill of Rights (IBR)", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Explain the Universal Declaration of Human Rights (UDHR)", "category": "Specific Outcome" },
+                { "sequence_number": 3, "description": "Describe Treaty Based Human Rights Instruments", "category": "Specific Outcome" },
+                { "sequence_number": 4, "description": "Discuss the Specialised Human Rights Instruments", "category": "Specific Outcome" },
+                { "sequence_number": 5, "description": "Explain provisions of the African Charter on Human and People's Rights", "category": "Specific Outcome" }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "12.2 Rights of a Child",
+          "sequence_number": 2,
+          "sub_topics": [
+            {
+              "name": "12.2 Rights of a Child",
+              "sequence_number": 1,
+              "competencies": [
+                { "sequence_number": 1, "description": "Describe Children's Rights", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Describe the four principles of the United Nations Convention on the Rights of the Child (UNCRC)", "category": "Specific Outcome" },
+                { "sequence_number": 3, "description": "Discuss the provisions of the UNCRC and the two optional protocols", "category": "Specific Outcome" }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "12.3 Family Law",
+          "sequence_number": 3,
+          "sub_topics": [
+            {
+              "name": "12.3 Family Law",
+              "sequence_number": 1,
+              "competencies": [
+                { "sequence_number": 1, "description": "Describe family and marriage", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Explain the elements of Family Law", "category": "Specific Outcome" },
+                { "sequence_number": 3, "description": "Describe types of marriages in Zambia", "category": "Specific Outcome" },
+                { "sequence_number": 4, "description": "Assess the effects of separation, divorce and death on the family", "category": "Specific Outcome" }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "12.4 Development Planning",
+          "sequence_number": 4,
+          "sub_topics": [
+            {
+              "name": "12.4 Development Planning",
+              "sequence_number": 1,
+              "competencies": [
+                { "sequence_number": 1, "description": "Explain development planning", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Discuss types of development planning", "category": "Specific Outcome" },
+                { "sequence_number": 3, "description": "Describe methods of planning", "category": "Specific Outcome" },
+                { "sequence_number": 4, "description": "Discuss the importance of budgeting and fiscal discipline in development planning", "category": "Specific Outcome" },
+                { "sequence_number": 5, "description": "Explain the functions of micro and macro-economic financial institutions", "category": "Specific Outcome" },
+                { "sequence_number": 6, "description": "Examine indicators of development", "category": "Specific Outcome" },
+                { "sequence_number": 7, "description": "Outline Zambia's National Development Plans from Independence to present", "category": "Specific Outcome" }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "12.5 Poverty Reduction in Zambia",
+          "sequence_number": 5,
+          "sub_topics": [
+            {
+              "name": "12.5 Poverty Reduction in Zambia",
+              "sequence_number": 1,
+              "competencies": [
+                { "sequence_number": 1, "description": "Describe poverty", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Explain the causes of poverty", "category": "Specific Outcome" },
+                { "sequence_number": 3, "description": "Assess the effects of poverty", "category": "Specific Outcome" },
+                { "sequence_number": 4, "description": "Discuss poverty alleviation strategies", "category": "Specific Outcome" },
+                { "sequence_number": 5, "description": "Evaluate poverty alleviation strategies and their implementation in Zambia", "category": "Specific Outcome" }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "12.6 Global Issues",
+          "sequence_number": 6,
+          "sub_topics": [
+            {
+              "name": "12.6 Global Issues",
+              "sequence_number": 1,
+              "competencies": [
+                { "sequence_number": 1, "description": "Explain globalisation and global issues", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Discuss bilateral and multilateral aid", "category": "Specific Outcome" },
+                { "sequence_number": 3, "description": "Discuss international trade", "category": "Specific Outcome" },
+                { "sequence_number": 4, "description": "State the role of the World Trade Organisation (WTO)", "category": "Specific Outcome" },
+                { "sequence_number": 5, "description": "Explain debt crisis and debt relief", "category": "Specific Outcome" },
+                { "sequence_number": 6, "description": "Discuss the effects of debt crisis on Zambia", "category": "Specific Outcome" },
+                { "sequence_number": 7, "description": "Explain Millennium Development Goals (MDGs)", "category": "Specific Outcome" },
+                { "sequence_number": 8, "description": "Analyse Zambia's efforts towards the attainment of the Millennium Development Goals", "category": "Specific Outcome" }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
