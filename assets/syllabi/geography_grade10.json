@@ -1,5 +1,5 @@
 {
-  "_source": "Ministry of Education / Curriculum Development Centre, Zambia. 'Grade 10-12 Geography Syllabus' (2013, published by CDC). Topic/sub-topic names and Specific Outcome statements for Topics 10.1 (Map Work) and 10.2 (The Solar System) only — the source PDF's table has 6 columns (Topic/Sub-topic/Specific Outcomes/Content split into Knowledge, Skills, Values) and text-extracts with columns interleaved out of order for the remaining Grade 10 topics (10.3-10.8), which risks misattributing content between sub-topics if reconstructed automatically; those are intentionally left out until they can be verified more carefully rather than guessed. The 'Content' (Knowledge/Skills/Values) columns are omitted even for 10.1-10.2 for the same reason — only the numbered Specific Outcomes are included, since their sub-topic association is unambiguous from the outcome's own code prefix. One exception: sub-topics 10.2.6 and 10.2.7 both carry the code prefix '10.2.7.x' in the source document itself (an apparent numbering error in the original, not an extraction artifact) — their outcome statements are included without that ambiguous code. The syllabus organizes content by Grade only, not by Term, so all of Grade 10 is modeled as a single term here.",
+  "_source": "Ministry of Education / Curriculum Development Centre, Zambia. 'Grade 10-12 Geography Syllabus' (2013, published by CDC), Section A (Map Work) and Section B (Elements of Physical Geography), covering Topics 10.1-10.8 (all of Grade 10 Sections A and B). Topic/sub-topic names and Specific Outcome statements only — the 'Content' (Knowledge/Skills/Values) columns are omitted throughout because the source PDF's table has 6 columns and text-extracts with columns interleaved out of order, risking misattribution of content between sub-topics if reconstructed automatically; the numbered Specific Outcomes, by contrast, were manually traced against each sub-topic heading in the raw extraction (verifying block order and outcome count per sub-topic) and are reproduced reliably, not guessed or sourced externally. Two numbering slips were found in the source document itself (not extraction artifacts) and corrected here based on the outcome's actual position under its sub-topic heading rather than its printed code: (1) sub-topics 10.2.6 and 10.2.7 both carry the printed code prefix '10.2.7.x' — their outcome statements are included without that ambiguous code; (2) the six Specific Outcomes belonging under sub-topics 10.5.1 (River Systems and Drainage Patterns) and 10.5.2 (River Erosion, Transportation and Deposition) are printed with the code prefix '10.8.1.x', which is also the prefix used for the five outcomes actually under Topic 10.8 (Natural Environmental Hazards) — the river outcomes have been renumbered here as 10.5.1.x/10.5.2.x to match their true topic, and the 10.8.1.x outcomes retained are the five that are actually about natural hazards. Grade 11 and 12 (Sections C and D, and beyond) are not yet included. The syllabus organizes content by Grade only, not by Term, so all of Grade 10 is modeled as a single term here.",
   "curriculum": {
     "code": "OBC_2013",
     "name": "2013 Outcome-Based Curriculum",
@@ -109,6 +109,141 @@
               "competencies": [
                 { "sequence_number": 1, "description": "Explain the effects of rotation of the earth", "category": "Specific Outcome" },
                 { "sequence_number": 2, "description": "Explain the effects of the earth's revolution", "category": "Specific Outcome" }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "10.3 Earth Movements",
+          "sequence_number": 3,
+          "description": "Section B: Elements of Physical Geography.",
+          "sub_topics": [
+            {
+              "name": "10.3.1 Faulting and Folding",
+              "sequence_number": 1,
+              "competencies": [
+                { "sequence_number": 1, "description": "Distinguish forces leading to faulting and folding", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Explain the landforms resulting from faulting and folding", "category": "Specific Outcome" },
+                { "sequence_number": 3, "description": "Describe the distribution of landforms resulting from faulting and folding", "category": "Specific Outcome" }
+              ]
+            },
+            {
+              "name": "10.3.2 Earthquakes and Volcanic Activities",
+              "sequence_number": 2,
+              "competencies": [
+                { "sequence_number": 1, "description": "Explain the origins of earthquakes and volcanoes", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Describe the types of volcanoes", "category": "Specific Outcome" },
+                { "sequence_number": 3, "description": "Discuss the various landforms resulting from volcanic activities", "category": "Specific Outcome" },
+                { "sequence_number": 4, "description": "Explain effects of earthquakes and volcanic activities on the environment and people", "category": "Specific Outcome" },
+                { "sequence_number": 5, "description": "Describe the distribution of earthquakes and volcanoes", "category": "Specific Outcome" }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "10.4 Weathering and Mass Wasting",
+          "sequence_number": 4,
+          "description": "Section B: Elements of Physical Geography.",
+          "sub_topics": [
+            {
+              "name": "10.4.1 Weathering in the Tropics and Temperate Regions",
+              "sequence_number": 1,
+              "competencies": [
+                { "sequence_number": 1, "description": "Explain the processes of weathering", "category": "Specific Outcome" }
+              ]
+            },
+            {
+              "name": "10.4.2 Mass Movement",
+              "sequence_number": 2,
+              "competencies": [
+                { "sequence_number": 1, "description": "Describe the agents of weathering", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Discuss the processes of mass movement or mass wasting", "category": "Specific Outcome" }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "10.5 River Processes",
+          "sequence_number": 5,
+          "description": "Section B: Elements of Physical Geography.",
+          "sub_topics": [
+            {
+              "name": "10.5.1 River Systems and Drainage Patterns",
+              "sequence_number": 1,
+              "competencies": [
+                { "sequence_number": 1, "description": "Describe river systems", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Identify river drainage patterns", "category": "Specific Outcome" }
+              ]
+            },
+            {
+              "name": "10.5.2 River Erosion, Transportation and Deposition",
+              "sequence_number": 2,
+              "competencies": [
+                { "sequence_number": 1, "description": "Explain the stages in the formation of a river", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Describe the features associated with each stage of a river", "category": "Specific Outcome" },
+                { "sequence_number": 3, "description": "Describe processes of river erosion, transportation and deposition", "category": "Specific Outcome" },
+                { "sequence_number": 4, "description": "Explain erosional and depositional features", "category": "Specific Outcome" },
+                { "sequence_number": 5, "description": "Discuss the importance of rivers", "category": "Specific Outcome" }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "10.6 Weather and Climate",
+          "sequence_number": 6,
+          "description": "Section B: Elements of Physical Geography.",
+          "sub_topics": [
+            {
+              "name": "10.6.1 Tropical and Temperate Storms",
+              "sequence_number": 1,
+              "competencies": [
+                { "sequence_number": 1, "description": "Describe formation, structure and effects of Tropical and Temperate storms", "category": "Specific Outcome" }
+              ]
+            },
+            {
+              "name": "10.6.2 Climatic Types",
+              "sequence_number": 2,
+              "competencies": [
+                { "sequence_number": 1, "description": "Locate on a world map major climatic types", "category": "Specific Outcome" }
+              ]
+            },
+            {
+              "name": "10.6.3 Climatic Characteristics",
+              "sequence_number": 3,
+              "competencies": [
+                { "sequence_number": 1, "description": "Describe the characteristics of climatic types", "category": "Specific Outcome" }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "10.7 Vegetation",
+          "sequence_number": 7,
+          "description": "Section B: Elements of Physical Geography.",
+          "sub_topics": [
+            {
+              "name": "10.7.1 Natural Vegetation",
+              "sequence_number": 1,
+              "competencies": [
+                { "sequence_number": 1, "description": "Explain the characteristics of natural vegetation (adaptation)", "category": "Specific Outcome" }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "10.8 Natural Environmental Hazards",
+          "sequence_number": 8,
+          "description": "Section B: Elements of Physical Geography.",
+          "sub_topics": [
+            {
+              "name": "10.8.1 Natural Hazards",
+              "sequence_number": 1,
+              "competencies": [
+                { "sequence_number": 1, "description": "Describe the natural environmental hazards", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Explain the impact of human activities on the physical environment", "category": "Specific Outcome" },
+                { "sequence_number": 3, "description": "Describe effects of hazards on people and the environment", "category": "Specific Outcome" },
+                { "sequence_number": 4, "description": "Suggest possible solutions to natural environmental hazards", "category": "Specific Outcome" },
+                { "sequence_number": 5, "description": "Assess the impact of climate change on the environment", "category": "Specific Outcome" }
               ]
             }
           ]
