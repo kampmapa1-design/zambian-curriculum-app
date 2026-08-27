@@ -1,0 +1,511 @@
+import 'package:flutter/material.dart';
+
+import '../models/marking_scheme.dart';
+import '../models/marking_script.dart';
+import '../services/marking_entitlement_service.dart';
+import '../services/marking_grading_service.dart';
+import '../services/marking_scheme_repository.dart';
+import '../services/marking_script_repository.dart';
+import 'burst_capture_screen.dart';
+import 'marking_review_screen.dart';
+import 'marking_scheme_list_screen.dart';
+
+/// AI-Assisted Marking, Stage 2 hub — every captured script sits here,
+/// grouped by status, until the teacher chooses to queue and process a
+/// batch. Also carries Stage 4 (AI grading dispatch), Stage 5 (confidence
+/// summary — see [_buildBatchSummary]), Stage 9 (access gating — see
+/// [_processBatch]'s per-script entitlement check), and a first-pass
+/// Stage 8 (retry handling — see [_processBatch]).
+class MarkingQueueScreen extends StatefulWidget {
+  const MarkingQueueScreen({super.key, this.repository, this.schemeRepository, this.gradingService});
+
+  final MarkingScriptRepository? repository;
+  final MarkingSchemeRepository? schemeRepository;
+  final MarkingGradingService? gradingService;
+
+  @override
+  State<MarkingQueueScreen> createState() => _MarkingQueueScreenState();
+}
+
+class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
+  late final MarkingScriptRepository _repository = widget.repository ?? MarkingScriptRepository();
+  late final MarkingSchemeRepository _schemeRepository = widget.schemeRepository ?? MarkingSchemeRepository();
+  late final MarkingGradingService _gradingService = widget.gradingService ?? MarkingGradingService();
+
+  MarkingScriptCatalog _catalog = MarkingScriptCatalog.empty();
+  MarkingSchemeCatalog _schemes = MarkingSchemeCatalog.empty();
+  bool _loading = true;
+  bool _selecting = false;
+  final Set<String> _selectedIds = {};
+
+  // Batch-processing progress (Stage 4/8) — null when nothing is running.
+  String? _processingBatchLabel;
+  int _processedCount = 0;
+  int _batchTotal = 0;
+
+  int? _remainingFreeGradings;
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+    _loadRemainingFreeGradings();
+  }
+
+  Future<void> _loadRemainingFreeGradings() async {
+    final remaining = await MarkingEntitlementService.instance.remainingFreeGradings();
+    if (mounted) setState(() => _remainingFreeGradings = remaining);
+  }
+
+  Future<void> _load() async {
+    final catalog = await _repository.loadCatalog();
+    final schemes = await _schemeRepository.loadCatalog();
+    if (!mounted) return;
+    setState(() {
+      _catalog = catalog;
+      _schemes = schemes;
+      _loading = false;
+    });
+  }
+
+  Future<void> _startNewCapture() async {
+    final result = await Navigator.of(context).push<MarkingScript>(
+      MaterialPageRoute(builder: (_) => BurstCaptureScreen(repository: _repository)),
+    );
+    if (result != null) _load();
+  }
+
+  void _toggleSelecting() {
+    setState(() {
+      _selecting = !_selecting;
+      _selectedIds.clear();
+    });
+  }
+
+  void _toggleSelected(MarkingScript script) {
+    setState(() {
+      if (_selectedIds.contains(script.id)) {
+        _selectedIds.remove(script.id);
+      } else {
+        _selectedIds.add(script.id);
+      }
+    });
+  }
+
+  /// Queuing links each selected script to one marking scheme — a "batch"
+  /// (Stage 2/4) is scripts from the same assessment, graded against the
+  /// same scheme, so the link has to exist before there's anything to
+  /// queue for.
+  Future<void> _queueSelected() async {
+    if (_schemes.schemes.isEmpty) {
+      final go = await showDialog<bool>(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
+          title: const Text('No marking scheme yet'),
+          content: const Text(
+            'Queuing a script links it to a marking scheme, so grading knows what to check each answer '
+            'against. Build one first.',
+          ),
+          actions: [
+            TextButton(onPressed: () => Navigator.of(dialogContext).pop(false), child: const Text('Cancel')),
+            FilledButton(onPressed: () => Navigator.of(dialogContext).pop(true), child: const Text('Build One')),
+          ],
+        ),
+      );
+      if (go == true && mounted) {
+        await Navigator.of(context).push(MaterialPageRoute(builder: (_) => const MarkingSchemeListScreen()));
+        await _load();
+      }
+      return;
+    }
+
+    final scheme = await showDialog<MarkingScheme>(
+      context: context,
+      builder: (dialogContext) => SimpleDialog(
+        title: const Text('Which marking scheme is this batch for?'),
+        children: [
+          for (final s in _schemes.schemes)
+            SimpleDialogOption(
+              onPressed: () => Navigator.of(dialogContext).pop(s),
+              child: Text('${s.title} (${s.questions.length} question(s))'),
+            ),
+        ],
+      ),
+    );
+    if (scheme == null) return;
+
+    final scripts = _catalog.scripts.where((s) => _selectedIds.contains(s.id));
+    for (final script in scripts) {
+      await _repository.update(script.copyWith(status: MarkingScriptStatus.queued, schemeId: scheme.id));
+    }
+    setState(() {
+      _selecting = false;
+      _selectedIds.clear();
+    });
+    await _load();
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('${scripts.length} script(s) queued against "${scheme.title}".')),
+    );
+  }
+
+  /// Stage 4 dispatch + a first-pass Stage 8: each script in the batch is
+  /// graded sequentially (never in parallel — keeps progress reporting
+  /// honest and avoids bursting the AI provider). A failure retries once
+  /// immediately; if that also fails the script is left as
+  /// [MarkingScriptStatus.needsRetry] with the error recorded, and the
+  /// rest of the batch keeps going rather than stopping cold.
+  ///
+  /// The original spec's "retry via the fallback provider" isn't possible
+  /// yet — this app doesn't have a second live provider (see the
+  /// Cloud Function's own comment) — so this retries on the same
+  /// provider instead. Worth revisiting once a real second provider
+  /// exists.
+  Future<void> _processBatch(String schemeId) async {
+    final scheme = _schemes.schemes.firstWhere((s) => s.id == schemeId);
+    final batch = _catalog.scripts.where((s) => s.status == MarkingScriptStatus.queued && s.schemeId == schemeId).toList();
+    if (batch.isEmpty) return;
+
+    setState(() {
+      _processingBatchLabel = scheme.title;
+      _processedCount = 0;
+      _batchTotal = batch.length;
+    });
+
+    for (final script in batch) {
+      // Stage 9 — checked per script, not once for the whole batch: a
+      // teacher partway through their free allowance should get as many
+      // scripts graded as they have left, then stop cleanly, rather than
+      // an all-or-nothing check against the batch size.
+      if (!await MarkingEntitlementService.instance.canGradeAnother()) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                "You've used this month's free AI-graded scripts. The rest of this batch stays queued "
+                'until next month (or an upgrade, once that\'s available).',
+              ),
+              duration: Duration(seconds: 6),
+            ),
+          );
+        }
+        break;
+      }
+
+      await _repository.update(script.copyWith(status: MarkingScriptStatus.processing));
+      if (mounted) setState(() {});
+
+      MarkingScript result;
+      try {
+        final pageFiles = await _repository.pageFilesFor(script);
+        final answers = await _gradingService.grade(pageFiles: pageFiles, scheme: scheme);
+        result = script.copyWith(status: MarkingScriptStatus.graded, gradedAnswers: answers, clearLastError: true);
+        await MarkingEntitlementService.instance.recordGradingUsed();
+      } catch (firstError) {
+        try {
+          final pageFiles = await _repository.pageFilesFor(script);
+          final answers = await _gradingService.grade(pageFiles: pageFiles, scheme: scheme);
+          result = script.copyWith(status: MarkingScriptStatus.graded, gradedAnswers: answers, clearLastError: true);
+          await MarkingEntitlementService.instance.recordGradingUsed();
+        } catch (secondError) {
+          result = script.copyWith(status: MarkingScriptStatus.needsRetry, lastError: secondError.toString());
+        }
+      }
+
+      await _repository.update(result);
+      if (mounted) setState(() => _processedCount++);
+    }
+
+    setState(() => _processingBatchLabel = null);
+    await _load();
+    await _loadRemainingFreeGradings();
+  }
+
+  Future<void> _deleteScript(MarkingScript script) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Delete this script?'),
+        content: Text('${script.studentName} — Script ${script.scriptNumber} (${script.pageCount} page(s)) '
+            'will be permanently deleted, including its captured pages.'),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(dialogContext).pop(false), child: const Text('Cancel')),
+          FilledButton(onPressed: () => Navigator.of(dialogContext).pop(true), child: const Text('Delete')),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+    await _repository.remove(script);
+    _load();
+  }
+
+  Future<void> _openScript(MarkingScript script) async {
+    if (script.status != MarkingScriptStatus.graded && script.status != MarkingScriptStatus.reviewed) return;
+    final scheme = script.schemeId == null
+        ? null
+        : _schemes.schemes.where((s) => s.id == script.schemeId).cast<MarkingScheme?>().firstWhere((s) => true, orElse: () => null);
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => MarkingReviewScreen(script: script, scheme: scheme, repository: _repository),
+      ),
+    );
+    _load();
+  }
+
+  Map<MarkingScriptStatus, List<MarkingScript>> get _byStatus {
+    final grouped = <MarkingScriptStatus, List<MarkingScript>>{};
+    for (final s in _catalog.scripts) {
+      grouped.putIfAbsent(s.status, () => []).add(s);
+    }
+    return grouped;
+  }
+
+  /// Stage 5 — batch-level confidence summary, computed straight from
+  /// Stage 4's stored results: how many answers across all graded-but-
+  /// unreviewed scripts are ready to accept versus need a look.
+  Widget? _buildConfidenceSummary(BuildContext context) {
+    final graded = _byStatus[MarkingScriptStatus.graded] ?? const [];
+    if (graded.isEmpty) return null;
+
+    var high = 0, medium = 0, low = 0;
+    for (final script in graded) {
+      for (final a in script.gradedAnswers ?? const []) {
+        switch (a.confidence) {
+          case MarkingConfidence.high:
+            high++;
+          case MarkingConfidence.medium:
+            medium++;
+          case MarkingConfidence.low:
+            low++;
+        }
+      }
+    }
+    final total = high + medium + low;
+    if (total == 0) return null;
+
+    return Card(
+      color: Theme.of(context).colorScheme.surfaceContainerHighest,
+      margin: const EdgeInsets.only(bottom: 12),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('${graded.length} script(s) graded, awaiting review', style: Theme.of(context).textTheme.titleSmall),
+            const SizedBox(height: 6),
+            Wrap(
+              spacing: 8,
+              runSpacing: 4,
+              children: [
+                _confidenceChip(context, '$high ready to accept', Colors.green),
+                _confidenceChip(context, '$medium need a glance', Colors.orange),
+                _confidenceChip(context, '$low need review', Colors.red),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _confidenceChip(BuildContext context, String label, Color color) {
+    return Chip(
+      label: Text(label, style: const TextStyle(fontSize: 12)),
+      backgroundColor: color.withValues(alpha: 0.15),
+      side: BorderSide(color: color.withValues(alpha: 0.4)),
+      visualDensity: VisualDensity.compact,
+    );
+  }
+
+  Color _statusColor(MarkingScriptStatus status, BuildContext context) => switch (status) {
+        MarkingScriptStatus.captured => Theme.of(context).colorScheme.secondaryContainer,
+        MarkingScriptStatus.queued => Theme.of(context).colorScheme.tertiaryContainer,
+        MarkingScriptStatus.processing => Theme.of(context).colorScheme.primaryContainer,
+        MarkingScriptStatus.graded => Colors.amber.shade200,
+        MarkingScriptStatus.reviewed => Theme.of(context).colorScheme.surfaceContainerHighest,
+        MarkingScriptStatus.needsRetry => Theme.of(context).colorScheme.errorContainer,
+      };
+
+  @override
+  Widget build(BuildContext context) {
+    final captured = _byStatus[MarkingScriptStatus.captured] ?? const [];
+    final queuedByScheme = <String, List<MarkingScript>>{};
+    for (final s in _byStatus[MarkingScriptStatus.queued] ?? const <MarkingScript>[]) {
+      if (s.schemeId != null) queuedByScheme.putIfAbsent(s.schemeId!, () => []).add(s);
+    }
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('AI-Assisted Marking'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.fact_check_outlined),
+            tooltip: 'Marking Schemes',
+            onPressed: () async {
+              await Navigator.of(context).push(MaterialPageRoute(builder: (_) => const MarkingSchemeListScreen()));
+              _load();
+            },
+          ),
+          if (captured.isNotEmpty)
+            TextButton(
+              onPressed: _toggleSelecting,
+              child: Text(_selecting ? 'Cancel' : 'Select', style: const TextStyle(color: Colors.white)),
+            ),
+        ],
+      ),
+      body: _loading
+          ? const Center(child: CircularProgressIndicator())
+          : _catalog.scripts.isEmpty
+              ? _buildEmptyState(context)
+              : _buildQueueList(context, queuedByScheme),
+      floatingActionButton: _selecting
+          ? null
+          : FloatingActionButton.extended(
+              onPressed: _startNewCapture,
+              icon: const Icon(Icons.camera_alt_outlined),
+              label: const Text('New Script'),
+            ),
+      bottomNavigationBar: _selecting && _selectedIds.isNotEmpty
+          ? SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: FilledButton.icon(
+                  onPressed: _queueSelected,
+                  icon: const Icon(Icons.playlist_add_check),
+                  label: Text('Queue ${_selectedIds.length} Script(s) for Processing'),
+                ),
+              ),
+            )
+          : null,
+    );
+  }
+
+  Widget _buildEmptyState(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.document_scanner_outlined, size: 48, color: Theme.of(context).colorScheme.outline),
+            const SizedBox(height: 12),
+            const Text(
+              'No scripts captured yet. Tap "New Script" to photograph a student\'s answer script — '
+              'entirely offline.',
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildQueueList(BuildContext context, Map<String, List<MarkingScript>> queuedByScheme) {
+    final byStatus = _byStatus;
+    final order = [
+      MarkingScriptStatus.needsRetry,
+      MarkingScriptStatus.processing,
+      MarkingScriptStatus.graded,
+      MarkingScriptStatus.queued,
+      MarkingScriptStatus.captured,
+      MarkingScriptStatus.reviewed,
+    ];
+
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 96),
+      children: [
+        if (_remainingFreeGradings case final remaining?)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: Text(
+              remaining > 0
+                  ? '$remaining free AI-graded script(s) left this month.'
+                  : "You've used this month's free AI-graded scripts — more become available next month.",
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: remaining > 0 ? null : Theme.of(context).colorScheme.error,
+                  ),
+            ),
+          ),
+        if (_buildConfidenceSummary(context) case final summary?) summary,
+        if (_processingBatchLabel case final label?)
+          Card(
+            margin: const EdgeInsets.only(bottom: 12),
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Grading "$label"… ($_processedCount of $_batchTotal)'),
+                  const SizedBox(height: 6),
+                  LinearProgressIndicator(value: _batchTotal == 0 ? null : _processedCount / _batchTotal),
+                ],
+              ),
+            ),
+          ),
+        for (final status in order)
+          if (byStatus[status]?.isNotEmpty ?? false) ...[
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8, top: 8),
+              child: Text(
+                '${status.label} (${byStatus[status]!.length})',
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+            ),
+            if (status == MarkingScriptStatus.queued)
+              for (final entry in queuedByScheme.entries) ...[
+                if (_processingBatchLabel == null)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: OutlinedButton.icon(
+                      onPressed: () => _processBatch(entry.key),
+                      icon: const Icon(Icons.play_arrow),
+                      label: Text(
+                        'Process ${entry.value.length} script(s) — '
+                        '${_schemes.schemes.where((s) => s.id == entry.key).map((s) => s.title).firstOrNull ?? 'Unknown scheme'}',
+                      ),
+                    ),
+                  ),
+                for (final script in entry.value) _buildScriptTile(context, script),
+              ]
+            else
+              for (final script in byStatus[status]!) _buildScriptTile(context, script),
+          ],
+      ],
+    );
+  }
+
+  Widget _buildScriptTile(BuildContext context, MarkingScript script) {
+    final selectable = _selecting && script.status == MarkingScriptStatus.captured;
+    final selected = _selectedIds.contains(script.id);
+    final openable = script.status == MarkingScriptStatus.graded || script.status == MarkingScriptStatus.reviewed;
+
+    return Card(
+      margin: const EdgeInsets.only(bottom: 8),
+      child: ListTile(
+        leading: CircleAvatar(
+          backgroundColor: _statusColor(script.status, context),
+          child: Text('${script.scriptNumber}', style: const TextStyle(fontSize: 13)),
+        ),
+        title: Text(script.studentName),
+        subtitle: Text(
+          '${script.pageCount} page(s)'
+          '${script.studentIdNumber != null ? ' · ID ${script.studentIdNumber}' : ''}'
+          ' · ${script.status.label}'
+          '${script.status == MarkingScriptStatus.needsRetry && script.lastError != null ? ' — ${script.lastError}' : ''}',
+        ),
+        onTap: selectable
+            ? () => _toggleSelected(script)
+            : openable
+                ? () => _openScript(script)
+                : null,
+        trailing: selectable
+            ? Checkbox(value: selected, onChanged: (_) => _toggleSelected(script))
+            : IconButton(
+                icon: const Icon(Icons.delete_outline),
+                tooltip: 'Delete',
+                onPressed: () => _deleteScript(script),
+              ),
+      ),
+    );
+  }
+}

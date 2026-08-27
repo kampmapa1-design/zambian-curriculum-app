@@ -700,3 +700,146 @@ export const extractSubjectContentTextFn = onCall<ExtractSubjectContentTextReque
     }
   }
 );
+
+// ---------------------------------------------------------------------
+// gradeMarkingScript — AI-Assisted Marking, Stage 4. Sends one student
+// script's captured page images, together with its linked marking
+// scheme, to Gemini for transcription and grading. Structured JSON out:
+// one graded answer per scheme question, each with a confidence value —
+// Stage 5 (client-side) categorizes by that confidence, Stage 6 requires
+// a teacher to review every answer before anything is final. This
+// function only produces a first-pass suggestion, never a final mark.
+//
+// "Dual-provider" per the original spec: this app doesn't actually have a
+// live, switchable dual-provider abstraction right now (see the top-of-
+// file comment — everything is on Gemini while Anthropic is blocked on
+// identity verification). This function is written Gemini-only for that
+// same reason, isolated behind this one function so swapping/adding a
+// second provider later doesn't touch the app's calling code.
+// ---------------------------------------------------------------------
+
+interface GradeMarkingScriptQuestion {
+  label: string;
+  expectedAnswerOrKeywords: string;
+  maxMarks: number;
+}
+
+interface GradeMarkingScriptRequest {
+  pageImagesBase64: string[];
+  questions: GradeMarkingScriptQuestion[];
+}
+
+interface GradedAnswerResult {
+  questionLabel: string;
+  transcribedAnswer: string;
+  marksAwarded: number;
+  confidence: "high" | "medium" | "low";
+}
+
+interface GradeMarkingScriptResponse {
+  answers: GradedAnswerResult[];
+}
+
+const gradeMarkingScriptSchema = {
+  type: "object",
+  properties: {
+    answers: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          questionLabel: { type: "string" },
+          transcribedAnswer: { type: "string" },
+          marksAwarded: { type: "number" },
+          confidence: { type: "string", enum: ["high", "medium", "low"] },
+        },
+        required: ["questionLabel", "transcribedAnswer", "marksAwarded", "confidence"],
+        additionalProperties: false,
+      },
+    },
+  },
+  required: ["answers"],
+  additionalProperties: false,
+};
+
+function buildGradingPrompt(questions: GradeMarkingScriptQuestion[]): string {
+  const schemeText = questions
+    .map((q) => `${q.label} (max ${q.maxMarks} marks): expected answer/keywords — ${q.expectedAnswerOrKeywords}`)
+    .join("\n");
+
+  return [
+    "The attached images are photos of one student's handwritten answer script, in page order. Your job:",
+    "1. Find each question's answer in the handwriting (questions are usually labeled the same way as " +
+      "in the marking scheme below, e.g. 'Q1', '1.', '1)' — match by number/order, not exact formatting).",
+    "2. Transcribe that handwritten answer as accurately as you can. If handwriting is illegible or the " +
+      "answer is missing entirely, say so plainly in transcribedAnswer (e.g. 'illegible' or 'no answer " +
+      "found') rather than guessing at words that aren't really there.",
+    "3. Compare the transcribed answer against the expected answer/keywords and award marks out of that " +
+      "question's maximum — partial credit is expected and normal, not just full marks or zero.",
+    "4. Give a confidence level for EACH answer: 'high' only when both the handwriting was clearly " +
+      "legible AND you're confident the mark awarded is correct; 'low' whenever either the handwriting " +
+      "was hard to read, the answer was ambiguous, or you're unsure the mark is right; 'medium' " +
+      "otherwise. Confidence reflects your own uncertainty honestly — it is what determines whether a " +
+      "teacher is required to double-check this specific answer, so do not default to 'high'.",
+    "",
+    "Marking scheme:",
+    schemeText,
+    "",
+    "Return exactly one answer per question in the marking scheme, using the same question label. Every " +
+      "mark you award must be a first-pass suggestion for a teacher to review, never a final grade — " +
+      "never fabricate an answer that isn't genuinely visible in the images.",
+  ].join("\n");
+}
+
+export const gradeMarkingScript = onCall<GradeMarkingScriptRequest>(
+  { secrets: [geminiApiKey], region: "us-central1", timeoutSeconds: 180, memory: "1GiB", maxInstances: 5 },
+  async (request): Promise<GradeMarkingScriptResponse> => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "Sign in is required to grade a script.");
+    }
+
+    const { pageImagesBase64, questions } = request.data ?? {};
+    if (!Array.isArray(pageImagesBase64) || pageImagesBase64.length === 0) {
+      throw new HttpsError("invalid-argument", "'pageImagesBase64' must be a non-empty array.");
+    }
+    if (!Array.isArray(questions) || questions.length === 0) {
+      throw new HttpsError("invalid-argument", "'questions' must be a non-empty array.");
+    }
+
+    const ai = new GoogleGenAI({ apiKey: geminiApiKey.value() });
+
+    const imageParts = pageImagesBase64.map((b64) => ({
+      inlineData: { mimeType: "image/jpeg", data: b64 },
+    }));
+
+    let text: string | undefined;
+    try {
+      const response = await ai.models.generateContent({
+        model: GEMINI_MODEL,
+        contents: [{ role: "user", parts: [{ text: buildGradingPrompt(questions) }, ...imageParts] }],
+        config: {
+          responseMimeType: "application/json",
+          responseJsonSchema: gradeMarkingScriptSchema,
+        },
+      });
+      text = response.text;
+    } catch (err) {
+      console.error("gradeMarkingScript: Gemini call failed", err);
+      throw new HttpsError("internal", "Failed to grade this script. Please try again.");
+    }
+
+    if (!text) {
+      throw new HttpsError("internal", "The AI did not return any grading results.");
+    }
+
+    let parsed: GradeMarkingScriptResponse;
+    try {
+      parsed = JSON.parse(text);
+    } catch (err) {
+      console.error("gradeMarkingScript: response was not valid JSON", text);
+      throw new HttpsError("internal", "The grading response could not be parsed.");
+    }
+
+    return parsed;
+  }
+);

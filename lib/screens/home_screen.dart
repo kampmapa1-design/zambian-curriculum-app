@@ -5,6 +5,7 @@ import '../models/scheme_of_work.dart';
 import '../models/syllabus_models.dart';
 import 'cdc_resources_screen.dart';
 import 'generate_lesson_plan_flow.dart';
+import 'marking_queue_screen.dart';
 import 'record_of_work_screen.dart';
 import 'scheme_of_work_document_screen.dart';
 import 'settings_screen.dart';
@@ -257,6 +258,14 @@ class HomeScreen extends StatelessWidget {
                         ],
                       ),
                     ),
+                  ),
+                ),
+                _FunctionButton(
+                  icon: Icons.document_scanner_outlined,
+                  label: 'AI-Assisted Marking',
+                  subtitle: 'Capture and queue student scripts for AI-assisted grading (early build)',
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const MarkingQueueScreen()),
                   ),
                 ),
               ],

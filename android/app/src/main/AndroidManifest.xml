@@ -1,4 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- AI-Assisted Marking (Stage 1): burst-capturing student script pages. -->
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-feature android:name="android.hardware.camera" android:required="true"/>
     <application
         android:label="Smart Teacher"
         android:name="${applicationName}"
