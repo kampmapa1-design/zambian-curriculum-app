@@ -1,5 +1,5 @@
 {
-  "_source": "Curriculum Development Centre Teaching Module — \"Art and Design Module\" (https://library.cdcrepository.info/resource.php?id=260). Topic/sub-topic structure and competencies extracted with AI assistance (Gemini) directly from this module's own stated content — never invented; the extraction was instructed to use only what the module itself says, and to flag anything unclear rather than guess. Covers only the term this specific module addresses (Term 2) — other terms are not included since no source document for them was available at extraction time. AI-flagged completeness notes from extraction: The module content starts at topic 1.11, indicating that earlier topics (1.1 through 1.10) are missing from the provided text, with the exception of an appended sample lesson plan referencing topic 1.9. Sub-topic 1.14.1 (Entrepreneurship in Art) did not contain an explicitly labeled 'Specific Competence' heading like the other sub-topics, so its competencies array was left empty. General competences listed at the topic level were omitted from the sub-topic competency arrays to adhere strictly to stated sub-topic competencies.",
+  "_source": "Curriculum Development Centre Teaching Module — \"Art and Design Module\" (https://library.cdcrepository.info/resource.php?id=260). Topic/sub-topic structure and competencies extracted with AI assistance (Gemini) directly from this module's own stated content — never invented; the extraction was instructed to use only what the module itself says, and to flag anything unclear rather than guess. Covers only the term this specific module addresses. CORRECTION (2026-08-28): originally mislabeled as \"Term 2\" — the module's own text never states its term, so the batch extraction script's default assumption went unchecked. Cross-checked directly against the CDC library's own term filter (library.cdcrepository.info, browse by term), which confirms resource id=260 is filed under Term 3. Relabeled accordingly; no content was changed, only the term/sequence fields. Other terms are not included since no source document for them was available at extraction time. AI-flagged completeness notes from extraction: The module content starts at topic 1.11, indicating that earlier topics (1.1 through 1.10) are missing from the provided text, with the exception of an appended sample lesson plan referencing topic 1.9. Sub-topic 1.14.1 (Entrepreneurship in Art) did not contain an explicitly labeled 'Specific Competence' heading like the other sub-topics, so its competencies array was left empty. General competences listed at the topic level were omitted from the sub-topic competency arrays to adhere strictly to stated sub-topic competencies.",
   "curriculum": {
     "code": "CBC_2023",
     "name": "2023 Competency-Based Curriculum",
@@ -18,8 +18,8 @@
   },
   "terms": [
     {
-      "name": "Term 2",
-      "sequence_number": 2,
+      "name": "Term 3",
+      "sequence_number": 3,
       "topics": [
         {
           "name": "1.11 CRAFTS IN 2D",
