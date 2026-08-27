@@ -1,0 +1,102 @@
+{
+  "_source": "Ministry of Education / Curriculum Development Centre, Zambia — 'Civic Education (Forms 1-4) Syllabus - Scope, Content, Sequence & Curriculum Analysis Grids', Form 3 rows (items 46-60 of the document's Scope and Sequence Overview table, identified by the table's column-position markers for the Form 3 colour key). The source document is authored/compiled by a named individual, whose name, title and contact details have been removed — this file contains no identifying information, per this app's standing content policy of crediting only CDC/Ministry of Education. As with civic_education_form1.json, this scope-and-sequence table gives only a Topic, Sub-Topic/Unit and a brief 'Key Content Focus' phrase per row (no numbered CDC 'Specific Competence' outcome codes) — competency statements below are a direct paraphrase of each row's Key Content Focus into standard competency-statement form, not verbatim official CDC outcome text. The source document also contains a more detailed 'Curriculum Analysis Grid' section per form (learning strategies, assessment, materials) not used for this ingestion pass. No week-level pacing was available (only term).",
+  "curriculum": {
+    "code": "CBC_2023",
+    "name": "2023 Competency-Based Curriculum",
+    "description": "Zambia's current competency-based curriculum."
+  },
+  "subject": {
+    "name": "Civic Education",
+    "code": "CIVIC",
+    "description": "Ordinary Level Secondary Civic Education syllabus, Form 1-4 (Curriculum Development Centre)."
+  },
+  "grade": {
+    "name": "Form 3",
+    "code": "F3_CBC",
+    "level": 3,
+    "phase": "Secondary — the source scheme itself uses \"Form 3\" for this level under the 2023 CBC."
+  },
+  "terms": [
+    {
+      "name": "Term 1",
+      "sequence_number": 1,
+      "topics": [
+        {
+          "name": "3.1 Corruption",
+          "sequence_number": 1,
+          "sub_topics": [
+            { "name": "3.1.1 Concept & Effects of Corruption", "sequence_number": 1, "description": "Types of corruption; effects on economy and society.", "competencies": [ { "sequence_number": 1, "description": "Explain the types of corruption and their effects on the economy and society", "category": "Specific Competence" } ] },
+            { "name": "3.1.2 Methods to Fight Corruption", "sequence_number": 2, "description": "Whistle blowing, sensitisation, advocacy, zero tolerance.", "competencies": [ { "sequence_number": 1, "description": "Describe methods to fight corruption (whistle blowing, sensitisation, advocacy, zero tolerance)", "category": "Specific Competence" } ] },
+            { "name": "3.1.3 Institutions Fighting Corruption", "sequence_number": 3, "description": "Anti-Corruption Commission, Auditor General's office, etc.", "competencies": [ { "sequence_number": 1, "description": "Identify institutions that fight corruption (Anti-Corruption Commission, Auditor General's office)", "category": "Specific Competence" } ] }
+          ]
+        },
+        {
+          "name": "3.2 Drug and Substance Abuse",
+          "sequence_number": 2,
+          "sub_topics": [
+            { "name": "3.2.1 Substance Abuse", "sequence_number": 1, "description": "Categories (over-the-counter, controlled); classifications (depressants, stimulants, hallucinogens); reasons; effects; self-control.", "competencies": [ { "sequence_number": 1, "description": "Classify categories of substance abuse and explain their reasons, effects, and the importance of self-control", "category": "Specific Competence" } ] },
+            { "name": "3.2.2 Institutions Fighting Substance Abuse", "sequence_number": 2, "description": "Drug Enforcement Commission, Transparency International Zambia, Zambia Police.", "competencies": [ { "sequence_number": 1, "description": "Identify institutions that fight substance abuse (Drug Enforcement Commission, Transparency International Zambia, Zambia Police)", "category": "Specific Competence" } ] }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 2",
+      "sequence_number": 2,
+      "topics": [
+        {
+          "name": "3.3 Family Law",
+          "sequence_number": 3,
+          "sub_topics": [
+            { "name": "3.3.1 Family", "sequence_number": 1, "description": "Importance of family; types (nuclear, extended, single, child-headed); types of marriage (civil/statutory, customary); marriage contract; building strong relationships.", "competencies": [ { "sequence_number": 1, "description": "Explain the importance and types of family and marriage, and describe how to build strong family relationships", "category": "Specific Competence" } ] },
+            { "name": "3.3.2 Elements of Family Law", "sequence_number": 2, "description": "Marriage, divorce, death; factors causing family crisis.", "competencies": [ { "sequence_number": 1, "description": "Explain elements of family law (marriage, divorce, death) and factors causing family crisis", "category": "Specific Competence" } ] }
+          ]
+        },
+        {
+          "name": "3.4 Child Abuse",
+          "sequence_number": 4,
+          "sub_topics": [
+            { "name": "3.4.1 Child Abuse - Forms & Protection", "sequence_number": 1, "description": "Concept; forms (sexual abuse, defilement, child marriage, harassment); protecting oneself (assertiveness, boundaries); addressing abuse (legislation, sensitisation).", "competencies": [ { "sequence_number": 1, "description": "Identify forms of child abuse and explain how to protect oneself and address abuse through legislation and sensitisation", "category": "Specific Competence" } ] },
+            { "name": "3.4.2 Teenage Pregnancies", "sequence_number": 2, "description": "Causes (peer pressure, lack of sex education); effects (dropout, suicide); promoting good morals.", "competencies": [ { "sequence_number": 1, "description": "Explain the causes and effects of teenage pregnancies and ways of promoting good morals", "category": "Specific Competence" } ] }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 3",
+      "sequence_number": 3,
+      "topics": [
+        {
+          "name": "3.5 Culture",
+          "sequence_number": 5,
+          "sub_topics": [
+            { "name": "3.5.1 Concept & Types of Culture", "sequence_number": 1, "description": "Meaning; types (material, non-material); indigenous culture; One Zambia One Nation.", "competencies": [ { "sequence_number": 1, "description": "Explain the meaning and types of culture, including indigenous culture and the One Zambia One Nation motto", "category": "Specific Competence" } ] },
+            { "name": "3.5.2 Cultural Diversity & Heritage", "sequence_number": 2, "description": "Obstacles to diversity; institutions preserving cultural heritage; national values.", "competencies": [ { "sequence_number": 1, "description": "Identify obstacles to cultural diversity and institutions that preserve cultural heritage and national values", "category": "Specific Competence" } ] }
+          ]
+        },
+        {
+          "name": "3.6 Civil Society and Media in Governance",
+          "sequence_number": 6,
+          "sub_topics": [
+            { "name": "3.6.1 Civil Society in Governance", "sequence_number": 1, "description": "Definition; classes (international, pressure groups, civic organisations); conditions for establishment; characteristics (non-profit); roles (defend democracy, civic education).", "competencies": [ { "sequence_number": 1, "description": "Explain the classes, characteristics and roles of civil society organisations in governance", "category": "Specific Competence" } ] },
+            { "name": "3.6.2 Media in Governance", "sequence_number": 2, "description": "Using different media to express oneself; responsible online communication.", "competencies": [ { "sequence_number": 1, "description": "Use different media responsibly to express oneself, including responsible online communication", "category": "Specific Competence" } ] }
+          ]
+        },
+        {
+          "name": "3.7 Personal Finance Management",
+          "sequence_number": 7,
+          "sub_topics": [
+            { "name": "3.7.1 Debt Management", "sequence_number": 1, "description": "Debt relief; debt crisis (borrowing beyond capacity); effects of debt crisis on Zambia; financial discipline.", "competencies": [ { "sequence_number": 1, "description": "Explain debt relief and the causes and effects of a debt crisis, and practise financial discipline", "category": "Specific Competence" } ] }
+          ]
+        },
+        {
+          "name": "3.8 Entrepreneurship",
+          "sequence_number": 8,
+          "sub_topics": [
+            { "name": "3.8.1 Entrepreneurial Activities", "sequence_number": 1, "description": "Establishing a business (producing goods, buying stock, selling services); recording business transactions (sales, purchases, working capital).", "competencies": [ { "sequence_number": 1, "description": "Describe how to establish a business and record business transactions (sales, purchases, working capital)", "category": "Specific Competence" } ] }
+          ]
+        }
+      ]
+    }
+  ]
+}

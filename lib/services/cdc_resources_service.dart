@@ -159,22 +159,52 @@ class CdcResourcesService {
     return merged;
   }
 
+  /// Every resource in this app is a PDF (the download always writes a
+  /// `.pdf` file below), so a genuine download starts with the PDF magic
+  /// bytes. Anything else — an HTML rate-limit notice, a Drive virus-scan
+  /// interstitial, a login page — fails this check instead of silently
+  /// being saved as if it were the real file.
+  bool _looksLikeRealFile(List<int> bytes) {
+    if (bytes.length < 5) return false;
+    return bytes[0] == 0x25 && // %
+        bytes[1] == 0x50 && // P
+        bytes[2] == 0x44 && // D
+        bytes[3] == 0x46 && // F
+        bytes[4] == 0x2D; // -
+  }
+
+  /// The CDC Digital Library's `resource.php?id=...` pages need `?download=1`
+  /// appended to serve the raw file instead of the landing page. Resources
+  /// from elsewhere (e.g. syllabi/past papers sourced from other open sites,
+  /// already recorded as direct-download URLs — see the `listCdcResources`
+  /// prompt) are used as-is, since that CDC-specific query trick doesn't
+  /// apply to other hosts.
   String _downloadUrlFor(String resourcePageUrl) {
     final uri = Uri.parse(resourcePageUrl);
+    if (uri.host != 'library.cdcrepository.info') return resourcePageUrl;
     return uri.replace(queryParameters: {...uri.queryParameters, 'download': '1'}).toString();
   }
 
   /// Downloads one resource's actual file to local storage. Requires a live
   /// connection — the catalog can be browsed offline, but files are never
   /// bundled with the app.
+  ///
+  /// Past papers specifically are routed through the `cleanPastPaperDownload`
+  /// Cloud Function rather than fetched directly: redistribution sites
+  /// (zedpastpapers.com etc.) stamp a branding watermark onto every page,
+  /// and that function strips it server-side before the file ever reaches
+  /// the device (see firebase/functions/src/watermark.ts for exactly how —
+  /// it targets only the known watermark, real exam content is never
+  /// touched). Modules and syllabi come straight from the CDC's own site
+  /// and carry no such watermark, so they skip this and download directly.
   Future<File> downloadResource(CdcResource resource) async {
     if (!await isOnline) {
       throw const CdcResourcesUnavailable("You're offline. Connect to the internet to download this file.");
     }
-    final response = await _httpClient.get(Uri.parse(_downloadUrlFor(resource.url)));
-    if (response.statusCode != 200) {
-      throw CdcResourcesUnavailable('Download failed (HTTP ${response.statusCode}).');
-    }
+
+    final List<int> bytes = resource.resourceType == 'past_paper'
+        ? await _downloadAndCleanPastPaper(resource)
+        : await _downloadDirect(resource);
 
     final dir = await getApplicationDocumentsDirectory();
     final downloadsDir = Directory(p.join(dir.path, 'cdc_downloads'));
@@ -186,7 +216,67 @@ class CdcResourcesService {
         .replaceAll(RegExp(r'[^a-z0-9]+'), '_')
         .replaceAll(RegExp(r'^_+|_+$'), '');
     final file = File(p.join(downloadsDir.path, '${safeName.isEmpty ? 'resource' : safeName}.pdf'));
-    await file.writeAsBytes(response.bodyBytes, flush: true);
+    await file.writeAsBytes(bytes, flush: true);
     return file;
+  }
+
+  Future<List<int>> _downloadDirect(CdcResource resource) async {
+    final response = await _httpClient.get(
+      Uri.parse(_downloadUrlFor(resource.url)),
+      // Drive occasionally serves an HTML "too many people have
+      // viewed/downloaded this file" or virus-scan interstitial with a 200
+      // status instead of the real file, especially once a shared file
+      // gets popular. A plain UA made this more likely in testing; a
+      // browser-like one reduces it, though the PDF-signature check below
+      // is what actually catches it either way.
+      headers: const {
+        'User-Agent':
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '
+                'Chrome/128.0.0.0 Safari/537.36',
+      },
+    );
+    if (response.statusCode != 200) {
+      throw CdcResourcesUnavailable('Download failed (HTTP ${response.statusCode}).');
+    }
+    if (!_looksLikeRealFile(response.bodyBytes)) {
+      throw const CdcResourcesUnavailable(
+        "This file couldn't be downloaded right now — the source may be rate-limiting "
+        'downloads. Please try again in a few minutes.',
+      );
+    }
+    return response.bodyBytes;
+  }
+
+  Future<List<int>> _downloadAndCleanPastPaper(CdcResource resource) async {
+    await AuthService.instance.ensureSignedIn();
+    final callable = _functions.httpsCallable(
+      'cleanPastPaperDownload',
+      options: HttpsCallableOptions(timeout: const Duration(seconds: 90)),
+    );
+    try {
+      final result = await callable.call<Map<Object?, Object?>>({'url': resource.url});
+      final base64 = result.data['base64'] as String?;
+      if (base64 == null || base64.isEmpty) {
+        throw const CdcResourcesUnavailable('The downloaded file was empty. Please try again.');
+      }
+      final bytes = base64Decode(base64);
+      if (!_looksLikeRealFile(bytes)) {
+        throw const CdcResourcesUnavailable(
+          "This file couldn't be downloaded right now — the source may be rate-limiting "
+          'downloads. Please try again in a few minutes.',
+        );
+      }
+      return bytes;
+    } on FirebaseFunctionsException catch (e) {
+      if (e.code == 'not-found' || e.code == 'internal' || e.code == 'unavailable') {
+        // The cleaning function isn't reachable (not deployed yet, or a
+        // transient outage) — fall back to a direct download rather than
+        // leaving the teacher with nothing. It just won't have the
+        // watermark stripped this one time.
+        debugPrint('CdcResourcesService: cleanPastPaperDownload unavailable ($e), falling back to direct download');
+        return _downloadDirect(resource);
+      }
+      throw CdcResourcesUnavailable(e.message ?? 'Failed to download this past paper.');
+    }
   }
 }

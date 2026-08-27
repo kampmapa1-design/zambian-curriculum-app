@@ -1,0 +1,158 @@
+{
+  "_source": "Ministry of Education / Curriculum Development Centre, Zambia — Principles of Accounts Scheme of Work, Form 2, Terms 1-3 (2026), as prepared by a serving teacher against the official CDC Principles of Accounts syllabus (each entry cites the syllabus page it is drawn from, e.g. 'Syllabus p.37'). No separate full syllabus document was available for this subject/form at ingestion time, so topic, sub-topic, competency and learning-objective text is reconstructed from the scheme's own Topic/Subtopic/Specific Competence/Content/Learning Activities columns. The source document's teacher name, TS number and school name have been removed — this file contains no identifying information about who prepared the source scheme, per this app's standing content policy of crediting only CDC/Ministry of Education. Several specific-competence codes (2.1.1.1, 2.3.1.1, 2.4.1.1, 2.4.2.1, 2.5.1.1) each cover multiple consecutive weeks/parts of the same skill — kept as one competency with multiple learning objectives rather than split, matching the source scheme. Week 3 of Term 3 combines competencies 2.4.1.1 and 2.4.2.1 into one culminating 'complete financial statements from a Trial Balance' task — folded into 2.4.2's learning objectives here as its final item, since it's the natural completion of both statements together. Weeks used for Revisions/Reporting, Mid-Term Test, Revision & Integration and End-of-Term Test carry no new topic content and are omitted.",
+  "curriculum": {
+    "code": "CBC_2023",
+    "name": "2023 Competency-Based Curriculum",
+    "description": "Zambia's current competency-based curriculum."
+  },
+  "subject": {
+    "name": "Principles of Accounts",
+    "code": "POA",
+    "description": "Ordinary Level Secondary Principles of Accounts syllabus, Form 1-4 (Curriculum Development Centre)."
+  },
+  "grade": {
+    "name": "Form 2",
+    "code": "F2_CBC",
+    "level": 2,
+    "phase": "Secondary — the source scheme itself uses \"Form 2\" for this level under the 2023 CBC."
+  },
+  "terms": [
+    {
+      "name": "Term 1",
+      "sequence_number": 1,
+      "topics": [
+        {
+          "name": "2.1 Books of Prime Entry",
+          "sequence_number": 1,
+          "sub_topics": [
+            {
+              "name": "2.1.1 Types of Books of Prime Entry",
+              "sequence_number": 1,
+              "description": "Expected standard: Cash Book (One/Two/Three Column), Petty Cash Book and Journal explained and recorded accordingly; Business Transactions posted to the Ledger accordingly.",
+              "competencies": [
+                { "sequence_number": 1, "description": "Record Business Transactions in the Books of Prime Entry", "category": "Specific Competence" },
+                { "sequence_number": 2, "description": "Post Business Transactions to the Ledger", "category": "Specific Competence" }
+              ],
+              "learning_objectives": [
+                { "sequence_number": 1, "description": "Identifying, explaining and recording in the One Column Cash Book" },
+                { "sequence_number": 2, "description": "Identifying, explaining and recording in the Two Column Cash Book (Cash and Discount columns)" },
+                { "sequence_number": 3, "description": "Identifying, explaining, recording in and balancing off the Three Column Cash Book (Cash, Bank and Discount columns)" },
+                { "sequence_number": 4, "description": "Explaining the Petty Cash Book and the Imprest System, and recording petty cash transactions" },
+                { "sequence_number": 5, "description": "Explaining the Journal (Journal Proper), identifying its source documents, and recording opening entries, correction of errors and transfer entries" },
+                { "sequence_number": 6, "description": "Posting business transactions from the Cash Book, Petty Cash Book and Journal to the Ledger" }
+              ],
+              "week_number": 2
+            }
+          ]
+        },
+        {
+          "name": "2.2 Trial Balance",
+          "sequence_number": 2,
+          "sub_topics": [
+            {
+              "name": "2.2.1 Extracting the Trial Balance",
+              "sequence_number": 1,
+              "description": "Expected standard: Trial Balance extracted from Ledger Account balances and prepared from a list of balances accordingly.",
+              "competencies": [
+                { "sequence_number": 1, "description": "Prepare the Trial Balance", "category": "Specific Competence" }
+              ],
+              "learning_objectives": [
+                { "sequence_number": 1, "description": "Explaining the meaning and purpose of the Trial Balance, and extracting it from Ledger Account balances" },
+                { "sequence_number": 2, "description": "Preparing the Trial Balance from a list of balances and checking its arithmetic accuracy" }
+              ],
+              "week_number": 9
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 2",
+      "sequence_number": 2,
+      "topics": [
+        {
+          "name": "2.3 Capital and Revenue Receipts and Expenditure",
+          "sequence_number": 3,
+          "sub_topics": [
+            {
+              "name": "2.3.1 Capital and Revenue Receipts and Expenditure",
+              "sequence_number": 1,
+              "description": "Expected standard: Capital and Revenue Expenditure and Receipts explained, distinguished and categorised accordingly.",
+              "competencies": [
+                { "sequence_number": 1, "description": "Classify Capital and Revenue Receipts and Expenditure", "category": "Specific Competence" }
+              ],
+              "learning_objectives": [
+                { "sequence_number": 1, "description": "Explaining and identifying Capital Expenditure and Revenue Expenditure items, and distinguishing between them" },
+                { "sequence_number": 2, "description": "Explaining and identifying Capital Receipts and Revenue Receipts items, and distinguishing between them" },
+                { "sequence_number": 3, "description": "Categorising Capital and Revenue Receipts and Expenditure using practical business scenarios" }
+              ],
+              "week_number": 2
+            }
+          ]
+        },
+        {
+          "name": "2.4 Financial Statements of a Sole Trader",
+          "sequence_number": 4,
+          "sub_topics": [
+            {
+              "name": "2.4.1 Statement of Profit or Loss (Income Statement)",
+              "sequence_number": 1,
+              "description": "Expected standard: Statement of Profit or Loss explained, its layout outlined, and prepared accordingly.",
+              "competencies": [
+                { "sequence_number": 1, "description": "Prepare the Statement of Profit or Loss", "category": "Specific Competence" }
+              ],
+              "learning_objectives": [
+                { "sequence_number": 1, "description": "Explaining the Statement of Profit or Loss and outlining its layout" },
+                { "sequence_number": 2, "description": "Calculating Net Purchases, Cost of Sales and Gross Profit/Loss" },
+                { "sequence_number": 3, "description": "Calculating Net Profit/Loss and preparing the complete Statement of Profit or Loss" }
+              ],
+              "week_number": 5
+            },
+            {
+              "name": "2.4.2 Statement of Financial Position (Balance Sheet)",
+              "sequence_number": 2,
+              "description": "Expected standard: Statement of Financial Position explained and drawn up accordingly, including complete Financial Statements prepared from a Trial Balance.",
+              "competencies": [
+                { "sequence_number": 1, "description": "Prepare the Statement of Financial Position/Balance Sheet", "category": "Specific Competence" }
+              ],
+              "learning_objectives": [
+                { "sequence_number": 1, "description": "Explaining and describing the Statement of Financial Position (Balance Sheet)" },
+                { "sequence_number": 2, "description": "Calculating Working Capital, Owner's Fund and Capital Employed" },
+                { "sequence_number": 3, "description": "Drawing up the Statement of Financial Position using the accounting equation method (Assets = Capital + Liabilities)" },
+                { "sequence_number": 4, "description": "Preparing complete Financial Statements of a Sole Trader (Statement of Profit or Loss and Statement of Financial Position together) from a given Trial Balance" }
+              ],
+              "week_number": 9
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 3",
+      "sequence_number": 3,
+      "topics": [
+        {
+          "name": "2.5 Introduction to Accounting Ratios",
+          "sequence_number": 5,
+          "sub_topics": [
+            {
+              "name": "2.5.1 Accounting Ratios",
+              "sequence_number": 1,
+              "description": "Expected standard: Profitability, Liquidity and Efficiency Ratios computed and interpreted accordingly.",
+              "competencies": [
+                { "sequence_number": 1, "description": "Calculate Accounting Ratios", "category": "Specific Competence" }
+              ],
+              "learning_objectives": [
+                { "sequence_number": 1, "description": "Explaining and computing Profitability Ratios (Return on Capital Employed, Return on Capital Invested, Gross Profit Ratio, Net Profit Ratio, Expense Ratio)" },
+                { "sequence_number": 2, "description": "Explaining and computing Liquidity Ratios (Acid Test Ratio and Current Ratio)" },
+                { "sequence_number": 3, "description": "Explaining and computing Efficiency Ratios (Stock Turnover, Receivable days, Payable days, Turnover)" },
+                { "sequence_number": 4, "description": "Computing and interpreting Accounting Ratios from complete Financial Statements" }
+              ],
+              "week_number": 4
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

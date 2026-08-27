@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 
+import '../models/record_of_work.dart';
+import '../models/scheme_of_work.dart';
 import '../models/syllabus_models.dart';
 import 'cdc_resources_screen.dart';
-import 'curriculum_grade_picker_screen.dart';
 import 'generate_lesson_plan_flow.dart';
-import 'scheme_of_work_screen.dart';
+import 'record_of_work_screen.dart';
+import 'scheme_of_work_document_screen.dart';
 import 'settings_screen.dart';
-import 'subject_selector_screen.dart';
+import 'subject_grade_topic_picker_screen.dart';
 import 'teaching_notes_sheet.dart';
-import 'topic_picker_screen.dart';
 
 /// The app's home screen: a branded header (not a bare list dropped
 /// straight under the system status bar) followed by one clearly labeled
@@ -19,32 +20,118 @@ import 'topic_picker_screen.dart';
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
-  Future<SyllabusTemplate?> _pickTemplate(BuildContext context, String title) {
-    return Navigator.of(context).push<SyllabusTemplate>(
-      MaterialPageRoute(builder: (_) => CurriculumGradePickerScreen(title: title)),
-    );
-  }
-
   Future<void> _openLessonPlan(BuildContext context) async {
-    final template = await _pickTemplate(context, 'Generate Lesson Plan');
+    final template = await Navigator.of(context).push<SyllabusTemplate>(
+      MaterialPageRoute(
+        builder: (_) => const SubjectGradeTopicPickerScreen(title: 'Generate Lesson Plan', pickTopic: false),
+      ),
+    );
     if (template == null || !context.mounted) return;
     await startGenerateLessonPlanFlow(context, template);
   }
 
+  /// "Generate Scheme of Work" does exactly one thing: subject → grade/form
+  /// → term, then straight to the generated document for that term. No
+  /// lesson-plan, teaching-notes, or slide shortcuts live under this button
+  /// — those are their own separate "Generate ..." entry points.
   Future<void> _openSchemeOfWork(BuildContext context) async {
-    final template = await _pickTemplate(context, 'Generate Scheme of Work');
-    if (template == null || !context.mounted) return;
-    await Navigator.of(context).push(MaterialPageRoute(builder: (_) => SchemeOfWorkScreen(template: template)));
+    final selection = await Navigator.of(context).push<TermSelection>(
+      MaterialPageRoute(
+        builder: (_) => const SubjectGradeTopicPickerScreen(title: 'Generate Scheme of Work', pickTopic: false, pickTerm: true),
+      ),
+    );
+    if (selection == null || !context.mounted) return;
+
+    final allEntries = generateSchemeOfWork(selection.template, null);
+    final topicIdsInTerm = selection.term.topics.map((t) => t.id).toSet();
+    final termEntries = allEntries.where((e) => topicIdsInTerm.contains(e.topic.id)).toList();
+
+    await Navigator.of(context).push(MaterialPageRoute(
+      builder: (_) => SchemeOfWorkDocumentScreen(template: selection.template, entries: termEntries),
+    ));
   }
 
   Future<void> _openTeachingNotes(BuildContext context) async {
-    final template = await _pickTemplate(context, 'Generate Teaching Notes');
-    if (template == null || !context.mounted) return;
-    final entry = await Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => TopicPickerScreen(template: template)),
+    final entry = await Navigator.of(context).push<SchemeOfWorkEntry>(
+      MaterialPageRoute(
+        builder: (_) =>
+            const SubjectGradeTopicPickerScreen(title: 'Generate Teaching Notes & Slides', pickTopic: true),
+      ),
     );
     if (entry == null || !context.mounted) return;
-    await showTeachingNotesSheet(context, entry: entry);
+
+    final format = await _pickNotesFormat(context);
+    if (format == null || !context.mounted) return;
+
+    await showTeachingNotesSheet(
+      context,
+      entry: entry,
+      initialFormat: format == 'paragraph' ? 'paragraph' : 'bullet',
+      autoGenerateSlides: format == 'slide',
+    );
+  }
+
+  Future<String?> _pickNotesFormat(BuildContext context) {
+    return showDialog<String>(
+      context: context,
+      builder: (dialogContext) => SimpleDialog(
+        title: const Text('Prepare notes as…'),
+        children: [
+          SimpleDialogOption(
+            onPressed: () => Navigator.of(dialogContext).pop('bullet'),
+            child: const ListTile(
+              leading: Icon(Icons.format_list_bulleted),
+              title: Text('Bulletin'),
+              subtitle: Text('Concise bullet points'),
+            ),
+          ),
+          SimpleDialogOption(
+            onPressed: () => Navigator.of(dialogContext).pop('paragraph'),
+            child: const ListTile(
+              leading: Icon(Icons.article_outlined),
+              title: Text('Essay'),
+              subtitle: Text('Flowing prose, up to 700 words'),
+            ),
+          ),
+          SimpleDialogOption(
+            onPressed: () => Navigator.of(dialogContext).pop('slide'),
+            child: const ListTile(
+              leading: Icon(Icons.slideshow_outlined),
+              title: Text('Slide'),
+              subtitle: Text('PowerPoint deck, shared immediately'),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _openRecordOfWork(BuildContext context) async {
+    final period = await showDialog<RecordOfWorkPeriod>(
+      context: context,
+      builder: (dialogContext) => SimpleDialog(
+        title: const Text('Generate Record of Work'),
+        children: [
+          for (final p in RecordOfWorkPeriod.values)
+            SimpleDialogOption(
+              onPressed: () => Navigator.of(dialogContext).pop(p),
+              child: Text(p.label),
+            ),
+        ],
+      ),
+    );
+    if (period == null || !context.mounted) return;
+
+    final template = await Navigator.of(context).push<SyllabusTemplate>(
+      MaterialPageRoute(
+        builder: (_) => const SubjectGradeTopicPickerScreen(title: 'Generate Record of Work', pickTopic: false),
+      ),
+    );
+    if (template == null || !context.mounted) return;
+
+    await Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => RecordOfWorkScreen(template: template, period: period)),
+    );
   }
 
   @override
@@ -112,14 +199,6 @@ class HomeScreen extends StatelessWidget {
             sliver: SliverList.list(
               children: [
                 _FunctionButton(
-                  icon: Icons.menu_book_outlined,
-                  label: 'Browse Syllabus',
-                  subtitle: 'View the full syllabus for a subject and grade',
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const SubjectSelectorScreen()),
-                  ),
-                ),
-                _FunctionButton(
                   icon: Icons.assignment_outlined,
                   label: 'Generate Lesson Plan',
                   subtitle: 'New lesson, or resume one that was paused',
@@ -128,14 +207,20 @@ class HomeScreen extends StatelessWidget {
                 _FunctionButton(
                   icon: Icons.event_note_outlined,
                   label: 'Generate Scheme of Work',
-                  subtitle: 'Auto-continue from the last topic concluded',
+                  subtitle: 'Pick a subject, grade/form, and term',
                   onTap: () => _openSchemeOfWork(context),
                 ),
                 _FunctionButton(
                   icon: Icons.auto_awesome_outlined,
-                  label: 'Generate Teaching Notes',
-                  subtitle: 'Bullet points or paragraph form, for one topic',
+                  label: 'Generate Teaching Notes & Slides',
+                  subtitle: 'Bulletin, essay, or PowerPoint slides, for one topic',
                   onTap: () => _openTeachingNotes(context),
+                ),
+                _FunctionButton(
+                  icon: Icons.fact_check_outlined,
+                  label: 'Generate Record of Work',
+                  subtitle: 'Weekly or fortnightly, pulled from what you\'ve already generated',
+                  onTap: () => _openRecordOfWork(context),
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(4, 20, 4, 8),
@@ -160,11 +245,17 @@ class HomeScreen extends StatelessWidget {
                 ),
                 _FunctionButton(
                   icon: Icons.description_outlined,
-                  label: 'CDC Syllabi',
-                  subtitle: 'Browse and download official syllabus documents',
+                  label: 'ECZ Past Papers & CDC Syllabi',
+                  subtitle: 'Official syllabus documents, plus past exam papers',
                   onTap: () => Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (_) => const CdcResourcesScreen(resourceType: 'syllabus', title: 'CDC Syllabi'),
+                      builder: (_) => const CdcResourcesScreen(
+                        title: 'ECZ Past Papers & CDC Syllabi',
+                        sections: [
+                          CdcResourceSection(resourceType: 'syllabus', heading: null),
+                          CdcResourceSection(resourceType: 'past_paper', heading: 'ECZ Past Papers'),
+                        ],
+                      ),
                     ),
                   ),
                 ),

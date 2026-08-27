@@ -2,6 +2,7 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
+import '../models/lesson_history_entry.dart';
 import '../models/syllabus_models.dart';
 
 /// Local SQLite storage for syllabus templates. Schema: curricula ->
@@ -15,7 +16,7 @@ class DatabaseHelper {
   DatabaseHelper._internal();
   static final DatabaseHelper instance = DatabaseHelper._internal();
 
-  static const _schemaVersion = 2;
+  static const _schemaVersion = 4;
 
   Database? _db;
 
@@ -49,6 +50,7 @@ class DatabaseHelper {
 
   // Drop order matters for foreign keys: children before parents.
   static const _tableNamesNewestFirst = [
+    'lesson_history',
     'topic_progress',
     'learning_objectives',
     'competencies',
@@ -109,6 +111,7 @@ class DatabaseHelper {
         name TEXT NOT NULL,
         sequence_number INTEGER NOT NULL,
         description TEXT,
+        week_number INTEGER,
         UNIQUE (subject_id, grade_id, term_id, name)
       )
     ''');
@@ -122,6 +125,7 @@ class DatabaseHelper {
         name TEXT NOT NULL,
         sequence_number INTEGER NOT NULL,
         description TEXT,
+        week_number INTEGER,
         UNIQUE (topic_id, name)
       )
     ''');
@@ -154,6 +158,31 @@ class DatabaseHelper {
         UNIQUE (subject_id, grade_id)
       )
     ''');
+    // Auto-captured lesson history — one row per topic/sub-topic a lesson
+    // plan or scheme of work was generated for (status 'generated'),
+    // upgraded to 'completed' when the teacher marks it taught/concluded.
+    // Feeds "Generate Record of Work" (see RecordOfWorkRepository) so a
+    // teacher never has to re-enter what was already covered. No UNIQUE
+    // constraint here (sub_topic_id is nullable, and SQLite treats every
+    // NULL as distinct under UNIQUE) — de-duplication on upsert is handled
+    // in code, see logLessonHistory.
+    await db.execute('''
+      CREATE TABLE lesson_history (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        curriculum_id INTEGER NOT NULL REFERENCES curricula(id) ON DELETE CASCADE,
+        subject_id INTEGER NOT NULL REFERENCES subjects(id) ON DELETE CASCADE,
+        grade_id INTEGER NOT NULL REFERENCES grades(id) ON DELETE CASCADE,
+        topic_id INTEGER NOT NULL REFERENCES topics(id) ON DELETE CASCADE,
+        sub_topic_id INTEGER REFERENCES sub_topics(id) ON DELETE CASCADE,
+        source TEXT NOT NULL,
+        status TEXT NOT NULL,
+        date TEXT NOT NULL,
+        updated_at TEXT NOT NULL
+      )
+    ''');
+    await db.execute(
+      'CREATE INDEX idx_lesson_history_scope ON lesson_history (subject_id, grade_id, date)',
+    );
   }
 
   Future<int> _getOrCreate(
@@ -242,7 +271,11 @@ class DatabaseHelper {
             txn,
             'topics',
             {'subject_id': subjectId, 'grade_id': gradeId, 'term_id': termId, 'name': topicJson['name']},
-            {'sequence_number': topicJson['sequence_number'], 'description': topicJson['description']},
+            {
+              'sequence_number': topicJson['sequence_number'],
+              'description': topicJson['description'],
+              'week_number': topicJson['week_number'],
+            },
           );
 
           for (final obj in (topicJson['learning_objectives'] as List? ?? [])
@@ -279,7 +312,11 @@ class DatabaseHelper {
               txn,
               'sub_topics',
               {'topic_id': topicId, 'name': subTopicJson['name']},
-              {'sequence_number': subTopicJson['sequence_number'], 'description': subTopicJson['description']},
+              {
+                'sequence_number': subTopicJson['sequence_number'],
+                'description': subTopicJson['description'],
+                'week_number': subTopicJson['week_number'],
+              },
             );
 
             for (final obj in (subTopicJson['learning_objectives'] as List? ?? [])
@@ -387,6 +424,7 @@ class DatabaseHelper {
             subTopics: subTopics,
             objectives: objectives,
             competencies: competencies,
+            weekNumber: row['week_number'] as int?,
           ));
     }
 
@@ -453,6 +491,138 @@ class DatabaseHelper {
     return rows.isEmpty ? null : rows.first['topic_id'] as int;
   }
 
+  /// Records that a lesson plan or scheme of work was generated for (or
+  /// marked taught/concluded at) this topic/sub-topic. Upserts by
+  /// curriculum+subject+grade+topic+sub-topic+source rather than appending
+  /// duplicates every time the same lesson is re-opened or re-exported, and
+  /// never lets a 'completed' entry regress back to 'generated'.
+  Future<void> logLessonHistory({
+    required String curriculumCode,
+    required String subjectCode,
+    required int gradeLevel,
+    required int topicId,
+    int? subTopicId,
+    required LessonHistorySource source,
+    required LessonHistoryStatus status,
+    required DateTime date,
+  }) async {
+    final db = await database;
+    final curriculumId = await _requireId(db, 'curricula', {'code': curriculumCode});
+    final subjectId = await _requireId(db, 'subjects', {'curriculum_id': curriculumId, 'code': subjectCode});
+    final gradeId =
+        await _requireId(db, 'grades', {'curriculum_id': curriculumId, 'sequence_number': gradeLevel});
+
+    final where = subTopicId != null
+        ? 'subject_id = ? AND grade_id = ? AND topic_id = ? AND sub_topic_id = ? AND source = ?'
+        : 'subject_id = ? AND grade_id = ? AND topic_id = ? AND sub_topic_id IS NULL AND source = ?';
+    final whereArgs = subTopicId != null
+        ? [subjectId, gradeId, topicId, subTopicId, source.dbValue]
+        : [subjectId, gradeId, topicId, source.dbValue];
+
+    final existing =
+        await db.query('lesson_history', columns: ['id', 'status'], where: where, whereArgs: whereArgs, limit: 1);
+
+    final values = {
+      'curriculum_id': curriculumId,
+      'subject_id': subjectId,
+      'grade_id': gradeId,
+      'topic_id': topicId,
+      'sub_topic_id': subTopicId,
+      'source': source.dbValue,
+      'status': status.dbValue,
+      'date': date.toIso8601String(),
+      'updated_at': DateTime.now().toIso8601String(),
+    };
+
+    if (existing.isEmpty) {
+      await db.insert('lesson_history', values);
+      return;
+    }
+    if (existing.first['status'] == LessonHistoryStatus.completed.dbValue &&
+        status == LessonHistoryStatus.generated) {
+      return;
+    }
+    await db.update('lesson_history', values, where: 'id = ?', whereArgs: [existing.first['id']]);
+  }
+
+  /// Lesson history entries within [from]-[to] (inclusive), optionally
+  /// narrowed to one curriculum/subject/grade — the pull behind "Generate
+  /// Record of Work".
+  Future<List<LessonHistoryEntry>> queryLessonHistory({
+    required DateTime from,
+    required DateTime to,
+    String? curriculumCode,
+    String? subjectCode,
+    int? gradeLevel,
+    LessonHistoryStatus? status,
+  }) async {
+    final db = await database;
+    final conditions = <String>['lesson_history.date >= ?', 'lesson_history.date <= ?'];
+    final args = <Object?>[from.toIso8601String(), to.toIso8601String()];
+
+    if (curriculumCode != null) {
+      conditions.add('curricula.code = ?');
+      args.add(curriculumCode);
+    }
+    if (subjectCode != null) {
+      conditions.add('subjects.code = ?');
+      args.add(subjectCode);
+    }
+    if (gradeLevel != null) {
+      conditions.add('grades.sequence_number = ?');
+      args.add(gradeLevel);
+    }
+    if (status != null) {
+      conditions.add('lesson_history.status = ?');
+      args.add(status.dbValue);
+    }
+
+    final rows = await db.rawQuery('''
+      SELECT
+        lesson_history.id AS id,
+        curricula.code AS curriculum_code,
+        curricula.name AS curriculum_name,
+        subjects.code AS subject_code,
+        subjects.name AS subject_name,
+        grades.sequence_number AS grade_level,
+        grades.name AS grade_name,
+        topics.id AS topic_id,
+        topics.name AS topic_name,
+        sub_topics.id AS sub_topic_id,
+        sub_topics.name AS sub_topic_name,
+        lesson_history.source AS source,
+        lesson_history.status AS status,
+        lesson_history.date AS date
+      FROM lesson_history
+      JOIN curricula ON curricula.id = lesson_history.curriculum_id
+      JOIN subjects ON subjects.id = lesson_history.subject_id
+      JOIN grades ON grades.id = lesson_history.grade_id
+      JOIN topics ON topics.id = lesson_history.topic_id
+      LEFT JOIN sub_topics ON sub_topics.id = lesson_history.sub_topic_id
+      WHERE ${conditions.join(' AND ')}
+      ORDER BY lesson_history.date
+    ''', args);
+
+    return rows
+        .map((row) => LessonHistoryEntry(
+              id: row['id'] as int,
+              curriculumCode: row['curriculum_code'] as String,
+              curriculumName: row['curriculum_name'] as String,
+              subjectCode: row['subject_code'] as String,
+              subjectName: row['subject_name'] as String,
+              gradeLevel: row['grade_level'] as int,
+              gradeName: row['grade_name'] as String,
+              topicId: row['topic_id'] as int,
+              topicName: row['topic_name'] as String,
+              subTopicId: row['sub_topic_id'] as int?,
+              subTopicName: row['sub_topic_name'] as String?,
+              source: LessonHistorySourceDb.fromDb(row['source'] as String),
+              status: LessonHistoryStatusDb.fromDb(row['status'] as String),
+              date: DateTime.parse(row['date'] as String),
+            ))
+        .toList();
+  }
+
   Future<int> _requireId(DatabaseExecutor db, String table, Map<String, Object?> match) async {
     final where = match.keys.map((k) => '$k = ?').join(' AND ');
     final rows = await db.query(table, columns: ['id'], where: where, whereArgs: match.values.toList(), limit: 1);
@@ -479,6 +649,7 @@ class DatabaseHelper {
         description: row['description'] as String?,
         objectives: await _loadObjectives(db, subTopicId: subTopicId),
         competencies: await _loadCompetencies(db, subTopicId: subTopicId),
+        weekNumber: row['week_number'] as int?,
       ));
     }
     return result;

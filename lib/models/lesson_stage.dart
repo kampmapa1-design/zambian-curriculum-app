@@ -1,17 +1,17 @@
-/// The three stages a topic's lesson conceptually has — Introduction,
-/// Lesson Development, Conclusion — used by the "Generate Lesson Plan"
-/// entry flow to ask which part of the lesson to start from/resume at.
-/// This is a simplified, app-level framing on top of the real CDC lesson
-/// plan template's progression stages (which may have more than three —
-/// e.g. the bundled default also has Exercise and Homework); [indexIn]
-/// maps one of these three onto the closest real stage by name so nothing
-/// in the sourced template itself is renamed or dropped.
+/// The three stages a topic's lesson conceptually has — Introduction, Main
+/// Body, Conclusion — used by the "Generate Lesson Plan" entry flow to ask
+/// which part of the lesson to generate. This is a simplified, app-level
+/// framing on top of the real CDC lesson plan template's progression stages
+/// (which may have more than three — e.g. the bundled default also has
+/// Exercise and Homework, both grouped under "Main Body"); [matchingIndices]
+/// maps one of these three onto every real stage that belongs to it by name
+/// so nothing in the sourced template itself is renamed or dropped.
 enum LessonStage { introduction, development, conclusion }
 
 extension LessonStageLabel on LessonStage {
   String get label => switch (this) {
         LessonStage.introduction => 'Introduction',
-        LessonStage.development => 'Lesson Development',
+        LessonStage.development => 'Main Body',
         LessonStage.conclusion => 'Conclusion',
       };
 
@@ -44,5 +44,27 @@ extension LessonStageLabel on LessonStage {
     if (name.contains('introduction')) return LessonStage.introduction;
     if (name.contains('conclusion')) return LessonStage.conclusion;
     return LessonStage.development;
+  }
+
+  /// Every real progression-stage index that belongs to this conceptual
+  /// stage — Introduction and Conclusion match by name, and Main Body picks
+  /// up everything else (Development, Exercise, Homework, ...), so a lesson
+  /// plan generated "at the Main Body stage" covers all of the lesson's
+  /// actual working stages, not just one narrowly-named row. Falls back to
+  /// every index if none match by name (e.g. a custom uploaded template).
+  List<int> matchingIndices(List<String> progressionStages) {
+    final indices = <int>[];
+    for (var i = 0; i < progressionStages.length; i++) {
+      final name = progressionStages[i].toLowerCase();
+      final isIntroduction = name.contains('introduction');
+      final isConclusion = name.contains('conclusion');
+      final matches = switch (this) {
+        LessonStage.introduction => isIntroduction,
+        LessonStage.conclusion => isConclusion,
+        LessonStage.development => !isIntroduction && !isConclusion,
+      };
+      if (matches) indices.add(i);
+    }
+    return indices.isEmpty ? [for (var i = 0; i < progressionStages.length; i++) i] : indices;
   }
 }

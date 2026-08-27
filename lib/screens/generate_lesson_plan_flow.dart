@@ -6,25 +6,23 @@ import '../models/lesson_stage.dart';
 import '../models/scheme_of_work.dart';
 import '../models/syllabus_models.dart';
 import '../services/lesson_checkpoint_repository.dart';
-import '../services/progress_repository.dart';
 import 'lesson_plan_screen.dart';
-import 'topic_picker_screen.dart';
+import 'term_topic_picker_screen.dart';
 
 /// Orchestrates the "Generate Lesson Plan" entry point end to end: asks
-/// whether to start a new lesson (the one after whatever was last
-/// concluded in this subject) or resume one that was paused mid-lesson,
-/// then — for a new lesson — asks which of the three stages
-/// (Introduction/Development/Conclusion) to start from, before opening
-/// [LessonPlanScreen]. Resuming reuses that screen's own checkpoint dialog
-/// (which already shows the real stage that was reached) rather than
-/// asking the stage question twice.
+/// whether to start a new lesson or resume one that was paused mid-lesson.
+/// For a new lesson, the teacher picks exactly which topic to teach (via
+/// [TermTopicPickerScreen] — Term, then that term's topics by week) and
+/// which of the three stages (Introduction/Main Body/Conclusion) this
+/// specific lesson plan should cover, before opening [LessonPlanScreen].
+/// Resuming reuses that screen's own checkpoint dialog (which already shows
+/// the real stage that was reached) rather than asking the stage question
+/// twice.
 Future<void> startGenerateLessonPlanFlow(
   BuildContext context,
   SyllabusTemplate template, {
-  ProgressRepository? progressRepository,
   LessonCheckpointRepository? checkpointRepository,
 }) async {
-  final progress = progressRepository ?? ProgressRepository();
   final checkpoints = checkpointRepository ?? LessonCheckpointRepository();
 
   final choice = await showDialog<_LessonPlanStart>(
@@ -32,8 +30,8 @@ Future<void> startGenerateLessonPlanFlow(
     builder: (dialogContext) => AlertDialog(
       title: const Text('Generate lesson plan'),
       content: const Text(
-        'Write a new lesson plan for the topic after the last one you generated a plan for in '
-        'this subject, or resume one that was paused partway through?',
+        'Pick a term, week and topic to write a new lesson plan, or resume one that was paused '
+        'partway through?',
       ),
       actions: [
         TextButton(
@@ -48,6 +46,11 @@ Future<void> startGenerateLessonPlanFlow(
     ),
   );
   if (choice == null || !context.mounted) return;
+
+  // OBC (2013) and CBC (2023) use structurally different real lesson plan
+  // templates — see defaultCbcLessonPlanTemplate's doc comment.
+  final activeTemplate =
+      template.curriculum.code == 'CBC_2023' ? defaultCbcLessonPlanTemplate : defaultCdcLessonPlanTemplate;
 
   if (choice == _LessonPlanStart.resume) {
     final checkpoint = await checkpoints.findMostRecentForSubject(
@@ -77,6 +80,7 @@ Future<void> startGenerateLessonPlanFlow(
             subjectCode: template.subject.code,
             gradeLevel: template.grade.level,
             entry: entry,
+            template: activeTemplate,
             checkpointRepository: checkpoints,
           ),
         ));
@@ -85,33 +89,19 @@ Future<void> startGenerateLessonPlanFlow(
     }
   }
 
-  // New lesson: the topic after whatever was last concluded in this
-  // subject (same cursor the Scheme of Work screen uses), falling back to
-  // the very first topic if nothing's been concluded yet.
-  final lastConcluded = await progress.getLastConcludedTopicId(
-    curriculumCode: template.curriculum.code,
-    subjectCode: template.subject.code,
-    gradeLevel: template.grade.level,
+  // New lesson: let the teacher pick exactly which term/week/topic to
+  // teach, rather than auto-advancing to "whatever comes next" — a topic
+  // can need several separate lesson plans (one per stage, or per CBC
+  // learning point), so there's no single "next" topic to guess at.
+  final entry = await Navigator.of(context).push<SchemeOfWorkEntry>(
+    MaterialPageRoute(builder: (_) => TermTopicPickerScreen(template: template)),
   );
-  if (!context.mounted) return;
-  final upcoming = generateSchemeOfWork(template, lastConcluded);
-
-  SchemeOfWorkEntry? entry;
-  if (upcoming.isNotEmpty) {
-    entry = upcoming.first;
-  } else if (context.mounted) {
-    // Every topic is already marked concluded — let the teacher pick one
-    // manually rather than a dead end.
-    entry = await Navigator.of(context).push<SchemeOfWorkEntry>(
-      MaterialPageRoute(builder: (_) => TopicPickerScreen(template: template)),
-    );
-  }
   if (entry == null || !context.mounted) return;
 
   final stage = await showDialog<LessonStage>(
     context: context,
     builder: (dialogContext) => SimpleDialog(
-      title: const Text('Start the lesson plan from'),
+      title: const Text('Which part of this lesson should the plan cover?'),
       children: [
         for (final s in LessonStage.values)
           SimpleDialogOption(
@@ -130,9 +120,10 @@ Future<void> startGenerateLessonPlanFlow(
       curriculumCode: template.curriculum.code,
       subjectCode: template.subject.code,
       gradeLevel: template.grade.level,
-      entry: entry!,
+      entry: entry,
+      template: activeTemplate,
       checkpointRepository: checkpoints,
-      initialFocusStageIndex: chosenStage.indexIn(defaultCdcLessonPlanTemplate.progressionStages),
+      focusStage: chosenStage,
     ),
   ));
 }

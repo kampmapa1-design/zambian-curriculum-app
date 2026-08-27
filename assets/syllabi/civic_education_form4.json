@@ -1,0 +1,107 @@
+{
+  "_source": "Ministry of Education / Curriculum Development Centre, Zambia — 'Civic Education (Forms 1-4) Syllabus - Scope, Content, Sequence & Curriculum Analysis Grids', Form 4 rows (items 61-74 of the document's Scope and Sequence Overview table, identified by the table's column-position markers for the Form 4 colour key). The source document is authored/compiled by a named individual, whose name, title and contact details have been removed — this file contains no identifying information, per this app's standing content policy of crediting only CDC/Ministry of Education. As with civic_education_form1.json, this scope-and-sequence table gives only a Topic, Sub-Topic/Unit and a brief 'Key Content Focus' phrase per row (no numbered CDC 'Specific Competence' outcome codes) — competency statements below are a direct paraphrase of each row's Key Content Focus into standard competency-statement form, not verbatim official CDC outcome text. The source document also contains a more detailed 'Curriculum Analysis Grid' section per form (learning strategies, assessment, materials) not used for this ingestion pass. No week-level pacing was available (only term). This is the last form in the document's scope-and-sequence table (item 74 of 74).",
+  "curriculum": {
+    "code": "CBC_2023",
+    "name": "2023 Competency-Based Curriculum",
+    "description": "Zambia's current competency-based curriculum."
+  },
+  "subject": {
+    "name": "Civic Education",
+    "code": "CIVIC",
+    "description": "Ordinary Level Secondary Civic Education syllabus, Form 1-4 (Curriculum Development Centre)."
+  },
+  "grade": {
+    "name": "Form 4",
+    "code": "F4_CBC",
+    "level": 4,
+    "phase": "Secondary — the source scheme itself uses \"Form 4\" for this level under the 2023 CBC."
+  },
+  "terms": [
+    {
+      "name": "Term 1",
+      "sequence_number": 1,
+      "topics": [
+        {
+          "name": "4.1 Legal System",
+          "sequence_number": 1,
+          "sub_topics": [
+            { "name": "4.1.1 Concept of Legal System", "sequence_number": 1, "description": "Elements of a good legal system; sources of law (common, customary); elements of a crime; classification of crime; criminal vs civil cases.", "competencies": [ { "sequence_number": 1, "description": "Explain the elements and sources of a legal system, and distinguish criminal from civil cases", "category": "Specific Competence" } ] },
+            { "name": "4.1.2 Zambian Legal System - Trial Stages", "sequence_number": 2, "description": "Pre-trial, trial, post-trial stages; criminal justice procedure (arrest, plea, trial); types of sentences.", "competencies": [ { "sequence_number": 1, "description": "Describe the stages of a criminal trial in Zambia's legal system, from arrest to sentencing", "category": "Specific Competence" } ] }
+          ]
+        },
+        {
+          "name": "4.2 International Human Rights",
+          "sequence_number": 2,
+          "sub_topics": [
+            { "name": "4.2.1 International Bill of Rights", "sequence_number": 1, "description": "UDHR, ICCPR, ICESCR; human rights institutions.", "competencies": [ { "sequence_number": 1, "description": "Identify the instruments of the International Bill of Rights (UDHR, ICCPR, ICESCR) and human rights institutions", "category": "Specific Competence" } ] }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 2",
+      "sequence_number": 2,
+      "topics": [
+        {
+          "name": "4.3 Poverty in Zambia",
+          "sequence_number": 3,
+          "sub_topics": [
+            { "name": "4.3.1 Causes, Effects & Alleviation", "sequence_number": 1, "description": "Causes (unemployment, low education); effects; poverty alleviation strategies.", "competencies": [ { "sequence_number": 1, "description": "Explain the causes and effects of poverty in Zambia and strategies for its alleviation", "category": "Specific Competence" } ] }
+          ]
+        },
+        {
+          "name": "4.4 Gender Development",
+          "sequence_number": 4,
+          "sub_topics": [
+            { "name": "4.4.1 Gender Equity & Equality", "sequence_number": 1, "description": "Sex vs gender roles; efforts to reduce gender gap (Ministry of Gender, GIDD, CEDAW, Beijing Conference); institutions promoting gender equity (Parliament, Police, ACC, NGOs like CAMFED).", "competencies": [ { "sequence_number": 1, "description": "Distinguish sex from gender roles and identify efforts and institutions promoting gender equity and equality", "category": "Specific Competence" } ] },
+            { "name": "4.4.2 Gender Based Violence (GBV)", "sequence_number": 2, "description": "Forms (physical, psychological, emotional); causes (jealousy, infidelity); effects (depression, death); reporting cases; empathy.", "competencies": [ { "sequence_number": 1, "description": "Identify forms and causes of gender-based violence and explain how to report cases with empathy", "category": "Specific Competence" } ] }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 3",
+      "sequence_number": 3,
+      "topics": [
+        {
+          "name": "4.5 Development Planning",
+          "sequence_number": 5,
+          "sub_topics": [
+            { "name": "4.5.1 Development Planning", "sequence_number": 1, "description": "Levels (individual, family, community); types (short, medium, long term); methods (centralised/decentralised); importance of national budgeting and fiscal discipline.", "competencies": [ { "sequence_number": 1, "description": "Explain the levels, types and methods of development planning, and the importance of national budgeting and fiscal discipline", "category": "Specific Competence" } ] },
+            { "name": "4.5.2 Micro & Macro Economic Financial Institutions", "sequence_number": 2, "description": "Functions: micro (personal loans, savings, rural credit); macro (central bank, commercial banks).", "competencies": [ { "sequence_number": 1, "description": "Distinguish the functions of micro (personal loans, savings, rural credit) and macro (central bank, commercial banks) financial institutions", "category": "Specific Competence" } ] },
+            { "name": "4.5.3 Indicators of Development", "sequence_number": 3, "description": "GDP, literacy rate, life expectancy, HDI, etc.", "competencies": [ { "sequence_number": 1, "description": "Identify indicators of development (GDP, literacy rate, life expectancy, Human Development Index)", "category": "Specific Competence" } ] },
+            { "name": "4.5.4 Zambia's National Development Plans", "sequence_number": 4, "description": "Evaluation from independence to date (FNDP, SNDP, 7NDP, 8NDP).", "competencies": [ { "sequence_number": 1, "description": "Evaluate Zambia's national development plans from independence to date (FNDP, SNDP, 7NDP, 8NDP)", "category": "Specific Competence" } ] }
+          ]
+        },
+        {
+          "name": "4.6 Credit",
+          "sequence_number": 6,
+          "sub_topics": [
+            { "name": "4.6.1 Credit Reference Bureau", "sequence_number": 1, "description": "Function; importance of credit history.", "competencies": [ { "sequence_number": 1, "description": "Explain the function of the Credit Reference Bureau and the importance of a good credit history", "category": "Specific Competence" } ] }
+          ]
+        },
+        {
+          "name": "4.7 Investment",
+          "sequence_number": 7,
+          "sub_topics": [
+            { "name": "4.7.1 Securities and Exchange Commission of Zambia", "sequence_number": 1, "description": "Functions; regulating capital markets.", "competencies": [ { "sequence_number": 1, "description": "Explain the functions of the Securities and Exchange Commission of Zambia in regulating capital markets", "category": "Specific Competence" } ] }
+          ]
+        },
+        {
+          "name": "4.8 Risk Management",
+          "sequence_number": 8,
+          "sub_topics": [
+            { "name": "4.8.1 Personal & Business Risk Management", "sequence_number": 1, "description": "Insurance, emergency funds, diversification.", "competencies": [ { "sequence_number": 1, "description": "Explain personal and business risk management strategies (insurance, emergency funds, diversification)", "category": "Specific Competence" } ] }
+          ]
+        },
+        {
+          "name": "4.9 Entrepreneurship",
+          "sequence_number": 9,
+          "sub_topics": [
+            { "name": "4.9.1 Retirement Planning", "sequence_number": 1, "description": "Plan for retirement; investment for old age.", "competencies": [ { "sequence_number": 1, "description": "Explain how to plan and invest for retirement", "category": "Specific Competence" } ] }
+          ]
+        }
+      ]
+    }
+  ]
+}

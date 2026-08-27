@@ -1,0 +1,257 @@
+{
+  "_source": "Ministry of Education / Curriculum Development Centre, Zambia — 'Civic Education (Forms 1-4) Syllabus - Scope, Content, Sequence & Curriculum Analysis Grids', Form 1 rows (items 1-19 of the document's Scope and Sequence Overview table; item 20 onward is Form 2, cross-checked against and consistent with this app's existing civic_education_form2.json). The source document is authored/compiled by a named individual, whose name, title and contact details have been removed — this file contains no identifying information, per this app's standing content policy of crediting only CDC/Ministry of Education. Unlike the scheme-of-work sources used elsewhere in this app, this scope-and-sequence table does not carry numbered CDC 'Specific Competence' outcome codes — each row gives only a Topic, Sub-Topic/Unit, and a brief 'Key Content Focus' phrase plus which term it falls in. Competency statements below are a direct paraphrase of each row's Key Content Focus into standard competency-statement form (an action verb plus the same content), not verbatim official CDC outcome text and not independently sourced content — flagged here transparently rather than presented as equivalent in authority to a numbered-outcome source. No week-level pacing was available in this source (only term), so week numbers are not set for this file.",
+  "curriculum": {
+    "code": "CBC_2023",
+    "name": "2023 Competency-Based Curriculum",
+    "description": "Zambia's current competency-based curriculum."
+  },
+  "subject": {
+    "name": "Civic Education",
+    "code": "CIVIC",
+    "description": "Ordinary Level Secondary Civic Education syllabus, Form 1-4 (Curriculum Development Centre)."
+  },
+  "grade": {
+    "name": "Form 1",
+    "code": "F1_CBC",
+    "level": 1,
+    "phase": "Secondary — the source scheme itself uses \"Form 1\" for this level under the 2023 CBC."
+  },
+  "terms": [
+    {
+      "name": "Term 1",
+      "sequence_number": 1,
+      "topics": [
+        {
+          "name": "1.1 Introduction to Civic Education",
+          "sequence_number": 1,
+          "sub_topics": [
+            {
+              "name": "1.1.1 Civic Education",
+              "sequence_number": 1,
+              "description": "Concept, goal and scope of Civic Education; importance of Civic Education; civic activities in school.",
+              "competencies": [
+                { "sequence_number": 1, "description": "Explain the concept, goal, scope and importance of Civic Education, and identify civic activities in school", "category": "Specific Competence" }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "1.2 Political Development of Zambia",
+          "sequence_number": 2,
+          "sub_topics": [
+            {
+              "name": "1.2.1 Zambia's Political Development (1890-date)",
+              "sequence_number": 1,
+              "description": "Path to independence; political evolution from 1964 to present; school administrative profile.",
+              "competencies": [
+                { "sequence_number": 1, "description": "Describe Zambia's path to independence and its political evolution from 1964 to the present, and outline the school's administrative profile", "category": "Specific Competence" }
+              ]
+            },
+            {
+              "name": "1.2.2 Symbols of National Identity",
+              "sequence_number": 2,
+              "description": "National Flag, Coat of Arms, National Anthem, Independence Day, National Motto; respect for symbols.",
+              "competencies": [
+                { "sequence_number": 1, "description": "Identify Zambia's symbols of national identity (Flag, Coat of Arms, National Anthem, Independence Day, National Motto) and demonstrate respect for them", "category": "Specific Competence" }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 2",
+      "sequence_number": 2,
+      "topics": [
+        {
+          "name": "1.3 Governance",
+          "sequence_number": 3,
+          "sub_topics": [
+            {
+              "name": "1.3.1 Concept of Governance",
+              "sequence_number": 1,
+              "description": "Family and school governance; government vs governance; systems (democracy, dictatorship, monarchy).",
+              "competencies": [
+                { "sequence_number": 1, "description": "Explain the concept of governance at family and school level, distinguish government from governance, and describe systems of governance (democracy, dictatorship, monarchy)", "category": "Specific Competence" }
+              ]
+            },
+            {
+              "name": "1.3.2 Characteristics of Good and Bad Governance",
+              "sequence_number": 2,
+              "description": "Transparency, accountability, rule of law vs corruption, nepotism, oppression.",
+              "competencies": [
+                { "sequence_number": 1, "description": "Distinguish characteristics of good governance (transparency, accountability, rule of law) from bad governance (corruption, nepotism, oppression)", "category": "Specific Competence" }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "1.4 Citizenship",
+          "sequence_number": 4,
+          "sub_topics": [
+            {
+              "name": "1.4.1 Citizenship (Concept, Rights & Duties)",
+              "sequence_number": 1,
+              "description": "Meaning of citizenship; rights, duties, responsibilities of a Zambian citizen.",
+              "competencies": [
+                { "sequence_number": 1, "description": "Explain the meaning of citizenship and the rights, duties and responsibilities of a Zambian citizen", "category": "Specific Competence" }
+              ]
+            },
+            {
+              "name": "1.4.2 Factors Hindering Good Citizenship",
+              "sequence_number": 2,
+              "description": "Poverty, ignorance, corruption, negative peer pressure, etc.",
+              "competencies": [
+                { "sequence_number": 1, "description": "Identify factors that hinder good citizenship (poverty, ignorance, corruption, negative peer pressure)", "category": "Specific Competence" }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 3",
+      "sequence_number": 3,
+      "topics": [
+        {
+          "name": "1.5 Citizenship",
+          "sequence_number": 5,
+          "sub_topics": [
+            {
+              "name": "1.5.1 Special Groups & Social Justice",
+              "sequence_number": 1,
+              "description": "Vulnerable groups (disabled, elderly, children); practising kindness, empathy, fairness.",
+              "competencies": [
+                { "sequence_number": 1, "description": "Identify vulnerable groups in society (persons with disabilities, the elderly, children) and practise kindness, empathy and fairness towards them", "category": "Specific Competence" }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "1.6 Political Parties",
+          "sequence_number": 6,
+          "sub_topics": [
+            {
+              "name": "1.6.1 Structure & Organisation of a Political Party",
+              "sequence_number": 1,
+              "description": "Ruling vs opposition; party structure (NEC, PEC); functions; dramatising campaigns.",
+              "competencies": [
+                { "sequence_number": 1, "description": "Distinguish ruling from opposition parties, describe a political party's structure (NEC, PEC) and functions, and dramatise a political campaign", "category": "Specific Competence" }
+              ]
+            },
+            {
+              "name": "1.6.2 Political Party Systems",
+              "sequence_number": 2,
+              "description": "One-party, two-party, multi-party systems; advantages/disadvantages; history in Zambia.",
+              "competencies": [
+                { "sequence_number": 1, "description": "Distinguish one-party, two-party and multi-party systems, weigh their advantages and disadvantages, and outline their history in Zambia", "category": "Specific Competence" }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "1.7 Local and Central Government",
+          "sequence_number": 7,
+          "sub_topics": [
+            {
+              "name": "1.7.1 Local Government in Zambia",
+              "sequence_number": 1,
+              "description": "History (native authority, urban authorities); structure (city, municipal, town councils); functions (services, rates, registration).",
+              "competencies": [
+                { "sequence_number": 1, "description": "Describe the history, structure (city, municipal, town councils) and functions of local government in Zambia", "category": "Specific Competence" }
+              ]
+            },
+            {
+              "name": "1.7.2 House of Chiefs",
+              "sequence_number": 2,
+              "description": "Role of traditional rulers in governance.",
+              "competencies": [
+                { "sequence_number": 1, "description": "Explain the role of the House of Chiefs and traditional rulers in governance", "category": "Specific Competence" }
+              ]
+            },
+            {
+              "name": "1.7.3 Central Government & Relationship with Local Government",
+              "sequence_number": 3,
+              "description": "Relationship between central and local government; shared functions.",
+              "competencies": [
+                { "sequence_number": 1, "description": "Explain the relationship between central and local government and their shared functions", "category": "Specific Competence" }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "1.8 Personal Finance Management",
+          "sequence_number": 8,
+          "sub_topics": [
+            {
+              "name": "1.8.1 Money",
+              "sequence_number": 1,
+              "description": "Importance of money; functions.",
+              "competencies": [
+                { "sequence_number": 1, "description": "Explain the importance and functions of money", "category": "Specific Competence" }
+              ]
+            },
+            {
+              "name": "1.8.2 Saving",
+              "sequence_number": 2,
+              "description": "Different ways of saving (bank, mobile money, savings groups).",
+              "competencies": [
+                { "sequence_number": 1, "description": "Identify different ways of saving money (bank, mobile money, savings groups)", "category": "Specific Competence" }
+              ]
+            },
+            {
+              "name": "1.8.3 Spending",
+              "sequence_number": 3,
+              "description": "Personal financial management; budgeting, avoiding wasteful expenditure.",
+              "competencies": [
+                { "sequence_number": 1, "description": "Apply personal financial management skills, including budgeting and avoiding wasteful expenditure", "category": "Specific Competence" }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "1.9 Risk Management",
+          "sequence_number": 9,
+          "sub_topics": [
+            {
+              "name": "1.9.1 Concept of Risk Management",
+              "sequence_number": 1,
+              "description": "Identifying risks (health, accident, theft); ways to manage risk.",
+              "competencies": [
+                { "sequence_number": 1, "description": "Identify common risks (health, accident, theft) and explain ways to manage them", "category": "Specific Competence" }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "1.10 Introduction to Entrepreneurship",
+          "sequence_number": 10,
+          "sub_topics": [
+            {
+              "name": "1.10.1 Entrepreneurship",
+              "sequence_number": 1,
+              "description": "Business opportunities; entrepreneur characteristics; benefits; creating a business plan.",
+              "competencies": [
+                { "sequence_number": 1, "description": "Identify business opportunities and entrepreneur characteristics, explain the benefits of entrepreneurship, and outline how to create a business plan", "category": "Specific Competence" }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "1.11 Business Units",
+          "sequence_number": 11,
+          "sub_topics": [
+            {
+              "name": "1.11.1 Types of Business Units",
+              "sequence_number": 1,
+              "description": "Sole trader, partnership, etc.; adapting to changing business environment.",
+              "competencies": [
+                { "sequence_number": 1, "description": "Identify types of business units (sole trader, partnership) and explain how businesses adapt to a changing environment", "category": "Specific Competence" }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

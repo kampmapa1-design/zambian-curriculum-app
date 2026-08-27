@@ -4,6 +4,8 @@ import 'syllabus_models.dart';
 /// no sub-topics, or carries its own objectives/competencies directly) or
 /// one of its sub-topics.
 class SchemeOfWorkEntry {
+  /// Sequential fallback numbering (1, 2, 3, ... in topic/sub-topic order) —
+  /// always present, used when no sourced scheme of work gives a real week.
   final int weekNumber;
   final Topic topic;
   final SubTopic? subTopic;
@@ -19,6 +21,25 @@ class SchemeOfWorkEntry {
   });
 
   String get title => subTopic == null ? topic.name : '${topic.name} — ${subTopic!.name}';
+
+  /// The real teaching week from a sourced scheme of work, when known — see
+  /// [SubTopic.weekNumber]. Null for content ingested before real week data
+  /// was tracked; callers should fall back to [weekNumber] in that case.
+  int? get realWeekNumber => subTopic?.weekNumber ?? topic.weekNumber;
+}
+
+/// Groups [entries] by [SchemeOfWorkEntry.realWeekNumber] for a week-picker
+/// UI, sorted by week. Returns an empty map if none of the entries have real
+/// week data — callers should fall back to a plain topic list in that case
+/// rather than showing an empty "pick a week" dropdown.
+Map<int, List<SchemeOfWorkEntry>> groupEntriesByRealWeek(List<SchemeOfWorkEntry> entries) {
+  final byWeek = <int, List<SchemeOfWorkEntry>>{};
+  for (final entry in entries) {
+    final week = entry.realWeekNumber;
+    if (week == null) continue;
+    byWeek.putIfAbsent(week, () => []).add(entry);
+  }
+  return Map.fromEntries(byWeek.entries.toList()..sort((a, b) => a.key.compareTo(b.key)));
 }
 
 /// Flattens a template's topics into one globally ordered list. Terms and

@@ -1,5 +1,14 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 
+/// Whether the entitlement gate actually blocks generation. [verifySubscription]
+/// and [watchRewardedAd] are still unimplemented placeholders (no real store
+/// or ad SDK wired up yet — see class doc), so with this left `true` nobody
+/// could ever pass the gate in a release build: every export would silently
+/// show nothing rather than "insufficient entitlement," which is exactly the
+/// bug this flag exists to avoid. Flip back to `true` once a real
+/// in_app_purchase/google_mobile_ads backend replaces those placeholders.
+const bool kEntitlementEnforced = false;
+
 /// A subscription verification cached from the last time it was confirmed
 /// online. [gracePeriod] is how long that verification stays trusted while
 /// offline before the app requires going online to reverify.
@@ -51,7 +60,7 @@ class EntitlementService {
   /// falls back to a subscription still within its grace period or a
   /// session ad-unlock — both avoid needing a live connection.
   Future<GenerationAccessResult> checkGenerationAccess() async {
-    if (hasLocalEntitlement) {
+    if (!kEntitlementEnforced || hasLocalEntitlement) {
       return const GenerationAccessResult(allowed: true);
     }
 

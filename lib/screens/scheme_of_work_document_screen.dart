@@ -1,17 +1,22 @@
+import 'dart:async' show unawaited;
+
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../models/scheme_of_work.dart';
 import '../models/scheme_of_work_document.dart';
+import '../models/scheme_of_work_template.dart';
 import '../models/syllabus_models.dart';
+import '../services/lesson_history_repository.dart';
+import '../services/progress_repository.dart';
 import '../services/scheme_of_work_document_service.dart';
+import '../services/syllabus_document_service.dart';
 
-/// Lets a teacher fill in the CDC scheme-of-work columns that aren't part of
-/// the app's syllabus data (Prescribed Competences, Content/Concept,
-/// Expected Standard, Strategies/Methods, Assessments, Material/Resources,
-/// References) around the columns that already are (Week, Topic/Sub-topic,
-/// Specific Competences, Learning Activities), then export the whole
-/// generated scheme as PDF or Word and share it — entirely on-device.
+/// Lets a teacher fill in whichever scheme-of-work columns aren't part of
+/// the app's syllabus data — which columns those are depends on the
+/// curriculum's real template (see scheme_of_work_template.dart: CBC and
+/// OBC have genuinely different columns) — then export the whole generated
+/// scheme as PDF or Word and share it, entirely on-device.
 class SchemeOfWorkDocumentScreen extends StatefulWidget {
   const SchemeOfWorkDocumentScreen({
     super.key,
@@ -31,14 +36,22 @@ class SchemeOfWorkDocumentScreen extends StatefulWidget {
 class _SchemeOfWorkDocumentScreenState extends State<SchemeOfWorkDocumentScreen> {
   late final SchemeOfWorkDocumentService _documentService =
       widget.documentService ?? SchemeOfWorkDocumentService();
+  late final SchemeOfWorkTemplate _activeTemplate = schemeOfWorkTemplateFor(widget.template.curriculum.code);
   late SchemeOfWorkDocumentDraft _draft;
   final Map<String, TextEditingController> _controllers = {};
+  final LessonHistoryRepository _lessonHistoryRepository = LessonHistoryRepository();
+  final _syllabusDocumentService = SyllabusDocumentService();
+  final _progressRepository = ProgressRepository();
   bool _exporting = false;
+  bool _sharingSyllabus = false;
+  final Set<int> _markedTaughtTopicIds = {};
+
+  Iterable<SchemeOfWorkColumnDef> get _manualColumns => _activeTemplate.columns.where((c) => c.manualEntry);
 
   @override
   void initState() {
     super.initState();
-    _draft = SchemeOfWorkDocumentDraft.fromEntries(widget.entries);
+    _draft = SchemeOfWorkDocumentDraft.fromEntries(widget.entries, curriculumCode: widget.template.curriculum.code);
 
     _controllers['schoolName'] = TextEditingController(text: _draft.header.schoolName);
     _controllers['teacherName'] = TextEditingController(text: _draft.header.teacherName);
@@ -47,13 +60,9 @@ class _SchemeOfWorkDocumentScreenState extends State<SchemeOfWorkDocumentScreen>
 
     for (var i = 0; i < _draft.rows.length; i++) {
       final row = _draft.rows[i];
-      _controllers['row_${i}_prescribedCompetences'] = TextEditingController(text: row.prescribedCompetences);
-      _controllers['row_${i}_contentConcept'] = TextEditingController(text: row.contentConcept);
-      _controllers['row_${i}_expectedStandard'] = TextEditingController(text: row.expectedStandard);
-      _controllers['row_${i}_strategiesMethods'] = TextEditingController(text: row.strategiesMethods);
-      _controllers['row_${i}_assessments'] = TextEditingController(text: row.assessments);
-      _controllers['row_${i}_materialResources'] = TextEditingController(text: row.materialResources);
-      _controllers['row_${i}_references'] = TextEditingController(text: row.references);
+      for (final column in _manualColumns) {
+        _controllers['row_${i}_${column.id}'] = TextEditingController(text: row.value(column));
+      }
     }
   }
 
@@ -73,18 +82,11 @@ class _SchemeOfWorkDocumentScreenState extends State<SchemeOfWorkDocumentScreen>
       curriculumPhilosophyAndGoals: _controllers['philosophy']!.text,
     ));
     for (var i = 0; i < _draft.rows.length; i++) {
-      _draft = _draft.withRow(
-        i,
-        _draft.rows[i].copyWith(
-          prescribedCompetences: _controllers['row_${i}_prescribedCompetences']!.text,
-          contentConcept: _controllers['row_${i}_contentConcept']!.text,
-          expectedStandard: _controllers['row_${i}_expectedStandard']!.text,
-          strategiesMethods: _controllers['row_${i}_strategiesMethods']!.text,
-          assessments: _controllers['row_${i}_assessments']!.text,
-          materialResources: _controllers['row_${i}_materialResources']!.text,
-          references: _controllers['row_${i}_references']!.text,
-        ),
-      );
+      var row = _draft.rows[i];
+      for (final column in _manualColumns) {
+        row = row.withValue(column.id, _controllers['row_${i}_${column.id}']!.text);
+      }
+      _draft = _draft.withRow(i, row);
     }
   }
 
@@ -92,6 +94,7 @@ class _SchemeOfWorkDocumentScreenState extends State<SchemeOfWorkDocumentScreen>
         subjectName: widget.template.subject.name,
         gradeName: widget.template.grade.name,
         curriculumName: widget.template.curriculum.name,
+        curriculumCode: widget.template.curriculum.code,
         termLabel: widget.entries.isEmpty ? '' : _termLabel(),
       );
 
@@ -120,6 +123,15 @@ class _SchemeOfWorkDocumentScreenState extends State<SchemeOfWorkDocumentScreen>
         files: [XFile(file.path)],
         subject: 'Scheme of Work — ${widget.template.subject.name} ${widget.template.grade.name}',
       ));
+      for (final entry in widget.entries) {
+        unawaited(_lessonHistoryRepository.logSchemeGenerated(
+          curriculumCode: widget.template.curriculum.code,
+          subjectCode: widget.template.subject.code,
+          gradeLevel: widget.template.grade.level,
+          topicId: entry.topic.id,
+          subTopicId: entry.subTopic?.id,
+        ));
+      }
     } catch (error) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -130,17 +142,56 @@ class _SchemeOfWorkDocumentScreenState extends State<SchemeOfWorkDocumentScreen>
     }
   }
 
+  Future<void> _shareFullSyllabus({required bool asDocx}) async {
+    setState(() => _sharingSyllabus = true);
+    try {
+      final file = asDocx
+          ? await _syllabusDocumentService.generateDocx(widget.template)
+          : await _syllabusDocumentService.generatePdf(widget.template);
+      if (!mounted) return;
+      await SharePlus.instance.share(ShareParams(
+        files: [XFile(file.path)],
+        subject: 'Syllabus — ${widget.template.subject.name} ${widget.template.grade.name}',
+      ));
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Could not create the file: $error')),
+      );
+    } finally {
+      if (mounted) setState(() => _sharingSyllabus = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Scheme of Work')),
+      appBar: AppBar(
+        title: const Text('Scheme of Work'),
+        actions: [
+          _sharingSyllabus
+              ? const Padding(
+                  padding: EdgeInsets.all(16),
+                  child: SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2)),
+                )
+              : PopupMenuButton<bool>(
+                  icon: const Icon(Icons.menu_book_outlined),
+                  tooltip: 'Print / share full syllabus',
+                  onSelected: (asDocx) => _shareFullSyllabus(asDocx: asDocx),
+                  itemBuilder: (_) => const [
+                    PopupMenuItem(value: true, child: Text('Share full syllabus (Word)')),
+                    PopupMenuItem(value: false, child: Text('Share full syllabus (PDF)')),
+                  ],
+                ),
+        ],
+      ),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
         children: [
           Text(
-            'CDC scheme-of-work layout. Week, Topic/Sub-topic, Specific Competences, and '
-            'Learning Activities are filled in from the syllabus already on your device; '
-            'fill in the remaining columns below before exporting.',
+            '${_activeTemplate.name} layout. ${[for (final c in _activeTemplate.columns) if (c.autoFilled) c.label].join(', ')} '
+            'are filled in from the syllabus already on your device; fill in the remaining columns below '
+            'before exporting.',
             style: Theme.of(context).textTheme.bodySmall?.copyWith(fontStyle: FontStyle.italic),
           ),
           const SizedBox(height: 16),
@@ -195,29 +246,66 @@ class _SchemeOfWorkDocumentScreenState extends State<SchemeOfWorkDocumentScreen>
     );
   }
 
+  /// The one remaining place a teacher can mark a topic as actually taught
+  /// (not just generated) — upgrades its lesson-history entry from
+  /// 'generated' to 'completed' (see [LessonHistoryRepository]), same
+  /// underlying action the old per-topic Scheme of Work browser used to
+  /// offer, now offered per row here instead since that screen no longer
+  /// sits in the "Generate Scheme of Work" flow.
+  /// Marks every topic in this row taught — for OBC's merged-week rows,
+  /// that can be more than one topic at once.
+  Future<void> _markTaught(List<SchemeOfWorkEntry> entries) async {
+    for (final entry in entries) {
+      await _progressRepository.markTopicConcluded(
+        curriculumCode: widget.template.curriculum.code,
+        subjectCode: widget.template.subject.code,
+        gradeLevel: widget.template.grade.level,
+        topicId: entry.topic.id,
+      );
+    }
+    if (!mounted) return;
+    setState(() => _markedTaughtTopicIds.addAll(entries.map((e) => e.topic.id)));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Marked ${entries.length == 1 ? '"${entries.first.title}"' : 'this week'} as taught.')),
+    );
+  }
+
   Widget _buildRowCard(int index) {
     final row = _draft.rows[index];
+    final entries = row.entries;
+    final taught = entries.every((e) => _markedTaughtTopicIds.contains(e.topic.id));
+    final week = row.primaryEntry.realWeekNumber ?? row.primaryEntry.weekNumber;
+    final competencies = entries.expand((e) => e.competencies).map((c) => c.description).toList();
+    final objectives = entries.expand((e) => e.objectives).map((o) => o.description).toList();
     return Card(
       margin: const EdgeInsets.only(bottom: 10),
       child: ExpansionTile(
-        title: Text('Week ${row.entry.weekNumber} — ${row.entry.title}'),
+        title: Text('Week $week — ${entries.map((e) => e.title).join('; ')}'),
+        subtitle: _activeTemplate.columns.any((c) => c.id == 'stage') ? Text('Lesson ${row.lessonNumber}') : null,
+        trailing: IconButton(
+          icon: Icon(
+            taught ? Icons.check_circle : Icons.check_circle_outline,
+            color: taught ? Colors.green : null,
+          ),
+          tooltip: taught ? 'Marked as taught' : 'Mark as taught',
+          onPressed: taught ? null : () => _markTaught(entries),
+        ),
         childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
         children: [
-          if (row.entry.competencies.isNotEmpty) ...[
-            _readOnlyBlock('Specific Competences', row.entry.competencies.map((c) => c.description)),
+          if (competencies.isNotEmpty) ...[
+            _readOnlyBlock('Specific Competence / Outcomes', competencies),
             const SizedBox(height: 8),
           ],
-          if (row.entry.objectives.isNotEmpty) ...[
-            _readOnlyBlock('Learning Activities', row.entry.objectives.map((o) => o.description)),
+          if (objectives.isNotEmpty) ...[
+            _readOnlyBlock('Learning Activities', objectives),
             const SizedBox(height: 8),
           ],
-          _textField('row_${index}_prescribedCompetences', 'Prescribed Competences', maxLines: 2),
-          _textField('row_${index}_contentConcept', 'Content / Concept', maxLines: 3),
-          _textField('row_${index}_expectedStandard', 'Expected Standard', maxLines: 2),
-          _textField('row_${index}_strategiesMethods', 'Strategies / Methods', maxLines: 2),
-          _textField('row_${index}_assessments', 'Assessments', maxLines: 2),
-          _textField('row_${index}_materialResources', 'Material / Resources', maxLines: 2),
-          _textField('row_${index}_references', 'References', maxLines: 2),
+          for (final column in _manualColumns)
+            _textField(
+              'row_${index}_${column.id}',
+              column.label,
+              maxLines: column.id == 'learningActivities' ? 3 : 2,
+            ),
         ],
       ),
     );

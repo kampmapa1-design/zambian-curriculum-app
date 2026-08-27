@@ -130,6 +130,14 @@ class SubTopic {
   final List<LearningObjective> objectives;
   final List<Competency> competencies;
 
+  /// The real teaching week this sub-topic falls on, taken directly from a
+  /// sourced scheme of work — null when no such source was available for
+  /// this content, in which case callers fall back to sequence-order
+  /// numbering (see `generateSchemeOfWork`). Only ever a single week even
+  /// for content taught across several real weeks (e.g. two competencies
+  /// merged under one sub-topic) — the first/introducing week is used.
+  final int? weekNumber;
+
   const SubTopic({
     required this.id,
     required this.sequenceNumber,
@@ -137,6 +145,7 @@ class SubTopic {
     this.description,
     this.objectives = const [],
     this.competencies = const [],
+    this.weekNumber,
   });
 }
 
@@ -149,6 +158,11 @@ class Topic {
   final List<LearningObjective> objectives;
   final List<Competency> competencies;
 
+  /// See [SubTopic.weekNumber] — only meaningful for a topic with no
+  /// sub-topics of its own (a topic with sub-topics is never itself a
+  /// schedulable leaf, see `generateSchemeOfWork`).
+  final int? weekNumber;
+
   const Topic({
     required this.id,
     required this.sequenceNumber,
@@ -157,6 +171,7 @@ class Topic {
     this.subTopics = const [],
     this.objectives = const [],
     this.competencies = const [],
+    this.weekNumber,
   });
 }
 

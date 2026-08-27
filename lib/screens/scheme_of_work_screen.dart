@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:share_plus/share_plus.dart';
 
+import '../models/lesson_plan.dart';
 import '../models/scheme_of_work.dart';
 import '../models/syllabus_models.dart';
 import '../services/entitlement_service.dart';
 import '../services/progress_repository.dart';
+import '../services/syllabus_document_service.dart';
 import 'guided_planning_screen.dart';
 import 'lesson_plan_screen.dart';
 import 'scheme_of_work_document_screen.dart';
@@ -26,11 +29,19 @@ class SchemeOfWorkScreen extends StatefulWidget {
 
 class _SchemeOfWorkScreenState extends State<SchemeOfWorkScreen> {
   late final ProgressRepository _repository = widget.repository ?? ProgressRepository();
+  final _syllabusDocumentService = SyllabusDocumentService();
+  bool _sharingSyllabus = false;
 
   bool _loading = true;
   int? _selectedTopicId;
   List<SchemeOfWorkEntry> _entries = const [];
   GenerationAccessResult _access = const GenerationAccessResult(allowed: false);
+
+  /// The term the teacher is browsing — asked for explicitly, before any
+  /// topic/week choice, so a specific topic can be called up directly
+  /// rather than only ever generating "whatever comes next." Defaults to
+  /// the term containing the next entry after whatever was last concluded.
+  int? _selectedTermSequence;
 
   @override
   void initState() {
@@ -46,12 +57,26 @@ class _SchemeOfWorkScreenState extends State<SchemeOfWorkScreen> {
     );
     final access = await EntitlementService.instance.checkGenerationAccess();
     if (!mounted) return;
+    final entries = generateSchemeOfWork(widget.template, lastConcluded);
     setState(() {
       _selectedTopicId = lastConcluded;
-      _entries = generateSchemeOfWork(widget.template, lastConcluded);
+      _entries = entries;
       _access = access;
+      _selectedTermSequence = _termSequenceForEntries(entries) ??
+          (widget.template.terms.isEmpty ? null : widget.template.terms.first.sequenceNumber);
       _loading = false;
     });
+  }
+
+  /// The term of the first upcoming entry — i.e. where a teacher should
+  /// naturally continue, matching "resume from where the previous term's
+  /// scheme left off."
+  int? _termSequenceForEntries(List<SchemeOfWorkEntry> entries) {
+    if (entries.isEmpty) return null;
+    for (final term in widget.template.terms) {
+      if (term.topics.any((t) => t.id == entries.first.topic.id)) return term.sequenceNumber;
+    }
+    return null;
   }
 
   Future<void> _onTopicSelected(int topicId) async {
@@ -69,10 +94,44 @@ class _SchemeOfWorkScreenState extends State<SchemeOfWorkScreen> {
     );
   }
 
+  /// All entries (regardless of concluded-progress cursor) belonging to
+  /// [_selectedTermSequence], built directly from the template rather than
+  /// [_entries] — so switching terms to browse doesn't depend on how far
+  /// progress has advanced.
+  List<SchemeOfWorkEntry> get _entriesForSelectedTerm {
+    final matches = widget.template.terms.where((t) => t.sequenceNumber == _selectedTermSequence);
+    if (matches.isEmpty) return const [];
+    final term = matches.first;
+    final all = generateSchemeOfWork(widget.template, null);
+    final topicIdsInTerm = term.topics.map((t) => t.id).toSet();
+    return all.where((e) => topicIdsInTerm.contains(e.topic.id)).toList();
+  }
+
   Future<void> _recheckAccess() async {
     final access = await EntitlementService.instance.checkGenerationAccess();
     if (!mounted) return;
     setState(() => _access = access);
+  }
+
+  Future<void> _shareFullSyllabus({required bool asDocx}) async {
+    setState(() => _sharingSyllabus = true);
+    try {
+      final file = asDocx
+          ? await _syllabusDocumentService.generateDocx(widget.template)
+          : await _syllabusDocumentService.generatePdf(widget.template);
+      if (!mounted) return;
+      await SharePlus.instance.share(ShareParams(
+        files: [XFile(file.path)],
+        subject: 'Syllabus — ${widget.template.subject.name} ${widget.template.grade.name}',
+      ));
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Could not create the file: $error')),
+      );
+    } finally {
+      if (mounted) setState(() => _sharingSyllabus = false);
+    }
   }
 
   @override
@@ -91,6 +150,20 @@ class _SchemeOfWorkScreenState extends State<SchemeOfWorkScreen> {
                 ),
               ),
             ),
+          _sharingSyllabus
+              ? const Padding(
+                  padding: EdgeInsets.all(16),
+                  child: SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2)),
+                )
+              : PopupMenuButton<bool>(
+                  icon: const Icon(Icons.menu_book_outlined),
+                  tooltip: 'Print / share full syllabus',
+                  onSelected: (asDocx) => _shareFullSyllabus(asDocx: asDocx),
+                  itemBuilder: (_) => const [
+                    PopupMenuItem(value: true, child: Text('Share full syllabus (Word)')),
+                    PopupMenuItem(value: false, child: Text('Share full syllabus (PDF)')),
+                  ],
+                ),
         ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(20),
@@ -108,14 +181,43 @@ class _SchemeOfWorkScreenState extends State<SchemeOfWorkScreen> {
   }
 
   Widget _buildContent(BuildContext context) {
+    if (!_access.allowed) {
+      return ListView(
+        padding: const EdgeInsets.all(16),
+        children: [_AccessGate(message: _access.message!, onUnlocked: _recheckAccess)],
+      );
+    }
+
+    final termEntries = _entriesForSelectedTerm;
+    final byWeek = groupEntriesByRealWeek(termEntries);
+
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
+        Text('Term', style: Theme.of(context).textTheme.titleMedium),
+        const SizedBox(height: 4),
+        const Text(
+          "Pick a term to see its weeks and topics — the app calls up exactly the topic you pick, "
+          'for a lesson plan, teaching notes, or slides.',
+        ),
+        const SizedBox(height: 8),
+        if (widget.template.terms.length > 1)
+          SegmentedButton<int>(
+            segments: [
+              for (final term in widget.template.terms)
+                ButtonSegment(value: term.sequenceNumber, label: Text(term.name, overflow: TextOverflow.ellipsis)),
+            ],
+            selected: {_selectedTermSequence ?? widget.template.terms.first.sequenceNumber},
+            onSelectionChanged: (selection) => setState(() => _selectedTermSequence = selection.first),
+          )
+        else if (widget.template.terms.isNotEmpty)
+          Text(widget.template.terms.first.name, style: Theme.of(context).textTheme.bodyMedium),
+        const Divider(height: 32),
         Text('Last topic concluded', style: Theme.of(context).textTheme.titleMedium),
         const SizedBox(height: 4),
         const Text(
-          'Pick where you left off last term. The scheme of work below updates '
-          'immediately and is saved on this device.',
+          "Or, to continue exactly where last term's scheme left off, mark the last topic you "
+          'concluded — the next document generated will start from the stage right after it.',
         ),
         const SizedBox(height: 8),
         _ProgressPicker(
@@ -124,16 +226,29 @@ class _SchemeOfWorkScreenState extends State<SchemeOfWorkScreen> {
           onChanged: _onTopicSelected,
         ),
         const Divider(height: 32),
-        Text('Next scheme of work', style: Theme.of(context).textTheme.titleMedium),
-        const SizedBox(height: 8),
-        if (_selectedTopicId == null)
-          const Text('Mark a concluded topic above to generate the scheme.')
-        else if (!_access.allowed)
-          _AccessGate(message: _access.message!, onUnlocked: _recheckAccess)
-        else if (_entries.isEmpty)
-          const Text('Every bundled topic for this subject and grade is already covered.')
-        else
-          for (final entry in _entries)
+        if (termEntries.isEmpty)
+          const Text('Every bundled topic for this term is already covered, or none is bundled yet.')
+        else if (byWeek.isNotEmpty) ...[
+          Text('Weeks in this term', style: Theme.of(context).textTheme.titleMedium),
+          const SizedBox(height: 8),
+          for (final weekEntry in byWeek.entries)
+            _WeekGroupCard(
+              weekNumber: weekEntry.key,
+              entries: weekEntry.value,
+              subjectName: widget.template.subject.name,
+              curriculumCode: widget.template.curriculum.code,
+              subjectCode: widget.template.subject.code,
+              gradeLevel: widget.template.grade.level,
+            ),
+        ] else ...[
+          Text('Topics in this term', style: Theme.of(context).textTheme.titleMedium),
+          const SizedBox(height: 4),
+          Text(
+            "No sourced week numbers for this subject yet, so topics are listed in syllabus order.",
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
+          const SizedBox(height: 8),
+          for (final entry in termEntries)
             _SchemeEntryCard(
               entry: entry,
               subjectName: widget.template.subject.name,
@@ -141,6 +256,7 @@ class _SchemeOfWorkScreenState extends State<SchemeOfWorkScreen> {
               subjectCode: widget.template.subject.code,
               gradeLevel: widget.template.grade.level,
             ),
+        ],
       ],
     );
   }
@@ -279,6 +395,52 @@ class _ProgressPicker extends StatelessWidget {
   }
 }
 
+/// One real teaching week and its topic(s) — usually just one entry, but
+/// grouped as a list since more than one sub-topic can occasionally share a
+/// week (see e.g. civic_education_form2.json).
+class _WeekGroupCard extends StatelessWidget {
+  const _WeekGroupCard({
+    required this.weekNumber,
+    required this.entries,
+    required this.subjectName,
+    required this.curriculumCode,
+    required this.subjectCode,
+    required this.gradeLevel,
+  });
+
+  final int weekNumber;
+  final List<SchemeOfWorkEntry> entries;
+  final String subjectName;
+  final String curriculumCode;
+  final String subjectCode;
+  final int gradeLevel;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 6),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 8, bottom: 2),
+            child: Text('Week $weekNumber', style: Theme.of(context).textTheme.labelLarge),
+          ),
+          for (final entry in entries)
+            _SchemeEntryCard(
+              entry: entry,
+              subjectName: subjectName,
+              curriculumCode: curriculumCode,
+              subjectCode: subjectCode,
+              gradeLevel: gradeLevel,
+              hideWeekLabel: true,
+            ),
+        ],
+      ),
+    );
+  }
+}
+
 class _SchemeEntryCard extends StatelessWidget {
   const _SchemeEntryCard({
     required this.entry,
@@ -286,6 +448,7 @@ class _SchemeEntryCard extends StatelessWidget {
     required this.curriculumCode,
     required this.subjectCode,
     required this.gradeLevel,
+    this.hideWeekLabel = false,
   });
 
   final SchemeOfWorkEntry entry;
@@ -293,6 +456,11 @@ class _SchemeEntryCard extends StatelessWidget {
   final String curriculumCode;
   final String subjectCode;
   final int gradeLevel;
+
+  /// True when a [_WeekGroupCard] wrapper already shows the week number,
+  /// so this card doesn't repeat it (or shows the sequential fallback
+  /// instead, when the entry list has no real week data at all).
+  final bool hideWeekLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -303,7 +471,8 @@ class _SchemeEntryCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Week ${entry.weekNumber}', style: Theme.of(context).textTheme.labelMedium),
+            if (!hideWeekLabel)
+              Text('Week ${entry.weekNumber}', style: Theme.of(context).textTheme.labelMedium),
             Text(entry.title, style: Theme.of(context).textTheme.titleSmall),
             if (entry.objectives.isNotEmpty) ...[
               const SizedBox(height: 6),
@@ -344,6 +513,11 @@ class _SchemeEntryCard extends StatelessWidget {
                         subjectCode: subjectCode,
                         gradeLevel: gradeLevel,
                         entry: entry,
+                        // OBC and CBC use structurally different real
+                        // lesson plan templates.
+                        template: curriculumCode == 'CBC_2023'
+                            ? defaultCbcLessonPlanTemplate
+                            : defaultCdcLessonPlanTemplate,
                       ),
                     ),
                   ),
@@ -354,6 +528,11 @@ class _SchemeEntryCard extends StatelessWidget {
                   onPressed: () => showTeachingNotesSheet(context, entry: entry),
                   icon: const Icon(Icons.auto_awesome, size: 18),
                   label: const Text('Teaching notes'),
+                ),
+                TextButton.icon(
+                  onPressed: () => showTeachingNotesSheet(context, entry: entry),
+                  icon: const Icon(Icons.slideshow_outlined, size: 18),
+                  label: const Text('PowerPoint slides'),
                 ),
               ],
             ),

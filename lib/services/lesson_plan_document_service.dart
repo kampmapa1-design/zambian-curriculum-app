@@ -44,28 +44,17 @@ class LessonPlanDocumentService {
             child: pw.Text('LESSON PLAN', style: pw.TextStyle(fontSize: 20, fontWeight: pw.FontWeight.bold)),
           ),
           pw.SizedBox(height: 16),
-          for (final section in template.sections) ...[
+          // "evaluation" (Teacher's/Learners' or Lesson Evaluation) is
+          // rendered after the progression table below, matching the real
+          // templates this app was built from — those fields come at the
+          // very bottom of the document, filled in by hand after teaching.
+          for (final section in template.sections.where((s) => s.id != 'evaluation')) ...[
             if (section.id != 'header') ...[
               pw.SizedBox(height: 12),
               pw.Text(section.title, style: pw.TextStyle(fontSize: 13, fontWeight: pw.FontWeight.bold)),
               pw.Divider(thickness: 0.5),
             ],
-            for (final field in section.fields)
-              if (draft.value(field.id).trim().isNotEmpty || field.required)
-                pw.Padding(
-                  padding: const pw.EdgeInsets.only(bottom: 6),
-                  child: pw.RichText(
-                    text: pw.TextSpan(
-                      children: [
-                        pw.TextSpan(
-                          text: '${field.label}: ',
-                          style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10.5),
-                        ),
-                        pw.TextSpan(text: draft.value(field.id), style: const pw.TextStyle(fontSize: 10.5)),
-                      ],
-                    ),
-                  ),
-                ),
+            for (final field in section.fields) _pdfField(field, draft.value(field.id)),
           ],
           pw.SizedBox(height: 14),
           pw.Text('LESSON PROGRESSION', style: pw.TextStyle(fontSize: 13, fontWeight: pw.FontWeight.bold)),
@@ -102,12 +91,57 @@ class LessonPlanDocumentService {
                 ),
             ],
           ),
+          for (final section in template.sections.where((s) => s.id == 'evaluation')) ...[
+            pw.SizedBox(height: 12),
+            pw.Text(section.title, style: pw.TextStyle(fontSize: 13, fontWeight: pw.FontWeight.bold)),
+            pw.Divider(thickness: 0.5),
+            for (final field in section.fields) _pdfField(field, draft.value(field.id)),
+          ],
         ],
       ),
     );
 
     final bytes = await doc.save();
     return _writeToTempFile('pdf', bytes, draft);
+  }
+
+  /// Renders one header/planning/evaluation field. A [blankSpaceOnPrint]
+  /// field (Teacher's/Learners' Evaluation) always prints — ruled blank
+  /// lines when empty, so there's physical room to handwrite a note on the
+  /// printed page — rather than being silently omitted the way any other
+  /// unfilled optional field is.
+  pw.Widget _pdfField(LessonPlanFieldDef field, String value) {
+    final trimmed = value.trim();
+    if (trimmed.isEmpty && !field.required && !field.blankSpaceOnPrint) {
+      return pw.SizedBox.shrink();
+    }
+    if (trimmed.isEmpty && field.blankSpaceOnPrint) {
+      return pw.Padding(
+        padding: const pw.EdgeInsets.only(bottom: 8),
+        child: pw.Column(
+          crossAxisAlignment: pw.CrossAxisAlignment.start,
+          children: [
+            pw.Text('${field.label}:', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10.5)),
+            for (var i = 0; i < 3; i++)
+              pw.Padding(
+                padding: const pw.EdgeInsets.only(top: 10),
+                child: pw.Text('_' * 78, style: const pw.TextStyle(fontSize: 10.5)),
+              ),
+          ],
+        ),
+      );
+    }
+    return pw.Padding(
+      padding: const pw.EdgeInsets.only(bottom: 6),
+      child: pw.RichText(
+        text: pw.TextSpan(
+          children: [
+            pw.TextSpan(text: '${field.label}: ', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10.5)),
+            pw.TextSpan(text: value, style: const pw.TextStyle(fontSize: 10.5)),
+          ],
+        ),
+      ),
+    );
   }
 
   pw.Widget _pdfHeaderCell(String text) => pw.Padding(
@@ -158,19 +192,26 @@ class LessonPlanDocumentService {
 
     buffer.write(_docxHeading('LESSON PLAN', size: 32, center: true));
 
-    for (final section in template.sections) {
+    // "evaluation" is rendered after the progression table below — see the
+    // matching comment in generatePdf.
+    for (final section in template.sections.where((s) => s.id != 'evaluation')) {
       if (section.id != 'header') {
         buffer.write(_docxHeading(section.title, size: 26));
       }
       for (final field in section.fields) {
-        final value = draft.value(field.id);
-        if (value.trim().isEmpty && !field.required) continue;
-        buffer.write(_docxLabeledParagraph(field.label, value));
+        buffer.write(_docxField(field, draft.value(field.id)));
       }
     }
 
     buffer.write(_docxHeading('LESSON PROGRESSION', size: 26));
     buffer.write(_docxProgressionTable(draft));
+
+    for (final section in template.sections.where((s) => s.id == 'evaluation')) {
+      buffer.write(_docxHeading(section.title, size: 26));
+      for (final field in section.fields) {
+        buffer.write(_docxField(field, draft.value(field.id)));
+      }
+    }
 
     buffer.write('<w:sectPr/></w:body></w:document>');
     return buffer.toString();
@@ -181,6 +222,28 @@ class LessonPlanDocumentService {
     return '<w:p><w:pPr>$jc<w:spacing w:before="200" w:after="120"/></w:pPr>'
         '<w:r><w:rPr><w:b/><w:sz w:val="$size"/></w:rPr>'
         '<w:t xml:space="preserve">${_xmlEscape(text)}</w:t></w:r></w:p>';
+  }
+
+  /// DOCX counterpart to [_pdfField] — same "always print blank ruled lines
+  /// for an unfilled handwritten field" behavior.
+  String _docxField(LessonPlanFieldDef field, String value) {
+    final trimmed = value.trim();
+    if (trimmed.isEmpty && !field.required && !field.blankSpaceOnPrint) return '';
+    if (trimmed.isEmpty && field.blankSpaceOnPrint) {
+      final buffer = StringBuffer();
+      buffer.write(
+        '<w:p><w:pPr><w:spacing w:after="40"/></w:pPr>'
+        '<w:r><w:rPr><w:b/></w:rPr><w:t xml:space="preserve">${_xmlEscape(field.label)}:</w:t></w:r></w:p>',
+      );
+      for (var i = 0; i < 3; i++) {
+        buffer.write(
+          '<w:p><w:pPr><w:spacing w:before="200"/></w:pPr>'
+          '<w:r><w:t xml:space="preserve">${'_' * 78}</w:t></w:r></w:p>',
+        );
+      }
+      return buffer.toString();
+    }
+    return _docxLabeledParagraph(field.label, value);
   }
 
   String _docxLabeledParagraph(String label, String value) {

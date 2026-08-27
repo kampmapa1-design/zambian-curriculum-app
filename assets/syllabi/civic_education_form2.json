@@ -1,0 +1,845 @@
+{
+  "_source": "Ministry of Education / Curriculum Development Centre, Zambia — Civic Education Scheme of Work, Form 2, Terms 1-3 (2026), as prepared by a serving teacher against the official CDC Civic Education syllabus (each entry cites the syllabus page it is drawn from, e.g. 'Syllabus p.34'). No separate full syllabus document (with numbered Topic/Sub-topic/Specific-Competence text independent of a term's pacing) was available for this subject/form at ingestion time, so topic, sub-topic, competency and learning-objective text is reconstructed from the scheme of work's own Topic/Subtopic/Specific Competence/Content/Learning Activities/Expected Standards columns — the scheme's own competency codes (2.1.1.1 etc.) are reproduced as found. The source document's teacher name, TS number and school name have been removed — this file contains no identifying information about who prepared the source scheme, per this app's standing content policy of crediting only CDC/Ministry of Education. Three weeks per term (Revision & Reporting, Mid-Term Test, Revision & Integration, End-of-Term Test) carry no new topic content and are omitted here. Two topics (2.1 Constitution's 'The Zambian Constitution' sub-topic, 2.2 Elections' 'Elections' sub-topic, 2.2's 'Electoral Commission of Zambia' sub-topic, and 2.12 Business Plan's final sub-topic) each span two consecutive weeks under one sub-topic name with two distinct competency codes — both competencies are kept under that single sub-topic rather than split, matching how the source scheme presents them.",
+  "curriculum": {
+    "code": "CBC_2023",
+    "name": "2023 Competency-Based Curriculum",
+    "description": "Zambia's current competency-based curriculum."
+  },
+  "subject": {
+    "name": "Civic Education",
+    "code": "CIVIC",
+    "description": "Ordinary Level Secondary Civic Education syllabus, Form 1-4 (Curriculum Development Centre)."
+  },
+  "grade": {
+    "name": "Form 2",
+    "code": "F2",
+    "level": 2,
+    "phase": "Secondary — the source scheme itself uses \"Form 2\" for this level under the 2023 CBC."
+  },
+  "terms": [
+    {
+      "name": "Term 1",
+      "sequence_number": 1,
+      "topics": [
+        {
+          "name": "2.1 Constitution",
+          "sequence_number": 1,
+          "sub_topics": [
+            {
+              "name": "2.1.1 The Constitution",
+              "sequence_number": 1,
+              "description": "Expected standard: understanding of the Constitution demonstrated accordingly.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Demonstrate understanding of the Constitution",
+                  "category": "Specific Competence"
+                }
+              ],
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Discussing the Constitution"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Describing its characteristics"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Examining forms and types"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Analysing advantages and disadvantages of each form"
+                }
+              ],
+              "week_number": 2
+            },
+            {
+              "name": "2.1.2 The Zambian Constitution",
+              "sequence_number": 2,
+              "description": "Expected standard: Constitution-making and adoption process analysed accordingly; structure of the Constitution examined accordingly.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Analyse process of Constitution making and adoption in Zambia",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Examine structure of Zambian Constitution",
+                  "category": "Specific Competence"
+                }
+              ],
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describing history of Constitution making in Zambia (Chona, Mvunga, Mwanakatwe, Wila Mung'omba, Zambia Constitution Review Commissions)"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Analysing the Constitution adoption process (Parliament, Referendum, Constituent Assembly)"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Examining the structure of the Zambian Constitution (Parts and Articles)"
+                }
+              ],
+              "week_number": 3
+            },
+            {
+              "name": "2.1.3 Importance of Constitution",
+              "sequence_number": 3,
+              "description": "Expected standard: importance of Constitution explained accordingly.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Explain importance of Constitution",
+                  "category": "Specific Competence"
+                }
+              ],
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Explaining the importance of the Constitution (promotes and protects the rule of law; owned and guarded by citizens; ensures democratic governance)"
+                }
+              ],
+              "week_number": 5
+            }
+          ]
+        },
+        {
+          "name": "2.2 Elections",
+          "sequence_number": 2,
+          "sub_topics": [
+            {
+              "name": "2.2.1 Elections",
+              "sequence_number": 1,
+              "description": "Expected standard: significance of electing leaders justified accordingly; types and forms of elections classified accordingly.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Justify significance of electing leaders",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Classify types and forms of elections",
+                  "category": "Specific Competence"
+                }
+              ],
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Assessing the significance of electing leaders in any organisation"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Explaining meaning and importance of elections"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Describing characteristics of a credible election"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Classifying types of elections (Presidential, National Assembly, Local Government)"
+                },
+                {
+                  "sequence_number": 5,
+                  "description": "Analysing forms of elections (General and By-elections)"
+                }
+              ],
+              "week_number": 6
+            },
+            {
+              "name": "2.2.2 Electoral Commission of Zambia (ECZ)",
+              "sequence_number": 2,
+              "description": "Expected standard: role of ECZ analysed accordingly; electoral malpractice analysed accordingly.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Analyse the role of the Electoral Commission of Zambia (ECZ)",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Analyse electoral malpractice in Zambia",
+                  "category": "Specific Competence"
+                }
+              ],
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describing the role of the ECZ (organise, conduct and manage elections) and discussing the Electoral Process (legislation, delimitation, voter education, registration)"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Describing the Electoral Code of Conduct and discussing voters' rights"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Analysing forms of electoral malpractice"
+                }
+              ],
+              "week_number": 9
+            },
+            {
+              "name": "2.2.3 Electoral Systems",
+              "sequence_number": 3,
+              "description": "Expected standard: electoral systems examined accordingly.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Examine electoral systems",
+                  "category": "Specific Competence"
+                }
+              ],
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Examining electoral systems (Single Member Plurality/Winner Takes It All, Majoritarian, Proportional Representation, Mixed Member Proportionality)"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Explaining Zambia's electoral system"
+                }
+              ],
+              "week_number": 11
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 2",
+      "sequence_number": 2,
+      "topics": [
+        {
+          "name": "2.3 Economic and Social Development",
+          "sequence_number": 3,
+          "sub_topics": [
+            {
+              "name": "2.3.1 The concept of Economic and Social Development",
+              "sequence_number": 1,
+              "description": "Expected standard: solutions to life challenges devised accordingly.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Devise solutions in dealing with life challenges",
+                  "category": "Specific Competence"
+                }
+              ],
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Exploring life challenges (social and economic)"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Explaining the concept of Economic and Social Development"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Discussing human needs (food, shelter, clothes, water)"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Describing factors affecting production (land, capital, labour, enterprise)"
+                },
+                {
+                  "sequence_number": 5,
+                  "description": "Explaining importance of standards"
+                }
+              ],
+              "week_number": 1
+            },
+            {
+              "name": "2.3.2 The role of Informal Sector to National Development",
+              "sequence_number": 2,
+              "description": "Expected standard: role of Informal Sector demonstrated accordingly.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Demonstrate understanding of the role of Informal Sector to National Development",
+                  "category": "Specific Competence"
+                }
+              ],
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Analysing the role of the Informal Sector to National Development (creation of employment; production of goods and services)"
+                }
+              ],
+              "week_number": 2
+            }
+          ]
+        },
+        {
+          "name": "2.4 Trade",
+          "sequence_number": 4,
+          "sub_topics": [
+            {
+              "name": "2.4.1 Local and International Trade",
+              "sequence_number": 1,
+              "description": "Expected standard: local and international trade differentiated accordingly.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Differentiate between local and international trade",
+                  "category": "Specific Competence"
+                }
+              ],
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Classifying types of trade (local and international; visible and invisible)"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Identifying challenges associated with local and international trade (poor transport, communication, smuggling)"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Describing importance of trade"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Discussing terms of trade (favourable/unfavourable balance of trade, balance of payments)"
+                },
+                {
+                  "sequence_number": 5,
+                  "description": "Analysing functions of the World Trade Organisation (WTO)"
+                },
+                {
+                  "sequence_number": 6,
+                  "description": "Designing a model on the chain of distribution"
+                }
+              ],
+              "week_number": 3
+            }
+          ]
+        },
+        {
+          "name": "2.5 Human Rights",
+          "sequence_number": 5,
+          "sub_topics": [
+            {
+              "name": "2.5.1 History of Human Rights",
+              "sequence_number": 1,
+              "description": "Expected standard: human dignity promoted accordingly.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Promote human dignity",
+                  "category": "Specific Competence"
+                }
+              ],
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Discussing Human Rights (claims and entitlements)"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Describing historical development of Human Rights (Magna Carta, Charter of Man, UDHR)"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Outlining significance of human dignity"
+                }
+              ],
+              "week_number": 4
+            },
+            {
+              "name": "2.5.2 Categories of Human Rights",
+              "sequence_number": 2,
+              "description": "Expected standard: categories of Human Rights examined accordingly.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Examine categories of Human Rights",
+                  "category": "Specific Competence"
+                }
+              ],
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describing characteristics of Human Rights (inherent, inalienable, universal)"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Explaining categories of Human Rights (civic and political rights; economic, social and cultural rights)"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Dramatising a human rights violation at home (right to education)"
+                }
+              ],
+              "week_number": 5
+            },
+            {
+              "name": "2.5.3 The Bill of Rights",
+              "sequence_number": 3,
+              "description": "Expected standard: concept of Bill of Rights examined accordingly.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Examine concept of Bill of Rights",
+                  "category": "Specific Competence"
+                }
+              ],
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Explaining meaning of the Bill of Rights"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Outlining elements of the Bill of Rights"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Analysing limitations of the Bill of Rights"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Demonstrating enforcement of the Bill of Rights"
+                }
+              ],
+              "week_number": 6
+            }
+          ]
+        },
+        {
+          "name": "2.6 Peace and Conflict",
+          "sequence_number": 6,
+          "sub_topics": [
+            {
+              "name": "2.6.1 Culture of Peace",
+              "sequence_number": 1,
+              "description": "Expected standard: peace and non-violence promoted accordingly.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Promote peace and non-violence in society",
+                  "category": "Specific Competence"
+                }
+              ],
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Identifying factors that hinder peace (bullying, violating rules, greed)"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Exploring culture of peace"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Discussing ways of promoting peace (intermarriages, mutual respect, justice)"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Promoting peace in different situations (family, classroom, school)"
+                }
+              ],
+              "week_number": 8
+            },
+            {
+              "name": "2.6.2 Conflict in society",
+              "sequence_number": 2,
+              "description": "Expected standard: conflict in society resolved accordingly.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Resolve conflict in society",
+                  "category": "Specific Competence"
+                }
+              ],
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describing levels of conflict (individual, community, national, international)"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Analysing causes of conflict (poverty, injustice, mineral exploration)"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Discussing effects of conflict in society"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Describing conflict resolution methods (counselling, mitigation, negotiation)"
+                }
+              ],
+              "week_number": 9
+            },
+            {
+              "name": "2.6.3 Role of the United Nations in promoting peace",
+              "sequence_number": 3,
+              "description": "Expected standard: role of the UN in promoting peace examined accordingly.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Examine the role of United Nations in promoting peace",
+                  "category": "Specific Competence"
+                }
+              ],
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Discussing the role of the United Nations in promoting peace (peacekeeping, conflict resolution)"
+                }
+              ],
+              "week_number": 10
+            }
+          ]
+        },
+        {
+          "name": "2.7 Regional Organisations",
+          "sequence_number": 7,
+          "sub_topics": [
+            {
+              "name": "2.7.1 Regional Organisations",
+              "sequence_number": 1,
+              "description": "Expected standard: roles of Regional Organisations analysed accordingly.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Analyse roles of Regional Organisations",
+                  "category": "Specific Competence"
+                }
+              ],
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Identifying Regional Organisations to which Zambia is a member (SADC, COMESA, AU)"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Describing the organisations and evaluating their structure"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Discussing benefits of Zambia's membership (ease of trade)"
+                }
+              ],
+              "week_number": 11
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 3",
+      "sequence_number": 3,
+      "topics": [
+        {
+          "name": "2.8 International Organisations",
+          "sequence_number": 8,
+          "sub_topics": [
+            {
+              "name": "2.8.1 International Organisations",
+              "sequence_number": 1,
+              "description": "Expected standard: existence of International Organisations justified accordingly.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Justify existence of International Organisations",
+                  "category": "Specific Competence"
+                }
+              ],
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Identifying International Organisations to which Zambia is a member (Commonwealth, United Nations)"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Describing membership and structure of International Organisations"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Discussing functions of International Organisations"
+                }
+              ],
+              "week_number": 1
+            },
+            {
+              "name": "2.8.2 Specialised Agencies of the United Nations",
+              "sequence_number": 2,
+              "description": "Expected standard: understanding of Specialised Agencies of the UN demonstrated accordingly.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Demonstrate understanding of Specialised Agencies of the United Nations Organisations",
+                  "category": "Specific Competence"
+                }
+              ],
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describing Specialised Agencies of the United Nations (UNESCO, UNICEF, WHO, FAO)"
+                }
+              ],
+              "week_number": 2
+            }
+          ]
+        },
+        {
+          "name": "2.9 Personal Finance Management",
+          "sequence_number": 9,
+          "sub_topics": [
+            {
+              "name": "2.9.1 Borrowing",
+              "sequence_number": 1,
+              "description": "Expected standard: terms and conditions of borrowing interpreted accordingly.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Interpret terms and conditions of borrowing",
+                  "category": "Specific Competence"
+                }
+              ],
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Identifying types of loans (personal, business, salary advance, agricultural, construction, asset financing)"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Describing sources of borrowing (banks and micro-finance institutions)"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Analysing reasons for borrowing"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Filling in a loan application form"
+                }
+              ],
+              "week_number": 3
+            },
+            {
+              "name": "2.9.2 Investment",
+              "sequence_number": 2,
+              "description": "Expected standard: knowledge of investment applied accordingly.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Apply knowledge of investment in real life",
+                  "category": "Specific Competence"
+                }
+              ],
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Identifying types of investment (bond, real estate, stock)"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Showing importance of investment and evaluating types of investment"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Identifying investment opportunities"
+                }
+              ],
+              "week_number": 4
+            }
+          ]
+        },
+        {
+          "name": "2.10 Taxation",
+          "sequence_number": 10,
+          "sub_topics": [
+            {
+              "name": "2.10.1 The Concept of Taxation",
+              "sequence_number": 1,
+              "description": "Expected standard: tax paid accordingly.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Practise paying tax",
+                  "category": "Specific Competence"
+                }
+              ],
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Showing significance of paying tax"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Identifying taxation laws in Zambia and explaining the role of the Zambia Revenue Authority (ZRA)"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Describing types of taxes (Pay As You Earn, Value Added Tax)"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Understanding benefits of tax compliance and consequences of not paying tax"
+                }
+              ],
+              "week_number": 5
+            }
+          ]
+        },
+        {
+          "name": "2.11 Banking Services",
+          "sequence_number": 11,
+          "sub_topics": [
+            {
+              "name": "2.11.1 Financial Services offered by Commercial Banks",
+              "sequence_number": 1,
+              "description": "Expected standard: banking and financial services used accordingly.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use banking and financial services",
+                  "category": "Specific Competence"
+                }
+              ],
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Identifying regulation of commercial banks"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Explaining documents used in banking (deposit slip, withdraw slip, invoice)"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Justifying importance of commercial banks"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Utilising e-banking services (bank transfer, e-banking, mobile banking)"
+                }
+              ],
+              "week_number": 6
+            }
+          ]
+        },
+        {
+          "name": "2.12 Business Plan",
+          "sequence_number": 12,
+          "sub_topics": [
+            {
+              "name": "2.12.1 Business Idea",
+              "sequence_number": 1,
+              "description": "Expected standard: investment opportunities evaluated and business ideas generated accordingly.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Evaluate different investment opportunities and generate business ideas",
+                  "category": "Specific Competence"
+                }
+              ],
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Identifying sources of a business idea and discussing business ideas"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Brainstorming various business ideas"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Selecting the best business idea by applying SWOT analysis (Strengths, Weaknesses, Opportunities, Threats)"
+                }
+              ],
+              "week_number": 8
+            },
+            {
+              "name": "2.12.2 Marketing Plan",
+              "sequence_number": 2,
+              "description": "Expected standard: marketing plan developed accordingly.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Develop a marketing plan",
+                  "category": "Specific Competence"
+                }
+              ],
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Conducting market research"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Making a marketing plan"
+                }
+              ],
+              "week_number": 9
+            },
+            {
+              "name": "2.12.3 Financial Plan",
+              "sequence_number": 3,
+              "description": "Expected standard: financial plan prepared accordingly.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Prepare a financial plan",
+                  "category": "Specific Competence"
+                }
+              ],
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Preparing a profit and loss statement"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Preparing a cash flow plan"
+                }
+              ],
+              "week_number": 10
+            },
+            {
+              "name": "2.12.4 Finalising a Business Plan; Business Startup Capital",
+              "sequence_number": 4,
+              "description": "Expected standard: business plan finalised and startup capital mobilised accordingly.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Consolidate components of a business plan",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Mobilise startup capital",
+                  "category": "Specific Competence"
+                }
+              ],
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Compiling a business plan"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Identifying sources of startup capital"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Sourcing startup capital"
+                }
+              ],
+              "week_number": 11
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

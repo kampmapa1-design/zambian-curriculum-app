@@ -13,6 +13,13 @@ class LessonPlanFieldDef {
   /// work context (Subject, Topic, Sub-topic, competencies) — shown
   /// read-only in the form rather than as something the teacher types.
   final bool autoFilled;
+
+  /// True for fields meant to be handwritten onto the printed document
+  /// after the lesson (e.g. Teacher's/Learners' Evaluation) — always
+  /// printed with a few ruled blank lines even when empty, rather than
+  /// being omitted the way an unfilled optional field normally is. See
+  /// [LessonPlanDocumentService].
+  final bool blankSpaceOnPrint;
   final String? helpText;
 
   const LessonPlanFieldDef({
@@ -21,6 +28,7 @@ class LessonPlanFieldDef {
     required this.type,
     this.required = false,
     this.autoFilled = false,
+    this.blankSpaceOnPrint = false,
     this.helpText,
   });
 
@@ -30,6 +38,7 @@ class LessonPlanFieldDef {
         'type': type.name,
         'required': required,
         'autoFilled': autoFilled,
+        'blankSpaceOnPrint': blankSpaceOnPrint,
         'helpText': helpText,
       };
 
@@ -39,6 +48,7 @@ class LessonPlanFieldDef {
         type: LessonPlanFieldType.values.byName(json['type'] as String),
         required: json['required'] as bool? ?? false,
         autoFilled: json['autoFilled'] as bool? ?? false,
+        blankSpaceOnPrint: json['blankSpaceOnPrint'] as bool? ?? false,
         helpText: json['helpText'] as String?,
       );
 }
@@ -185,15 +195,135 @@ const defaultCdcLessonPlanTemplate = LessonPlanTemplate(
       title: 'After the lesson',
       fields: [
         LessonPlanFieldDef(
-          id: 'lessonEvaluation',
-          label: 'Lesson Evaluation',
+          id: 'teacherEvaluation',
+          label: "Teacher's Evaluation",
           type: LessonPlanFieldType.multiline,
-          helpText: "Filled in after teaching — left blank in the generated document.",
+          required: true,
+          blankSpaceOnPrint: true,
+          helpText: 'Filled in after teaching — printed with blank ruled lines for a handwritten note.',
+        ),
+        LessonPlanFieldDef(
+          id: 'learnerEvaluation',
+          label: "Learners' Evaluation",
+          type: LessonPlanFieldType.multiline,
+          required: true,
+          blankSpaceOnPrint: true,
+          helpText: 'Filled in after teaching — printed with blank ruled lines for a handwritten note.',
         ),
       ],
     ),
   ],
   progressionStages: ['Introduction', 'Lesson Development', 'Exercise', 'Homework', 'Conclusion'],
+);
+
+/// The 2023 Competency-Based Curriculum lesson plan template, sourced from
+/// real Form 1 History/Civic Education/Mathematics CBC lesson plan samples
+/// (2026) provided by the user. Structurally distinct from
+/// [defaultCdcLessonPlanTemplate] (the 2013 OBC template): a narrower "Major
+/// learning point/Activity" per lesson (a subtopic typically spans several
+/// lessons, one per learning objective), an explicit Lesson Goal and Prior
+/// Knowledge chaining lessons together, and a single Lesson Evaluation field
+/// rather than a split Teacher's/Learners' Evaluation — the real CBC samples
+/// consistently use one field, so this template follows that rather than
+/// the OBC form's structure.
+const defaultCbcLessonPlanTemplate = LessonPlanTemplate(
+  id: 'cbc_lesson_plan_v1',
+  name: 'CBC Lesson Plan',
+  source: 'Real Form 1 CBC lesson plan samples (History, Civic Education, Mathematics), provided by the '
+      'user (2026), cross-referenced against the 2023 Competency-Based Curriculum syllabus structure.',
+  sections: [
+    LessonPlanSectionDef(
+      id: 'header',
+      title: 'Lesson details',
+      fields: [
+        LessonPlanFieldDef(id: 'teacherName', label: 'Name of Teacher', type: LessonPlanFieldType.text),
+        LessonPlanFieldDef(id: 'term', label: 'Term', type: LessonPlanFieldType.text),
+        LessonPlanFieldDef(id: 'date', label: 'Date', type: LessonPlanFieldType.text),
+        LessonPlanFieldDef(id: 'time', label: 'Time', type: LessonPlanFieldType.text),
+        LessonPlanFieldDef(
+            id: 'duration', label: 'Duration', type: LessonPlanFieldType.text, helpText: 'e.g. 40 minutes'),
+        LessonPlanFieldDef(id: 'enrolmentBoys', label: 'Enrolment — Boys', type: LessonPlanFieldType.text),
+        LessonPlanFieldDef(id: 'enrolmentGirls', label: 'Enrolment — Girls', type: LessonPlanFieldType.text),
+        LessonPlanFieldDef(id: 'subject', label: 'Subject', type: LessonPlanFieldType.text, autoFilled: true),
+        LessonPlanFieldDef(id: 'className', label: 'Form', type: LessonPlanFieldType.text),
+        LessonPlanFieldDef(id: 'attendanceBoys', label: 'Attendance — Boys', type: LessonPlanFieldType.text),
+        LessonPlanFieldDef(id: 'attendanceGirls', label: 'Attendance — Girls', type: LessonPlanFieldType.text),
+        LessonPlanFieldDef(id: 'topic', label: 'Topic', type: LessonPlanFieldType.text, autoFilled: true),
+        LessonPlanFieldDef(id: 'subTopic', label: 'Sub-Topic', type: LessonPlanFieldType.text, autoFilled: true),
+        LessonPlanFieldDef(
+          id: 'generalCompetences',
+          label: 'General Competences',
+          type: LessonPlanFieldType.multiline,
+          autoFilled: true,
+        ),
+        LessonPlanFieldDef(
+          id: 'specificCompetences',
+          label: 'Specific Competences',
+          type: LessonPlanFieldType.multiline,
+          autoFilled: true,
+        ),
+        LessonPlanFieldDef(
+          id: 'majorLearningPoint',
+          label: 'Major Learning Point/Activity',
+          type: LessonPlanFieldType.multiline,
+          required: true,
+          autoFilled: true,
+          helpText: "This lesson's specific slice of the sub-topic — a sub-topic usually spans several "
+              'lessons, one per learning objective.',
+        ),
+        LessonPlanFieldDef(
+          id: 'lessonGoal',
+          label: 'Lesson Goal',
+          type: LessonPlanFieldType.multiline,
+          required: true,
+          helpText: "By the end of the lesson, learners will be able to... — refine the auto-filled draft "
+              'to fit this specific class.',
+        ),
+      ],
+    ),
+    LessonPlanSectionDef(
+      id: 'planning',
+      title: 'Planning',
+      fields: [
+        LessonPlanFieldDef(id: 'rationale', label: 'Rationale', type: LessonPlanFieldType.multiline, required: true),
+        LessonPlanFieldDef(id: 'priorKnowledge', label: 'Prior Knowledge', type: LessonPlanFieldType.multiline),
+        LessonPlanFieldDef(id: 'references', label: 'References', type: LessonPlanFieldType.multiline),
+        LessonPlanFieldDef(
+            id: 'learningEnvironmentNatural', label: 'Learning Environment — Natural', type: LessonPlanFieldType.text),
+        LessonPlanFieldDef(
+            id: 'learningEnvironmentArtificial',
+            label: 'Learning Environment — Artificial',
+            type: LessonPlanFieldType.text),
+        LessonPlanFieldDef(
+            id: 'learningEnvironmentTechnological',
+            label: 'Learning Environment — Technological',
+            type: LessonPlanFieldType.text),
+        LessonPlanFieldDef(
+          id: 'tlm',
+          label: 'Teaching and Learning Resources/Materials',
+          type: LessonPlanFieldType.multiline,
+          required: true,
+        ),
+        LessonPlanFieldDef(
+            id: 'expectedStandard', label: 'Expected Standard', type: LessonPlanFieldType.multiline, required: true),
+      ],
+    ),
+    LessonPlanSectionDef(
+      id: 'evaluation',
+      title: 'After the lesson',
+      fields: [
+        LessonPlanFieldDef(
+          id: 'lessonEvaluation',
+          label: 'Lesson Evaluation',
+          type: LessonPlanFieldType.multiline,
+          required: true,
+          blankSpaceOnPrint: true,
+          helpText: 'Filled in after teaching — printed with blank ruled lines for a handwritten note.',
+        ),
+      ],
+    ),
+  ],
+  progressionStages: ['Introduction', 'Development', 'Exercise', 'Homework', 'Conclusion'],
 );
 
 /// One row of the "Lesson Progression" table.

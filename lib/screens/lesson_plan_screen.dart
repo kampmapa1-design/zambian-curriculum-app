@@ -1,12 +1,21 @@
+import 'dart:async' show unawaited;
+
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../models/embedded_lesson_plan.dart';
 import '../models/lesson_checkpoint.dart';
 import '../models/lesson_plan.dart';
+import '../models/lesson_stage.dart';
 import '../models/scheme_of_work.dart';
+import '../models/subject_content_item.dart';
 import '../services/custom_template_repository.dart';
+import '../services/embedded_lesson_plan_repository.dart';
 import '../services/lesson_checkpoint_repository.dart';
+import '../services/lesson_history_repository.dart';
 import '../services/lesson_plan_document_service.dart';
+import '../services/lesson_progression_generator.dart';
+import '../services/subject_content_repository.dart';
 
 /// Lets a teacher fill in a lesson plan template for one scheme-of-work
 /// entry (topic/sub-topic already known from the syllabus), then export it
@@ -33,9 +42,10 @@ class LessonPlanScreen extends StatefulWidget {
     this.documentService,
     this.customTemplateRepository,
     this.checkpointRepository,
+    this.embeddedLessonPlanRepository,
     this.guidedActivitiesText,
     this.guidedNoteText,
-    this.initialFocusStageIndex,
+    this.focusStage,
   });
 
   final String subjectName;
@@ -47,6 +57,7 @@ class LessonPlanScreen extends StatefulWidget {
   final LessonPlanDocumentService? documentService;
   final CustomTemplateRepository? customTemplateRepository;
   final LessonCheckpointRepository? checkpointRepository;
+  final EmbeddedLessonPlanRepository? embeddedLessonPlanRepository;
 
   /// Pre-fills the "Lesson Development" progression stage's Learners' Role
   /// (or the first stage, if none is named "Development") — set when
@@ -61,12 +72,16 @@ class LessonPlanScreen extends StatefulWidget {
   /// Teacher's Role.
   final String? guidedNoteText;
 
-  /// Scrolls to and highlights this progression stage on open — set by the
-  /// "Generate Lesson Plan" entry flow when the teacher picked which of the
-  /// three simplified stages (Introduction/Development/Conclusion) to start
-  /// a fresh lesson from. Ignored when resuming a checkpoint (that flow
-  /// already shows which real stage was reached).
-  final int? initialFocusStageIndex;
+  /// Restricts a freshly generated lesson plan to just this conceptual
+  /// stage's real progression rows (see [LessonStage.matchingIndices]) —
+  /// set by the "Generate Lesson Plan" entry flow when the teacher picked
+  /// which part of the lesson (Introduction/Main Body/Conclusion) this
+  /// specific 40-minute lesson plan should cover, rather than always
+  /// generating every stage from Introduction through Conclusion in one
+  /// document. Null shows every stage (e.g. opened directly from a Scheme
+  /// of Work entry card, with no stage question asked). Ignored when
+  /// resuming a checkpoint — that draft's progression is whatever was saved.
+  final LessonStage? focusStage;
 
   @override
   State<LessonPlanScreen> createState() => _LessonPlanScreenState();
@@ -78,6 +93,10 @@ class _LessonPlanScreenState extends State<LessonPlanScreen> {
       widget.customTemplateRepository ?? CustomTemplateRepository();
   late final LessonCheckpointRepository _checkpointRepository =
       widget.checkpointRepository ?? LessonCheckpointRepository();
+  late final EmbeddedLessonPlanRepository _embeddedRepository =
+      widget.embeddedLessonPlanRepository ?? EmbeddedLessonPlanRepository();
+  final SubjectContentRepository _subjectContentRepository = SubjectContentRepository();
+  final LessonHistoryRepository _lessonHistoryRepository = LessonHistoryRepository();
 
   List<LessonPlanTemplate> _availableTemplates = const [];
   late LessonPlanTemplate _activeTemplate;
@@ -85,7 +104,10 @@ class _LessonPlanScreenState extends State<LessonPlanScreen> {
   final Map<String, TextEditingController> _controllers = {};
   bool _exporting = false;
   int? _reachedStageIndex;
-  final Map<int, GlobalKey> _progressionCardKeys = {};
+  List<EmbeddedLessonPlan> _embeddedMatches = const [];
+  bool _usingEmbedded = false;
+  List<SubjectContentItem> _relatedMaterials = const [];
+  String? _subjectContentExcerpt;
 
   @override
   void initState() {
@@ -94,20 +116,125 @@ class _LessonPlanScreenState extends State<LessonPlanScreen> {
     _availableTemplates = [widget.template];
     _rebuildForActiveTemplate();
     _loadCustomTemplates();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await _checkForCheckpoint();
-      if (mounted) _scrollToInitialFocusStage();
+    _loadEmbeddedMatches();
+    _loadRelatedMaterials();
+    _loadSubjectContentExcerpt();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _checkForCheckpoint());
+  }
+
+  /// Materials for this same subject already saved in the on-device Subject
+  /// Content Database (see [SubjectContentRepository]) — offered as
+  /// reference to open/share while writing this lesson plan, alongside
+  /// [_loadSubjectContentExcerpt] weaving real content from the same
+  /// materials directly into the Development stage below.
+  Future<void> _loadRelatedMaterials() async {
+    final catalog = await _subjectContentRepository.loadCatalog();
+    final matches = catalog.items.where((i) => i.subjectName.toLowerCase() == widget.subjectName.toLowerCase()).toList();
+    if (mounted && matches.isNotEmpty) setState(() => _relatedMaterials = matches);
+  }
+
+  /// Entirely local/offline (the text is already on-device — see
+  /// SubjectContentRepository) but still done async, after the initial
+  /// synchronous build, so opening the screen never waits on a disk scan.
+  /// Silently does nothing on failure or no match — the syllabus-derived
+  /// progression already shown stands on its own; this only enriches it.
+  Future<void> _loadSubjectContentExcerpt() async {
+    try {
+      final excerpt = await _subjectContentRepository.findRelevantExcerpt(
+        subjectName: widget.subjectName,
+        topicName: widget.entry.topic.name,
+        subTopicName: widget.entry.subTopic?.name,
+      );
+      if (excerpt == null || !mounted) return;
+      _subjectContentExcerpt = excerpt;
+      _mergeExcerptIntoDevelopmentRow(excerpt);
+    } catch (_) {
+      // Best-effort enrichment only.
+    }
+  }
+
+  /// Patches just the Development-stage progression row with the excerpt,
+  /// rather than rebuilding the whole draft — this can land after the
+  /// teacher has already started editing other fields, and a full rebuild
+  /// would silently discard that work.
+  void _mergeExcerptIntoDevelopmentRow(String excerpt) {
+    final devIndex = _draft.progression.indexWhere((r) => r.stage.toLowerCase().contains('development'));
+    if (devIndex == -1) return;
+
+    final regenerated = generateDefaultProgression(
+      _activeTemplate.progressionStages,
+      widget.entry,
+      subjectContentExcerpt: excerpt,
+    );
+    if (devIndex >= regenerated.length) return;
+
+    setState(() {
+      _draft = _draft.withProgressionRow(devIndex, regenerated[devIndex]);
+      _controllers['progression_${devIndex}_teacher']?.text = regenerated[devIndex].teacherRole;
     });
   }
 
-  void _scrollToInitialFocusStage() {
-    final index = widget.initialFocusStageIndex;
-    if (index == null) return;
-    final key = _progressionCardKeys[index];
-    final cardContext = key?.currentContext;
-    if (cardContext != null) {
-      Scrollable.ensureVisible(cardContext, duration: const Duration(milliseconds: 300), alignment: 0.1);
+  Future<void> _openRelatedMaterial(SubjectContentItem item) async {
+    final file = await _subjectContentRepository.fileFor(item);
+    if (!mounted) return;
+    await SharePlus.instance.share(ShareParams(files: [XFile(file.path)], subject: item.title));
+  }
+
+  /// Real, sanitized lesson plans sourced from the user's own Drive
+  /// documents (see assets/lesson_plans/*.json and each file's `_source`)
+  /// that match this exact topic/sub-topic — usually none (most topics have
+  /// no embedded source yet), sometimes several (one topic is often taught
+  /// across multiple real lessons).
+  Future<void> _loadEmbeddedMatches() async {
+    final matches = await _embeddedRepository.find(
+      curriculumCode: widget.curriculumCode,
+      subjectCode: widget.subjectCode,
+      gradeLevel: widget.gradeLevel,
+      topicName: widget.entry.topic.name,
+      subtopicName: widget.entry.subTopic?.name,
+    );
+    if (mounted && matches.isNotEmpty) setState(() => _embeddedMatches = matches);
+  }
+
+  /// Replaces the current (generated) draft's content with a real embedded
+  /// lesson plan — sanitized, never fabricated. Auto-filled header fields
+  /// (subject/topic/sub-topic/competences, already syllabus-derived) are
+  /// left as they are; only the planning fields and progression come from
+  /// the embedded source. Still fully editable afterwards, same as any
+  /// other draft.
+  void _applyEmbedded(EmbeddedLessonPlan plan) {
+    final values = Map<String, String>.from(_draft.values);
+    void set(String id, String? value) {
+      if (value != null && value.trim().isNotEmpty) values[id] = value;
     }
+
+    set('rationale', plan.rationale);
+    set('priorKnowledge', plan.priorKnowledge);
+    set('references', plan.references);
+    set('tlm', plan.tlm);
+    set('majorLearningPoint', plan.majorLearningPoint);
+    set('lessonGoal', plan.lessonGoal);
+    set('duration', plan.duration);
+    if (plan.objectives.isNotEmpty) values['expectedStandard'] = plan.objectives.join('\n');
+
+    var progression = [
+      for (final row in plan.progression)
+        LessonProgressionRow(stage: row.stage, teacherRole: row.teacherRole ?? '', learnersRole: row.learnersRole ?? ''),
+    ];
+    final focus = widget.focusStage;
+    if (focus != null && progression.isNotEmpty) {
+      final stageNames = [for (final r in progression) r.stage];
+      final keep = focus.matchingIndices(stageNames).toSet();
+      final filtered = [for (var i = 0; i < progression.length; i++) if (keep.contains(i)) progression[i]];
+      if (filtered.isNotEmpty) progression = filtered;
+    }
+    if (progression.isEmpty) progression = _draft.progression;
+
+    setState(() {
+      _usingEmbedded = true;
+      _reachedStageIndex = null;
+      _rebuildForActiveTemplate(seedDraft: LessonPlanDraft(values: values, progression: progression));
+    });
   }
 
   Future<void> _loadCustomTemplates() async {
@@ -174,38 +301,96 @@ class _LessonPlanScreenState extends State<LessonPlanScreen> {
     }
     _controllers.clear();
 
-    var draft = seedDraft;
-    if (draft == null) {
-      draft = LessonPlanDraft.empty(_activeTemplate)
+    final seed = seedDraft;
+    if (seed != null) {
+      _draft = seed;
+    } else {
+      var built = LessonPlanDraft.empty(_activeTemplate)
           .withValue('subject', widget.subjectName)
           .withValue('topic', widget.entry.topic.name);
       if (widget.entry.subTopic != null) {
-        draft = draft.withValue('subTopic', widget.entry.subTopic!.name);
+        built = built.withValue('subTopic', widget.entry.subTopic!.name);
       }
       final generalCompetences = widget.entry.topic.competencies.map((c) => c.description).join('\n');
       if (generalCompetences.isNotEmpty) {
-        draft = draft.withValue('generalCompetences', generalCompetences);
+        built = built.withValue('generalCompetences', generalCompetences);
       }
       final specificCompetences = widget.entry.competencies.map((c) => c.description).join('\n');
       if (specificCompetences.isNotEmpty) {
-        draft = draft.withValue('specificCompetences', specificCompetences);
+        built = built.withValue('specificCompetences', specificCompetences);
       }
       if (widget.entry.objectives.isNotEmpty) {
-        draft = draft.withValue('expectedStandard', widget.entry.objectives.first.description);
+        built = built.withValue('expectedStandard', widget.entry.objectives.first.description);
+        // CBC template only: "Major Learning Point/Activity" is this specific
+        // lesson's slice of the sub-topic — the first not-yet-covered
+        // objective is a reasonable default starting point (a sub-topic
+        // typically spans several lessons, one per objective).
+        built = built.withValue('majorLearningPoint', widget.entry.objectives.first.description);
       }
-      if (widget.guidedActivitiesText != null && draft.progression.isNotEmpty) {
-        final idx = draft.progression.indexWhere((r) => r.stage.toLowerCase().contains('development'));
-        final targetIndex = idx == -1 ? 0 : idx;
-        draft = draft.withProgressionRow(
-          targetIndex,
-          draft.progression[targetIndex].copyWith(
-            learnersRole: widget.guidedActivitiesText,
-            teacherRole: widget.guidedNoteText,
-          ),
+      if (built.value('lessonGoal').isEmpty && widget.entry.competencies.isNotEmpty) {
+        built = built.withValue(
+          'lessonGoal',
+          'By the end of the lesson, learners will be able to ${widget.entry.competencies.first.description}'
+              '${widget.entry.competencies.length > 1 ? ' and related specific competences.' : '.'}',
         );
       }
+      // Rationale is picked automatically from the topic's syllabus
+      // objectives (falling back to competencies) rather than left for the
+      // teacher to compose from scratch — still an editable field, just
+      // pre-filled with syllabus-grounded text.
+      if (built.value('rationale').isEmpty) {
+        final rationaleSource = widget.entry.objectives.isNotEmpty
+            ? widget.entry.objectives.map((o) => o.description)
+            : widget.entry.competencies.map((c) => c.description);
+        if (rationaleSource.isNotEmpty) {
+          built = built.withValue(
+            'rationale',
+            'This lesson matters because, by the end of it, learners will be able to:\n'
+                '${rationaleSource.map((s) => '•  $s').join('\n')}',
+          );
+        }
+      }
+      if (built.progression.isNotEmpty) {
+        // Every stage gets real, syllabus-derived content by default — most
+        // topics have no curated Guided Planning activity bank, so without
+        // this every row but the auto-filled header stays blank (see
+        // lesson_progression_generator.dart).
+        final generated = generateDefaultProgression(
+          _activeTemplate.progressionStages,
+          widget.entry,
+          subjectContentExcerpt: _subjectContentExcerpt,
+        );
+        for (var i = 0; i < generated.length && i < built.progression.length; i++) {
+          built = built.withProgressionRow(i, generated[i]);
+        }
+        if (widget.guidedActivitiesText != null) {
+          // Guided Planning's curated, rule-checked activities are richer
+          // than the generic default above — let them override just the
+          // Development stage when they're available.
+          final idx = built.progression.indexWhere((r) => r.stage.toLowerCase().contains('development'));
+          final targetIndex = idx == -1 ? 0 : idx;
+          built = built.withProgressionRow(
+            targetIndex,
+            built.progression[targetIndex].copyWith(
+              learnersRole: widget.guidedActivitiesText,
+              teacherRole: widget.guidedNoteText,
+            ),
+          );
+        }
+        final focus = widget.focusStage;
+        if (focus != null) {
+          // Restrict the generated plan to just the requested stage's real
+          // progression rows — a lesson plan "at the Main Body stage" is its
+          // own complete 40-minute lesson, not the whole topic end to end.
+          final keep = focus.matchingIndices(_activeTemplate.progressionStages).toSet();
+          built = LessonPlanDraft(
+            values: built.values,
+            progression: [for (var i = 0; i < built.progression.length; i++) if (keep.contains(i)) built.progression[i]],
+          );
+        }
+      }
+      _draft = built;
     }
-    _draft = draft;
 
     for (final field in _activeTemplate.allFields) {
       _controllers[field.id] = TextEditingController(text: _draft.value(field.id));
@@ -288,6 +473,13 @@ class _LessonPlanScreenState extends State<LessonPlanScreen> {
         files: [XFile(file.path)],
         subject: 'Lesson Plan — ${widget.entry.topic.name}',
       ));
+      unawaited(_lessonHistoryRepository.logLessonPlanGenerated(
+        curriculumCode: widget.curriculumCode,
+        subjectCode: widget.subjectCode,
+        gradeLevel: widget.gradeLevel,
+        topicId: widget.entry.topic.id,
+        subTopicId: widget.entry.subTopic?.id,
+      ));
     } catch (error) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -321,7 +513,85 @@ class _LessonPlanScreenState extends State<LessonPlanScreen> {
             style: Theme.of(context).textTheme.bodySmall?.copyWith(fontStyle: FontStyle.italic),
           ),
           const SizedBox(height: 16),
-          for (final section in _activeTemplate.sections) ...[
+          if (_embeddedMatches.isNotEmpty) ...[
+            Card(
+              color: Theme.of(context).colorScheme.secondaryContainer,
+              child: Padding(
+                padding: const EdgeInsets.all(12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      _embeddedMatches.length == 1
+                          ? 'A real, teacher-submitted lesson plan is available for this topic.'
+                          : '${_embeddedMatches.length} real, teacher-submitted lesson plans are available for '
+                              'this topic.',
+                      style: const TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                    const SizedBox(height: 8),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        for (var i = 0; i < _embeddedMatches.length; i++)
+                          OutlinedButton(
+                            onPressed: () => _applyEmbedded(_embeddedMatches[i]),
+                            child: Text(
+                              _embeddedMatches[i].sequenceLabel ??
+                                  (_embeddedMatches.length > 1 ? 'Lesson ${i + 1}' : 'Use this lesson plan'),
+                            ),
+                          ),
+                      ],
+                    ),
+                    if (_usingEmbedded) ...[
+                      const SizedBox(height: 6),
+                      Text(
+                        'Showing a real, sanitized lesson plan below — not generated.',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(fontStyle: FontStyle.italic),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+          ],
+          if (_relatedMaterials.isNotEmpty) ...[
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '${_relatedMaterials.length} saved material(s) for ${widget.subjectName} — tap to open '
+                      'for reference.',
+                      style: const TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                    const SizedBox(height: 8),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        for (final item in _relatedMaterials)
+                          ActionChip(
+                            avatar: const Icon(Icons.description_outlined, size: 16),
+                            label: Text(item.title, overflow: TextOverflow.ellipsis),
+                            onPressed: () => _openRelatedMaterial(item),
+                          ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+          ],
+          // "evaluation" (Teacher's/Learners' or Lesson Evaluation) is shown
+          // at the very bottom, after Lesson Progression — matching the real
+          // templates this app was built from, where those fields are filled
+          // in by hand only after the lesson has actually been taught.
+          for (final section in _activeTemplate.sections.where((s) => s.id != 'evaluation')) ...[
             Text(section.title, style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 8),
             for (final field in section.fields) _buildField(field),
@@ -363,6 +633,12 @@ class _LessonPlanScreenState extends State<LessonPlanScreen> {
               icon: const Icon(Icons.bookmark_add_outlined),
               label: const Text('Save progress here'),
             ),
+          ],
+          for (final section in _activeTemplate.sections.where((s) => s.id == 'evaluation')) ...[
+            const SizedBox(height: 16),
+            Text(section.title, style: Theme.of(context).textTheme.titleMedium),
+            const SizedBox(height: 8),
+            for (final field in section.fields) _buildField(field),
           ],
         ],
       ),
@@ -428,17 +704,8 @@ class _LessonPlanScreenState extends State<LessonPlanScreen> {
 
   Widget _buildProgressionCard(int index) {
     final stage = _draft.progression[index].stage;
-    final isInitialFocus = widget.initialFocusStageIndex == index;
-    final key = _progressionCardKeys.putIfAbsent(index, () => GlobalKey());
     return Card(
-      key: key,
       margin: const EdgeInsets.only(bottom: 10),
-      shape: isInitialFocus
-          ? RoundedRectangleBorder(
-              side: BorderSide(color: Theme.of(context).colorScheme.primary, width: 2),
-              borderRadius: BorderRadius.circular(12),
-            )
-          : null,
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(
@@ -447,15 +714,7 @@ class _LessonPlanScreenState extends State<LessonPlanScreen> {
             Row(
               children: [
                 Expanded(
-                  child: Row(
-                    children: [
-                      Flexible(child: Text(stage, style: Theme.of(context).textTheme.titleSmall)),
-                      if (isInitialFocus) ...[
-                        const SizedBox(width: 6),
-                        Icon(Icons.flag, size: 16, color: Theme.of(context).colorScheme.primary),
-                      ],
-                    ],
-                  ),
+                  child: Text(stage, style: Theme.of(context).textTheme.titleSmall),
                 ),
                 SizedBox(
                   width: 110,

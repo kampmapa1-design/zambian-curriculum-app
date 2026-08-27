@@ -1,0 +1,1345 @@
+{
+  "_source": "Extracted from two real Google Drive PDFs of teacher-authored CBC (2023) Civic Education Form 2 lesson plans, Zambia: (1) file id 1XBFyOOS35PFah-y0FjSpWYio1IdWRoEB, 'BUSINESS PLAN CIVIC EDUCATION FORM 2 LESSON PLANS 2ND VERSION.pdf' (Topic 2.12 Business Plan, 15 lessons); (2) file id 1el22nnmX0yidZNPx7Xg040dGISf1-JZH, 'Form 2 Civic Education Elections Lesson Plan ESCEOL 2nd Version.pdf' (Topic 2.2 Elections, 15 lessons). Both files were read via the Drive connector's read_file_content tool, which returned a natural-language text conversion of each PDF (saved locally as .txt) rather than the original PDF layout; both were read in full, sequential character-offset chunks with no gaps or duplication. All 30 lesson plans present in the two source documents were extracted (each source explicitly self-numbers as 'lesson N of a 15-lesson series', confirming full coverage). Teacher-identifying content was stripped: a real teacher name and two TS (Teaching Service) numbers appeared on every one of the 30 lesson headers and were removed from every field below; a real school name (which appeared in the Business Plan file's header/footer on every lesson, and once inside a Lesson 15 role-play scenario naming a learner's school) was removed everywhere it appeared, including that scenario mention; other real Mkushi-district place names retained in scenario text (e.g. Katanino, Chalata, Fiwila, Mkushi Boma, Mkushi District/North/South) are general community locations, not the specific identifying school, and were kept as genuine pedagogical content. No phone/WhatsApp/email contacts were present in either source. Irregularities found in the raw extraction, documented for transparency: (a) the PDF's table layout (STAGES / TEACHER'S ROLE / LEARNERS' ROLE / ASSESSMENT CRITERIA columns) was flattened by the text-extraction tool, interleaving column text out of strict reading order, most noticeably in the EXERCISE/ASSESSMENT stage of several Elections-file lessons, where scenario text, task text, and expected-answer text were visually split across page-break columns; teacherRole/learnersRole fields below were reconstructed from the real, unaltered wording into logical order, with no invented content added. (b) Repeated 'STAGES TEACHER'S ROLE LEARNERS' ROLE ASSESSMENT CRITERIA' table-header boilerplate (a page-break artifact) was stripped from all fields. (c) In the Elections file, the header block for Lesson 7 ('Describing the role of the Electoral Commission of Zambia') is missing its 'NAME OF TEACHER / TS NO / TERM / DATE / TIME / DURATION / ENROLMENT' line in the source text (the extraction jumps straight to 'SUBJECT: Civic Education...'); this appears to be a genuine PDF page-break extraction gap in the source rather than an original authoring omission, and no content was invented to fill it. (d) Every lesson in the Elections file has 'DURATION: ................ minutes' (an unfilled template blank), so duration is recorded as null for all 15 Elections lessons; the Business Plan file's DURATION field was consistently filled in as '40 minutes' and is recorded as such. (e) 'LESSON EVALUATION:' fields were blank dotted lines in both source files and were skipped per instructions. 'objectives' arrays combine each lesson's real Specific Competence code/description with each listed General Competence (competence-strength numbers in parentheses, e.g. 'Citizenship (2)', are preserved verbatim from the Elections file where present). All narrative content (scenarios, tasks, expected answers, role-play instructions) is real content drawn directly from the source PDFs; progression stage text was combined/lightly reorganised (per the requested teacherRole/learnersRole mapping) but not paraphrased-to-invent or fabricated.",
+  "curriculum_code": "CBC_2023",
+  "subject_code": "civic_education",
+  "grade_levels": [
+    2
+  ],
+  "lesson_plans": [
+    {
+      "topic_name": "2.12 BUSINESS PLAN",
+      "subtopic_name": "2.12.1 Business Idea — Identifying Sources of Business Ideas",
+      "sequence_label": "Lesson 1",
+      "majorLearningPoint": "Identifying sources of business ideas",
+      "lessonGoal": "By the end of the lesson, learners should be able to identify at least three sources from which business ideas can be generated, using examples from their own Mkushi community.",
+      "duration": "40 minutes",
+      "references": "2024 Civic Education Syllabus, Ordinary Level Secondary Education, Form 1-4 (CDC), Topic 2.12 Business Plan; ECSEOL Assessment Schemes for Civic Education 3011 (ECZ, 2026).",
+      "tlm": "Chalkboard, chalk, printed pictures of common Mkushi businesses (a tuck shop, a maize grinding mill, a phone-charging kiosk, a chibwantu stall).",
+      "rationale": "This foundational lesson sparks entrepreneurial thinking among learners. The content is sources of business ideas, the value is observation and problem-solving, and the method is using local Mkushi community examples to make the concept relatable. This is the 1st lesson in the series of 15.",
+      "objectives": [
+        "Specific competence: 2.12.1.1 Evaluate different investment opportunities",
+        "General competence: Entrepreneurship",
+        "General competence: Creativity and Innovation",
+        "General competence: Critical Thinking"
+      ],
+      "priorKnowledge": "Learners have seen different types of businesses operating in Mkushi District (tuck shops, grinding mills, market stalls, phone-charging kiosks).",
+      "progression": [
+        {
+          "stage": "INTRODUCTION/ENGAGEMENT",
+          "teacherRole": "The teacher poses a scenario naming Mkushi residents Bwalya (sells kapenta near the bus station), Natasha (repairs mobile phones near the Boma) and Chanda (sells ice-lollies outside the school gate), and asks where each got the idea to start their business, recording answers on the chalkboard.",
+          "learnersRole": "Learners suggest answers such as 'they saw a need,' 'they had a skill,' or 'they copied someone,' showing curiosity about the origin of business ideas. Assessment criteria: learners actively participate and provide at least one plausible source for each business mentioned."
+        },
+        {
+          "stage": "DEVELOPMENT",
+          "teacherRole": "Defines a Business Idea as a concept that can be used for financial gain, the starting point of any business. Identifies sources of business ideas: Personal Skills and Hobbies (e.g. baking scones, tailoring chitenge dresses, farming, repairing bicycles); Identifying a Need or Problem (e.g. no photocopying service near Mkushi Boma, no fresh vegetables at Katanino market); Observing Trends (e.g. increased phone use driving demand for accessories and airtime); Improving an Existing Product/Service (e.g. selling chilled bottled water instead of warm ones at Chalata bus stop); Franchising (e.g. opening a Java Foods or Zambeef outlet). Additional notes: ideas can also come from Government/Cooperative Empowerment Programmes (CDF, CEEC, farmer/marketer cooperatives common in Mkushi) and from Networking and Mentorship with established Mkushi farmers or traders.",
+          "learnersRole": "Learners take notes. In small groups they receive a picture of a common Mkushi business, brainstorm and list at least two possible sources for that business idea, and present findings to the class. Assessment criteria: each group correctly identifies at least two plausible sources, including at least one of the additional sources discussed."
+        },
+        {
+          "stage": "EXERCISE/ASSESSMENT",
+          "teacherRole": "Scenario: in Chalata area of Mkushi District, Kunda Mwewa noticed boarding-school learners had no convenient phone-charging place; Bana Nachiyunde began selling roasted groundnuts after noticing hungry farm workers passing by; Mwaba Chulu opened a welding workshop after completing a welding course in Kabwe. Tasks: (a) identify the possible source of each entrepreneur's business idea [6 marks]; (b) explain one reason why observing community needs is a reliable source of business ideas [4 marks]; (c) role-play task — in pairs, role-play Kunda explaining to a friend how he identified his business idea and encouraging the friend to look for a similar opportunity. Expected answers: (a) Kunda — identifying a need/problem; Bana Nachiyunde — observing trends/needs; Mwaba Chulu — personal skills and training [6]. (b) Observing needs is reliable because the business solves a real, existing problem, so demand already exists, reducing the risk of failure [4].",
+          "learnersRole": "Learners correctly match each entrepreneur to their business idea source, give a logically sound reason, and perform a clear, relevant role-play applying at least one source of business ideas. Level of difficulty: (a) Understanding (b) Analysing (c) Applying/Creating."
+        },
+        {
+          "stage": "HOMEWORK",
+          "teacherRole": "The teacher asks learners to identify one business run by a relative or neighbour in their home village or compound and write down one possible source of the idea for that business: (a) name the business and owner [2 marks]; (b) state the likely source of the business idea, with one reason [3 marks].",
+          "learnersRole": "Learners observe a local business owned by someone they know and write a short note about the likely source of its idea. Assessment criteria: learners return with a plausible source correctly identified and explained."
+        },
+        {
+          "stage": "CONCLUSION",
+          "teacherRole": "The teacher summarises: 'Great business ideas are all around us, even here in Mkushi. We just need to have open eyes and think about what people need,' and asks a few learners to share one source they learned about.",
+          "learnersRole": "Learners share one source of business ideas from the lesson. Assessment criteria: learners can correctly name one source of business ideas."
+        }
+      ]
+    },
+    {
+      "topic_name": "2.12 BUSINESS PLAN",
+      "subtopic_name": "2.12.1 Business Idea — Discussing Business Ideas",
+      "sequence_label": "Lesson 2",
+      "majorLearningPoint": "Discussing business ideas",
+      "lessonGoal": "By the end of the lesson, learners should be able to effectively discuss and evaluate the potential of different business ideas using a structured framework.",
+      "duration": "40 minutes",
+      "references": "2024 Civic Education Syllabus, Ordinary Level Secondary Education, Form 1-4 (CDC), Topic 2.12 Business Plan; ECSEOL Assessment Schemes for Civic Education 3011 (ECZ, 2026).",
+      "tlm": "Chalkboard, chalk, discussion prompt cards with simple Mkushi-based business ideas (e.g. 'washing school uniforms for boarders,' 'selling liquid soap at Katanino market').",
+      "rationale": "This lesson develops communication and critical thinking skills. The content is a framework for discussing business ideas, the value is collaborative learning and constructive feedback, and the method is structured group discussion using Mkushi-based examples. This is the 2nd lesson in the series of 15.",
+      "objectives": [
+        "Specific competence: 2.12.1.1 Evaluate different investment opportunities",
+        "General competence: Entrepreneurship",
+        "General competence: Communication",
+        "General competence: Collaboration"
+      ],
+      "priorKnowledge": "Learners can identify sources of business ideas from the previous lesson.",
+      "progression": [
+        {
+          "stage": "INTRODUCTION/ENGAGEMENT",
+          "teacherRole": "The teacher presents the idea of learners starting a business washing school uniforms for boarders at the school, asks for immediate reactions and facilitates a brief unstructured discussion to show how people can hold different opinions about the same idea.",
+          "learnersRole": "Learners share initial, gut reactions to the business idea, agreeing, disagreeing and asking questions. Assessment criteria: learners actively participate in the initial discussion."
+        },
+        {
+          "stage": "DEVELOPMENT",
+          "teacherRole": "Defines discussing business ideas as talking about a business concept in a structured way to evaluate its potential, and provides the 5 Ws framework: What is the product/service?; Who will buy it?; Why will they buy it?; Where will the business operate?; How will it work? Models the framework on the chalkboard using the uniform-washing idea, and emphasises respectful communication (listening, building on ideas, constructive feedback). Additional note: learners should also briefly weigh strengths and weaknesses of an idea (a preview of SWOT, covered later).",
+          "learnersRole": "Learners copy the 5 Ws framework. In small groups, each receives a different business idea on a prompt card, discusses it using the 5 Ws, and prepares a short summary to present. Assessment criteria: each group's presentation addresses at least four of the five Ws."
+        },
+        {
+          "stage": "EXERCISE/ASSESSMENT",
+          "teacherRole": "Scenario: Mutale and Choolwe, Form 2 learners, discuss opening a stationery kiosk near the school gate selling pens, exercise books and photocopying; Mutale is optimistic, Choolwe worries about pocket money. Tasks: (a) using the 5 Ws, answer What, Who and Why for the kiosk idea [6 marks]; (b) explain one way their differing opinions can improve the idea [4 marks]; (c) role-play the discussion between Mutale and Choolwe reaching a respectful, reasoned compromise. Expected answers: (a) What — stationery and photocopying; Who — learners (and possibly teachers); Why — frequent need, avoids travel to Boma [6]. (b) Differing opinions help identify weaknesses early (e.g. limited pocket money), allowing adjustments such as credit books or affordable units before money is invested [4].",
+          "learnersRole": "Learners correctly complete at least three of the 5 Ws, give a sound explanation of the value of differing opinions, and perform a respectful, well-reasoned role-play. Level of difficulty: (a) Understanding (b) Analysing (c) Applying."
+        },
+        {
+          "stage": "HOMEWORK",
+          "teacherRole": "The teacher asks learners to discuss one business idea from the lesson with a family member at home: (a) record their own opinion [2 marks]; (b) record the family member's opinion and one reason [3 marks].",
+          "learnersRole": "Learners have a discussion at home and record both viewpoints in a short written note. Assessment criteria: learners submit a written note showing both viewpoints with reasons."
+        },
+        {
+          "stage": "CONCLUSION",
+          "teacherRole": "The teacher concludes that discussing a business idea with others before starting helps see both its strengths and risks, and asks learners to state one benefit of discussing ideas before starting a business.",
+          "learnersRole": "Learners state one benefit of discussing business ideas. Assessment criteria: learners can correctly state one benefit of group discussion."
+        }
+      ]
+    },
+    {
+      "topic_name": "2.12 BUSINESS PLAN",
+      "subtopic_name": "2.12.1 Business Idea — Understanding the Concept and Purpose of a Business Plan",
+      "sequence_label": "Lesson 3",
+      "majorLearningPoint": "Making a business plan (introducing the concept and purpose of a business plan)",
+      "lessonGoal": "By the end of the lesson, learners should be able to explain what a business plan is and state at least three reasons why a business plan is important before starting a business.",
+      "duration": "40 minutes",
+      "references": "2024 Civic Education Syllabus, Ordinary Level Secondary Education, Form 1-4 (CDC), Topic 2.12 Business Plan; ECSEOL Assessment Schemes for Civic Education 3011 (ECZ, 2026).",
+      "tlm": "Chalkboard, chalk, a sample simplified one-page business plan outline (photocopied or drawn on manila paper).",
+      "rationale": "This lesson bridges business idea generation to formal business planning. The content is the concept and purpose of a business plan, the value is foresight and preparedness, and the method is comparing planned and unplanned Mkushi business examples. This is the 3rd lesson in the series of 15.",
+      "objectives": [
+        "Specific competence: 2.12.1.1 Evaluate different investment opportunities",
+        "General competence: Entrepreneurship",
+        "General competence: Analytical Thinking"
+      ],
+      "priorKnowledge": "Learners can discuss and evaluate business ideas using the 5 Ws framework.",
+      "progression": [
+        {
+          "stage": "INTRODUCTION/ENGAGEMENT",
+          "teacherRole": "The teacher narrates that Mr Nchimunya opened a grocery shop at Katanino without writing anything down and ran out of stock unable to tell if he was profitable, while Mrs Kabwe planned her chicken-rearing project on paper first (costs, customers, expected income) before starting, then asks why Mrs Kabwe's business is doing better.",
+          "learnersRole": "Learners suggest reasons such as 'she planned ahead,' 'she knew her costs,' or 'she had a clear direction.' Assessment criteria: learners actively participate and link success to planning."
+        },
+        {
+          "stage": "DEVELOPMENT",
+          "teacherRole": "Defines a Business Plan as a written document describing a business idea, how it will be run, and how it will make money. Explains its purpose: Provides Direction (roadmap); Attracts Financing (banks/microfinance institutions in Mkushi Boma require one for loans); Identifies Risks Early; Measures Progress. Outlines the main components to be covered later: Business Idea, Marketing Plan, Financial Plan, Startup Capital Plan. Additional note: a business plan need not be long — even a one-page plan is far better than no plan at all.",
+          "learnersRole": "Learners take notes on the definition and purposes. In pairs, they compare a planned versus unplanned business scenario (using cards) and list two advantages the planned business enjoys. Assessment criteria: each pair correctly lists at least two advantages of having a business plan."
+        },
+        {
+          "stage": "EXERCISE/ASSESSMENT",
+          "teacherRole": "Scenario: Chansa wants to start a small poultry business in Fiwila area; his uncle Mr Sokoni advises him to first write a business plan, since the local Farmers' Cooperative Savings Group will only lend money against a written plan. Tasks: (a) explain what a business plan is, using Chansa's situation [3 marks]; (b) give two reasons why Mr Sokoni's advice is important [4 marks]; (c) role-play the conversation between Chansa and Mr Sokoni. Expected answers: (a) a written document describing his poultry idea, chicken numbers, target customers and expected income [3]. (b) it would help secure a loan from the cooperative and help identify risks (disease outbreaks, feed costs) before investing [4].",
+          "learnersRole": "Learners give a correct, contextualised definition, state two valid reasons, and perform a relevant, informative role-play. Level of difficulty: (a) Understanding (b) Analysing (c) Applying."
+        },
+        {
+          "stage": "HOMEWORK",
+          "teacherRole": "The teacher asks learners to interview one local business owner about whether they wrote a business plan before starting: (a) state whether they had a written plan [1 mark]; (b) record one challenge a business plan might have prevented [4 marks].",
+          "learnersRole": "Learners conduct a short interview and record findings in a notebook. Assessment criteria: learners return with a recorded interview showing understanding of the value of business planning."
+        },
+        {
+          "stage": "CONCLUSION",
+          "teacherRole": "The teacher concludes: 'A good business plan is like a map for a journey — it does not guarantee success, but it greatly reduces the chances of getting lost,' and asks learners to state one purpose of a business plan.",
+          "learnersRole": "Learners state one purpose of a business plan. Assessment criteria: learners can correctly state one purpose."
+        }
+      ]
+    },
+    {
+      "topic_name": "2.12 BUSINESS PLAN",
+      "subtopic_name": "2.12.1 Business Idea — Generating Business Ideas: Brainstorming Various Business Ideas",
+      "sequence_label": "Lesson 4",
+      "majorLearningPoint": "Brainstorming various business ideas",
+      "lessonGoal": "By the end of the lesson, learners should be able to generate a wide range of possible business ideas suited to Mkushi District, using a structured brainstorming technique.",
+      "duration": "40 minutes",
+      "references": "2024 Civic Education Syllabus, Ordinary Level Secondary Education, Form 1-4 (CDC), Topic 2.12 Business Plan; ECSEOL Assessment Schemes for Civic Education 3011 (ECZ, 2026).",
+      "tlm": "Manila paper, marker pens, masking tape, chalkboard.",
+      "rationale": "This lesson builds creativity and innovation. The content is brainstorming techniques for business idea generation, the value is open-mindedness and teamwork, and the method is a timed group brainstorming exercise. This is the 4th lesson in the series of 15.",
+      "objectives": [
+        "Specific competence: 2.12.1.2 Generate business ideas",
+        "General competence: Creativity and Innovation",
+        "General competence: Entrepreneurship",
+        "General competence: Collaboration"
+      ],
+      "priorKnowledge": "Learners understand the sources of business ideas and the purpose of a business plan.",
+      "progression": [
+        {
+          "stage": "INTRODUCTION/ENGAGEMENT",
+          "teacherRole": "The teacher asks: 'If each of you were given K500 today to start any small business in Mkushi, what would you start?' and gives learners one minute to shout out ideas, writing them rapidly on the chalkboard without judging any idea.",
+          "learnersRole": "Learners call out many business ideas quickly (e.g. selling vitumbuwa, rearing village chickens, a barbershop, tailoring). Assessment criteria: learners generate at least eight different ideas as a class within the time limit."
+        },
+        {
+          "stage": "DEVELOPMENT",
+          "teacherRole": "Defines brainstorming as generating as many ideas as possible without criticising any at first, and explains its rules: quantity over quality at first; no criticism; build on others' ideas; stay focused on the theme. Demonstrates a 3-minute brainstorm on 'agriculture-related businesses in Mkushi' on the chalkboard. Additional note: learners should be encouraged to think across sectors — agriculture, trade/retail, services, manufacturing/processing — to widen the range of ideas.",
+          "learnersRole": "Learners form groups of five, are assigned a theme (agriculture, retail/trade, services, processing) and brainstorm for five minutes on manila paper without discussion, then pin their paper on the wall. Assessment criteria: each group generates at least six distinct business ideas under their assigned theme."
+        },
+        {
+          "stage": "EXERCISE/ASSESSMENT",
+          "teacherRole": "Scenario: Form 2 learners Mubita, Sepiso, Natasha and Kaingu prepare for a class competition to brainstorm creative business ideas suited to the school environment before selecting one for a full business plan. Tasks: (a) list four business ideas from different sectors [4 marks]; (b) explain why 'no criticism' is an important brainstorming rule [3 marks]; (c) role-play a two-minute brainstorming session where each learner contributes an idea without criticism. Expected answers: (a) e.g. school vegetable garden (agriculture), stationery kiosk (retail), phone-charging/photocopying stall (service), peanut-butter processing (processing) [4]. (b) 'No criticism' encourages more ideas to be shared freely since learners are not afraid of being judged, increasing the total number and creativity of ideas [3].",
+          "learnersRole": "Learners list four varied, plausible ideas, give a sound explanation of the 'no criticism' rule, and perform a cooperative, rule-following role-play. Level of difficulty: (a) Understanding (b) Analysing (c) Applying."
+        },
+        {
+          "stage": "HOMEWORK",
+          "teacherRole": "The teacher asks learners to brainstorm, on their own, five business ideas suited to their home area: (a) list the five ideas [3 marks]; (b) underline the most interesting idea and give one reason [2 marks].",
+          "learnersRole": "Learners individually brainstorm and record five ideas at home. Assessment criteria: learners return with five relevant ideas and one reasoned preference."
+        },
+        {
+          "stage": "CONCLUSION",
+          "teacherRole": "The teacher concludes: 'No idea is a bad idea during brainstorming — even the wildest idea can be improved into something workable,' and asks a few groups to read out their favourite idea from the wall charts.",
+          "learnersRole": "Learners share their group's favourite brainstormed idea. Assessment criteria: learners can correctly state at least one rule of effective brainstorming."
+        }
+      ]
+    },
+    {
+      "topic_name": "2.12 BUSINESS PLAN",
+      "subtopic_name": "2.12.1 Business Idea — Generating Business Ideas: Selecting the Best Business Idea Using SWOT Analysis",
+      "sequence_label": "Lesson 5",
+      "majorLearningPoint": "Selecting the best business idea by applying the Strengths, Weaknesses, Opportunities and Threats (SWOT) analysis",
+      "lessonGoal": "By the end of the lesson, learners should be able to apply a SWOT analysis to select the most viable business idea from a list of brainstormed ideas.",
+      "duration": "40 minutes",
+      "references": "2024 Civic Education Syllabus, Ordinary Level Secondary Education, Form 1-4 (CDC), Topic 2.12 Business Plan; ECSEOL Assessment Schemes for Civic Education 3011 (ECZ, 2026).",
+      "tlm": "Chalkboard, chalk, printed SWOT grid templates for group work.",
+      "rationale": "This lesson develops analytical and critical thinking skills. The content is the SWOT analysis tool, the value is objective decision-making, and the method is applying SWOT to Mkushi-based business ideas generated in the previous lesson. This is the 5th lesson in the series of 15.",
+      "objectives": [
+        "Specific competence: 2.12.1.2 Generate business ideas",
+        "General competence: Critical Thinking",
+        "General competence: Analytical Thinking",
+        "General competence: Entrepreneurship"
+      ],
+      "priorKnowledge": "Learners have brainstormed a range of business ideas in the previous lesson.",
+      "progression": [
+        {
+          "stage": "INTRODUCTION/ENGAGEMENT",
+          "teacherRole": "The teacher asks: 'If you had only K1,000 to invest, how would you choose the single best idea from your long list?' and listens to learner suggestions before introducing the day's tool.",
+          "learnersRole": "Learners suggest ways of choosing, such as 'pick the cheapest one' or 'pick the one with less competition.' Assessment criteria: learners engage with the question and offer at least one reasonable selection method."
+        },
+        {
+          "stage": "DEVELOPMENT",
+          "teacherRole": "Defines SWOT Analysis as a tool to evaluate the Strengths, Weaknesses, Opportunities and Threats of a business idea, explaining each element with Mkushi examples (e.g. Strengths — existing farming skills; Weaknesses — limited startup capital; Opportunities — growing demand for fresh produce at Mkushi Boma market; Threats — competition from established traders, unpredictable rainfall). Models a SWOT analysis on the chalkboard for 'selling roasted maize near Mkushi Bus Station.' Additional note: an idea with manageable weaknesses/threats and strong strengths/opportunities is generally the most viable choice.",
+          "learnersRole": "Learners copy the SWOT grid. In their groups from the previous lesson, they select their two most promising brainstormed ideas, complete a SWOT analysis for each, then choose and justify the single best idea. Assessment criteria: each group completes a SWOT grid for at least one idea and clearly justifies their final selection."
+        },
+        {
+          "stage": "EXERCISE/ASSESSMENT",
+          "teacherRole": "Scenario: Bwalya Mumba from Mpelembe area has two ideas — rearing broiler chickens or opening a salon near the market; she knows poultry farming, has K800 saved but worries about stockfeed/disease costs, and notes three existing salons but few poultry sellers. Tasks: (a) draw a SWOT analysis for the poultry idea, one point per element [8 marks]; (b) recommend which idea Bwalya should select, with a reason [4 marks]; (c) role-play Bwalya presenting her SWOT analysis to her mother. Expected answers: (a) Strengths — poultry-rearing skills; Weaknesses — limited capital for stockfeed; Opportunities — few poultry sellers (less competition); Threats — disease outbreak risk, unpredictable stockfeed prices [8]. (b) Poultry-rearing, because it matches her skills and faces less competition than the saturated salon market [4].",
+          "learnersRole": "Learners correctly complete all four SWOT elements, give a logically sound recommendation, and perform a clear, well-organised role-play. Level of difficulty: (a) Understanding/Applying (b) Evaluating (c) Applying."
+        },
+        {
+          "stage": "HOMEWORK",
+          "teacherRole": "The teacher asks learners to select one of their own brainstormed ideas from the previous homework and complete a SWOT analysis for it: (a) complete the four-part SWOT grid [4 marks]; (b) state whether they would go ahead with the idea, with one reason [2 marks].",
+          "learnersRole": "Learners individually complete a SWOT grid for their chosen idea at home. Assessment criteria: learners return with a correctly completed SWOT grid and a reasoned decision."
+        },
+        {
+          "stage": "CONCLUSION",
+          "teacherRole": "The teacher concludes: 'SWOT analysis helps us choose with our heads, not just our hearts, before risking our hard-earned money,' and asks learners to name one element of SWOT.",
+          "learnersRole": "Learners name one element of SWOT. Assessment criteria: learners can correctly name at least one element of SWOT analysis."
+        }
+      ]
+    },
+    {
+      "topic_name": "2.12 BUSINESS PLAN",
+      "subtopic_name": "2.12.2 Marketing Plan — Conducting Market Research",
+      "sequence_label": "Lesson 6",
+      "majorLearningPoint": "Conducting market research",
+      "lessonGoal": "By the end of the lesson, learners should be able to describe the process of conducting simple market research for a chosen business idea.",
+      "duration": "40 minutes",
+      "references": "2024 Civic Education Syllabus, Ordinary Level Secondary Education, Form 1-4 (CDC), Topic 2.12 Business Plan; ECSEOL Assessment Schemes for Civic Education 3011 (ECZ, 2026).",
+      "tlm": "Chalkboard, chalk, sample simple questionnaire template (photocopied).",
+      "rationale": "This lesson develops analytical and communication skills. The content is market research methods, the value is evidence-based decision-making, and the method is a simulated survey exercise using Mkushi market examples. This is the 6th lesson in the series of 15.",
+      "objectives": [
+        "Specific competence: 2.12.2.1 Develop a marketing plan",
+        "General competence: Communication",
+        "General competence: Analytical Thinking",
+        "General competence: Entrepreneurship"
+      ],
+      "priorKnowledge": "Learners have selected a business idea using SWOT analysis in the previous lesson.",
+      "progression": [
+        {
+          "stage": "INTRODUCTION/ENGAGEMENT",
+          "teacherRole": "The teacher asks how Bana Chileshe, before selling second-hand clothes (salaula) at Mkushi Boma market, found out which sizes and styles people wanted, recording learner guesses on the chalkboard.",
+          "learnersRole": "Learners suggest ideas such as 'she asked people,' 'she watched what people bought elsewhere,' or 'she asked friends.' Assessment criteria: learners engage and offer at least one plausible method."
+        },
+        {
+          "stage": "DEVELOPMENT",
+          "teacherRole": "Defines Market Research as gathering information about potential customers and competitors before starting a business, and explains methods: Surveys/Questionnaires, Observation (e.g. counting groundnut buyers at Katanino market in an hour), Interviews, and Studying Competitors (prices, products, customer flow). Explains what research should find out: customer needs, preferred prices, competitor strengths/weaknesses, best location. Additional note: even a simple, low-cost method such as informally asking ten neighbours what they would pay for a product is valid market research.",
+          "learnersRole": "Learners take notes. In pairs, they design three simple survey questions for their chosen business idea and role-play interviewing each other as a mock customer. Assessment criteria: each pair designs at least three relevant survey questions and completes the mock interview."
+        },
+        {
+          "stage": "EXERCISE/ASSESSMENT",
+          "teacherRole": "Scenario: Musonda wants to start a fritters (vitumbuwa) business near Mkushi Day Secondary School gate; she visits for three afternoons counting snack-buying learners, asking ten learners their willing price, and checking two existing vendors. Tasks: (a) identify two market research methods Musonda used [4 marks]; (b) explain one benefit of studying existing vendors [3 marks]; (c) role-play Musonda conducting a survey interview with a learner-customer. Expected answers: (a) Observation and interviews/surveys [4]. (b) Studying vendors helps understand competitor prices and popular flavours, enabling a competitive price or a differentiated offer [3].",
+          "learnersRole": "Learners correctly identify two research methods, give a sound explanation of the benefit of studying competitors, and perform a realistic, well-structured interview role-play. Level of difficulty: (a) Understanding (b) Analysing (c) Applying."
+        },
+        {
+          "stage": "HOMEWORK",
+          "teacherRole": "The teacher asks learners to conduct a mini market research exercise for their own business idea by asking three people at home or in their neighbourhood: (a) record the three questions asked [2 marks]; (b) summarise what was learnt [3 marks].",
+          "learnersRole": "Learners conduct a short survey at home and record the findings. Assessment criteria: learners return with three relevant questions and a clear summary of findings."
+        },
+        {
+          "stage": "CONCLUSION",
+          "teacherRole": "The teacher concludes: 'Market research is like looking before you leap — it tells us if people truly want what we plan to sell,' and asks learners to name one method of market research.",
+          "learnersRole": "Learners name one method of market research. Assessment criteria: learners can correctly name at least one method."
+        }
+      ]
+    },
+    {
+      "topic_name": "2.12 BUSINESS PLAN",
+      "subtopic_name": "2.12.2 Marketing Plan — Making a Marketing Plan",
+      "sequence_label": "Lesson 7",
+      "majorLearningPoint": "Making a marketing plan",
+      "lessonGoal": "By the end of the lesson, learners should be able to draft a simple marketing plan for a chosen business idea, covering product, price, place, and promotion.",
+      "duration": "40 minutes",
+      "references": "2024 Civic Education Syllabus, Ordinary Level Secondary Education, Form 1-4 (CDC), Topic 2.12 Business Plan; ECSEOL Assessment Schemes for Civic Education 3011 (ECZ, 2026).",
+      "tlm": "Chalkboard, chalk, printed marketing plan template.",
+      "rationale": "This lesson develops planning and communication skills. The content is the marketing mix (4 Ps), the value is strategic thinking, and the method is applying the 4 Ps to a Mkushi business example. This is the 7th lesson in the series of 15.",
+      "objectives": [
+        "Specific competence: 2.12.2.1 Develop a marketing plan",
+        "General competence: Communication",
+        "General competence: Entrepreneurship",
+        "General competence: Creativity and Innovation"
+      ],
+      "priorKnowledge": "Learners can describe how to conduct simple market research.",
+      "progression": [
+        {
+          "stage": "INTRODUCTION/ENGAGEMENT",
+          "teacherRole": "The teacher asks what Musonda should plan next after finishing her market research on fritters, before opening her stall, listing learner suggestions on the chalkboard.",
+          "learnersRole": "Learners suggest ideas such as 'where to sell,' 'what price to charge,' or 'how to tell people about it.' Assessment criteria: learners engage and provide at least one relevant planning suggestion."
+        },
+        {
+          "stage": "DEVELOPMENT",
+          "teacherRole": "Defines a Marketing Plan as a document outlining how a business will attract and keep customers, and introduces the Marketing Mix (4 Ps): Product, Price, Place, Promotion (e.g. word of mouth, posters, WhatsApp status, local radio adverts). Models a complete 4 Ps grid for Musonda's fritter business using the previous lesson's market research findings. Additional note: promotion in rural Mkushi settings need not be expensive — word-of-mouth referrals, church/community announcements and small handwritten posters are often effective and affordable.",
+          "learnersRole": "Learners take notes on the 4 Ps. In their groups, they draft a simple marketing plan for their chosen business idea, completing all four Ps on the provided template. Assessment criteria: each group completes all four elements with relevant, specific details."
+        },
+        {
+          "stage": "EXERCISE/ASSESSMENT",
+          "teacherRole": "Scenario: after her research, Musonda decides to sell fritters made with local groundnut flour at K2 each near the school gate every morning, promoting by word of mouth and asking the tuck-shop operator to mention it. Tasks: (a) identify the Product, Price, Place elements from the passage [6 marks]; (b) suggest one additional low-cost Promotion method [4 marks]; (c) role-play Musonda pitching her complete 4 Ps plan to a fellow learner in one minute. Expected answers: (a) Product — fritters with local groundnut flour; Price — K2 each; Place — near the school gate every morning [6]. (b) A handwritten poster near the notice board, or asking prefects for a daily announcement [4].",
+          "learnersRole": "Learners correctly identify three elements of the marketing mix, suggest one realistic low-cost promotion idea, and perform a clear, confident, complete pitch role-play. Level of difficulty: (a) Understanding (b) Creating (c) Applying."
+        },
+        {
+          "stage": "HOMEWORK",
+          "teacherRole": "The teacher asks learners to draft a marketing plan (4 Ps) for their own chosen business idea using the template: (a) complete all four Ps [4 marks]; (b) suggest one promotion method suited to their home area [1 mark].",
+          "learnersRole": "Learners complete the 4 Ps template individually at home. Assessment criteria: learners return with a complete, relevant 4 Ps marketing plan."
+        },
+        {
+          "stage": "CONCLUSION",
+          "teacherRole": "The teacher concludes: 'A good product will not sell itself — it needs the right price, place, and promotion to reach the right customers,' and asks learners to name one of the 4 Ps.",
+          "learnersRole": "Learners name one of the 4 Ps of the marketing mix. Assessment criteria: learners can correctly name at least one of the 4 Ps."
+        }
+      ]
+    },
+    {
+      "topic_name": "2.12 BUSINESS PLAN",
+      "subtopic_name": "2.12.3 Financial Plan — Preparing a Profit Plan",
+      "sequence_label": "Lesson 8",
+      "majorLearningPoint": "Preparing a profit plan",
+      "lessonGoal": "By the end of the lesson, learners should be able to prepare a simple profit plan by calculating expected income, costs, and profit for a small business idea.",
+      "duration": "40 minutes",
+      "references": "2024 Civic Education Syllabus, Ordinary Level Secondary Education, Form 1-4 (CDC), Topic 2.12 Business Plan; ECSEOL Assessment Schemes for Civic Education 3011 (ECZ, 2026).",
+      "tlm": "Chalkboard, chalk, exercise books, simple profit-plan template.",
+      "rationale": "This lesson develops financial literacy and analytical skills. The content is basic profit planning, the value is financial discipline, and the method is guided calculation using a Mkushi business example. This is the 8th lesson in the series of 15.",
+      "objectives": [
+        "Specific competence: 2.12.3.1 Prepare a financial plan",
+        "General competence: Financial Education",
+        "General competence: Analytical Thinking",
+        "General competence: Entrepreneurship"
+      ],
+      "priorKnowledge": "Learners have drafted a marketing plan for their chosen business idea.",
+      "progression": [
+        {
+          "stage": "INTRODUCTION/ENGAGEMENT",
+          "teacherRole": "The teacher asks how Musonda, selling 50 fritters a day at K2 each with ingredients costing K60 per day, would know if she is making money, writing learner suggestions on the chalkboard.",
+          "learnersRole": "Learners attempt rough calculations and suggest 'subtract the cost from the sales' or similar ideas. Assessment criteria: learners attempt at least one reasonable calculation approach."
+        },
+        {
+          "stage": "DEVELOPMENT",
+          "teacherRole": "Defines a Profit Plan as a simple financial estimate showing expected income, costs and profit over a period, and explains key terms: Income/Revenue (Selling Price x Quantity Sold), Costs/Expenses, Profit (Income minus Costs). Demonstrates a worked example on the chalkboard: Income = 50 x K2 = K100; Costs = K60; Profit = K100 - K60 = K40 per day. Additional note: learners should record fixed costs (e.g. rent) and variable costs (e.g. ingredients) separately so the profit plan remains accurate as sales volumes change.",
+          "learnersRole": "Learners copy the definitions and worked example. In pairs, they prepare a simple profit plan (Income, Costs, Profit) for their own chosen business idea using realistic Mkushi prices. Assessment criteria: each pair correctly calculates income, costs, and profit."
+        },
+        {
+          "stage": "EXERCISE/ASSESSMENT",
+          "teacherRole": "Scenario: Kunda plans to sell roasted groundnuts near Chalata bus stop, expecting to sell 40 packets a day at K3 each; daily costs are raw groundnuts K50, charcoal K15, packaging bags K5. Tasks: (a) calculate expected daily income [3 marks]; (b) calculate total daily costs and expected daily profit [5 marks]; (c) role-play Kunda explaining his profit plan calculations to a friend. Expected answers: (a) Income = 40 x K3 = K120 [3]. (b) Total costs = K50+K15+K5 = K70; Profit = K120-K70 = K50 per day [5].",
+          "learnersRole": "Learners correctly calculate income, total costs, and profit, and perform a clear, accurate explanatory role-play. Level of difficulty: (a) Understanding (b) Applying (c) Applying."
+        },
+        {
+          "stage": "HOMEWORK",
+          "teacherRole": "The teacher asks learners to prepare a profit plan for their own chosen business idea using realistic prices from their home area: (a) state expected daily income [2 marks]; (b) state expected daily costs and calculate the profit [3 marks].",
+          "learnersRole": "Learners calculate and record their own profit plan at home. Assessment criteria: learners return with a correctly calculated profit plan."
+        },
+        {
+          "stage": "CONCLUSION",
+          "teacherRole": "The teacher concludes: 'Knowing your numbers — income, costs, and profit — is what separates a hobby from a real business,' and asks learners to state the profit formula.",
+          "learnersRole": "Learners state the formula: Profit = Income - Costs. Assessment criteria: learners can correctly state the profit formula."
+        }
+      ]
+    },
+    {
+      "topic_name": "2.12 BUSINESS PLAN",
+      "subtopic_name": "2.12.3 Financial Plan — Preparing a Cash Flow Plan",
+      "sequence_label": "Lesson 9",
+      "majorLearningPoint": "Preparing a cash flow plan",
+      "lessonGoal": "By the end of the lesson, learners should be able to prepare a simple cash flow plan showing cash coming in and cash going out of a business over a period of time.",
+      "duration": "40 minutes",
+      "references": "2024 Civic Education Syllabus, Ordinary Level Secondary Education, Form 1-4 (CDC), Topic 2.12 Business Plan; ECSEOL Assessment Schemes for Civic Education 3011 (ECZ, 2026).",
+      "tlm": "Chalkboard, chalk, exercise books, printed cash flow plan template.",
+      "rationale": "This lesson strengthens financial planning skills. The content is cash flow planning, the value is liquidity management, and the method is a guided weekly cash flow exercise using a Mkushi business example. This is the 9th lesson in the series of 15.",
+      "objectives": [
+        "Specific competence: 2.12.3.1 Prepare a financial plan",
+        "General competence: Financial Education",
+        "General competence: Analytical Thinking",
+        "General competence: Problem Solving"
+      ],
+      "priorKnowledge": "Learners can prepare a simple profit plan.",
+      "progression": [
+        {
+          "stage": "INTRODUCTION/ENGAGEMENT",
+          "teacherRole": "The teacher describes Mrs Zulu's tailoring business, which made a good profit last month but could not pay for new material because all her money was tied up in unpaid customer orders, and asks what went wrong.",
+          "learnersRole": "Learners suggest ideas such as 'she had no cash on hand' or 'people owed her money.' Assessment criteria: learners engage and identify that having profit is different from having available cash."
+        },
+        {
+          "stage": "DEVELOPMENT",
+          "teacherRole": "Defines Cash Flow as the movement of actual cash into and out of a business over a period, and distinguishes it from profit (a business can be profitable on paper yet run out of cash). Explains the structure of a cash flow plan: Cash Inflows (sales, credit payments received, loans), Cash Outflows (stock, transport, wages, loan repayments), Net Cash Flow (inflows minus outflows). Demonstrates a worked weekly example on the chalkboard for a tuck shop owner in Mkushi Boma. Additional note: a positive net cash flow each week helps a small business restock and cover unexpected costs even if it is also earning a healthy profit.",
+          "learnersRole": "Learners copy the definitions and worked example. In pairs, they prepare a simple one-week cash flow plan for their own chosen business idea, listing expected daily cash inflows and outflows. Assessment criteria: each pair completes a weekly cash flow plan with a calculated net cash flow."
+        },
+        {
+          "stage": "EXERCISE/ASSESSMENT",
+          "teacherRole": "Scenario: Mrs Zulu, a tailor in Mkushi Boma, receives K300 cash sales plus K150 from a credit customer (total inflow K450); she spends K200 on new material, K50 on transport to Kabwe for thread, and K100 repaying a village banking loan. Tasks: (a) calculate total cash inflow and outflow for the week [6 marks]; (b) calculate net cash flow and explain what it means for her business [4 marks]; (c) role-play Mrs Zulu explaining to a fellow trader why tracking weekly cash flow, not just monthly profit, helps her avoid running short of cash. Expected answers: (a) Inflow = K450; Outflow = K200+K50+K100 = K350 [6]. (b) Net cash flow = K450-K350 = K100 (positive), meaning she has enough cash to cover unexpected costs or start saving [4].",
+          "learnersRole": "Learners correctly calculate total inflow, total outflow, and net cash flow, and perform a clear, accurate explanatory role-play. Level of difficulty: (a) Understanding (b) Applying/Analysing (c) Applying."
+        },
+        {
+          "stage": "HOMEWORK",
+          "teacherRole": "The teacher asks learners to prepare a one-week cash flow plan for their own chosen business idea, listing at least three inflows and three outflows: (a) list the inflows and outflows [3 marks]; (b) calculate the net cash flow for the week [2 marks].",
+          "learnersRole": "Learners prepare and calculate a weekly cash flow plan at home. Assessment criteria: learners return with a correctly completed weekly cash flow plan."
+        },
+        {
+          "stage": "CONCLUSION",
+          "teacherRole": "The teacher concludes: 'A business can look profitable on paper, yet still fail if it runs out of actual cash — that is why cash flow planning matters just as much as profit planning,' and asks learners to state the difference between profit and cash flow.",
+          "learnersRole": "Learners state that profit is income minus costs, while cash flow is the actual movement of cash in and out of the business. Assessment criteria: learners can correctly distinguish profit from cash flow."
+        }
+      ]
+    },
+    {
+      "topic_name": "2.12 BUSINESS PLAN",
+      "subtopic_name": "2.12.4 Finalising a Business Plan — Compiling the Business Plan (Part 1: Executive Summary, Business Description, Marketing and Financial Sections)",
+      "sequence_label": "Lesson 10",
+      "majorLearningPoint": "Compiling a business plan (Part 1)",
+      "lessonGoal": "By the end of the lesson, learners should be able to begin compiling their business idea, marketing plan, and financial plan into the first sections of a complete written business plan.",
+      "duration": "40 minutes",
+      "references": "2024 Civic Education Syllabus, Ordinary Level Secondary Education, Form 1-4 (CDC), Topic 2.12 Business Plan; ECSEOL Assessment Schemes for Civic Education 3011 (ECZ, 2026).",
+      "tlm": "Chalkboard, chalk, learners' previous exercise book work, business plan compilation template (photocopied).",
+      "rationale": "This lesson consolidates prior learning into a single document. The content is the structure of a full business plan document, the value is organisation and synthesis, and the method is guided compilation using learners' own previously completed work. This is the 10th lesson in the series of 15.",
+      "objectives": [
+        "Specific competence: 2.12.4.1 Consolidate components of a business plan",
+        "General competence: Entrepreneurship",
+        "General competence: Communication",
+        "General competence: Analytical Thinking"
+      ],
+      "priorKnowledge": "Learners have completed a business idea, SWOT analysis, marketing plan, profit plan, and cash flow plan across previous lessons.",
+      "progression": [
+        {
+          "stage": "INTRODUCTION/ENGAGEMENT",
+          "teacherRole": "The teacher asks what learners should now do with the separate pieces created over past lessons (business idea, SWOT, marketing plan, financial figures), listening to suggestions.",
+          "learnersRole": "Learners suggest 'put them together,' 'write them as one document,' or similar ideas. Assessment criteria: learners recognise the need to consolidate previous work into one document."
+        },
+        {
+          "stage": "DEVELOPMENT",
+          "teacherRole": "Explains the standard structure of a business plan: Executive Summary, Business Description, Marketing Plan, Financial Plan, Startup Capital Plan. Guides writing an Executive Summary (a short 3-5 sentence paragraph written last but placed first) and the Business Description (what the business does, where located, who owns it), and guides transferring the Marketing and Financial Plan sections from earlier work. Additional note: learners should use clear, simple language, avoiding overly technical terms, since the document must be understandable to a lender who may not be a professional accountant.",
+          "learnersRole": "Learners individually begin compiling their own business plan document using the template, starting with the Business Description, Marketing Plan and Financial Plan sections, drawing on earlier exercise book work. Assessment criteria: each learner completes at least the Business Description and Marketing Plan sections."
+        },
+        {
+          "stage": "EXERCISE/ASSESSMENT",
+          "teacherRole": "Scenario: Chitalu has completed all separate pieces of her business plan for a tomato-selling business at Chalata market (business idea, marketing plan, expected profit of K80 per market day) and now needs to compile them to present to her uncle, a cooperative treasurer, for a small loan. Tasks: (a) write a suitable three-sentence Business Description [4 marks]; (b) explain why compiling into one organised document is important before approaching her uncle [4 marks]; (c) role-play Chitalu presenting her compiled sections to her uncle. Expected answers: (a) sample description of Chitalu's Fresh Tomatoes business at Chalata market [4]. (b) makes it easier for her uncle to understand the whole business at a glance, shows she is serious and prepared, increases chances of loan approval [4].",
+          "learnersRole": "Learners write a clear, relevant Business Description, give a sound explanation of the value of compiling work, and perform a confident, organised presentation role-play. Level of difficulty: (a) Applying (b) Analysing (c) Applying."
+        },
+        {
+          "stage": "HOMEWORK",
+          "teacherRole": "The teacher asks learners to continue compiling their own business plan document at home, completing the Business Description, Marketing Plan, and Financial Plan sections in full: (a) complete the Business Description section [2 marks]; (b) ensure the Marketing Plan and Financial Plan sections are neatly transferred [3 marks].",
+          "learnersRole": "Learners complete the compilation of the first three sections of their business plan at home. Assessment criteria: learners return with three completed, well-organised sections."
+        },
+        {
+          "stage": "CONCLUSION",
+          "teacherRole": "The teacher concludes: 'A business plan is only powerful when all its parts are brought together clearly — scattered notes convince no one,' and asks learners to name one section of a business plan.",
+          "learnersRole": "Learners name one section of a business plan. Assessment criteria: learners can correctly name at least one section."
+        }
+      ]
+    },
+    {
+      "topic_name": "2.12 BUSINESS PLAN",
+      "subtopic_name": "2.12.4 Finalising a Business Plan — Compiling the Business Plan (Part 2: Reviewing, Consolidating and Presenting the Final Document)",
+      "sequence_label": "Lesson 11",
+      "majorLearningPoint": "Compiling a business plan (Part 2)",
+      "lessonGoal": "By the end of the lesson, learners should be able to review, finalise, and confidently present a complete business plan document.",
+      "duration": "40 minutes",
+      "references": "2024 Civic Education Syllabus, Ordinary Level Secondary Education, Form 1-4 (CDC), Topic 2.12 Business Plan; ECSEOL Assessment Schemes for Civic Education 3011 (ECZ, 2026).",
+      "tlm": "Chalkboard, chalk, learners' compiled business plan drafts, a simple peer-review checklist (photocopied).",
+      "rationale": "This lesson completes the consolidation process begun in the previous lesson. The content is reviewing and presenting a finished business plan, the value is quality control and confidence, and the method is peer review followed by mock presentation. This is the 11th lesson in the series of 15.",
+      "objectives": [
+        "Specific competence: 2.12.4.1 Consolidate components of a business plan",
+        "General competence: Entrepreneurship",
+        "General competence: Communication",
+        "General competence: Critical Thinking"
+      ],
+      "priorKnowledge": "Learners have compiled the Business Description, Marketing Plan, and Financial Plan sections of their business plan.",
+      "progression": [
+        {
+          "stage": "INTRODUCTION/ENGAGEMENT",
+          "teacherRole": "The teacher asks what could go wrong if Chitalu shows her finished business plan to no one before taking it to her uncle, recording learner ideas on the chalkboard.",
+          "learnersRole": "Learners suggest ideas such as 'she might have mistakes,' 'someone might spot a missing part,' or 'she might not present it well.' Assessment criteria: learners recognise the value of reviewing work before presenting it."
+        },
+        {
+          "stage": "DEVELOPMENT",
+          "teacherRole": "Explains the importance of reviewing a business plan (checking for missing information, unclear figures, unrealistic assumptions) and introduces a peer-review checklist (Is the business idea clear? Are the 4 Ps complete? Do the profit and cash flow figures make sense? Is the Executive Summary clear and brief?). Explains effective presentation skills: speaking clearly, eye contact, being ready for questions, confidence in figures. Additional note: receiving critical feedback from a peer is not a sign of failure but an opportunity to strengthen the plan before facing a real lender.",
+          "learnersRole": "Learners exchange compiled drafts with a partner, use the peer-review checklist to identify at least two improvements needed, and revise their own plan based on feedback received. Assessment criteria: each learner identifies at least two improvements for their partner's plan and makes at least one revision to their own."
+        },
+        {
+          "stage": "EXERCISE/ASSESSMENT",
+          "teacherRole": "Scenario: Chitalu shares her tomato-business plan with classmate Nawa for peer review; Nawa notices the Executive Summary is too long and the cash flow figures do not match the earlier profit figures; Chitalu is initially upset but agrees to revise. Tasks: (a) identify the two problems Nawa found [4 marks]; (b) explain why it was important for Chitalu to accept the feedback rather than ignore it [4 marks]; (c) role-play Nawa giving constructive, respectful feedback and Chitalu responding maturely. Expected answers: (a) Executive Summary too long; cash flow figures inconsistent with stated profit figures [4]. (b) accepting feedback allowed correction of mistakes before the real presentation, increasing credibility and chances of securing the loan [4].",
+          "learnersRole": "Learners correctly identify both problems, give a sound explanation of the value of accepting feedback, and perform a respectful, constructive feedback role-play. Level of difficulty: (a) Understanding (b) Analysing (c) Applying."
+        },
+        {
+          "stage": "HOMEWORK",
+          "teacherRole": "The teacher asks learners to finalise their business plan at home by incorporating all peer-review feedback received, and to prepare to present it briefly next lesson: (a) list the corrections made [2 marks]; (b) write three key points to mention when presenting [3 marks].",
+          "learnersRole": "Learners finalise their business plan document and prepare presentation notes at home. Assessment criteria: learners return with a finalised business plan and clear presentation notes."
+        },
+        {
+          "stage": "CONCLUSION",
+          "teacherRole": "The teacher concludes: 'A finished business plan is not the end — it must be reviewed and confidently presented before it can open doors, such as securing a loan,' and asks a few learners to briefly share one correction they made.",
+          "learnersRole": "Learners share one correction made to their business plan after peer review. Assessment criteria: learners can correctly describe one improvement made."
+        }
+      ]
+    },
+    {
+      "topic_name": "2.12 BUSINESS PLAN",
+      "subtopic_name": "2.12.5 Business Startup Capital — Identifying Sources of Startup Capital",
+      "sequence_label": "Lesson 12",
+      "majorLearningPoint": "Identifying sources of startup capital",
+      "lessonGoal": "By the end of the lesson, learners should be able to identify at least four sources of startup capital available to a small business owner in Mkushi District.",
+      "duration": "40 minutes",
+      "references": "2024 Civic Education Syllabus, Ordinary Level Secondary Education, Form 1-4 (CDC), Topic 2.12 Business Plan; ECSEOL Assessment Schemes for Civic Education 3011 (ECZ, 2026).",
+      "tlm": "Chalkboard, chalk, pictures or names of local financial institutions (commercial banks, microfinance, cooperatives).",
+      "rationale": "This lesson introduces the final component of a business plan. The content is sources of startup capital, the value is resourcefulness, and the method is a comparison exercise using real Mkushi-based examples of capital sources. This is the 12th lesson in the series of 15.",
+      "objectives": [
+        "Specific competence: 2.12.5.1 Mobilise startup capital",
+        "General competence: Financial Education",
+        "General competence: Entrepreneurship",
+        "General competence: Analytical Thinking"
+      ],
+      "priorKnowledge": "Learners have finalised and presented their business plan document.",
+      "progression": [
+        {
+          "stage": "INTRODUCTION/ENGAGEMENT",
+          "teacherRole": "The teacher asks where Chitalu, who now has a finished, well-reviewed business plan for her tomato business, could get money for her first stock, recording learner suggestions on the chalkboard.",
+          "learnersRole": "Learners suggest ideas such as 'borrow from family,' 'save her own money,' or 'get a loan from a bank.' Assessment criteria: learners engage and suggest at least one plausible source of startup capital."
+        },
+        {
+          "stage": "DEVELOPMENT",
+          "teacherRole": "Defines Startup Capital as the initial money needed to begin a business (stock, equipment, early operating costs), and explains sources: Personal Savings; Family and Friends; Village Banking/Chilimba Groups (common in Mkushi); Cooperative Societies; Commercial Banks and Microfinance Institutions (formal loans requiring a business plan and often collateral); Government Empowerment Funds (CEEC, CDF grants). Additional note: different sources suit different amounts and risk levels — personal savings/family loans suit small amounts, while banks and government funds suit larger needs but require more documentation, including a business plan.",
+          "learnersRole": "Learners take notes on the sources. In groups, they classify given examples (e.g. 'K200 from a father,' 'K5,000 cooperative loan,' 'K50,000 CEEC grant') into personal versus external sources of capital. Assessment criteria: each group correctly classifies at least four examples."
+        },
+        {
+          "stage": "EXERCISE/ASSESSMENT",
+          "teacherRole": "Scenario: Chitalu needs K600 to start her tomato business; she has K150 in savings from firewood sales, her mother offers K100 interest-free, and she considers the Chalata Village Banking group (lends up to K500 to members saving 3+ months) or the local Farmers' Cooperative. Tasks: (a) identify three sources of startup capital available to Chitalu [6 marks]; (b) explain one advantage and one disadvantage of the Village Banking group compared to her mother's loan [4 marks]; (c) role-play Chitalu approaching the Village Banking group chairperson for a loan. Expected answers: (a) personal savings, family, Village Banking group (or Farmers' Cooperative) [6]. (b) advantage — larger amount available and builds a formal saving/borrowing record; disadvantage — may require interest and proof of three months' saving, unlike her mother's interest-free loan [4].",
+          "learnersRole": "Learners correctly identify three sources, give a balanced advantage/disadvantage comparison, and perform a clear, well-prepared role-play. Level of difficulty: (a) Understanding (b) Analysing (c) Applying."
+        },
+        {
+          "stage": "HOMEWORK",
+          "teacherRole": "The teacher asks learners to identify, for their own chosen business idea, three possible sources of startup capital available in their home area: (a) list the three sources [3 marks]; (b) state which source they would prefer and why [2 marks].",
+          "learnersRole": "Learners identify and record three sources of startup capital relevant to their own situation. Assessment criteria: learners return with three relevant sources and a reasoned preference."
+        },
+        {
+          "stage": "CONCLUSION",
+          "teacherRole": "The teacher concludes: 'There is often more than one way to raise startup capital — the key is choosing the source that best matches how much you need and how soon you need it,' and asks learners to name one source of startup capital.",
+          "learnersRole": "Learners name one source of startup capital. Assessment criteria: learners can correctly name at least one source."
+        }
+      ]
+    },
+    {
+      "topic_name": "2.12 BUSINESS PLAN",
+      "subtopic_name": "2.12.5 Business Startup Capital — Calculating Startup Capital Requirements",
+      "sequence_label": "Lesson 13",
+      "majorLearningPoint": "Calculating startup capital requirements (bridging identifying sources and sourcing capital)",
+      "lessonGoal": "By the end of the lesson, learners should be able to calculate the total startup capital required for a small business idea by listing and totalling all necessary start-up items.",
+      "duration": "40 minutes",
+      "references": "2024 Civic Education Syllabus, Ordinary Level Secondary Education, Form 1-4 (CDC), Topic 2.12 Business Plan; ECSEOL Assessment Schemes for Civic Education 3011 (ECZ, 2026).",
+      "tlm": "Chalkboard, chalk, exercise books, sample price list of common startup items in Mkushi.",
+      "rationale": "This lesson provides the practical bridge between identifying sources of capital and actually sourcing it, ensuring learners know precisely how much capital to mobilise. The content is startup capital budgeting, the value is accuracy and financial discipline, and the method is a guided itemised costing exercise. This is the 13th lesson in the series of 15.",
+      "objectives": [
+        "Specific competence: 2.12.5.1 Mobilise startup capital",
+        "General competence: Financial Education",
+        "General competence: Analytical Thinking",
+        "General competence: Problem Solving"
+      ],
+      "priorKnowledge": "Learners can identify sources of startup capital.",
+      "progression": [
+        {
+          "stage": "INTRODUCTION/ENGAGEMENT",
+          "teacherRole": "The teacher asks how Chitalu arrived at exactly K600 for her tomato business rather than K300 or K1,000, recording learner ideas on the chalkboard.",
+          "learnersRole": "Learners suggest ideas such as 'she added up all the things she needs to buy' or 'she listed her costs first.' Assessment criteria: learners engage and recognise that startup capital figures come from itemised listing and calculation."
+        },
+        {
+          "stage": "DEVELOPMENT",
+          "teacherRole": "Explains the process of calculating startup capital requirements: listing every item needed, estimating cost, and totalling. Categorises items: One-off Equipment Costs, Initial Stock Costs, Licensing/Registration Costs, and a Contingency/Buffer Amount (about 10%) for unexpected costs. Demonstrates a worked example itemising and totalling costs for a tomato-selling stall on the chalkboard. Additional note: learners should always include a small contingency buffer since prices of goods such as transport and produce in Mkushi markets can fluctuate seasonally.",
+          "learnersRole": "Learners copy the categories and worked example. In pairs, they list and total the startup items needed for their own chosen business idea, including a 10% contingency buffer. Assessment criteria: each pair produces an itemised list with a correctly calculated total, including the buffer."
+        },
+        {
+          "stage": "EXERCISE/ASSESSMENT",
+          "teacherRole": "Scenario: Kaingu wants to start a phone-charging and airtime kiosk at Fiwila trading centre, needing a solar charging unit (K350), a wooden table (K80), initial airtime stock (K100), and a council trading licence (K30), with no buffer added yet. Tasks: (a) calculate the total startup capital before a contingency buffer [4 marks]; (b) calculate a 10% contingency buffer and the final total [4 marks]; (c) role-play Kaingu presenting his itemised list, including the buffer, to a loan officer. Expected answers: (a) Total = K350+K80+K100+K30 = K560 [4]. (b) 10% of K560 = K56; final total = K616 [4].",
+          "learnersRole": "Learners correctly calculate the initial total, the contingency buffer, and the final total, and perform a clear, well-justified presentation role-play. Level of difficulty: (a) Understanding (b) Applying (c) Applying."
+        },
+        {
+          "stage": "HOMEWORK",
+          "teacherRole": "The teacher asks learners to itemise and total the startup capital requirement for their own chosen business idea, including a 10% contingency buffer: (a) list all items and estimated costs [3 marks]; (b) calculate the contingency buffer and final total [2 marks].",
+          "learnersRole": "Learners calculate their total startup capital requirement, including a buffer, at home. Assessment criteria: learners return with a correctly itemised and totalled startup capital requirement."
+        },
+        {
+          "stage": "CONCLUSION",
+          "teacherRole": "The teacher concludes: 'Knowing the exact amount of startup capital you need protects you from either under-borrowing, which stalls your business, or over-borrowing, which increases your repayment burden,' and asks learners to state why a contingency buffer is important.",
+          "learnersRole": "Learners state that a contingency buffer covers unexpected costs that may arise when starting the business. Assessment criteria: learners can correctly explain the purpose of a contingency buffer."
+        }
+      ]
+    },
+    {
+      "topic_name": "2.12 BUSINESS PLAN",
+      "subtopic_name": "2.12.5 Business Startup Capital — Sourcing Startup Capital",
+      "sequence_label": "Lesson 14",
+      "majorLearningPoint": "Sourcing startup capital",
+      "lessonGoal": "By the end of the lesson, learners should be able to describe the practical steps involved in successfully sourcing startup capital from a chosen source.",
+      "duration": "40 minutes",
+      "references": "2024 Civic Education Syllabus, Ordinary Level Secondary Education, Form 1-4 (CDC), Topic 2.12 Business Plan; ECSEOL Assessment Schemes for Civic Education 3011 (ECZ, 2026).",
+      "tlm": "Chalkboard, chalk, a sample simplified loan application form (photocopied).",
+      "rationale": "This lesson completes the startup capital component of the business plan. The content is the practical process of approaching and securing capital, the value is confidence, preparation, and integrity, and the method is a guided step-by-step approach applied to a Mkushi lending scenario. This is the 14th lesson in the series of 15.",
+      "objectives": [
+        "Specific competence: 2.12.5.1 Mobilise startup capital",
+        "General competence: Financial Education",
+        "General competence: Communication",
+        "General competence: Entrepreneurship"
+      ],
+      "priorKnowledge": "Learners can identify sources of startup capital and calculate their startup capital requirements.",
+      "progression": [
+        {
+          "stage": "INTRODUCTION/ENGAGEMENT",
+          "teacherRole": "The teacher asks what practical steps Kaingu, who now knows he needs K616 and knows a cooperative that can lend, must take to actually get that money in his hand, recording learner ideas on the chalkboard.",
+          "learnersRole": "Learners suggest ideas such as 'fill in a form,' 'show his business plan,' or 'ask politely.' Assessment criteria: learners engage and suggest at least one practical step towards sourcing capital."
+        },
+        {
+          "stage": "DEVELOPMENT",
+          "teacherRole": "Explains the practical steps of sourcing startup capital: prepare required documents (business plan, National Registration Card, proof of savings/guarantor if required); approach the chosen source during appropriate hours; complete the application accurately and honestly; present the business plan confidently (idea, amount needed, repayment plan); follow up respectfully. Emphasises integrity — honest information avoids future problems such as loan default or loss of trust within a cooperative or village banking group. Additional note: maintaining a good reputation for honesty and repayment within the community makes it easier to source larger capital amounts in future, since trust is built gradually.",
+          "learnersRole": "Learners take notes on the steps. In pairs, they complete a sample simplified loan application form for their own chosen business idea, using their previously calculated startup capital figure. Assessment criteria: each pair correctly and honestly completes the sample loan application form."
+        },
+        {
+          "stage": "EXERCISE/ASSESSMENT",
+          "teacherRole": "Scenario: Kaingu has prepared his business plan and calculated he needs K616 to start his phone-charging kiosk at Fiwila trading centre; he visits the Fiwila Farmers' Cooperative office with his NRC and business plan, fills in the loan application accurately, and presents his plan to the treasurer, Mr Kalunga. Tasks: (a) identify three practical steps Kaingu followed [6 marks]; (b) explain why it was important to fill in the form accurately and honestly [4 marks]; (c) role-play Kaingu's meeting with Mr Kalunga. Expected answers: (a) prepared required documents; approached the chosen source; completed the application accurately [6]. (b) filling in the form honestly builds trust, avoids future legal/repayment problems, and increases chances of loan approval and future access to credit [4].",
+          "learnersRole": "Learners correctly identify three practical steps, give a sound explanation of the importance of honesty, and perform a confident, realistic role-play. Level of difficulty: (a) Understanding (b) Analysing (c) Applying."
+        },
+        {
+          "stage": "HOMEWORK",
+          "teacherRole": "The teacher asks learners to write a short plan of the practical steps they would personally follow to source startup capital for their own chosen business idea: (a) list the documents they would need [2 marks]; (b) describe how they would present their business plan to their chosen source [3 marks].",
+          "learnersRole": "Learners write a short, personalised plan for sourcing startup capital at home. Assessment criteria: learners return with a clear, relevant plan for sourcing startup capital."
+        },
+        {
+          "stage": "CONCLUSION",
+          "teacherRole": "The teacher concludes: 'Sourcing startup capital is not just about asking for money — it is about being prepared, honest, and confident,' and asks learners to state one practical step in sourcing startup capital.",
+          "learnersRole": "Learners state one practical step in sourcing startup capital. Assessment criteria: learners can correctly state at least one practical step."
+        }
+      ]
+    },
+    {
+      "topic_name": "2.12 BUSINESS PLAN",
+      "subtopic_name": "2.12 Business Plan — Revision and Consolidation Lesson (Comprehensive Review of the Business Plan Process)",
+      "sequence_label": "Lesson 15",
+      "majorLearningPoint": "Comprehensive revision of the business plan process (Business Idea, Marketing Plan, Financial Plan, Finalising a Business Plan, and Business Startup Capital)",
+      "lessonGoal": "By the end of the lesson, learners should be able to confidently outline the complete process of developing a business plan, from identifying a business idea to sourcing startup capital.",
+      "duration": "40 minutes",
+      "references": "2024 Civic Education Syllabus, Ordinary Level Secondary Education, Form 1-4 (CDC), Topic 2.12 Business Plan; ECSEOL Assessment Schemes for Civic Education 3011 (ECZ, 2026).",
+      "tlm": "Chalkboard, chalk, learners' completed business plan documents, a revision quiz card set.",
+      "rationale": "This final lesson in the series consolidates all previous learning into a single coherent process. The content is a full review of Topic 2.12, the value is confidence and readiness for assessment, and the method is a whole-class recap quiz followed by a full mock presentation. This is the 15th and final lesson in the series of 15.",
+      "objectives": [
+        "Specific competence: 2.12.1.1–2.12.5.1 Consolidated specific competences of Topic 2.12 Business Plan",
+        "General competence: Entrepreneurship",
+        "General competence: Critical Thinking",
+        "General competence: Communication",
+        "General competence: Financial Education"
+      ],
+      "priorKnowledge": "Learners have completed all stages of developing a business plan across the previous fourteen lessons.",
+      "progression": [
+        {
+          "stage": "INTRODUCTION/ENGAGEMENT",
+          "teacherRole": "The teacher references Chitalu, Kunda, Musonda, Kaingu, Namwandi and others followed across fourteen lessons building their business plans, and asks learners to list, in order, the five main stages covered, recording responses on the chalkboard.",
+          "learnersRole": "Learners attempt to list the five stages in order: Business Idea, Marketing Plan, Financial Plan, Finalising a Business Plan, and Business Startup Capital. Assessment criteria: learners correctly recall at least three of the five main stages."
+        },
+        {
+          "stage": "DEVELOPMENT",
+          "teacherRole": "Provides a comprehensive recap: Business Idea (sources, discussing ideas, purpose of a plan, brainstorming, SWOT selection); Marketing Plan (market research, 4 Ps); Financial Plan (profit plan, cash flow plan); Finalising a Business Plan (compiling and reviewing/presenting); Business Startup Capital (identifying sources, calculating requirements, sourcing capital). Additional note: these five stages are not strictly one-directional — in real Mkushi businesses, entrepreneurs often revisit earlier stages (e.g. adjusting the marketing plan after starting to sell) as they learn more about their market.",
+          "learnersRole": "Learners participate in a rapid recap quiz in teams, answering short questions on each of the five stages from quiz cards, and each team also prepares a two-minute summary presentation of their own completed business plan for the final assessment stage. Assessment criteria: each team correctly answers at least eight of ten recap quiz questions and prepares a complete summary presentation."
+        },
+        {
+          "stage": "EXERCISE/ASSESSMENT",
+          "teacherRole": "Scenario: Bwalya Chomba, a Form 2 learner, completed her entire business plan journey for a honey-processing business inspired by her father's beekeeping in Fiwila forest area — market research at Mkushi Boma market, marketing plan, profit and cash flow figures, compiled final document — and now prepares to approach the Fiwila Beekeepers' Cooperative for a K700 startup loan. Tasks: (a) outline, in order, the five main stages Bwalya followed, with one example at each stage [10 marks]; (b) explain why following all five stages in order increases her chances of running a successful business [5 marks]; (c) group role-play of Bwalya's final presentation to the cooperative committee covering all sections, with the committee asking at least two questions. Expected answers: (a) sequenced stages with examples from Bwalya's honey business [10]. (b) following all stages ensures the idea is realistic, correctly priced/promoted, financially sound, clearly documented, and properly funded — skipping a stage increases risk of failure [5].",
+          "learnersRole": "Learners correctly outline all five stages with relevant examples, give a well-reasoned explanation of the value of the full process, and perform a comprehensive, confident, well-organised presentation role-play covering all plan sections. Level of difficulty: ranges from Understanding to Evaluating."
+        },
+        {
+          "stage": "HOMEWORK",
+          "teacherRole": "The teacher asks learners to write a one-page reflective summary of their own personal business plan journey across the fifteen lessons, to be kept as part of their Civic Education portfolio: (a) summarise the five stages as applied to their own business idea [3 marks]; (b) state one skill from this topic they feel most confident applying in real life, with a reason [2 marks].",
+          "learnersRole": "Learners write a reflective summary of their personal business plan journey at home. Assessment criteria: learners submit a complete, thoughtful reflective summary covering all five stages."
+        },
+        {
+          "stage": "CONCLUSION",
+          "teacherRole": "The teacher concludes: 'You have now walked the complete journey of building a business plan, from a simple idea in Mkushi to a fully costed, funded proposal. This is a real, usable skill for your future, whether in business, farming, or any career you choose,' congratulating learners and inviting final questions.",
+          "learnersRole": "Learners reflect on their learning journey and ask any final clarifying questions on Topic 2.12 Business Plan. Assessment criteria: learners can confidently and correctly summarise the complete business plan process from start to finish."
+        }
+      ]
+    },
+    {
+      "topic_name": "2.2 ELECTIONS",
+      "subtopic_name": "2.2.1 Elections — Assessing the Significance of Selecting Leaders",
+      "sequence_label": "Lesson 1",
+      "majorLearningPoint": "Assessing the significance of selecting leaders in any organisation",
+      "lessonGoal": "By the end of the lesson, learners should be able to assess and justify the importance of selecting leaders through a fair process in various Zambian organisations, including their own school.",
+      "duration": null,
+      "references": "Civic Education Syllabus Ordinary Level Secondary Education Form 1-4 (2024), page 42; ECSEOL Assessment Schemes for Civic Education 3011 (ECZ, 2026).",
+      "tlm": "Scenario cards on leadership selection methods, whiteboard, markers.",
+      "rationale": "This lesson builds the foundation for understanding participatory leadership selection. It develops creativity and citizenship by relating leadership choice to familiar Zambian settings such as school prefectship, church councils and village headship. Strategies include scenario analysis and group discussion. This is the 1st lesson in the series of 15.",
+      "objectives": [
+        "Specific competence: 2.2.1.1 Justify significance of electing leaders",
+        "General competence: Creativity and Innovation (5)",
+        "General competence: Citizenship (2)"
+      ],
+      "priorKnowledge": "Learners have experience with electing class monitors and school prefects.",
+      "progression": [
+        {
+          "stage": "INTRODUCTION/ENGAGEMENT",
+          "teacherRole": "The teacher poses a scenario: at a Mkushi secondary school the Deputy Head Teacher wants to appoint a Head Boy without consulting learners, simply because the boy is the tallest in Form 4, and asks for a quick show of hands (fair/unfair/unsure).",
+          "learnersRole": "Learners indicate their stance by raising hands and briefly explaining their reasoning; most find the method unfair since height has nothing to do with leadership ability, while a few are unsure. Assessment criteria: learners engage actively with the scenario and give a reason for their stance."
+        },
+        {
+          "stage": "DEVELOPMENT",
+          "teacherRole": "Defines a leader as a person who guides, directs or represents a group, and significance as the quality of being important. Contrasts a group with no leader (confusion, no direction) versus a group with an unelected, unpopular leader (resentment, low cooperation). Real-life application: contrasts the Bemba Royal Establishment's succession customs (elders and family council deliberate before installing a Chief) with a football team such as Zesco United electing a captain, and cites Zambia's own national elections where citizens elect the Republican President every five years. Synthesis: a leadership selection process involving those affected produces leaders who are accountable and respected.",
+          "learnersRole": "Learners listen and take notes. In pairs, they discuss a scenario card (e.g. selecting a marketeers' committee chairperson) comparing election to appointment. Assessment criteria: learners actively participate in pair discussion and correctly link the scenario to the value of electing rather than appointing leaders, noting that election builds trust, gives everyone a voice, and holds the leader accountable."
+        },
+        {
+          "stage": "EXERCISE/ASSESSMENT",
+          "teacherRole": "Scenario: at Katanino Girls Technical Secondary School, the outgoing Head Girl Mutinta is due to be replaced; the Deputy Head Teacher proposes handing the position directly to her younger sister without nomination or voting, which some teachers support to save time, while others and the Debate Club insist all Form 4 girls should be able to stand and be voted for by the whole school. Tasks: (a) identify the two positions on how the new Head Girl should be selected [4 marks]; (b) explain two reasons why an election-based selection is more significant than a direct handover [6 marks]; role-play task — in groups of six, dramatise a school assembly where the Deputy Head Teacher announces an open nomination and voting process, with candidates giving short campaign speeches. Expected answers: (a) Position 1 — hand the position directly to a chosen relative to save time; Position 2 — all eligible Form 4 girls should stand and the whole school should vote [4]. (b) an election gives every learner a voice and is representative of the majority's wishes; an elected leader feels accountable to the electorate; election reduces favouritism and nepotism, building trust [6].",
+          "learnersRole": "Learners' written answers identify both positions clearly and give well-justified reasons; the role-play demonstrates a fair, orderly selection process with clear roles. Level of difficulty: (a) Remembering (b) Analysing; role-play: Applying."
+        },
+        {
+          "stage": "HOMEWORK",
+          "teacherRole": "The teacher asks learners to observe how a leader emerged for a specific task at home or in the community over the past week (e.g. choosing who leads a funeral preparation committee, a village savings group/chilimba, or a football team) and record how the leader was chosen: (a) record who was selected as leader and for what task [2 marks]; (b) state whether the selection was fair, giving one reason [3 marks].",
+          "learnersRole": "Learners observe a real leadership selection in their home or community and record their findings in a short written note. Assessment criteria: learners submit a written note showing observation and a reasoned judgement on its fairness."
+        },
+        {
+          "stage": "CONCLUSION",
+          "teacherRole": "The teacher concludes: 'Whether it is choosing a Head Girl, a market chairperson, or the Republican President, a fair process of electing leaders builds trust, order and accountability in any Zambian organisation.'",
+          "learnersRole": "Learners share one insight gained about the significance of electing leaders. Assessment criteria: learners can state, in their own words, why electing leaders is significant."
+        }
+      ]
+    },
+    {
+      "topic_name": "2.2 ELECTIONS",
+      "subtopic_name": "2.2.1 Elections — Explaining the Meaning of Elections",
+      "sequence_label": "Lesson 2",
+      "majorLearningPoint": "Explaining the meaning of Elections",
+      "lessonGoal": "By the end of the lesson, learners should be able to explain, in their own words, the meaning of elections and identify their key features in the Zambian context.",
+      "duration": null,
+      "references": "Civic Education Syllabus Ordinary Level Secondary Education Form 1-4 (2024), page 42; ECSEOL Assessment Schemes for Civic Education 3011 (ECZ, 2026).",
+      "tlm": "Whiteboard, markers, newspaper cutting/picture of a Zambian polling station.",
+      "rationale": "This lesson builds a clear conceptual foundation before learners move to deeper analysis of the electoral process. It develops communication skills through definition-building and Zambianised examples. This is the 2nd lesson in the series of 15.",
+      "objectives": [
+        "Specific competence: 2.2.1.1 Justify significance of electing leaders",
+        "General competence: Communication (7)",
+        "General competence: Citizenship (2)"
+      ],
+      "priorKnowledge": "Learners understand the significance of electing leaders (previous lesson).",
+      "progression": [
+        {
+          "stage": "INTRODUCTION/ENGAGEMENT",
+          "teacherRole": "The teacher shows a picture of Zambians queuing at a polling station in Lusaka during a past general election and asks what these people are doing and why it matters.",
+          "learnersRole": "Learners observe the picture and offer suggestions such as that people are voting/choosing leaders, some mentioning the 2021 general elections they witnessed at home. Assessment criteria: learners observe keenly and make a reasonable connection between the picture and voting."
+        },
+        {
+          "stage": "DEVELOPMENT",
+          "teacherRole": "Defines an election as a formal and organised process by which citizens choose their leaders or representatives by casting votes, and outlines its key features: more than one candidate, eligible/registered voters, secret ballot, results determined by counting votes. Real-life application: uses the 2021 Zambian general elections, where citizens voted for the Republican President, MPs and Local Government Councillors on the same day.",
+          "learnersRole": "Learners listen and take notes, copying the definition and key features. In pairs, they classify examples (e.g. choosing a Head Teacher by the Ministry of Education, voting for a Ward Councillor, a King inheriting a throne) as elections or not, giving reasons based on the features discussed. Assessment criteria: learners correctly classify examples and justify their classification using the features of an election."
+        },
+        {
+          "stage": "EXERCISE/ASSESSMENT",
+          "teacherRole": "Scenario: in Mkushi District, candidates Mwansa and Chomba contest for Ward Councillor; registered residents queue at Chalata Polling Station, mark ballots in secret booths, drop them into sealed ballot boxes, and presiding officers count votes in the presence of party monitors, with Mwansa declared winner with 1,200 votes against Chomba's 950. Tasks: (a) explain the meaning of an election using the scenario [4 marks]; (b) identify three features of an election shown in the scenario [6 marks]; role-play task — re-enact the Chalata Polling Station scene with a presiding officer verifying voters, polling agents observing, voters queuing and marking ballots in secret, and the officer announcing the result. Expected answers: (a) an election is a formal, organised process in which registered citizens choose their leaders by casting votes [4]. (b) features shown: more than one candidate; registered voters; secret ballot voting booths; sealed ballot boxes and vote counting; presence of monitors for transparency (any three) [6].",
+          "learnersRole": "Learners' answers correctly explain the meaning of an election and identify at least three accurate features from the scenario; the role-play accurately depicts an orderly, transparent polling process. Level of difficulty: (a) Understanding (b) Analysing; role-play: Applying."
+        },
+        {
+          "stage": "HOMEWORK",
+          "teacherRole": "The teacher asks learners to interview a parent or guardian about the last time they voted in Zambia (e.g. 2021 general elections, a council by-election, or a cooperative society election) and record what they remember about the voting process: (a) record what election the parent/guardian voted in and when [2 marks]; (b) record one feature of the voting process they described [3 marks].",
+          "learnersRole": "Learners conduct a short interview at home and record the findings in their notebooks. Assessment criteria: learners submit a written record showing they conducted the interview and identified a genuine feature of the voting process."
+        },
+        {
+          "stage": "CONCLUSION",
+          "teacherRole": "The teacher concludes: 'An election is more than just marking a paper — it is an organised, fair process that gives every eligible Zambian a voice in choosing their leaders.'",
+          "learnersRole": "Learners state, in one sentence, the meaning of an election. Assessment criteria: learners can correctly and confidently define an election."
+        }
+      ]
+    },
+    {
+      "topic_name": "2.2 ELECTIONS",
+      "subtopic_name": "2.2.1 Elections — Establishing the Importance of Elections",
+      "sequence_label": "Lesson 3",
+      "majorLearningPoint": "Establishing importance of elections",
+      "lessonGoal": "By the end of the lesson, learners should be able to establish and explain the importance of elections in a democratic society such as Zambia.",
+      "duration": null,
+      "references": "Civic Education Syllabus Ordinary Level Secondary Education Form 1-4 (2024), page 42; ECSEOL Assessment Schemes for Civic Education 3011 (ECZ, 2026).",
+      "tlm": "Whiteboard, markers, debate cards.",
+      "rationale": "This lesson deepens learners' appreciation of democracy by linking elections to accountability, participation and national development. It uses debate and real-life Zambian illustrations to build critical thinking. This is the 3rd lesson in the series of 15.",
+      "objectives": [
+        "Specific competence: 2.2.1.1 Justify significance of electing leaders",
+        "General competence: Citizenship (2)",
+        "General competence: Critical Thinking (6)"
+      ],
+      "priorKnowledge": "Learners know the meaning and key features of an election (previous lesson).",
+      "progression": [
+        {
+          "stage": "INTRODUCTION/ENGAGEMENT",
+          "teacherRole": "The teacher poses a provocative statement for a quick debate: 'Zambia would develop faster if the President were simply chosen by a group of wise elders instead of holding costly elections every five years.'",
+          "learnersRole": "Learners take a quick stance (agree/disagree) with a one-sentence reason; most disagree, arguing elders may not represent everyone's interests, while a few agree citing cost savings. Assessment criteria: learners engage with the statement and offer an initial, reasoned opinion."
+        },
+        {
+          "stage": "DEVELOPMENT",
+          "teacherRole": "Explains that elections are important because they give citizens a voice in choosing who governs them, hold leaders accountable since they can be voted out, promote peaceful transfer of power, legitimise a government's authority, and allow citizens to influence policies affecting their lives. Real-life application: discusses how a Member of Parliament for Mkushi North who fails to fulfil campaign promises (e.g. on the Mkushi-Serenje road) risks losing the next election.",
+          "learnersRole": "Learners listen and take notes. In groups, they are given a card with one importance of elections (e.g. accountability, legitimacy, peaceful transfer of power) and prepare a one-minute explanation supported by a relevant Zambian example, such as Constituency Development Fund projects tied to MP performance. Assessment criteria: learners collaborate effectively and present a clear, well-supported explanation of their assigned point."
+        },
+        {
+          "stage": "EXERCISE/ASSESSMENT",
+          "teacherRole": "Scenario: in Serenje District, residents are unhappy that their Ward Councillor has not repaired the community borehole for three years despite promises; community members remind each other that the next Local Government election is in a few months and agree to use their vote to decide whether he continues in office. Tasks: (a) state one importance of elections shown in the scenario [3 marks]; (b) explain how the scenario demonstrates that elections make leaders accountable [7 marks]; role-play task — dramatise a community meeting (insaka) in Serenje where residents confront the Councillor, remind him of the upcoming election, and he responds with a plan of action, including a Village Headperson moderating [10 marks]. Expected answers: (a) elections give citizens power to hold leaders accountable and to remove non-performing leaders [3]. (b) because the Councillor knows the community can vote him out, he has an incentive to fulfil promises such as repairing the borehole; elections thus create pressure on leaders to perform, unlike appointed leaders who cannot be removed by those they serve [7].",
+          "learnersRole": "Learners' answers correctly identify and explain the accountability function of elections using the scenario; the role-play realistically portrays community accountability pressure on an elected leader. Level of difficulty: (a) Remembering (b) Analysing; role-play: Applying."
+        },
+        {
+          "stage": "HOMEWORK",
+          "teacherRole": "The teacher asks learners to discuss with a parent or elder one project or service in their own community (e.g. a clinic, road, school block) that was promised by an elected leader, and to record whether it was delivered: (a) record the project/service promised and by which elected leader [2 marks]; (b) record whether it was delivered, and one reason why elections matter in this case [3 marks].",
+          "learnersRole": "Learners engage a parent or elder in discussion and record findings in a short written note. Assessment criteria: learners submit a written note showing genuine engagement and a reasoned link to the importance of elections."
+        },
+        {
+          "stage": "CONCLUSION",
+          "teacherRole": "The teacher concludes that elections are the tool citizens use to reward good leadership and hold poor leadership accountable.",
+          "learnersRole": "Learners share one importance of elections they will remember. Assessment criteria: learners can state at least one clear importance of elections."
+        }
+      ]
+    },
+    {
+      "topic_name": "2.2 ELECTIONS",
+      "subtopic_name": "2.2.1 Elections — Describing Characteristics of a Credible Election",
+      "sequence_label": "Lesson 4",
+      "majorLearningPoint": "Describing characteristics of a credible election",
+      "lessonGoal": "By the end of the lesson, learners should be able to describe the characteristics of a credible election and apply them to real Zambian scenarios.",
+      "duration": null,
+      "references": "Civic Education Syllabus Ordinary Level Secondary Education Form 1-4 (2024), page 42; ECSEOL Assessment Schemes for Civic Education 3011 (ECZ, 2026).",
+      "tlm": "Whiteboard, markers, checklist cards.",
+      "rationale": "This lesson equips learners with standards for evaluating whether an election is trustworthy, developing analytical and critical thinking skills through Zambian case examples. This is the 4th lesson in the series of 15.",
+      "objectives": [
+        "Specific competence: 2.2.1.1 Justify significance of electing leaders",
+        "General competence: Critical Thinking (6)",
+        "General competence: Analytical Thinking (1)"
+      ],
+      "priorKnowledge": "Learners understand the meaning and importance of elections (previous lessons).",
+      "progression": [
+        {
+          "stage": "INTRODUCTION/ENGAGEMENT",
+          "teacherRole": "The teacher asks whether learners would trust the result of a nearby chiefdom's cooperative society election if only the chairperson's relatives were allowed to vote, and why.",
+          "learnersRole": "Learners respond with their opinions, saying they would not trust it because not everyone was allowed to vote, making it unfair and unrepresentative. Assessment criteria: learners engage with the question and identify at least one reason for distrust."
+        },
+        {
+          "stage": "DEVELOPMENT",
+          "teacherRole": "Explains that a credible election is one that is free, fair, transparent and widely accepted as legitimate, and lists characteristics: free participation without intimidation, fair and equal treatment of candidates, transparency in vote counting and results announcement, independence of the electoral body (e.g. the Electoral Commission of Zambia), secrecy of the ballot, and accurate results. Real-life application: notes that bodies such as the Churches Monitoring Group and the Commonwealth Observer Mission have monitored Zambian polls and declared them largely credible, boosting public confidence.",
+          "learnersRole": "Learners listen and take notes on the characteristics. In groups, they are given a checklist card and a short case (e.g. a village cooperative election) and must tick which characteristics were present or absent, correctly justifying their assessment using case details. Assessment criteria: learners accurately apply the checklist of characteristics to the given case and justify their conclusions."
+        },
+        {
+          "stage": "EXERCISE/ASSESSMENT",
+          "teacherRole": "Scenario: during a Parent-Teacher Association (PTA) election at Chibombo Secondary School, all registered parents could nominate and vote, voting was by secret ballot, votes were counted in full view of parents present and results announced immediately; however, one parent later complained that the Chairperson had campaigned using threats against parents who supported his rival. Tasks: (a) identify two characteristics of a credible election shown in the scenario [4 marks]; (b) explain why the complaint raised threatens the credibility of the election [6 marks]; role-play task — dramatise a PTA disciplinary hearing investigating the intimidation complaint, with a panel comprising the Head Teacher, a Governing Body representative and two parents, culminating in a recommendation on safeguarding future PTA elections [10 marks]. Expected answers: (a) secret ballot voting; transparent vote counting in front of parents; immediate and open announcement of results (any two) [4]. (b) the intimidation complaint shows some parents may not have voted freely, violating the principle that a credible election must be free from intimidation, undermining legitimacy even if other procedures like ballot secrecy were followed correctly [6].",
+          "learnersRole": "Learners correctly identify characteristics present and give a sound analytical explanation of the threat to credibility; the role-play demonstrates a fair, structured investigation process. Level of difficulty: (a) Remembering (b) Analysing; role-play: Evaluating."
+        },
+        {
+          "stage": "HOMEWORK",
+          "teacherRole": "The teacher asks learners to think of any election they have witnessed or heard about in their community (church, cooperative, market association) and assess it against the characteristics of a credible election learnt in class: (a) name the election observed and state one characteristic of credibility it met [3 marks]; (b) state one characteristic it may have lacked, if any [2 marks].",
+          "learnersRole": "Learners reflect on a real or reported election and record their assessment in their notebooks. Assessment criteria: learners submit a written assessment correctly applying at least one credibility characteristic to a real example."
+        },
+        {
+          "stage": "CONCLUSION",
+          "teacherRole": "The teacher concludes: 'A credible election is not just about voting — it is about fairness, transparency and freedom from fear at every stage of the process.'",
+          "learnersRole": "Learners name one characteristic of a credible election they will remember. Assessment criteria: learners can correctly state at least one characteristic of a credible election."
+        }
+      ]
+    },
+    {
+      "topic_name": "2.2 ELECTIONS",
+      "subtopic_name": "2.2.1 Elections — Classifying the Types of Elections (Presidential, National Assembly and Local Government)",
+      "sequence_label": "Lesson 5",
+      "majorLearningPoint": "Classifying the types of elections (Presidential, National Assembly and Local Government)",
+      "lessonGoal": "By the end of the lesson, learners should be able to classify the types of elections held in Zambia, namely Presidential, National Assembly and Local Government elections.",
+      "duration": null,
+      "references": "Civic Education Syllabus Ordinary Level Secondary Education Form 1-4 (2024), page 42; ECSEOL Assessment Schemes for Civic Education 3011 (ECZ, 2026).",
+      "tlm": "Whiteboard, markers, chart showing Zambia's three-tier elective structure.",
+      "rationale": "This lesson helps learners distinguish between the three levels of elective office in Zambia's governance structure, developing analytical thinking through classification exercises using Zambianised examples. This is the 5th lesson in the series of 15.",
+      "objectives": [
+        "Specific competence: 2.2.1.1 Justify significance of electing leaders",
+        "General competence: Analytical Thinking (1)",
+        "General competence: Citizenship (2)"
+      ],
+      "priorKnowledge": "Learners understand the characteristics of a credible election (previous lesson).",
+      "progression": [
+        {
+          "stage": "INTRODUCTION/ENGAGEMENT",
+          "teacherRole": "The teacher asks: 'On the same voting day in Zambia's general elections, how many different leaders does a voter in Mkushi actually choose?'",
+          "learnersRole": "Learners try to recall and guess the number and names of positions, mentioning President, Member of Parliament and Councillor, though some may only recall the President. Assessment criteria: learners attempt to recall the positions voted for, applying prior general knowledge."
+        },
+        {
+          "stage": "DEVELOPMENT",
+          "teacherRole": "Explains that Zambia holds three types of elections concurrently during general elections: Presidential election (Republican President and Vice-President running mate); National Assembly election (MPs for each of 156 constituencies); Local Government election (Councillors for each ward, and Mayors/Council Chairpersons in some councils, who oversee local development such as roads, markets and clinics). Real-life application: uses a chart to show a single Mkushi voter's three ballot papers on election day — one each for President, the MP for Mkushi North, and the Ward Councillor.",
+          "learnersRole": "Learners listen and take notes, copying the chart. In pairs, they match given responsibilities (e.g. 'repairs the Chalata feeder road', 'represents Zambia internationally', 'makes laws') to the appropriate type of election/leader — matching the feeder road to the Councillor, international representation to the President, and law-making to the MP. Assessment criteria: learners correctly classify responsibilities under the appropriate type of election/leader."
+        },
+        {
+          "stage": "EXERCISE/ASSESSMENT",
+          "teacherRole": "Scenario: during the 2026 by-elections in Mkushi District, three separate ballot papers were used at Katanino Polling Station — a green ballot for the Republican President, a ballot for the MP for Mkushi North Constituency, and another for the Ward Councillor of Chalata Ward; first-time voter Chansa was confused about why she had to vote three times. Tasks: (a) classify the three types of elections shown at Katanino Polling Station [6 marks]; (b) explain to Chansa why Zambia holds three separate elections at once [4 marks]; role-play task — re-enact the scene at Katanino Polling Station with a presiding officer explaining to Chansa the purpose of each of the three ballot papers before she casts her three votes [10 marks]. Expected answers: (a) Presidential election — for the Republican President; National Assembly election — for the MP for Mkushi North Constituency; Local Government election — for the Ward Councillor of Chalata Ward [6]. (b) Zambia holds three elections together because governance operates at three levels — national, constituency and ward — each with different responsibilities, and voting for all three at once ensures every level of government is filled and saves the cost of separate election days [4].",
+          "learnersRole": "Learners correctly classify all three types of elections and give a sound explanation for holding them concurrently; the role-play clearly demonstrates the distinct purpose of each ballot. Level of difficulty: (a) Remembering (b) Understanding; role-play: Applying."
+        },
+        {
+          "stage": "HOMEWORK",
+          "teacherRole": "The teacher asks learners to find out, from a parent, guardian or local newspaper, the names of the current MP for their constituency and the Ward Councillor for their area: (a) record the name of the MP for their constituency [2 marks]; (b) record the name of their Ward Councillor and one responsibility they hold [3 marks].",
+          "learnersRole": "Learners research at home and record findings in their notebooks. Assessment criteria: learners submit correctly recorded names and at least one accurate responsibility of the Councillor."
+        },
+        {
+          "stage": "CONCLUSION",
+          "teacherRole": "The teacher draws three columns on the board — 'President', 'MP' and 'Councillor' — and asks the class to chorally state the level of government each represents (National, Constituency, Ward).",
+          "learnersRole": "Learners respond chorally, matching each leader to their level of government. Assessment criteria: learners can correctly and confidently classify the three types of elections and their corresponding levels of government."
+        }
+      ]
+    },
+    {
+      "topic_name": "2.2 ELECTIONS",
+      "subtopic_name": "2.2.1 Elections — Analysing the Forms of Elections (General and By-elections)",
+      "sequence_label": "Lesson 6",
+      "majorLearningPoint": "Analysing the forms of elections (General and By-elections)",
+      "lessonGoal": "By the end of the lesson, learners should be able to analyse the difference between General Elections and By-elections in the Zambian context.",
+      "duration": null,
+      "references": "Civic Education Syllabus Ordinary Level Secondary Education Form 1-4 (2024), page 42; ECSEOL Assessment Schemes for Civic Education 3011 (ECZ, 2026).",
+      "tlm": "Whiteboard, markers, newspaper report on a Zambian by-election.",
+      "rationale": "This lesson completes learners' understanding of Sub-topic 2.2.1 by distinguishing the two forms elections may take, using real Zambian by-election cases to build analytical skill. This is the 6th in the series of 15.",
+      "objectives": [
+        "Specific competence: 2.2.1.1 Justify significance of electing leaders",
+        "General competence: Analytical Thinking (1)",
+        "General competence: Critical Thinking (6)"
+      ],
+      "priorKnowledge": "Learners can classify the types of elections in Zambia (previous lesson).",
+      "progression": [
+        {
+          "stage": "INTRODUCTION/ENGAGEMENT",
+          "teacherRole": "The teacher asks why Zambia sometimes holds an election for only one constituency, like Kaputa or Chilanga, outside the usual five-year general election cycle.",
+          "learnersRole": "Learners engage with the question and attempt a reasonable guess, such as that the previous MP died, resigned, or was removed from office. Assessment criteria: learners offer their guesses and engage with the question."
+        },
+        {
+          "stage": "DEVELOPMENT",
+          "teacherRole": "Explains that a General Election is held nationwide at the end of a five-year term to elect the President, all 156 MPs and all Councillors at once, while a By-election is held in a single constituency or ward at any time to fill a vacancy arising before the next general election (e.g. due to death, resignation, or court-ordered removal of the sitting MP or Councillor). Explains common causes of by-elections in Zambia: death, resignation, adoption of foreign citizenship, court-ordered removal.",
+          "learnersRole": "Learners listen and take notes on the two forms of elections, comparing them in a two-column table (General Election vs By-election) under headings such as scope, timing and cause, correctly noting a general election covers the whole country on a fixed five-year cycle while a by-election covers only one constituency/ward and can occur at any time. Assessment criteria: learners correctly complete the comparison table distinguishing the two forms of elections."
+        },
+        {
+          "stage": "EXERCISE/ASSESSMENT",
+          "teacherRole": "Scenario: in 2025 the MP for Mkushi North Constituency passed away suddenly, and the Electoral Commission of Zambia announced a by-election to be held within 90 days to elect a new MP for Mkushi North only, while residents of other constituencies continued to be represented by their sitting MPs elected in 2021 until the 2026 general election. Tasks: (a) identify the form of election that will be held in Mkushi North Constituency, giving one reason [4 marks]; (b) distinguish this form of election from a general election using details from the scenario [6 marks]; role-play task — dramatise an Electoral Commission of Zambia press briefing at Mkushi Boma announcing the by-election and explaining to journalists why only Mkushi North will vote and how the process differs from a general election [10 marks]. Expected answers: (a) a by-election, because it is being called to fill a single vacancy created by the death of the sitting MP, rather than at the end of a nationwide five-year term [4]. (b) unlike a general election, which covers the whole country and elects the President, all MPs and all Councillors on a fixed five-year cycle, the by-election covers only Mkushi North Constituency, is called suddenly due to a vacancy, and does not affect other constituencies [6].",
+          "learnersRole": "Learners correctly identify and distinguish the two forms of elections using scenario evidence; the role-play accurately conveys the scope and cause of the by-election. Level of difficulty: (a) Understanding (b) Analysing; role-play: Applying."
+        },
+        {
+          "stage": "HOMEWORK",
+          "teacherRole": "The teacher asks learners to search a newspaper, radio bulletin or ask an elder about any by-election that has taken place in Zambia in recent years (e.g. Kwacha, Kaputa, Chilanga, or a local council ward): (a) record the name of the constituency/ward and the reason the by-election was called [3 marks]; (b) state one way this by-election differed from a general election [2 marks].",
+          "learnersRole": "Learners research at home and record findings in their notebooks. Assessment criteria: learners submit an accurate record of a real Zambian by-election and one correct point of difference from a general election."
+        },
+        {
+          "stage": "CONCLUSION",
+          "teacherRole": "The teacher concludes: 'A general election renews the whole nation's leadership at once, while a by-election simply fills a single gap when it arises — both keep Zambia's democracy continuously representative.'",
+          "learnersRole": "Learners state, in one sentence, the difference between a general election and a by-election. Assessment criteria: learners can correctly distinguish the two forms of elections."
+        }
+      ]
+    },
+    {
+      "topic_name": "2.2 ELECTIONS",
+      "subtopic_name": "2.2.2 Electoral Commission of Zambia (ECZ) — Describing the Role of the Electoral Commission of Zambia",
+      "sequence_label": "Lesson 7",
+      "majorLearningPoint": "Describing the role of the Electoral Commission of Zambia",
+      "lessonGoal": "By the end of the lesson, learners should be able to describe the role of the Electoral Commission of Zambia (ECZ) in organising, conducting and managing elections.",
+      "duration": null,
+      "references": "Civic Education Syllabus Ordinary Level Secondary Education Form 1-4 (2024), page 42; ECSEOL Assessment Schemes for Civic Education 3011 (ECZ, 2026).",
+      "tlm": "Whiteboard, markers, picture/logo of the Electoral Commission of Zambia.",
+      "rationale": "This lesson introduces learners to Zambia's constitutional electoral management body, building citizenship awareness through Zambianised, real-life illustrations of ECZ's work. This is the 7th lesson in the series of 15.",
+      "objectives": [
+        "Specific competence: 2.2.2.1 Analyse the role of the Electoral Commission of Zambia (ECZ)",
+        "General competence: Citizenship (2)",
+        "General competence: Collaboration (3)"
+      ],
+      "priorKnowledge": "Learners understand the types and forms of elections in Zambia (previous lessons).",
+      "progression": [
+        {
+          "stage": "INTRODUCTION/ENGAGEMENT",
+          "teacherRole": "The teacher shows the ECZ logo and asks who is responsible for making sure elections in Zambia run smoothly, from registering voters to announcing the winner.",
+          "learnersRole": "Learners guess and discuss; some correctly name the Electoral Commission of Zambia (ECZ), others guess the police or the President. Assessment criteria: learners attempt a reasonable guess and engage with the picture."
+        },
+        {
+          "stage": "DEVELOPMENT",
+          "teacherRole": "Explains that ECZ is the independent constitutional body responsible for organising, conducting and managing all elections and referenda in Zambia, and describes its key roles: registering voters and maintaining the voters' register, delimiting constituencies and wards, accrediting candidates and political parties, conducting voter education, and managing polling, counting and results. Real-life application: describes ECZ mobile teams visiting Mkushi Boma and surrounding chiefdoms to register new voters.",
+          "learnersRole": "Learners listen and take notes on ECZ's roles. In groups, they match given activities (e.g. 'printing ballot papers', 'announcing results', 'campaigning for a candidate') to 'ECZ role' or 'not an ECZ role', correctly identifying printing ballot papers and announcing results as ECZ roles and campaigning as not. Assessment criteria: learners correctly classify activities as ECZ roles or not, with sound reasoning."
+        },
+        {
+          "stage": "EXERCISE/ASSESSMENT",
+          "teacherRole": "Scenario: ahead of the 2026 Mkushi North by-election, an ECZ mobile team set up a registration desk at Chalata Community Hall, verifying residents' National Registration Cards, capturing biometric details and issuing voter cards; on election day ECZ-appointed presiding officers managed the polling station, counted votes transparently, and announced results to party monitors present. Tasks: (a) describe two roles of ECZ shown in the scenario [4 marks]; (b) explain why it is important for ECZ, rather than a political party, to manage this process [6 marks]; role-play task — dramatise the ECZ mobile registration desk at Chalata Community Hall, with roles for a registration officer verifying an NRC, capturing biometric details, and issuing a voter's card to a first-time voter [10 marks]. Expected answers: (a) roles shown — registering voters and issuing voter cards; managing the polling station, counting votes and announcing results [4]. (b) it is important for ECZ, as an independent and neutral body, to manage the process because a political party has an interest in the outcome and might manipulate registration or counting to favour its own candidate; ECZ's independence ensures the process is trusted by all candidates and voters [6].",
+          "learnersRole": "Learners correctly describe ECZ roles from the scenario and give a sound explanation of the importance of ECZ's independence; the role-play accurately depicts the registration process. Level of difficulty: (a) Remembering (b) Analysing; role-play: Applying."
+        },
+        {
+          "stage": "HOMEWORK",
+          "teacherRole": "The teacher asks learners to ask a parent or guardian whether they have ever registered as a voter with ECZ, and what the process involved: (a) record whether the parent/guardian has registered as a voter [2 marks]; (b) record one step of the ECZ registration process they described [3 marks].",
+          "learnersRole": "Learners interview a family member and record findings in their notebooks. Assessment criteria: learners submit a written record showing genuine engagement and at least one accurate registration step."
+        },
+        {
+          "stage": "CONCLUSION",
+          "teacherRole": "The teacher concludes: 'From registering voters at Chalata to announcing results, the Electoral Commission of Zambia is the trusted referee that makes our elections fair and orderly.'",
+          "learnersRole": "Learners state one role of ECZ they will remember. Assessment criteria: learners can correctly state at least one role of the Electoral Commission of Zambia."
+        }
+      ]
+    },
+    {
+      "topic_name": "2.2 ELECTIONS",
+      "subtopic_name": "2.2.2 Electoral Commission of Zambia (ECZ) — Discussing the Electoral Process (Part 1: Legislation and Delimitation)",
+      "sequence_label": "Lesson 8",
+      "majorLearningPoint": "Discussing the Electoral Process (Part 1: Legislation and Delimitation)",
+      "lessonGoal": "By the end of the lesson, learners should be able to discuss the legislation and delimitation stages of Zambia's electoral process.",
+      "duration": null,
+      "references": "Civic Education Syllabus Ordinary Level Secondary Education Form 1-4 (2024), page 42; ECSEOL Assessment Schemes for Civic Education 3011 (ECZ, 2026).",
+      "tlm": "Whiteboard, markers, map showing Zambia's constituency boundaries.",
+      "rationale": "This lesson splits the compacted 'Electoral Process' learning activity into a focused, manageable segment covering the legal framework and constituency/ward boundary-setting, using Zambianised examples. This is the 8th lesson in the series of 15.",
+      "objectives": [
+        "Specific competence: 2.2.2.1 Analyse the role of the Electoral Commission of Zambia (ECZ)",
+        "General competence: Analytical Thinking (1)",
+        "General competence: Citizenship (2)"
+      ],
+      "priorKnowledge": "Learners understand the role of the Electoral Commission of Zambia (previous lesson).",
+      "progression": [
+        {
+          "stage": "INTRODUCTION/ENGAGEMENT",
+          "teacherRole": "The teacher asks: 'Before any Zambian can vote, what rules and boundaries must first be set by law?'",
+          "learnersRole": "Learners brainstorm ideas, mentioning the Constitution, electoral laws, or boundaries of constituencies, though few know the specific terms. Assessment criteria: learners attempt to brainstorm relevant ideas about pre-election legal preparation."
+        },
+        {
+          "stage": "DEVELOPMENT",
+          "teacherRole": "Explains that the electoral process begins with legislation — the laws governing how elections are conducted in Zambia, principally the Constitution of Zambia and the Electoral Process Act — and explains delimitation as the process of dividing the country into constituencies (for MPs) and wards (for Councillors) based on population size and geography, conducted periodically by ECZ. Real-life application: uses Mkushi North and Mkushi South Constituencies for National Assembly elections as an example of how delimitation creates manageable, fairly-sized voting areas.",
+          "learnersRole": "Learners listen and take notes on legislation and delimitation. In pairs, they study a simplified map of Mkushi District's wards and constituencies and identify which ward/constituency they would vote in for a given village. Assessment criteria: learners correctly interpret the map and identify the appropriate ward/constituency."
+        },
+        {
+          "stage": "EXERCISE/ASSESSMENT",
+          "teacherRole": "Scenario: following growth of Mkushi Boma's population due to new settlements around Katanino, ECZ announced a delimitation exercise to review ward boundaries, guided by the Electoral Process Act; residents of the newly settled area were unsure which ward they now belonged to and attended a public consultation meeting organised by ECZ. Tasks: (a) explain the meaning of delimitation as shown in the scenario [4 marks]; (b) discuss why legislation such as the Electoral Process Act is necessary to guide delimitation [6 marks]; role-play task — dramatise the ECZ public consultation meeting at Katanino, with a delimitation officer explaining the new proposed ward boundary on a map and residents asking questions [10 marks]. Expected answers: (a) delimitation is the process of dividing an area into constituencies/wards based on factors such as population; in the scenario ECZ is reviewing Mkushi's ward boundaries because the population around Katanino has grown [4]. (b) legislation such as the Electoral Process Act is necessary because it sets clear, legal criteria and procedures for how boundaries should be drawn (e.g. population thresholds, public consultation), preventing arbitrary or biased boundary changes and giving residents a legal right to be consulted [6].",
+          "learnersRole": "Learners correctly explain delimitation and the role of legislation using the scenario; the role-play accurately reflects a genuine public consultation process. Level of difficulty: (a) Understanding (b) Analysing; role-play: Applying."
+        },
+        {
+          "stage": "HOMEWORK",
+          "teacherRole": "The teacher asks learners to find out from a parent, guardian or local Councillor's office which ward and constituency their home area falls under: (a) record the name of their ward and constituency [2 marks]; (b) state one reason why it matters to know their ward/constituency [3 marks].",
+          "learnersRole": "Learners research at home and record findings in their notebooks. Assessment criteria: learners submit correctly recorded ward/constituency information with a sound reason."
+        },
+        {
+          "stage": "CONCLUSION",
+          "teacherRole": "The teacher concludes: 'Before Zambians can even vote, the law must first set the rules, and delimitation must fairly draw the boundaries — the electoral process begins long before election day.'",
+          "learnersRole": "Learners state one thing they learnt about legislation or delimitation. Assessment criteria: learners can correctly explain either legislation or delimitation in their own words."
+        }
+      ]
+    },
+    {
+      "topic_name": "2.2 ELECTIONS",
+      "subtopic_name": "2.2.2 Electoral Commission of Zambia (ECZ) — Discussing the Electoral Process (Part 2: Voter Education and Registration)",
+      "sequence_label": "Lesson 9",
+      "majorLearningPoint": "Discussing the Electoral Process (Part 2: Voter Education and Registration)",
+      "lessonGoal": "By the end of the lesson, learners should be able to discuss the voter education and voter registration stages of Zambia's electoral process.",
+      "duration": null,
+      "references": "Civic Education Syllabus Ordinary Level Secondary Education Form 1-4 (2024), page 42; ECSEOL Assessment Schemes for Civic Education 3011 (ECZ, 2026).",
+      "tlm": "Whiteboard, markers, sample voter's card image.",
+      "rationale": "This lesson completes the electoral process learning activity by focusing on how citizens are prepared and enrolled to vote, using Zambianised community examples to develop communication and citizenship. This is the 9th lesson in the series of 15.",
+      "objectives": [
+        "Specific competence: 2.2.2.1 Analyse the role of the Electoral Commission of Zambia (ECZ)",
+        "General competence: Communication (7)",
+        "General competence: Citizenship (2)"
+      ],
+      "priorKnowledge": "Learners understand legislation and delimitation stages of the electoral process (previous lesson).",
+      "progression": [
+        {
+          "stage": "INTRODUCTION/ENGAGEMENT",
+          "teacherRole": "The teacher asks why some people who are 18 years and above still fail to vote on election day.",
+          "learnersRole": "Learners brainstorm reasons such as not being registered, not knowing where to vote, or not understanding the importance of voting. Assessment criteria: learners engage and propose reasonable explanations."
+        },
+        {
+          "stage": "DEVELOPMENT",
+          "teacherRole": "Explains voter education as the process by which ECZ informs citizens about their right to vote, how to register, how to vote correctly, and the importance of participating, and voter registration as the process by which eligible citizens (18+, holding an NRC) enrol their details in the voters' register. Explains ECZ's voter education methods: radio and television programmes, community meetings, school civic clubs, printed materials in local languages. Real-life application: describes how ECZ partnered with community radio stations such as Mkushi Community Radio to educate first-time voters ahead of the 2021 general elections.",
+          "learnersRole": "Learners listen and take notes on voter education and registration. In pairs, they design a simple voter education message (a slogan or short jingle) in English or a local language encouraging first-time voters to register. Assessment criteria: learners produce a relevant and appropriately targeted voter education message."
+        },
+        {
+          "stage": "EXERCISE/ASSESSMENT",
+          "teacherRole": "Scenario: ahead of the 2026 by-election, Mkushi Community Radio aired a voter education programme in Bemba explaining eligibility, required documents and mobile registration desk locations in Chalata and Katanino Wards; many first-time voters, including 19-year-old Bwalya, listened and later went to register with their NRCs. Tasks: (a) distinguish between voter education and voter registration as shown in the scenario [4 marks]; (b) explain why voter education was necessary before Bwalya could register [6 marks]; role-play task — dramatise a voter education radio programme with a presenter interviewing an ECZ officer about eligibility and registration requirements, followed by a scene of Bwalya registering at the Chalata mobile desk [10 marks]. Expected answers: (a) voter education is the radio programme informing citizens about eligibility, requirements and registration locations; voter registration is the actual process of Bwalya presenting his NRC and enrolling his details at the mobile desk [4]. (b) without voter education, Bwalya may not have known he was eligible, what documents were required, or where and when to register; voter education equips citizens with the knowledge and confidence to exercise their right to register and vote [6].",
+          "learnersRole": "Learners correctly distinguish voter education from registration and give a sound explanation of their relationship; the role-play accurately depicts both processes in sequence. Level of difficulty: (a) Understanding (b) Analysing; role-play: Applying."
+        },
+        {
+          "stage": "HOMEWORK",
+          "teacherRole": "The teacher asks learners to design, on paper, a short voter education poster (with a slogan and picture idea) that could be displayed at their local clinic, market or school to encourage eligible community members to register as voters: (a) draw or describe the poster design and slogan [3 marks]; (b) explain in one sentence why the poster's message matters [2 marks].",
+          "learnersRole": "Learners design a poster idea at home and present it in their notebooks. Assessment criteria: learners submit a relevant, well-explained voter education poster idea."
+        },
+        {
+          "stage": "CONCLUSION",
+          "teacherRole": "The teacher concludes: 'An informed voter is an empowered voter — voter education opens the door, and registration is the key that lets every eligible Zambian walk through it on election day.'",
+          "learnersRole": "Learners state one thing they learnt about voter education or registration. Assessment criteria: learners can correctly explain either voter education or voter registration in their own words."
+        }
+      ]
+    },
+    {
+      "topic_name": "2.2 ELECTIONS",
+      "subtopic_name": "2.2.2 Electoral Commission of Zambia (ECZ) — Describing the Electoral Code of Conduct",
+      "sequence_label": "Lesson 10",
+      "majorLearningPoint": "Describing the Electoral Code of Conduct",
+      "lessonGoal": "By the end of the lesson, learners should be able to describe the Electoral Code of Conduct and its role in guiding candidate and voter behaviour in Zambia.",
+      "duration": null,
+      "references": "Civic Education Syllabus Ordinary Level Secondary Education Form 1-4 (2024), page 42; ECSEOL Assessment Schemes for Civic Education 3011 (ECZ, 2026).",
+      "tlm": "Whiteboard, markers, printed extract of Electoral Code of Conduct rules.",
+      "rationale": "This lesson helps learners understand the rules that regulate campaign behaviour, developing citizenship and emotional intelligence (self-control, respect for others) through Zambianised campaign scenarios. This is the 10th lesson in the series of 15.",
+      "objectives": [
+        "Specific competence: 2.2.2.1 Analyse the role of the Electoral Commission of Zambia (ECZ)",
+        "General competence: Citizenship (2)",
+        "General competence: Emotional Intelligence (8)"
+      ],
+      "priorKnowledge": "Learners understand voter education and registration (previous lesson).",
+      "progression": [
+        {
+          "stage": "INTRODUCTION/ENGAGEMENT",
+          "teacherRole": "The teacher asks whether learners have ever seen or heard of political party supporters fighting or insulting each other during campaigns, and what rules should stop this.",
+          "learnersRole": "Learners share experiences and suggestions, recalling campaign clashes reported on radio/TV and suggesting rules against violence, insults or bribery. Assessment criteria: learners share relevant experiences and reasonable suggestions."
+        },
+        {
+          "stage": "DEVELOPMENT",
+          "teacherRole": "Explains the Electoral Code of Conduct as a set of rules issued under the Electoral Process Act governing the behaviour of candidates, parties, supporters and voters during the electoral period, and outlines key rules: no violence, threats or intimidation; no abusive or inciting language; no bribery of voters (vote-buying); no misuse of government resources for campaigning. Real-life application: cites cases where ECZ, working with the Zambia Police Service, has warned or disqualified candidates for breaching the Code, such as political violence between rival cadres during campaign rallies.",
+          "learnersRole": "Learners listen and take notes on the Code of Conduct rules. In groups, they are given short campaign scenarios and must decide whether the behaviour breaches the Code, giving a reason — correctly identifying threats or bribery against supporters as breaches, while normal rallies and door-to-door canvassing are acceptable. Assessment criteria: learners correctly distinguish acceptable campaign conduct from breaches of the Code."
+        },
+        {
+          "stage": "EXERCISE/ASSESSMENT",
+          "teacherRole": "Scenario: during campaigns for the Mkushi North by-election, one candidate's supporters distributed bags of mealie-meal to Chalata Ward residents in exchange for votes, and separately, supporters of two rival candidates clashed at a market in Katanino, exchanging insults and minor scuffles, before Police and ECZ monitors intervened. Tasks: (a) identify two breaches of the Electoral Code of Conduct shown in the scenario [4 marks]; (b) explain how such breaches can undermine the credibility of the by-election [6 marks]; role-play task — dramatise an ECZ and Zambia Police joint intervention at Katanino Market, separating the clashing supporters, cautioning them on the Code of Conduct, and recording witness statements about the mealie-meal distribution [10 marks]. Expected answers: (a) breaches shown — vote-buying (distributing mealie-meal for votes); political violence/intimidation (clashes and insults between rival supporters) [4]. (b) vote-buying corrupts voters' free choice, making the result reflect gifts received rather than genuine support; violence and intimidation frighten voters and supporters away from participating freely, reducing turnout and fairness, and together these breaches can lead observers to question whether the result reflects the will of the people [6].",
+          "learnersRole": "Learners correctly identify breaches and explain their impact on credibility; the role-play realistically shows enforcement of the Electoral Code of Conduct. Level of difficulty: (a) Remembering (b) Evaluating; role-play: Applying."
+        },
+        {
+          "stage": "HOMEWORK",
+          "teacherRole": "The teacher asks learners to recall any campaign period they have witnessed (local or national) and identify one example of good conduct and, if any, one example of poor conduct they observed or heard about: (a) record one example of good campaign conduct observed [2 marks]; (b) record one example of poor conduct (if any) and why it was wrong [3 marks].",
+          "learnersRole": "Learners reflect on a real campaign period and record their observations in their notebooks. Assessment criteria: learners submit a thoughtful, relevant reflection distinguishing good and poor campaign conduct."
+        },
+        {
+          "stage": "CONCLUSION",
+          "teacherRole": "The teacher concludes: 'The Electoral Code of Conduct is like a referee's rulebook — it keeps campaigns fair, peaceful and respectful for everyone.'",
+          "learnersRole": "Learners state one rule of the Electoral Code of Conduct they will remember. Assessment criteria: learners can correctly state at least one rule of the Electoral Code of Conduct."
+        }
+      ]
+    },
+    {
+      "topic_name": "2.2 ELECTIONS",
+      "subtopic_name": "2.2.2 Electoral Commission of Zambia (ECZ) — Discussing Voters' Rights",
+      "sequence_label": "Lesson 11",
+      "majorLearningPoint": "Discussing voters' rights",
+      "lessonGoal": "By the end of the lesson, learners should be able to discuss the rights of voters in Zambia and how these rights are protected during elections.",
+      "duration": null,
+      "references": "Civic Education Syllabus Ordinary Level Secondary Education Form 1-4 (2024), page 42; ECSEOL Assessment Schemes for Civic Education 3011 (ECZ, 2026).",
+      "tlm": "Whiteboard, markers, extract of the Bill of Rights relating to political participation.",
+      "rationale": "This lesson builds learners' awareness of their own future rights as voters, developing citizenship and communication skills through Zambianised scenarios of rights being upheld or challenged. This is the 11th lesson in the series of 15.",
+      "objectives": [
+        "Specific competence: 2.2.2.1 Analyse the role of the Electoral Commission of Zambia (ECZ)",
+        "General competence: Citizenship (2)",
+        "General competence: Communication (7)"
+      ],
+      "priorKnowledge": "Learners understand the Electoral Code of Conduct (previous lesson).",
+      "progression": [
+        {
+          "stage": "INTRODUCTION/ENGAGEMENT",
+          "teacherRole": "The teacher asks: 'If you turn 18 next year and go to vote, what would you expect to be entitled to as a voter?'",
+          "learnersRole": "Learners brainstorm expectations, mentioning the right to vote secretly, to vote without being forced, and to have their vote counted fairly. Assessment criteria: learners engage and propose reasonable expectations."
+        },
+        {
+          "stage": "DEVELOPMENT",
+          "teacherRole": "Explains voters' rights as the entitlements every eligible Zambian citizen has when participating in an election, protected under the Constitution and electoral laws, including the right to register and vote if eligible, the right to a secret ballot, and the right to vote free from intimidation. Real-life application: discusses how a voter in Mkushi turned away from a polling station without valid reason, or forced to reveal who they voted for, has the right to report this to ECZ officials or election monitors present.",
+          "learnersRole": "Learners listen and take notes on voters' rights. In pairs, they identify which right is being violated in short given cases (e.g. a farm supervisor telling employees who to vote for, or a presiding officer refusing a registered voter entry without reason), correctly identifying such cases as violations of the right to vote freely if eligible/registered. Assessment criteria: learners correctly identify the specific voter right violated in each case."
+        },
+        {
+          "stage": "EXERCISE/ASSESSMENT",
+          "teacherRole": "Scenario: at a large farm near Mkushi, the owner gathered workers before the by-election and told them he would only renew contracts for those who could prove they voted for his preferred candidate; one worker, Musonda, felt pressured but later reported the matter to an ECZ monitor at the polling station, who assured her that her ballot was secret and recorded her complaint for investigation. Tasks: (a) identify the voter's right that the farm owner threatened to violate [3 marks]; (b) explain how the ECZ monitor's response protected Musonda's rights as a voter [7 marks]; role-play task — dramatise Musonda reporting the incident to the ECZ monitor, including the monitor explaining ballot secrecy, recording her statement, and advising her on further steps [10 marks]. Expected answers: (a) the farm owner threatened Musonda's right to vote freely, without intimidation or coercion, and her right to a secret ballot [3]. (b) the monitor protected Musonda's rights by assuring her that her vote was secret, meaning the farm owner could not know who she voted for, removing the basis for his threat, and by recording her complaint upheld her right to report violations for investigation, reinforcing that voters are protected by law regardless of their employer's wishes [7].",
+          "learnersRole": "Learners correctly identify the rights at risk and explain the protective role of the monitor; the role-play accurately reflects a respectful, supportive rights-protection process. Level of difficulty: (a) Remembering (b) Analysing; role-play: Applying."
+        },
+        {
+          "stage": "HOMEWORK",
+          "teacherRole": "The teacher asks learners to discuss with a parent or guardian what they believe are the most important rights a voter has, and why: (a) record two voters' rights identified by the parent/guardian [3 marks]; (b) state one reason why one of these rights matters, in their own words [2 marks].",
+          "learnersRole": "Learners discuss with a family member and record findings in their notebooks. Assessment criteria: learners submit a written record showing genuine discussion and correct identification of voters' rights."
+        },
+        {
+          "stage": "CONCLUSION",
+          "teacherRole": "The teacher concludes: 'Every Zambian voter has rights that protect their choice — from the secrecy of the ballot to the freedom from pressure — and these rights make democracy meaningful.'",
+          "learnersRole": "Learners state one voter's right they will remember. Assessment criteria: learners can correctly state at least one voter's right."
+        }
+      ]
+    },
+    {
+      "topic_name": "2.2 ELECTIONS",
+      "subtopic_name": "2.2.2 Electoral Commission of Zambia (ECZ) — Analysing Electoral Malpractice in Zambia",
+      "sequence_label": "Lesson 12",
+      "majorLearningPoint": "Analysing electoral malpractice in Zambia",
+      "lessonGoal": "By the end of the lesson, learners should be able to analyse forms of electoral malpractice in Zambia and their consequences.",
+      "duration": null,
+      "references": "Civic Education Syllabus Ordinary Level Secondary Education Form 1-4 (2024), page 42; ECSEOL Assessment Schemes for Civic Education 3011 (ECZ, 2026).",
+      "tlm": "Whiteboard, markers, newspaper report on an electoral petition case.",
+      "rationale": "This lesson concludes Sub-topic 2.2.2 by equipping learners with critical thinking skills to identify and evaluate threats to electoral integrity, using Zambianised case examples. This is the 12th lesson in the series of 15.",
+      "objectives": [
+        "Specific competence: 2.2.2.1 Analyse the role of the Electoral Commission of Zambia (ECZ)",
+        "General competence: Analytical Thinking (1)",
+        "General competence: Critical Thinking (6)"
+      ],
+      "priorKnowledge": "Learners understand voters' rights and the Electoral Code of Conduct (previous lessons).",
+      "progression": [
+        {
+          "stage": "INTRODUCTION/ENGAGEMENT",
+          "teacherRole": "The teacher asks whether learners have heard of a Zambian election result being challenged in court, and why this happens.",
+          "learnersRole": "Learners share what they know or have heard, recalling election petitions on the news and suspecting reasons like rigging, vote-buying or violence. Assessment criteria: learners engage and share relevant prior knowledge or reasonable guesses."
+        },
+        {
+          "stage": "DEVELOPMENT",
+          "teacherRole": "Defines electoral malpractice as any dishonest or illegal practice that undermines the fairness and credibility of an election, and outlines common forms in Zambia: vote-buying/bribery, ballot stuffing or tampering, intimidation and political violence, multiple voting or impersonation, misuse of government resources for campaigning, and manipulation of results. Real-life application: notes that election petitions have led courts to nullify constituency/council seat results after malpractice such as bribery or violence was proven.",
+          "learnersRole": "Learners listen and take notes on forms of malpractice. In groups, they are given short case descriptions and must classify the type of malpractice involved and suggest one consequence — e.g. correctly classifying a candidate's agent giving out chitenge cloth for votes as vote-buying. Assessment criteria: learners correctly classify malpractice cases and identify a reasonable consequence."
+        },
+        {
+          "stage": "EXERCISE/ASSESSMENT",
+          "teacherRole": "Scenario: after the Mkushi North by-election result was announced, the losing candidate filed a High Court petition alleging that the winning candidate's agents had bribed voters in Katanino Ward with chitenge material and bags of sugar, and had inflated the number of votes recorded at one polling station beyond the number of registered voters there; the Court ordered a recount and investigation. Tasks: (a) identify two forms of electoral malpractice alleged in the scenario [4 marks]; (b) analyse the possible consequences for the winning candidate if the allegations are proven true [6 marks]; role-play task — dramatise a High Court hearing of the election petition, with roles for the petitioner's lawyer presenting evidence, the respondent's lawyer defending the candidate, and a judge delivering a reasoned ruling [10 marks]. Expected answers: (a) forms alleged — vote-buying (distributing chitenge and sugar); ballot/vote tampering (inflated vote numbers beyond registered voters, suggesting ballot stuffing) [4]. (b) if proven, the court could nullify the result in the affected ward/constituency requiring a fresh by-election, disqualify the winning candidate for a specified period, expose the candidate and agents to criminal prosecution under the Electoral Process Act, and damage public trust in the wider electoral system [6].",
+          "learnersRole": "Learners correctly identify forms of malpractice and analyse realistic consequences; the role-play demonstrates a fair, reasoned judicial process. Level of difficulty: (a) Remembering (b) Analysing; role-play: Evaluating."
+        },
+        {
+          "stage": "HOMEWORK",
+          "teacherRole": "The teacher asks learners to find, from a newspaper, radio bulletin or an elder, one real or reported case of electoral malpractice in Zambia (local or national) and its outcome: (a) record the form of malpractice reported [2 marks]; (b) record the outcome or consequence that followed, if known [3 marks].",
+          "learnersRole": "Learners research at home and record findings in their notebooks. Assessment criteria: learners submit a relevant, accurately recorded case of electoral malpractice and its outcome."
+        },
+        {
+          "stage": "CONCLUSION",
+          "teacherRole": "The teacher concludes: 'Electoral malpractice, whether bribery or tampering, threatens the very trust that elections are built on — and Zambia's laws and courts stand ready to correct it.'",
+          "learnersRole": "Learners state one form of electoral malpractice they will remember and its consequence. Assessment criteria: learners can correctly state at least one form of electoral malpractice and a possible consequence."
+        }
+      ]
+    },
+    {
+      "topic_name": "2.2 ELECTIONS",
+      "subtopic_name": "2.2.3 Electoral Systems — Examining Electoral Systems (Part 1: Single Member Plurality/Majoritarian System)",
+      "sequence_label": "Lesson 13",
+      "majorLearningPoint": "Examining electoral systems (Part 1: Single Member Plurality/Majoritarian System)",
+      "lessonGoal": "By the end of the lesson, learners should be able to examine the Single Member Plurality (Win-Takes-It-All) System and the Majoritarian System of elections.",
+      "duration": null,
+      "references": "Civic Education Syllabus Ordinary Level Secondary Education Form 1-4 (2024), page 42; ECSEOL Assessment Schemes for Civic Education 3011 (ECZ, 2026).",
+      "tlm": "Whiteboard, markers, sample vote-count table.",
+      "rationale": "This lesson splits the compacted 'examining electoral systems' learning activity into a focused segment on the two majority-based systems, developing analytical and critical thinking through Zambianised illustrations. This is the 13th lesson in the series of 15.",
+      "objectives": [
+        "Specific competence: 2.3.1.1 Examine electoral systems",
+        "General competence: Analytical Thinking (1)",
+        "General competence: Critical Thinking (6)"
+      ],
+      "priorKnowledge": "Learners understand electoral malpractice and voters' rights (previous lessons).",
+      "progression": [
+        {
+          "stage": "INTRODUCTION/ENGAGEMENT",
+          "teacherRole": "The teacher presents a simple vote count for a constituency election (Candidate A 4,000, Candidate B 3,500, Candidate C 2,500) and asks who should win and whether the winner needs more than half of all votes.",
+          "learnersRole": "Learners calculate and discuss, noting Candidate A has the most votes but not more than half of the total, sparking debate on whether that should be enough to win. Assessment criteria: learners engage with the numbers and reason about what should determine a winner."
+        },
+        {
+          "stage": "DEVELOPMENT",
+          "teacherRole": "Explains the Single Member Plurality System ('Win-Takes-It-All'), where the candidate with the most votes in a constituency/ward wins even without an outright majority, and the Majoritarian System, where a candidate must win more than 50% (an absolute majority) of votes cast, otherwise a second ballot is required between the top candidates.",
+          "learnersRole": "Learners listen and take notes copying both systems' rules. In pairs, they are given different vote totals for a hypothetical Mkushi ward election and determine the winner under each system, showing that the outcome can differ depending on which system is used. Assessment criteria: learners correctly apply both systems to determine winners from given vote data."
+        },
+        {
+          "stage": "EXERCISE/ASSESSMENT",
+          "teacherRole": "Scenario: in a mock Katanino Ward Council election organised by the school's Civic Education Club, three candidates received votes — Mumba 180, Zulu 150, Phiri 90, out of 420 votes cast in total. Tasks: (a) determine the winner if the Single Member Plurality System is applied, giving a reason [4 marks]; (b) determine what would happen if the Majoritarian System were applied instead, giving a reason [6 marks]; role-play task — dramatise the Civic Education Club's mock election results announcement, with a Returning Officer first announcing the Single Member Plurality outcome, then explaining what would happen under the Majoritarian System [10 marks]. Expected answers: (a) under Single Member Plurality, Mumba wins with 180 votes, because this system declares the candidate with the highest number of votes the winner regardless of whether it is more than half of the total [4]. (b) under the Majoritarian System, no candidate would win outright since none received more than 210 votes (over half of 420); a second ballot (run-off) would be needed between the top two candidates, Mumba (180) and Zulu (150) [6].",
+          "learnersRole": "Learners correctly apply both systems to the scenario's vote figures with sound reasoning; the role-play clearly distinguishes the outcomes under each system. Level of difficulty: (a) Applying (b) Analysing; role-play: Applying."
+        },
+        {
+          "stage": "HOMEWORK",
+          "teacherRole": "The teacher asks learners to create their own hypothetical vote totals for three candidates in a fictitious Zambian ward, then apply both systems: (a) state their invented vote totals and determine the Single Member Plurality winner [3 marks]; (b) determine whether a run-off would be needed under the Majoritarian System, and why [2 marks].",
+          "learnersRole": "Learners create and solve their own hypothetical example at home, recording the working in their notebooks. Assessment criteria: learners submit a correctly worked hypothetical example showing understanding of both systems."
+        },
+        {
+          "stage": "CONCLUSION",
+          "teacherRole": "The teacher concludes: 'Under Single Member Plurality, the most votes is enough to win; under the Majoritarian System, a candidate must clear the higher bar of more than half — the choice of system can change who becomes the leader.'",
+          "learnersRole": "Learners state, in one sentence, the difference between the two systems. Assessment criteria: learners can correctly distinguish the Single Member Plurality System from the Majoritarian System."
+        }
+      ]
+    },
+    {
+      "topic_name": "2.2 ELECTIONS",
+      "subtopic_name": "2.2.3 Electoral Systems — Examining Electoral Systems (Part 2: Proportional Representation and Mixed Member Proportionality Systems)",
+      "sequence_label": "Lesson 14",
+      "majorLearningPoint": "Examining electoral systems (Part 2: Proportional Representation and Mixed Member Proportionality Systems)",
+      "lessonGoal": "By the end of the lesson, learners should be able to examine the Proportional Representation System and the Mixed Member Proportionality System of elections.",
+      "duration": null,
+      "references": "Civic Education Syllabus Ordinary Level Secondary Education Form 1-4 (2024), page 42; ECSEOL Assessment Schemes for Civic Education 3011 (ECZ, 2026).",
+      "tlm": "Whiteboard, markers, sample party-vote-share table.",
+      "rationale": "This lesson completes the 'examining electoral systems' learning activity by covering the remaining two systems, developing analytical thinking and collaboration through comparative, Zambianised group work. This is the 14th lesson in the series of 15.",
+      "objectives": [
+        "Specific competence: 2.3.1.1 Examine electoral systems",
+        "General competence: Analytical Thinking (1)",
+        "General competence: Collaboration (3)"
+      ],
+      "priorKnowledge": "Learners understand the Single Member Plurality and Majoritarian Systems (previous lesson).",
+      "progression": [
+        {
+          "stage": "INTRODUCTION/ENGAGEMENT",
+          "teacherRole": "The teacher asks whether it is fair for a political party that gets 30% of the national vote to get 30% of the seats in Parliament, rather than none at all.",
+          "learnersRole": "Learners discuss and share opinions; most agree it seems fairer, though some are unsure how such a system would work in practice. Assessment criteria: learners engage with the fairness question and offer a reasoned opinion."
+        },
+        {
+          "stage": "DEVELOPMENT",
+          "teacherRole": "Explains the Proportional Representation System, in which legislative seats are allocated to parties in proportion to their percentage of votes nationally or regionally, rather than through individual constituency contests, and the Mixed Member Proportionality System, which combines constituency-based elections with proportional representation — some legislators elected directly, others allocated to correct imbalance — unlike Zambia's current First-Past-the-Post system for MPs, where winning individual constituencies is what matters regardless of national vote share.",
+          "learnersRole": "Learners listen and take notes comparing the two systems. In groups, they are given a table of a fictitious country's party vote shares (e.g. Party X 45%, Party Y 35%, Party Z 20%) and calculate how many of 100 seats each party would receive under pure Proportional Representation. Assessment criteria: learners correctly calculate proportional seat allocation from given vote-share data (e.g. Party X 45 seats, Party Y 35 seats, Party Z 20 seats)."
+        },
+        {
+          "stage": "EXERCISE/ASSESSMENT",
+          "teacherRole": "Scenario: the fictitious neighbouring country of Kalobwe uses a Mixed Member Proportionality System for its National Assembly — half of the 100 seats are won directly by constituency candidates (like Zambia's First-Past-the-Post MPs), while the other half are allocated to parties based on national vote share to correct any imbalance; in the last election the Unity Front won 30 constituency seats but only 35% of the national vote. Tasks: (a) explain how Kalobwe's Mixed Member Proportionality System works, using scenario details [4 marks]; (b) analyse how the proportional seats could adjust the Unity Front's final seat total to better reflect their national vote share [6 marks]; role-play task — dramatise Kalobwe's Electoral Commission announcing the final seat allocation, with an officer explaining to party representatives how the proportional 'top-up' seats were calculated [10 marks]. Expected answers: (a) Kalobwe's system combines directly-elected constituency seats with additional seats allocated based on national vote share, so the final Assembly composition better reflects how the whole country voted [4]. (b) since Unity Front won 30 constituency seats (30% of the 100-seat Assembly) but received 35% of the national vote, proportional seats would be allocated to bring their overall seat share closer to 35, correcting the 5-percentage-point gap [6].",
+          "learnersRole": "Learners correctly explain the Mixed Member Proportionality System and reason through the seat adjustment; the role-play accurately conveys the allocation logic. Level of difficulty: (a) Understanding (b) Analysing; role-play: Applying."
+        },
+        {
+          "stage": "HOMEWORK",
+          "teacherRole": "The teacher asks learners to research (from a library book, newspaper or the internet where accessible) one country that uses Proportional Representation or Mixed Member Proportionality (e.g. South Africa, Germany) and note one feature of how it works: (a) record the name of the country and system used [2 marks]; (b) record one feature of how the system works in that country [3 marks].",
+          "learnersRole": "Learners research at home and record findings in their notebooks. Assessment criteria: learners submit accurate, relevant research findings on a real country's electoral system."
+        },
+        {
+          "stage": "CONCLUSION",
+          "teacherRole": "The teacher concludes: 'Proportional Representation shares seats according to votes won nationally, while Mixed Member Proportionality blends this fairness with the direct link constituencies provide — different systems, different balances of fairness.'",
+          "learnersRole": "Learners state one difference between Proportional Representation and Mixed Member Proportionality. Assessment criteria: learners can correctly distinguish the two systems in their own words."
+        }
+      ]
+    },
+    {
+      "topic_name": "2.2 ELECTIONS",
+      "subtopic_name": "2.2.3 Electoral Systems — Explaining Zambia's Electoral System (Majoritarian System for President/Vice-President and First-Past-the-Post for National Assembly and Local Government)",
+      "sequence_label": "Lesson 15",
+      "majorLearningPoint": "Explaining Zambia's electoral system (Majoritarian System for President/Vice-President and First-Past-the-Post for National Assembly and Local Government)",
+      "lessonGoal": "By the end of the lesson, learners should be able to explain the electoral system Zambia actually uses for Presidential, National Assembly and Local Government elections, as provided under the Republican Constitution and the Electoral Process Act.",
+      "duration": null,
+      "references": "Civic Education Syllabus Ordinary Level Secondary Education Form 1-4 (2024), page 42; ECSEOL Assessment Schemes for Civic Education 3011 (ECZ, 2026); Republican Constitution of Zambia (Amendment) Act No. 2 of 2016; Electoral Process Act No. 35 of 2016.",
+      "tlm": "Whiteboard, markers, diagram of Zambia's electoral structure for President, MP and Councillor.",
+      "rationale": "This final lesson under Topic 2.2 applies all prior knowledge of electoral systems specifically to Zambia's own constitutional arrangement, consolidating learners' understanding through Zambianised, real election-result examples. This is the 15th and final lesson in the series.",
+      "objectives": [
+        "Specific competence: 2.3.1.1 Explain Zambia's electoral system",
+        "General competence: Analytical Thinking (1)",
+        "General competence: Citizenship (2)"
+      ],
+      "priorKnowledge": "Learners understand the Single Member Plurality, Majoritarian, Proportional Representation and Mixed Member Proportionality Systems (previous lessons).",
+      "progression": [
+        {
+          "stage": "INTRODUCTION/ENGAGEMENT",
+          "teacherRole": "The teacher asks how Zambia actually elects its own President, and whether the same system is used for MPs.",
+          "learnersRole": "Learners recall the systems learnt and try to guess which applies to Zambia's President and MPs; some correctly recall that the President needs more than 50% while MPs simply need the most votes, though many need confirmation. Assessment criteria: learners actively attempt to apply prior knowledge to the Zambian context."
+        },
+        {
+          "stage": "DEVELOPMENT",
+          "teacherRole": "Explains that the 2016 Constitution of Zambia (Amendment) Act and the Electoral Process Act clearly define Zambia's electoral system: the President and Vice-President are elected using the Majoritarian (50%+1) System, while MPs and Local Government Councillors are elected using the First-Past-the-Post (Single Member Plurality) System — the candidate with the highest votes in their constituency/ward wins without needing more than 50%. Real-life application: explains the rationale — the 50%+1 rule for the presidency ensures broad national support given the power of the office, while First-Past-the-Post for MPs and Councillors is simpler and creates a direct link between a representative and their specific constituency or ward, such as Mkushi North Constituency or Chalata Ward.",
+          "learnersRole": "Learners listen and take detailed notes, copying the diagram from the board, and ask questions (e.g. about ballot procedures). Assessment criteria: learners can correctly state which electoral system is used for the President and which for MPs/Councillors, and explain the reason for the difference."
+        },
+        {
+          "stage": "EXERCISE/ASSESSMENT",
+          "teacherRole": "Scenario: in the 2021 Zambian general elections, President Hakainde Hichilema was declared winner of the presidential race after securing more than 50% of the valid votes cast nationally; in the same elections, in Mkushi North Constituency the winning parliamentary candidate secured victory with 38% of the vote ahead of two rivals splitting the remainder, while in Chalata Ward the winning Councillor won by just 300 votes more than the closest competitor. Tasks: (a) identify the electoral system used to elect the President in the scenario, giving evidence [3 marks]; (b) identify and explain the electoral system used to elect the MP and the Councillor in the scenario [7 marks]; role-play task — dramatise an ECZ results announcement ceremony, with an officer separately announcing the presidential result (explaining the 50%+1 requirement), the Mkushi North MP result (explaining First-Past-the-Post), and the Chalata Ward Councillor result, clarifying to a curious first-time voter why the rules differ [10 marks]. Expected answers: (a) the Majoritarian System (50%+1) was used, as the President needed to secure more than 50% of the valid votes cast nationally [3]. (b) the First-Past-the-Post (Single Member Plurality) System was used for both the MP and Councillor — shown because the MP won with only 38% (not more than half), simply having more votes than each individual rival, and similarly the Councillor won by a 300-vote margin without needing to cross the 50% threshold; this system is used for MPs and Councillors because it is simpler to administer across many constituencies/wards and creates a direct, accountable link between each representative and their area [7].",
+          "learnersRole": "Learners correctly identify and explain both systems as applied to the scenario with accurate reasoning; the role-play clearly and correctly distinguishes the rules for each type of election. Level of difficulty: (a) Remembering (b) Analysing; role-play: Evaluating."
+        },
+        {
+          "stage": "HOMEWORK",
+          "teacherRole": "The teacher asks learners to research (from a newspaper, radio bulletin, or ECZ website where accessible) the vote result for their own constituency's MP or ward's Councillor: (a) record the vote result found for their MP or Councillor [2 marks]; (b) state which electoral system this confirms was used, giving one reason [3 marks].",
+          "learnersRole": "Learners research the vote result at home and record findings. Assessment criteria: learners submit a correctly recorded result and correctly identify the electoral system it confirms was used."
+        },
+        {
+          "stage": "CONCLUSION",
+          "teacherRole": "The teacher draws two columns on the board, 'President' and 'MP/Councillor,' and asks the class to chorally state the correct electoral system for each column.",
+          "learnersRole": "Learners respond chorally: 'Majoritarian, 50%+1!' for President, and 'First-Past-the-Post!' for MP/Councillor. Assessment criteria: learners can confidently and correctly name the two electoral systems used in Zambia and the offices to which each applies, consolidating the entire Topic 2.2 on Elections."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,1087 @@
+{
+  "_source": "Ministry of Education / Curriculum Development Centre, Zambia — English Scheme of Work, Form 2, Terms 1 and 2 merged (Term 3 was not found in either Drive folder). Each entry cites the syllabus page it is drawn from. The source document's teacher name and school name have been removed — this file contains no identifying information about who prepared the source scheme, per this app's standing content policy of crediting only CDC/Ministry of Education. As with english_form1.json, this scheme teaches by spaced repetition: Listening & Speaking, Comprehension, Composition and Summary Writing each largely repeat their Term 1 sub-topics again in Term 2 (with two genuinely new Listening & Speaking sub-topics, Clarifications and Figurative Language) while Structure continues introducing new grammar content nearly every week across both terms. Sub-topics are listed once, at their first appearance across either term; competencies/learning objectives are merged where the same sub-topic gained a genuinely new specific-competence code in Term 2 (e.g. 2.4.5 Comparison). Mid-term test and end-of-term test/revision weeks carry no new topic content and are omitted.",
+  "curriculum": {
+    "code": "CBC_2023",
+    "name": "2023 Competency-Based Curriculum",
+    "description": "Zambia's current competency-based curriculum."
+  },
+  "subject": {
+    "name": "English Language",
+    "code": "ENG",
+    "description": "Ordinary Level Secondary English Language syllabus, Form 1-4 (Curriculum Development Centre)."
+  },
+  "grade": {
+    "name": "Form 2",
+    "code": "F2_CBC",
+    "level": 2,
+    "phase": "Secondary — the source scheme itself uses \"Form 2\" for this level under the 2023 CBC."
+  },
+  "terms": [
+    {
+      "name": "Terms 1 and 2 (taught as a continuous, repeating cycle — see _source; Term 3 was not found)",
+      "sequence_number": 1,
+      "topics": [
+        {
+          "name": "2.1 Listening and Speaking",
+          "sequence_number": 1,
+          "sub_topics": [
+            {
+              "name": "2.1.1 Instructions",
+              "sequence_number": 1,
+              "description": "Expected standard: instructions given and received appropriately.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Give and receive instructions",
+                  "category": "Specific Competence"
+                }
+              ],
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Discussing situations where instructions are given/received and using appropriate language to sequence them (Firstly, Secondly, Next, Lastly)"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Role-playing following of instructions given"
+                }
+              ],
+              "week_number": 1
+            },
+            {
+              "name": "2.1.2 Directions",
+              "sequence_number": 2,
+              "description": "Expected standard: directions given and received appropriately.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Give and receive directions",
+                  "category": "Specific Competence"
+                }
+              ],
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Discussing situations where directions are given/received and identifying direction vocabulary (left, right, adjacent to, beyond, underneath)"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Role-playing giving and getting directions"
+                }
+              ],
+              "week_number": 2
+            },
+            {
+              "name": "2.1.3 Announcements",
+              "sequence_number": 3,
+              "description": "Expected standard: language to make announcements used correctly.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use appropriate language to make announcements",
+                  "category": "Specific Competence"
+                }
+              ],
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Discussing appropriate language for announcements (clear, concise, objective tone) and reacting to announcements"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Role-playing making and responding to announcements"
+                }
+              ],
+              "week_number": 3
+            },
+            {
+              "name": "2.1.4 Expressing Emotions",
+              "sequence_number": 4,
+              "description": "Expected standard: appropriate language to express sympathy used correctly.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use appropriate language to express sympathy",
+                  "category": "Specific Competence"
+                }
+              ],
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Discussing situations for expressing sympathy and identifying sympathy language (My condolences, I am here for you)"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Practising expressing sympathy in different situations"
+                }
+              ],
+              "week_number": 4
+            },
+            {
+              "name": "2.1.5 Compliments",
+              "sequence_number": 5,
+              "description": "Expected standard: language to compliment others used correctly.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use appropriate language to compliment others",
+                  "category": "Specific Competence"
+                }
+              ],
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Identifying achievements/occasions requiring compliments and discussing compliment vocabulary (Congratulations!, Well done!)"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Role-playing giving and receiving compliments"
+                }
+              ],
+              "week_number": 5
+            },
+            {
+              "name": "2.1.6 Greetings",
+              "sequence_number": 6,
+              "description": "Expected standard: language to greet different categories of people used appropriately.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use appropriate language to greet different categories of people",
+                  "category": "Specific Competence"
+                }
+              ],
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Discussing ways of greeting the young/peers (formal/informal) and adults/elderly people"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Role-playing greeting different categories of people"
+                }
+              ],
+              "week_number": 6
+            },
+            {
+              "name": "2.1.7 Public Speaking",
+              "sequence_number": 7,
+              "description": "Expected standard: appropriate language to debate used correctly.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use appropriate language to debate",
+                  "category": "Specific Competence"
+                }
+              ],
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Identifying situations necessitating a debate and using appropriate debating language (I have a dissenting view, In my opinion)"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Holding debates on cross-cutting issues (Climate Change, Corruption, Human Rights)"
+                }
+              ],
+              "week_number": 8
+            },
+            {
+              "name": "2.1.8 Invitations",
+              "sequence_number": 8,
+              "description": "Expected standard: language to invite people used appropriately.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use appropriate language to invite people",
+                  "category": "Specific Competence"
+                }
+              ],
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Identifying situations requiring invitations and discussing invitation vocabulary"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Role-playing inviting people to different occasions"
+                }
+              ],
+              "week_number": 9
+            },
+            {
+              "name": "2.1.9 Conversations",
+              "sequence_number": 9,
+              "description": "Expected standard: language to initiate conversations, make offers and make requests used appropriately.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use appropriate language to initiate conversations",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Use appropriate language to make an offer",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Use appropriate language to make requests",
+                  "category": "Specific Competence"
+                }
+              ],
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Discussing how to initiate conversations and role-playing"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Identifying situations requiring an offer and practising making an offer through role-play"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Discussing language used to make a request and role-playing making a request"
+                }
+              ],
+              "week_number": 10
+            },
+            {
+              "name": "2.1.10 Clarifications",
+              "sequence_number": 10,
+              "description": "Expected standard: language used to seek clarification used appropriately.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use appropriate language to seek clarification",
+                  "category": "Specific Competence"
+                }
+              ],
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Discussing language used to seek clarification (Would you mind explaining what you mean?)"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Role-playing seeking clarification"
+                }
+              ],
+              "week_number": 13
+            },
+            {
+              "name": "2.1.11 Figurative Language",
+              "sequence_number": 11,
+              "description": "Expected standard: figurative language used appropriately.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use figures of speech in various social contexts",
+                  "category": "Specific Competence"
+                }
+              ],
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Discussing figures of speech (riddles, proverbs, idioms, similes, metaphor, euphemism)"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Using figurative language in conversation"
+                }
+              ],
+              "week_number": 14
+            }
+          ]
+        },
+        {
+          "name": "2.2 Comprehension",
+          "sequence_number": 2,
+          "sub_topics": [
+            {
+              "name": "2.2.1 Listening Comprehension",
+              "sequence_number": 1,
+              "description": "Expected standard: listening to oral sources and answering questions done effectively. Revisited repeatedly across the term.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Listen to different oral sources of information and answer questions",
+                  "category": "Specific Competence"
+                }
+              ],
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Listening to different oral sources (radio, television, someone speaking) and answering different types of questions"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Identifying and listing main ideas (note-taking) and retelling information"
+                }
+              ],
+              "week_number": 1
+            },
+            {
+              "name": "2.2.2 Reading Passages Efficiently",
+              "sequence_number": 2,
+              "description": "Expected standard: passages read efficiently. Revisited repeatedly across the term.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Read passages efficiently",
+                  "category": "Specific Competence"
+                }
+              ],
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Reading at a speed of 250 words per minute; skimming and scanning"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Answering factual and inference questions, retelling details, and deducing meanings of unfamiliar words and idiomatic expressions"
+                }
+              ],
+              "week_number": 2
+            },
+            {
+              "name": "2.2.3 Reading Unabridged Materials",
+              "sequence_number": 3,
+              "description": "Expected standard: different unabridged materials read. Revisited repeatedly across the term.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Read different unabridged materials for enjoyment",
+                  "category": "Specific Competence"
+                }
+              ],
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Reading a variety of texts (newspapers, magazines, journals) silently and at an appropriate pace"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Reading critically and making discriminating judgements (theme, characterisation, style, setting)"
+                }
+              ],
+              "week_number": 3
+            }
+          ]
+        },
+        {
+          "name": "2.3 Composition",
+          "sequence_number": 3,
+          "sub_topics": [
+            {
+              "name": "2.3.1 Narratives",
+              "sequence_number": 1,
+              "description": "Expected standard: stories written appropriately.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Write stories",
+                  "category": "Specific Competence"
+                }
+              ],
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Discussing features/techniques of narratives (plot, setting, characterisation, conflict, point of view, resolution)"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Writing narratives based on given situations"
+                }
+              ],
+              "week_number": 1
+            },
+            {
+              "name": "2.3.2 Descriptive Writing",
+              "sequence_number": 2,
+              "description": "Expected standard: a place described correctly.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe a place",
+                  "category": "Specific Competence"
+                }
+              ],
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Discussing adjectives and language appealing to the five senses to describe a place"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Using descriptive techniques (naming, detailing, comparison) to write descriptive compositions"
+                }
+              ],
+              "week_number": 2
+            },
+            {
+              "name": "2.3.3 Report Writing",
+              "sequence_number": 3,
+              "description": "Expected standard: a simple report written correctly.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Write a simple report",
+                  "category": "Specific Competence"
+                }
+              ],
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Identifying types of reports (police, book, school, incident-based) and discussing features (title, past tense, formal language, factual)"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Answering WH questions and writing simple reports from given notes"
+                }
+              ],
+              "week_number": 3
+            },
+            {
+              "name": "2.3.4 Speech Writing",
+              "sequence_number": 4,
+              "description": "Expected standard: a speech of introduction written correctly.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Write a speech of introduction",
+                  "category": "Specific Competence"
+                }
+              ],
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Identifying types of speeches and discussing features of a speech of introduction (protocol, background, purpose)"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Composing and giving a speech of introduction orally"
+                }
+              ],
+              "week_number": 4
+            },
+            {
+              "name": "2.3.5 Biography Writing",
+              "sequence_number": 5,
+              "description": "Expected standard: an auto-biography and a biography written accordingly.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Write an auto-biography",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Write a biography",
+                  "category": "Specific Competence"
+                }
+              ],
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Discussing an auto-biography, its types (semi, fictional), structure and features (1st person, DOB, place of birth), and writing one"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Discussing the purpose, structure (3rd person, life story) and features of a biography, and writing one"
+                }
+              ],
+              "week_number": 5
+            },
+            {
+              "name": "2.3.6 Expository Writing",
+              "sequence_number": 6,
+              "description": "Expected standard: expository composition written correctly.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Write an expository composition",
+                  "category": "Specific Competence"
+                }
+              ],
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Discussing features of an expository composition (clear purpose, objective tone, formal language)"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Making an outline of points and writing expository compositions on cross-cutting issues (Financial Education, HIV/AIDS)"
+                }
+              ],
+              "week_number": 8
+            },
+            {
+              "name": "2.3.7 Persuasive Writing",
+              "sequence_number": 7,
+              "description": "Expected standard: an argumentative and a discursive composition written correctly/appropriately.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Write an argumentative composition",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Write a discursive composition",
+                  "category": "Specific Competence"
+                }
+              ],
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Discussing features of argumentative writing (picking a side, evidence-based) and using language to agree/disagree with controversial statements"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Discussing features of a discursive composition (formal/objective tone, both sides discussed), researching, and writing"
+                }
+              ],
+              "week_number": 9
+            },
+            {
+              "name": "2.3.8 Diary Writing",
+              "sequence_number": 8,
+              "description": "Expected standard: diary entries written correctly.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Write diary entries",
+                  "category": "Specific Competence"
+                }
+              ],
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Discussing features (date, time, note form, 1st person, brevity) and structure/format of a diary"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Writing diary entries based on given notes"
+                }
+              ],
+              "week_number": 11
+            },
+            {
+              "name": "2.3.9 Letter Writing",
+              "sequence_number": 9,
+              "description": "Expected standard: a semi-formal letter written correctly.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Write a semi-formal letter",
+                  "category": "Specific Competence"
+                }
+              ],
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Identifying the purpose of semi-formal letters (apologising to a neighbour, writing to civic leaders) and outlining their layout"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Writing a semi-formal letter on a given situation"
+                }
+              ],
+              "week_number": 12
+            }
+          ]
+        },
+        {
+          "name": "2.4 Structure",
+          "sequence_number": 4,
+          "sub_topics": [
+            {
+              "name": "2.4.1 Tenses",
+              "sequence_number": 1,
+              "description": "Expected standard: the emphatic form of future tense and the unreal past used in sentences correctly.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use the emphatic form of the future tense in sentences",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Use the unreal past in sentences",
+                  "category": "Specific Competence"
+                }
+              ],
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Discussing the use of the emphatic 'shall' (firm resolve/determination) and constructing sentences"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Discussing the unreal past (not referring to actual past time) and using it to construct sentences"
+                }
+              ],
+              "week_number": 1
+            },
+            {
+              "name": "2.4.2 Verb Expressions",
+              "sequence_number": 2,
+              "description": "Expected standard: verbs and expressions followed by -ing, object + infinitive, and the infinitive used correctly in sentences.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use verbs and expressions followed by -ing in sentences",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Use verbs followed by object + infinitive in sentences",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Use verbs followed by the Infinitive in sentences",
+                  "category": "Specific Competence"
+                }
+              ],
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Discussing the pattern verb + -ing (enjoy, avoid, finish, stop) and expression + -ing (can't help, can't stand)"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Discussing the pattern verb + object + infinitive (advise, allow, instruct, remind)"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Discussing the pattern verb + to + verb (agree, decide, refuse, forget)"
+                }
+              ],
+              "week_number": 3
+            },
+            {
+              "name": "2.4.3 Determiners",
+              "sequence_number": 3,
+              "description": "Expected standard: adjectives of quantity, possessive adjectives and demonstrative adjectives used correctly in sentences.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use adjectives of quantity in sentences",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Use possessive adjectives as determiners in sentences",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Use demonstrative adjectives in sentences",
+                  "category": "Specific Competence"
+                }
+              ],
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Discussing adjectives that show quantity (some, all, much, little, enough)"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Discussing adjectives showing possession (my, your, his, her, its, our, their)"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Discussing words that demonstrate and introduce the noun (this, these, that, those) and their position"
+                }
+              ],
+              "week_number": 6
+            },
+            {
+              "name": "2.4.4 Relative Clauses",
+              "sequence_number": 4,
+              "description": "Expected standard: relative pronouns, and defining/non-defining relative clauses, used correctly in sentences.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Construct sentences using relative pronouns",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Use defining and non-defining relative clauses in sentences",
+                  "category": "Specific Competence"
+                }
+              ],
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Identifying different relative pronouns (which, whom, that) and discussing subject/object in sentence construction"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Discussing relative pronouns that introduce a relative clause and distinguishing defining from non-defining clauses"
+                }
+              ],
+              "week_number": 10
+            },
+            {
+              "name": "2.4.5 Comparison",
+              "sequence_number": 5,
+              "description": "Expected standard: comparatives, superlatives, and alternative/parallel-increase comparison structures used correctly in sentences.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use comparatives and superlatives in sentences",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Use alternative ways of expressing comparison (similes, as...as, the same...as)",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Use parallel increase (the + comparative and the + comparative) to express comparison",
+                  "category": "Specific Competence"
+                }
+              ],
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Discussing ways of comparing two things (comparative, -er/more) and more than two things (superlative, -est/most)"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Discussing irregular forms and constructing sentences"
+                }
+              ],
+              "week_number": 12
+            },
+            {
+              "name": "2.4.6 Reason",
+              "sequence_number": 6,
+              "description": "Expected standard: 'now that'/'seeing that' and participial phrases to express reason used correctly in sentences.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use 'now that'/'seeing that' to express reason in sentences",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Use Participial Phrases to express reason in sentences",
+                  "category": "Specific Competence"
+                }
+              ],
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Discussing the use of 'now that'/'seeing that' to express reason"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Discussing the formation and use of participial phrases to express reason"
+                }
+              ],
+              "week_number": 3
+            },
+            {
+              "name": "2.4.7 Time",
+              "sequence_number": 7,
+              "description": "Expected standard: expressions of time used correctly.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use expressions of time",
+                  "category": "Specific Competence"
+                }
+              ],
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Using phrases with the Perfect Participle (Having completed) and conjunction + participial phrases to express time"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Using 'no sooner...than' with inversion as an alternative to 'as soon as'"
+                }
+              ],
+              "week_number": 5
+            },
+            {
+              "name": "2.4.8 Contrast",
+              "sequence_number": 8,
+              "description": "Expected standard: other expressions to show contrast in sentences used correctly.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use other expressions to show contrast in sentences",
+                  "category": "Specific Competence"
+                }
+              ],
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Using present participle with 'despite'/'in spite of' for contrast"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Using 'one...the other', 'no matter...', adjective + as/though"
+                }
+              ],
+              "week_number": 6
+            },
+            {
+              "name": "2.4.9 Condition",
+              "sequence_number": 9,
+              "description": "Expected standard: other ways of expressing condition used correctly.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use other ways of expressing condition",
+                  "category": "Specific Competence"
+                }
+              ],
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Discussing 'but for' and 'if only' to show condition"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Using 'provided/providing that', 'so/as long as', 'supposing that', and composing sentences showing inversion in conditional sentences"
+                }
+              ],
+              "week_number": 8
+            },
+            {
+              "name": "2.4.10 Question Tags",
+              "sequence_number": 10,
+              "description": "Expected standard: question tags used correctly.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use question tags",
+                  "category": "Specific Competence"
+                }
+              ],
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Identifying the use of question tags in speech and discussing positive/negative tag rules and imperative statement tags"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Supplying correct question tags to given statements"
+                }
+              ],
+              "week_number": 9
+            },
+            {
+              "name": "2.4.11 Voice",
+              "sequence_number": 11,
+              "description": "Expected standard: active and passive voice used correctly.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use the active and passive voice",
+                  "category": "Specific Competence"
+                }
+              ],
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Using active voice when the subject performs the action and passive voice when the subject receives the action"
+                }
+              ],
+              "week_number": 10
+            },
+            {
+              "name": "2.4.12 Agreement (Concord)",
+              "sequence_number": 12,
+              "description": "Expected standard: subject-verb agreement used correctly.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use subject-verb agreement",
+                  "category": "Specific Competence"
+                }
+              ],
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Discussing subject-verb agreement rules and constructing sentences expressing correct subject-verb agreement"
+                }
+              ],
+              "week_number": 11
+            },
+            {
+              "name": "2.4.13 Word Building (Affixation)",
+              "sequence_number": 13,
+              "description": "Expected standard: affixation to form new words used correctly.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use affixation to form new words",
+                  "category": "Specific Competence"
+                }
+              ],
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Discussing the process of adding prefixes/suffixes to form new words and identifying various prefixes and suffixes (en, dis, un, pre; er, tion, al)"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Forming new words using affixation"
+                }
+              ],
+              "week_number": 12
+            }
+          ]
+        },
+        {
+          "name": "2.5 Summary Writing",
+          "sequence_number": 5,
+          "sub_topics": [
+            {
+              "name": "2.5.1 Title Summary",
+              "sequence_number": 1,
+              "description": "Expected standard: titles composed correctly. Revisited repeatedly across the term.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Compose titles",
+                  "category": "Specific Competence"
+                }
+              ],
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Choosing best titles from options given on a passage and composing titles from a given passage"
+                }
+              ],
+              "week_number": 1
+            },
+            {
+              "name": "2.5.2 Sentence Summary",
+              "sequence_number": 2,
+              "description": "Expected standard: sentence summaries composed correctly. Revisited repeatedly across the term.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Compose sentence summaries",
+                  "category": "Specific Competence"
+                }
+              ],
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Identifying the main idea or claim in a sentence and summarising it in a shorter form while maintaining meaning"
+                }
+              ],
+              "week_number": 2
+            },
+            {
+              "name": "2.5.3 Paragraph Summary",
+              "sequence_number": 3,
+              "description": "Expected standard: paragraph summaries composed correctly. Revisited repeatedly across the term.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Compose paragraph summaries",
+                  "category": "Specific Competence"
+                }
+              ],
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Identifying main ideas and supporting details in a paragraph, omitting unnecessary information, and paraphrasing"
+                }
+              ],
+              "week_number": 3
+            },
+            {
+              "name": "2.5.4 Tabulation Skills",
+              "sequence_number": 4,
+              "description": "Expected standard: tabulation skills to summarise information applied correctly. Revisited repeatedly across the term.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Apply tabulation skills to summarise information",
+                  "category": "Specific Competence"
+                }
+              ],
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Identifying and categorising information, and creating tables, charts and graphs to organise data"
+                }
+              ],
+              "week_number": 4
+            },
+            {
+              "name": "2.5.5 Abbreviations",
+              "sequence_number": 5,
+              "description": "Expected standard: abbreviations to take or make notes used correctly.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use abbreviations to take or make notes",
+                  "category": "Specific Competence"
+                }
+              ],
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Discussing types of abbreviations (initialisms, blends, clips, acronyms) and using them when taking notes"
+                }
+              ],
+              "week_number": 5
+            },
+            {
+              "name": "2.5.6 Verbal Summaries",
+              "sequence_number": 6,
+              "description": "Expected standard: information summarised orally correctly.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Summarise information orally",
+                  "category": "Specific Competence"
+                }
+              ],
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Identifying main ideas and key points, organising them logically, and summarising a short text/conversation orally in own words"
+                }
+              ],
+              "week_number": 6
+            },
+            {
+              "name": "2.5.7 Prose Summaries",
+              "sequence_number": 7,
+              "description": "Expected standard: prose summaries written correctly.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Write prose summaries",
+                  "category": "Specific Competence"
+                }
+              ],
+              "learning_objectives": [
+                {
+                  "sequence_number": 1,
+                  "description": "Identifying main and supporting ideas, distinguishing fact from opinion, and writing concise, clear prose summaries"
+                }
+              ],
+              "week_number": 8
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

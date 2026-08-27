@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "377253758104",
+    "project_id": "zambian-curriculum-app",
+    "storage_bucket": "zambian-curriculum-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:377253758104:android:f42389b2e8f9a024d17ced",
+        "android_client_info": {
+          "package_name": "com.kampmapa1design.smartteacher"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "377253758104-gtkn2b750eve32l3btqtbvsdhg0ahtli.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB8mzzUEzZLslBJX8xs8ZkcVmWoXOSHDfk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "377253758104-gtkn2b750eve32l3btqtbvsdhg0ahtli.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

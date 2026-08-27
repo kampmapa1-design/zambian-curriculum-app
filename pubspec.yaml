@@ -66,11 +66,27 @@ flutter:
     - assets/syllabi/english_grade10_obc.json
     - assets/syllabi/english_grade11_obc.json
     - assets/syllabi/english_grade12_obc.json
+    - assets/syllabi/civic_education_form2.json
+    - assets/syllabi/english_form1.json
+    - assets/syllabi/mathematics_form1.json
+    - assets/syllabi/civic_education_form1.json
+    - assets/syllabi/civic_education_form3.json
+    - assets/syllabi/civic_education_form4.json
+    - assets/syllabi/principles_of_accounts_form1.json
+    - assets/syllabi/principles_of_accounts_form2.json
+    - assets/syllabi/english_form2.json
     - assets/activity_banks/manifest.json
     - assets/activity_banks/hist_f1_1_1_1.json
     - assets/rules/cdc_constraints.example.json
     - assets/rules/cbc_2023_constraints.json
     - assets/cdc_resources/seed_catalog.json
+    - assets/subject_content/manifest.json
+    - assets/subject_content/civic_education/form1_term3_teaching_module.txt
+    - assets/lesson_plans/manifest.json
+    - assets/lesson_plans/civic_education_grade10-12.json
+    - assets/lesson_plans/history_form1.json
+    - assets/lesson_plans/religious_education_grade10-11.json
+    - assets/lesson_plans/civic_education_form2.json
     - assets/icon/icon.png
 
 # Run `flutter pub run flutter_launcher_icons` after `flutter create` (see

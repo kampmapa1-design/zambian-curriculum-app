@@ -8,50 +8,30 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
 import '../models/scheme_of_work_document.dart';
+import '../models/scheme_of_work_template.dart';
 
 /// Identifies which subject/grade/curriculum a scheme-of-work document is
-/// for — display-only context, not stored in the draft itself.
+/// for — display-only context, not stored in the draft itself. The actual
+/// column layout comes from [schemeOfWorkTemplateFor], not from here — CBC
+/// and OBC use genuinely different real templates (see
+/// scheme_of_work_template.dart).
 class SchemeOfWorkDocumentContext {
   final String subjectName;
   final String gradeName;
   final String curriculumName;
+  final String curriculumCode;
   final String termLabel;
 
   const SchemeOfWorkDocumentContext({
     required this.subjectName,
     required this.gradeName,
     required this.curriculumName,
+    required this.curriculumCode,
     required this.termLabel,
   });
+
+  SchemeOfWorkTemplate get template => schemeOfWorkTemplateFor(curriculumCode);
 }
-
-const _columnHeaders = [
-  'Week',
-  'Topic / Sub-topic',
-  'Prescribed Competences',
-  'Specific Competences',
-  'Content / Concept',
-  'Learning Activities',
-  'Expected Standard',
-  'Strategies / Methods',
-  'Assessments',
-  'Material / Resources',
-  'References',
-];
-
-List<String> _rowCells(SchemeOfWorkRowDraft row) => [
-      '${row.entry.weekNumber}',
-      row.entry.title,
-      row.prescribedCompetences,
-      row.entry.competencies.map((c) => c.description).join('\n'),
-      row.contentConcept,
-      row.entry.objectives.map((o) => o.description).join('\n'),
-      row.expectedStandard,
-      row.strategiesMethods,
-      row.assessments,
-      row.materialResources,
-      row.references,
-    ];
 
 /// Renders a [SchemeOfWorkDocumentDraft] as a PDF or Word (.docx) file,
 /// entirely on-device — no network, no server round trip. Mirrors
@@ -80,6 +60,7 @@ class SchemeOfWorkDocumentService {
   Future<File> generatePdf(SchemeOfWorkDocumentContext context, SchemeOfWorkDocumentDraft draft) async {
     final doc = pw.Document();
     final header = draft.header;
+    final columns = context.template.columns;
 
     doc.addPage(
       pw.MultiPage(
@@ -106,26 +87,19 @@ class SchemeOfWorkDocumentService {
           pw.SizedBox(height: 12),
           pw.Table(
             border: pw.TableBorder.all(width: 0.5),
-            columnWidths: const {
-              0: pw.FlexColumnWidth(0.5),
-              1: pw.FlexColumnWidth(1.6),
-              2: pw.FlexColumnWidth(1.3),
-              3: pw.FlexColumnWidth(1.6),
-              4: pw.FlexColumnWidth(1.3),
-              5: pw.FlexColumnWidth(1.8),
-              6: pw.FlexColumnWidth(1.3),
-              7: pw.FlexColumnWidth(1.2),
-              8: pw.FlexColumnWidth(1.2),
-              9: pw.FlexColumnWidth(1.3),
-              10: pw.FlexColumnWidth(1.2),
+            columnWidths: {
+              for (var i = 0; i < columns.length; i++)
+                i: pw.FlexColumnWidth(
+                  columns[i].id == 'learningActivities' || columns[i].id == 'topicSubTopic' ? 1.8 : 1.2,
+                ),
             },
             children: [
               pw.TableRow(
                 decoration: const pw.BoxDecoration(color: PdfColors.grey300),
-                children: [for (final h in _columnHeaders) _pdfHeaderCell(h)],
+                children: [for (final c in columns) _pdfHeaderCell(c.label)],
               ),
               for (final row in draft.rows)
-                pw.TableRow(children: [for (final cell in _rowCells(row)) _pdfCell(cell)]),
+                pw.TableRow(children: [for (final c in columns) _pdfCell(row.value(c))]),
             ],
           ),
         ],
@@ -204,7 +178,7 @@ class SchemeOfWorkDocumentService {
       buffer.write(_docxLabeledParagraph('Curriculum Philosophy and Goals', header.curriculumPhilosophyAndGoals));
     }
 
-    buffer.write(_docxTable(draft));
+    buffer.write(_docxTable(context, draft));
 
     buffer.write('<w:sectPr><w:pgSz w:w="16838" w:h="11906" w:orient="landscape"/></w:sectPr></w:body></w:document>');
     return buffer.toString();
@@ -223,7 +197,7 @@ class SchemeOfWorkDocumentService {
         '<w:r><w:t xml:space="preserve">${_xmlEscape(value)}</w:t></w:r></w:p>';
   }
 
-  String _docxTable(SchemeOfWorkDocumentDraft draft) {
+  String _docxTable(SchemeOfWorkDocumentContext context, SchemeOfWorkDocumentDraft draft) {
     final buffer = StringBuffer();
     buffer.write(
       '<w:tbl><w:tblPr><w:tblW w:w="0" w:type="auto"/><w:tblBorders>'
@@ -235,9 +209,10 @@ class SchemeOfWorkDocumentService {
       '<w:insideV w:val="single" w:sz="4" w:space="0" w:color="auto"/>'
       '</w:tblBorders></w:tblPr>',
     );
-    buffer.write(_docxTableRow(_columnHeaders, bold: true));
+    final columns = context.template.columns;
+    buffer.write(_docxTableRow([for (final c in columns) c.label], bold: true));
     for (final row in draft.rows) {
-      buffer.write(_docxTableRow(_rowCells(row)));
+      buffer.write(_docxTableRow([for (final c in columns) row.value(c)]));
     }
     buffer.write('</w:tbl>');
     return buffer.toString();

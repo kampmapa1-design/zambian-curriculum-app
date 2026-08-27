@@ -9,10 +9,11 @@ class CdcResource {
   final String? term;
   final String url;
 
-  /// 'module' (a Teaching Module) or 'syllabus' — lets the CDC Resources
-  /// screen split into separate "Teaching Modules" / "Syllabi" views rather
-  /// than one mixed list. Older cached entries (fetched before this field
-  /// existed) fall back to 'module', the more common case.
+  /// 'module' (a Teaching Module), 'syllabus', or 'past_paper' (an ECZ past
+  /// exam paper) — lets the CDC Resources screen split into separate
+  /// grouped views rather than one mixed list. Older cached entries
+  /// (fetched before this field existed) fall back to 'module', the more
+  /// common case.
   final String resourceType;
 
   const CdcResource({

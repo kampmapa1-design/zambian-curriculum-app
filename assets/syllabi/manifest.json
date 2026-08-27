@@ -37,6 +37,87 @@
       "file": "history_form1.json"
     },
     {
+      "curriculum_code": "CBC_2023",
+      "curriculum_name": "2023 Competency-Based Curriculum",
+      "subject_code": "CIVIC",
+      "subject_name": "Civic Education",
+      "grade_level": 2,
+      "grade_name": "Form 2",
+      "file": "civic_education_form2.json"
+    },
+    {
+      "curriculum_code": "CBC_2023",
+      "curriculum_name": "2023 Competency-Based Curriculum",
+      "subject_code": "ENG",
+      "subject_name": "English Language",
+      "grade_level": 1,
+      "grade_name": "Form 1",
+      "file": "english_form1.json"
+    },
+    {
+      "curriculum_code": "CBC_2023",
+      "curriculum_name": "2023 Competency-Based Curriculum",
+      "subject_code": "MATH",
+      "subject_name": "Mathematics",
+      "grade_level": 1,
+      "grade_name": "Form 1",
+      "file": "mathematics_form1.json"
+    },
+    {
+      "curriculum_code": "CBC_2023",
+      "curriculum_name": "2023 Competency-Based Curriculum",
+      "subject_code": "CIVIC",
+      "subject_name": "Civic Education",
+      "grade_level": 1,
+      "grade_name": "Form 1",
+      "file": "civic_education_form1.json"
+    },
+    {
+      "curriculum_code": "CBC_2023",
+      "curriculum_name": "2023 Competency-Based Curriculum",
+      "subject_code": "CIVIC",
+      "subject_name": "Civic Education",
+      "grade_level": 3,
+      "grade_name": "Form 3",
+      "file": "civic_education_form3.json"
+    },
+    {
+      "curriculum_code": "CBC_2023",
+      "curriculum_name": "2023 Competency-Based Curriculum",
+      "subject_code": "CIVIC",
+      "subject_name": "Civic Education",
+      "grade_level": 4,
+      "grade_name": "Form 4",
+      "file": "civic_education_form4.json"
+    },
+    {
+      "curriculum_code": "CBC_2023",
+      "curriculum_name": "2023 Competency-Based Curriculum",
+      "subject_code": "POA",
+      "subject_name": "Principles of Accounts",
+      "grade_level": 1,
+      "grade_name": "Form 1",
+      "file": "principles_of_accounts_form1.json"
+    },
+    {
+      "curriculum_code": "CBC_2023",
+      "curriculum_name": "2023 Competency-Based Curriculum",
+      "subject_code": "POA",
+      "subject_name": "Principles of Accounts",
+      "grade_level": 2,
+      "grade_name": "Form 2",
+      "file": "principles_of_accounts_form2.json"
+    },
+    {
+      "curriculum_code": "CBC_2023",
+      "curriculum_name": "2023 Competency-Based Curriculum",
+      "subject_code": "ENG",
+      "subject_name": "English Language",
+      "grade_level": 2,
+      "grade_name": "Form 2",
+      "file": "english_form2.json"
+    },
+    {
       "curriculum_code": "OBC_2013",
       "curriculum_name": "2013 Outcome-Based Curriculum",
       "subject_code": "GEOG",

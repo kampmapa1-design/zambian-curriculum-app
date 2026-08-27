@@ -1,6 +1,6 @@
 {
-  "_source": "Fetched directly from the official CDC Digital Library (https://library.cdcrepository.info/) by browsing its listing pages — browse.php?level=secondary (pages 1-4), browse.php?level=primary (page 1), browse.php?level=syllabi (page 1), and browse.php?level=ece. Every title/subject/level/term/URL below is real and was read straight off those pages, not generated. This is a breadth-first starting catalog, not exhaustive — the site listed 69 syllabi and 103 primary resources alone, far more than sampled here.",
-  "fetchedAt": "2026-08-20T00:00:00.000Z",
+  "_source": "Fetched directly from the official CDC Digital Library (https://library.cdcrepository.info/) by browsing its listing pages — browse.php?level=secondary (pages 1-4), browse.php?level=primary (page 1), browse.php?level=syllabi (page 1), and browse.php?level=ece. Every title/subject/level/term/URL below is real and was read straight off those pages, not generated. This is a breadth-first starting catalog, not exhaustive — the site listed 69 syllabi and 103 primary resources alone, far more than sampled here. 2026-08-24: 126 ECZ (Examinations Council of Zambia) past-exam-paper entries (resourceType past_paper) added, covering 38 secondary-school subjects (Grade 12 and Grade 9) from two independent open-access compilations, zambiapapers.com and zedpastpapers.com (ECZ's own site, exams-council.org.zm, does not publish free past papers directly — confirmed separately). Every Google Drive preview/view link was converted to its uc?export=download&id=FILE_ID direct-download form before being recorded; none of the raw preview/view URLs were kept. A-M subjects: Sources checked: (1) https://www.zambiapapers.com/grade-12 (subject index, 36 subject/paper pages) and https://www.zambiapapers.com/grade-9 (junior secondary index) - each subject page lists exam years as Google Drive 'preview' or 'open?id=' links, verified per-page. (2) https://zedpastpapers.com/downloads/grade12/index.html - a single long index page listing Grade 12 subjects (Mathematics, Biology, Chemistry, English Language, Geography, History, Civic Education, and others) with Google Drive links already in direct-download form (drive.google.com/uc?export=download&id=...); used as a secondary source and to get fresher years (2019-2024) than zambiapapers.com had for several core subjects. All Google Drive 'preview'/'view'/'open?id=' links from zambiapapers.com were converted to the uc?export=download&id=FILE_ID form; zedpastpapers.com links were already in that form and used as-is. Where the same (subject, paper, year) appeared reachable on both sites, only one copy was kept. Where zedpastpapers.com had materially more recent years for a subject already found on zambiapapers.com (Biology, Chemistry, English Language, Geography, History, Civic Education, Mathematics), the freshest 1-2 confirmed non-GCE years from zedpastpapers.com were used in place of or alongside the older zambiapapers.com years, keeping to 1-2 most recent years per paper as instructed. GCE-variant papers were skipped in favor of standard-sitting papers where both were listed. One malformed-looking Google Drive id extracted for Geography Paper 1 2023 (only 14 characters, inconsistent with the ~28-33 character ids seen everywhere else on the site) was discarded as unreliable rather than guessed at; Geography Paper 1 2024 and 2022 were used instead. Subjects A-M covered (25 total, spanning Grade 12 and Grade 9 sections): Additional Mathematics, Agricultural Science, Art and Design, Biology, Business Studies (Gr9), Chemistry, Chinese, Chitonga (Gr9), Cinyanja, Civic Education, Civics (Gr9), Commerce, Computer Studies, Design and Technology, English Language, Fashion and Fabrics, French, Geography, Geometrical and Mechanical Drawing, History, Home Economics (Gr9), Icibemba, Kiikaonde, Literature, Lunda, Luvale, Mathematics, Metal Work, Musical Arts Education. Subjects seen on the zambiapapers.com Grade-12 index but skipped for this A-M batch because they fall outside the A-M range (Metal Work/Musical Arts Education were included as M-subjects; Physical Education, Physics, Principles of Accounts, Religious Education, Science, Silozi, Woodwork were NOT attempted - they are N-Z range or later, left for a separate batch). No subject in the A-M range was searched for and came up completely empty; every subject listed above has at least one verified downloadable entry. Two zambiapapers.com pages (Icibemba, Kiikaonde, Lunda, Luvale, Chinese, Cinyanja, Fashion and Fabrics) only had a single exam year (2020) available rather than two - recorded as-is, not padded with invented years. No personal/contact/compiler names were present on any page checked. N-Z subjects: Sites checked: (1) https://www.zambiapapers.com/grade-12 and https://www.zambiapapers.com/grade-9 - alphabetical subject index pages fetched to enumerate every N-Z subject, then each individual subject/paper page fetched to extract Google Drive preview links (format https://drive.google.com/file/d/FILE_ID/preview or /open?id=FILE_ID, converted here to https://drive.google.com/uc?export=download&id=FILE_ID). (2) https://zedpastpapers.com/downloads/grade12/index.html and .../grade9/index.html - a secondary independent site whose links were already in direct-download format (drive.google.com/uc?export=download&id=...); used preferentially where it offered more recent years than zambiapapers.com (notably Science Paper 1/2 Grade 12 at 2024/2023 vs zambiapapers' 2015/2013, Physics Paper 1/2/3 Grade 12 at 2019/2018/2017 vs zambiapapers' 2017/2016, and Religious Education / Science Paper 1 Grade 9 at 2024/2023 vs zambiapapers' 2019). zedpastpapers.com's Grade 9 'Social Studies' and 'Silozi' entries were NOT used because the site did not clearly label paper numbers (Paper 1 vs Paper 2) on that listing, and zambiapapers.com's clearly-labeled per-paper pages were used instead to avoid mislabeling. zedpastpapers.com had no Grade 12 entries at all for Principles of Accounts, Religious Education, Silozi, or Woodwork, and no Grade 9 entries for Physics or Principles of Accounts, so those came entirely from zambiapapers.com. Subjects covered (N-Z alphabetical range, as actually listed on the sites - confirmed no Nutrition, Technical Drawing, Tonga(as 'Tonga'), or additional Zambian-language subjects exist in this range beyond what's listed; 'Chitonga' and 'Cinyanja' are alphabetized under C on these sites, not T/N, and were left to the A-M batch): Physical Education, Physics, Principles of Accounts, Religious Education (both syllabus codes 2044 and 2046 at Grade 12), Science, Silozi, Woodwork (Grade 12 only - not offered at Grade 9 on either site), Office Practice (Grade 9 only), Social Studies (Grade 9 only - Grade 12 'Social Studies' is not offered by ECZ, only Grade 9). No subjects in this range were skipped entirely - every N-Z subject found on the zambiapapers.com index pages yielded at least one real downloadable paper. Irregularities: several subject pages (Silozi Paper 1/2 Grade 12, Physical Education Paper 1/2 Grade 9, Science Paper 3 Grade 9, Office Practice Grade 9) only had a single year of question paper available rather than two, so only one entry is recorded for those; no marking schemes were available for any paper on either site (all entries are question papers only); all links were verified to be genuine Google Drive file links actually observed on the source pages, none were constructed or guessed. 2026-08-24 (correction): removed all Grade 9 past-paper entries (phased out per user instruction) and all pre-2017 past-paper entries (kept 2017-present only, secondary/Grade 12 school-leaving papers only) — 56 entries removed, 70 past_paper entries remain. Subjects that lost all past-paper coverage as a result: Art and Design and Metal Work (their only available papers were pre-2017); Business Studies, Chitonga, Civics, Home Economics, Office Practice, and Social Studies (their only available papers were Grade 9, now excluded — these appear to be junior-secondary-only subjects with no Grade 12/O-level continuation found on the source sites).",
+  "fetchedAt": "2026-08-24T21:33:42.918Z",
   "resources": [
     {
       "title": "Travel and Tourism Teaching Module Form 1 - Term 2",
@@ -673,6 +673,566 @@
       "term": "Term 3",
       "url": "https://library.cdcrepository.info/resource.php?id=348",
       "resourceType": "module"
+    },
+    {
+      "title": "Additional Mathematics Paper 1 (2017)",
+      "subjectName": "Additional Mathematics",
+      "level": "Grade 12",
+      "term": null,
+      "url": "https://drive.google.com/uc?export=download&id=12AEZi8vtcdIZGqgpvOaPkRjbVvEqv0lc",
+      "resourceType": "past_paper"
+    },
+    {
+      "title": "Additional Mathematics Paper 2 (2017)",
+      "subjectName": "Additional Mathematics",
+      "level": "Grade 12",
+      "term": null,
+      "url": "https://drive.google.com/uc?export=download&id=1OprCvvOV4wJXMYjkXOQgmz2lLycLiorY",
+      "resourceType": "past_paper"
+    },
+    {
+      "title": "Agricultural Science Paper 1 (2017)",
+      "subjectName": "Agricultural Science",
+      "level": "Grade 12",
+      "term": null,
+      "url": "https://drive.google.com/uc?export=download&id=10XXy2wyCzewNiEvTRZExLpN_2SLVBwYs",
+      "resourceType": "past_paper"
+    },
+    {
+      "title": "Agricultural Science Paper 3 (2017)",
+      "subjectName": "Agricultural Science",
+      "level": "Grade 12",
+      "term": null,
+      "url": "https://drive.google.com/uc?export=download&id=1uHq952LkoFpnXslZZd75MGCEw8CR20mN",
+      "resourceType": "past_paper"
+    },
+    {
+      "title": "Biology Paper 1 (2024)",
+      "subjectName": "Biology",
+      "level": "Grade 12",
+      "term": null,
+      "url": "https://drive.google.com/uc?export=download&id=1zqYE3K5hMbV8MfKAGbKg61JSygEiF-GP",
+      "resourceType": "past_paper"
+    },
+    {
+      "title": "Biology Paper 1 (2023)",
+      "subjectName": "Biology",
+      "level": "Grade 12",
+      "term": null,
+      "url": "https://drive.google.com/uc?export=download&id=1ICPRGEAyBVjMZo4PhO_An1hh1_IN1NR9",
+      "resourceType": "past_paper"
+    },
+    {
+      "title": "Biology Paper 2 (2024)",
+      "subjectName": "Biology",
+      "level": "Grade 12",
+      "term": null,
+      "url": "https://drive.google.com/uc?export=download&id=1JkcKvKFc_Fm6iZrqWLvHpwk3PdExhZ-t",
+      "resourceType": "past_paper"
+    },
+    {
+      "title": "Biology Paper 2 (2023)",
+      "subjectName": "Biology",
+      "level": "Grade 12",
+      "term": null,
+      "url": "https://drive.google.com/uc?export=download&id=13Mgo3VtYcwKhOQ_7j5L7p5koWXNqoprT",
+      "resourceType": "past_paper"
+    },
+    {
+      "title": "Chemistry Paper 1 (2019)",
+      "subjectName": "Chemistry",
+      "level": "Grade 12",
+      "term": null,
+      "url": "https://drive.google.com/uc?export=download&id=1Z0wvopQaQZZRXE9nGzOpOymY22t-ntZl",
+      "resourceType": "past_paper"
+    },
+    {
+      "title": "Chemistry Paper 1 (2018)",
+      "subjectName": "Chemistry",
+      "level": "Grade 12",
+      "term": null,
+      "url": "https://drive.google.com/uc?export=download&id=1XLr4Gzzxa4OLeMgHBRmIjl4lhMBMgXcj",
+      "resourceType": "past_paper"
+    },
+    {
+      "title": "Chemistry Paper 2 (2020)",
+      "subjectName": "Chemistry",
+      "level": "Grade 12",
+      "term": null,
+      "url": "https://drive.google.com/uc?export=download&id=17GQu5hSssuuuz4Og0UPSnfFkVvpl_wwC",
+      "resourceType": "past_paper"
+    },
+    {
+      "title": "Chemistry Paper 2 (2019)",
+      "subjectName": "Chemistry",
+      "level": "Grade 12",
+      "term": null,
+      "url": "https://drive.google.com/uc?export=download&id=1BWyBB-O2QzV3Qrmszizp5E_V7y7bXUwW",
+      "resourceType": "past_paper"
+    },
+    {
+      "title": "Chinese (2020)",
+      "subjectName": "Chinese",
+      "level": "Grade 12",
+      "term": null,
+      "url": "https://drive.google.com/uc?export=download&id=1GUY_NnguTNxeQemJm2xXZqlP8FWI6bIc",
+      "resourceType": "past_paper"
+    },
+    {
+      "title": "Cinyanja Paper 1 (2020)",
+      "subjectName": "Cinyanja",
+      "level": "Grade 12",
+      "term": null,
+      "url": "https://drive.google.com/uc?export=download&id=1tQTMqkyXrpBjvihDQf5glhbTFM-NKymk",
+      "resourceType": "past_paper"
+    },
+    {
+      "title": "Cinyanja Paper 2 (2020)",
+      "subjectName": "Cinyanja",
+      "level": "Grade 12",
+      "term": null,
+      "url": "https://drive.google.com/uc?export=download&id=1rPa1zk1uvIdPxlY93aktOEgktc0V3w8j",
+      "resourceType": "past_paper"
+    },
+    {
+      "title": "Civic Education Paper 1 (2024)",
+      "subjectName": "Civic Education",
+      "level": "Grade 12",
+      "term": null,
+      "url": "https://drive.google.com/uc?export=download&id=1_Za8rkJG0zHrqhQhk8I-U6afCZXAcfDm",
+      "resourceType": "past_paper"
+    },
+    {
+      "title": "Civic Education Paper 1 (2023)",
+      "subjectName": "Civic Education",
+      "level": "Grade 12",
+      "term": null,
+      "url": "https://drive.google.com/uc?export=download&id=1lmMqmuFVxrM1OOtnVK_-Suj00I3Z7tWq",
+      "resourceType": "past_paper"
+    },
+    {
+      "title": "Civic Education Paper 2 (2019)",
+      "subjectName": "Civic Education",
+      "level": "Grade 12",
+      "term": null,
+      "url": "https://drive.google.com/uc?export=download&id=1SzuNrvK3C_iWqLu_EQUVJbSG-K7CV4U_",
+      "resourceType": "past_paper"
+    },
+    {
+      "title": "Civic Education Paper 2 (2017)",
+      "subjectName": "Civic Education",
+      "level": "Grade 12",
+      "term": null,
+      "url": "https://drive.google.com/uc?export=download&id=1jvHPm7QwnDxOSOM8HAlrGG2bvwK4N--D",
+      "resourceType": "past_paper"
+    },
+    {
+      "title": "Commerce (2018)",
+      "subjectName": "Commerce",
+      "level": "Grade 12",
+      "term": null,
+      "url": "https://drive.google.com/uc?export=download&id=11woXG2LBxglQ4XOn6JSw913vfpyMsFn0",
+      "resourceType": "past_paper"
+    },
+    {
+      "title": "Commerce (2017)",
+      "subjectName": "Commerce",
+      "level": "Grade 12",
+      "term": null,
+      "url": "https://drive.google.com/uc?export=download&id=1rUjc8lVTGugiKXyTUB9LvNhDfjK0E8GS",
+      "resourceType": "past_paper"
+    },
+    {
+      "title": "Computer Studies Paper 1 (2017)",
+      "subjectName": "Computer Studies",
+      "level": "Grade 12",
+      "term": null,
+      "url": "https://drive.google.com/uc?export=download&id=17WHoWaf0lt2HAyR4fnDJJvJpN8egABbz",
+      "resourceType": "past_paper"
+    },
+    {
+      "title": "Computer Studies Paper 2 (2017)",
+      "subjectName": "Computer Studies",
+      "level": "Grade 12",
+      "term": null,
+      "url": "https://drive.google.com/uc?export=download&id=1G25s8GBvBzhaMWB_fiAnsbzVSmBR62PZ",
+      "resourceType": "past_paper"
+    },
+    {
+      "title": "Design and Technology Paper 1 (2020)",
+      "subjectName": "Design and Technology",
+      "level": "Grade 12",
+      "term": null,
+      "url": "https://drive.google.com/uc?export=download&id=14tNNYTqiJUSePwzjqUUS4xjW7fFVdcBj",
+      "resourceType": "past_paper"
+    },
+    {
+      "title": "English Language Paper 1 (2024)",
+      "subjectName": "English Language",
+      "level": "Grade 12",
+      "term": null,
+      "url": "https://drive.google.com/uc?export=download&id=1IKpTOqNy53qG4en7grBANrtI_yV75RAl",
+      "resourceType": "past_paper"
+    },
+    {
+      "title": "English Language Paper 1 (2023)",
+      "subjectName": "English Language",
+      "level": "Grade 12",
+      "term": null,
+      "url": "https://drive.google.com/uc?export=download&id=1q_D8rvIYOUMXL8bqni4ddBXshmk-k3Ik",
+      "resourceType": "past_paper"
+    },
+    {
+      "title": "English Language Paper 2 (2020)",
+      "subjectName": "English Language",
+      "level": "Grade 12",
+      "term": null,
+      "url": "https://drive.google.com/uc?export=download&id=1NL1sorfR2iUzqndNHYEKY44m9jCFXZCT",
+      "resourceType": "past_paper"
+    },
+    {
+      "title": "English Language Paper 2 (2017)",
+      "subjectName": "English Language",
+      "level": "Grade 12",
+      "term": null,
+      "url": "https://drive.google.com/uc?export=download&id=1DdR6OZY2AqT0p6jtfINtXl1Lkkc_bu44",
+      "resourceType": "past_paper"
+    },
+    {
+      "title": "Fashion and Fabrics Paper 1 (2020)",
+      "subjectName": "Fashion and Fabrics",
+      "level": "Grade 12",
+      "term": null,
+      "url": "https://drive.google.com/uc?export=download&id=1YoBuyfn8EDkLS3KHVKlI96JlUsB_ZYdm",
+      "resourceType": "past_paper"
+    },
+    {
+      "title": "French Paper 1 (2017)",
+      "subjectName": "French",
+      "level": "Grade 12",
+      "term": null,
+      "url": "https://drive.google.com/uc?export=download&id=1Cush2PElBk0ViDGIZQcLXK5QzE2kkzQZ",
+      "resourceType": "past_paper"
+    },
+    {
+      "title": "French Paper 2 (2017)",
+      "subjectName": "French",
+      "level": "Grade 12",
+      "term": null,
+      "url": "https://drive.google.com/uc?export=download&id=18muwlheW5eyMKTCNgL4Mns-9fstkD2xL",
+      "resourceType": "past_paper"
+    },
+    {
+      "title": "Geography Paper 1 (2024)",
+      "subjectName": "Geography",
+      "level": "Grade 12",
+      "term": null,
+      "url": "https://drive.google.com/uc?export=download&id=12ricMGn5wA202L2Sf1K-6goRe2kEpq6s",
+      "resourceType": "past_paper"
+    },
+    {
+      "title": "Geography Paper 1 (2022)",
+      "subjectName": "Geography",
+      "level": "Grade 12",
+      "term": null,
+      "url": "https://drive.google.com/uc?export=download&id=1CAycptSL3kJ3HOaoV_ktOoo8PtSZ41Du",
+      "resourceType": "past_paper"
+    },
+    {
+      "title": "Geography Paper 2 (2023)",
+      "subjectName": "Geography",
+      "level": "Grade 12",
+      "term": null,
+      "url": "https://drive.google.com/uc?export=download&id=12qsY2dPO-2_KQZ-4doqwl5JTX55-4lHx",
+      "resourceType": "past_paper"
+    },
+    {
+      "title": "Geography Paper 2 (2022)",
+      "subjectName": "Geography",
+      "level": "Grade 12",
+      "term": null,
+      "url": "https://drive.google.com/uc?export=download&id=1baUaW5HuuwM7JdPYn8-1hk6OwhZBgyua",
+      "resourceType": "past_paper"
+    },
+    {
+      "title": "Geometrical and Mechanical Drawing Paper 1 (2017)",
+      "subjectName": "Geometrical and Mechanical Drawing",
+      "level": "Grade 12",
+      "term": null,
+      "url": "https://drive.google.com/uc?export=download&id=1awzDJoHvwJqIDXrv2WrrZha7O8RJ6O_V",
+      "resourceType": "past_paper"
+    },
+    {
+      "title": "History Paper 1 (2023)",
+      "subjectName": "History",
+      "level": "Grade 12",
+      "term": null,
+      "url": "https://drive.google.com/uc?export=download&id=1lQIlZyZNwbJmI7rjEotU2Qbkp_BC2I5k",
+      "resourceType": "past_paper"
+    },
+    {
+      "title": "History Paper 1 (2022)",
+      "subjectName": "History",
+      "level": "Grade 12",
+      "term": null,
+      "url": "https://drive.google.com/uc?export=download&id=1EUKXXfrQmh3J5CQZOGECkkJpwoEozkaF",
+      "resourceType": "past_paper"
+    },
+    {
+      "title": "History Paper 2 (2024)",
+      "subjectName": "History",
+      "level": "Grade 12",
+      "term": null,
+      "url": "https://drive.google.com/uc?export=download&id=1zAOiAZZfil9vGtCk33eAumHeRpudEVrp",
+      "resourceType": "past_paper"
+    },
+    {
+      "title": "History Paper 2 (2023)",
+      "subjectName": "History",
+      "level": "Grade 12",
+      "term": null,
+      "url": "https://drive.google.com/uc?export=download&id=1EqbrFYXJgw2VyB8VgtJwgvq7ywGaIBC6",
+      "resourceType": "past_paper"
+    },
+    {
+      "title": "Icibemba Paper 1 (2020)",
+      "subjectName": "Icibemba",
+      "level": "Grade 12",
+      "term": null,
+      "url": "https://drive.google.com/uc?export=download&id=1zOapFXBm2eaM9kJ2nG5q8u5LI_vTbbiz",
+      "resourceType": "past_paper"
+    },
+    {
+      "title": "Kiikaonde Paper 1 (2020)",
+      "subjectName": "Kiikaonde",
+      "level": "Grade 12",
+      "term": null,
+      "url": "https://drive.google.com/uc?export=download&id=1jMamFY92RMwYZ_MVtNxlLZfibGSF36P9",
+      "resourceType": "past_paper"
+    },
+    {
+      "title": "Literature Paper 1 (2017)",
+      "subjectName": "Literature",
+      "level": "Grade 12",
+      "term": null,
+      "url": "https://drive.google.com/uc?export=download&id=1YIPa8mx7ML_IpzQM3RS8_NrvTjizkaTi",
+      "resourceType": "past_paper"
+    },
+    {
+      "title": "Literature Paper 2 (2017)",
+      "subjectName": "Literature",
+      "level": "Grade 12",
+      "term": null,
+      "url": "https://drive.google.com/uc?export=download&id=19SCm-k_twreTmZ0a_B9OtkIKtb-i1Xo6",
+      "resourceType": "past_paper"
+    },
+    {
+      "title": "Lunda Paper 1 (2020)",
+      "subjectName": "Lunda",
+      "level": "Grade 12",
+      "term": null,
+      "url": "https://drive.google.com/uc?export=download&id=1lCwKzFPOwHr4190OgO_0H-WmV5cOH38u",
+      "resourceType": "past_paper"
+    },
+    {
+      "title": "Luvale Paper 1 (2020)",
+      "subjectName": "Luvale",
+      "level": "Grade 12",
+      "term": null,
+      "url": "https://drive.google.com/uc?export=download&id=1PFPWBurVIAI5b07uoVUVJz6sq6tUE8Dr",
+      "resourceType": "past_paper"
+    },
+    {
+      "title": "Mathematics Paper 1 (2021)",
+      "subjectName": "Mathematics",
+      "level": "Grade 12",
+      "term": null,
+      "url": "https://drive.google.com/uc?export=download&id=1zifoyTQyZf4hdfoNfEma6wukn50nxMrp",
+      "resourceType": "past_paper"
+    },
+    {
+      "title": "Mathematics Paper 1 (2019)",
+      "subjectName": "Mathematics",
+      "level": "Grade 12",
+      "term": null,
+      "url": "https://drive.google.com/uc?export=download&id=1Ihun0Rs0yJ4qXPPy2J8cW6Me-i3jvWuD",
+      "resourceType": "past_paper"
+    },
+    {
+      "title": "Mathematics Paper 2 (2024)",
+      "subjectName": "Mathematics",
+      "level": "Grade 12",
+      "term": null,
+      "url": "https://drive.google.com/uc?export=download&id=1lPGj6KTd84khlbkjymiTJCAr_QI7YhKm",
+      "resourceType": "past_paper"
+    },
+    {
+      "title": "Mathematics Paper 2 (2023)",
+      "subjectName": "Mathematics",
+      "level": "Grade 12",
+      "term": null,
+      "url": "https://drive.google.com/uc?export=download&id=1hzgjk6Cb93zrGqq5rBL2QAG1cXFGPrfT",
+      "resourceType": "past_paper"
+    },
+    {
+      "title": "Musical Arts Education Paper 1 (2017)",
+      "subjectName": "Musical Arts Education",
+      "level": "Grade 12",
+      "term": null,
+      "url": "https://drive.google.com/uc?export=download&id=1jNb0UmIb0qN7iGcKsRnHgubWOh_hUFyd",
+      "resourceType": "past_paper"
+    },
+    {
+      "title": "Physical Education (2017)",
+      "subjectName": "Physical Education",
+      "level": "Grade 12",
+      "term": null,
+      "url": "https://drive.google.com/uc?export=download&id=15S-3C39Oclalc_SuFKbHma_YkveVqfH3",
+      "resourceType": "past_paper"
+    },
+    {
+      "title": "Physics Paper 1 (2019)",
+      "subjectName": "Physics",
+      "level": "Grade 12",
+      "term": null,
+      "url": "https://drive.google.com/uc?export=download&id=1-_NqjYIb1YS1YUvMsGlaa90kAmUOHMHq",
+      "resourceType": "past_paper"
+    },
+    {
+      "title": "Physics Paper 1 (2017)",
+      "subjectName": "Physics",
+      "level": "Grade 12",
+      "term": null,
+      "url": "https://drive.google.com/uc?export=download&id=1iRamDMZAoUkbZdA1tBHRvKe4yEh67-Ec",
+      "resourceType": "past_paper"
+    },
+    {
+      "title": "Physics Paper 2 (2018)",
+      "subjectName": "Physics",
+      "level": "Grade 12",
+      "term": null,
+      "url": "https://drive.google.com/uc?export=download&id=1jFX_Eqv1BkxoUKVNJW9tVFilKuAFAcjg",
+      "resourceType": "past_paper"
+    },
+    {
+      "title": "Physics Paper 2 (2017)",
+      "subjectName": "Physics",
+      "level": "Grade 12",
+      "term": null,
+      "url": "https://drive.google.com/uc?export=download&id=1kjplOCj3-aIVPJYoh-s1uypnenag0cCW",
+      "resourceType": "past_paper"
+    },
+    {
+      "title": "Physics Paper 3 (2017)",
+      "subjectName": "Physics",
+      "level": "Grade 12",
+      "term": null,
+      "url": "https://drive.google.com/uc?export=download&id=1STGzdFeIsHWxlOBwJ_HveRKlZ4fxlnBL",
+      "resourceType": "past_paper"
+    },
+    {
+      "title": "Principles of Accounts Paper 1 (2017)",
+      "subjectName": "Principles of Accounts",
+      "level": "Grade 12",
+      "term": null,
+      "url": "https://drive.google.com/uc?export=download&id=1BI-JT00UCTDPOqMZtnm_5xv-SGKvSeC5",
+      "resourceType": "past_paper"
+    },
+    {
+      "title": "Religious Education 2044 (2017)",
+      "subjectName": "Religious Education",
+      "level": "Grade 12",
+      "term": null,
+      "url": "https://drive.google.com/uc?export=download&id=1RdD1n47MYTAbRALg6ll52zLo3wi58oFW",
+      "resourceType": "past_paper"
+    },
+    {
+      "title": "Religious Education 2044 (2016)",
+      "subjectName": "Religious Education",
+      "level": "Grade 12",
+      "term": null,
+      "url": "https://drive.google.com/uc?export=download&id=1ZNZ13fOf5BWTEy3R7Czts-WFYuqDeXsH",
+      "resourceType": "past_paper"
+    },
+    {
+      "title": "Religious Education 2046 (2017)",
+      "subjectName": "Religious Education",
+      "level": "Grade 12",
+      "term": null,
+      "url": "https://drive.google.com/uc?export=download&id=1qBaYfl1udujlcy2D8j7vmyiMnCWL9p9Q",
+      "resourceType": "past_paper"
+    },
+    {
+      "title": "Religious Education 2046 (2015)",
+      "subjectName": "Religious Education",
+      "level": "Grade 12",
+      "term": null,
+      "url": "https://drive.google.com/uc?export=download&id=1Dwwbqi2EEhEZ2YkWwACOJgpiNuPozGzY",
+      "resourceType": "past_paper"
+    },
+    {
+      "title": "Science Paper 1 (2024)",
+      "subjectName": "Science",
+      "level": "Grade 12",
+      "term": null,
+      "url": "https://drive.google.com/uc?export=download&id=1Ib1CAstwsSEzDIsXmFcZEER5pAkIvYUG",
+      "resourceType": "past_paper"
+    },
+    {
+      "title": "Science Paper 1 (2023)",
+      "subjectName": "Science",
+      "level": "Grade 12",
+      "term": null,
+      "url": "https://drive.google.com/uc?export=download&id=1bo19fn8I_Kqx4QOO19YdqAARi7RVgbrX",
+      "resourceType": "past_paper"
+    },
+    {
+      "title": "Science Paper 2 (2024)",
+      "subjectName": "Science",
+      "level": "Grade 12",
+      "term": null,
+      "url": "https://drive.google.com/uc?export=download&id=1zACRhVprbK-E-quLrcgZhbK9gZ2EC0kh",
+      "resourceType": "past_paper"
+    },
+    {
+      "title": "Science Paper 2 (2023)",
+      "subjectName": "Science",
+      "level": "Grade 12",
+      "term": null,
+      "url": "https://drive.google.com/uc?export=download&id=1BZYOw9yJNfF-JM8rjhMuJOZ3E7wREReI",
+      "resourceType": "past_paper"
+    },
+    {
+      "title": "Silozi Paper 1 (2020)",
+      "subjectName": "Silozi",
+      "level": "Grade 12",
+      "term": null,
+      "url": "https://drive.google.com/uc?export=download&id=1OGu37ROVRmVinxGxNi8ZjBe0cyu5l08w",
+      "resourceType": "past_paper"
+    },
+    {
+      "title": "Silozi Paper 2 (2020)",
+      "subjectName": "Silozi",
+      "level": "Grade 12",
+      "term": null,
+      "url": "https://drive.google.com/uc?export=download&id=1r2GUbPHIzyFC4kUGj9R_hXJru4SSI8qm",
+      "resourceType": "past_paper"
+    },
+    {
+      "title": "Woodwork Paper 1 (2017)",
+      "subjectName": "Woodwork",
+      "level": "Grade 12",
+      "term": null,
+      "url": "https://drive.google.com/uc?export=download&id=1ma79rTZoumtiXj_ldafW-3a2T5urJqO1",
+      "resourceType": "past_paper"
+    },
+    {
+      "title": "Woodwork Paper 2 (2017)",
+      "subjectName": "Woodwork",
+      "level": "Grade 12",
+      "term": null,
+      "url": "https://drive.google.com/uc?export=download&id=1__sgojTL8yYQo_IsuUytuwBLaO9yXfcg",
+      "resourceType": "past_paper"
     }
   ]
 }

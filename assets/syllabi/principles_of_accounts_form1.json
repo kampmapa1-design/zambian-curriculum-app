@@ -1,0 +1,214 @@
+{
+  "_source": "Ministry of Education / Curriculum Development Centre, Zambia — Principles of Accounts Scheme of Work, Form 1, Terms 1-3 (2026), as prepared by a serving teacher against the official CDC Principles of Accounts syllabus (each entry cites the syllabus page it is drawn from, e.g. 'Syllabus p.30'). No separate full syllabus document was available for this subject/form at ingestion time, so topic, sub-topic, competency and learning-objective text is reconstructed from the scheme's own Topic/Subtopic/Specific Competence/Content/Learning Activities columns. The source document's teacher name, TS number and school name have been removed — this file contains no identifying information about who prepared the source scheme, per this app's standing content policy of crediting only CDC/Ministry of Education. Several specific-competence codes (1.1.1.1, 1.3.2.1, 1.4.2.1, 1.5.1.1) each cover multiple consecutive weeks/parts of the same skill (e.g. 1.5.1.1 spans six weeks covering different Books of Prime Entry) — these are kept as one competency with multiple learning objectives rather than split, matching how the source scheme presents them. Weeks used for Revisions/Reporting, Mid-Term Test, Revision & Integration and End-of-Term Test carry no new topic content and are omitted.",
+  "curriculum": {
+    "code": "CBC_2023",
+    "name": "2023 Competency-Based Curriculum",
+    "description": "Zambia's current competency-based curriculum."
+  },
+  "subject": {
+    "name": "Principles of Accounts",
+    "code": "POA",
+    "description": "Ordinary Level Secondary Principles of Accounts syllabus, Form 1-4 (Curriculum Development Centre)."
+  },
+  "grade": {
+    "name": "Form 1",
+    "code": "F1_CBC",
+    "level": 1,
+    "phase": "Secondary — the source scheme itself uses \"Form 1\" for this level under the 2023 CBC."
+  },
+  "terms": [
+    {
+      "name": "Term 1",
+      "sequence_number": 1,
+      "topics": [
+        {
+          "name": "1.1 Principles of Accounts",
+          "sequence_number": 1,
+          "sub_topics": [
+            {
+              "name": "1.1.1 Introduction to Principles of Accounts",
+              "sequence_number": 1,
+              "description": "Expected standard: meaning of Accounting and book-keeping demonstrated accordingly.",
+              "competencies": [
+                { "sequence_number": 1, "description": "Demonstrate knowledge of Principles of Accounts", "category": "Specific Competence" }
+              ],
+              "learning_objectives": [
+                { "sequence_number": 1, "description": "Explaining Accounting, Principles of Accounts, and book-keeping, and discussing the relationship between book-keeping and accounting" },
+                { "sequence_number": 2, "description": "Stating the importance of Principles of Accounts and identifying career prospects (Accountant, Accounts Clerk, Cashier, Auditor, Finance Manager, Book Keeper, Bursar, Financial Controller)" }
+              ],
+              "week_number": 2
+            },
+            {
+              "name": "1.1.2 Users of Accounting Information",
+              "sequence_number": 2,
+              "description": "Expected standard: users of Accounting Information described accordingly.",
+              "competencies": [
+                { "sequence_number": 1, "description": "Describe Users of Accounting Information", "category": "Specific Competence" }
+              ],
+              "learning_objectives": [
+                { "sequence_number": 1, "description": "Explaining accounting information (Income Statement, Statement of Financial Position, list of payables and receivables)" },
+                { "sequence_number": 2, "description": "Describing internal users (business owners, shareholders, employees, internal auditors) and external users (customers, suppliers, potential shareholders, general public, lenders, government, external auditors)" }
+              ],
+              "week_number": 4
+            },
+            {
+              "name": "1.1.3 Accounting Terminologies",
+              "sequence_number": 3,
+              "description": "Expected standard: Accounting Terminologies used correctly.",
+              "competencies": [
+                { "sequence_number": 1, "description": "Use Accounting Terminologies", "category": "Specific Competence" }
+              ],
+              "learning_objectives": [
+                { "sequence_number": 1, "description": "Outlining and explaining accounting terminologies (Book-keeping, Business Transaction, Accounts Payable, Accounts Receivable, Inventory, Assets, Liabilities)" }
+              ],
+              "week_number": 5
+            },
+            {
+              "name": "1.1.4 Accounting Concepts",
+              "sequence_number": 4,
+              "description": "Expected standard: Accounting Concepts applied accordingly.",
+              "competencies": [
+                { "sequence_number": 1, "description": "Apply Accounting Concepts in recording Business Transactions", "category": "Specific Competence" }
+              ],
+              "learning_objectives": [
+                { "sequence_number": 1, "description": "Outlining accounting concepts (Going Concern, Accruals/Matching, Consistency, Prudence, Business Entity, Realization, Cost, Objectivity, Materiality, Duality, Substance over Form, Periodical) and applying them to given scenarios" }
+              ],
+              "week_number": 6
+            }
+          ]
+        },
+        {
+          "name": "1.2 Ethics",
+          "sequence_number": 2,
+          "sub_topics": [
+            {
+              "name": "1.2.1 Ethics in Accountancy",
+              "sequence_number": 1,
+              "description": "Expected standard: Ethics in Accountancy applied accordingly; roles of the Accountancy Regulatory body demonstrated accordingly.",
+              "competencies": [
+                { "sequence_number": 1, "description": "Apply Ethics in Accountancy", "category": "Specific Competence" },
+                { "sequence_number": 2, "description": "Demonstrate understanding of the roles of the Accountancy Regulatory body in Zambia", "category": "Specific Competence" }
+              ],
+              "learning_objectives": [
+                { "sequence_number": 1, "description": "Identifying and explaining ethics in accountancy (Integrity, Honesty, Discipline, Trustworthy, Accountability) and effects of non-adherence" },
+                { "sequence_number": 2, "description": "Describing the roles of ZICA (Zambia Institute of Chartered Accountants) in regulating the accounting profession" }
+              ],
+              "week_number": 8
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 2",
+      "sequence_number": 2,
+      "topics": [
+        {
+          "name": "1.3 Business Transactions",
+          "sequence_number": 3,
+          "sub_topics": [
+            {
+              "name": "1.3.1 Types of Business Transactions",
+              "sequence_number": 1,
+              "description": "Expected standard: knowledge of Business Transactions demonstrated accordingly.",
+              "competencies": [
+                { "sequence_number": 1, "description": "Demonstrate knowledge of Business Transactions", "category": "Specific Competence" }
+              ],
+              "learning_objectives": [
+                { "sequence_number": 1, "description": "Explaining the meaning of business transactions and identifying/classifying types (Cash, Credit and Contra)" }
+              ],
+              "week_number": 2
+            },
+            {
+              "name": "1.3.2 Accounting Equation",
+              "sequence_number": 2,
+              "description": "Expected standard: elements of the Accounting Equation explained accordingly; Accounting Equation applied accordingly to determine financial position.",
+              "competencies": [
+                { "sequence_number": 1, "description": "Use Accounting Equation to determine financial position", "category": "Specific Competence" }
+              ],
+              "learning_objectives": [
+                { "sequence_number": 1, "description": "Explaining the accounting equation (Assets = Capital + Liabilities) and classifying items as assets, capital or liabilities" },
+                { "sequence_number": 2, "description": "Illustrating effects of transactions on the Accounting Equation and applying it to determine financial position" }
+              ],
+              "week_number": 3
+            }
+          ]
+        },
+        {
+          "name": "1.4 The Ledger",
+          "sequence_number": 4,
+          "sub_topics": [
+            {
+              "name": "1.4.1 Classes of Accounts",
+              "sequence_number": 1,
+              "description": "Expected standard: Ledger Accounts classified accordingly.",
+              "competencies": [
+                { "sequence_number": 1, "description": "Classify Ledger Accounts", "category": "Specific Competence" }
+              ],
+              "learning_objectives": [
+                { "sequence_number": 1, "description": "Explaining the Ledger and Ledger Accounts, and identifying/categorising classes of accounts (Nominal, Real and Personal)" }
+              ],
+              "week_number": 5
+            },
+            {
+              "name": "1.4.2 Principle of Double Entry",
+              "sequence_number": 2,
+              "description": "Expected standard: steps in the double entry system explained accordingly; Business Transactions recorded accordingly using the double entry system; Ledger Accounts balanced off accordingly.",
+              "competencies": [
+                { "sequence_number": 1, "description": "Apply double entry system in recording business transactions", "category": "Specific Competence" },
+                { "sequence_number": 2, "description": "Balance off Ledger Accounts", "category": "Specific Competence" }
+              ],
+              "learning_objectives": [
+                { "sequence_number": 1, "description": "Explaining double entry and identifying debit and credit sides of an account" },
+                { "sequence_number": 2, "description": "Recording business transactions using the double entry system in appropriate ledger accounts, and practising posting entries" },
+                { "sequence_number": 3, "description": "Outlining the steps in balancing off a ledger account and balancing off ledger accounts using practical examples" }
+              ],
+              "week_number": 6
+            },
+            {
+              "name": "1.4.3 Types of Ledgers",
+              "sequence_number": 3,
+              "description": "Expected standard: Business Transactions recorded in the appropriate Ledger accordingly.",
+              "competencies": [
+                { "sequence_number": 1, "description": "Record Business Transactions in the appropriate Ledger", "category": "Specific Competence" }
+              ],
+              "learning_objectives": [
+                { "sequence_number": 1, "description": "Identifying and explaining types of Ledgers (General/Nominal, Payables/Purchases Ledger, Receivables/Sales Ledger) and classifying accounts accordingly" }
+              ],
+              "week_number": 10
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 3",
+      "sequence_number": 3,
+      "topics": [
+        {
+          "name": "1.5 Books of Prime Entry",
+          "sequence_number": 5,
+          "sub_topics": [
+            {
+              "name": "1.5.1 Types of Books of Prime Entry",
+              "sequence_number": 1,
+              "description": "Expected standard: Business Transactions recorded in the Books of Prime Entry accordingly, posted to the Ledger, and the Trial Balance extracted accordingly.",
+              "competencies": [
+                { "sequence_number": 1, "description": "Record Business Transactions in the Books of Prime Entry", "category": "Specific Competence" }
+              ],
+              "learning_objectives": [
+                { "sequence_number": 1, "description": "Identifying and explaining the Purchases Day Book and Purchases Returns Day Book" },
+                { "sequence_number": 2, "description": "Identifying and explaining the Sales Day Book and Sales Returns Day Book/Returns Inwards Book" },
+                { "sequence_number": 3, "description": "Stating and matching source documents for each Book of Prime Entry (Original/Duplicate Invoice, Debit Note/Original Credit Note, Duplicate Debit/Credit Note)" },
+                { "sequence_number": 4, "description": "Entering business transactions in the Subsidiary Books (Date, Details, Source Document Number, Subtotal, Amount)" },
+                { "sequence_number": 5, "description": "Posting transactions from the Books of Prime Entry to the Ledger" },
+                { "sequence_number": 6, "description": "Extracting the Trial Balance from ledger account balances and checking its arithmetic accuracy" }
+              ],
+              "week_number": 2
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
