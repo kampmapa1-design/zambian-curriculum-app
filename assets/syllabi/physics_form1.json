@@ -1,0 +1,70 @@
+{
+  "_source": "Curriculum Development Centre Teaching Module — \"Physics form 1 Teaching Module\" (https://library.cdcrepository.info/resource.php?id=275). Topic/sub-topic structure and competencies extracted with AI assistance (Gemini) directly from this module's own stated content — never invented; the extraction was instructed to use only what the module itself says, and to flag anything unclear rather than guess. The catalog listing for this resource carries no term label, and the extraction was initially requested as Term 2 by default — the module's own introduction states it is Term 3 (explaining that scalar/vector quantities and linear motion were already covered in Term 2), so it is labeled Term 3 here to match what the source document itself says, correcting that initial assumption. AI-flagged completeness notes from extraction: Sub-Topic 2 and Sub-Topic 3 are omitted from this Term 3 document text. Additionally, pages 23 through 26 in Sub-Topic 4 contain incomplete text fragments and header repetitions.",
+  "curriculum": {
+    "code": "CBC_2023",
+    "name": "2023 Competency-Based Curriculum",
+    "description": "Zambia's current competency-based curriculum."
+  },
+  "subject": {
+    "name": "Physics",
+    "code": "PHY",
+    "description": "Physics syllabus, Form 1-4 (Curriculum Development Centre)."
+  },
+  "grade": {
+    "name": "Form 1",
+    "code": "F1_CBC",
+    "level": 1,
+    "phase": "Secondary — the source scheme itself uses \"Form 1\" for this level under the 2023 CBC."
+  },
+  "terms": [
+    {
+      "name": "Term 3",
+      "sequence_number": 3,
+      "topics": [
+        {
+          "name": "Topic 5: Mechanics 1",
+          "sequence_number": 1,
+          "description": "Mechanics is a branch of physics that deals with the study of motion, forces, and energy. It involves understanding how objects move, respond to forces, and interact with their environment.",
+          "sub_topics": [
+            {
+              "name": "Sub-Topic 1: Forces",
+              "sequence_number": 1,
+              "description": "A force is a push or pull that causes an object to change its state of motion, speed, direction, or shape.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Apply force-body interaction concepts",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "Sub-Topic 4: Circular Motion",
+              "sequence_number": 2,
+              "description": "Circular motion is the motion of an object in a circular path, where the direction of the velocity is constantly changing.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Apply circular motion concepts to solve problems and make predictions",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "Sub-Topic 5: Moment of a Force",
+              "sequence_number": 3,
+              "description": "Moment of a force is the turning effect of force and it is equal to the product of force and perpendicular distance from the line of action of force to the pivot.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Create a tool that applies moment of a force in solving problems in everyday life.",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

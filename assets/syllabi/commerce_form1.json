@@ -1,0 +1,70 @@
+{
+  "_source": "Curriculum Development Centre Teaching Module — \"Commerce Teaching Module Form 1 - Term 2\" (https://library.cdcrepository.info/resource.php?id=300). Topic/sub-topic structure and competencies extracted with AI assistance (Gemini) directly from this module's own stated content — never invented; the extraction was instructed to use only what the module itself says, and to flag anything unclear rather than guess. Covers only the term this specific module addresses (Term 2) — other terms are not included since no source document for them was available at extraction time. AI-flagged completeness notes from extraction: General competences were explicitly defined at the main topic level (under section 1.1), while each sub-topic explicitly stated its own specific competence.",
+  "curriculum": {
+    "code": "CBC_2023",
+    "name": "2023 Competency-Based Curriculum",
+    "description": "Zambia's current competency-based curriculum."
+  },
+  "subject": {
+    "name": "Commerce",
+    "code": "COMM",
+    "description": "Commerce syllabus, Form 1-4 (Curriculum Development Centre)."
+  },
+  "grade": {
+    "name": "Form 1",
+    "code": "F1_CBC",
+    "level": 1,
+    "phase": "Secondary — the source scheme itself uses \"Form 1\" for this level under the 2023 CBC."
+  },
+  "terms": [
+    {
+      "name": "Term 2",
+      "sequence_number": 2,
+      "topics": [
+        {
+          "name": "HOME TRADE",
+          "sequence_number": 1,
+          "description": "This topic exposes learners to the real world of conducting business within the country. Home trade is trade done within a country and is divided into retail and wholesale trade.",
+          "sub_topics": [
+            {
+              "name": "RETAIL TRADE",
+              "sequence_number": 1,
+              "description": "This sub-topic covers what retail trade is, its functions, factors considered before putting up a retail outlet, opportunities and challenges of running a retail business, and how learners can practice running a retail business.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Practice running a Retail Business",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "WHOLESALE TRADE",
+              "sequence_number": 2,
+              "description": "This sub-topic covers the definition of wholesale trade, its functions, its opportunities and challenges, and how learners can practice running a wholesale business.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Practice running a Wholesale business",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "DOCUMENTS USED IN HOME TRADE",
+              "sequence_number": 3,
+              "description": "This sub-topic covers the written business documentation involved between buyers and sellers to provide evidence of transactions, protect rights, and ensure legal compliance.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Prepare documents used in home trade",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

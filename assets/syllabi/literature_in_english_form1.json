@@ -1,0 +1,75 @@
+{
+  "_source": "Curriculum Development Centre Teaching Module — \"Literature in English Teaching Module Form 1 - Term 2\" (https://library.cdcrepository.info/resource.php?id=305). Topic/sub-topic structure and competencies extracted with AI assistance (Gemini) directly from this module's own stated content — never invented; the extraction was instructed to use only what the module itself says, and to flag anything unclear rather than guess. Covers only the term this specific module addresses (Term 2) — other terms are not included since no source document for them was available at extraction time. AI-flagged completeness notes from extraction: The source text explicitly details SUBTOPIC 1.2.2.1 and SUB-TOPIC 1.2.2.2 in the main instructional body. SUB-TOPIC 1.2.2.3 is omitted entirely from the text, while SUB-TOPIC 1.2.2.4 (Poetry) is only present within a sample lesson plan at the end. General competences are specified at the topic level in the module text, whereas specific competences are listed per sub-topic.",
+  "curriculum": {
+    "code": "CBC_2023",
+    "name": "2023 Competency-Based Curriculum",
+    "description": "Zambia's current competency-based curriculum."
+  },
+  "subject": {
+    "name": "Literature in English",
+    "code": "LIT_ENG",
+    "description": "Literature in English syllabus, Form 1-4 (Curriculum Development Centre)."
+  },
+  "grade": {
+    "name": "Form 1",
+    "code": "F1_CBC",
+    "level": 1,
+    "phase": "Secondary — the source scheme itself uses \"Form 1\" for this level under the 2023 CBC."
+  },
+  "terms": [
+    {
+      "name": "Term 2",
+      "sequence_number": 2,
+      "topics": [
+        {
+          "name": "TOPIC: 1.2.2 WRITTEN LITERATURE",
+          "sequence_number": 1,
+          "description": "Written literature encompasses various artistic works in the form of prose, drama, and poetry. By studying these forms, learners gain a deeper understanding of how writers use language to communicate, inspire, and challenge their audiences.",
+          "sub_topics": [
+            {
+              "name": "SUBTOPIC: 1.2.2.1. FORMS OF WRITTEN LITERATURE",
+              "sequence_number": 1,
+              "description": "Learners discuss written literature and its various forms, including prose, drama, and poetry, while distinguishing written literature from oral literature.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Demonstrate understanding of written literature",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "SUB-TOPIC: 1.2.2.2. PROSE",
+              "sequence_number": 2,
+              "description": "Covers continuous writing in fiction and non-fiction, structural elements such as plot, character, setting, theme, conflict, and point of view, as well as composing short stories on cross-cutting themes.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Demonstrate understanding of prose",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Compose short stories",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "SUB-TOPIC: 1.2.2.4 Poetry",
+              "sequence_number": 3,
+              "description": "Appears within the Sample Lesson Plan section, focusing on understanding poetry and its structural elements including form, line, and stanza.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Demonstrate understanding of poetry",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,108 @@
+{
+  "_source": "Curriculum Development Centre Teaching Module — \"Agricultural Science Teaching Module Form 1 - Term 2\" (https://library.cdcrepository.info/resource.php?id=291). Topic/sub-topic structure and competencies extracted with AI assistance (Gemini) directly from this module's own stated content — never invented; the extraction was instructed to use only what the module itself says, and to flag anything unclear rather than guess. Covers only the term this specific module addresses (Term 2) — other terms are not included since no source document for them was available at extraction time. AI-flagged completeness notes from extraction: Topic 4 only includes Sub-Topic 4.1 (Garden tools and Equipment) and Topic 5 only includes Sub-Topic 5.1 (Vegetable Production), leaving other aspects implied by the main topic titles (such as farm structures or field crops) unaddressed in the source text. There are typographical errors in topic titles in the original text ('AGRICUTURE' missing an 'L'). Specific competencies were explicitly given per sub-topic while general competences were listed at topic level.",
+  "curriculum": {
+    "code": "CBC_2023",
+    "name": "2023 Competency-Based Curriculum",
+    "description": "Zambia's current competency-based curriculum."
+  },
+  "subject": {
+    "name": "Agricultural Science",
+    "code": "AGR",
+    "description": "Agricultural Science syllabus, Form 1-4 (Curriculum Development Centre)."
+  },
+  "grade": {
+    "name": "Form 1",
+    "code": "F1_CBC",
+    "level": 1,
+    "phase": "Secondary — the source scheme itself uses \"Form 1\" for this level under the 2023 CBC."
+  },
+  "terms": [
+    {
+      "name": "Term 2",
+      "sequence_number": 2,
+      "topics": [
+        {
+          "name": "TOPIC 3: CLIMATE-SMART AGRICUTURE",
+          "sequence_number": 1,
+          "description": "Climate-Smart Agriculture is an approach to agriculture that aims to increase agricultural productivity and improve food security while reducing damage to the environment. This topic introduces learners to climate-smart agriculture, allowing them to evaluate common practices in their local area.",
+          "sub_topics": [
+            {
+              "name": "Sub-Topic 3 1- Climate-Smart Agriculture",
+              "sequence_number": 1,
+              "description": "Focuses on Climate-Smart Agriculture as an integrated farming approach to increase productivity, improve food security, and minimize greenhouse gas emissions while exploring its key characteristics, benefits, and local factors in Zambia.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Demonstrate understanding of Climate-smart Agriculture.",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "Sub-Topic 3.2- Application of Drones",
+              "sequence_number": 2,
+              "description": "Explores drones as aerial electronic devices equipped with sensors and cameras to collect data on crop health, soil moisture, and weather patterns to improve agricultural productivity sustainably.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use drones to enhance productivity in agriculture",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "Sub-Topic 3 3 - Climate Change",
+              "sequence_number": 3,
+              "description": "Covers climate change, distinguishing it from climate variability, investigating its natural and human causes, analyzing greenhouse gas effects, and exploring mitigation activities for farmers in Zambia.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Show understanding of climate change and its causes",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "TOPIC 4: FARM STRUCTURES AND MACHINERY",
+          "sequence_number": 2,
+          "description": "Covers buildings, infrastructure, and machinery used to support agricultural activities. Learners view, handle, use, repair, maintain, and properly store garden tools and equipment to ensure longevity and efficiency.",
+          "sub_topics": [
+            {
+              "name": "Sub-Topic 4 1 - Garden tools and Equipment",
+              "sequence_number": 1,
+              "description": "Examines essential garden tools and equipment, safe handling practices, care, maintenance, storage, identification of knapsack sprayer components, and improvision of garden tools.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use Garden tools and equipment for better production.",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "TOPIC 5: CROP PRODUCTION",
+          "sequence_number": 3,
+          "description": "Focuses on the fundamentals of crop production and post-harvest management where learners grow selected crops, store, process, add value, and market agricultural produce.",
+          "sub_topics": [
+            {
+              "name": "Sub-Topic 5.1: Vegetable Production",
+              "sequence_number": 1,
+              "description": "Focuses on growing vegetables for human consumption, covering seed/site selection, vegetable classification, nutritive value, crop rotation design, crop establishment, and post-harvest handling.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Grow a variety of vegetables.",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

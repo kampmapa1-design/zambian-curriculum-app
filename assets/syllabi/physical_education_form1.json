@@ -1,0 +1,151 @@
+{
+  "_source": "Curriculum Development Centre Teaching Module — \"Physical Education and Sport Teaching Module Form 1 - Term 2\" (https://library.cdcrepository.info/resource.php?id=307). Topic/sub-topic structure and competencies extracted with AI assistance (Gemini) directly from this module's own stated content — never invented; the extraction was instructed to use only what the module itself says, and to flag anything unclear rather than guess. Covers only the term this specific module addresses (Term 2) — other terms are not included since no source document for them was available at extraction time. AI-flagged completeness notes from extraction: The source text contains a minor heading numbering discrepancy: Topic 6 is titled 'TOPIC: 6 GYMNASTICS', but its corresponding sub-topic is numbered '1.6.1'. General competencies were listed at the topic level in the module text, but per schema rules, only specific competencies explicitly linked to sub-topics were included in the competencies arrays.",
+  "curriculum": {
+    "code": "CBC_2023",
+    "name": "2023 Competency-Based Curriculum",
+    "description": "Zambia's current competency-based curriculum."
+  },
+  "subject": {
+    "name": "Physical Education",
+    "code": "PE",
+    "description": "Physical Education syllabus, Form 1-4 (Curriculum Development Centre)."
+  },
+  "grade": {
+    "name": "Form 1",
+    "code": "F1_CBC",
+    "level": 1,
+    "phase": "Secondary — the source scheme itself uses \"Form 1\" for this level under the 2023 CBC."
+  },
+  "terms": [
+    {
+      "name": "Term 2",
+      "sequence_number": 2,
+      "topics": [
+        {
+          "name": "TOPIC: 1.5 FITNESS ACTIVITIES",
+          "sequence_number": 1,
+          "description": "Fitness connects closely to developing overall physical, social, emotional, spiritual, and mental well-being, enabling learners to handle daily life and sports challenges efficiently. This unit introduces fundamental concepts of health-related fitness components as well as isotonic and isometric activities.",
+          "sub_topics": [
+            {
+              "name": "Sub-Topic 1.5.1 Health-Related Components of Fitness",
+              "sequence_number": 1,
+              "description": "Focuses on the five health-related components of fitness—cardiovascular endurance, muscular strength, muscular endurance, flexibility, and body composition—essential for maintaining overall physical well-being.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Perform health related activities",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "Sub-Topic 1.5.2 Isotonic activities",
+              "sequence_number": 2,
+              "description": "Covers physical exercises where muscle length and tension change simultaneously to move joints through a range of motion under constant tension.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Demonstrate isotonic activities",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "Sub-Topic 1.5.3 Isometric Activities",
+              "sequence_number": 3,
+              "description": "Explores exercises where muscles contract and generate force statically without moving the joints or changing muscle length.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Perform isometric activities",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "TOPIC: 6 GYMNASTICS",
+          "sequence_number": 2,
+          "description": "Gymnastics involves systematic and rhythmic exercises on the ground, bars, and apparatus requiring strength, flexibility, balance, coordination, agility, endurance, and control. It tests a performer's ability to control body movement while making significant contributions to overall physical education goals.",
+          "sub_topics": [
+            {
+              "name": "Sub-topic: 1.6.1. Stunts and Tumbling activities",
+              "sequence_number": 1,
+              "description": "Focuses on tumbling acrobatic movements on the ground and stunts requiring lifting or supporting another gymnast to build dedication, self-confidence, balance, and physical fitness.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Perform Tumbling and stunts activities",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "TOPIC: 1.7 RECREATIONAL GAMES AND ACTIVITIES",
+          "sequence_number": 3,
+          "description": "Recreational games and activities are structured forms of play undertaken primarily for enjoyment, relaxation, physical fitness, and social interaction. They serve as stress relievers while fostering teamwork, leadership, strategic thinking, and cultural appreciation.",
+          "sub_topics": [
+            {
+              "name": "Sub-topic: 1.7.1. Aerobics",
+              "sequence_number": 1,
+              "description": "Covers rhythmic body movements performed individually or in groups, with or without music, using locomotor, non-locomotor, and manipulative movement patterns.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Perform step and rhythmic patterns of aerobics",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "Sub-topic: 1.7.2. Traditional games",
+              "sequence_number": 2,
+              "description": "Examines cultural activities passed down through generations that promote socialization, physical development, critical thinking, and preservation of community heritage.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Perform traditional games",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "TOPIC: 1.8 SWIMMING",
+          "sequence_number": 4,
+          "description": "Swimming covers moving through water using coordinated arm and leg movements, providing a full-body workout that builds cardiovascular endurance, strength, flexibility, and coordination. This topic focuses on fundamental swimming concepts, water safety practices, and pool hygiene.",
+          "sub_topics": [
+            {
+              "name": "Sub-Topic: 1.8.1 Water Safety",
+              "sequence_number": 1,
+              "description": "Covers safety practices, precautions, and awareness needed to prevent accidents, injuries, or drowning in various aquatic environments.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Apply water safety practices",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "Sub-Topic: 1.8.2 Pool",
+              "sequence_number": 2,
+              "description": "Focuses on maintaining proper pool hygiene, safe behavior around pool areas, and sanitation practices to ensure a healthy aquatic environment.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Practice pool hygiene",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

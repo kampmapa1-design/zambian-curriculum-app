@@ -1,0 +1,125 @@
+{
+  "_source": "Curriculum Development Centre Teaching Module — \"Food and Nutrition Teaching Module Form 1 - Term 2\" (https://library.cdcrepository.info/resource.php?id=315). Topic/sub-topic structure and competencies extracted with AI assistance (Gemini) directly from this module's own stated content — never invented; the extraction was instructed to use only what the module itself says, and to flag anything unclear rather than guess. Covers only the term this specific module addresses (Term 2) — other terms are not included since no source document for them was available at extraction time. AI-flagged completeness notes from extraction: The source text begins at Topic 1.2, implying earlier topics (e.g., Topic 1.1) are missing from the provided excerpt. General competences are listed in summary tables at the topic level, while specific competences are stated explicitly per sub-topic. Appendix 1 contains a sample lesson plan on 'Cooking Food' which is not structured as a standard module topic in the main text.",
+  "curriculum": {
+    "code": "CBC_2023",
+    "name": "2023 Competency-Based Curriculum",
+    "description": "Zambia's current competency-based curriculum."
+  },
+  "subject": {
+    "name": "Food and Nutrition",
+    "code": "FN",
+    "description": "Food and Nutrition syllabus, Form 1-4 (Curriculum Development Centre)."
+  },
+  "grade": {
+    "name": "Form 1",
+    "code": "F1_CBC",
+    "level": 1,
+    "phase": "Secondary — the source scheme itself uses \"Form 1\" for this level under the 2023 CBC."
+  },
+  "terms": [
+    {
+      "name": "Term 2",
+      "sequence_number": 2,
+      "topics": [
+        {
+          "name": "TOPIC 1.2 NUTRITION",
+          "sequence_number": 1,
+          "description": "This topic provides a comprehensive overview of nutrition to empower learners to make informed dietary choices and apply practical skills in real-world scenarios. It covers nutritional terms, food groups, food nutrients, and nutritional disorders.",
+          "sub_topics": [
+            {
+              "name": "Sub-Topic 1.2.1: Nutritional terms",
+              "sequence_number": 1,
+              "description": "Focuses on exploring and interpreting diverse nutritional terms, assessing nutritional status through anthropometric measurements and dietary assessments, and visiting health centers to identify potential nutrient deficiencies or excesses.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Apply Nutritional terms",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "Sub-Topic 1.2.2: Food groups",
+              "sequence_number": 2,
+              "description": "Focuses on exploring different food groups, illustrating the food pyramid diagram, and creating serving portions and choices necessary for maintaining a balanced and healthy diet.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Develop health food choices",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "Sub- Topic:1.2.3: Food Nutrients",
+              "sequence_number": 3,
+              "description": "Examines macronutrients, micronutrients, and essential elements in the diet, assessing the nutritional value of foods, producing materials for nutrient determination, and conducting food tests.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Prepare healthy nutrient dense meals",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "Sub Topic:1.2. 4: Nutritional Disorders",
+              "sequence_number": 4,
+              "description": "Examines conditions resulting from overnutrition, undernutrition, and psychological eating habits, analyzing their causes, signs, symptoms, and risk factors while promoting healthy eating habits.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Apply healthy nutritional eating habits",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "TOPIC: 1.3 DIGESTION, ABSORPTION AND METABOLISM OF NUTRIENTS",
+          "sequence_number": 2,
+          "description": "This topic covers the physiological mechanisms underlying digestion, absorption, and metabolism to help learners understand how the body breaks down and utilizes food nutrients. It guides learners in tracing nutrient pathways and making evidence-based dietary choices to maintain physiological equilibrium.",
+          "sub_topics": [
+            {
+              "name": "Sub-topic 1.3.1 - Digestion of Nutrients",
+              "sequence_number": 1,
+              "description": "Explores physical and chemical digestion at various stages of the alimentary canal, illustrating the digestive system, and researching the physiological processes involved in breaking down food.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Trace the path way of food through digestion",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "Sub-topic 1.3.2 ABSORPTION OF NUTRIENTS",
+              "sequence_number": 2,
+              "description": "Explains mechanisms of nutrient transport across the intestinal wall—such as simple diffusion, facilitated diffusion, and active transport—analyzing the structure of villi and factors affecting absorption.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Make dietary and lifestyle choices to optimize nutrient absorption and overall health.",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "Sub-Topic 1.3.3: Metabolism",
+              "sequence_number": 3,
+              "description": "Analyzes the biochemical processes of anabolism and catabolism, examines factors affecting body energy usage, and guides the design of personalized nutritional plans based on metabolic needs.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Design a personalized nutritional plan.",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

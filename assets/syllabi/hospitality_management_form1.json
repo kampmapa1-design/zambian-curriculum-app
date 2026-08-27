@@ -1,0 +1,185 @@
+{
+  "_source": "Curriculum Development Centre Teaching Module — \"Hospitality Management Teaching Module Form1 - Term 2\" (https://library.cdcrepository.info/resource.php?id=302). Topic/sub-topic structure and competencies extracted with AI assistance (Gemini) directly from this module's own stated content — never invented; the extraction was instructed to use only what the module itself says, and to flag anything unclear rather than guess. Covers only the term this specific module addresses (Term 2) — other terms are not included since no source document for them was available at extraction time. AI-flagged completeness notes from extraction: General competences were explicitly provided for major topic headers (1.3 and 1.4) while sub-topics explicitly provided single 'Specific Competence' statements, extracted directly. Formatting contains minor numbering typos in the original text (e.g., duplicate 'Learning Activity 4' headings in Topic 1.3.4), but all topic structures and sub-topics were parsed as explicitly named.",
+  "curriculum": {
+    "code": "CBC_2023",
+    "name": "2023 Competency-Based Curriculum",
+    "description": "Zambia's current competency-based curriculum."
+  },
+  "subject": {
+    "name": "Hospitality Management",
+    "code": "HM",
+    "description": "Hospitality Management syllabus, Form 1-4 (Curriculum Development Centre)."
+  },
+  "grade": {
+    "name": "Form 1",
+    "code": "F1_CBC",
+    "level": 1,
+    "phase": "Secondary — the source scheme itself uses \"Form 1\" for this level under the 2023 CBC."
+  },
+  "terms": [
+    {
+      "name": "Term 2",
+      "sequence_number": 2,
+      "topics": [
+        {
+          "name": "TOPIC: 1.3 FOOD AND BEVERAGE OPERATIONS",
+          "sequence_number": 1,
+          "description": "Food and Beverage Operations refer to the processes involved in the preparation, service, and management of food and drinks in various hospitality settings such as restaurants, hotels, cafeterias, and event venues. It is a dynamic field that combines creativity, customer service, and operational efficiency to ensure a seamless dining experience for customers.",
+          "sub_topics": [
+            {
+              "name": "Sub-Topic: 1.3.1 Food and Beverage Operation",
+              "sequence_number": 1,
+              "description": "Encompasses the preparation, production, service, and delivery of food and drinks to customers, including kitchen operations, restaurant service, and bar management.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Demonstrate understanding of Food and Beverage operations",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "Sub-Topic: 1.3.2 Hygiene Practices in the Cooking Area",
+              "sequence_number": 2,
+              "description": "Focuses on maintaining proper hygiene standards, pest control, waste management, equipment maintenance, and personal hygiene practices to prevent food contamination and foodborne illnesses.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Demonstrate understanding of hygiene practices in the cooking area",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "Sub-Topic: 1.3.3 Safety and Security in the Cooking Area",
+              "sequence_number": 3,
+              "description": "Covers practicing safe work routines, personal protective equipment, knife and fire safety, chemical handling, safety signs, and emergency response procedures in the kitchen.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Practice safety and security in the cooking area",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "Sub-Topic: 1.3.4 Nutrition in Cookery",
+              "sequence_number": 4,
+              "description": "Explores key cookery and nutrition terminology, dietary guidelines, macro and micronutrients, meal planning principles, and preparing healthy meals for special diets.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Apply nutritional knowledge in cookery",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "Sub-Topic: 1.3.5 Introduction to Cookery",
+              "sequence_number": 5,
+              "description": "Introduces fundamental cookery principles and equipment classification, including eating, serving, preparation, bar, specialty, cooking, refrigeration, and traditional kitchen utensils.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Demonstrate understanding of cookery",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "Sub-Topic: 1.3.6 Methods of Cooking",
+              "sequence_number": 6,
+              "description": "Details the application of heat to food through moist methods, dry methods, combination methods, and specialized cooking techniques like sous vide, smoking, pickling, and curing.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Apply a variety of methods of cooking",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "Sub-Topic: 1.3.7 Basic Cookery Skills",
+              "sequence_number": 7,
+              "description": "Focuses on practical kitchen techniques including mis en place, knife skills and basic cuts, stock making, preparing starch/fat/protein thickening agents, and basic mother sauces.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Exhibit basic cookery skills",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "TOPIC: 1.4 HOUSE KEEPING OPERATIONS",
+          "sequence_number": 2,
+          "description": "This topic covers the critical aspects of cleanliness, hygiene, and safety measures in the housekeeping department essential for maintaining a healthy and safe environment for both guests and staff.",
+          "sub_topics": [
+            {
+              "name": "Sub-Topic: 1.4.1 Cleanliness, Hygiene and Safety in Housekeeping Department",
+              "sequence_number": 1,
+              "description": "Covers pest identification, handling cleaning chemicals safely, implementing the 3Rs of waste management, and executing integrated pest control methods.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Apply cleanliness, hygiene and safety measures in housekeeping",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "Sub-Topic: 1.4.2 Housekeeping Operations",
+              "sequence_number": 2,
+              "description": "Addresses organizational structures in housekeeping, roles of various staff, professional personnel characteristics, and personal hygiene standards for staff.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Housekeeping Operations",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "Sub-Topic: 1.4.3 Cleaning Operations",
+              "sequence_number": 3,
+              "description": "Focuses on routine cleaning schedules, cleaning specific functional areas, applying cleaning methods, selecting appropriate cleaning agents, and step-by-step bed making.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Practice routine cleaning",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "Sub-Topic: 1.4.4 Interior and Exterior Decoration in Hospitality Facility",
+              "sequence_number": 4,
+              "description": "Explores aesthetic color schemes, principles and elements of interior design, grouping display arrangements, and outdoor landscaping and gardening techniques.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Develop skills in interior and exterior decorations",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "Sub-Topic: 1.4.5 Introduction to Laundry Processes",
+              "sequence_number": 5,
+              "description": "Covers fiber and fabric identification, manual and mechanical laundry equipment, laundry agents, stain removal techniques, care label reading, and household laundry workflows.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Practice laundry Processes",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

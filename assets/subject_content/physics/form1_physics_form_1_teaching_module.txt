@@ -1,0 +1,1142 @@
+This Physics Teaching Module provides guidance to the teacher on how to deliver competence-based
+lessons on the fundamental principles and concepts of Physics. This module aims to help a teacher
+develop an understanding of the natural, artificial or technological environment to prepare lessons
+which help learners develop critical thinking, problem-solving, and analytical skills. This module is
+committed to providing an enriching and supportive educational environment where teachers can
+prepare and deliver lessons which stimulate interest in physics for learners. This module seeks to
+support teachers to prepare lessons for both academic performance and their future roles as
+knowledgeable and responsible citizens in a scientifically advanced society by encouraging inquiry,
+curiosity, and a love of science.
+It is expected that this physics teaching module, once implemented successfully, will inspire and
+empower learners to achieve their full potential, equipping them with the knowledge and skills
+necessary to navigate and contribute to the world around them. This module is designed to ensure
+learners develop a deep understanding of Physics principles while also acquiring the practical skills
+and competencies needed for further education and careers in science.
+Suggested Teaching and Learning Materials
+The study of Physics content requires hands-on experiences, visual aids, and interactive resources to
+strengthen deep understanding and appreciation. To support the teaching and learning of Physics in
+Form 1, the suggested teaching and learning materials are meant to:
+• Enhance learner engagement and motivation in Physics
+• Develop practical skills and laboratory techniques
+• Promote critical thinking, problem-solving, and analytical skills
+• Support differentiated instruction and inclusive learning
+The suggested teaching and learning materials are either artificial or natural. By utilising these
+suggested teaching and learning materials, teachers can create a dynamic and supportive learning
+environment that promotes academic excellence, creativity, and scientific literacy in Physics for
+Form 1 learners.
+Learning Environment Set Up
+To create an effective learning environment for teaching and learning chemistry in important in
+deepening understanding of the concepts and application in real life context. The learning
+environment set-up aims to create a safe, inclusive, and engaging space.
+• Natural Environment: A natural learning environment is a setting where learners explore
+and learn naturally, often without explicit instruction or formal teaching, such as in school
+surroundings
+Physics Teaching Module: Form 1 – Term 3
+ix
+
+• Man-Made Environment: Man-made learning environments are intentionally designed safe
+spaces, such as classrooms, laboratories, and libraries, designed for formal instruction, hands-
+on activities, and games and songs
+• Technological Learning Environment: Access educational apps, and software for learning,
+including game-based platforms, virtual platforms, and simulations, to engage learners and
+promote learning
+Safety in the Learning Environment
+Safety in the learning environment is a requirement in learning Physics, as learners are exposed to
+potential hazards during hands-on experiments. Collaboration between teachers, and learners, is
+important to create a responsible learning environment that promotes scientific inquiry. Guidelines for
+maintaining a safe learning environment include laboratory safety rules (protocols), risk identification,
+personal protective equipment, emergency response plans, storage, and disposal, and learner
+responsibilities. Prioritising safety minimises risks, prevents accidents, and ensures a positive learning
+experience.
+Suggested Teaching Methodology
+The effective teaching methodologies in STEM Physics include:
+• Conducting experiments: Demonstrate key principles and encourage curiosity among
+learners.
+• Collaborative learning: Pair learners to work together, promoting peer-to-peer teaching,
+discussion, and problem-solving.
+• Conceptual learning: Connect Physics concepts to everyday life, industry, or current events,
+making learning relevant and meaningful.
+• Differentiated instructions: Tailor teaching to meet diverse learning styles, abilities, and
+interests of different learners.
+• Feedback and Reflection: Encourage learners to reflect on their learning, providing
+constructive feedback to guide improvement.
+• Inquiry-based learning: Encourage learners to explore, investigate, and discover Physics
+concepts through hands-on experiments and activities.
+• Integration of Technology: Use digital tools, simulations, and visualisations to enhance
+engagement, understanding, and analysis.
+• Problem-based learning: Present real-world problems or case studies, requiring students to
+apply Physics principles to develop solutions.
+• Project-based learning: Assign open-ended projects, allowing learners to design, conduct,
+and present research or applications of Physics concepts.
+Physics Teaching Module: Form 1 – Term 3
+x
+
+By implementing these methodologies, a teacher can create an engaging, inclusive and effective
+STEM Physics learning environment.
+Time Allocation
+The standard minimum learner-teacher contact time for Physics at Secondary School Level is 4 hours
+per week, translating into Six (6) periods. The duration for a single period is 40 minutes. The contact
+time at Secondary School Level is planned in such a way as to give ample time for practical activities.
+Learning Activities
+Learning activities are intentional educational experiences aimed at promoting learning,
+engagement, and achievement among learners. Facilitated by teachers, they help acquire new
+knowledge, skills, attitudes, and behaviour change. To create an inclusive environment, teachers
+should use a "hook" or “problem posing” or “scenario” or “key question” or “case studies to
+introduce new learning activities in an interactive and interesting way.
+Icons used in this Module
+This module utilises icons as visual symbols or graphics to represent instructions, enhancing the
+learning experience for learners. Icons categorize and organise instructions, making navigation
+easier for teachers.
+Key Terms Assessment Discussion
+Activity Tips Skills
+Developed
+Explaination(contexualisation)/Key Learning Points
+Time Allocation
+The standard minimum learner-teacher contact time for physics at secondary school level is 4 hours
+per week, translating into Six (6) periods with at least two double periods per week. The duration for
+a single period is 40 minutes. The contact time at Secondary school level is planned in such a way as
+to give ample time for practical activities.
+Physics Teaching Module: Form 1 – Term 3
+xi
+
+• Formative Assessments: To monitor learner progress, identify areas of improvement, and
+adjust instruction to meet learner needs.
+• Quizzes: Regular quizzes to assess learners' understanding of concepts.
+• Tests: Periodic tests to evaluate learners' knowledge and application of Physics concepts.
+• Class Discussions: Observing learners'' participation and engagement in class discussions.
+• Laboratory Reports: Evaluating learners' laboratory reports for accuracy, completeness, and
+understanding.
+• Group Work: Assessing learners' ability to work collaboratively and contribute to group
+tasks.
+• Projects: Evaluating learners' ability to design, conduct, and present a Physics project.
+• Presentations: Assessing learners' ability to communicate Physics concepts and ideas
+effectively
+Summative Assessments: To evaluate learner learning at the end of a lesson, sub-topic, topic or
+term, and to provide a comprehensive picture of learner achievement.
+• Unit Tests : Comprehensive tests to evaluate learners' understanding of Physics concepts at
+the end of each unit.
+• Mock Exams: Comprehensive exams to evaluate learners' overall understanding of Physics
+concepts at the end of the semester.
+• Practical Tasks : Assessing learners' laboratory skills and techniques through practical
+exams.
+• Project-Based Assessments: Evaluating learners' ability to design, conduct, and present a
+Physics project.
+Key Competences
+KEY COMPETENCE DESCRIPTOR
+Analytical Thinking To analyse and interpret data, making evidence-based conclusions.
+Collaboration To work together, promoting peer -to-peer teaching, discussion, and
+problem-solving.
+Communication To communicate scientific information effectively, both orally and in
+writing.
+Creativity and
+innovation
+To create new ideas and products by applying processes and
+introducing new techniques that can add value.
+Physics Teaching Module: Form 1 – Term 3
+xii
+
+KEY COMPETENCE DESCRIPTOR
+Critical Thinking To enhance learners’ ability to think critically and solve problems
+through logical reasoning based on conclusions.
+Digital literacy Using a broad range of Information and Communication
+Technologies such as a cell phone, computer, calculator in specific
+contexts.
+Environmental
+Sustainability
+To apply physical principles to understand and mitigate the
+environmental impact of human activities.
+Problem Solving To use scientific knowledge, critical thinking, and analytical skills to
+develop a robust problem-solving mindset, enabling learners to tackle
+complex challenges and drive innovation in various fields.
+Physics Teaching Module: Form 1 – Term 3
+xiii
+
+1
+Topic 5: Mechanics 1
+Introduction
+Mechanics is a branch of physics that deals with the study of motion, forces, and energy. It involves
+understanding how objects move, respond to forces, and interact with their environment.
+Some key areas in mechanics include:
+• Kinematics (study of motion)
+• Dynamics (study of forces and motion)
+• Statics (study of objects at rest)
+• Energy and work
+Mechanics has numerous applications in various fields, such as engineering, transportation, and it
+covers six sub-topics; scalar and vector quantities, linear motion, force, circular motion and moment
+of a force. Scalar and vector quantities, and linear motion are covered in term 2.
+Key Competences
+• Analytical Thinking
+• Collaborative
+• Communication
+• Critical Thinking
+• Problem Solving
+• Environmental sustainability
+• Creativity and innovation
+Sub-Topic 1: Forces
+Introduction
+A force is a push or pull that causes an object to change its state of motion. Forces cause an object
+to change its speed, direction, or both. It is a vector quantity.
+Specific Competence
+• Apply force-body interaction concepts
+Physics Teaching Module: Form 1 – Term 3
+
+2
+Key Terms
+• Applied force-Is force that a person or an object applies to another body
+• Air Resistance-A force that opposes the motion of an object through the air
+• Balanced forces-Are forces acting on an object from opposite directions that are equal.
+These objects that are acted upon by balanced forces, will most likely be STILL – Not
+Moving Direction-The direction in which the force is applied
+• Frictional Force-A force that opposes motion between two surfaces in contact
+• Gravitational Force-A force that attracts objects towards each other due to their mass
+• Magnitude-The size or amount of force applied
+• Normal Force-A force that acts perpendicular to the surface of contact between two objects
+• Unbalanced forces-Are forces acting on an object from opposite directions that are not
+equal. These objects with unbalanced forces acting upon them, are in MOTION – MOVING
+• Point of Application-The point at which the force is applied
+• Tension Force -A force that acts along a string or wire, pulling objects towards each other
+Learning Activities
+There are seven learning activities in the syllabus. In this module, we will look at nine activities
+which learners will engage in. The learning activity on the effect of a force on a body (shape and
+size, motion, and direction) has been split into three activities.
+Learning Activity 1: Investigating the effect of a force on a body
+This activity is designed to help learners investigate the effect of a force on a body. There are three
+sub activities which learners will engage in as they investigate the effect of a force on a body.
+Activity 1.1. Investigating how different forces
+In this activity, learners design and conduct an experiment to investigate how different compressive
+and tension forces affect the shape and size of various materials, such as clay, playdough, spring,
+foam, ... (e.g., compression, tension) affect the shape and size of various objects (e.g., springs, clay,
+playdough, ...)
+Key Question: How do forces affect an object's dimensions and structure?
+Suggested Teaching and Learning Materials
+• Natural Materials: Clay, wood, sand, soil, ...
+Physics Teaching Module: Form 1 – Term 3
+
+3
+• Artificial Materials: Foam, playdough, rubber bands, ropes, springs, metal wires, ruler,
+spring scales, ...
+Learning Environment set up
+• Natural Environment: School surroundings
+• Artificial Environment: Laboratory or any room or place where learners can be (mobile
+laboratory).
+• Technological Environment : Computer laboratory, virtual laboratory, ...
+Teacher’s Roles:
+• Introduce the concept of forces and their effects on bodies, highlighting the importance of
+understanding how forces impact shape and size by asking learners to play around with the
+provided materials, such as clay, playdough, spring, foam, ...
+• Ask learners probing questions to explain what is happening when they stretch, compress,
+...the materials provided
+• Ask learners to conduct experiments or simulations that illustrate the effects of forces on
+different bodies
+• Guide learners on how to design and conduct the experiments or simulations
+• Facilitate learner-led investigations, supervising and ensuring safety protocols are followed
+• Ask open-ended questions to encourage critical thinking.
+• Provide feedback to the learner’s activity
+Learners’ Activities:
+• Playing around with the provided materials, such as clay, playdough, spring, foam, ... for
+them to understand how forces impact shape and size
+• Answering probing questions explaining what is happening when they stretch, compress,
+...the materials provided.
+• Conducting experiments or simulations that illustrate the effects of forces on different
+bodies.
+• Answering open ended questions to encourage critical thinking
+Assessment Guide
+• Observe learners during experiments or simulation activities, noting their ability to design
+and conduct
+• Assess learner's understanding through observations, discussions, and written reflections,
+evaluating their ability to apply scientific concepts to real-world scenarios
+• Administer quizzes and tests to assess learners' understanding of concepts and their ability to
+apply them.
+Physics Teaching Module: Form 1 – Term 3
+
+4
+Skills Developed
+• Scientific Inquiry: Learners will develop scientific inquiry skills by designing and
+conducting experiments or simulation
+• Critical Thinking: Learners will develop critical thinking skills through making
+connections between concepts
+• Problem-Solving: Learners will develop problem-solving skills through designing and
+conducting experiments or simulation
+• Communicating: Learners will develop communication skills through presenting their
+findings from experiments or simulations
+• Collaborating: Learners will develop collaboration skills through working in groups,
+sharing ideas, and building on each other's strengths
+Key Learning Points
+Force can change an object's shape (deformation) or size (compression/extension). Examples
+include; compressing and stretching a spring, kneading a dough, and kicking a soccer ball.
+Activity 1.2. "Measuring Force and Motion: Investigating the Relationship Between
+Mass, Shape, and Force
+In this activity, learners measure the force required to move objects of different masses using spring
+scales. Learners will have an experience and a reflection on the hands-on activity of measuring
+forces required to move objects with varying masses and shapes
+Key Question: How do forces influence an object's movement, including its speed, and
+acceleration?
+Suggested Teaching and Learning Materials
+• Natural Materials: Stones, wood, ...
+• Artificial Materials: Blocks, balls, spring scales, ...
+Learning Environment set up
+• Natural Environment: School surroundings.
+• Artificial Environment: Laboratory or any room or place where learners can be (mobile
+laboratory).
+Physics Teaching Module: Form 1 – Term 3
+
+5
+Teacher’s Roles:
+• Introduce the concept of force and how it relates to the motion of objects by asking the
+learners to measure the force required to move objects of different masses and shapes
+• Ask learners to demonstrate how to use the spring scale to measure the force required to
+move an object
+• Supervise and assist learners as they conduct the experiment, providing guidance and
+support as needed.
+• Ask open-ended questions to encourage learners to think critically about the data they are
+collecting and the relationships between the variables.
+• Provide feedback to learners on their experimental design, data collection, and analysis.
+Learners’ Activities:
+• Designing an experiment to measure the force required to move objects of different masses
+using spring scales.
+• Conducting the experiment, collecting data on the force required to move each object.
+• Answering open-ended questions
+• Recording and analysing the data, identifying patterns and relationships between the force
+required to move each object and its mass
+• Drawing conclusions about the relationships between the variables and the underlying
+principles of physics
+Assessment Guide
+• Assess learners' ability to design an experiment to measure the force required to move
+objects of different masses using spring scales
+• Assess learners' ability to analyse the data and identify patterns and relationships between
+the variables
+• Assess learners' ability to communicate their findings to the class
+• Assess learners' ability to reflect on their learning and identify areas for improvement
+• Ask open-ended questions such as;
+(i) Did the learner design a clear and concise experiment to measure the force
+required to move objects of different masses?
+(ii) Did the learner identify the variables to be measured and controlled?
+(iii)Did the learner collect accurate and reliable data using the spring scale?
+(iv) Did the learner analyse the data correctly and identify patterns and relationships
+between the force required to move each object?
+Physics Teaching Module: Form 1 – Term 3
+
+6
+Skills Developed
+• Problem-Solving: Learners develop problem-solving skills by designing and conducting an
+experiment to measure the force required to move objects
+• Critical Thinking: Learners develop critical thinking skills by analysing the data and the
+relationships between the variables
+• Communicating: Learners develop communication skills by presenting their findings to the
+class
+• Collaborating: Learners develop collaboration skills by working in pairs or small groups to
+design and conduct the experiment.
+Key Learning Points:
+Force can:
+1. Set a stationary object in motion.
+2. Accelerate or decelerate a moving object.
+Example: Pushing a ball (motion)
+Activity 1.3. Investigating how magnetic forces affect the direction of magnets and
+other objects.
+In this activity, learners will design and conduct an investigation on how magnetic forces affect the
+direction of magnets and other objects.
+Key Question: How do forces change an object's direction or orientation?
+Suggested Teaching and Learning Materials
+• Natural Materials: Magnetic rocks, iron fillings, magnets, water, ...
+• Artificial Materials: Copper wire, ceramic magnets, Alnico magnets, magnetic tape,
+electromagnets, ...
+Learning Environment set up
+• Natural Environment: School surroundings.
+• Artificial Environment: Laboratory or any room or place where learners can be (mobile
+laboratory).
+Teacher’s Roles:
+• Facilitate learners' investigation and exploration of magnetic forces
+• Provide guidance and support to learners as they design and conduct their investigation
+Physics Teaching Module: Form 1 – Term 3
+
+7
+• Encourage learners to think critically about the data they collect and the relationships
+between magnetic forces and the direction of magnets and other objects
+• Ask learners to present the findings
+• Provide feedback
+Learners’ Activities:
+• Investigating and exploring of magnetic forces
+• Designing and conducting their investigation
+• Collecting data and thinking critically on the relationships between magnetic forces and the
+direction of magnets and other objects
+• Presenting findings
+• Drawing conclusions about the effects of magnetic forces on the direction of magnets and
+other objects.
+Assessment Guide
+• Assess learners' ability to design an investigation to explore magnetic forces
+• Assess learners' ability to analyse data and identify relationships between magnetic forces
+and the direction of magnets and other objects
+• Assess learners' ability to communicate their findings to the class
+• Assess learners' ability to reflect on their learning and identify areas for improvement
+• Ask open-ended questions such as;
+(i) Did the learner design a clear and concise investigation to explore how magnetic
+forces affect the direction of magnets and other objects?
+(ii) Did the learner identify the variables to be measured and controlled?
+(iii)Did the learner collect accurate and reliable data on the effects of magnetic forces on
+the direction of magnets and other objects?
+(iv) Did the learner analyse the data correctly and identify relationships between the
+magnetic forces and the direction of the magnets and other objects?
+(v) Did the learner demonstrate an understanding of the concept of magnetic forces and
+their effects on the direction of magnets and other objects?
+(vi) Did the learner present their findings clearly and concisely?
+Skills Developed
+• Critical Thinking-Learners develop critical thinking skills by analysing data and identify
+relationships between magnetic forces and the direction of magnets and other objects
+• Communicating-Learners develop communication skills by presenting their findings to the
+class
+Physics Teaching Module: Form 1 – Term 3
+
+8
+• Collaborating-Learners develop collaboration skills by working in pairs or small groups to
+design and conduct the investigation
+• Problem-Solving-Learners develop problem-solving skills by designing and conducting an
+investigation to explore magnetic forces and the direction
+Key Learning Points
+Force can alter an object's direction of motion. Example, deflecting a moving object (direction)
+Learning Activity 2: Newton's First Law in Action: Exploring Inertia
+This activity captures the essence of describing and demonstrating the Law of Inertia, which states
+that an object at rest stays at rest, and an object in motion stays in motion, unless acted upon by an
+external force. In this activity, learners will conduct a simple experiment using a marble, a piece of
+cardboard, and a ruler to describe the inertia law.
+Scenario: What happens when you are riding in a car and it suddenly stops? Ask learners to share
+their experiences and thoughts on what happens to their bodies when the car stops?
+Suggested Teaching and Learning Materials
+• Natural Materials: Wood, paper, ...
+• Artificial Materials: Marbles, cardboard, rulers, bowling ball or heavy book, smooth
+surface, whiteboard, markers, ...
+Learning Environment set up
+• Natural Environment: School surroundings
+• Artificial Environment: Laboratory or any room or place where learners can be (mobile
+laboratory)
+Teacher’s Roles:
+• Introduce the activity using a hook
+• Put learners into small groups
+• Allow learners to conduct a simple experiment using materials provided to demonstrate
+inertia law
+• Ask learners to observe what happens when the object is suddenly stopped
+• Ask probing questions that lead learners to connect the experiment to the concept of inertia
+• Provide feedback
+Physics Teaching Module: Form 1 – Term 3
+
+9
+Learners’ Activities:
+• Working in pairs to conduct a simple experiment using a marble, a piece of cardboard, and a
+ruler
+• Placing the marble on the cardboard and give it a gentle push
+• Observing what happens when the cardboard is suddenly stopped
+• Repeating the experiment several times, varying the speed and force of the push
+• Recording observations and measurements
+• Analysing data and drawing conclusions about the relationship between the marble's motion
+and the force applied to it
+• Answering probing questions
+Assessment Guide
+• Observe learners during the experiment and demonstration, noting their participation and
+engagement
+• Review learners' data and analysis, looking for understanding of the inertia law
+• Administer a short- written test to assess learners' understanding of the inertia law
+Skills Developed
+• Critical Thinking-Learners will develop critical thinking skills by analysing data and
+drawing conclusions
+• Communication-Learners will develop communication skills by sharing their findings and
+explaining the inertia law
+• Scientific Inquiry- Learners will develop scientific inquiry skills by designing and
+conducting an experiment
+• Problem-Solving-Learners will develop problem-solving skills by applying the inertia law
+to real-world scenarios.
+Key Learning Points:
+• An object at rest remains at rest, and an object in motion remains in motion, unless acted
+upon by an external force.
+• Inertia: Tendency of an object to resist changes in its motion. External force is required to
+change an object's state of motion. Mass and inertia: More massive objects have greater
+inertia.
+• Inertia law can be applied in many situations such as;
+(i) Seatbelt importance in vehicles
+Physics Teaching Module: Form 1 – Term 3
+(ii) Objects maintaining motion or rest without external forces
+
+10
+Learning Activity 3: Exploring the relationship between force and acceleration.
+This activity is designed to help learners describe the relationship between force and acceleration.
+In this activity, learners design and build a marble run to investigate how different forces affect the
+acceleration of the marbles.
+Key Question: What are some real-life examples of how different forces affecting the motion of
+objects? How can you model these examples using a marble run?
+Suggested Teaching and Learning Materials
+• Natural Materials: Wood, cardboard, clay, rocks, ...
+• Artificial Materials: Plastic tracks, marble run kits, magnetic tiles, tape, glue, ruler,
+marbles, ...
+Learning Environment set up
+• Natural Environment: School surroundings
+• Artificial Environment: Laboratory or any room or place where learners can be (mobile
+laboratory)
+Teacher’s Roles:
+• Facilitate learners' design and construction of the marble run, providing guidance and
+support as needed
+• Provide learners with materials and resources needed to design and build the marble run
+• Encourage learners to think critically about the design and construction of the marble run,
+and how different forces affect the acceleration of the marbles
+• Ask probing questions to deepen the learners' understanding of the concepts of force and
+acceleration
+• Provide feedback to learners on their design and construction of the marble run, and their
+understanding of the concepts of force and acceleration
+Learners’ Activities:
+• Designing and building a marble run to investigate how different forces affect the
+acceleration of the marbles
+• Conducting an experiment using the marble run to investigate how different forces affect the
+acceleration of the marbles
+• Thinking critically about the design and construction of the marble run, and how different
+forces affect the acceleration of the marbles
+Physics Teaching Module: Form 1 – Term 3
+• Answering probing questions.
+
+11
+Assessment Guide
+• Assess learners' ability to design and build a marble run to investigate how different forces
+affect the acceleration of the marbles
+• Assess learners' ability to collect and analyse data on the acceleration of the marbles
+• Assess learners' ability to communicate their findings to the class
+• Assess learners' ability to reflect on their learning and identify areas for improvement
+Skills Developed
+• Critical Thinking- Learners develop critical thinking skills by analysing data and drawing
+conclusions about how different forces affect the acceleration of the marbles
+• Communicating-Learners develop communication skills by presenting their findings to the
+class
+• Collaborating-Learners develop collaboration skills by working in pairs or small groups to
+design and build the marble run.
+• Problem-Solving-Learners develop problem-solving skills by designing and building a
+marble run to investigate how different forces affect the acceleration of the marbles .
+Key Learning Points:
+• Force causes acceleration: Applying a force can change an object's motion
+• Mass affects acceleration: More massive objects require more force for same acceleration
+Examples
+1. Pushing a car: More force accelerates it faster
+2. Rockets: Generating thrust to overcome gravity
+Learning Activity 4: Demonstrating the effect of friction on the motion of a body
+This activity is designed to help learners demonstrate the effect of friction on the motion of a body.
+In this activity, learners will design and conduct an experiment to investigate the effect of friction
+on the motion of a body.
+Problem posing: Design a system to reduce the friction between a moving object and a surface.
+How would you test the effectiveness of your design?
+Suggested Teaching and Learning Materials
+• Natural Materials: Wood, sand, rock, ...
+Physics Teaching Module: Form 1 – Term 3
+
+12
+• Artificial Materials: Blocks, surfaces, ramps, marbles or balls, friction strips, spring scales,
+stopwatch, pencils, graph, ...
+Learning Environment set up
+• Natural Environment: School surroundings
+• Artificial Environment: Laboratory or any room or place where learners can be (mobile
+laboratory)
+Teacher’s Roles:
+• Introduce the activity by posing a problem
+• Put learners into small groups
+• Provide the materials for the experiment
+• Allow learners to design and conduct an experiment to investigate the effect of friction on
+the motion of a body
+• Guide learners through a structured inquiry process to investigate the effect of friction on the
+motion of a body
+• Provide feedback on learners' experiments, data analysis, and design challenges
+• Learners to make connections to real-world scenarios where friction plays a crucial role,
+such as in engineering, transportation, or sports
+• Ask learners probing questions
+• Provide feedback
+Learners’ Activities:
+• Designing and conducting an experiment to investigate the effect of friction on the motion
+of a body
+• Investigating the effect of friction on the motion of a body
+• Making connections to real-world scenarios where friction plays a crucial role, such as in
+engineering, transportation, or sports
+• Answering probing questions
+Assessment Guide
+• Assess learners' ability to design and conduct an experiment to investigate the effect of
+friction on the motion of a body
+• Assess learners' ability to collect and analyse data on the effect of friction on the motion of a
+body
+• Assess learners' ability to design a system to reduce friction between two surfaces
+Physics Teaching Module: Form 1 – Term 3
+
+13
+• Assess learners' ability to research and analyse a real-world scenario where friction plays a
+crucial role
+• Assess learners' ability to present their findings and explain complex concepts
+Skills Developed
+• Creativity and innovation-Learners develop creativity and innovative skills by designing a
+system to reduce friction between two surfaces
+• Communication-Learners develop communicative skills by presenting findings, and
+collaborating with others
+• Critical Thinking- Learners develop critical thinking skills by analysing complex
+situations, evaluating evidence, and making informed decisions
+• Scientific Inquiry-Learners develop scientific inquiry by designing experiments,
+investigating phenomena, and analyzing data
+• Problem-Solving-Learners develop problem solving skills by identifying problems,
+generating solutions, and testing hypotheses.
+Key Learning Points:
+Friction's Role
+• Opposes motion: Friction acts against an object's motion.
+• Slows or stops: Friction can decelerate or bring an object to rest.
+Types of Frictional Forces
+There are two types of frictional forces and these are;
+• Static frictional force: The word ‘static’ means stationary (not moving). Therefore, static
+frictional force is a force which exists between surfaces of bodies at rest.
+• Sliding /Kinetic/dynamic frictional force: The word ‘kinetic or dynamic’ means motion.
+Therefore, kinetic or dynamic frictional force is a force which exists between surfaces that are
+in relative motion.
+Examples
+3. Braking a car: Friction between tires and road slows the vehicle.
+4. Walking: Friction between feet and ground enables movement.
+Learning Activity 5: Demonstrating the relationship between mass and acceleration
+This activity is designed to help learners demonstrate the relationship between mass and
+acceleration. In this activity, learners will design and conduct an experiment to investigate the
+Physics Teaching Module: Form 1 – Term 3
+
+14
+relationship between mass and acceleration. This activity reflects the investigation into how mass
+and acceleration are related, according to Newton's Second Law of Motion (F = ma).
+Key Question: How does the mass of an object affect its acceleration when a constant force is
+applied?
+Suggested Teaching and Learning Materials
+• Natural Materials: Wood, sand, rock, ...
+• Artificial Materials: Pulley and strings, marbles, trolleys, force sensors, motion sensors,
+spring scales, ...
+Learning Environment set up
+• Natural Environment: School surroundings
+• Artificial Environment: Laboratory or any room or place where learners can be (mobile
+laboratory)
+Teacher’s Roles:
+• Introduce the activity using a hook
+• Put learners into small groups
+• Provide the learners with the materials for the experiments
+• Allow learners to conduct an experiment to investigate the relationship between mass and
+acceleration
+• Ask probing questions to facilitate a class discussion to help learners understand the
+relationship between mass and acceleration
+• Provide feedback on learners' experiments, data analysis, and conclusions.
+Learners’ Activities:
+• Designing and conducting an experiment to investigate the relationship between mass and
+acceleration. They use a spring scale or force sensor to apply a constant force to different
+masses (e.g., 100g, 200g, 300g) attached to a cart or trolley
+• Measuring and recording the time and distance of each mass
+• Calculating the acceleration of each mass
+• Analysing their data and create a graph to illustrate the relationship between mass and
+acceleration
+• Drawing conclusions about the relationship between mass and acceleration based on their
+experiment and data analysis
+Physics Teaching Module: Form 1 – Term 3
+
+15
+• Answering probing questions
+Assessment Guide
+• Assess learners' ability to design and conduct an experiment to investigate the relationship
+between mass and acceleration
+• Assess learners' ability to analyse data and create a graph to illustrate the relationship
+between mass and acceleration
+• Assess learners' ability to draw conclusions about the relationship between mass and
+acceleration based on their experiment and data analysis
+• Assess learners' ability to communicate their findings and conclusions clearly and
+accurately.
+Skills Developed
+• Communication-Learners develop communication skills by presenting the findings and
+collaborating with others
+• Creativity and innovating-Learners develop creative and innovative skills by designing
+innovative solutions, thinking outside the box, and exploring new ideas
+• Critical Thinking-Learners develop critical thinking skills analysing complex situations,
+evaluating evidence, and making informed decisions
+• Scientific Inquiry- Learners develop scientific inquiry skills by designing experiments,
+investigating phenomena, and analyzing data
+• Problem-Solving-Learners develop problem solving skills by identifying problems,
+generating solutions, and testing hypotheses.
+Key Learning Points:
+• Inverse relationship: Mass and acceleration are inversely proportional (for constant
+force)
+• More mass, less acceleration.
+• Some examples on the relationship between mass and acceleration are: Pushing a
+massive object vs. less massive object.
+Learning Activity 6: Calculating the acceleration of an object given the force applied
+and mass
+This activity is designed to help learners solve problems involving force (F = ma). In this activity,
+learners solve problems that require calculating the acceleration of an object given the force applied
+and its mass. After calculating, they will be asked to verify any one of the solved problems using an
+experiment.
+Physics Teaching Module: Form 1 – Term 3
+
+16
+Suggested Teaching and Learning Materials
+• Natural Materials: Rocks, wooden blocks, marbles...
+• Artificial Materials: Calculators, ruler, whiteboard...
+Scenario: What would happen if you pushed a heavy box and a light box with the same force?
+Which one would accelerate faster?
+Suggested Teaching and Learning Materials
+• Natural Materials: Wood, sand, rock, ...
+• Artificial Materials: Worksheets, pulley and strings, marbles, trolleys, force sensors,
+motion sensors, spring scales, ...
+Learning Environment set up
+• Natural Environment: School surroundings
+• Artificial Environment: Laboratory or any room or place where learners can be (mobile
+laboratory)
+Teacher’s Roles:
+• Introduce the activity using a hook
+• Put learners into small groups
+• Provide the materials
+• Encourage learners to think critically about the problems and to apply mathematical
+concepts to solve them
+• Facilitate learners' understanding of the concept to verify acceleration and its relationship to
+force and mass
+• Ask probing question to deepen learners' understanding of the concept of acceleration and
+their ability to apply mathematical concepts to solve problems
+• Provide feedback to learners
+Learners’ Activities:
+• Solving problems that require them to calculate the acceleration of an object given the force
+applied and its mass
+• Applying mathematical concepts, such as Newton's second law of motion, to solve problems
+• Verifying acceleration and its relationship to force and mass
+• Analysing and interpreting data to determine the acceleration of an object
+Physics Teaching Module: Form 1 – Term 3
+
+17
+• Answering probing questions to deepen the understanding.
+Assessment Guide
+• Assess learners' ability to solve problems that require them to calculate the acceleration of
+an object given the force applied and its mass
+• Assess learners' understanding of mathematical concepts, such as Newton's second law of
+motion
+• Assess learners' ability to communicate their solutions to the class
+• Assess learners' ability to reflect on their learning and identify areas for improvement.
+Skills Developed
+• Communication: Learners develop communication skills by presenting their solutions to
+the class
+• Collaboration: Learners develop collaboration skills by working in pairs or small groups to
+solve problems.
+• Critical Thinking: Learners develop critical thinking skills by analyzing and interpreting
+data to determine the acceleration of an object
+• Problem-Solving: Learners develop problem-solving skills by applying mathematical
+concepts to solve problems.
+Key Learning Points:
+• Identify given values: Force (F), mass (m), acceleration (a)
+• Determine unknown value: Solve for F, m, or a
+• Apply F = ma formula: Plug in values and solve
+• Newton’s three laws of Motion
+Tips
+• Unit consistency: Ensure units match (e.g., Newtons for force, kg for mass, m/s² for
+acceleration)
+• Direction: Consider direction of force and acceleration
+Examples
+(i) Finding force: Calculate force applied to an object.
+(ii) Finding acceleration: Determine acceleration from given force and mass
+(iii)Finding mass: Calculate mass from given force and acceleration
+Physics Teaching Module: Form 1 – Term 3
+
+18
+Sample Questions
+1. A 5 kg object accelerates at 2 m/s². Find the net force.
+2. A 10 N force acts on a 2 kg object. Find acceleration.
+3. A car accelerates at 3 m/s² with a 1500 N force. Find its mass.
+4. A 10 kg block slides down a frictionless incline with 30 o angle. Find acceleration.
+Solutions
+1. F = ma
+= (5 kg) x (2 m/s²)
+= 10 N
+2. a = F/m
+= 10 N / 2 kg
+= 5 m/s²
+3. m = F/a
+= 1500 N / 3 m/s²
+= 500 kg
+4. F= mg sinϴ
+F=10kg x 9.8m/s2 sin 30o
+F= 49N
+a = F
+m
+a = 49  
+10    
+a = 4.9m/s2
+Learning Activity 7: Verifying Hooke’s law using an experiment (F ∝ e)
+This activity is designed to help learners verify Hooke’s law using an experiment (F ∝ e). There is
+one activity which learners will engage in as they verify Hooke’s law using an experiment.
+Activity 7.1: Experimenting to verify Hooke's law.
+In this activity, learners will design and conduct an experiment to verify Hooke's law.
+Key Question: How does the spring stretches as the force increases?
+Physics Teaching Module: Form 1 – Term 3
+
+19
+Suggested Teaching and Learning Materials
+• Natural Materials: Rocks, wooden blocks, ...
+• Artificial Materials: Spring, set of known weights, ruler or meter stick, graph paper,
+worksheet, ...
+Learning Environment set up
+• Natural Environment: School surroundings
+• Artificial Environment: Laboratory or any room or place where learners can be (mobile
+laboratory)
+Teacher’s Roles:
+• Introduce the activity using a hook
+• Put learners into small groups
+• Provide the materials for the experiments
+• Ask learners to design and conduct an experiment to verify Hooke's law
+• Ask learners to present the findings
+• Provide feedback on learners' experiment design, data collection, and analysis
+• Facilitate a class discussion to help learners understand the application and implications of
+Hooke's law through probing questions
+Learners’ Activities:
+• Designing an experiment to verify Hooke's law
+• Conducting an experiment and collect data
+• Analysing the data and drawing conclusions about the relationship between force and
+displacement (extension) using the graph
+• Presenting findings
+• Answering probing questions and explaining the application and implications of Hooke's
+law
+Assessment Guide
+• Assess learners' ability to design an experiment to verify Hooke's law
+• Assess learners' ability to present their findings and explain the implications of Hooke's law
+• Assess learners' ability to collect and analyse data to verify Hooke's law using a graph
+Physics Teaching Module: Form 1 – Term 3
+
+20
+• Assess learners' ability to apply Hooke's law to solve problems involving springs and elastic
+materials.
+Skills Developed
+• Scientific Inquiry: Learners develop scientific inquiry skills as they plot a graph of force
+(F) against extension (e)
+• Critical Thinking: Learners develop critical thinking skills by analysing data and drawing
+conclusions about the relationship between force and displacement (extension)
+• Psychomotor: Learners develop psychomotor skills as they design and conduct an
+experiment to verify Hooke's law
+• Problem-Solving: Learners develop problem solving skills by applying Hooke's law to
+solve problems involving springs and elastic materials
+• Communicating: Learners develop communication skills by presenting their findings and
+explaining the application and implications of Hooke's law
+Key Learning Points:
+Hooke's Law
+• F = ke: Force (F) equals spring constant (k) times extension (e)
+• Measure spring extension (e): Record extension (e) for various forces (F)
+• Plot F vs. e: Verify linear relationship: F and e are directly proportional within elastic limit
+Importance
+• Understanding elasticity: Hooke's Law applies to materials within elastic limits
+• Real-world applications: Designing springs, understanding material properties
+Physics Teaching Module: Form 1 – Term 3
+
+21
+Sub-Topic 4: Circular Motion
+Introduction:
+Circular motion is the motion of an object in a circular path, where the direction of the velocity is
+constantly changing. As the object moves around a circular path, its direction changes continuously
+and hence its velocity and subsequently acceleration also change despite moving at a constant speed.
+Specific Competence:
+Apply circular motion concepts to solve problems and make predictions
+Key Terms
+• Acceleration-The rate of change of velocity
+• Constant Speed-The speed of the object remains constant, but the direction of the velocity
+changes
+• Changing Direction-The direction of the velocity is constantly changing, resulting in a
+centripetal acceleration
+• Centripetal Force-A force that acts towards the center of the circle, keeping the object
+moving in a circular path
+• Centrifugal Force-An outward force that acts on an object moving in a circular path,
+causing it to move away from the center. This force also produces its own acceleration
+called centrifugal acceleration acting away from the centre
+• Banked Road-A Road that is curved and angled to allow vehicles to navigate the curve
+safely
+• Direction-The centrifugal force acts away from the center of the circle
+• Radius-The distance from the center of the circle to the edge
+• Satellite Orbit-A circular path that a satellite follows as it orbits around a celestial body
+• Velocity-The speed of an object in a specific direction.
+Learning Activities
+There are four learning activities in the syllabus. In this module, there are also four activities which
+learners will engage in.
+Learning Activity 1: Centripetal force in action: Understanding Circular Motion
+This activity is designed to help learners describe motion in a circular path due to centripetal force.
+In this activity, learners design and conduct an experiment to investigate the motion of an object in
+a circular path, using a marble, a string, and a stopwatch.
+Key Question: What happens to the speed of an object as it moves in a circular path?
+Physics Teaching Module: Form 1 – Term 3
+
+22
+Suggested Teaching and Learning Materials
+• Natural Materials: Stones, ...
+• Artificial Materials: Marble, a string, a stopwatch, ...
+Learning Environment set up
+• Natural Environment: School surroundings
+• Artificial Environment: Laboratory or any room or place where learners can be (mobile
+laboratory)
+Teacher’s Roles:
+• Introduce the concept of circular motion using a key question
+• Ask learners to describe motion in a circular path due to centripetal force
+• Ask learners to design and conduct the experiment
+• Guide learners in designing and conducting the experiment
+• Ask probing questions
+• Provide feedback on learner experimental design and data analysis
+• Evaluate learner understanding and skills during and after the experiment
+Learners’ Activities:
+• Describing motion in a circular path due to centripetal force
+• Designing and conducting the experiment
+• Analysing data and drawing conclusions based on the experiment
+• Presenting findings to the class
+• Answering probing questions
+Assessment Guide
+• Evaluate learner understanding of circular motion and experimental design
+• Assess learner ability to collect and analyse data
+• Evaluate learner ability to draw conclusions and communicate findings
+• Assess learner laboratory skills, including measurement, observation, and safety
+Skills Developed
+• Collaborating-Learners develop collaborative skills by working in teams to design and
+conduct the experiment
+Physics Teaching Module: Form 1 – Term 3
+
+23
+Physics Teaching Module: Form 1 – Term 3
+
+24
+Physics Teaching Module: Form 1 – Term 3
+Assess learners' ability to analyse the relationship between force, mass, velocity, and radius
+
+25
+Physics Teaching Module: Form 1 – Term 3
+Learners develop critical thinking skills by analysing the relationship
+
+Suggested Teaching and Learning Materials
+• Artificial Materials: Protractor, textbooks, calculator, worksheet, whiteboard and markers,
+PowerPoint presentation, ...
+Learning Environment set up
+• Natural Environment: School surroundings
+• Artificial Environment: Laboratory or any room or place where learners can be (mobile
+laboratory)
+• Technological Environment : Virtual lab, simulations, …
+Teacher’s Roles:
+• Introduce the activity using a hook
+• Put the learners into small groups
+• Provide the learners with the materials
+• Guide learners through the process of solving problems involving circular motion using
+worksheets
+• Facilitate the use of computer simulations to model circular motion, providing guidance on
+how to use the simulation and encouraging learners to explore
+• Encourage learners to think critically about the forces involved in circular motion and how
+they affect the motion of objects
+• Ask probing questions
+• Provide feedback and support as needed
+Learners’ Activities:
+• Completing a worksheet with problems involving circular motion (centripetal and
+centrifugal forces)
+• Exploring the differences between centripetal and centrifugal forces through group
+discussion
+• Using computer simulations to model circular motion, providing guidance on how to use the
+simulation and encouraging learners to explore
+• Answering probing questions
+Assessment Guide
+• Assess learners' ability to solve problems involving circular motion (centripetal and
+centrifugal forces)
+• Assess learners' understanding of the concepts of centripetal force, centrifugal force, and
+circular motion
+26
+Physics Teaching Module: Form 1 – Term 3
+
+27
+Physics Teaching Module: Form 1 – Term 3
+Draw diagrams: Visualise circular motion
+
+Learning Activity 4: Real-World Circular Motion: Everyday Applications
+This activity is designed to help learners demonstrate how circular motion is applied in real life
+situations. In this activity, learners will apply scientific knowledge of circular motion, centripetal
+force, and velocity to design a satellite orbit simulation.
+Key Question: How do satellites stay in orbit around the Earth, and what forces are acting on
+them to keep them moving in a circular path?
+Suggested Teaching and Learning Materials
+• Natural Materials: Stones, ...
+• Artificial Materials: A marble or a small ball to represent a satellite, A circular track or a
+bowl to represent the Earth's orbit, A calculator, A stopwatch (optional), ...
+Learning Environment set up
+• Natural Environment: School surroundings
+• Artificial Environment: Laboratory or any room or place where learners can be (mobile
+laboratory)
+Teacher’s Roles:
+• Introduce the activity using a key question
+• Put learners into small groups
+• Provide a marble or a small ball to represent a satellite, and a circular track or a bowl to
+represent the Earth's orbit
+• Ask learners to design a satellite orbit simulation
+• Ask probing questions such as;
+(i) How does the satellite maintain its orbit?
+(ii) What forces are acting on the satellite?
+(iii)How does the velocity of the satellite affect its orbit?
+• Provide feedback
+Learners’ Activities:
+• Designing a satellite orbit simulation
+• Placing the marble on the circular track or in the bowl and observe how it moves in a
+circular motion
+• Discussing the results of the simulation and how the design of the satellite orbit applies the
+concept of circular motion
+28
+Physics Teaching Module: Form 1 – Term 3
+
+• Answering to probing question
+Assessment Guide
+• Assess the learners design of the satellite orbit simulation
+• Assess the learners’ observation of the satellite orbit
+• Assess the learners’ participation in the discussion and their ability to explain how the
+design of the satellite orbit applies the concept of circular motion
+Skills Developed
+• Collaborating-Learners develop collaborative skills as they work effectively with others to
+achieve a common goal, sharing ideas, and feedback
+• Communicating-Learners develop communication skills as they express scientific ideas,
+processes, and results through various media
+• Critical Thinking-Learners develop critical thinking skills as they analyse and evaluate
+information, and make connections between concepts
+• Problem-Solving-Learners develop problem solving skills as they apply scientific
+knowledge to solve problems
+• Scientific Inquiry- Learners develop scientific inquiry skills as they understand circular
+motion and its application in real-life situations.
+Key Learning Points:
+Circular motion concepts are essential in many real-world applications.
+Examples
+1. Cars turning: Centripetal force keeps vehicles on curved paths.
+2. Satellites orbiting: Gravity provides centripetal force.
+3. Amusement park rides: Circular motion creates thrilling experiences.
+4. Washing machines: Spin cycle uses circular motion.
+5. Centrifuges: Separate particles using centrifugal force.
+Applications
+1. Road design: Banking curves for safe turns.
+2. Space exploration: Orbiting satellites and planets.
+3. Industrial processes: Mixing, separating, and processing materials.
+29
+Physics Teaching Module: Form 1 – Term 3
+
+Sub-Topic 5: Moment of a Force
+Introduction
+Moment of a force is the turning effect of force and it is equal to the product of force and
+perpendicular distance from the line of action of force to the pivot. Moment of force has a range of
+applications in physics, engineering, mathematics and environmental sciences.
+Specific Competence
+• Create a tool that applies moment of a force in solving problems in everyday life.
+Key Terms
+• Moment of a force: This is the product of a force and perpendicular distance from line of
+action of a force to the pivot.
+• Pivot: A central point on which a mechanism turns or oscillates.
+• Principle of moments: A law which states that; for a body in equilibrium the sum of
+clockwise moments about a point is equal to the sum of anticlockwise moments about the
+same point.
+• Equilibrium: A state of balance
+Learning Activities
+There are four learning activities in the syllabus but in this module, learning activity 1 and 2 have
+been merged into one activity. Therefore, the total learning activities are three. There is also a
+learning activity (principle of moments) from the sub-topic equilibrium from the syllabus in term 3.
+So, the sub-topic equilibrium is not covered in this module because it was covered in module 1.
+Learning Activity 1: "Exploring Moments of Force with Levers: How Force and Distance
+Interact
+This activity is designed to help learners relate the concept of moment of force to force and
+perpendicular distance from the pivot to the line of action of force.
+Activity 1.1: Demonstrating the concept of moment of a force using a lever and
+exploring how force and distance affect moment of force.
+In this activity, learners will relate the concept of moment of force to force and perpendicular
+distance from the pivot to the line of action of force.
+Hook: Why is it easier to unlock a nut using a longer spanner than a short spanner? Why is the
+classroom door handle placed far away from the hinges than closer to them?
+30
+Physics Teaching Module: Form 1 – Term 3
+
+Suggested Teaching and Learning Materials
+• Natural Materials: Wooden sticks, ...
+• Artificial Materials: Chalk board, door, nuts, bottle opener, planks, worksheets, steel
+spanner, knife, metal bars, meter rule, …
+Learning Environment set up
+• Natural Environment: school surroundings
+• Artificial Environment: Classroom or laboratory
+Teacher’s Roles:
+• Introduce the activity by engaging learners in opening and closing of windows, doors;
+unlocking nuts with different spanners of different lengths; opening bottle tops with
+different bottle openers...
+• Put learners into small groups and provide materials and worksheets
+• Ask learners to set up a lever system with different weights and distances from the fulcrum,
+allowing them to explore the relationship between force, distance, and moment of a force.
+• Ask learners to report their findings
+• Clarify on the reports given by learners to clear any misconceptions.
+Learners’ Activities:
+• Getting into groups and receiving materials
+• Setting up lever systems to explore the relationship between force distance and moment of
+force.
+• Solving numerical problems involving moment of force.
+• Reporting the findings
+Assessment Guide
+• Check that learners are correctly making connections between the use of levers and moment
+of force
+• Give numerical questions on moment of force
+Key Learning Points:
+• Moments are widely applied in everyday life, e.g., when using a cooking stick, knife, spoon,
+opening a fridge, opening a door or window, using of a hoe, ...
+Activity 1.2: Applying principle of moments as a condition for equilibrium
+This activity is designed to help learners appreciate that, for a system to be in equilibrium the sum
+of the clockwise moments about a point is equal to the sum of the anticlockwise moment about the
+same point.
+Hook: why don’t bridges collapse when vehicles, people, or trains pass over them?
+31
+Physics Teaching Module: Form 1 – Term 3
+
+Suggested Teaching and Learning Materials
+• Natural Materials: Wooden sticks/logs, pivots, …
+• Artificial Materials: Chalk board, planks worksheets, metal bars, meter rule, pivots, see-
+saw, …
+Learning Environment set up
+• Natural Environment: School surroundings
+• Artificial Environment: Classroom and laboratory
+Teacher’s Roles:
+• Introduce the activity using the hook
+• provide worksheets and other materials
+• Ask learners to set up a lever system with different weights and distances from the fulcrum
+to explore the principle of moments
+• Allow learners to apply the principle of moments to determine the mass of a beam such as a
+meter rule
+• Ask learners to report their findings
+• Clarify on the reports given by learners and clear any misconceptions
+Learners’ Activities:
+• Learners getting into groups and receiving materials
+• Setting up lever systems to explore the principle of moments moment
+• Determining the mass of beams using principle of moments
+• Reporting the findings
+Assessment Guide
+• Check that learners correctly balance the beams
+• Check that the equation for principle of moments is applied correctly
+• Give numerical questions on principle of moments
+Key Learning Points
+• Application of the equation of principle of moments to solve numerical problems
+• Calculating masses of objects using principle of moments.
+Activity 1.3: Moments of Force in Tool Design: Leveraging Force and Distance for
+Efficiency"
+This activity is about designing tools that apply moment of a force such as a lever. Learners should
+be given an opportunity to design the tools. This activity highlights the practical application of
+moments of force in designing tools, emphasising the importance of force and distance in creating
+effective tools.
+32
+Physics Teaching Module: Form 1 – Term 3
+
+Hook: can you design any tool that apply moments of force?
+Suggested Teaching and Learning Materials
+• Natural Materials: wooden sticks/logs, …
+• Artificial Materials: Planks, books, metal bars, meter rule, …
+Learning Environment set up
+• Natural Environment: School surroundings
+• Artificial Environment: Classroom and laboratory
+Teacher’s Roles:
+• Introduce the activity using a hook
+• provide learners with a research project guide to design any tool that apply moment of force
+• Ask learners to present their designed tools
+• Clarify on the reports given by learners and clear any misconceptions
+Learners’ Activities:
+• Designing tools that apply moment of force
+• Presenting the designed tools
+Assessment Guide
+• Check for the functionality of the designed tool
+• Check if the tool is able to apply the moments of force
+Key Learning Points:
+• Moment of force is the turning effect of force and is equal to the product of force and
+perpendicular distance from the line of action of force to the pivot.
+33
+Physics Teaching Module: Form 1 – Term 3
+
+BIBLIOGRAPHY
+Beet, E. A. (2015). A text book of elementary astronomy. Cambridge University Press.
+Gouguenheim, L., McNally, D., & Percy, J. R. (Eds.). (1998). New trends in astronomy Teaching.
+Cambridge University Press.
+Kleczek, J. (Ed.). (2012). Exercises in Astronomy: Revised and Extended Edition of “Practical
+Work in Elementary Astronomy” by MGJ Minnaert. Springer Science & Business Media.
+Leverington, D. (2012). A History of Astronomy: from 1890 to the Present. Springer Science &
+Business Media.
+Ridpath, I. (Ed.). (2012). A dictionary of astronomy. Oxford University Press.
+34
+Physics Teaching Module: Form 1 – Term 3

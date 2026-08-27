@@ -1,0 +1,879 @@
+The introduction of the competence-based curriculum (CBC) marks a transformative step in
+improving education quality and relevance. This Form 1 Computer Science Teaching Module
+has been meticulously designed to support teachers in effectively delivering Computer Science
+lessons under the new curriculum. The module aims to bridge the gap created by the absence
+of approved textbooks and to equip educators with practical tools, activities, and assessments
+tailored to the learners’ level and needs.
+As a Ministry, we understand the challenges that come with transitioning to a new curriculum
+framework. This module reflects our commitment to making this journey as smooth as possible
+for teachers, by providing structured guidance, suggested activities, and formative assessments
+that align with the CBC’s objectives. However, we also encourage educators to supplement this
+module with their own research and innovations to address any gaps that may arise during
+implementation.
+The suggested activities and assessments provided in this module are designed to foster practical
+and critical thinking skills in learners while ensuring relevance and adaptability to different school
+contexts. Teachers are encouraged to tailor these suggestions to their unique classroom dynamics
+and to explore alternative, acceptable approaches when necessary. This flexibility is key to
+ensuring that all learners, regardless of their environment, benefit from meaningful and impactful
+Computer Science education.
+We hope this module will serve as a valuable resource for teachers as they navigate the new
+competence-based curriculum, enhancing their ability to inspire and equip learners with essential
+Computer Science knowledge and skills. Together, let us work towards creating a vibrant and
+responsive education system that prepares our learners for the demands of the digital age.
+Faculty of Technology and Entrepreneurship
+The Curriculum Development Centre
+Ministry of Education
+Guidelines for Teachers on Using Computer Science Module
+The Computer Science modules for Forms 1 to 4 are designed to equip learners with foundational
+knowledge of how computers work, programming skills, and problem-solving abilities. In the
+absence of approved textbooks, these modules will serve as comprehensive teaching resources
+for delivering impactful Computer Science lessons.
+1. Understand the Nature of Computer Science as a Subject
+Computer Science focuses on:
+• The science behind computers, including understanding hardware, software, and networks.
+• Developing computational thinking skills to analyze and solve problems.
+• Writing and debugging programs in programming languages like Python or Scratch.
+• Exploring how data is stored, processed, and managed.
+As a science, it goes beyond just using tools—it explains how those tools work and
+empowers learners to create solutions.
+
+Form 1 Term 2
+Teaching Moduleix
+• Start by introducing problem-solving techniques, such as breaking down a problem into
+smaller steps (decomposition).
+• Use examples like designing algorithms or flowcharts to help learners visualize solutions.
+• Encourage learners to explain their thought processes when solving programming problems.
+3. Teach Programming Through Practice
+Programming is a hands-on skill that requires regular practice. To teach programming:
+• Use the modules to introduce programming fundamentals, such as variables, loops, and
+decision-making structures.
+• Guide learners to write simple programs, such as a calculator, using the provided examples
+in the modules.
+• Introduce platforms like Python, Scratch, or Code.org for interactive coding sessions.
+• Encourage learners to debug their code and explore why errors occur. This reinforces
+problem-solving skills.
+4. Use Examples and Exercises to Explain Concepts
+The modules contain worked examples and exercises to simplify complex concepts. Teachers
+should:
+• Guide learners through each example, explaining the logic behind the solution. For instance,
+demonstrate how a loop works by writing a program that counts from 1 to 10.
+• Assign practical exercises from the modules, such as creating algorithms or designing
+flowcharts.
+• Relate programming concepts to real-life applications, such as creating a simple weather
+app or automating a task.
+5. Relate Concepts to Real-World Applications
+Learners grasp concepts better when they understand their relevance. For example:
+• Explain how databases are used in everyday life, such as managing inventory in a store.
+• Discuss how programming is used to develop games, apps, or websites.
+• Highlight how artificial intelligence and robotics rely on programming skills.
+6. Foster Collaboration and Problem-Solving
+Collaborative learning builds confidence and teamwork. Teachers can:
+• Organize coding challenges where learners solve problems in pairs or groups.
+• Assign group projects, such as designing a game or creating a data management program.
+• Encourage learners to share their approaches to problem-solving and learn from one
+another.
+7. Focus on Assessment and Feedback
+Assessment in Computer Science should test both theoretical understanding and practical skills.
+Teachers should:
+• Use quizzes in the modules to evaluate learners’ knowledge of hardware, software, and
+algorithms.
+• Assign coding tasks and grade learners based on functionality, efficiency, and creativity of
+their programs.
+• Provide constructive feedback, pointing out errors in logic and suggesting improvements.
+2. Focus on Developing Computational Thinking
+The modules emphasize logical reasoning and problem-solving skills. Teachers should:
+
+Computer Science
+Teaching Modulex
+household budgets or create a chatbot.
+• Use examples in the modules to discuss advancements in technology, such as machine
+learning and blockchain.
+9. Integrate ICT Where Necessary
+While Computer Science focuses on programming and system understanding, ICT tools can
+enhance teaching. For example:
+• Use presentation software to explain complex concepts like data flow or computer
+architecture.
+• Incorporate online coding platforms to give learners more exposure to coding environments.
+8. Promote Innovation and Critical Thinking
+Computer Science encourages learners to think creatively and solve real-world problems. Teachers
+should:
+• Inspire learners to come up with innovative solutions, such as writing a program to calculate
+
+Form 1 Term 2
+Teaching Module1
+Topic 5: Cyber Security
+Introduction
+This topic introduces learners to the fundamentals of cybersecurity and the importance of
+safeguarding digital systems and personal data. It covers common threats such as hacking,
+malware, phishing, and ransomware, highlighting the impact of cyber-attacks on individuals
+and society. Learners will also explore safe online practices such as using strong passwords and
+enabling two-factor authentication to promote responsible behavior and contribute to a safer
+digital environment.
+General Competence(s)
+• Analyse potential cyber threats in different online scenarios.
+• Evaluate the risks of unsafe online behaviour.
+• Assess the ethical implications of digital actions
+• Apply preventive measures to secure personal and shared digital spaces.
+• Demonstrate safe online practices
+• Respond appropriately to cyber security incidents
+Learning Environment
+Physical
+• Classrooms with computers and internet access, projectors, and whiteboards.
+Or
+• Basic computer labs or use of printed materials, posters, or teacher demonstrations.
+Virtual
+• Access to learning platforms like Moodle, Google Classroom, or Zoom for remote sessions.
+or
+• WhatsApp-based lessons or offline digital content (USBs or DVDs).
+Technological
+• Laptops/desktops with antivirus software, access to firewalls or simulation tools and
+opportunities for fields trips.
+Or
+• Basic PCs, mobile phones, printable simulations or videos via USB.
+Hook
+Thought provoking question
+What would happen if someone accessed all your personal data online without
+your permission?
+
+Computer Science
+Teaching Module2
+Key Terms
+• Malware
+• Phishing
+• Hacking
+• Firewall
+• Antivirus
+• Cyberbullying
+• Digital footprint
+• Two-factor authentication
+Sub Topic 1.5.1 Fundamentals of cyber security
+Overview
+The sub-topic introduces learners to the core principles of cyber security, emphasizing the
+application of online safety and security measures. It covers key concepts, common cyber threats,
+preventive strategies, and responsible online behavior to equip learners with practical skills for
+navigating the digital world securely.
+Specific Competence(s)
+1.5.1.1 Apply online safety and security measures
+Learning Activities
+1. Discussing Terminologies and Key Concepts in Cyber security
+Activity: Learners discussing Terminologies and Key Concepts in Cyber security (Encryption,
+Authentication, malware, phishing, firewall …)
+2. Identifying Different Types of Cyber Threats
+Activity: Learners Identifying Different Types of Cyber Threats (hacking, phishing,
+ransomware…).
+3. Detecting Potential Cyber Threats Using Monitoring Tools and Logs
+Activity: Learners detecting Potential Cyber Threats Using Monitoring Tools (cyberdefenders.
+org or Norton’s online demo) and Logs(unusual login attempts …).
+4. Describing the Importance of Cyber security in the Digital World
+Activity: Learners describing the Importance of Cyber security in the Digital World
+(protection, compliance …)
+
+Form 1 Term 2
+Teaching Module3
+• Field trips
+• Research & surveys
+• Interviews
+Content Tips
+What is Cyber security?
+• Protection of digital systems, devices, and personal data from cyber threats.
+• Helps prevent unauthorized access, data loss, and damage.
+Why Cyber security is Important
+• Protects personal privacy and sensitive information.
+• Prevents financial loss and disruption of services.
+• Safeguards national security and public systems.
+Common Cyber Threats
+• Hacking – Unauthorized access to systems.
+• Malware – Malicious software (e.g., viruses, worms, spyware).
+• Phishing – Fake emails or messages to steal information.
+• Ransomware – Blocks access to data until money is paid.
+Safe Online Practices
+• Use strong, unique passwords.
+• Enable two-factor authentication (2FA).
+• Avoid clicking on suspicious links or attachments.
+• Keep software and antivirus updated.
+• Log out of accounts after use.
+Impact of Cyber-Attacks
+• Loss of personal and financial data.
+• Damage to reputation.
+• Disruption of learning, business, or government operations
+5.. Implementing Strong Password Policies and Multi-Factor Authentication
+Activity: learners implementing Strong Password Policies (length, special characters …) and
+Multi-Factor Authentication
+How will the Activities Be Conducted?
+• In groups, pairs, and individually.
+• Learners will use local examples to understand global concepts.
+• Activities will be interactive, with minimal teacher interference.
+
+Computer Science
+Teaching Module4
+Assessment Activities
+Formative Assessment
+Formative assessments will be integrated throughout the learning process to monitor
+understanding, provide feedback, and guide instruction.
+1. Observation during Group Work and Discussions
+2. Quizzes (Digital or Paper-based)
+3. Peer Assessment During Role-Plays
+4. Poster Feedback
+5. Reflection Journals
+Summative Assessment
+1. Short Written Test
+2. Cyber Security Poster Presentation
+3. Scenario-Based Written Task
+4. Personal Cyber Safety Plan (Mini Project)
+Key Points Recap
+• Cyber security protects digital systems and data.
+• Common threats include malware, phishing, and hacking.
+• Prevention includes strong passwords, antivirus software, and safe browsing.
+• Responsible online behaviour helps ensure safety for everyone.
+Suggested Teaching and Learning Materials
+• Internet-connected devices
+• Projector or whiteboard
+• Cyber security videos (YouTube clips…)
+• Paper, markers (for posters)
+• Case study printouts
+• Interactive quiz tools (Kahoot, Quizizz…)
+Expected Standard
+• Online Safety and Security measures successfully applied.
+
+Form 1 Term 2
+Teaching Module5
+Topic 6: Data Processing
+Introduction
+This Topic focuses on equipping learners with the skills to collect and clean data effectively, Data
+processing is a critical component of computing, enabling learners to retrieve, transform, and
+classify data into usable forms. By mastering data collection and cleaning, learners will develop
+foundational skills for data management, analysis, and visualization, which are essential in various
+real-world applications, such as tracking academic performance, managing public health records,
+or analyzing agricultural yields.
+General Competence(s):
+• Demonstrate the ability to collect and clean data from multiple sources using appropriate
+tools and techniques.
+• Understand key concepts of data processing and apply them to ensure data accuracy and
+consistency.
+• Develop problem-solving skills through practical data management tasks.
+• Apply ethical considerations in data collection, ensuring privacy and informed consent.
+Learning Environment
+Physical:
+• Access to computer labs with reliable internet, Classrooms equipped with projectors,
+interactive whiteboards, whiteboards...
+Or
+• Class room with shared desktops, laptops, tablets, smart phones …
+Virtual:
+• Online platforms (Google Classroom, Microsoft Teams, Moodle…)
+Technological:
+• High-speed internet, access to data visualization tools (Power BI …), and database
+management software (Microsoft Access, SQLite …), Use of APIs for real-time data
+collection (weather APIs …)
+Or
+• Basic software (Excel, OpenOffice Calc …) Offline datasets stored on USB drives...
+Hook
+Thought-provoking question: “How can we ensure the data we collect is accurate and reliable
+to solve real-world problems like boosting school attendance, improving healthcare, or
+increasing crop yields?”
+
+Computer Science
+Teaching Module6
+• Visualization
+• Outlier
+• Data Ethics
+Sub-topic: 1.6.1 Data Collection and Cleaning
+Overview
+This subtopic introduces learners to the importance of data collection and cleaning in effective
+data management. It covers how data is gathered from reliable sources and cleaned by correcting
+errors, removing duplicates, and ensuring consistency. These processes ensure that data is accurate
+and trustworthy, enabling informed decision-making across sectors like education, healthcare,
+agriculture, and business.
+Specific Competence(s)
+1.6.1.1 Collect and clean data
+Learning Activities
+1. Discussing key Concepts Data Processing and cleaning
+Activity: Discuss key concepts of data processing and cleaning (data collection, data
+transformation, data storage …)
+2. Exploring types of data in computing
+Activity: Learners identify different typesof data (Structured, Semi-Structured, Unstructured …)
+3. Identifying data processing techniques.
+Activity: Learners identify data processing techniques (manual, mechanical, Electronic …)
+4. Discussing tools for capturing and cleaning data
+Activity: Discussing tools for capturing data (sensors, questionnaire, data capturing
+software …) and cleaning tools (programing libraries, database tools …)
+5. Collecting data from multiple sources
+Activity: Learners to collect data from multiple sources: Primary (interviews, observations
+…), Secondary (publications, newspapers …)
+6. Demonstrating how to clean and validate data:
+Activity: Learners to clean (remove irrelevant data, duplicated data …) and validate data
+(verifying data types, formats…)
+7. Designing visualization to present processed data
+Activity: Learners to visualize and present processed data (use graphs, graphics, charts…)
+Key Terms
+• Data
+• Data Collection
+• Data Cleaning
+• Data Validation
+• Data Processing.
+• Dataset
+• Data Source
+
+Form 1 Term 2
+Teaching Module7
+• Field trips
+• Research & surveys
+• Interviews
+Content Tips
+• Definition:
+Transforming raw data into meaningful, usable information.
+• Stages of Data Processing:
+o Data Collection: Gathering raw data from various sources.
+o Data Cleaning (Preparation): Removing errors, duplicates, and inconsistencies.
+o Data Input: Converting cleaned data into a machine-readable format.
+o Data Processing: Applying algorithms, calculations, or transformations to the data.
+o Data Storage: Saving processed data for easy retrieval and future use.
+o Data Output: Presenting the results in a readable form (e.g., reports, charts).
+o Data Interpretation: Analyzing the output to support decision-making.
+• Methods of Data Processing:
+o Manual Processing: Done by humans without automation (slow and error-prone).
+o Mechanical Processing: Using simple machines (e.g., calculators, typewriters).
+o Electronic Processing: Using computers and software (fast and efficient).
+• Types of Data Processing:
+o Batch Processing: Handling large volumes of data at once (e.g., payroll systems).
+o Real-Time Processing: Instant processing as data comes in (e.g., ATM transactions).
+o Online Processing: Data processed immediately with user interaction (e.g.,
+e-commerce).
+o Distributed Processing: Data processed across multiple computers or servers.
+• Importance of Data Processing:
+o Enhances decision-making.
+o Improves efficiency and accuracy.
+o Enables large-scale data analysis (Big Data, AI …).
+• In groups, pairs, and individually.
+• Learners will use local examples to understand global concepts.
+• Activities will be interactive, with minimal teacher interference.
+8. Developing testing protocols to ensure accuracy and consistency of processed data
+Activity: learners to develop testing protocols (validation, verification …)
+How will the Activities Be Conducted?
+
+Computer Science
+Teaching Module8
+Assessment Methods
+• Formative Assessment:
+o Quizzes, Peer reviews, Teacher observation …
+• Summative Assessment:
+o Projects, written, oral presentation
+Key Points
+• Definition:
+o Turning raw data into useful information.
+• Stages:
+o Collection → Cleaning → Input → Processing → Storage → Output → Interpretation
+• Methods:
+o Manual (by hand)
+o Mechanical (simple machines)
+o Electronic (computers/software)
+• Types:
+o Batch (bulk)
+o Real-Time (instant)
+o Online (user-driven)
+o Distributed (multi-system)
+• Importance:
+o Better decisions
+o Greater efficiency
+o Supports Big Data & A
+Suggested Teaching and Learning Materials
+• Hardware: Laptops or desktops, USB drives for offline resources, printers for paper-based
+tasks.
+• Software: Microsoft Excel, OpenOffice Calc, Google Sheets, Google Forms (if internet is
+available), SQLite for basic database practice.
+o Databases (SQL, NoSQL …)
+o Programming languages (Python, R, Java …)
+o Data Processing Frameworks (Hadoop, Spark …)
+o Data Visualization Tools (Tableau, Power BI …)
+Expected Standard
+• Data effectively collected and cleaned
+
+Form 1 Term 2
+Teaching Module9
+Topic 7: Web Design
+Introduction
+This topic introduces the basics of Web Design, focusing on how websites are structured using
+HTML. Learners will explore key concepts, work with web design tools, and gain practical skills to
+create simple, well-organized web pages that follow modern standard.
+General Competences
+• Design basic web pages
+• Create basic web pages
+• Apply foundational HTML concepts and tags
+Learning Environment
+Physical
+ Classrooms with computers and internet access, projectors, and whiteboards.
+Or
+ Basic computer labs or use of printed materials, posters, or teacher demonstrations.
+Virtual
+• Access to learning platforms like Moodle, Google Classroom, or Zoom for remote sessions.
+Technological
+ Laptops/desktops with antivirus software, access to firewalls or simulation tools.
+Or
+ PCs, mobile phones, simulations or videos.
+Hook
+“Ever wondered how your favorite websites are created? Design a web pages from scratch!”
+Key Terms
+• HTML
+• CSS
+• Web Page
+• Tags Elements
+• Text Editor
+• JavaScript
+• Sematic Elements
+
+Computer Science
+Teaching Module10
+Specific Competences
+1.7.1.1 Design and Structure Web Pages using web design tools
+Learning Activities
+1. Discussing the key concepts of Web Design
+Activity: Learners discussing the key concepts of Web Design (HTML, CSS, JavaScript, text
+editors, web browsers ...).
+2. Identifying the components of a web page
+Activity: Learners identifying the key structural components of a web page (header, main
+content, footer …).
+3. Describing the Roles of HTML, CSS, JavaScript in creating and designing web pages
+Activity: Learners describing the roles of HTML (structuring, content organization …), CSS
+(styling) and JavaScript (making a web page interactive, dynamic …)
+4. Designing and structuring simple web pages using HTML5 and semantic tags
+Activity: Learners designing and structuring simple webpages using HTML5 and semantic
+tags (header, section, footer …)
+How will the Activities Be Conducted?
+ In groups, pairs, and individually.
+ Learners will use local examples to understand global concepts.
+ Activities will be interactive, with minimal teacher interference.
+ Research
+Content Tips:
+• HTML is the standard markup language for Web pages. HTML defines the structure of a
+web page using elements and tags. With HTML you can create your own
+Web Design Basics
+• Involves creating and structuring websites.
+• Focuses on both layout (structure) and user experience.
+Sub – Topic: 1.7. 1 Fundamentals of Web Design
+Overview
+This subtopic introduces the basic principles of web design, focusing on how websites are created
+and structured. It explores the use of HTML to build web pages and highlights the essential
+components that are required to design simple, well-structured web pages. This subtopic further
+explores the roles of web tools (HTML, CSS, JavaScript …) in creating and designing web pages.
+
+Form 1 Term 2
+Teaching Module11
+o <img> – images.
+o <ul>, <ol>, <li> – lists.
+Basic structure of a web page in html
+<!DOCTYPE html>
+<html>
+<head>
+<title> Page Title</title>
+</head>
+<body>
+<!-- Page content goes here -->
+</body>
+</html>
+Essential Components of a Simple Web Page
+• Page title and heading.
+• Paragraphs of text.
+• Images and links.
+• Lists (ordered or unordered).
+• Proper use of tags to ensure structure and readability.
+Web Design Tools
+1. Text Editors
+Used to write code (Notepad++, Sublime Text, Visual Studio Code…).
+Web Design Technologies
+1. HTML (HyperText Markup Language)
+o Structures the content of web pages (headings, paragraphs, links, images).
+2. CSS (Cascading Style Sheets)
+o Styles the appearance of web pages (fonts, colors, layout, animations).
+3. JavaScript
+o Adds interactivity and dynamic content (buttons, forms, sliders,
+animations).
+Website Structure
+• Websites are made up of individual web pages.
+• Web pages are written using HTML (HyperText Markup Language).
+• A website usually consists of a homepage and other linked pages.
+HTML – Building Blocks of Web Pages
+• HTML is used to create the structure and content of web pages.
+• Common HTML elements include:
+o <!DOCTYPE html> – declares the document type.
+o <html>, <head>, <body> – define the main sections.
+o <h1> to <h6> – headings.
+o <p> – paragraphs.
+o <a> – hyperlinks.
+
+Computer Science
+Teaching Module12
+• AI tools (ChatGPT, Deep Seek …) for quick explanations and examples
+Teaching/ Learning Aids:
+• Printed diagrams of web page layouts
+• Sample HTML files
+• Worksheets for labeling components
+• Cut-out shapes or cards representing page sections (e.g., header, footer …)
+• Computers or laptops with internet access
+• Text editors (Notepad, Visual Studio Code …)
+Expected Standards
+Simple web pages and structures successfully implemented.
+Assessment
+1. Formative Assessment:
+Observation & Feedback, Quizzes, Peer Review
+2. Summative Assessment:
+Project-Based Task
+Topic Summary
+• Web design involves planning, creating, and structuring content for websites using tools
+like (HTML, CSS, and JavaScript…)
+• HTML provides the basic structure of web pages using elements and tags to define content.
+• Web pages are made up of key components (e.g. headers, main content areas, footers ….)
+that organize content for users.
+• CSS is used to style and visually enhance web pages, while JavaScript adds interactivity and
+dynamic behavior.
+• HTML5 semantic tags (<header>, <section>, <footer>, …) improve the structure, readability,
+and accessibility of web pages, aligning with modern web standards.
+Purpose of Using Web Tools
+• Enhance user experience and visual appeal.
+• Make websites responsive and interactive.
+• Ensure consistency across multiple web pages.
+Materials:
+• Computers or laptops with internet access
+• Text editors (Notepad, Visual Studio Code …)
+• Web browsers (Chrome, Firefox …)
+• Projector or smart board for class demonstrations
+• Real website examples for analysis
+
+Form 1 Term 2
+Teaching Module13
+TOPIC 8: Digital Citizenship
+Introduction
+This topic introduces learners to the concept of digital citizenship. Allowing learners to explores
+respectful communication, identifying reliable information online, maintaining mental wellbeing
+through screen-time balance, and promoting inclusion and fairness in online communities.
+The topic encourages learners to become thoughtful, kind, and critical participants in digital
+environments.
+General Competence(s)
+• Demonstrate ethical and responsible use of technology.
+• Awareness of digital footprints and online privacy management.
+• Understanding of digital footprints and online privacy management.
+• Promotion of safe and responsible digital behavior.
+Learning Environment
+Physical
+• Access to computer labs with (internet-enabled devices, projectors, collaborative
+spaces…) and opportunities for fields trips.
+Or
+• Use of shared community centers with basic computing facilities or offline resources
+like printed guides and posters on digital ethics.
+Virtual
+• Online platforms (Google Classroom, Moodle, discussion forums, digital citizenship
+videos…)
+Technological
+• Laptops or desktops, internet connectivity, web browsers…
+• Smartphones or shared tablets with offline apps or pre-installed digital citizenship
+content;
+Hook
+Thought-Provoking Question: Imagine your online behavior was projected on the classroom
+wall for everyone to see- every comment, every post, and every like. Would you be proud of
+what is there?
+Key Terms
+• Digital Citizenship
+• Digital Ethics
+• Online Communication
+• Respectful Behavior
+• Fact / Opinion / Bias
+• Cyberbullying
+• Digital Footprint
+• Digital Inclusion
+• Screen Time
+• Mental Wellbeing
+
+Computer Science
+Teaching Module14
+Sub-Topic: 1.8.1 Digital Ethics
+Overview
+This sub-topic covers the responsible use of technology and the internet. It teaches learners how
+to behave safely, respectfully and honestly while using online platforms. Concepts like online
+privacy, cyberbullying, digital footprint, and the importance of following rules and laws when
+using technology.
+Specific Competence(s)
+1.8.1.1 Demonstrate Ethical Behavior in a Digital Environment
+Learning Activities:
+1. Discussing digital citizenship.
+Activities: Learners discussing Digital Citizenship (Definition, importance, skills …)
+2. Demonstrating respectful communication in online interaction
+Activities: Learners demonstrating respectful communication in online interaction ethical
+(respect privacy, engage in respectful conversation, know online etiquette…) and unethical
+behavior (fake news, cyber bullying...)
+3. Distinguish between fact, opinion, and bias in digital content
+Activities: Learners distinguishing between fact, opinion, and bias in digital content (Fact-
+Evidence, Opinion-personal belief, Bias-prejudice)
+4. Demonstrating how to balance screen time with offline activities to maintain physical and
+mental well being
+Activities: Learners demonstrating how to balance screen time with offline activities to
+maintain physical and mental wellbeing (screen time limit, regular health breaks…)
+5. Demonstrating a culture of inclusion, respect and fairness in online communities
+Activities: Learners demonstrating the culture of inclusion, respect and fairness in online
+communities (Use of respectful language, rephrasing negative comments, recognizing
+divergent views …)
+How will the Activities Be Conducted?
+ In groups, pairs, and individually.
+ Learners will use local examples to understand global concepts.
+ Activities will be interactive, with minimal teacher interference.
+ Field trips
+ Research & surveys
+ Interviews
+Content Tip
+• Digital Citizenship is responsible, safe, and respectful use of technology including Knowing
+your digital rights and responsibilities.
+Key Components
+• Online safety
+• Verifying information
+• Managing harmful or inappropriate content
+
+Form 1 Term 2
+Teaching Module15
+Importance
+• Protects from scams, data breaches, and misinformation.
+• Encourages sharing facts and challenging false content.
+Digital Ethics
+• Respect: Others’ privacy, opinions, and work.
+• Responsibility: Think before posting; report abuse.
+• Integrity: No plagiarism or false information.
+Good Digital Behaviour
+• Cite sources
+• Avoid cyberbullying
+• Protect personal data
+• No illegal downloads
+Cyberbullying
+• Causes emotional harm, anxiety, low self-esteem, learning issues.
+Fact vs. Opinion vs. Bias
+• Fact: Can be proven (“Plants are green.”)
+• Opinion: Personal belief (“Chocolate is the best.”)
+• Bias: Unfair one-sided view (“Only youth are good at technology.”)
+Screen Time & Offline Balance
+• Screen time: Time spent on digital devices.
+• Too much: Eye strain, fatigue, poor health.
+• Offline time: Boosts creativity, health, and social skills.
+Online Communities
+• Inclusive: Welcome everyone.
+• Respectful: Kind and polite communication.
+• Fair: Equal participation for all
+Suggested Teaching and Learning Materials
+ Internet-connected devices
+ Projector or whiteboard
+ Cyber security videos (YouTube clips …)
+ Paper, markers (for posters)
+ Case study printouts
+Expected Standard
+• Ethical Behavior in Digital Environment Demonstrated Appropriately.
+
+Computer Science
+Teaching Module16
+Key-Points
+• Practice respectful online communication
+• Identify fact, opinion, and bias
+• Balance screen time with offline activities
+• Show inclusion, respect, and fairness online
+• Inclusion and fairness in digital spaces
+• Bottom of Form
+Assessment
+1. Formative Assessment:
+Observation & Feedback, Quizzes, Peer Review
+2. Summative Assessment:
+Project-Based Task
+
+Form 1 Term 2
+Teaching Module17
+SAMPLE OF LESSON PLAN
+MINISTRY OF EDUCATION
+MAPUTOSA SECONDARY SCHOOL
+LESSON PLAN
+SUBJECT: Computer science
+NAME OF TEACHER: John K TIME: 07:00-09:00
+LEVEL: Form 1 K DURATION: 120 Minutes
+TOPIC: 1.5 Cyber Security NO. OF PUPILS: 50
+SUB-TOPIC: 1.5.1 Fundamentals of cyber security BOYS: 25 GIRLS: 25
+GENERAL COMPETENCES:
+• Analyze potential cyber threats in different online scenarios.
+• Evaluate the risks of unsafe online behavior.
+• Assess the ethical implications of digital actions
+• Apply preventive measures to secure personal and shared digital spaces.
+• Demonstrate safe online practices
+• Respond appropriately to cyber security incidents
+SPECIFIC COMPETENCES:
+1.1.1.1 Apply online safety and security measures
+LESSON GOAL: Explore and analyse cybersecurity concepts
+PRIOR KNOWLEDGE:
+Basic internet use, Password familiarity
+REFERENCES:
+• Computer Science Module 2, Term 2 Page… (2023 Curriculum)
+• Computer Science Ordinary Level Syllabus (2023)
+• Common Sense Education: Digital Citizenship Curriculum
+• YouTube: Crash Course - Cyber security Series
+• Cyber Security & Digital Citizenship (Google for Education Resources)
+• Local cyber security awareness campaigns or government guidelines (if available)
+LEARNING ENVIRONMENT
+Physical (Natural environment)
+ Classrooms with computers and internet access, projectors, and whiteboards.
+Virtual
+• Access to learning platforms like Moodle, Google Classroom, or Zoom for remote sessions.
+Technological
+ Laptops/desktops with antivirus software, access to firewalls or simulation tools and
+opportunities for fields trips.
+
+Computer Science
+Teaching Module18
+ Internet-connected devices
+ Projector or whiteboard
+ Cyber security videos (YouTube clips…)
+ Paper, markers (for posters)
+ Case study printouts
+ Interactive quiz tools (Kahoot, Quizizz…)
+EXPECTED STANDARD:
+• Online Safety and Security measures successfully applied.
+LESSON PROGRESSION
+STAGES TEACHER’S ROLE LEARNERS’ ROLE ASSESSMENT
+CRITERIA
+INTRODUCTION
+10 Minutes
+Present a Hook Ques-
+tion:
+‘‘What would happen
+if someone accessed
+all your personal data
+online without your
+permission?
+Brainstorm answers in
+pairs and share with the
+class.
+Participation
+and relevance of
+responses.
+LESSON DEVELOP-
+MENT
+5 minutes
+Divide learners into
+small groups
+Move into groups and
+prepare to work collabora-
+tively.
+Groups formed
+• Activity1
+Discussing Termi-
+nologies and Key
+Concepts in Cyber
+security
+35 Minutes
+• Distribute cyber se-
+curity term cards
+• Guide group discus-
+sions
+- Research terms
+Discussing Terminologies
+and Key Concepts in Cyber
+security (Encryption,
+Authentication, malware,
+phishing, firewall …)
+- Creating poster or slides
+- Make presentations
+Accuracy and
+clarity of defini-
+tions.
+Creativity in pre-
+sentation.
+• Activity 2
+Identifying Differ-
+ent Types of Cyber
+Threats
+35 Minutes
+Distribute case studies
+(phishing email, ransom-
+ware attack…).
+• Identifying Different
+Types of Cyber Threats
+(hacking, phishing, ran-
+somware attack…).
+• Analyzing, classifying
+threats, and present
+findings to the class.
+Correct iden-
+tification and
+explanation of
+threats.
+EXERCISE 20 Min-
+utes
+• Distribute new sce-
+nario cards
+“Your friend shares a
+suspicious link on a
+group chat”
+• Task groups to devel-
+op a response plan.
+• Collect and review
+group plans briefly
+for feedback.
+• Provide feedback
+• Collaborating to analyze
+the scenario
+• Identify the threat,
+and propose a detailed
+response (report the
+link, avoid clicking...).
+• Creating a poster or
+written plan outlining
+their response
+• Making presentations
+Critical thinking,
+relevance, and
+teamwork.
+TEACHING AND LEARNING MATERIALS/RESOURCES
+
+Form 1 Term 2
+Teaching Module19
+STAGES TEACHER’S ROLE LEARNERS’ ROLE ASSESSMENT
+CRITERIA
+CONCLUSION
+15 Minutes
+• Summarize key points
+• Address questions
+• Relate content to re-
+al-world situations
+• Clarify doubts and
+misconception
+• Introduce next topic
+briefly
+• Share reflections, ask
+questions, and note
+key takeaways
+• Engagement,
+understanding
+of key
+concepts.
+HOMEWORK/
+ASSIGNMENT
+• Assign homework or
+assignment
+“Research on a recent
+cybercrime case in Zam-
+bia or internationally.
+Write a one-page report
+describing:
+• What happened?
+• What cyber threat
+was involved?
+• How it was resolved
+(or could have been
+prevented)”
+• Note homework or
+Assignment
+• Relevance
+• Understand-
+ing of Cyber
+Threat
+• Analysis
+• Preventive
+Measures /
+Response
+• Presentation
+and Structure
+LESSON EVALUATION:
+Evaluation criteria: Lesson planning and competencies, teaching strategies, student engagement,
+reflection and improvement.
+Example:
+The majority of learners were able to identify different types of cyber threats. They participated
+actively in discussions and demonstrated understanding through practical tasks. Some learners
+may need further reinforcement on describing key concepts in cyber security.

@@ -1,0 +1,187 @@
+{
+  "_source": "Curriculum Development Centre Teaching Module — \"Design and Technology Teaching Module Form 1 - Term 2\" (https://library.cdcrepository.info/resource.php?id=304). Topic/sub-topic structure and competencies extracted with AI assistance (Gemini) directly from this module's own stated content — never invented; the extraction was instructed to use only what the module itself says, and to flag anything unclear rather than guess. Covers only the term this specific module addresses (Term 2) — other terms are not included since no source document for them was available at extraction time. AI-flagged completeness notes from extraction: Heading styles vary significantly across the module text: some sections use 'TOPIC:' and 'SUB-TOPIC:' explicit prefixes, while materials like 'PLASTICS' and 'OTHER MATERIALS' appear without the explicit 'TOPIC:' prefix, though they share equal structural weighting and competency declarations. In GRAPHICS, the topic overview explicitly mentions four sub-topics (Drafting Aids, Plane Geometry, Symbols, and CAD), but only 'PLANE GEOMETRY' contains detailed text content in this document fragment.",
+  "curriculum": {
+    "code": "CBC_2023",
+    "name": "2023 Competency-Based Curriculum",
+    "description": "Zambia's current competency-based curriculum."
+  },
+  "subject": {
+    "name": "Design and Technology",
+    "code": "DT",
+    "description": "Design and Technology syllabus, Form 1-4 (Curriculum Development Centre)."
+  },
+  "grade": {
+    "name": "Form 1",
+    "code": "F1_CBC",
+    "level": 1,
+    "phase": "Secondary — the source scheme itself uses \"Form 1\" for this level under the 2023 CBC."
+  },
+  "terms": [
+    {
+      "name": "Term 2",
+      "sequence_number": 2,
+      "topics": [
+        {
+          "name": "MATERIALS",
+          "sequence_number": 1,
+          "description": "Covers the fundamental materials used in Design and Technology, including their properties, production, practical applications, environmental impacts, and safe usage in manufacturing products.",
+          "sub_topics": [
+            {
+              "name": "MATERIALS-MANUFACTURED BOARDS",
+              "sequence_number": 1,
+              "description": "Focuses on utilizing manufactured boards in product making using tools for measuring, marking, cutting, testing, finishing, and applying edge treatments.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Utilise manufactured boards in different situations",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "MATERIALS – METAL",
+              "sequence_number": 2,
+              "description": "Covers properties and classification of metals, iron and steel production, non-ferrous extraction, practical fabrication, environmental impacts, recycling, and workshop safety.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use metals in different situations",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "PLASTICS",
+              "sequence_number": 3,
+              "description": "Explores plastic identification, physical and mechanical properties, chemical structure, forming processes, tool manipulation, environmental impacts, practical applications, safety protocols, and conservation strategies.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use plastics in different situations",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Utilise plastics in different situations",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "OTHER MATERIALS",
+              "sequence_number": 4,
+              "description": "Examines non-traditional materials such as reed, grass, leather, glass, ceramics, canvas, rubber, and fiberglass, focusing on their properties, environmental effects, tool manipulation, safety, and sustainable reuse.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Utilise other materials in different situations",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "GRAPHICS",
+          "sequence_number": 2,
+          "description": "Covers basic knowledge, skills, values, and attitudes on graphical communication to effectively convey ideas and concepts using internationally recognized symbols and drawings.",
+          "sub_topics": [
+            {
+              "name": "PLANE GEOMETRY",
+              "sequence_number": 1,
+              "description": "Focuses on the study of shapes, sizes, and positions of objects on a flat surface, including constructing, inscribing, and circumscribing triangles and quadrilaterals for product designs.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Construct triangles from given data",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Construct quadrilaterals from given data",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "ENERGY",
+          "sequence_number": 3,
+          "description": "Focuses on energy sources used to power daily life in homes, workplaces, and industries, categorizing them into renewable and non-renewable energy sources.",
+          "sub_topics": [
+            {
+              "name": "SOURCES OF ENERGY",
+              "sequence_number": 1,
+              "description": "Covers identifying, classifying, analyzing advantages and disadvantages, and designing systems to harness various renewable and non-renewable energy sources.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Utilise sources of energy",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "STRUCTURES",
+          "sequence_number": 4,
+          "description": "Examines different types of structures that provide support, stability, and functionality to products, buildings, and engineering systems.",
+          "sub_topics": [
+            {
+              "name": "STRUCTURES",
+              "sequence_number": 1,
+              "description": "Focuses on identifying and classifying natural, artificial, frame, shell, and mass structures, researching their properties, analyzing causes of structural failure, and applying structural design principles.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Apply knowledge on structures in different situations",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "MECHANISMS",
+          "sequence_number": 5,
+          "description": "Focuses on mechanical systems and motion analysis, allowing product designers to predict mechanism performance, speed, acceleration, and efficiency.",
+          "sub_topics": [
+            {
+              "name": "MOTIONS",
+              "sequence_number": 1,
+              "description": "Covers identifying, analyzing, sketching, and applying four primary types of motion—linear, rotary, reciprocating, and oscillating—in product design and mechanical development.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Apply motions in various situations",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "ENTREPRENEURSHIP",
+          "sequence_number": 6,
+          "description": "Provides guidance on organizing business information to evaluate commercial viability and develop a comprehensive business plan for managing successful ventures.",
+          "sub_topics": [
+            {
+              "name": "BUSINESS PLAN",
+              "sequence_number": 1,
+              "description": "Focuses on understanding and formulating the key components of a business plan, including executive summary, business description, and marketing plan elements like product description, pricing, target selection, sales strategies, and advertising.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Develop a Business plan",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

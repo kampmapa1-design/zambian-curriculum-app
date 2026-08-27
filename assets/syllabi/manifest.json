@@ -359,6 +359,168 @@
       "grade_level": 12,
       "grade_name": "Grade 12",
       "file": "english_grade12_obc.json"
+    },
+    {
+      "curriculum_code": "CBC_2023",
+      "curriculum_name": "2023 Competency-Based Curriculum",
+      "subject_code": "TT",
+      "subject_name": "Travel and Tourism",
+      "grade_level": 1,
+      "grade_name": "Form 1",
+      "file": "travel_and_tourism_form1.json"
+    },
+    {
+      "curriculum_code": "CBC_2023",
+      "curriculum_name": "2023 Competency-Based Curriculum",
+      "subject_code": "FN",
+      "subject_name": "Food and Nutrition",
+      "grade_level": 1,
+      "grade_name": "Form 1",
+      "file": "food_and_nutrition_form1.json"
+    },
+    {
+      "curriculum_code": "CBC_2023",
+      "curriculum_name": "2023 Competency-Based Curriculum",
+      "subject_code": "FRE",
+      "subject_name": "French",
+      "grade_level": 1,
+      "grade_name": "Form 1",
+      "file": "french_form1.json"
+    },
+    {
+      "curriculum_code": "CBC_2023",
+      "curriculum_name": "2023 Competency-Based Curriculum",
+      "subject_code": "FF",
+      "subject_name": "Fashion and Fabrics",
+      "grade_level": 1,
+      "grade_name": "Form 1",
+      "file": "fashion_and_fabrics_form1.json"
+    },
+    {
+      "curriculum_code": "CBC_2023",
+      "curriculum_name": "2023 Competency-Based Curriculum",
+      "subject_code": "PE",
+      "subject_name": "Physical Education",
+      "grade_level": 1,
+      "grade_name": "Form 1",
+      "file": "physical_education_form1.json"
+    },
+    {
+      "curriculum_code": "CBC_2023",
+      "curriculum_name": "2023 Competency-Based Curriculum",
+      "subject_code": "LIT_ENG",
+      "subject_name": "Literature in English",
+      "grade_level": 1,
+      "grade_name": "Form 1",
+      "file": "literature_in_english_form1.json"
+    },
+    {
+      "curriculum_code": "CBC_2023",
+      "curriculum_name": "2023 Competency-Based Curriculum",
+      "subject_code": "DT",
+      "subject_name": "Design and Technology",
+      "grade_level": 1,
+      "grade_name": "Form 1",
+      "file": "design_and_technology_form1.json"
+    },
+    {
+      "curriculum_code": "CBC_2023",
+      "curriculum_name": "2023 Competency-Based Curriculum",
+      "subject_code": "HM",
+      "subject_name": "Hospitality Management",
+      "grade_level": 1,
+      "grade_name": "Form 1",
+      "file": "hospitality_management_form1.json"
+    },
+    {
+      "curriculum_code": "CBC_2023",
+      "curriculum_name": "2023 Competency-Based Curriculum",
+      "subject_code": "COMM",
+      "subject_name": "Commerce",
+      "grade_level": 1,
+      "grade_name": "Form 1",
+      "file": "commerce_form1.json"
+    },
+    {
+      "curriculum_code": "CBC_2023",
+      "curriculum_name": "2023 Competency-Based Curriculum",
+      "subject_code": "ICT",
+      "subject_name": "ICT",
+      "grade_level": 1,
+      "grade_name": "Form 1",
+      "file": "ict_form1.json"
+    },
+    {
+      "curriculum_code": "CBC_2023",
+      "curriculum_name": "2023 Competency-Based Curriculum",
+      "subject_code": "CS",
+      "subject_name": "Computer Science",
+      "grade_level": 1,
+      "grade_name": "Form 1",
+      "file": "computer_science_form1.json"
+    },
+    {
+      "curriculum_code": "CBC_2023",
+      "curriculum_name": "2023 Competency-Based Curriculum",
+      "subject_code": "GEO",
+      "subject_name": "Geography",
+      "grade_level": 1,
+      "grade_name": "Form 1",
+      "file": "geography_form1.json"
+    },
+    {
+      "curriculum_code": "CBC_2023",
+      "curriculum_name": "2023 Competency-Based Curriculum",
+      "subject_code": "AGR",
+      "subject_name": "Agricultural Science",
+      "grade_level": 1,
+      "grade_name": "Form 1",
+      "file": "agricultural_science_form1.json"
+    },
+    {
+      "curriculum_code": "CBC_2023",
+      "curriculum_name": "2023 Competency-Based Curriculum",
+      "subject_code": "BIO",
+      "subject_name": "Biology",
+      "grade_level": 1,
+      "grade_name": "Form 1",
+      "file": "biology_form1.json"
+    },
+    {
+      "curriculum_code": "CBC_2023",
+      "curriculum_name": "2023 Competency-Based Curriculum",
+      "subject_code": "RE",
+      "subject_name": "Religious Education",
+      "grade_level": 1,
+      "grade_name": "Form 1",
+      "file": "religious_education_form1.json"
+    },
+    {
+      "curriculum_code": "CBC_2023",
+      "curriculum_name": "2023 Competency-Based Curriculum",
+      "subject_code": "PHY",
+      "subject_name": "Physics",
+      "grade_level": 1,
+      "grade_name": "Form 1",
+      "file": "physics_form1.json"
+    },
+    {
+      "curriculum_code": "CBC_2023",
+      "curriculum_name": "2023 Competency-Based Curriculum",
+      "subject_code": "MUS",
+      "subject_name": "Music",
+      "grade_level": 1,
+      "grade_name": "Form 1",
+      "file": "music_form1.json"
+    },
+    {
+      "curriculum_code": "CBC_2023",
+      "curriculum_name": "2023 Competency-Based Curriculum",
+      "subject_code": "AD",
+      "subject_name": "Art and Design",
+      "grade_level": 1,
+      "grade_name": "Form 1",
+      "file": "art_and_design_form1.json"
     }
   ]
 }

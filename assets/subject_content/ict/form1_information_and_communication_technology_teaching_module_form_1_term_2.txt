@@ -1,0 +1,516 @@
+The advent of the competence-based curriculum (CBC) heralds a new era of dynamic and
+practical learning experiences designed to equip learners with skills for the 21st century.
+This Form 1 Information and Communication Technology (ICT) Teaching Module has been
+developed to provide teachers with essential tools and guidance for effectively delivering ICT
+lessons to Form 1 learners under the CBC framework.
+The module serves as a crucial resource in addressing the current gap created by the absence
+of approved textbooks tailored to the new curriculum. It aims to support teachers in aligning
+their teaching practices with the curriculum’s objectives, while also fostering innovation and
+creativity in the classroom.
+Objectives of the Module:
+1. To empower teachers with structured guidance on the delivery of ICT lessons based on
+the CBC.
+2. To provide suggested activities and assessments that are suitable for Form 1 learners,
+ensuring a balance between theoretical and practical learning.
+3. To encourage teachers to critically evaluate the module and identify gaps that may
+arise, supplementing it with their own research and context-specific resources.
+Flexibility and Adaptation: While the module offers a comprehensive set of activities and
+assessments, teachers are encouraged to adapt its content to suit the unique needs of their
+learners and the circumstances of their schools. This flexibility ensures that all learners,
+regardless of their context, can benefit from meaningful ICT education.
+As a Ministry, we have made every effort to simplify and support teachers’ transition to
+the competence-based curriculum. This module is designed to not only ease the burden
+of navigating a new curriculum but also to inspire confidence and creativity in the teaching
+process.
+It is hoped that this module will be a valuable companion in your teaching journey, fostering
+a generation of learners equipped with critical ICT skills and knowledge. Together, let us work
+towards building a robust, technology-enabled education system that meets the demands of
+our rapidly changing world.
+Faculty of Technology and Entrepreneurship
+The Curriculum Development Centre
+Ministry of Education
+
+Form 1 Term 2
+Teaching Moduleix
+Guidelines for Teachers on Using ICT Modules
+The ICT modules for Forms 1 to 4 are carefully designed to provide practical skills in using
+technology effectively in everyday life, education, and professional environments. Teachers
+can use these modules as a comprehensive guide in the absence of approved textbooks to
+deliver engaging and impactful lessons.
+1. Understand the Nature of ICT as a Subject
+ICT (Information and Communication Technology) emphasizes the practical application of
+digital tools and technologies, such as:
+• Learning how to use software applications like Microsoft Word, Excel, and PowerPoint
+for productivity.
+• Developing the ability to use the internet for research, communication, and
+collaboration.
+• Understanding digital ethics, cyber safety, and the responsible use of technology.
+As ICT focuses on practical skills, teaching should prioritize showing learners how to use digital
+tools effectively in real-life scenarios, such as preparing documents, creating presentations, or
+performing data analysis.
+2. Plan Lessons Based on Prac ical Applica ion
+• Go through each module in advance to identify the main objectives, key concepts, and
+suggested activities.
+• Plan lessons to include a balance of theory and practice, ensuring learners understand
+the purpose of each tool before using it.
+• Ensure lessons are aligned with learners’ daily experiences, such as typing assignments
+or designing simple projects, to make the content relatable.
+3. Facilitate Hands-On Learning
+Practical learning is at the heart of ICT. To achieve this:
+• Use computer labs (if available) to conduct live demonstrations of software applications
+and tools.
+• Give learners tasks such as typing a letter, preparing a budget using Excel, or designing
+a simple presentation using PowerPoint.
+• Let learners experiment with the tools, offering guidance and support as needed. For
+instance, demonstrate how to format a document in Word and then assign learners to
+replicate it.
+4. Encourage Collabora ive Learning
+ICT lends itself well to teamwork and collaboration. Teachers can:
+• Organize group tasks where learners work together to complete projects, such as
+designing a brochure or preparing a group presentation.
+• Encourage peer-to-peer learning by assigning students to mentor others during
+practical activities.
+• Foster discussions about real-world applications of ICT, such as how businesses use
+spreadsheets or databases.
+
+Information and Communication Technology
+Teaching Modulex
+• Design quizzes to test theoretical knowledge, such as identifying the features of
+different software.
+• Provide feedback promptly, highlighting areas for improvement and offering tips to
+enhance learners’ skills.
+6. Integrate Digital Tools into the Classroom
+If access to computers is limited, teachers can still use available resources:
+• Use projectors to demonstrate software features to the entire class.
+• Leverage mobile devices or tablets for activities like typing or online research.
+• Show videos or tutorials on basic ICT skills if equipment is not readily available.
+7. Promote Digital Literacy and Safety
+Digital literacy and safety are integral to ICT education. Teachers should:
+• Use the modules to teach learners about online risks such as phishing, malware, and
+cyberbullying.
+• Demonstrate safe practices, such as using strong passwords, recognizing suspicious
+emails, and protecting personal information.
+• Discuss ethical use of technology, such as respecting intellectual property rights and
+avoiding plagiarism.
+5. Focus on Assessment and Feedback
+Assessment in ICT should be ongoing and practical. Use the following approaches:
+• Assign practical tasks, such as creating a presentation or formatting a Word
+document, and grade learners based on accuracy and creativity.
+
+Form 1 Term 2
+Teaching Module1
+Topic 1.3 File Management
+Introduction
+This topic introduces learners to the basics of file management. It focuses on how to organize,
+name, and handle files and folders properly. Knowing how to manage files well makes it easier
+to keep your computer neat, work faster, and find your work when you need it.
+General Competence(s):
+• Demonstrate the ability to organize and manage files and folders efficiently,
+• Apply appropriate file naming conventions,
+• Practice safe file handling to support digital literacy.
+Learning Environment
+Physical
+• Access to computer labs with desktops, laptops, Smartphones, tablets, projectors,
+and reliable power supply
+or
+• Shared computer facilities mobile labs, laptops, Smartphones, where available,
+with printed guides for reference during limited computer access.
+Virtual
+• Computers with operating systems (Windows, Linux, Android…), File Explorer software,
+and cloud storage access
+or
+• Basic computers or shared devices with file management software; offline simulations
+if internet is unavailable.
+Hook
+Thought-provoking question: Imagine walking into your room and seeing papers all over
+the place on the bed, the floor, and the desk. Some are homework, some are letters, and
+others are important notes. But none of them are labeled, and everything is mixed up.
+How would you fix this mess?
+Key Terms
+• File
+• Folder
+• Subfolder
+• File Naming Convention
+• File Extension
+• Directory
+• File Path
+• File Organization
+Technological:
+• Online platforms (Google Classroom
+
+Information and Communication Technology
+Teaching Module2
+Sub topic 1.3.1 Basics of file management
+Overview
+This sub-topic introduces learners to essential skills needed to manage digital files and
+folders effectively. It covers how to create, organize, name, store, and retrieve files in a
+structured way. These basics helps users keep their computer systems clean and efficient,
+avoid losing work, and save time when accessing documents. Mastering file management is
+a foundation for good digital practices in both academic and professional settings.
+Specific Competence(s)
+1.3.1.1 Use different file naming conventions
+1.3.1.2 Demonstrate safe file handling practices
+1.3.1.3 Organize and manage files and folders.
+Learning Activities
+1: Creating Folders and Subfolders
+Activity: Learners creating folders and subfolders (creating a main folder and organize
+files into subfolders based on topics, subjects, or file types…)
+2: Naming Files and Folders
+Activity: Learners naming files and folders (practicing using descriptive and consistent
+names for files and folders…)
+3: Copying, Moving, and Deleting Files
+Activity: Learners copying, moving, and deleting Files (Demonstrating how to copy files to
+a different location, move files into different locations both internally and externally, and
+delete unnecessary files while avoiding accidental deletion of important ones)
+4: File Sorting and Searching
+Activity: Learners sorting and searching files (name, date, or size …) using different search
+options to locate files, folders
+5. Backing up
+Activity: Learners backing up their files using different storage media (flash disk, Google
+Drive…).
+6. Discussing the importance of saving files regularly
+Activity: Learners discussing the importance of saving files regularly (prevent data loss,
+protect data against ransomware, malware…)
+7. File restoration
+Activity: learners restoring deleted files (recycle bin, cloud storage restoration …)
+
+Form 1 Term 2
+Teaching Module3
+How will the Activities Be Conducted
+• Demonstration
+• Hands-On Practice
+• Paper-Based Alternative
+• Group Discussion
+• Blended Learning
+Content Tips
+• File – A collection of information saved on a computer (document, picture, music …)
+• Folder – A container used to store files and other folders.
+• File Management – The process of naming, saving, organizing, and keeping track of
+files and folders.
+Why File Management Is Important:
+• Helps you find files quickly.
+• Keeps your work organized.
+• Saves time and effort.
+• Prevents losing important files.
+• Makes the computer run more smoothly.
+Examples of Good File Management:
+• Giving files clear names (ICT, Homework, June …)
+• Keeping similar files in one folder.
+• Deleting files you no longer need.
+• Creating backups of important files
+Suggested Teaching and Learning Materials
+• Computers with Windows, Linux, Android… operating systems.
+• USB drives …
+• Sample files (.docx, .pdf, .jpg…)
+• Printed handouts
+• Projector or whiteboard
+• Simulation software
+Expected Standard
+• File naming conventions used appropriately
+• Safe file handling practices demonstrated correctly
+• Files and folders organized and managed accordingly
+
+Information and Communication Technology
+Teaching Module4
+Key Points
+• File management involves creating, naming, and organizing files and folders for
+efficiency.
+• Descriptive and consistent file names improve retrieval and reduce confusion.
+• Safe file handling includes recognizing file extensions and avoiding accidental deletions.
+• Organized folder structures enhance productivity and support digital literacy skills.
+Assessment Activities
+• Practical Task
+• Quiz
+• Paper-Based Assessment
+• Peer Review
+• Portfolio Task
+
+Form 1 Term 2
+Teaching Module5
+Topic 1.4: Basics of the Internet and Online Tools
+1. Introduction
+This topic introduces learners to the basics of the Internet and common online tools. It explains
+how the Internet works, its main services, and the tools used for online communication and
+teamwork. Learners will also explore how the Internet affects everyday life, especially in areas
+like communication, learning, business, and entertainment
+General Competence(s):
+• Identify key Internet services and their uses.
+• Use basic online tools for communication and collaboration.
+• Evaluate the impact of the Internet on different aspects of society.
+Learning Environment
+Physical
+• Access to computer labs equipped with communication, Learning, corroboration, tools
+(Gmail, Outlook, Zoom, Moodle…)
+OR
+• Use of shared devices or simulation software on available computers, Offline resources
+like diagrams and physical models
+Virtual
+• Online platforms (Tinkercad, Wokwi, supplemented by video tutorials and interactive
+IoT courses.
+Technological
+• Laptops/ desktops, internet connectivity (Gmail, Outlook, Zoom, Moodle…)
+OR
+• Shared computers or low-spec devices with pre-installed simulation software.
+Basic communication, learning … tools for group activities.
+Hook
+Thought-provoking question: “Imagine you want to learn something new, chat with
+friends, or buy something online. Chances are, you would use the Internet. But have you
+ever wondered how it actually works behind the scenes?
+Key Terms
+• Internet
+• World Wide Web
+• Web Browser
+• Search Engine
+• Email
+• URL
+• IP Address
+• Online Collaboration Tools
+• Cloud Storage
+• Cyber security
+
+Information and Communication Technology
+Teaching Module6
+Specific Competence
+1.4.1.1 Demonstrate understanding of how internet works
+1.4.1.2 Use online tools to search and navigate the internet
+1.4.1.3 Apply basic online safety practices
+Learning Activities
+1. Discussing the uses of the internet in daily lives
+Activity: Learners discussing the uses of the internet in daily lives (Communication,
+Researching, Entertainment …)
+2. Identifying and using networking devices
+Activity: Learners identifying and using networking devices (modem, router, Network
+Interface Card, Switch …)
+3. Discussing web browser and search engine
+Activity: learners discussing web browser (Chrome, Edge, Firefox…) and search engine
+(Bing, Yahoo, Google …)
+4. Using a web browser to access educational websites
+Activity: Learners using a web browser (Chrome, Edge, Firefox…) and search engine (Bing,
+Yahoo, Google …) to access educational websites
+5. Using online learning tools
+Activity: Learners using online learning tools (Google Classroom, Zoom …)
+6. Discussing the importance of using strong passwords and browsing safely.
+Activity: Learners discussing the importance of using strong passwords (preventing cyber-
+attacks, protecting person information …) and browsing safely (avoiding online scams,
+avoiding harmful content …)
+7. Demonstrating basic online safety practices
+Activity: Learners demonstrating basic online safety practices (Multi-Factor Authentication,
+log out after use, use strong password …)
+How will the Activities Be Conducted?
+• In groups, pairs, and individually.
+• Learners will use local examples to understand global concepts.
+• Activities will be interactive, with minimal teacher interference.
+• Field trips
+• Research & surveys
+Content Tips:
+The Internet
+• A network that connects millions of computers around the world.
+• Helps people communicate, share information, and access services.
+
+Form 1 Term 2
+Teaching Module7
+A Web Browser
+• A program used to open websites.
+• Examples: Google Chrome, Mozilla Firefox, Microsoft Edge, Safari…
+A Search Engine
+• A website used to find information on the Internet.
+• Examples: Google, Bing, Yahoo, DuckDuckGo…
+Examples of Online Tools
+Communication Tools
+• Email (Yahoo, Gmail…)
+• Chat apps (Messenger, WhatsApp…)
+• Video calling (Zoom, Google Meet…)
+Learning Tools
+• Google Classroom, Khan Academy, YouTube
+Collaboration Tools
+• Google Docs, Padlet, Jamboard
+E-commerce Tools
+• Online shops (E-bay, Alibab Amazon, OLX…)
+• Mobile money apps (Airtel Money, MTN MoMo…)
+Importance of the Internet
+• Makes learning easier and faster.
+
+Information and Communication Technology
+Teaching Module8
+• Helps people connect across the world.
+• Used for shopping, banking, and sharing ideas.
+• Makes communication quick and easy.
+Internet Safety
+• Don’t share personal information with strangers.
+• Use strong passwords.
+• Don’t click on unknown links.
+• Ask an adult if something looks suspicious online
+Suggested Teaching and Learning Materials
+• Internet-connected devices
+• Projector or whiteboard
+• Online tools videos (YouTube clips …)
+• Paper, markers (for posters)
+• Case study printouts
+Expected Standard
+• Understanding how internet works demonstrated accordingly
+• Online tools to search and navigate the internet used correctly
+• Online safety practices correctly applied
+Assessment
+1. Formative Assessment: Observation & Feedback, Quizzes, Peer Review …
+2. Summative Assessment: Project-Based Task …
+Key Points
+• The Internet is a global network enabling communication, information access, and
+digital interaction.
+• Internet services include email, search engines, and online collaboration.
+• Online tools enhance communication and productivity.
+• Safe and ethical use of the Internet is essential in the digital age.
+
+Form 1 Term 2
+Teaching Module9
+ICT SAMPLE OF LESSON PLAN
+MINISTRY OF EDUCATION
+MAPUTOSA SECONDARY SCHOOL
+LESSON PLAN
+SUBJECT: Information and Communication Technology (ICT)
+NAME OF TEACHER: John Kayamba TIME: 08:20-09:40
+LEVEL: Form 1 K DURATION: 80 Minutes
+TOPIC: 1.3 File Management NO. OF PUPILS:50
+SUB-TOPIC: 1.3.1 Basics of File Management BOYS: 25 GIRLS: 25
+GENERAL COMPETENCES:
+• Demonstrate the ability to organize and manage files and folders efficiently.
+• Apply appropriate file naming conventions.
+• Practice safe file handling to support digital literacy.
+SPECIFIC COMPETENCES:
+• 1.3.1.1 Use different file naming conventions.
+LESSON GOAL: By the end of this lesson, learners should create folders and subfolders; use
+appropriate file naming conventions to organize files meaningfully.
+PRIOR KNOWLEDGE:
+• Learners familiar with categorizing objects.
+REFERENCES:
+• ICT Module 2, Term 2 Page… (2023 Curriculum)
+• Official ICT Ordinary Level Syllabus (2023)
+LEARNING ENVIRONMENT
+• Physical: Classroom, ICT Laboratory
+• Virtual: Online platforms
+• Technological: Laptops, tablets, projector, file explorer software, Smartphones
+TEACHING AND LEARNING MATERIALS/RESOURCES
+• Computers, tablets, Smartphones
+• Projector or whiteboard
+• Sample files ( .docx, .pdf)
+• Printed guides for naming conventions
+• Folders/files for demonstration
+EXPECTED STANDARD:
+File naming conventions used appropriately
+
+Information and Communication Technology
+Teaching Module10
+LESSON PROGRESSION
+STAGES TEACHER’S ROLE LEARNERS’ ROLE A S S E S S M E N T
+CRITERIA
+INTRODUCTION
+5 Minutes
+Present a Hook Question;
+“Imagine walking into your
+room and seeing papers all
+over the place on the bed,
+the floor, and the desk. Some
+are homework, some are let-
+ters, and others are import-
+ant notes. But none of them
+are labeled, and everything is
+mixed up. How would you fix
+this mess?”
+Participate in the dis-
+cussion and respond
+to the scenario
+Learners relate
+the analogy to
+digital file organi-
+zation.
+LESSON DEVEL-
+OPMENT
+10 minutes
+Present key concepts: file,
+folder, directory, naming con-
+vention, file extension
+Listen and take notes.
+Answer clarifying
+questions.
+Learners describe
+key file manage-
+ment terms
+Activity 1:
+Creating Folders
+and Subfolders
+10 Minutes
+Demonstrate how to create
+folders/subfolders
+Follow along prac-
+tically on devices.
+Create folders e.g.
+“Subjects > ICT >
+Homework.’’
+Learners create a
+structured folder
+system correctly
+Activity 2: Nam-
+ing Folders and
+Subfolders
+15 Minutes
+Show how to name folders
+and sub-folders. Guide learn-
+ers through exercises.
+Learners creating
+folders and subfold-
+ers (creating a main
+folder and organize
+files into subfolders
+based on topics, sub-
+jects, or file types…)
+Folders and
+s u b - f o l d e r s
+named correctly.
+EXERCISE
+20 Minutes
+Provide a worksheet or prac-
+tical task (e.g., organize files
+into subject-based folders and
+name them)
+Complete the task in-
+dividually or in pairs.
+Peer-review each
+other’s folder struc-
+ture.
+Folders are prop-
+erly organized,
+named, and files
+correctly handled
+CONCLUSION
+10 Minutes Recap key points of the lesson.
+Emphasize the importance of
+file naming and safe handling
+Share what they
+learned and ask final
+questions.
+Learners can ver-
+bally explain file
+m a n a g e m e n t
+benefits and tech-
+niques
+HOMEWORK Ask learners to organize files
+on their personal flash drive
+or home PC using folder nam-
+ing techniques learned.
+Practice at home and
+prepare to present
+before the next les-
+son
+Evidence of file or-
+ganization in next
+class.
+
+Form 1 Term 2
+Teaching Module11
+LESSON EVALUATION:
+Evaluation criteria: Lesson planning and competencies, teaching strategies, student
+engagement, reflection and improvement.
+Example:
+The majority of learners were able to create and name folders, apply naming conventions,
+and perform safe file operations. They participated actively in discussions and demonstrated
+understanding through practical tasks. Some learners may need further reinforcement
+consistent naming format

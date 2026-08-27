@@ -92,6 +92,42 @@ flutter:
     - assets/subject_content/mathematics/form_2_adapted_mathematics_form_2_term_2.txt
     - assets/subject_content/principles_of_accounts/form_1_principles_of_accounts_teaching_module_form_1_term_2.txt
     - assets/subject_content/principles_of_accounts/form_1_principles_of_accounts_teaching_module.txt
+    - assets/subject_content/travel_and_tourism/form1_travel_and_tourism_teaching_module_form_1_term_2.txt
+    - assets/syllabi/travel_and_tourism_form1.json
+    - assets/subject_content/food_and_nutrition/form1_food_and_nutrition_teaching_module_form_1_term_2.txt
+    - assets/syllabi/food_and_nutrition_form1.json
+    - assets/subject_content/french/form1_french_language_teaching_module_form_1_term_2.txt
+    - assets/syllabi/french_form1.json
+    - assets/subject_content/fashion_and_fabrics/form1_fashion_and_fabrics_teaching_module_form_1_term_2.txt
+    - assets/syllabi/fashion_and_fabrics_form1.json
+    - assets/subject_content/physical_education/form1_physical_education_and_sport_teaching_module_form_1_term_2.txt
+    - assets/syllabi/physical_education_form1.json
+    - assets/subject_content/literature_in_english/form1_literature_in_english_teaching_module_form_1_term_2.txt
+    - assets/syllabi/literature_in_english_form1.json
+    - assets/subject_content/design_and_technology/form1_design_and_technology_teaching_module_form_1_term_2.txt
+    - assets/syllabi/design_and_technology_form1.json
+    - assets/subject_content/hospitality_management/form1_hospitality_management_teaching_module_form1_term_2.txt
+    - assets/syllabi/hospitality_management_form1.json
+    - assets/subject_content/commerce/form1_commerce_teaching_module_form_1_term_2.txt
+    - assets/syllabi/commerce_form1.json
+    - assets/subject_content/ict/form1_information_and_communication_technology_teaching_module_form_1_term_2.txt
+    - assets/syllabi/ict_form1.json
+    - assets/subject_content/computer_science/form1_computer_science_teaching_module_form_1_term_2.txt
+    - assets/syllabi/computer_science_form1.json
+    - assets/subject_content/geography/form1_geography_teaching_module_form_1_term_2.txt
+    - assets/syllabi/geography_form1.json
+    - assets/subject_content/agricultural_science/form1_agricultural_science_teaching_module_form_1_term_2.txt
+    - assets/syllabi/agricultural_science_form1.json
+    - assets/subject_content/biology/form1_biology_teaching_module_form_1_term_2.txt
+    - assets/syllabi/biology_form1.json
+    - assets/subject_content/religious_education/form1_religious_education_teaching_module.txt
+    - assets/syllabi/religious_education_form1.json
+    - assets/subject_content/physics/form1_physics_form_1_teaching_module.txt
+    - assets/syllabi/physics_form1.json
+    - assets/subject_content/music/form1_musical_art_education_teaching_module.txt
+    - assets/syllabi/music_form1.json
+    - assets/subject_content/art_and_design/form1_art_and_design_module.txt
+    - assets/syllabi/art_and_design_form1.json
     - assets/lesson_plans/manifest.json
     - assets/lesson_plans/civic_education_grade10-12.json
     - assets/lesson_plans/history_form1.json
