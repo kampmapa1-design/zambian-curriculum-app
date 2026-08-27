@@ -653,7 +653,7 @@ export const cleanPastPaperDownload = onCall<CleanPastPaperDownloadRequest>(
 // downloaded Teaching Module PDF (or similar "Subject Content Material"),
 // for the Flutter app's on-device Subject Content Database
 // (SubjectContentRepository) to store in place of the much bulkier raw
-// PDF. Runs server-side because Node's pdf-parse (built on pdf.js) is a
+// PDF. Runs server-side because pdfjs-dist (Mozilla's real PDF.js) is a
 // mature, proven text-extraction path with no Dart equivalent — see
 // subjectContent.ts for exactly how, and why real people's names from a
 // module's front matter never end up in what's stored. The app sends the

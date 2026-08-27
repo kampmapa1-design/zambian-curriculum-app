@@ -1,0 +1,1007 @@
+The Form 1 Mathematics Teaching Module has been developed to guide teachers on how to facilitate
+competence-based lessons at this level. The module aims to provide quality education that is aligned
+with the competence-based curriculum and 21st Century Skills, that is developing knowledge, skills,
+values and positive attitudes that are aimed at enabling learners to live and grow into productive and
+useful members of their communities and the Zambian society.
+The purpose of the module is to illustrate teaching and learning activities that:
+a. are consistent with teaching and learning in a competence-based curriculum;
+b. show processes that allow achievement of 21st Century Skills such as creativity, collaboration,
+communication and critical thinking;
+c. Illustrate what activity-based and learner-centred teaching and learning could look like.
+PURPOSE OF THE MODULE
+HOW TO USE THE MODULE
+This module provides suggested learning activities and teaching strategies that enhance learners’
+mathematical competences. The suggested activities are designed to offer learners hands-on experiences
+through manipulation of tasks that are interactive and learning through practice. We should bear in
+mind that the desired competences and 21st century skills will NOT be achieved by the topics ‘covered’
+but by the manner in which teaching and learning activities are carried out. For example, asking learners
+to give reasons for their answers, whether or not the answer is correct; to plan for solving a problem;
+to consider alternative ways of solving a problem even if the first method yields a correct answer and
+to consider which of the methods is better; to acknowledge that even in mathematics, more than one
+correct answer is possible, for example, “What two numbers when added have 5 as the answer?”
+Activities in the Module are meant to be incorporated in the teacher’s lesson plan. The activities are
+NOT meant to replace the teacher’s lesson plan. The topics and activities in the Module are as specified
+in the 2023 Mathematics Form 1to 4Syllabus. There might be terms used in the Module that are not
+exactly the same as those in the syllabus, but this is in the interest of using language that might be more
+learner-friendly. Teachers are encouraged to vary the environment when conducting lessons in order
+to create a good atmosphere for learning and teaching which is learner friendly. Environment may be
+man made, natural or technological.
+Each topic in the Module begins with a key question. A key question seeks to stimulate learners’
+curiosity and motivate them to learn. Teachers may create their own key questions that provoke their
+learners’ curiosity and motivation.
+
+xMATHEMATICS I TEACHING MODULE FORM 1-TERM 2x
+Key terms Content Tips Assessment
+Key questionActivityDiscussion
+This module utilises icons as graphics to represent instructions , enhancing the learning experience for
+learners, icons categorize and organise instructions, making navigation easier for teachers.
+ICONS USED IN THIS MODULE
+
+1MATHEMATICS I TEACHING MODULE FORM 1-TERM 21
+INTRODUCTION
+Algebra is a branch of mathematics that uses variables to represent unknown quantities. It
+allows us to formulate equations, analyze relationships, and solve real-life problems. Algebra
+trains the brain to break down complex problems into manageable steps; a skill that is valuable
+in everything we do, from planning a budget to fixing a car.
+Key terms :
+Coefficients, Variables, Terms, Algebraic Expressions, Simplify, Evaluate.
+General competence(s):
+Analytical Thinking, Problem Solving, Creativity, Critical Thinking, Collaboration, Financial
+Literacy, Digital Literacy
+Key question
+SUB-TOPIC 1: Algebraic Expressions
+Introduction
+Algebraic expressions help us describe and solve real-life problems where values can change.
+Whether you are planning a budget, tracing time, or figuring out costs, we can explore and
+formulate algebraic expressions to represent these situations.
+Specific competence: Apply algebraic expressions in real life.
+Learning activity 1: Exploring and formulating algebraic expressions from
+everyday life activities (using letters to represent the number of things, managing
+budgets, planning, production, tracking expenses, scheduling activities,
+measures…)
+Activity 1.1: Class Tour
+Instructions
+ Put learners in groups.
+ Present the learners with the following scenario.
+“Your class is planning a tour to one of the falls in Zambia.Each learner is required to pay
+TOPIC 5: ALGEBRA
+
+2MATHEMATICS I TEACHING MODULE FORM 1-TERM 22
+for transport, entrance tickets and lunch.”Determine the total cost of this tour.
+ Learners present their work to the whole class.
+Content Tips
+From the group activity learners should create an expression to represent the total cost of the tour.
+Learners are likely to come up with different options such as:
+ Total cost of transport + total cost of ticket + total cost of lunch.
+ The number of learners x (transport + ticket + lunch)
+ where nx + ny + nz is the number of learners, x is the cost of transport, y is the cost of each ticket
+and z is the cost of lunch.
+To create algebraic expressions, identify the unknown quantity with a variable (like x, use numbers
+and operations (addition, subtraction, multiplication, division to represent relationships, and combine
+them into a single expression.
+Ensure that learners use letters to represent unknowns. For instance, x to represent the cost of transport,
+y the cost of each ticket and z the cost of lunch.
+Highlight that a term is a number, variable (s) or combination of the two by multiplication or division.
+An expression is a group of terms combined using addition or subtraction is either a single number or
+a product of numbers and variables. For instance, 4x and 5 are terms in the expression 4x + 5.
+Activity 1.2: Situational representations
+Instructions: Place the learners in pairs and give them the following task.
+Task :
+Write an algebraic expression to represent each of the following situations and state what each letter
+represents:
+1. A bus leaves Lusaka heading to Monze with 50 passengers. More passengers get on in Kafue, and
+some get off in Mazabuka. Represent the total number of passengers who reached Monze.
+2. Veronica has 5 oranges. Enechela gives her some more, how many does she have altogether?
+3. A Pumpkin is cut into equal slices. You eat 3 slices, and some are left over. How many slices were
+left over?
+4. One pencil costs K2, what is the cost of n pencils?
+5. When anumber is increased by 7, what is the new number ?
+
+3MATHEMATICS I TEACHING MODULE FORM 1-TERM 23
+Content Tips
+Provide more scenarios for learners to formulate algebraic expressions to consolidate the learning.
+Activity 1.3: Situational representations
+Instructions:
+Individual learners find solutions to the task given
+Task:
+1. The length of a rectangular garden is 3 metres longer than its width. Form an expression for its
+area.
+2. Liam is planning a road trip. His car consumes m liters of fuel per kilometre, and the total distance
+of the trip is d kilometres. If fuel costs p kwacha per liter, how much will he spend on fuel for the
+trip?
+3. Sophia is organizing a party. She buys x packs of plates, and each pack contains 14 plates. If she
+already has 22plates at home, how many plates does she have in total?
+4. The temperature at sunrise is T degrees. By noon, it increases by 5 degrees, and by evening, it
+drops by 8 degrees. What is the temperature in the evening?
+Learning activity 2: Distinguishing coefficients and variables in an algebraic expression.
+Activity 2.1: Brainstorming
+Instructions
+ Place learners in groups
+ Have each group list the expressions formulated in activities already done in 1.1, 1.2 and 1.3
+Discussion:
+Answer the following questions:
+1. Why are letters used in these mathematical expressions?
+2. What do you notice about the letters in the expressions listed?
+3. What happens if I change 3x to 5x, does the letter change? Give reasons for your answer.
+How is the role of 2 different from the role of x in 2x?
+
+4MATHEMATICS I TEACHING MODULE FORM 1-TERM 24
+Content Tips
+Help learners to realise that a variable is a symbol/letter that can change.
+For instance in the expression 4x + 5, x is the variable. The number that multiplies a variable is the
+coefficient, in the case of 4x + 5, 4 is a coefficient while 5 is a constant.
+From the activity, the coefficient of z is 1. Ensure learners understand that when there is no number
+attached to the variable the coefficient is 1.
+Learning activity 3: Grouping like and unlike terms
+Activity 3.1: Shopping list
+Group work
+Spiwe, Shift, and Shams were given pocket money to buy fruits. Let the cost of a banana be x, the cost of
+an orange be y, and the cost of an apple be z. The price of a pineapple is the same as that of a banana,
+the price of a lemon is the same as that of an orange, and the price of a mango is the same as that of
+an apple. Spiwe bought 3 bananas, 4 oranges, and 5 apples. Shift bought 1 pineapple, 2 oranges, and 1
+mango. Shams bought 10 bananas, 3 lemons, and 7 apples.
+1. Write an algebraic expression to represent the total amount of money spent by;
+a. Spiwe
+b. Shift
+c. Shams
+d. All the three together.
+2. Write expressions for the cost of the fruits with the same price (three expressions are expected)
+3. Explain your answer in part (ii)
+4. Using the expressions in (ii) write an expression for the total cost.
+Content tips
+Based on the group activity, bananas and pineapples have the same cost (x), oranges and lemons have
+the same cost (y) and apples and mangoes have the same cost (z). The total cost will be;
+Spiwe: 3x + 4y + 5z,
+Shift: x + 2y+ z
+Shams: 10x + 3y + 7z,
+All three: 3x + 4y + 5z + x + 2y+ z + 10x + 3y + 7z,
+Fruits with the same price will give us like terms shown by the following expressions;3x+x+10x,4y+2y
++3yand 5z + 7z + The expression for the total cost is 3x+x+10x + 4y+2y +3y + 5z + z +7z.
+
+5MATHEMATICS I TEACHING MODULE FORM 1-TERM 25
+Like terms are terms with same variables and same power while unlike terms are terms with different
+variables or same variables but with different powers.
+Activity 3.2: Card Sorting
+Instructions
+ In groups give learners cards with algebraic terms ( 3x, -2y, 5x,25x2, 7y, -4x,6y, x2,…)
+ Ask them to sort the cards into groups of like terms and unlike terms and give reasons for their
+choice.
+ Learners present their arrangements to the class.
+Assessment
+From the following table, group the like terms :
+4f 3r 7y 5s 16x 8f
+4y 5f 15s 21f 45r 9s
+3s 47r 2x 9y 95 8r
+38 47 45 7s 17 y
+6x 35 63r 24 74 7x
+Learning activity 4: Simplifying algebraic expressions (addition, subtraction,
+multiplication and division)
+Activity4.1: Shopping list (addition and subtraction)
+Pair work
+Instructions : place the Learners in pairs and let them present their solutions to the class.
+Task:
+Refer to activity 3.1
+1. Spiwe decides to go to the shop again, she decides to maintain her previous shopping list but adds
+more fruits; 5 pineapples and 2 mangoes. Write an expression for her new total cost in its simplest
+form.
+2. Shams returns to the shop and maintains his shopping list. He is given a discount that is the same
+as the cost of 2 pineapples, write an expression for Shams’ new bill in its simplest form.
+3. Add the terms in question 1 and 2 to form a single expression, in its simplest form.
+
+6MATHEMATICS I TEACHING MODULE FORM 1-TERM 26
+Content Tips
+From the shopping list for Spiwe, the simplified total cost is 8x + 4y +7z and Shams’ total cost is given by
+10x – 2x + 3y + 7z which simplifies to 8x + 3y + 7z, like terms can be added and subtracted while unlike
+terms can simplified by adding or subtracting.
+Activity 4.2: Formulating Algebraic expressions
+Pair work
+Instructions
+ Put learners in pairs/small groups
+ Give learners different questions and ask them to explore each of the questions
+ Ask selected pairs to present their solutions to the whole class
+Task :
+1. You are helping organise school supply kits for classrooms, each classroom receives 4x boxes of
+pencils (x is the number of learners in each class and each learner gets 4 boxes), there are y
+classrooms in total. How many boxes of pencils are needed altogether?
+2. A store sells x number of gift boxes, and each box contains x chocolates. How many chocolates
+were sold in total?
+3. A rectangular field is x metres wide and y metres long. What is the expression for its area?
+4. If g bags of maize cost k3300, write down the cost for y bags of maize.
+5. A room has an area of (4a x 3b) square metres, if a single tile has an area of 2a square metres,
+i. Write an expression for the number of tiles needed to fill the entire room
+ii. simplify the expression in (i)
+Content tips
+ Highlight the steps to follow when multiplying or dividing terms . In question 1, boxes per
+classroom 4×x=4x, there are y classrooms therefore the total number of boxes should be
+4x×y = 4xy.
+Ensure that learners pay attention to positive and negative signs when combining terms.
+
+7MATHEMATICS I TEACHING MODULE FORM 1-TERM 27
+Learning Activity 5: Evaluating algebraic expressions by substituting numerical values
+Key question
+Activity 5.1: Substitution
+Instructions
+ In pairs let the learners explore the given questions
+ Selected pairs to present their work to the whole class
+Task :
+1. From the expressions in activity 3.1 if the bananas were K5 each, oranges K7 each and apples K 8
+each. Find the total cost for the fruits that were bought by:
+i. Spiwe
+ii. Shift
+iii. Shams
+iv. All the three learners
+2. From the expression in activity 4.2 (question 5), find the number of tiles needed to fill the entire
+room, if a = 2 and b = 4.
+Content tips
+To find the cost of fruits for each learner, Substitute the actual values for the cost of each fruit in the
+expressions: and
+For instance,
+Ö 3x+4y+5z
+Ö 3(5) + 4(7) + 5(8)
+Ö 15+28+40
+Ö K83
+
+8MATHEMATICS I TEACHING MODULE FORM 1-TERM 28
+ Evaluating an algebraic expression means finding the value of the expression for a specific value
+of the variable(s). Substitute the value of the variable(s) into the expression and then simplify it
+according to arithmetic rules.
+ Construct more tasks that may involve substitution into an expression that has more than
+three operations in one, to ensure that learners apply order of operations (PEMDAS/BODMAS):
+ Parentheses (P)
+ Exponents (E)
+ Multiplication and Division (MD)
+ Addition and Subtraction (AS)
+Assessment
+1. A bike rental shop charges K15 per day for renting a bike and an additional K5 for insurance.
+i. Write an expression to represent the total cost of renting a bike for d days
+ii. What is the variable in the expression?
+iii. What is the coefficient of the d in the expression?
+iv. What is the cost for renting a bike for 7 days?
+2. Sarah has a budget of (100 + x) kwacha for her party. She spends 2x kwacha on decorations. How
+much money does she have left?
+3. Mr Miti’s car fuel efficiency is 12 km per liter, and petrol costs K28 per liter.
+i. Write an expression for the total cost of a trip covering d kilometres.
+ii. How much does a 360 km trip cost?
+4. A prepaid plan charges K1 per minute for calls and K0.50 per MB of data.
+i. If you talk for g minutes and use h MB of data, write an expression for the total cost.
+ii. What will be the total cost if you talk for 30 minutes and use 200 MB of data?
+5. A birthday party venue costs K1000 for booking, plus K150 per guest.
+i. Write an expression for the total cost if y guests attend.
+ii. What is the cost for 15 guests?
+6. A farmer has 12x apples and wants to pack them into 3x baskets equally. How many apples
+will each basket contain?
+
+9MATHEMATICS I TEACHING MODULE FORM 1-TERM 29
+Project:Budget Planner with Algebra
+Instructions
+ Assign each learner a scenario (planning a party, a weekly grocery trip…).
+ Use algebraic expressions to represent costs of different items, (atleast 10)
+ Have them write and simplify total cost expressions.
+ Have them evaluate for different values of their choice.
+Product pricing ( another possible assignment )
+Instructions
+Give the following task to each learner. give them enough time to find solutions
+ Select a custom product business of your choice (selling t-shirts, selling snacks, digital art,
+tutoring sessions....). The business you select should be one relevant to your local community.
+i. Create a pricing expression using an algebraic expression with at least, 2 variables, 2 different
+coefficients and a 1 constant.
+ii. Describe your business (what you are selling / offering)
+iii. Explain what each variable, coefficient and constant represent.
+iv. Explain how the algebraic expression helps you in your business.
+Expected Standard
+Algebraic expressions applied in a variety of real-life situations
+
+10MATHEMATICS I TEACHING MODULE FORM 1-TERM 210
+Key Terms:
+Matrix,Rows, Columns, Order of a matrix, Transpose of a Matrix, singular, equal, identity Matrix.
+General Competence(s): Analytical Thinking, Creativity and Innovation, problem solving, digital literacy,
+collaboration and Communication.
+Sub-Topic–Operations on Matrices
+Introduction
+Operations on Matrices allow us to manipulate and analyze data in a structured and powerful way,
+making them essential in both theoretical and real-world applications.In mathematics, we can perform
+various operations on matrices, such as transposition, addition, subtraction, scalar multiplication,
+and matrix multiplication, each following specific rules.
+Specific competence:Apply Matrices to real life situations
+Learning Activity 1: Formulating matrices from real life situations (making a payroll,
+shop records, distribution of resources, planning...)
+Activity 1.1 Data Tracker ( pre class activity)
+Instructions :
+ Place learners into groups.
+ Ask learners to collect or create data based on any one of the categories given.
+ Assign the activity to the groups at least a week before the class. Ensure that each category is
+given to more than one group.
+Categories:
+i. Sales tracker: in a store / Kantemba of their choice learners to track how many of a particular
+item were sold each day ( Monday to Friday) in a particular week. Pick any 4 store items of your
+choice.
+T0PIC 6: MATRICES
+Introduction
+Matrices are fundamental structures in mathematics that allow us to organize and manipulate data
+from different life situations efficiently. These situations vary from test results of learners to sales
+record in a shop. In this topic we will look at the different operations that can be applied on matrices.
+
+11MATHEMATICS I TEACHING MODULE FORM 1-TERM 211
+ii. Classroom test score tracker: learners to record the test scores of 10 selected learners over 3
+different tests in the same subject
+iii. Restaurant food order tracker: record the orders received for food items (maximum four) overa
+three day period.
+iv. Daily Temperature Record: record the temperature each day (in degree Celsius) for three days at
+noon.
+Activity 1.2 Data organization.
+Instructions:
+ Ask each group to present the data collected in activity 1.1 to the class. This should be done on
+appropriate materials or tools (manilla paper, flip chart, projector …)
+ From the presentations made you may ask the following questions:
+i. Which of the data presentations is easier to interpret? Give reasons.
+ii. Are there any other ways that the data can be presented apart from the ones shown from the
+groups? If so describe them.
+ If the data has not been presented in rows and columns. Ask the groups to organize the data in
+rows and columns. If it has, then bring the focus of the class to that presentation.
+ Ask learners toremove the labels, enclose the data in brackets (), and denote it with a capital
+letter of their choice.
+Content Tips
+Ensure that the learners clearly label rows and columns depending on the category selected and extract
+the corresponding matrix. For instance, in sales tracking:
+Item/ day Monday Tuesday Wednesday Thursday Friday
+Bread 10 8 12 15 16
+Cooking Oil 5 6 10 3 8
+Sugar 8 10 7 7 10
+Soap 6 5 7 8 9
+ The data can be presented in form of a matrix where Columns represent days of the week and
+rows represent type of food sold on each day (Bread, Cooking Oil, Sugar, Soap), as the following
+shows:
+
+12MATHEMATICS I TEACHING MODULE FORM 1-TERM 212
+ For the same category learners may represent the matrix where Columns represent type of
+food sold on each day (Bread, Cooking Oil, Sugar, Soap…) and rows represent days of the week,
+as the following shows:
+ Ensure that the learners clearly distinguish rows from columns (use everyday arrangements to
+consolidate the understanding)
+Activity 1.2 Individual work
+1. A bakery sells bread, cakes, and biscuits. On Monday they sold 200 loaves of bread , 50 cakesand 90
+biscuits. On Tuesday 180 loaves of bread , 45 cakes and 110biscuits were sold while on Wednesday
+they sold 205 loaves of bread , 60 cakes and 89 biscuits. Present this data using Matrices.
+2. An organization is distributing food supplies in tones to Central, Western, Northwestern and
+Southern.
+Central Western Northwestern Southern
+Maize 100 150 120 110
+Beans 80 90 85 70
+Rice 50 60 55 45
+a. Represent the information given using a Matrix.
+b. From the matrix
+i. what do the numbers in the second row represent?
+ii. What do the numbers in the third column represent?
+iii. What does the entry in row 2 column 3 represent?
+Learning Activity 2: Identifying the order of Matrices
+Discussion ( think pair share)
+Instructions:
+ Learners to tackle the task individually, share with a pair/ small group.
+ Selected pairs / small groups to present to the class
+
+13MATHEMATICS I TEACHING MODULE FORM 1-TERM 213
+Task :
+From Activity 1.2 and 1.3 , state the number of rows and columns in each matrix.
+Activity 2.1: Individual activity
+For each of the following categories, state what the rows and the columns would represent and state
+the order of the Matrix that could be formed:
+i. A University records the number of students enrolled in five courses (Math, Physics, Chemistry,
+Biology, and Computer Science) for four academic years.
+ii. A Hospital tracks daily patient admissions in three departments (Emergency, Surgery, Pediatrics)
+for a week
+iii. A company tracks the monthly electricity and water usage for six offices.
+iv. A supermarket records sales of four items (Bread, Milk, Sugar, Rice) over three months.
+Content tips:
+From the discussion and activity 2.1 the learners should indicate the order of the matrix by first stating
+the number of rows of the matrix and then the number of columns in the form a x b (read as a by b)
+where a represents the number of rows and b represents the number of column. For instance :
+Order of matrix A is 4 X 5 read as 4 by 5.
+Learning Activity 3: Transposing Matrices
+Activity 3.1: Class arrangement (Out door activity )
+Instructions :
+ Take learners to any appropriate area outdoors ( play ground , school hall, …)
+ Place learners in appropriate groups
+ Let each group draw an appropriate grid on the floor (alternatively teacher can draw these grids
+before the class starts)
+
+14MATHEMATICS I TEACHING MODULE FORM 1-TERM 214
+ Groups to create a matrix by having learners physically stand in the grid drawn.
+ One of the group members to write the names of team mates according to their position in the
+matrix.
+ On the teachers command learners switch positions from being rows to columns and vice versa.
+ Alternatively, to make it easier to time and observe the winners, work with two groups at a time.
+Where two groups go against each other and the winners move to the next round.
+ The team member to write down the new positions .
+ Upon returning to the classroom let selected groups present how they switched the rows to
+column.
+Content Tip
+From activity 3.1 the matrix formed by learners standing in the grid can be recorded as follows.
+After swapping the rows with columns the matrix will become
+Jane Mukuka
+Mutale Mando
+Alfred David
+
+
+
+
+
+
+
+
+
+
+The pair that wins will be the one that switches the rows and columns the fastest (correctly).
+Tournament chart can be used to keep track of the winners and who they are to go against in the second
+round.
+Group 1
+Group 2
+Group 3
+Group 4
+Group 5
+Group 6
+Group 7
+Group 8
+Winner
+
+15MATHEMATICS I TEACHING MODULE FORM 1-TERM 215
+ Ensure that learners understand that the operation performed is known as Transpose, and can
+be denoted with Superscript T. For instance, transpose of matrix A can be denoted as AT.
+ Connect the activity with one that has numbers, to consolidate learning.
+Learning Activity 4: Exploring various types of Matrices and their properties (equal,
+identity matrices,… )
+Activity 4.1: Explore Various types of Matrices
+Instructions:
+ Place the learners in pairs
+ Let learners create matrices from each of the scenarios given and provide solutions to the
+questions that follow
+Scenarios:
+i. A delivery company tracks the driving distances (in kilometres) between three warehouses located
+in Livingstone , Lusaka, and Kitwe. The distances tracked were as follows:
+ From Livingstone to Lusaka is 485 km, and from Livingstone to Kitwe is 845 km.
+ From Lusaka to Livingstone is 485 km, and to Kitwe is 845km.
+ From Kitwe to Livingstone is 845 km, and to Lusaka is 357km.
+ii. At school camp, four friends Kalunga, Luyando, Ngosa and Temwani were asked to rate how
+well they think they’d work together as a team for a group scavenger hunt. Each person gave
+ratings from 0 to 10 for how well they think they would team up with each of the others.
+Here’s what they said:
+a. Kalunga said he would work with Luyando at an 8, Ngosa at a 6, and Temwani at a 7.
+b. Luyando rated working with Ngosa a 5 and with Temwani a 9.
+c. Ngosa rated teaming up with Temwani an 8.
+ Note: Everyone is assumed to rate themselves a 10 for self-teamwork (just to keep things fair!),
+and if someone gave a teammate a certain rating, it counts both ways. For example, if Kalunga
+gave Luyando an 8, Luyando also gets an 8 with Kalunga. The table used to record ratings had
+Kalunga, Luyando, Ngosa, and Temwani across the top as column headers, and again down the
+left side as row headers.
+iii. In a small inter-school basketball tournament, three teams :Tigers, Stars, and Sundowns . played
+against each other once. Here’s what happened:
+ Tigers scored 78 points against Stars and 65 points against the Sundowns.
+
+16MATHEMATICS I TEACHING MODULE FORM 1-TERM 216
+ Stars scored 82 points against the Tigers and 71 points against the Sundowns.
+ Sundowns scored 67 points against the Tigers and 74 points against the Stars
+ Place zeros on the places where team match with themselves
+iv. You’re tracking the average speed (in km/h) of five runners in a 100m race:
+Chanda ran at 18 km/h, Mwene at 19.5 km/h, Mvula at 20 km/h, Choolwe at 17 km/h, and
+Sthembile at 21 km/h.
+v. Transpose the Matrix formed in (iv) .
+vi. The Metrological centre recorded the amount of rainfall in three different places on two days. The
+recorded rainfall in all three places for both days was zero.
+vii. A Company uses Matrices to track the tasks given to employees in a day. The number (1) is used to
+show which task is assigned to an employee and a zero (0) if not assigned. On a particular day the
+manager assigns Chanda Task C, Takondwa Task A, Mapalo Task D and Chimuka Task B. The table
+used to create the matrix is as below
+Task A Task B Task C Task D
+Takondwa
+Chimuka
+Chanda
+Mapalo
+viii. Musonda is tracking the scores obtained by teams in a local Robotics competition. Three teams
+(A, B, and C) are building unique components for a single robot. Each team is responsible for
+one specific component: Team A handles the motor, Team B manages the sensors, and Team C
+works on the control software. There is no overlap between tasks—each team focuses only on its
+assigned responsibility and is given points for it.Team A is given 3 points , Team B is given 5 points
+while Team C is given 3 points. He uses the table below to record his information.
+Team A Team B Team C
+Motor
+Sensors
+Control Software
+Follow-up questions
+a. From the information given which ones do you think are square matrices? Give a reason for your
+answer.
+b. Transpose the Matrix formed in scenario (ii). What are your observations about the original and
+transposed matrix?
+c. What are your observations of the matrix formulated from scenario (iv), (v), (vi), (vii), (viii).
+
+17MATHEMATICS I TEACHING MODULE FORM 1-TERM 217
+Content Tips
+From the activity,
+ Ensure that the matrices created do not have the labels, have brackets and are denoted by a
+capital letter.
+ A square matrix will be the one with equal number of rows and columns
+ Highlight that the matrix in (ii) is known as a symmetric Matrix.
+ If the learners present the matrix in (iv) as a column Matrix, highlight that it is a column Matrix
+and the Transpose will then give rise to a row matrix and vice versa.
+ The matrices that have non zero elements in the major diagonal and zeros everywhere else is a
+diagonal matrix.
+ A diagonal matrix that has ones in the major diagonal and zeros everywhere else is an identity
+Matrix
+Activity 4.2: Individual work
+1. Determine the type of matrix for each of the following :
+a.
+b.
+c.
+d.
+e.
+2. State whether the following statements are True or False. If false, give a reason for your answer.
+a. Every square matrix is a diagonal matrix.
+b. An identity matrix always has ones (1) in the major diagonal.
+c. A zero matrix can be both square and rectangular.
+d. A row matrix has only one column.
+
+18MATHEMATICS I TEACHING MODULE FORM 1-TERM 218
+Activity 4.3 Assignment
+Instructions
+ Give learners enough time to create these matrices . For instance, one week, while other
+activities are taking place in class.
+ Ask learners to create the following:
+i. 2x2 Square Matrix
+ii. Symmetrical Matrix
+iii. 3x3 Identity Matrix
+iv. Row Matrix
+v. Column Matrix
+vi. 3x3 Zero Matix
+vii. Diagonal Matrix
+Learning Activity 5: Carry out operations on matrices in real life situations (Addition,
+subtraction, multiplication; matrix by a scalar, matrix by matrix up to 2x2 )
+Activity 5.1 Lets Budget (Addition and Subtraction)
+Instructions:
+ Place learners in pairs/groups
+ Give them this Scenario:
+A Province allocates funds to various departments such as Education, Health, and Transportation across
+different districts. The Accounting officers use Matrices to track and manage these budgets. Each matrix
+represents the budget allocation (in thousands) for each department in 3 districts within a week.
+Week 1 Budget (Matrix A): Education Health Transportation
+District 1 120 90 75
+District 2 100 85 60
+District 3 110 95 70
+Week 2 Budget (Matrix B): Education Health Transportation
+District 1 130 85 80
+District 2 95 88 65
+District 3 115 92 75
+
+19MATHEMATICS I TEACHING MODULE FORM 1-TERM 219
+Give learners the following questions:
+i. Formulate matrices for each of the two budgets and denote them as Matrix A and B respectively.
+ii. Determine the overall budget received over the two weeks for each department in each district.
+Present this overall budget in Matrix form and denote it with C.
+iii. Explain how you came up with the solution in (ii).
+iv. The budget allocations for week 1 and week 2 were different. By how much did the budget
+allocations in week 2 change from those in week 1.
+v. Explain how you came up with the solution in (iv).
+vi. Were there any reductions in funding? If so, state the district and the departments affected.
+vii. If you had an extra K50,000 to allocate, how would you divide it among the departments and
+districts? Create a new matrix and add it to Week 2’s Budget.
+Content tips:
+In the activity ensure learners follow the rules of Addition and Subtraction:
+i. To add/subtract two matrices, ensure that they are of the same order.
+ii. Add/subtract the elements in the corresponding positions:
+Activity 5.2: Concert Budget (Scalar Multiplication)
+Instructions:
+ Place learners in pairs
+ In pairs/ small groups learners to analyze the scenario and determine the solutions to the
+questions being asked
+
+20MATHEMATICS I TEACHING MODULE FORM 1-TERM 220
+Scenario:
+You’re helping plan a music tour for Tusole band. Here’s the cost breakdown for one concert
+Expense Item Cost (K)
+Venue rental 1,200
+Equipment rental 800
+Staff & security 500
+Transportation 300
+i. Represent this information in Matrix form.
+ii. The band decides to have 5 concerts. Determine how much the band will spend on each category?
+Explain how you determined the answer.
+Content Tips
+Ensure that learners multiply each entry by the constant. For instance, from activity 5.2
+Activity 5.3: Boost the Matrix
+Instructions : Individually learners to analyze the scenario and provide solutions to the follow up
+questions
+Scenario:
+You are the manager of a small electronics store. You track the number of items in stock for two types of
+products: Smartphones and Laptops. You have data on the current inventory for two colors: Black and
+Silver.
+Inventory Matrix ( Matrix V)
+Smart Phones Laptops
+Black 20 15
+Silver 30 25
+Suppose you get a new shipment of products that triplethe inventory for each item.
+Write another Matrix for the new inventory.
+
+21MATHEMATICS I TEACHING MODULE FORM 1-TERM 221
+Activity 5.4: Product Sales and Profit Analysis (Matrix by Matrix Multiplication
+up to 2x2)
+Instructions:
+ Place learners in pairs
+ In pairs learners to analyze the scenario and determine the solutions to the questions
+Scenario:
+ You are working for a small company that sells two products: Product A and Product B
+ Your company sells these in two regions: Region 1 and Region 2
+Units Sold (Matrix S):
+Product A Product B
+Region 1 100 80
+Region 2 60 90
+Profit per Unit (Matrix p):
+ Each product earns a different profit per unit in each region (due to local taxes, pricing,...)
+Region 1 Region 2
+Product A K5 K4
+Product B K3 K2
+Follow up questions :
+i. Using the provided sales and profit data, determine the total profit for each product in each region,
+and present it in matrix form
+ii. Explain how you found the answer in (i).
+ Selected pairs to present their work to the class .
+ Ask learners to multiply Matrix P X S .
+ Ask learners what they have noticed about Matrix multiplication.
+Content Tips
+ Ensure that learners find the solutions to the activity through accurate application of Matrix
+multiplication rules.
+ For instance, from the activity,to determine the total profit for each product in each region, and
+present it in matrix form we multiply Matrix S by Matrix P.
+
+22MATHEMATICS I TEACHING MODULE FORM 1-TERM 222
+ Highlight that to be able to multiply two matrices the columns of the first matrix have to be
+the same as the rows of the second.
+ In addition, highlight that matrix multiplication is not commutative.
+ Use more matrices to assist in consolidation.
+Activity 5.4: Business inventory and Pricing
+Instructions:
+Individually learners to analyze the scenario and determine the solutions to the questions
+Scenario:
+ Janeis managing a company that sells calculators and mathematical sets. Her company has two
+branches, one in Kitwe and the other in Lusaka.
+Stock available at each branch (Matrix X):
+Calculators Mathematical sets
+Kitwe 30 50
+Lusaka 40 35
+Each item is sold in three price categories (due to different promotional offers):
+Standard Price, Discounted Price, Wholesale Price
+Pricing Data (matrix Y)
+The price of each item in the three categories is:
+Standard
+Price
+Discounted
+Price
+Wholesale price
+Calculator K70 K65 K60
+Mathematical Set K50 K45 K40
+Follow up question:
+Using both the inventory and pricing data, determine the total value of stock for each branch under
+each pricing category.
+Assessment
+1. The shop/ Kantemba receives orders from two different suppliers each week. The number of
+items (in crates) delivered over two weeks is recorded in the matrices given. The rows represent
+suppliers (Row 1 – Supplier A, Row 2 – Supplier B) and the columns represent items delivered
+(Column 1 – Milk, Column 2 – Bread, Column 3 – Vegetables).
+
+23MATHEMATICS I TEACHING MODULE FORM 1-TERM 223
+Week 1 deliveries (W)
+Week 2 deliveries (K)
+a. Find the total number of each item delivered by each supplier over the two weeks and
+present it in matrix form.
+b. Calculate the difference in total deliveries between Week 2 and Week 1 for each item and
+present them in matrix form.
+c. Which category (fruit, vegetables, dairy) saw the largest increase in total supply across
+both suppliers from Week 1 to Week 2?
+d. Given that the deliveries for week 3 where double those of week 3;
+i. Determine the deliveries for week 3 and present them in matrix form.
+ii. Find the total number of each item delivered by each supplier over the three weeks
+and present it in matrix form.
+2. Chalwe’ company stores employee shift data in a matrix. The rows represent employees (Row 1
+– Employee A, Row 2 – Employee B) and the columns represent 3 days of the week (Column 1 –
+Monday, Column 2 – Tuesday, Column 3 – Wednesday)
+i. Transpose matrix E.
+i. What does the transposed matrix represent now?
+ii. Which version (original or transposed) is more useful if you want to compare employee
+workloads across days? Give reasons for your answer?
+3. A bakery records the sales of 3 types of pastries over 2 days in matrix form:
+i. What is represented by
+a. Rows
+b. columns
+ii. State the order of the matrix.
+
+24MATHEMATICS I TEACHING MODULE FORM 1-TERM 224
+iii. The Prices of pastries are , Doughnut = K7, Cupcake = k5, Fritter= K3, and represented in
+matrix form as;
+a. Calculate the total earning for each day
+b. Which day had better sales.
+Expected Standard : Matrices applied in real life situations correctly.
+
+25MATHEMATICS I TEACHING MODULE FORM 1-TERM 225
+Introduction
+Angles are everywhere: from the corners of a book and the hands of a clock to the design of buildings
+and the paths we take while walking, driving, or cycling. Learners will explore how angles formed by
+straight lines contribute to daily life. They will also learn to identify and create angles, including using
+angles of elevation and depression to solve real-world problems. Let us explore how angles make our
+world more functional and fascinating.
+Key Terms:
+Adjacent Angles, Complementary Angles, Supplementary Angles, Elevation, Depression.
+General Competence(s):
+Critical thinking, Problem-solving, Analytical Thinking, Communication, Digital literacy, Collaboration.
+Sub-Topic 1: Angles Associated with Straight Lines
+Introduction:
+Angles associated with straight lines are fundamental concepts in geometry, and they play a significant
+role in our daily experiences. Measuring and analysing angles formed by intersecting straight lines helps
+learners to gain valuable insights that can be applied to various real-life situations such as construction,
+navigation, and even in technology. This subtopic will explore relationships of angles associated
+with straight lines, distinguishing the types of angles associated with straight lines and solve practical
+problems.
+Specific competence: Use angles associated with straight lines in everyday life
+Key Question
+TOPIC 7: ANGLES
+
+26MATHEMATICS I TEACHING MODULE FORM 1-TERM 226
+Learning Activity 1: Exploring the relationship of angles and straight lines using tools
+(geometrical instruments, geoboards, computer software…)
+Activity1.1 : Angle hunt
+Materials needed: Ruler, straightedge, protractors, camera (for taking photos — optional), worksheets
+for sketching and noting angles, access to classroom or nearby spaces (windows, doors, furniture…)
+Instructions:
+ Have learners explore points on objects or places around the classroom or the school surrounding
+where angles are formed.
+ If possible, learners can take photos of the places or points on objects where angles are formed
+ Let learners sketch the angles formed by straight lines from the school surrounding or on objects.
+ From the sketch let learners draw/extend straight lines that are intersecting
+ Let learners make a presentation of the sketched diagrams
+ Let learners measure the angle formed by intersecting straight lines on the sketched diagram
+ Have learners record their findings
+ Ask learners the following questions:
+i. What can you observe from the measured angles?
+ii. What is the sum of measured angles on the straight line?
+iii. Are there any angles that are equal?
+Content Tips
+ Help learners understand supplementary angles, vertically opposite angles, and adjacent angles.
+ From the activity angles that are bounded by straight lines may be found on points, on objects or
+places such as the hinge of a window pane, a door when partially open, the corner of the room,
+cross roads/streets…
+ Supplementary Angles: Two angles are supplementary if their sum is 180°. For example, (if one
+angle is 120°, the other must be 60°...)
+ Adjacent Angles: Angles that share a common side and vertex without overlapping. On a straight
+line, adjacent angles are supplementary.
+ Linear Pair of Angles: A pair of adjacent angles formed when two lines intersect, creating a
+straight line. These angles add up to 180°.
+
+27MATHEMATICS I TEACHING MODULE FORM 1-TERM 227
+ Vertically Opposite Angles: When two straight lines intersect, they form two pairs of opposite
+angles that are equal in measure.
+ Angles Around a Point: The total measure of angles around a single point is always 360°
+Activity1.2: Exploring Angle Relationships with Rubber Bands/Strings using
+a Geoboard or computer software (Geogebra, Desmos …)
+Instruction:
+ Let learners discover angle properties by forming different intersecting lines.
+ In small groups ask learners to stretch rubber bands/strings to form intersecting straight lines on
+the geoboard
+ Alternatively, Using Computer software draw intersecting lines.
+ Let leaners identify angles formed (supplementary, complementary, adjacent, vertically opposite,
+straight angles…).
+ If using Geoboard ask learners to use a protractor to measure angles formed and verify:
+ Adjacent angles on a straight line add up to 180°.
+ Vertically opposite angles are equal.
+ Complementary angles add up to 900
+ If using computer software, ask learners to drag one line dynamically and observe how the
+angles change while maintaining their relationships.
+ Challenge learners to create different angle pairs and record their findings.
+ Ask each group to present their findings to the rest of the class.
+Activity 1.3: Angle Exploration
+Instructions : Individually, ask learners to answer the given questions.
+1. Draw a representation of a fan or windmill in GeoGebra/Geoboard and mark angles formed by
+the blades at their intersection point. Measure all the angles and calculate their sum to confirm if
+they are equal to 360°.
+
+28MATHEMATICS I TEACHING MODULE FORM 1-TERM 228
+2. Find the size of angle y and the value of x in the following diagrams;
+i. ii.
+Learning Activity 2: Distinguishing angles associated with parallel lines (corresponding
+angles, vertically opposite, alternate angles, straight line angles…)
+Activity 2.1: Hands-On Angle Measurement Using Protractors
+Materials needed: Ruler, Protractor, Compass
+Instructions:
+ Put learners in pairs or small groups
+ Provide learners with worksheets containing parallel lines intersected by a transversal.
+ Ask learners to measure and label the different angles
+ Let them record their observations and identify relationships between the angles and thereafter
+make presentations to the rest of the class. (corresponding, alternate, vertically opposite, and
+angles on a straight line…).
+Content Tips
+
+29MATHEMATICS I TEACHING MODULE FORM 1-TERM 229
+1. Corresponding Angles; If 2 parallel lines are cut by a transversal, then corresponding angles are
+congruent or equal.
+2. Alternate Angles; If 2 parallel lines are cut by a transversal, then alternate angles are congruent
+or equal.
+3. Interior Angles (Allied); If 2 parallel lines are cut by a transversal, then consecutive interior angles
+are supplementary.
+Activity 2.3: Class tasks
+1. Draw a diagram showing two parallel roads that are crossed by a diagonal path. If one of the
+corresponding angles is 700, what is the measure of the other corresponding angle?
+2. A transversal intersects two parallel lines, creating alternate interior angles. If one of the alternate
+interior angles measures 500, find the measure of the other angle.
+Learning Activity 3: Using angles associated with straight lines in solving practical
+problems
+Activity 3.1: “The Road construction” Challenge
+Materials needed: Ruler, Protractor, pencils
+Instructions:
+ Place learners in groups
+ Learners to analyse and provide solutions to the scenario given
+ Ask learners to present their findings
+Scenario
+ A new road is being constructed parallel to an existing one, at a certain point a diagonal cross
+road intersects both roads. The engineers used the cross road to ensure that the two roads are
+parallel. They take measurementsof the angles made between the cross road and the existing
+road as well as the crossroads and where they want the new road to be. This is done three times.
+Their findings are given below.
+i. a = 40o , b=120o , c=120o ,d=60o ,e=80o , f=100o , g=100o ,h=80o
+ii. a = 40o, b=140o , c=140o ,d=40o ,e=70o , f=110o , g=110o ,h=70o
+iii. a =62o , b=118o , c=118o ,d=62o,e=62o , f=118o , g=118o,h=62o
+Which of the above trials proves that the roads are parallel and justify your choice.
+
+30MATHEMATICS I TEACHING MODULE FORM 1-TERM 230
+Content Tips
+ From the activity, the trial that will produce parallel roads satisfies the rules that apply to angles
+associated with parallel lines (allied, alternate and corresponding angles)
+Individual activity
+1. In a construction design, two parallel beams are cut by a support beam. If one interior angle on
+one side is 120 degrees, what is the measure of the other interior angle on the same side?
+2. In a modern office building, the walls are made of parallel glass panels. A diagonal light beam from
+the ceiling hits one glass wall at 48°. What is the angle between the light beam and the opposite
+glass wall?
+3. If two intersecting roads create one angle measuring 45° at an intersection, what is the measure
+of the vertically opposite angle formed by the road.
+4. If one angle in a window frame is 120°, what should the adjacent angle be to keep the frame
+straight?
+(teacher is advised to explore additional tasks for the learners)
+Expected Standard: Angles used in a variety of real-life situations correctly
+Assessment:
+Project : Angles in every day life
+Instructions: the project is to be done in pairs/ small groups
+i. Select a real life context of your choice (sports, constructions, art , navigation, agricultures, culinary
+arts ...)
+Proposed New Road
+Existing Road
+Cross Road
+a
+e
+c
+g
+b
+f
+d
+h
+
+31MATHEMATICS I TEACHING MODULE FORM 1-TERM 231
+ii. For the context chosen, conduct research to understand how angles are used. Consider; Why
+specific angles are important in that context and how angles affect performance, safety, or
+aesthetics.
+iii. Create a visual representation of the angles used in the context chosen and angles measured.
+Note: Research should be done on your immediate community/local environment were possible.
+Sub-Topic 2: Angle of Elevation and Depression
+Introduction:
+This sub-topic focuses on the application of angles of elevation and depression in real life situations.
+Understanding elevation and depression angles is crucial for solving real-world problems.
+Specific competence: Use Angle of Elevation and Depression in everyday life
+Learning Activity 1: Exploring angles of depression and elevation practically using real
+life situations.
+Activity 1.1: Outdoor Angle hunt
+Instructions:
+ Ask learners to look at any object in the classroom
+ Ask learners what object they are looking at (highlight that the line of sight is the straight line
+from their eyes to the object)
+ Divide learners in small groups/pairs
+ Let learners go outside and look at an object that is above their horizontal line of sight (top of a
+tree, top of a building, top of a flagpole…)
+ Whilst outside, ask learners to look at an object that is below their horizontal line of sight
+ Ask learners to sketch the representation of the line of sight to the object and the horizontal line
+of sight in each of the previous two steps
+ Ask learners to label the angles made by the horizontal line of sight and the line of sight to the
+object observed.
+ Ask learners to identify which one of the two represents angle of elevation and depression and
+give an explanation.
+
+32MATHEMATICS I TEACHING MODULE FORM 1-TERM 232
+Content tips
+ From the activity the angle of elevation is formed when a learner looks upward from the
+horizontal line of sight while the angle of depression is formed when a learner looks downward
+from the horizontal line of sight.
+Figure 1
+Activity 1.2 Individual work
+1. A dog observes a bird on the top of a tree while standing at a distance on the ground, and makes
+an angle of elevation. The line of sight of a bird to a dog from above also makes an angle of
+ Figure 1 further illustrates these angles.
+
+33MATHEMATICS I TEACHING MODULE FORM 1-TERM 233
+depression. Represent this information on a diagram indicating clearly the angle of elevation.
+2. Sandra is 1.4m tall, she is standing 3 metres away from the building on the ground, looking up at
+the top of a building that is 4 metres tall. She then looks down at a point on the ground where
+a cat is sitting 5 metres away from her feet. Draw and label a diagram to represent this scenario,
+showing the angle of elevation to the top of the building and the angle of depression to the cat
+(let 1 cm represent 1m).
+Learning Activity 2: Distinguishing angles of elevation and depression in real life
+situations
+Activity 2.1
+Instructions:
+Learners answer the following task individually.
+Task :
+1. From figure 2, state which of the labeled angles are angles of elevation and which ones are angles
+of depression.
+2. You are standing on the ground and looking up at the top of the tree, is the angle you make an
+angle of elevation or depression? Explain your choice.
+Figure 2: Angles of elevation and depression
+
+34MATHEMATICS I TEACHING MODULE FORM 1-TERM 234
+3. You are on the balcony of the top building and looking down at the car on the streets. Is the angle
+you make an angle of elevation or depression? Give reason for reason for your answer.
+4. A person at the top of a 20-metre-high building sees a car parked on the ground at an angle of
+depression of 40°. They also see the top of a nearby streetlamp at an angle of elevation of 15°.
+Draw a diagram to illustrate this scenario, marking the angles and distances.
+5. A balloon is floating at a height of 100 metres above the ground. From a point on the ground, the
+angle of elevation to the balloon is 45°. From the same point, the angle of depression to a person
+standing directly below the balloon is 90°. Draw a diagram to show the angles and label all the
+relevant distances.
+Learning Activity 3: Finding the angle of depression and elevation
+Activity3.1 : Observing objects
+Instructions:
+ Put learners in pairs/ small groups
+ Write the question on the board or type on a hand out.
+ Give time limit between 20 to 30 minutes
+ Ask learners to brainstorm and give solutions to the given questions.
+1. Sakuwaha observes a bird rested on a tree at an angle of elevation of 40°. Illustrate this information
+with a diagram and determine the angle of depression that would be formed when the bird looks
+directly down at the Sakuwaha.
+2. A drone is hovering above the ground at a certain height. From a point on the ground, the angle
+of elevation to the drone is 60°. At the same time, the drone’s camera observes the same point
+on the ground at an angle of depression. If the path of sight between the drone and the ground
+is considered a transversal cutting through parallel lines, determine the angle of depression and
+explain the relationship between the two angles.
+Content Tips
+ From the activities ensure that learners clearly determine angles of elevation and depression
+formed with line of sight (transversal) and the horizontal axes.
+ Apply the principles about angles associated with parallel lines (alternate, corresponding).
+ You may use more tasks for consolidation.
+Expected standard: Angle of elevation and depression used in everyday life.
+
+35MATHEMATICS I TEACHING MODULE FORM 1-TERM 235
+Assessment:
+1. Stand near a tree/building. How would you describe the angle formed when you look at its top?
+2. From the top of a lighthouse, 50 meters tall, a person observes a boat at an angle of depression of
+25°. At the same time, they see a bird flying above the boat at an angle of elevation of 30°. Draw
+a diagram to represent this situation, clearly showing the angles of elevation and depression, as
+well as the distances involved.
+3. Josephat stands at the base of a tower and observes the top of the tower at an angle of elevation.
+At the same time, Mary standing at the top of the tower observes the Josephat at an angle of
+depression. If the horizontal ground and the line of sight between the observer and the top of
+the tower are parallel, what is the relationship between the angle of elevation and the angle of
+depression? Draw a diagram to support your answer.
+4. A flagpole stands vertically on level ground. From a point on the ground, the angle of elevation to
+the top of the flagpole is 50°. Explain how this angle relates to the angle of depression observed
+if a person at the top of the flagpole looks directly at the same point on the ground. Use your
+knowledge of angles formed by parallel lines to support your answer with a diagram.
+
+36MATHEMATICS I TEACHING MODULE FORM 1-TERM 236
+BIBLIOGRAPHY
+Ministry of Education (2023) Mathematics I Syllabus- Ordinary Level Secondary Education Form 1-3.
+Zambia: Lusaka, Curriculum Development Centre.
+Ministry of Education (2023) Zambia Education Curriculum Framework. Zambia: Lusaka, Curriculum
+Development Centre.
+Abbott, E. A. (2019). Flatland: A romance of many dimensions. Princeton University Press.
+BOYD C. J etal (1999) Mathematics’ Application and connections course 1 and 2,New York : Glencoe/
+Mcgraw- Hill.
+Burger, E. B., & Starbird, M. (2019). The heart of mathematics: An invitation to effective thinking (5th
+ed.). Wiley.
+Quantitative vs. Qualitative Data Creswell, J. W. (2014). Research design: Qualitative, quantitative, and
+mixed methods approaches (4th ed.). SAGE Publications.
+https://thirdspacelearning.com/gcse-maths/
+https://courses.lumenlearning.com/waymakermath4libarts/chapter/union-intersection-and-
+complement/
+https://www.cuemath.com/algebra/a-intersection-b-complement/https://www.twinkl.co.uk/
+homework-help/science-homework-help/weather-and-climate-facts-for-kids/weather-what-are-
+climate-zones

@@ -4,8 +4,23 @@
 // SubjectContentRepository in the Flutter app) — investigated against a
 // real sample (2026-08-27, civic_education_module.pdf) rather than
 // guessed: unlike scanned past papers, Teaching Modules are genuine
-// digital-text PDFs, so plain text extraction (pdf-parse, built on
-// pdf.js) works well with no OCR needed.
+// digital-text PDFs, so plain text extraction works well with no OCR
+// needed.
+//
+// Runs on pdfjs-dist (the real, actively-maintained Mozilla PDF.js
+// library) directly, not the popular `pdf-parse` wrapper — pdf-parse
+// bundles a version of pdf.js from around 2018 that threw "Invalid PDF
+// structure" on a second real module tested (2026-08-27,
+// history_form1.pdf) that this project's own poppler pdftotext handled
+// fine, i.e. a real, current PDF that an outdated parser chokes on.
+//
+// pdfjs-dist v4+ ships ESM-only (no CommonJS build), while this project
+// compiles to CommonJS — a plain `import()` here gets down-leveled by tsc
+// into a `require()` call, which throws (ERR_REQUIRE_ESM) on a .mjs file.
+// The `new Function(...)` indirection below is the standard workaround:
+// it hides the import from tsc's static rewriting, so Node executes a
+// real native dynamic import at runtime. Verified working locally before
+// use, not assumed.
 //
 // Every module opens with several pages of front matter — Vision,
 // Authors, Coordinators, Typesetter, Preface, Acknowledgement — that name
@@ -16,8 +31,49 @@
 // MANAGEMENT" onward in the sample) is ever stored or used.
 // ---------------------------------------------------------------------
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const pdfParse = require("pdf-parse");
+import path from "path";
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const importEsm = new Function("modulePath", "return import(modulePath)") as (modulePath: string) => Promise<any>;
+
+let pdfjsPromise: Promise<any> | undefined;
+function loadPdfjs() {
+  if (!pdfjsPromise) pdfjsPromise = importEsm("pdfjs-dist/legacy/build/pdf.mjs");
+  return pdfjsPromise;
+}
+
+async function extractRawText(pdfBytes: Buffer): Promise<string> {
+  const pdfjs = await loadPdfjs();
+  const pdfjsDistDir = path.dirname(require.resolve("pdfjs-dist/package.json"));
+
+  const doc = await pdfjs.getDocument({
+    data: new Uint8Array(pdfBytes),
+    standardFontDataUrl: path.join(pdfjsDistDir, "standard_fonts") + path.sep,
+    cMapUrl: path.join(pdfjsDistDir, "cmaps") + path.sep,
+    cMapPacked: true,
+    // No canvas/DOM available in Cloud Functions, and none needed — only
+    // text is being pulled out, nothing is rendered.
+    isEvalSupported: false,
+  }).promise;
+
+  const pageTexts: string[] = [];
+  for (let i = 1; i <= doc.numPages; i++) {
+    const page = await doc.getPage(i);
+    const content = await page.getTextContent();
+    // Real line breaks matter here, not just for readability — the front-
+    // matter cut below depends on "Introduction" appearing as its own
+    // line. pdf.js marks a text run's end-of-line via hasEOL; a run
+    // without it is followed by more text on the same visual line.
+    let pageText = "";
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    for (const item of content.items as any[]) {
+      if (!("str" in item)) continue;
+      pageText += item.str + (item.hasEOL ? "\n" : "");
+    }
+    pageTexts.push(pageText);
+  }
+  return pageTexts.join("\n\n");
+}
 
 /** Cuts everything up to and including the module's own "Introduction"
  * heading — a line containing *only* that word (front matter has it as a
@@ -33,16 +89,18 @@ function stripFrontMatter(text: string): string {
   return text.slice(match.index + match[0].length).trim();
 }
 
-/** Collapses the excess blank lines pdf-parse tends to leave behind. */
+/** Collapses the excess blank lines/spacing that come out of a real PDF's
+ * text layer (extra whitespace around line breaks, runs of blank lines). */
 function tidyWhitespace(text: string): string {
   return text
-    .replace(/[ \t]+\n/g, "\n")
+    .replace(/[ \t]+/g, " ")
+    .replace(/ *\n */g, "\n")
     .replace(/\n{3,}/g, "\n\n")
     .trim();
 }
 
 export async function extractSubjectContentText(pdfBytes: Buffer): Promise<string> {
-  const data = await pdfParse(pdfBytes);
-  const withoutFrontMatter = stripFrontMatter(data.text as string);
+  const rawText = await extractRawText(pdfBytes);
+  const withoutFrontMatter = stripFrontMatter(rawText);
   return tidyWhitespace(withoutFrontMatter);
 }

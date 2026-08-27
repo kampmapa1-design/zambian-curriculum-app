@@ -1,0 +1,1069 @@
+The Form 2 Adapted Mathematics Teaching Module has been developed to guide teachers on
+how to facilitate competence-based lessons at this level. The module aims to provide quality
+education that is aligned with the competence-based curriculum and 21st Century Skills. It also
+aims to facilitate the development of knowledge, skills, values and positive attitudes that are
+aimed at enabling learners with visual impairment to live and grow into productive and useful
+members of their communities and the Zambian society.
+PURPOSE OF THE MODULE
+The purpose of the module is to illustrate teaching and learning activities that: are consistent
+with teaching and learning in a competence-based curriculum; show processes that allow
+achievement of 21st century skills such as creativity, collaboration, communication, and
+critical thinking; Illustrate what activity-based and learner-centred teaching and learning could
+look like.
+HOW TO USE THE MODULE
+This module provides suggested learning activities and teaching strategies that enhance
+learners’ mathematical competencies. The suggested activities are designed to offer learners
+hands-on experiences through the manipulation of tasks that are interactive and learning
+through practice. We should bear in mind that the desired competences and 21st century skills
+will NOT be achieved by the topics ‘covered’ but by how teaching and learning activities are
+carried out. For example, asking learners to give reasons for their answers, whether or not the
+answer is right; to plan for solving a problem; to consider alternative ways of solving a problem
+even if the first method yields a correct answer and to consider which of the methods is better;
+to acknowledge that even in Mathematics, more than one correct answer is possible, for
+example, “What two numbers when added have 5 as the answer?”
+Activities in the Module are meant to be incorporated into the teacher’s lesson plan. The
+activities are NOT meant to replace the teacher’s lesson plan. The topics and activities in the
+Module are as specified in the 2023 Adapted Mathematics Form 1 to 4 syllabus. There might
+be terms used in the Module that are not the same as those in the syllabus, but this is in the
+interest of using language that might be more learner-friendly. Teachers are encouraged to vary
+the environment when conducting lessons to create a good atmosphere for learning and
+teaching, which is learner-friendly.
+Each topic in the Module begins with a Hook. A Hook is an opening statement at the start of
+the topic that seeks to stimulate learners’ curiosity and motivate them to learn. Teachers may
+create their hooks that provoke their learners’ curiosity and motivation. A hook can be a
+provocative question, a scenario or something that puts learners into a thinking mood. Let the
+designed hook incline towards problem-solving scenarios.
+
+Mathematics Teaching Module Form 2 – Term 2
+2
+TOPIC 3: ALGEBRAIC EXPRESSIONS
+1. INTRODUCTION
+Overview: Algebra is a powerful language of mathematics that helps us describe patterns,
+relationships, and real-life situations using symbols and numbers. Algebraic expressions are
+used in everyday life, such as calculating costs, planning budgets, measuring distances, and
+solving problems where exact values are not yet known. In this module, learners will expand
+and simplify algebraic expressions, factorize linear and quadratic expressions, and simplify
+algebraic fractions.
+General Competence(s):
+● Analytical Thinking: Learners analyse algebraic expressions to identify variables,
+coefficients, and operations in order to simplify or manipulate them correctly.
+● Creativity and Innovation: Learners apply different methods and strategies to expand,
+factorise, and simplify algebraic expressions in new or efficient ways.
+● Critical Thinking: Learners evaluate algebraic steps and verify whether the
+simplification or factorisation of an expression is correct.
+● Problem Solving: Learners use algebraic expressions to represent and solve
+mathematical and real-life problems involving unknown quantities.
+● Communication: Learners explain their reasoning, methods, and solutions when
+simplifying or manipulating algebraic expressions.
+● Collaboration: Learners work together in groups or pairs to discuss, solve, and verify
+algebraic expressions and related problems.
+● Digital Literacy: Learners may use calculators, computers, or educational software to
+check solutions and explore algebraic expressions.
+● Entrepreneurship: Learners apply algebraic expressions to situations involving profit,
+cost, and pricing when solving business-related problems.
+● Financial Literacy: Learners use algebraic expressions to represent financial situations
+such as calculating expenses, savings, income, or profit.
+● Problem Solving: Algebraic expressions help learners develop the ability to find
+solutions to mathematical and everyday challenges involving unknown values.
+Hook: Have you ever wondered how letters and numbers can be used to describe almost
+anything in the world?
+Key Terms:
+● Algebraic Expression: A mathematical phrase made up of numbers, variables, and
+operations (such as addition, subtraction, multiplication, or division).
+● Variable: A letter or symbol that represents an unknown value (e.g., x, y, a).
+● Constant: A fixed numerical value that does not change (e.g., 5, negative 3, 10).
+● Coefficient: A number that multiplies a variable (e.g., in 3x, 3 is the coefficient).
+
+Mathematics Teaching Module Form 2 – Term 2
+3
+● Term: A single part of an algebraic expression separated by addition or subtraction
+signs (e.g., in 3x plus 4y minus 5, the terms are 3x, 4y, and negative 5).
+● Like Terms: Terms that have the same variables raised to the same powers (e.g., 2x
+and 5x).
+● Unlike Terms: Terms that have different variables or different powers of variables
+(e.g., 3x and 3y).
+● Simplifying: The process of combining like terms to make an algebraic expression
+shorter or easier to work with.
+● Factorisation: Writing an algebraic expression as a product of two or more factors.
+● Algebraic Fraction: A fraction where the numerator, denominator, or both contain
+algebraic expressions.
+Exponent (Power): A number that shows how many times a variable or number is
+multiplied by itself (e.g., in x squared, 2 is the exponent).
+● Bracket (Parenthesis): Symbols used to group terms in an expression, such as ( ).
+
+Mathematics Teaching Module Form 2 – Term 2
+4
+SUB-TOPIC 1- EXPAND AND SIMPLIFY ALGEBRAIC EXPRESSIONS
+INTRODUCTION
+In this subtopic, learners will discuss Braille symbols used in algebraic expressions and the
+simplification of algebraic expressions. Learners should explore real-life situations involving
+expanding and simplifying expressions (such as managing budgets, planning, production,
+tracking expenses, and scheduling activities) in Braille.
+Specific Competences: Use algebraic expressions in problem solving.
+Learning Activity 1: Discussing Braille Symbols Used in Algebraic Expressions
+Activity 1.1: Group work, pair work.
+Instructions
+1. Provide learners with the following Braille mathematical symbols used in algebra:
+a) Letters (variables) in Braille (x, y, a, b…)
+b) Numbers and number indicators
+c) Operational signs (plus, minus, times, divide by)
+d) Round brackets, square brackets
+e) Equality sign (equals)
+2. Ask learners to read and identify the given Braille symbols aloud.
+3. Ask learners to match Braille symbols to their meanings such as identifying which symbol
+represents multiplication.
+4. Ask learners to write simple algebraic expressions in Braille such as: x plus 3, 2y minus 5
+and present.
+Learning Activity 2: Simplifying Algebraic Expressions in Braille
+Activity 2.2: Group work, pair work.
+Instructions
+1. Provide learners with the following embossed algebraic expressions:
+a) 3x plus 2x
+b) 5y minus y plus 4
+c) 2a plus 3b minus a
+2. Ask learners to identify and read aloud like terms
+3. Ask learners to group like terms
+4. Ask learners to add or subtract like terms
+
+Mathematics Teaching Module Form 2 – Term 2
+5
+5. Ask learners to write and present
+Activity 2.3: Individual work
+Instructions
+1. Provide learners with the following embossed algebraic terms:
+d) 3x, 2x and negative x.
+e) 3y, 2y, y
+f) X, 2y and 9
+2. Ask learners to identify and read the given terms
+3. Ask learners to formulate algebraic expressions from the terms given
+4. Ask learners to add or subtract like terms
+Content Tips
+● An algebraic expression combines numbers, variables, and operations such as addition,
+subtraction, multiplication, or division, but does not include an equality sign
+● To simplify algebraic expressions, look for terms that have the same variable(s) with
+the same exponent.
+● Only like terms can be added or subtracted, and constants can be added or subtracted.
+● Pay attention to plus and minus signs.
+● For instance, Example: 4x plus 5 minus 3 plus 2x equals 6x plus 2.
+Learning Activity 3: Exploring Real-Life Situations Involving Expanding and
+Simplifying Expressions in Braille (such as managing budgets, planning, production,
+tracking expenses, scheduling activities) in braille.
+Activity 3.1: Group work, pair work.
+i. Present real-life scenarios to learners:
+ii. Ask learners to read the scenarios
+iii. Ask learners to translate these scenarios into algebraic expressions
+iv. Ask learners to expand where necessary, and simplify the expressions.
+Scenarios
+a) Pela spends t hours of studying per subject. Write an expression for the number of hours
+he spends on 4 subjects.
+b) Sula wants to buy gifts for her 3 sisters, each gift costs x kwacha. She also pays K2 for
+wrapping each gift.
+i) Write an expression for the cost of each gift
+ii) find the total cost for the gifts.
+
+Mathematics Teaching Module Form 2 – Term 2
+6
+c) There are 5 form two classes in the school, each learner is contributing x kwacha
+towards a party. Given that the number of learners in each class is y, find the total
+amount raised if the contribution was made twice.
+d) Luwi sells some 50kg bags of maize to FRA at K340 each, boxes of tomatoes at K50
+each and trays of eggs at K90 each.
+a. Write the algebraic expression for each sale.
+b. Write the algebraic expression for the total sales.
+Activity 3.2: Individual work
+Instructions
+1. Present real-life scenarios to learners:
+2. Ask learners to read the scenarios
+3. Ask learners to translate these scenarios into algebraic expressions
+4. Ask learners to expand where necessary, and simplify the expressions.
+Scenarios
+a) A farmer planted trees in rows. Each row has 12 trees.
+i) Write an expression for the total number of trees planted in x rows.
+b) A water tank fills y litres of water every minute.
+i) Write an expression for the amount of water in the tank after 15 minutes.
+c) A learner pays K3 for entering the library and K2 for each book borrowed. If the learner
+borrows x books:
+i) write an expression for the cost of x book.
+d) A gardener plants x rows of flowers, and each row contains (x plus 2) flowers.
+i) Write an expression for the total number of flowers.
+ii) Expand the expression
+e) A farmer has a square garden where each side measures x metres. Inside the garden
+there is also a small storage shed with an area of 9 metres squares.
+i) Write an algebraic expression for the area of the garden
+ii) Determine the area of the remaining part of the garden.
+Content Tips
+To write Algebraic Expressions from Scenarios
+
+Mathematics Teaching Module Form 2 – Term 2
+7
+Identify the variable(s)
+Determine what is unknown or changing in the problem.
+Represent the unknown with any letter of choice
+Identify constants: Look for fixed values in the scenario (costs, fees, quantities), for example
+if the entrance fee is K5 then the constant is 5.
+Determine the operation: Decide whether to add, subtract, multiply, or divide based on the
+scenario. For example, if a book costs K3 and K2 for packaging, multiply 3 by x, for x books
+add K2 for packaging.
+Break the scenario into parts: Write an expression for each component, then combine.
+Example: Total cost equals cost of books plus packaging is written as 3x plus 2.
+Use parentheses for groups: If a quantity has multiple components, enclose it in parentheses.
+Example: Luwi sells some 50kg bags of maize to FRA at K340 per 50kg of bag, boxes of
+tomatoes at K60 each and trays of eggs at K90 each.
+i)choose any letter of your choice to represent the unknown. For instance, let x be the number
+of bags, y be the number of boxes of tomatoes and z be the number of trays of eggs. Each
+sale. Find the total sale of each by multiplying the number of items sold and the price to
+get 50(x) plus 60(y) plus 90(z)
+
+Mathematics Teaching Module Form 2 – Term 2
+8
+SUB-TOPIC 2: FACTORIZE LINEAR AND QUADRATIC EXPRESSIONS
+INTRODUCTION
+This subtopic focuses on identifying the fraction symbol, simplifying algebraic fraction and
+factorizing linear and quadratic expressions in braille.
+Specific Competences- Learners to: Use algebraic expressions in problem solving.
+Learning Activity 1: Identifying the Fraction Symbol in Braille
+Activity 1.1: group, pair work, individual
+Instruction
+1. provide learners with embossed Braille samples containing common fractions (1 over
+2, 3 over 4, a over b, …)
+2. Ask learners to tactually explore and identify the Braille symbols such as fraction line,
+numerator, denominator.
+3. Ask learners to correctly identify, read, and interpret the fraction symbol and related
+notations in Braille.
+4. Learners write given fractions in Braille using a slate or Perkins Brallier.
+Content tips
+● Explains the Braille fraction indicator and how it differs from whole numbers.
+● Learners read fractions aloud from Braille texts, reinforcing correct symbol recognition.
+Learning Activity 2: Simplifying Algebraic Fractions in Braille
+Activity 2.1: Group work, pair work
+Instructions
+1. Provide learners with embossed samples of algebraic fractions such as x over 2, 4x over
+8, (x minus 4) over 2, 3 over xy, negative x over 2, 6xy over 9y, (2x plus 4) over 2
+2. Ask learners to read the algebraic fractions
+3. Ask learners to identify the numerator, denominator in the given fractions.
+4. Ask learners to identify variables and coefficients.
+5. Ask learners to simplify
+i) 4x over 8
+ii) 6xy over 9y
+iii) x over 2 plus 1
+
+Mathematics Teaching Module Form 2 – Term 2
+9
+iv) xy plus (6xy over 9y)
+6. Ask learners to present their findings by explaining each simplification step verbally.
+Activity 2.2: Individual work.
+Instruction
+1. Provide learners with algebraic terms and expressions.
+2. ask learners to simplify the given algebraic fractions.
+3. Ask each learner to simplify algebraic fractions and record their answers in Braille.
+i) 2x over 4
+ii) 3xy over 6y
+iii) (x over 2) plus (3x over)
+iv) (y plus 2) over 3 plus (2y plus 1) over 3
+v) 2x over 3 times 4 over 5
+vi) 3x over 4 times 2x over 5
+Content tips
+● Given an algebraic fraction, identify the numerator and denominator
+● Look for common factors in the numerator or denominator.
+● Divide numerator and denominator by the same factor.
+● Example: 2x over 4, divide the numerator and the denominator by the common factor
+2 and the result is x over 2.
+● fractions can be split if needed by dividing each term separately by the denominator.
+For example, (6x plus 12) over 6 equals 6x over 6 plus 12 over 6, which gives x plus 2.
+● Note that only terms with the same variable and power can be combined.
+Learning Activity 3: Factorising Linear and Quadratic Expressions in Braille
+Activity 3.1: Group work.
+Instructions.
+1. Provide learners with embossed linear expressions
+2. Ask learners to explore how expressions can be factored.
+3. Ask learners to factorise the following linear expressions in pairs.
+a) a 3x plus 9.
+b) 2a plus 4b.
+
+Mathematics Teaching Module Form 2 – Term 2
+10
+c) 6ab plus 9ac.
+d) 12xy minus 18xz
+e) ax plus ay plus bx plus by
+f) 18xy plus 24xz plus 30xw.
+g) 2a plus 2b plus 7a7b
+h) Pq plus pr plus 5q plus 5r
+Ask learners to present their findings.
+Activity 3.2: Individual Activity.
+Instructions
+1. Provide learners with embossed linear expressions
+2. Ask learners to explore how expressions can be factored.
+3. Ask learners to factorise the following linear expressions in pairs.
+a) 5y minus 15.
+b) 4x plus 8y plus 12
+c) 6mn plus 12mp minus 18mq
+d) 3a plus 3b plus 7a plus 7b
+e) 2px plus 2py plus 5qx plus 5qy
+f) 4ax minus 4ay plus 7bx minus 7by
+Content tips
+● To factorise a linear expression, identify the greatest common factor
+● Look at all the terms in the expression.
+● Find the greatest common factor that appears in each term.
+● This common factor will be taken out first, then write the remaining terms inside
+brackets and divide each term by the common factor.
+● If the common factor is negative, the signs inside the bracket change.
+● For example, in the expression 5y plus 15, common factor is 5 and the expression
+reduces to y plus 3,
+● Also, 2px plus 2py plus 5qx plus 5qy, the common factor for 2px and 2py is 2p while
+the common factor for 5qx and 5qy is 5q. The expression becomes 2p(x plus y) plus 5q
+(x plus y) which reduces to (2p plus 5q)(x plus y).
+● Ensure that learners are guided step by step to resolve the given tasks and pay attention
+to positive and negative signs when factoring.
+Activity 3.3: Group work, pair work
+Instructions.
+4. Provide learners with embossed quadratic expressions
+5. Ask learners to explore how expressions can be factored.
+
+Mathematics Teaching Module Form 2 – Term 2
+11
+6. Ask learners to factorise the following linear expressions in pairs.
+a) 2x squared plus 6x.
+b) m squared minus 5m.
+c) y squared minus 9
+d) 25x squared minus 4y squared
+e) 25p squared plus 30p minus 35
+f) x squared plus 5x plus 6
+Activity 3.4: Individual work
+Instructions.
+7. Provide learners with embossed quadratic expressions
+8. Ask learners to explore how expressions can be factored.
+9. Ask learners to factorise the following linear expressions independently.
+a) 3x squared plus 9x
+b) n squared minus 7n
+c) 36x squared minus 9y squared
+d) a squared minus 16
+e) 20p squared plus 40p plus 20
+f) X squared plus 7x plus 12
+Content tips
+● To factorise a quadratic expression, identify the greatest common factor
+● Look at all the terms in the expression.
+● Find the greatest common factor that appears in each term.
+● This common factor will be taken out first, then write the remaining terms inside
+brackets and divide each term by the common factor.
+● If the common factor is negative, the signs inside the bracket change.
+● For example in the expression n squared minus 9 n, common factor is n and the
+expression reduces to n(n minus 9).
+● Recognize the expression in the form a squared minus b squared (difference of two
+squares, both terms must be perfect square and separated by a minus sign).
+● Example: 25x squared minus 16 can be reduced to (5x) squared minus 4 squared. This
+further reduces to the form (5x minus 4)(5x plus 4)
+● For quadratic expressions in the form of ax squared plus bx plus c, find the product of
+ac
+● Find the factors of ac whose sum is equal to b
+● Express bx as a sum using the two factors
+● Factor by grouping terms
+● For example, 20p squared plus 40p plus 20 can be factorised as; first factor out 20 which
+gives 20(p squared plus p plus p plus 1), and this reduces to 20(p plus 1)(p plus 1)
+
+Mathematics Teaching Module Form 2 – Term 2
+12
+● Ensure that learners are guided step by step to resolve the given tasks and pay attention
+to positive and negative signs when factoring.
+
+Mathematics Teaching Module Form 2 – Term 2
+8
+SUB-TOPIC 3: SIMPLIFY ALGEBRAIC FRACTIONS
+INTRODUCTION
+This subtopic focuses on simplifying algebraic fractions and using algebraic expressions in
+solving real life problems.
+Specific Competences- Learners to: Use algebraic expressions in problem solving.
+Learning Activity 1: Simplifying Algebraic Fractions in Braille
+Activity 1.1: Group, pair work
+Instructions
+1. Provide learners with embossed algebraic fractions
+2. Ask learners to read the algebraic fractions
+3. Ask learners to identify the numerator, denominator in the given fractions.
+4. Ask learners to identify variables and coefficients.
+5. Ask learners to work in pairs or groups to simplify the following:
+i) 2 over x plus 3 over 2x
+ii) 6xy over 9y
+iii) (x plus 2) over (x squared minus 4)
+iv) (x squared plus 5x) over (x squared plus 3x)
+v) (2x squared plus 7x plus 3) over (x squared plus 3x plus 2)
+6. Ask learners to present their findings by explaining each simplification step verbally.
+7. Ask learners to write their working
+Activity 2.2: Individual work.
+Instructions
+1. Provide learners with embossed algebraic fractions
+2. Ask learners to read the algebraic fractions
+3. Ask learners to identify the numerator, denominator in the given fractions.
+4. Ask learners to work independently and simplify the following:
+i) 6x squared y over 9xy
+ii) (x squared minus 9) over (x squared plus 6x plus 9)
+iii) (4a squared minus 16) over 8a
+iv) (x squared plus 5x) over (x squared plus 3x)
+
+Mathematics Teaching Module Form 2 – Term 2
+9
+v) (2x squared plus 7x plus 3) over (x squared plus 3x plus 2)
+Content tips
+ Given an algebraic fraction, identify the numerator and denominator
+ Check for the type of the expression on the numerator and denominator
+ Look at all terms, take out any common number or variable for example, in the fraction
+6xy over 9y, 3y is a common factor for both numerator and denominator. So when we
+divide 3y into the numerator and the denominator, we get 2x over 3.
+ Look for Special Patterns in the denominator or numerator:
+ For example, (x plus 2) over (x squared minus 4), can be simplified as x plus 2 over (x
+plu2)(x minus 2), divide x plus 2 into the numerator and denominator. Therefore, the
+simplified fraction is 1 over (x minus 2). (using the idea of the difference of two squares
+for the denominator).
+ If either the numerator or denominator is in the form ax squared plus bx plus c, first
+factorise and simplify, for example: (2x squared plus 7𝑥 plus 3) over (x plus 3) when
+factorised will be (2𝑥 plus 1)(𝑥 plus 3) over (x plus 3), divide the numerator and
+denominator by x plus 3.
+ Therefore, the simplified expression is 2x plus 1
+Learning Activity 2: Using Algebraic Expressions to Solve Real-Life Problems
+Activity 2.1: Group work
+Instruction:
+1. Provide the learners with the following embossed real-life scenarios.
+2. Ask learners to formulate algebraic expressions from the given scenarios and simplify
+where possible.
+a) Mr Kalandanya works in a mine and earns K15 per hour. If he works for h hours a
+week, and his expenses are x Kwacha per week, write an algebraic expression for his
+weekly savings.
+b) A construction team can build 3 wall sections per day. If they have already completed
+w wall sections and need to build a total of 50 wall sections, write an expression for the
+number of additional days, d, they will need to finish the project.
+c) The temperature at noon is T degrees Celsius. If the temperature drops by 3 degrees
+every hour, write an expression for the temperature after h hours.
+d) Mr Kalandanya works in a mine and earns K15 per hour. If he works for h hours in a
+week and receives a fixed K3 transport allowance per week:
+i) Write an algebraic expression for his total weekly earnings
+ii) Write an algebraic expression for the total wage after two weeks
+
+Mathematics Teaching Module Form 2 – Term 2
+10
+3. Ask learners to present their findings through step-by-step guidance.
+Activity 2.2: Individual work
+Instruction:
+1. Provide the learners with the following embossed real-life scenarios.
+2. Ask learners to formulate the algebraic expression step by step
+3. Ask learners to simplify as far as possible
+a) A salesperson earns a basic salary of K1200 per month plus a 10% commission on all
+sales. If they make s kwacha of sales in a month, write an expression for their total
+sales.
+b) A library receives (k plus 5) new books each month. If this continues for 2 months,
+write and expand the expression for the total number of books received.
+c) A car has a fuel tank capacity of 15 litres. If the car consumes 0.5 litres of fuel per hour
+of driving. Write an expression for the amount of fuel, F, remaining in the tank after
+driving for h hours, assuming it started with a full tank.
+d) A rectangular garden has a length (x plus 5) metres and a width x metre.
+i) Write an expression for the area of the garden.
+ii) Expand the expression.
+Content Tips:
+● Read and understand the problem
+● Identify the unknown and assign a variable to it.
+● Break down the word problem into smaller pieces and identify numbers, operations,
+and relationships.
+● Specify the operations to use
+● Formulate the algebraic expression based on the translated information.
+● Simplify where possible
+Examples
+● From activity 2.1 (a), the sales in a month are represented by s
+● 10 percent commission for the sales in a month is 10 over 100 times s
+● Total sales are 1200 plus 10s over 100, equals (1200 plus 0.1s) in its simplest form
+Expected Standard: Algebraic expressions applied accurately in problem solving.
+Assessment
+1. Simplify the following expressions:
+a) 3x plus 2x
+b) 5y minus y plus 4
+c) 2a plus 3b minus a
+d) 2x over (2x plus 4)
+e) x squared plus 5x
+
+Mathematics Teaching Module Form 2 – Term 2
+11
+2. Expand and simplify
+a) 2(x plus 5) plus 3 (x minus 2)
+b) 5(a plus 2) minus 3(a minus 4)
+c) 3(2x plus 5y).
+d) Negative 4(a minus 3b).
+e) (x plus 2)(x plus 3).
+f) (y minus 7)(y plus 7).
+g) (2m plus 1) squared.
+h) (a plus b plus c)(d).
+i) 1 over 2(4p minus 6q).
+j) x over 3(6x minus 9).
+3. A store sells pens and pencils. Each pen costs x Kwacha and each pencil costs 2 Kwacha.
+If a customer buys 3 pens and 4 pencils, write an expression for the total cost.
+4. A gardener plants (y plus 3) flowers in the first row and (y plus 5) flowers in the second
+row. Write an expression for the total flowers and simplify.
+5. A car travels (2x plus 3) km in the morning and (x minus 2) km in the evening. Write
+an expression for the total distance travelled and simplify.
+6. A rectangular garden has an area of x squared plus 9x plus 20 m squared. Factorize the
+expression to
+determine the possible length and width combinations.
+7. Dalit bakes some loaves of bread in the morning and 4 more loaves in the afternoon than
+in the morning.
+i) Write an expression for the total number of loaves she bakes in a day
+ii) Find the number of loaves she bakes in a week.
+8. A shop sells some packets of rice on Monday and 6 more packets on Tuesday than on
+Monday. Write an expression for the total number of packets sold.
+9. A teacher writes some questions on the board for the first class and 3 fewer questions for
+the second class. Write an expression for the total number of questions written.
+10.A farmer plants some maize seeds in the first field and 5 more seeds in the second field
+
+Mathematics Teaching Module Form 2 – Term 2
+12
+than the first. Write an expression for the total seeds planted.
+11. A student reads some pages of a book in the morning and twice as many pages in the
+afternoon. Write an expression for the total number of pages read and simplify.
+12. A gardener plants some roses in the first row and 2 fewer roses in the second row than in
+the first. Write an expression for the total number of roses.
+13. A cyclist rides some kilometres in the morning and 3 more kilometres in the evening than
+in the morning. Write an expression for the total distance travelled.
+Summary
+● An algebraic expression is a mathematical phrase that contains numbers, variables, and
+arithmetic operations (such as addition, subtraction, multiplication, and division), but
+does not have an equal’s sign.
+● Variables represent unknown or changeable values, usually denoted by small letters of
+the alphabet.
+● Constants are fixed numbers, like 2, 5, or negative 3.
+● Terms are parts of an expression separated by plus or minus; for example, 3x plus 5 has
+two terms, 3x (variable term) and 5 (constant term), whereas 2a squared minus 4a plus
+7 has three terms.
+● Key Techniques include: Use of distributive property when simplifying a(b plus c)
+equals ab plus ac and combine like terms or group like terms where possible e.g. 3x
+plus 5x equals 8x. However, 5x plus 8y equals 5x plus 8y.
+● Factorization is writing an expression as a product of simpler expressions.
+● Techniques for Linear Expressions: Factor out the highest common factor (HCF): 6x
+plus 12 equals 6(x plus 2)
+● Techniques for Quadratic Expressions: Factor by splitting the middle term: x squared
+plus 5x plus 6 equals (x plus 2)(x plus 3)
+● Use difference of squares: x squared minus 9 equals (x minus 3)(x plus 3)
+● Importance of simplifying expressions, helps in solving quadratic equations, and is
+used in algebraic fractions.
+
+Mathematics Teaching Module Form 2 – Term 2
+13
+TOPIC 4: POLYGONS
+INTRODUCTION
+Overview: This topic focuses on Regular polygons and Irregular polygons. A polygon is one
+of the most fundamental geometric shapes. Polygons are important because they appear
+everywhere in real life, from the design of buildings and bridges and the layout of floor plans
+in architecture, to computer graphics and animation in technology, to natural patterns like
+honeycombs and crystals. Understanding polygons is essential as it provides the building
+blocks for both theoretical geometry and practical applications that shape the world around us.
+General Competence(s):
+Analytical Thinking: Examine the properties of different polygons (sides, angles,
+symmetry). And analyse patterns in the sum of interior and exterior angles.
+Communication: Use appropriate language (verbal and non-verbal) in different situation
+Collaboration: Work in groups to solve complex polygon problems.
+Critical Thinking: Deal with life challenges effectively
+Problem Solving: Solve real-world problems involving polygons (finding missing angles,
+optimizing area).
+Hook: Every time you walk across tiled floors, or touch the edges of a book, or feel the outline
+of a stop sign, do you ever wonder what those shapes are and the secret code behind patterns
+in nature and in the things we use every day?
+Key terms
+Polygon: A closed 2D shape made up of straight-line segments.
+Sides (Edges): The straight lines that form a polygon.
+Vertices (Corners): The points where two sides meet.
+Interior Angle: The angle inside a polygon between two sides.
+Exterior Angle: The angle formed outside the polygon between a side and the extension of
+another side.
+Regular Polygon: A polygon with all sides equal and all angles equal.
+Regular Polygon: A polygon with sides and angles that are not all equal.
+Sub-Topic 1: Regular Polygons
+Introduction: ·This subtopic focuses on describing regular polygons, identifying the different
+types of polygons, exploring the relationship between sides and angles of a regular polygon
+and calculating the interior and exterior angles of regular polygons in braille. Regular polygons
+are important because they show balance and symmetry and they appear in many places around
+
+Mathematics Teaching Module Form 2 – Term 2
+14
+us and can be explored through touch. It is important for learners to understand how equal sides
+and equal angles work together to form patterns that are both simple and powerful.
+Specific Competence(s) Apply polygons to problem solving.
+Learning Activity 1: Describing regular polygons using tactile objects.
+Activity 1.1 Group work (Polygon touch and tell)
+Materials needed
+● Tactile polygon models (triangle, square, pentagon, hexagon, octagon).
+● Raised-line drawings on cardboard or embossed sheets.
+● Braille labels for each shape.
+● Optional: sticks or string to construct polygons.
+Instruction
+1. Give each learner a tactile polygon model, and ask them if they can feel the corners of
+each shape.
+2. Ask the learners to trace the sides and corners with their fingers. Encourage them to
+count the corners, sides and angles aloud.
+3. Ask learners to describe the polygon using tactile information:
+i. Number of sides.
+ii. Whether sides feel equal in length.
+iii. Whether angles feel equal (sharp vs. wide).
+Learning activity 2: Identifying different types of polygons using tactile objects
+Activity 2.1 group or pair work
+1. Using the learning materials in activity 1.1 ask learners in groups to discuss various
+types of polygons.
+2. Consider providing two different polygons to each pair and let learners compare
+(triangle and hexagon, square and rectangle…).
+3. Let Learners compare by touch and explain differences in sides and angles.
+4. Let learners write short descriptions (Pentagon: 5 equal sides, 5 equal angles…) to
+reinforce both tactile and written understanding.
+5. Ask learners to group polygons into categories by considering the number of sides
+6. State whether the polygon is a triangle, quadrilateral or pentagon and so on
+7. Ask follow-up questions:
+a) How many sides does your shape have?
+b) Do all the sides feel the same length?
+c) What makes this shape different from the one you felt before?
+
+Mathematics Teaching Module Form 2 – Term 2
+15
+Learning Activity 3: Exploring the relationship between sides and angles of a regular
+polygon using tactile objects
+Activity 3.1 Individual Work
+Materials needed
+● Tactile models of regular polygons (equilateral triangle, square, pentagon, hexagon,
+octagon).
+● Raised-line drawings or embossed sheets.
+● Tactile protractor or angle-measuring aids.
+● Braille worksheets with guiding questions.
+Instructions
+1. Each learner to trace each polygon with their fingers, counting the sides and corners.
+2. Each learner to write how many sides each shape has.
+3. Each learner to write how many corners each shape has.
+4. Ask each learner to compare by touching each corner of each polygon.
+5. Ask learners to say how they feel about the number of sides, corners and angles of
+different types of polygons.
+6. Ask learners to arrange polygons in order (triangle, square, pentagon, hexagon,
+octagon)
+Content Tips:
+● By comparing the number of sides, corners and angles, learners will notice that the
+sharper the edges/corners feel, the smaller the angles of a polygon and the smaller the
+number of sides. For instance, in a triangle, the corners are sharper than in a hexagon,
+and the interior angles are larger in a hexagon than in a triangle
+● Notice how the angles get wider as the number of sides increases.
+● They observe through touch that as sides increase, angles become less sharp and more
+open.
+● The corners are called vertices. At each vertex, there is an angle.
+● Learners explain the relationship that as the number of sides increases, the interior
+angles also increase, and the polygon feels closer to a circle.
+Learning Activity 4: Calculating the interior and exterior angles of regular polygons in
+braille.
+Activity 4.1 Group Work, pair work
+Learning Materials:
+● Tactile polygon cut-outs (triangle, square, pentagon, hexagon, octagon) with raised
+edges.
+● Pegboard or geoboard with elastic bands to construct polygons.
+
+Mathematics Teaching Module Form 2 – Term 2
+16
+● Braille worksheets with formulas and blank spaces for calculations.
+● Talking calculator or abacus.
+● Angle cards in braille (60 degrees, 90 degrees, 108 degrees, …)
+Instructions:
+1. Give learners tactile polygons
+2. Ask learners to discuss the number of sides (n)
+3. Ask learners to find the sum of the interior angles
+4. Ask learners to calculate the size of each interior angle using braille.
+5. Ask learners to use elastic bands on a pegboard polygon to trace the outside angle.
+6. Ask learners to find the size of the external angle.
+7. Ask learners to match braille angle cards to check the sum of the interior and the exterior
+angle.
+8. Ask learners to present their finding
+Content tips:
+● Introduce the formula in braille.
+● Learners calculate the sum, then divide by, to find each interior angle.
+● Example: Square (n equals 4): (4 minus 2)180 degrees equal 360 degrees. Each interior
+angle equals 360 divide 4 equals 90 degrees. Where n is the number of sides.
+● Learners use braille worksheets to calculate interior angles with the formula: interior
+angles (n minus 2) times 180 over n
+● Example: Triangle each interior angle is 60 degrees, square each interior angle is 90
+degrees and a Pentagon n equals 5, each interior angle is 108 degrees.
+● They compare tactile experience with calculated results.
+● Interior angle plus exterior angle equals 180 degrees, for example: Pentagon (n equals
+5) Interior angle is 108 degrees while the exterior is 72 degrees, the sum is 180 degrees.
+
+Mathematics Teaching Module Form 2 – Term 2
+17
+SUB-TOPIC 2: IRREGULAR POLYGONS
+INTRODUCTION:
+This subtopic focuses on describing irregular polygons, deriving the formula for the sum of
+interior angles of a polygon and determining the sum of interior angles of a polygon in braille.
+Irregular polygons can have sides and angles of different lengths and measures.
+Learning activity 1: Describing irregular polygons using tactile objects.
+Activity 1.1 Group Work, pair work.
+Learning Materials:
+● A set of tactile irregular polygon cut-outs (made from cardboard, foam, or 3D-printed
+with raised edges).
+● Braille labels for each polygon (Polygon A, Polygon B,…).
+● Braille worksheet with guiding prompts.
+● Audio recorder or oral response option for learners to describe findings.
+Instructions:
+1. Provide the learner with one tactile irregular polygon.
+2. Ask learners to feel the edges and corners carefully.
+3. Ask learners to count how many sides and corners the shape has.
+4. Ask the learners to compare the sides by touch. Prompt: “Are all the sides the same
+length, or do some feel longer or shorter?”
+5. Ask learners to record their observation in Braille:
+6. Guide the learner to feel each corner. Prompt: “Do the corners feel sharp or wide?
+Which ones feel bigger or smaller?”
+7. Ask the learner to describe the “feel” of the whole polygon.
+8. Prompt: “Does the shape feel balanced or uneven? Does it remind you of something
+familiar?”
+Content tips:
+● An irregular polygon is a polygon that does not have all sides equal and all angles equal.
+Unlike regular polygons (such as equilateral triangles or squares), irregular polygons
+can have sides and angles of different lengths and measures.
+● Learners complete a braille worksheet or record audio answers to prompts:
+ Number of sides
+ Comparison of side lengths
+ Description of angles
+ Overall impression (if the shape is symmetrical, even or uneven,)
+● For example, if Polygon A has 5 sides. Two sides are longer than the others.
+Or if Polygon B has 4 corners. One corner feels wider than the rest.
+
+Mathematics Teaching Module Form 2 – Term 2
+18
+Learning Activity 2: Deriving the formula for the sum of interior angles of a polygon in
+braille.
+Activity 2.1 Pair Work
+Learning Materials
+● Tactile polygon cut-outs (triangle, quadrilateral, pentagon, hexagon).
+● Pegboard or geoboard with elastic bands.
+● Braille worksheets with guiding prompts.
+● Talking calculator or abacus.
+Instructions:
+● Give learners an irregular tactile triangle.
+● Ask them to feel the three corners (angles).
+● Ask learners to find the sum of the angles in a triangle.
+● Write the sum in Braille
+● Provide irregular tactile square or rectangle.
+● Guide learners to divide it into two triangles using a diagonal (elastic band on
+pegboard).
+● Ask learners to tell how many triangles can be made from a quadrilateral (learners to
+use elastic bands or strings to split the quadrilateral).
+● Provide learners with tactile pentagons and hexagons
+● Ask learners to repeat splitting Pentagons and hexagons into triangles.
+● Ask learners to find the sum of the angles of those triangles for the pentagon and the
+hexagon
+● Ask learners what they have noticed when a polygon with n sides is divided into
+triangles.
+Content Tips:
+● The sum of these angles is always 180°.
+● Each triangle has 180°. So, for the quadrilateral, the total is 2 times 180, which equals
+360°
+● Determining the sum of interior angles of a polygon in braille. Braille note:
+● Guide learners to draw diagonals from one vertex, dividing it into 3 triangles.
+● For instance, a pentagon can be split into 3 triangles. Each triangle has 180°. So the
+total is 3 times 180 equals 540°.
+● Braille note:
+● A hexagon can be split into 4 triangles. Each triangle has 180°. So the total is 4 times
+180 equals 720°.
+● Braille note:
+● Guide them to write in braille.
+
+Mathematics Teaching Module Form 2 – Term 2
+19
+Learning activity 3: Determining the sum of interior angles of a polygon in braille.
+Activity 3.1 individual Work
+Ask learners to work individually on the following activities in braille
+1. Calculate the sum of interior angles of:
+a) a triangle
+b) quadrilateral
+c) pentagon
+d) hexagon
+2. If a polygon has 8 sides, calculate the sum of its interior angles.
+Content Tips:
+ Pair each braille formula with a tactile polygon diagram (triangle, quadrilateral,
+pentagon, etc.) so learners can count sides by touch before applying the formula.
+ Encourage learners to read the braille expression aloud as they calculate, reinforcing
+both Nemeth literacy and mathematical reasoning.
+ Provide step-by-step braille worksheets where learners substitute values of into the
+formula and solve
+Expected Standard: Polygons correctly applied in various problem-solving situations
+Assessment
+1. Using tactile diagrams, count the sides of each polygon and state the value of .
+● Triangle
+● Quadrilateral
+● Pentagon
+2. Write the formula for finding the sum of interior angles of a polygon in Braille.
+3. Calculate the sum of the interior angles of;
+a) a triangle
+b) a quadrilateral
+c) a hexagon.
+4. A polygon has 10 sides. Use the formula to calculate the sum of its interior angles.
+5. If the sum of interior angles of a polygon is 1260 degrees, how many sides does
+the polygon have? (Learners solve using the formula)
+6. By how many degrees is a pentagon less than a decagon.
+7. A classroom window is shaped like a regular hexagon.
+a) Use the formula to determine the sum of its interior angles.
+b) Explain why this is important for designing symmetrical shapes.
+
+Mathematics Teaching Module Form 2 – Term 2
+20
+8. A polygon has twice as many sides as a pentagon.
+a) How many sides does it have?
+b) What is the sum of its interior angles?
+9. A polygon has a sum of interior angles equal to 1440 degrees. How many sides
+does the polygon have?
+Summary
+1. State the formula in Braille (Nemeth Code).
+2. Identify the number of sides in tactile polygon diagrams.
+3. Calculate sums for specific polygons (triangle, quadrilateral, pentagon, hexagon).
+4. Use Braille arithmetic to substitute values of.
+5. Explain why the formula works (polygons can be divided into triangles).
+6. Solve inverse problems (e.g., given the sum, find the number of sides).
+7. Compare sums between polygons (e.g., pentagon vs. decagon).
+Topic 3: Systems of Equations
+Introduction
+A system of equations is a set of two or more equations that use the same variables. In everyday
+life, many situations involve finding unknown values that satisfy multiple conditions
+simultaneously. This topic focuses on simultaneous equations in which two or more conditions
+must be satisfied at the same time.
+General competences
+● Collaboration: learners to work with others in finding solutions to daily challenges.
+● Critical Thinking: learners to solve complex problems.
+● Problem Solving: learners to weigh up evidence and make appropriate decisions best
+on experiences and relevant learning.
+● Creativity and Innovation: Express one’s idea through life experiences.
+● Analytical Thinking: modelling a problem using equations
+● Communication: Express oneself using different media and symbols.
+● Digital Literacy: Demonstrate advanced proficiency in software tools for productivity
+Hook: Imagine solving a mystery where two or more pieces of information must be true at the
+same time?
+Key Terms
+System of equations: A set of two or more equations with the same variables that are solved
+together
+Linear Equation: An equation that forms a straight line when graphed (e.g.,
+
+Mathematics Teaching Module Form 2 – Term 2
+21
+Variable: A symbol (like 𝑥, y) that represents an unknown value.
+Substitution Method: A method where one equation is rearranged and substituted into
+another.
+Elimination Method: A method where equations are added or subtracted to eliminate one
+variable.
+Coefficient: A number multiplying a variable (e.g., 3 in 3𝑥).
+Constant Term: A number without a variable (e.g., 5 in 𝑥 plus 5).
+Learning activity 1. Exploring situations that give rise to equations in one variable and
+two variables in braille.
+Sub-Topic 1: Simultaneous equations.
+Activity 1.1: Group work, pair work
+Instructions
+1. Place the learners in groups or pairs.
+2. Provide learners with the following embossed scenarios
+1. A number multiplied by 4 equals 20.
+2. A number reduced by 6 gives 9.
+3. The sum of two numbers is 15.
+4. A book costs K20 and a pen costs K3. Chanda bought x books and y pens, spending a
+total of 50 kwacha.
+5. The total number of learners in the class, with x boys and y girls, is 30.
+6. The difference between the two numbers is 4.
+7. A number divided by 5 equals 6.
+8. The perimeter of a square garden is 20 cm
+3. Ask learners to read and discuss the scenarios
+4. Ask learners to formulate the equations for each scenario.
+5. Ask each pair to present their findings to the rest of the class.
+Activity 1.2: Individual work
+Instructions
+1) Place the learners in groups or pairs.
+2) Provide learners with the following embossed scenarios
+a) A number plus 9 equals 17. Write the equation.
+b) Five times a number equals 35. Write the equation.
+c) The sum of two numbers is 40. Write the equation.
+d) A number divided by 4 equals 8. Write the equation.
+
+Mathematics Teaching Module Form 2 – Term 2
+22
+e) There are x cows and y goats at the farm. Total number of animals 25. Write the
+equation.
+f) A number decreased by 11 gives 3. Write the equation.
+g) The total cost of x items is 60 kwachas. Write the equation
+h) The perimeter of a rectangle is 30 cm. Write an equation.
+3. Ask learners to read the scenarios individually.
+4. Ask learners to formulate the equations for each scenario.
+5. Ask learners to present their work
+Content Tips
+● A situation can give rise to an equation in one variable or two variables.
+● An equation shows that two quantities are equal in any given scenario.
+● A one-variable equation has one unknown (example: 2x equals 2, x is unknown).
+● Two-variable equations have two unknowns (example: x plus y equals 1. x and y are
+unknown).
+● Refer to Activity 1.1. (a) A number multiplied by 4 equals 20. Let that number be
+represented by any letter of the English alphabet. In this case, let x be the unknown
+number. 4 times x equals 20. The expression is 4x equals 20.
+● Refer to activity 1,1. (d)A book costs K20 and a pen costs K3. Chanda bought x books
+and y pens, spending a total amount of K50. In this statement, x represents the number
+of unknown books, and y represents the number of unknown pens. Multiply x by 20,
+add y multiplied by 3, and set the sum equal to 50. Therefore, the equation is 20x plus
+3y equals 50.
+Learning activity 2. Solving Equations in One Variable
+Activity 2.1: Pair Work
+Instructions
+1. Place the learners in groups or pairs.
+2. Provide learners with the following embossed equations:
+a) x plus 5 equals 12
+b) x minus 4 equals 9.
+c) 2x equals 18.
+d) x over 3 equals 6.
+e) 4x equals 20.
+f) x minus 8 equals 2.
+g) x plus 10 equals 25.
+h) 5x equals 45.
+3. Ask learners to read and discuss the equations
+4. Ask learners to solve the equations given.
+
+Mathematics Teaching Module Form 2 – Term 2
+23
+5. Ask each pair to present their findings to the rest of the class.
+Activity 2.3: Individual work
+Instructions
+1. Provide learners with the following embossed equations:
+a) x plus 6 equals 13.
+b) 7x equals 49.
+c) x divided by 2 equals 8.
+d) x minus 3 equals 10.
+e) 9x equals 81.
+f) x plus 11 equals 18.
+g) x divided by 6 equals 4.
+h) 4x minus 5 equals 65 minus 6x.
+2. Ask learners to read the equations individually.
+4. Ask learners to solve the equations given.
+5. Ask learners to present their findings.
+Content Tips
+● Simplify both sides combine like terms and remove brackets if any.
+● Move the constant term to the other side using addition or subtraction.
+● Isolate the variable by dividing or multiplying.
+● Check the solution by substituting it back into the original equation.
+Example:
+Solve 3x plus 7 equals 16
+3x equals 16 minus 7
+x equals 9 over 3
+x equals 3
+Learning activity 3: Solving simultaneous linear equations using elimination and substitution
+(in two variables) in braille.
+Activity 3.1: Group, pair work
+Instructions
+1) Place the learners in groups or pairs.
+2) Provide learners with the following embossed pairs of equations:
+a) x plus y equals 9, x minus y equals 1.
+b) x plus y equals 13; x equals y plus 3.
+c) x minus y equals 4, x plus y equals 8.
+d) x plus y equals 17; x equals y plus 5.
+
+Mathematics Teaching Module Form 2 – Term 2
+24
+e) x plus y equals 14, x minus y equals 2.
+f) 2x plus 3y equals 16; 3x minus 2y equals 5.
+g) 3x plus 4y equals 18 , 2x minus y equals 12.
+h) 4x plus 5y equals 20, 2x minus 3 y equals 4
+3) Ask learners to read and discuss the equations
+4) Ask learners to solve the equations given.
+5) Ask each pair to present their findings to the rest of the class.
+Activity 3.2: individual work
+Instructions
+1. Provide learners with the following embossed pairs of equations:
+a) x plus y equals 7, 2x minus y equals 4.
+b) 2x plus 3y equals 11; 3x minus 2y equals 4.
+c) 4x minus 2y equals 14, x minus y equals 1.
+d) 3x minus 2y equals 8; negative 5x plus 4y equals negative 14.
+e) 2x plus 3y equals 7, 4x minus 5y equals negative 1.
+f) 4x plus 3y equals 5; 2x plus y equals 5.
+2. Ask learners to solve the equations given.
+3. Ask the learners to present their findings.
+Content Tips:
+● To solve Simultaneous Equations by Elimination
+● Write both equations in the form 𝑎𝑥 plus 𝑏𝑦 equals 𝑐, with variables on one side and
+constants on the other.
+● Decide which variable to eliminate either 𝑥 or y.
+● Make the coefficients equal (if needed) by multiplying one or both equations so that the
+coefficients of the chosen variable are the same (or opposites).
+● Add or subtract the equations to eliminate the chosen variable and get an equation with
+only one variable.
+● Solve for the remaining variable using the single-variable equation.
+● Substitute back to find the other variable in one of the original equations.
+● Check by substituting both values into both original equations to verify if they satisfy
+the
+● Identify the equations and variables, and decide which variable you want to solve for
+first.
+● Make one variable in one equation the subject of the formula
+● Replace the expression in the other equation and replace the variable you isolated in the
+second equation with the expression from step 2.
+
+Mathematics Teaching Module Form 2 – Term 2
+25
+● Solve for the remaining variable
+● Substitute back to find the other variable: Plug the value found into the expression from
+step 2 to find the second variable.
+● Check your solution: Substitute both values into the original equations to make sure
+they satisfy both.
+Examples:
+Solve: x plus y equals 9; x minus y equals 1
+Eliminate x and substitute 𝑦 in any of the equations.
+2y equals 8
+y equals 4
+Substitute y equals 4 in x minus y equals 1
+When y is 4, x equals 5
+2x plus 3y equals 12, x minus y equals 1
+You can solve either by elimination or by substitution
+By elimination
+2x plus 3y equals 12…. eq.1
+X minus y equals 1…..eq.2 multiply eqn 2 by 2 to eliminate x
+2x plus 3y equals 12
+2x minus 2y equals 2 subtract eqn 2 from eqn 1
+5Y equals 10
+When y is 2, x is negative 3
+Method 2: substitution
+Let x or y be the subject of the formula
+To make x the subject of the formula from equation 2
+We have x equals 1 plus y
+Substitute x equals 1 plus y in equation 1
+2(1 plus y) plus 3y equals 12
+2 plus 2y plus 3y equals 12
+5y equals 12 minus 2
+5y equals 10
+Y equals 2
+When y is 2, x is
+Expected Standard: Equations used correctly in problem solving.
+Assessment
+1. Formulate equations for the following situations:
+a) Three times a number is 18.
+b) A number minus 7 is 5.
+c) The sum of two numbers is 22.
+
+Mathematics Teaching Module Form 2 – Term 2
+26
+d) The cost of x books and y pens is K45.
+e) A pen costs K3, and a book costs K20. Kondwani buys x pens and y books for a total
+amount of K100.
+f) A bus fare from Munali to town plus a taxi fare back costs K120.
+g) At a market, 4 apples and 2 bananas cost K40.
+h) A toll gate charges 20 Kwachas for small cars and 500 kwacha for trucks. A total of
+K2000 is collected for small cars and trucks.
+2. Solve the following linear equations in one variable:
+a) x plus 9 equals 16.
+b) 6x equals 36.
+c) x over 4 equals 5.
+d) x minus 7 equals 11.
+e) x plus 14 equals 20.
+f) x over 5 equals 9.
+3. Solve the following systems of simultaneous equations:
+a) x plus y equals 12, x equals y plus 2.
+b) x minus y equals 4, x plus y equals 10.
+c) x plus y equals 9, x equals y plus 1.
+d) x minus y equals 2, x plus y equals 6.
+e) x plus y equals 14, x equals y plus 4.
+f) x plus y equals 11, x minus y equals 3.
+g) x plus y equals 10, x equals y minus 2.
+h) x plus y equals 15, x minus y equals 5
+i) A farmer buys chickens and goats. Two chickens and three goats’ cost K19, while four
+chickens and one goat cost K17. Determine the cost of each chicken and each goat.
+j) A farmer sells 5 kg of maize and 2 kg of beans for 90 Kwacha. Another farmer sells 3
+kg of maize and 4 kg of beans for 100 Kwacha. Determine the price per kilogram of
+maize and beans?
+k) At a bakery, three loaves of bread and two cakes cost K24, while two loaves of bread
+and four cakes cost K30. determine the cost of each loaf of bread and a cake.
+Summary
+● A system of equations is a collection of two or more equations that share the same set
+of variables.
+● Substitution Method: Solve one equation for one variable and substitute that expression
+into the other equation(s).
+● Elimination (or Addition) Method: Multiply one or both equations by constants so that
+the coefficients of one variable are opposites, then add the equations together to
+eliminate that variable.

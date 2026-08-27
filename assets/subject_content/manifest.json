@@ -7,6 +7,78 @@
       "sourceUrl": "bundled://civic_education/form1_term3_teaching_module",
       "fileName": "civic_education/form1_term3_teaching_module.txt",
       "_source": "Curriculum Development Centre Teaching Module for Civic Education, Form 1 Term 3 — real curriculum content, front matter (authorship/credits) stripped during extraction and never bundled."
+    },
+    {
+      "title": "Civic Education Teaching Module Form 1 - Term 2",
+      "subjectName": "Civic Education",
+      "resourceType": "module",
+      "sourceUrl": "https://library.cdcrepository.info/resource.php?id=297",
+      "fileName": "civic_education/form_1_civic_education_teaching_module_form_1_term_2.txt",
+      "_source": "Curriculum Development Centre Teaching Module, downloaded from the CDC Digital Library catalog (resource id 297) — real curriculum content, front matter (authorship/credits) stripped during extraction and never bundled."
+    },
+    {
+      "title": "History Teaching Module Form 1 - Term 2",
+      "subjectName": "History",
+      "resourceType": "module",
+      "sourceUrl": "https://library.cdcrepository.info/resource.php?id=298",
+      "fileName": "history/form_1_history_teaching_module_form_1_term_2.txt",
+      "_source": "Curriculum Development Centre Teaching Module, downloaded from the CDC Digital Library catalog (resource id 298) — real curriculum content, front matter (authorship/credits) stripped during extraction and never bundled."
+    },
+    {
+      "title": "History Teaching Module",
+      "subjectName": "History",
+      "resourceType": "module",
+      "sourceUrl": "https://library.cdcrepository.info/resource.php?id=269",
+      "fileName": "history/form_1_history_teaching_module.txt",
+      "_source": "Curriculum Development Centre Teaching Module, downloaded from the CDC Digital Library catalog (resource id 269) — a distinct document from resource id 298 above (verified by diff, not just by title) despite the similar name; real curriculum content, front matter stripped and never bundled."
+    },
+    {
+      "title": "English Language Teaching Module Form 1 - Term 2",
+      "subjectName": "English Language",
+      "resourceType": "module",
+      "sourceUrl": "https://library.cdcrepository.info/resource.php?id=309",
+      "fileName": "english_language/form_1_english_language_teaching_module_form_1_term_2.txt",
+      "_source": "Curriculum Development Centre Teaching Module, downloaded from the CDC Digital Library catalog (resource id 309) — real curriculum content, front matter (authorship/credits) stripped during extraction and never bundled."
+    },
+    {
+      "title": "English Teaching Module",
+      "subjectName": "English Language",
+      "resourceType": "module",
+      "sourceUrl": "https://library.cdcrepository.info/resource.php?id=264",
+      "fileName": "english_language/form_1_english_teaching_module.txt",
+      "_source": "Curriculum Development Centre Teaching Module, downloaded from the CDC Digital Library catalog (resource id 264) — a distinct document from resource id 309 above (verified by diff, not just by title), appears to cover Term 3 content; real curriculum content, front matter stripped and never bundled."
+    },
+    {
+      "title": "Mathematics Teaching Module Form 1 - Term 2",
+      "subjectName": "Mathematics",
+      "resourceType": "module",
+      "sourceUrl": "https://library.cdcrepository.info/resource.php?id=299",
+      "fileName": "mathematics/form_1_mathematics_i_teaching_module_form_1_term_2.txt",
+      "_source": "Curriculum Development Centre Teaching Module, downloaded from the CDC Digital Library catalog (resource id 299) — real curriculum content, front matter (authorship/credits) stripped during extraction and never bundled."
+    },
+    {
+      "title": "Adapted Mathematics Teaching Module Form 2 - Term 2",
+      "subjectName": "Mathematics",
+      "resourceType": "module",
+      "sourceUrl": "https://library.cdcrepository.info/resource.php?id=173",
+      "fileName": "mathematics/form_2_adapted_mathematics_form_2_term_2.txt",
+      "_source": "Curriculum Development Centre Teaching Module, downloaded from the CDC Digital Library catalog (resource id 173) — real curriculum content, front matter (authorship/credits) stripped during extraction and never bundled."
+    },
+    {
+      "title": "Principles of Accounts Teaching Module Form 1 - Term 2",
+      "subjectName": "Principles of Accounts",
+      "resourceType": "module",
+      "sourceUrl": "https://library.cdcrepository.info/resource.php?id=311",
+      "fileName": "principles_of_accounts/form_1_principles_of_accounts_teaching_module_form_1_term_2.txt",
+      "_source": "Curriculum Development Centre Teaching Module, downloaded from the CDC Digital Library catalog (resource id 311) — real curriculum content, front matter (authorship/credits) stripped during extraction and never bundled."
+    },
+    {
+      "title": "Principles of Accounts Teaching Module",
+      "subjectName": "Principles of Accounts",
+      "resourceType": "module",
+      "sourceUrl": "https://library.cdcrepository.info/resource.php?id=276",
+      "fileName": "principles_of_accounts/form_1_principles_of_accounts_teaching_module.txt",
+      "_source": "Curriculum Development Centre Teaching Module, downloaded from the CDC Digital Library catalog (resource id 276) — a distinct document from resource id 311 above (verified by diff, not just by title); real curriculum content, front matter stripped and never bundled."
     }
   ]
 }

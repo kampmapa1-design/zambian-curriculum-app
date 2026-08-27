@@ -82,6 +82,15 @@ flutter:
     - assets/cdc_resources/seed_catalog.json
     - assets/subject_content/manifest.json
     - assets/subject_content/civic_education/form1_term3_teaching_module.txt
+    - assets/subject_content/civic_education/form_1_civic_education_teaching_module_form_1_term_2.txt
+    - assets/subject_content/history/form_1_history_teaching_module_form_1_term_2.txt
+    - assets/subject_content/history/form_1_history_teaching_module.txt
+    - assets/subject_content/english_language/form_1_english_language_teaching_module_form_1_term_2.txt
+    - assets/subject_content/english_language/form_1_english_teaching_module.txt
+    - assets/subject_content/mathematics/form_1_mathematics_i_teaching_module_form_1_term_2.txt
+    - assets/subject_content/mathematics/form_2_adapted_mathematics_form_2_term_2.txt
+    - assets/subject_content/principles_of_accounts/form_1_principles_of_accounts_teaching_module_form_1_term_2.txt
+    - assets/subject_content/principles_of_accounts/form_1_principles_of_accounts_teaching_module.txt
     - assets/lesson_plans/manifest.json
     - assets/lesson_plans/civic_education_grade10-12.json
     - assets/lesson_plans/history_form1.json

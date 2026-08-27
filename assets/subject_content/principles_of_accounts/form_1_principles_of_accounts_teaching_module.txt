@@ -1,0 +1,1115 @@
+The Principles of Accounts Teaching Module for Form One Term 2 comprise content that
+have been sequenced to create a link with the Principles of Accounts Teaching Module for
+Term 3.
+The suggested learning activities are designed in such a way as to promote cognitive and
+technical skills of the learners. You should therefore ensure that learners are actively engaged in
+the learning activities as stipulated in the module for masterly of the competences.
+The module provides:
+ Proposals of learner centred teaching methodology. However, you are free to explore
+other learner centred methodologies to suit your local environment as well as available
+resources.
+ An example of how a learning activity can be conducted to support Competence-
+Based Curriculum.
+ Content Tips to provide knowledge for the learning activity.
+ Examples of class exercises and homework assignments suitable for Competence
+Based Curriculum.
+Note: The Principles of Accounts Teaching Module Term 3 must be used upon completing
+Module for term 2. Therefore, you may continue using the Module for term 2 in term 3.
+Adequate time should be spent on the topics to allow learners to acquire the competences
+stated there in.
+
+Principles of Accounts
+Teaching Moduleviii
+ICONS USED IN THE MODULE
+Assessment
+Tips
+Methodology
+Learning Activity
+Key TermsSummary
+Discussion
+
+Form 1 Term 3
+Teaching Module1
+Sub – Topic –Types of Books of Prime Entry – Sales Day Book
+Introduction
+The Sales Day Book is one of the Books of Prime Entry where we record goods sold on credit.
+It is also known as a Sales Journal.
+The source document used to write up the Sales Day Book is known as the Duplicate Invoice.
+Specific Competence
+ Record Business Transactions in the Books of Prime Entry – Sales Day Book
+ Post Business Transactions to the Ledger.
+KEY TERMS
+ Sales – refers to goods sold.
+ Credit Sales – these are goods sold on credit to customers.
+LEARNING ACTIVITY 4
+Entering Business Transactions in the Books of Prime Entry – Sales Day Book.
+Methodology
+Suggested Methodology (Collaboration, Discussions and Inquiry)
+Suggested Learning Environment (Natural, Artificial and Technological)
+For illustration purposes relate to the example below:
+Methodology: Collaboration – learners work in pairs
+Learning Environment: Artificial
+Teacher’s Role:
+ Write a few credit sales transactions on the board, at least 6 transactions, as shown
+below:
+T. Taonga, a dealer in household goods, had a challenge in establishing the total
+credit sales and preparing the Sales Day Book. You as a qualified Accounts Clerk
+have been asked to help them calculate the total credit sales by preparing the Sales
+Day Book for the month of April 2025, from the transactions below:
+April. 4 Sold good on credit to Miyoba K174,000.00, less 10% Trade
+Discount (Invoice No. 0945).
+13 Sold goods to Z Pimba on credit K76,000.00 (Invoice No. 542)
+21 Sold on credit to Miyoba, 2 dozens of Soap at K600.00 per dozen
+(Invoice No. 871).
+24 Sales to M Gondwe on credit K12,800.00 (Invoice No. 0156)
+28 Sales to Z Pimpa on credit K15,000.00 less 10% Trade Discount.
+(Invoice No. 7619)
+
+Principles of Accounts
+Teaching Module2
+SOLUTION
+T TAONGA’S
+SALES DAY BOOK
+Date Details Invoice
+No. Subtotal Total
+Amount
+2025 K N K N
+4-Apr MIYOBA 0949
+Goods @ K174,000.00 174,000 00
+Less: 10% Trade Discount 17,400 00
+156,600 00
+13-Apr Z. PIMPA 542
+Goods @ K76,000.00 76,000 00
+21-Apr MIYOBA 871
+2 Dozens of Soap @ 600.00 per dozen 1,200 00
+24-Apr M. GONDWE 0156
+Goods @ k12,800.00 12,800 00
+28-Apr Z. PIMPA 7619
+Goods @ K15,000.00 15,000 00
+Less: 10% Trade Discount 1,500 00
+13,500 00
+30-Apr Cr Sale Account – General Ledger 260,100 00
+ Pick the first 2 transactions and demonstrate on how to record them in the Sales Day
+Book, taking into account trade discount.
+ Allow learners working in pairs to record the remaining transactions in the Sales Day
+Book.
+ Mark the exercise and correct each pair’s work to clear any misconceptions.
+ Give individualised home work.
+Let learners:
+ work in pairs and prepare the Sales Day Book from a list of credit transactions.
+ copy home work.
+CONTENT TIP
+The following is the format of the Sales Day Book.
+TITLE
+Date Details Invoice
+No. Subtotal Total Amount
+K N K N
+
+Form 1 Term 3
+Teaching Module3
+Note: When drawing the columns, the Details Column must be the widest.
+i. The Title of the Book of Prime Entry is written on top of the template.
+ii. Date Column- for entering the date when the transaction took place.
+iii. Details Column – for entering particulars of a transaction.
+iv. Invoice Number Column -for cross referencing of the source document number.
+v. Subtotal Column – for entering the monetary value of the unit price.
+vi. Total Amount Column- for entering the monetary value of the Total Amount of a
+transaction.
+LEARNING ACTIVITY 4
+Posting Transactions to the ledger
+Methodology
+Suggested Methodology (Collaboration, Discussions and Inquiry)
+Suggested Learning Environment (Natural, Artificial and Technological)
+For illustration purposes relate to the example below:
+Methodology: Collaboration – Learners work in pairs
+Learning Environment: Classroom
+Teacher’s Role:
+ Put learners in pairs.
+ From the Book of Prime Entry in Learning Activity 4 above, allow Learners to
+post transactions to the Ledger.
+T TAONGA’S
+ACCOUNTS RECEIVABLE LEDGER
+MIYOBA’S ACCOUNT
+Date Details F Dr Cr
+K N K N
+2025
+April 4 Sales 156,600 00
+21 Sales 1,200 00
+30 Balance c/d 157,800 00
+157,800 00 157,800 00
+May 1 Balance b/d 157,800 00
+MIYOBA’S ACCOUNT
+Date Details F Dr Cr
+K N K N
+2025
+April 4 Sales 156,600 00
+
+Principles of Accounts
+Teaching Module4
+21 Sales 1,200 00
+30 Balance c/d 157,800 00
+157,800 00 157,800 00
+May 1 Balance b/d 157,800 00
+Z. PIMPA’S ACCOUNT
+Date Details F Dr Cr
+K N K N
+2025
+April 18 Sales 76,000 00
+28 Sales 13,500 00
+30 Balance c/d 89,500 00
+89,500 00 89,500 00
+May 1 Balance b/d 89,500 00
+M. GONDWE’S ACCOUNT
+Date Details F Dr Cr
+K N K N
+2025
+April 24 Sales 12,800 00
+30 Balance c/d 12,800 00
+12,800 00 12,800 00
+May 1 Balance b/d 12,800 00
+T TAONGA’S
+GENERAL LEDGER
+SALES ACCOUNT
+Date Details F Dr Cr
+K N K N
+2025
+April 30 Total Receivables 260,100 00
+30 Balance c/d 260,100 00
+260,100 00 260,100 00
+May 1 Balance b/d 260,100 00
+ Pick 2 accounts: 1 with multiple postings and another with a single posting, and
+demonstrate on how to record them in the Accounts Receivable Ledger.
+ Allow learners working in pairs to record the remaining transactions in the Accounts
+Receivable Ledger.
+ Mark the learner’s work done in pairs and clear any misconceptions.
+ Give individualised home work.
+
+Form 1 Term 3
+Teaching Module5
+Let learners:
+ work in pairs and prepare the General Ledger and the Accounts Receivable Ledger
+from the example given.
+ present their work done in pairs for marking.
+ copy homework and continue hands on during free time at home.
+CONTENT TIP
+Rules for posting the Sale Day Book transactions to the ledger:
+ The total value of each Sales Invoice is posted to the debit side of each Customer’s
+Account in the Accounts Receivable Ledger.
+ The total of the Sales Day Book for the period is posted to the credit side of the
+Sales Account in the General Ledger.
+The following is the format of the Ledger Accounts
+TITLE
+Date Details Folio Debit Credit
+K N K N
+Note: When drawing the columns, the Details Column must be the widest.
+i. Title – for writing the name of the Ledger Account
+ii. Date Column- for entering the date when the transaction took place.
+iii. Details Column – for entering particulars of a transaction.
+iv. Folio Column -for cross referencing of the double effect of a transaction.
+v. Debit Column – for entering the monetary value of a transaction.
+vi. Credit Column- for entering the monetary value of a transaction.
+LEARNING ACTIVITY 6
+Extracting the Trial Balance
+Methodology
+Suggested Methodology (Collaboration, Discussions and Inquiry)
+Suggested Learning Environment (Natural, Artificial and Technological)
+For illustration purposes relate to the example below:
+Methodology: Collaboration – learners work in pairs
+Learning Environment: Natural Environment
+
+Principles of Accounts
+Teaching Module6
+Teacher’s Role:
+ Put learners in pairs.
+ From the Ledger Accounts in Learning Activity 5 above, allow learners to ex-
+tract a Trial Balance.
+ Mark the learner’s work and clear any misconceptions.
+T TAONGA’S
+TRIAL BALANCE
+AS AT 30TH APRIL 2025
+Details Folio Debit Credit
+K N K N
+Sales 260,100 00
+Receivables:
+Miyoba 157,800 00
+Z. Pimpa 89,500 00
+M. Gondwe 12,800 00
+260,100 00 260,100 00
+Let learners:
+ continue working in Pairs and extract the Trial Balance.
+Expected Standard:
+ Business Transactions recorded in the Books of Prime Entry correctly.
+ Business Transactions posted to the Ledger correctly.
+ASSESSMENT CRITERIA
+ Assess whether learners are able to identify correct transactions to be recorded in
+the Sales Day Book
+ Assess learners’ ability to explain the importance of a Sales Day Book
+ Assess whether learners are able to identify correct source document for the Sales
+Day Book.
+ Assess learner’s ability to correctly prepare the Sales Journal and post to the
+Ledger.
+Proposed tasks for assessment:
+Task 1
+Changwe Enterprise a retailer is involved in selling goods both on cash and credit basis and has
+not kept a proper record of Books of Prime Entry due to the increase in the number of credit
+sales and fewer workers in the Accounts Department. The business has decided to employ an
+additional Accountant to specifically be in charge of all the Books of Prime Entry, the Ledger
+Books and the Trial Balance. As a newly employed worker, you have been asked to prepare the
+Sales Day for the month of May 2024, post to the Ledger and extract a Trial Balance, from the
+transactions below:
+
+Form 1 Term 3
+Teaching Module7
+May 1 Sent an Invoice (Number 4904) to Mubiana for the following:
+100 Reams of Paper K120.00 each.
+50 Boxes of White Board Markers K50.00 each.
+May 16 Sold on credit 100 cartons of 30 Centimeter Rulers to Moya worth
+K15,000.00 on invoice Number 456.
+May 22 Sold the following on credit to Kolala (Invoice Number 230):
+20 packets of Detergent paste at K90.00 each.
+50 containers of disinfectant at K1 500.00 each.
+Less: 10% Trade Discount
+May 28 Sold the following on credit to Chengo (Invoice Number 234):
+40 Boxes of Chalk at K150.00 each
+100 Boxes of Assorted Ball Pens at K30.00 per box.
+All subject to 5% Trade Discount.
+Task 2
+Mwangala General Dealers have enjoyed a fair share of business in town. Because of the volume
+of the purchases and sales transactions on a daily basis, they failed to keep any record of the
+books of Account. They have then resolved to end this challenge by hiring you, a qualified
+Finance intern. You are to help them prepare the business’ Day Books, post the transactions to the
+appropriate Ledger Books and extract a Trial balance from the information below for the month
+of March 2025:
+8th March Issued an Invoice to Trends Fashion for the following (Invoice No. 287):
+100 pairs of Boy’s socks at K35.00 a pair
+170 pairs Men’s Jerseys at K200.00 each
+200 pairs Girls Cargo Trousers at K250.00 each
+All subject to 10% Trade Discount
+10th March Sold the following goods to North Beauty Parlour on credit (Invoice No. 0022):
+45 pairs Girls Cargo Trousers at K400.00 each
+35 pairs of Single Bed Sheets at K700.00 a pair
+All subject to 2% Trade Discount
+14th March Sold the following goods to Smart Boutique on credit (Invoice No. 6745):
+90 pairs of men’s Office Shoes at K90.00 a pair
+75 pairs of men’s Navy-Blue jeans at K180.00 a pair
+175 pairs of lady’s flat shoes at K75.00 a pair
+All subject to 5% Trade Discount
+22nd March We sold the following to Bright Fashions on credit (Invoice No. 6654):
+15 pairs of men’s office shoes at K120.00 a pair
+75 pairs of boy’s socks at K12.00 a pair
+50 pair of men’s navy-blue jeans at K120.00 a pair
+
+Principles of Accounts
+Teaching Module8
+Task 3
+A Business and Finance learner was invited by the Accountant to assist interpret a bundle of
+filed sales invoices for the business of SNK Enterprise. This was at a time when the Accountant
+was busy attending finance meetings outside the province. The Accountant has further left an
+instruction that you prepare the sales day book using the filed invoices below, post to the Ledger
+and extract a Trial Balance:
+2025
+February 2. Sales invoice number 02 – to SSK traders
+15 Extension Adaptors at K75.00 each
+10 laptop bags at K450.00 each
+All subject to 10% trade discount.
+4. Sales invoice number 03- to JK traders
+12 boxes of phone screen protectors at K330.00 per box
+8 boxes of phone coves at K660.00 per box.
+All subject to 5% trade discount
+7. Sales invoice number 04- to SK traders
+20 cases of Biscuits at K150.00 per case
+15 cases of Maheu at K330 per case
+All subject to 5% trade discount
+10. Sales Invoice Number 05-to GK Traders
+7 Bales of Sugar at K585 per bale
+5 bags of salt at K230 per bag
+All subject to 10% Trade discount
+Task 4
+Ngwe’na General Dealers did not employ an accountant to handle its business accounting works
+as it finds it very expensive to employ an accountant but prefers to hire one for some specific
+tasks.
+During the during the month of May 2025, they sold:
+May 1: 5 Lounge Suits to Chakola Enterprises on credit K35,000.00 each with a 20% trade
+discount (Invoice No. 5564):.
+May 10: 10 Dinning Sets to Chakola Enterprises on credit K15,000.00 each, with a
+trade discount of 8% (Invoice No. 9985).
+May 19: 8 beds to Mulamba Carpentry on credit K3, 500.00 each (Invoice No. 5092):
+As a hired qualified Accountant, you are required to prepare the Sales Day Book, post to the
+Ledger and Extract a Trial Balance as at 31st May 2025.
+Task 5
+You are an Accounts Clerk at Jaja Traders, a company that deals in electronics. The business sells
+goods on credit to selected customers and needs to records these transactions in the Sales Day
+Book everyday of each month, posting them to the Ledger and extracting a Trial Balance as at 31
+
+Form 1 Term 3
+Teaching Module9
+March 2025. The Accounts Clerk is not familiar with the accounting system of a retail trading
+businesses. Jaja Traders hires an Accounting Firm to come and induct the Accounting Personnel
+on the accounting system of a retailing business. After the induction as an Accounts Clerk you
+have been tasked to prepare the Sales Day Book, post to the Ledger and extract a Trial Balance
+from the transactions below:
+DATE CUSTOMER INVOICE
+NO. DETAILS
+March 1 Pendo Traders 0024
+30 Mouse Pads at K300 each mouse pads.
+15 Laptops at K7,800 each Laptop.
+Less: 15% Trade Discount.
+March 14 Zonetech Limited 876 Electronic goods worth K120,000.00,
+subject to 20% Trade Discont.
+March 21 Dipoint Enterprise 541 32 Computers at K10,000 each.
+March 27 Ndemwe Agencies 106 10 Car Headlamp bulbs at K280.00 each
+100 Car Fuses at K25.00 each
+Task 6
+GMD General Dealers has increased on its sales to customers on credit. This has increased the
+work load of the workers in the accounts department in determining the total of credit sales as
+some invoices are not recorded in the Sales Day Book thus posting less credit transactions to the
+Ledger Books and the Trial Balance. As a qualified Accountant, you have been asked to prepare
+the Sales Day Book to determine the credit sales; the balances due to individual credit customers
+and extract a Trial Balance for the month of February 2025, based on the following transactions.
+February 1 Sent an Invoice Note No. 0040 to NDQ Wholesalers containing:
+20 boxes of Washing Soap at K100.00 each box,
+30 cartons of Assorted Biscuits at K90.00 each carton
+Less 5 % Trade Discount.
+February 15 Sold goods on credit to KDP General Dealers the following (Invoice No.
+8823)::
+50 Garden Folks at K100.00 each,
+60 Wheelbarrows at K750.00 each.
+All subject to 15% Trade Discount
+February 25 Sold goods on credit to Taps Traders worth K50 000.00. less 5% Trade
+Discount (Invoice No. 1117).
+February 26 Sent an Invoice Note No. 567 to Akatama for the following:
+200 Lawn Rakes at K30.00 each,
+60 Lawn Mowers at K2 000.00 each.
+All subject to 10% Trade Discount.
+
+Principles of Accounts
+Teaching Module10
+SUMMARY
+Ensure learners are able to:
+ Enter transactions in the Sales Day Book.
+ Post transactions to the appropriate Ledger Books.
+ Extract a Trial Balance with the correct heading.
+Sub Topic – Types of Books of Prime Entry - Sales Returns Day Book
+Introduction
+The Sales Returns Day Book is a Book of Prime Entry that is used to record goods sold on credit
+but later returned by our customers due to various reasons e.g., wrong colour, faulty goods,
+damaged goods etc. It is also known as Sales Returns Journal, Returns Inwards Journal or
+Returns Inwards Day Book. It is important because it helps to account for goods returned. The
+Source Document used to write up the Sales Returns Day Book is known as the Duplicate Credit
+Note.
+Specific Competence
+ Record Business Transactions in the Books of Prime Entry – Sales Returns Day Book
+ Post Business Transactions to the Ledger.
+KEY TERM
+Sales Returns – refers to goods that were earlier sold but have been returned by the
+customer for various reasons such as wrong colour, damaged goods, expired goods etc.
+LEARNING ACTIVITY 4
+Entering business transactions in the Books of Prime Entry – Sales
+Returns Day Book
+Methodology
+Suggested Methodology (Collaboration, Discussions and Inquiry)
+Suggested Learning Environment (Natural, Artificial and Technological)
+For illustration purposes relate to the example below:
+Methodology: Collaboration – learners work in pairs
+Learning Environment: Artificial Environment
+Teacher’s Role:
+ Write a few credit sales returns transactions on the board, relating to Learning
+Activity No. 4’s example on Sales Day Book.
+T. Taonga, a dealer in household goods, had a challenge in establishing the total credit
+sales returns and preparing the Sales Returns Day Book. As a qualified Accounts Clerk,
+
+Form 1 Term 3
+Teaching Module11
+you have been asked to help in calculating the total credit sales returns by preparing
+the Sales Returns Day Book for the month of April 2025, from the transactions below:
+April 9 Sent a Credit Note No. 0050 for K30,000.00 to Miyoba, as damaged in transit.
+April 18 Issued a Credit Note No. 0345 to Z Pimpa for goods valued at K26,000.00 as they
+were expired.
+April 28 M Gondwe returned goods for K2,800.00, due to wrong colour and was issued
+with a Credit Note No. 0853.
+April 30 Sent a Credit Note No. 0347 to Z Pimpa for goods worth K5,000.00 as they were
+faulty.
+Solution
+T. TAONGA’S
+SALES RETURNS DAY BOOK
+Date Details
+Credit
+Note
+No.
+Subtotal Total
+Amount
+2025 K N K N
+9-Apr MIYOBA
+Goods @ K30,000.00 (damaged in transit) 0050 30,000 00
+Less: 10% Trade Discount 3,000 00
+27,000 00
+18-Apr Z. PIMPA
+Goods @ K26,000.00 (expired) 0345 26,000 00
+28-Apr M. GONDWE
+Goods @ KK2,800.00 (wrong colour) 0853 2,800 00
+30-Apr Z. PIMPA
+Goods @ K5,000.00 (faulty goods) 0347 5,000 00
+Less: 10% Trade Discount 500 00
+4,500 00
+30-Apr Dr. Sale Returns Account – General
+Ledger 60,300 00
+ Pick the first 2 transactions and demonstrate on how to record them in the Sales Re-
+turns Day Book, taking into account Trade Discount.
+ Allow learners working in pairs to record the remaining transactions in the Sales
+Returns Day Book
+ Mark the exercise and clear any learners’ misconceptions.
+ Give individualised class exercise/home work.
+Let learners:
+ work in pairs and prepare the Sales Returns Day Book from a list of credit trans-
+actions.
+ copy class exercise/home work.
+
+Principles of Accounts
+Teaching Module12
+The following is the format of the Sales Returns Day Book
+TITLE
+Date Details Credit Note
+No. Subtotal Total Amount
+K N K N
+Note: when drawing the columns, the details column should be the widest.
+i. The Title of the Book of Prime Entry is written on top of the template.
+ii. Date Column- for entering the date when the transaction took place.
+iii. Details Column – for entering particulars of a transaction.
+iv. Credit Note Number Column -for cross referencing of the source document number.
+v. Sub-total Column – for entering the monetary value of the unit price.
+vi. Total Amount Column- for entering the monetary value of the Total Amount of a
+transaction.
+LEARNING ACTIVITY 5
+Posting Transactions to the ledger
+Methodology
+Suggested Methodology (Collaboration, Discussions and Inquiry)
+Suggested Learning Environment (Natural, Artificial and Technological)
+For illustration purposes relate to the example below:
+Methodology: Collaboration – learners work in pairs
+Learning Environment: Natural Environment
+Teacher’s Role:
+ Refer to the Learning Activity 4 to post transactions to the Ledger.
+ Pick the first transactions and demonstrate on how to record in the Ledger Books.
+Solution
+T. TAONGA’S
+ACCOUNTS RECEIVABLE LEDGER
+MIYOBA ACCOUNT
+Date Details Folio Debit Credit
+2025 K N K N
+4-Apr Sales Returns 27,000 00
+30-Apr Balance c/d 27,000 00
+27,000 00 27,000 00
+1-May Balance b/d 27,000 00
+
+Form 1 Term 3
+Teaching Module13
+Z. PIMPA ACCOUNT
+Date Details Folio Debit Credit
+2025 K N K N
+13-Apr Sales Returns 26,000 00
+28-Apr Sales Returns 4,500 00
+30-Apr Balance c/d 30,500 00
+30,500 00 30,500 00
+1-May Balance b/d 30,500 00
+M. GONDWE ACCOUNT
+Date Details Folio Debit Credit
+2025 K N K N
+24-Apr Sales Returns 2,800 00
+30-Apr Balance c/d 2,800 00
+2,800 00 2,800 00
+1-May Balance b/d 2,800 00
+T TAONGA’S
+GENERAL LEDGER
+SALES RETURNS ACCOUNT
+Date Details Folio Debit Credit
+2025 K N K N
+30-Apr Sundry Returns 60,300 00
+30-Apr Balance c/d 60,300 00
+60,300 00 60,300 00
+1-May balance b/d 60,300 00
+ Allow learners working in pairs to record the remaining transactions in the Ledger
+books.
+ Mark the learners’ work done in pairs and clear any misconceptions.
+ Give individualised class exercise/home work.
+Let learners:
+ work in pairs and prepare the General Ledger and the Account Receivable Ledger
+from the example given.
+ present their work done in pairs for marking.
+ copy class exercise/homework.
+
+Principles of Accounts
+Teaching Module14
+CONTENT TIP
+Rules for posting the sales returns transactions to the Ledger Books:
+ Debit – Sales Returns Account with Total Sales Returns (from the Sales Returns
+Journal) in the General Ledger.
+ Credit – Individual Customers Accounts (from the Sales Returns Journal) in the
+Accounts Receivable Ledger.
+The following is the format for the Accounts Receivable Ledger:
+TITLE
+Date Details Folio Debit Credit
+K N K N
+Note: when drawing the columns, the details column should be the widest.
+i. Title – for writing the name of the Ledger Account
+ii. Date Column- for entering the date when the transaction took place.
+iii. Details Column – for entering particulars of a transaction.
+iv. Folio Column -for cross referencing of the double effect of a transaction.
+v. Debit Column – for entering the monetary value of a transaction.
+vi. Credit Column- for entering the monetary value of a transaction.
+LEARNING ACTIVITY 5
+Extracting the Trial Balance
+Methodology
+Suggested Methodology (Collaboration, Discussions and Inquiry)
+Suggested Learning Environment (Natural, Artificial and Technological)
+For illustration purposes relate to the example below:
+Methodology: Collaboration – learners work in pairs
+Learning Environment: Natural Environment
+Teacher’s Role:
+ From Learning Activity 5 above, allow learners to extract a Trial Balance.
+
+Form 1 Term 3
+Teaching Module15
+T TAONGA’S
+TRIAL BALANCE
+AS AT 30TH APRIL, 2025
+Details F Debit Credit
+K N K N
+Sales Returns 60,300 00
+Accounts Receivable:
+Miyoba 27,000 00
+Z. Pimpa 30,500 00
+M. Gondwe 2,800 00
+60,300 00 60,300 00
+ Mark the learner’s work and clear any misconceptions.
+ Give class exercise home work
+Let learners:
+ continue working in Pairs and extract the Trial Balance.
+ submit their work for marking.
+ copy class exercise/home work.
+Expected Standard
+ Business Transactions recorded in the Books of Prime Entry correctly.
+ Business Transactions posted to the Ledger correctly.
+ASSESSMENT CRITERIA
+ Assess whether learners are able to identify correct transactions to be recorded in
+the Sales Returns Journal.
+ Assess learners’ ability to explain the importance of a Sales Returns Journal.
+ Assess whether learners are able to identify correct source document for the Sales
+Returns Journal.
+ Assess learner’s ability to correctly prepare the Sales Returns Journal and post to
+the Ledger and extract a Trial Balance.
+Proposed tasks for assessment:
+Task 1
+A Cooperative Wholesale Society, which has been selling goods on credit, but lately, the goods
+have been returned by customers for various reasons. This has led to the business having
+challenges in determine the total return by customer. The Cooperative has therefore, decided
+to employee an additional Accounts Clerk that would prepare the Sales Returns Day Book,
+the Ledger Books and Extract the Trial Balance in order determine the total returns given the
+following transactions below for the month of July 2024:
+
+Principles of Accounts
+Teaching Module16
+8th July Received the following from M & H Auto Spares as they were damaged, quoted
+on Credit Note No. 0456:
+128 packets of Air Filters at K120.00 each,
+57 Packets of Oil Filters at K235.00 each.
+15th July Sent a Credit Note No. 0457 to Bubu Motors, as the goods were wrong type:
+17 Car Batteries at K1, 995.00 each,
+68 Car Battery Terminals at K165.00 each,
+All subject to 5% Trade Discount.
+23rd July Issued a Credit Note No. 0458 to TK Wheels limited, the following as they were
+wrong size:
+69 size 14 Mag Rims at K1, 500.00 each;
+73 size 17 Mag Rims at K1, 900.00 each.
+Task 2
+GG Holdings has mostly sold goods on cash basis but recently increased selling goods credit
+which has led to challenges of the business to account for Sales returns and the list of balances
+owed by Accounts Receivables. The business has engaged an Accounting Agency to assist the
+business in preparing the Sales Returns Day Book, post to the Ledger and extract a Trial Balance,
+for the month of April, 2025 based on the following transactions:
+13th April QM Fashions returned the following goods quoted on Credit Note No.
+0234, as they were wrong order:
+200 Maroon Shirts costing K175.00 each,
+300 Short Sleeved Jerseys costing K125.00 each.
+18th April Issued a Credit Note 0235 to EBM Book Shop for the following as they
+were soiled:
+10 copies of ‘Things Fall Apart’ Novels at K165.00 each,
+33 copies of Principles of Accounts at K210.00 each.
+All subject to 5% Trade Discount.
+25th April Sent a Credit Note 0236 to DB Book Store the following as they were
+not as ordered:
+70 copies of Physics Text Books costing K185.00 each,
+60 copies of Biology Text Books costing K175.00 each,
+80 copies of Chemistry Text Books costing K195.00 each.
+They were sold less 20% Trade Discount.
+Task 3
+VXY Enterprise, a seller of goods on credit to various customers of goods, has lately been
+receiving faulty goods from its customers making it difficult for its limited personnel in the
+Accounts Department to handle the entries in the Books of Prime Entry concerning the returns so
+that the total sales returns and the amounts receivable from credit customers can be determined.
+In order to solve the problem, the business employed another worker who was presented with the
+transactions below for the month of March 2025, to prepare the Sales Returns Day Book, post to
+the Ledger and extract a Trial Balance.
+
+Form 1 Term 3
+Teaching Module17
+8th March Sent a Credit Note No. 458 to BTY Stores:
+15 boxes Biscuits at K4, 500.00 per box,
+10 bags of Mealie Meal at K350.00 each.
+The goods were damaged in transit.
+All subject to 5% Trade Discount.
+16th March Issued a Credit Note No. 459 to Simate. The goods were wrong size:
+5 bales of Second-Hand Clothes at K4,500.00 per bale,
+2 bales of Second-Hand Shoes worth K7,000.00 for all.
+20th March Sent a Credit Note No. 460 to Chanda Wholesalers:
+3 cartons of Bathing Soap at K250.00 per carton not as ordered
+Less 5% Trade Discount
+28th March Issued a Credit Note No. 461 to Chipangula for the following goods as they
+were underweight:
+10 cartons of Bathing Soap worth K2,500.00, for all,
+10 cartons of Insect Side with the total cost of K3,500.00, for all.
+Less 10% Trade Discount.
+Task 4
+You are a new Accounts Assistant at Sum Distributors Limited., a company that sells goods
+on credit to various clients. Occasionally, some goods are returned by customers due to being
+damaged, expired, or wrongly supplied etc., the challenge is that the Accounts Assistant is not
+yet acquainted with the work and has been asked to redo the work which was done, with the
+guide of the Senior Accountant, by preparing the Sales Returns Day Book, posting to the Ledger
+and extract a Trial Balance as at 30 April 2025, from the transactions below:
+April 5 Sent a Credit Note No. 0560 to Hapa Trader 10 Blenders which was costing
+K18,000.00 each due to wrong model.
+13 Issued a Credit Note No. 0561 to KP Stores for 14 Pressing Iron with the price
+of K5,000.00 as faulty. At the time of sale, the Pressing Iron was subjected to a
+10%. Trade Discount.
+19 Sent a Credit Note No. 0562 to Wabo Investment Limited following items as
+they were broken:
+1 Upright Fridge at K32,000.00,
+2 Stoves at K12,500 each.
+All subject to 15% Trade Discount.
+Task 5
+The Assistant Accountant for PLK Wholesaler, was happy with the work done by the Accounts
+Clerk on Sales Day Book but was not happy with the work done concerning the Sales Returns
+Day Book, because some credit notes were omitted, thus, making it difficult for the Assistant
+Accountant to report back to management who needed to know the totals of sales returns.
+Therefore, the Accounts Assistant was requested to reprepare the Sales Returns Day Book, post
+transaction to the Ledger Books and extract a Trial Balance after presentation of all the Credit
+Note Copies for the month of February 2025 as given below:
+
+Principles of Accounts
+Teaching Module18
+3rd February Copy Credit Note No. 005 SSK for the following as they were faulty:
+2 Extension Adaptors K75.00 each,
+5 Laptop Bags at K450.00 each.
+10 % Trade Discount.
+5th February Credit Note No. 006 issued to JK Traders as they had wrong sizes:
+2 boxes of Screen Protectors at K330.00 per box,
+1 box of Phone Covers at K660.00.
+All subject to 5% Trade Discount.
+6th February Credit Note. 007 issued to SK Traders as expired goods:
+5 cases of Biscuits at K150.00 per case,
+5 cases of Maheu at K330.00 each case.
+All subject to 5% Trade Discount.
+8th February Sent a Credit Note. 008 to GK Traders for damaged goods:
+2 bales of Sugar at K585.00 per bale.
+Subject to 10% Trade Discount.
+Task 6
+Peza Enterprise a retailer had difficulties in preparing the Sales Returns Day Book, decided to
+hire a Book Keeper because some business transactions were confusing when recording them
+making it difficult to determine the value of Sales Returns. Therefore, the Book Keeper was
+tasked to prepare the Sales Returns Day Book, posting to the Ledger and extracting a Trail
+Balance given the transactions below for the month of May 2025:
+May 16 Sent a Credit Note. 867 to Manu Stores, 60 dozens of Pens at K150.00 per dozen,
+due to poor quality. Less 5% Trade Discount.
+May 22 Issued a Credit Note No. 868 to Kwatu Shop:
+8 packets of Washing Paste at K45.00 per packet,
+10 bottles of Soft Drinks at K50.00 per bottle.
+All subject to 5% Trade Discount.
+May 28 Hazi Shop returned the following goods based on Credit Note No.869 due dam-
+ages in transit:
+15 Boxes of Tooth Paste at K150.00 each
+30 Boxes of Assorted Biscuit at K100.00 per box
+SUMMARY
+Ensure learners are able to:
+ Enter transactions in the Sales Returns Day Book.
+ Post transactions to the appropriate Ledger Books.
+ Extract a Trial Balance with the correct heading.
+
+Form 1 Term 3
+Teaching Module19
+CONSOLIDATED QUESTIONS ON BOOKS OF PRIME ENTRY
+Note: Tasks for consolidated day books for assessment purposes:
+Task 1
+M & Q a Cash and Carry Wholesaler dealing in hardware, lately started buying and selling goods
+on credit, which has made it difficult for the business to clearly determine credit purchases, credit
+sales and returns, due to the increase in the business transactions. The business has decided to
+employ an additional Accounts Assistant who has been asked to prepare appropriate Books of
+Prime Entry related to credit transactions, post to the Ledger Books and extract a Trial Balance
+for the month of October 2024 given the transactions below:
+Oct 1 Bought on credit from Momo Company (Invoice No. 001):
+30 Wheelbarrows at K1,000.00 each.
+All subject to 10% Trade Discount.
+Oct 8 Sold to Yande Stores (Invoice No. 010):
+10 Digging Forks at K80.00 each,
+15 Wheelbarrows at K1,650.00 each.
+All subject to 5% Trade Discount.
+Oct 13 Bought on credit from BM Wholesalers (Invoice No. 002):
+20 Lawn Rakes at K50.00 each,
+10 Lawn Mowers at K2,500.00 each.
+All subject to 10% Trade Discount.
+Oct 15 Yande Stores Returned (Credit Note No. 075):
+2 Digging Forks,
+2 Wheelbarrows sold on 8th October found as wrong type.
+Oct 20 Sold goods on credit to Didi Enterprise (Invoice No. 011):
+10 Lawn Rakes at K70.00each,
+6 Lawn Mowers at K3,500.00 each.
+All subject to 5% Trade Discount.
+Oct 26 Returned to BM Wholesalers (Credit Note No. 095):
+5 Lawn Rakes Purchased on 18th October as damaged in transit.
+Task 2
+Kaburi Traders, a business that deals in household appliances, had an Accounts Assistant who
+was in charge of recording business transactions in appropriate Day Books, posting them to the
+ledger and extracting a Trial Balance. The Accounts Assistant resigned in the month of February
+2025, which led to failure of the business in preparing the necessary Books of Prime Entry. As an
+Accounting Consultant, you have been engaged and tasked to prepare the necessary Day Books,
+post transactions to the appropriate Ledgers and extract a Trial Balance from the transactions
+below:
+February 1 Bought the following on credit from Doe Suppliers (Invoice No. 015):
+50 Electric Kettles at K300.00 each,
+100 Toasters at K350.00 each,
+
+Principles of Accounts
+Teaching Module20
+15 Microwaves at K4,500.00 each.
+All subject to 10% Trade Discount.
+February 4 50 Toasters bought on 1st February were returned as an oversupply
+(Credit Note No. 002).
+February 6 Sold the following to Nice Home Stores on credit (Invoice No. 020):
+30 Electric Kettles at K400.00 each,
+40 Toasters at K450.00 each.
+Less 10% Trade Discount.
+February 10 Nice Home Store returned 5 Electric Kettles as faulty (Credit Note No.
+003).
+February 21 Hawa Wholesalers sold goods on credit to Kaburi Traders worth
+K20,000.00 (Invoice No. 021).
+February 26 Kaburi Traders sold goods on credit to Zuri Interiors worth K80,000.00
+(Invoice No. 022).
+Task 3
+Pelekelo Wholesalers Limited a dealer in groceries and electricals appliances. On 30th March
+2025, their only Accountant resigned without giving notice. On 31st March, 2025, the company
+managed to temporarily engage one recommended Business and Finance learner to assist in the
+preparation of the Books of Prime Entry, post to the ledgers and Extract the Trial balance from
+the following Business Transactions for the month of April, 2025 as per company policy.
+2025
+APRIL 1 Bought the following on credit from Twatasha Producers (Invoice No. 250)
+150 buckets of washing powder at K120.00 per bucket,
+300 containers of yogurt at K35.00 each,
+250 Boxes of Mr. Min at K460.00 per box.
+All subject to 15% Trade Discount.
+5. Sold the following on credit to Chadiza Enterprise (Invoice No. 450):
+10 Buckets of washing powder at K220.00 per bucket,
+80 Containers of yogurt at K50.00 each.
+All subject to 5% Trade Discount.
+10. Bought the following on credit from Twalumba Producers (Invoice No. 251):
+500 Scientific Calculators at K150.00 each,
+450 Rechargeable Bulbs at K175.00 each,
+115 Microphone Batteries at K55.00 each.
+All subject to 10% Trade Discount.
+12. Chadiza Enterprise returned the following as they were expired (Credit Note No.
+004):
+5 Buckets of washing powder,
+
+Form 1 Term 3
+Teaching Module21
+4 Containers of yogurt.
+13. Returned to Twatasha Producers the following goods as they were expired (Credit
+Note No. 061)
+12 Buckets of washing powder,
+10 Containers of yogurt.
+15. Sold the following on credit to Kyawama Enterprise (Invoice No. 252):
+40 Scientific Calculators at K200.00 each,
+60 Rechargeable Bulbs at K195.00 each.
+All subject to 5% Trade Discount.
+17. Kyawama Enterprise Returned the following goods as they were faulty (Credit
+Note No. 451):
+10 Scientific Calculators,
+5 Rechargeable Bulbs.
+20. Returned to Twalumba producers the following goods as they were faulty (Credit
+Note No. 017)
+25 Scientific Calculators,
+10 Rechargeable Bulbs,
+5 Microphone Batteries.
+Task 4
+Mwangala General Dealers has enjoyed a fair share of business in town because of an increase in
+purchases and sales transactions, which made them fail to keep a record of Books of Accounts.
+They have resolved to end the challenge by hiring another Accountant to help in preparing Books
+of Prime Entry, post transactions to the appropriate Ledger Books and extract a Trial balance for
+the month of March 2025, from the given transactions below:
+8th March Received an Invoice No.045 from Trends Fashion for the following:
+100 Pairs of boy’s socks at K10.00 a pair,
+170 Pairs men’s jerseys at K200.00 each,
+200 Pairs girl’s cargo trousers at K250.00 each.
+All subject to 10% Trade Discount.
+10th March Sold the following goods to North Beauty Parlour on credit (Invoice No. 222):
+45 Pairs girl’s cargo trousers at K400.00 each,
+35 Pairs of single bed sheets at K700.00 a pair.
+All subject to 5% Trade Discount.
+13th March Returned the following to Trends Fashion as they were soiled (Credit Note No.
+234):
+17 Pairs of boy’s socks at K10.00 a pair,
+16 Pairs of men’s jerseys at K200 each.
+Initially bought on 8th March.
+14th March We bought the following goods from Smart Boutique on credit (Invoice No.
+046)
+90 Pairs of men’s office shoes at K90.00 a pair,
+75 Pairs of men’s navy-blue jeans at K180.00 a pair,
+
+Principles of Accounts
+Teaching Module22
+175 Pairs of lady’s flat shoes at K75.00 a pair.
+All subject to 5% Trade Discount.
+16th March Received the following from North Beauty Parlour as they were torn
+13 Pairs of single bed sheets at K700.00 a pair.
+initially bought on 10th March.
+22nd March We sold the following to Bright Fashions on credit (Invoice No. 223)
+15 Pairs of men’s office shoes at K120.00 a pair,
+75 Pairs of boy’s socks at K12.00 a pair,
+50 Pair of men’s navy-blue jeans at K120.00 a pair.
+Task 5
+Jape Enterprise is a large retailer operating on a large scale, selling and buying
+assorted goods on cash and credit. On 31ST December 2024 the business discovered
+that Debtors still owed the business and at the sometime, business was owing
+its suppliers as the Enterprise had no qualified Accountant to prepare Books of
+Accounts. This scenario prompted the Director to hire an Accountant to prepare
+appropriate Books of Prime Entry, post to the Ledger and extract a Trial Balance
+from the transactions given below:
+December 4 Bought the following goods on credit from Zim Dealers (In
+voice No. 051):
+100 Bags of flour at K1100.00 each,
+400 Bales of sugar at K560.00 each.
+All less 5% Trade Discount.
+10. Ordered 2000 Crates of soft drinks at K115.00 per crate (In-
+voice No. 052), less 10% Trade Discount,
+13 Returned to Zim Dealers (Credit Note No. 375), for bought on
+4th December:
+15 bags of flour,
+50 Bales of sugar, as damaged in transit.
+21 Credit sales to Star Dealers (Invoice No. 034):
+60 X 20 Litres of cooking oil at K1200.00 each,
+200 Packets of candles K145.00 each.
+All less 5%Trade Discount.
+28. Sold goods on credit to Meco Enterprise (Invoice No. 035):
+300 Bales of sugar at K177,000.00 for all.
+30. Meco returned (Credit Note No. 045):
+70 Bales of sugar worth K41,300.00 as underweight.
+
+Form 1 Term 3
+Teaching Module23
+Task 6
+Mbwete General Dealers who has been running as an Agent business, selling Office Furniture
+has further decided to diversify its business operations into purchasing of Wheat from Mkushi
+District and Rice from Chama District. Even though a qualified accountant was hired to help
+out with the challenge of accounting for the credit transactions and also the amounts due to
+individual credit customer and suppliers, such that, one accountant isn’t enough to handle the
+numerous business transactions resulting from wheat and rice business operations.
+As a matter of urgency, you have been employed as a second Accountant and tasked to prepare
+the Sales, Purchases, Returns Inwards and Returns Outwards Day Books from the following
+details, then to post the items to the relevant accounts in the Ledger Books, and extract a Trial
+Balance as at 31st May, 2025:
+May. 1 Bought from Muku Enterprise (Invoice No. 0098):
+600 Bags of wheat K1,100.00 per bag. Less 10% Trade Discount.
+3 Purchased from Chakola Farms (Invoice No. 0099):
+300 Bags of rice at K1000.00 per bag. Less 10% Trade Discount.
+5 Returned to Muku Enterprise (Credit Note 21):
+15 Bags of wheat which were purchased on 1st May 2025 as rotten.
+7 Sold to Dasha Investments (Invoice 0221):
+50 Bags of rice at K1,400.00 per bag.
+less 5% Trade Discount.
+12 Sold to Chidosa (Invoice No. 4780):
+25 Bags of rice K1,300.00 per bag.
+Less 5% Trade Discount.
+14 Returned 15 bags of rice to Chakola Farms (Credit note No. 90) as underweight.
+15 Dasha Investments returned 5 bags of Rice as unshelled (Credit Note No. 067).
+17 Bought from Diana (Invoice No. 478):
+200 Bags of wheat K950.00 per bag.
+24 Returned to Diana on (Credit Note No. 0105)
+50 Bags of wheat bought on 17th May.
+
+Principles of Accounts
+Teaching Module24
+Bibliography
+ABE. (2008), Introduction to Accounting, UK
+Brian Titley (2014), Complete Accounting for Cambridge 0 Level & IGCSE, Oxford University
+Press
+Donald K. (2018), Accounting Principles IFRS Version, Global Edition John Wiley & Sons
+Frank Wood and Sangster. 2015. Business accounting V1, 13th Edition; Pearson
+Education Limited; ISBN-10: 1292084669/ ISBN-13: 9781292084664.
+Harison S. and Milner D. (2015) Business Revision Guide Hodder Education, a
+Hachette UK Company House, 50Victoria Embarkment London.
+Wiley E. B. (1993) Financial Accounting and Analysis: International Edition.
+ZICA (2021) Study Manual: Financial Accounting, Zambia Institute of Chartered
+Accountants: Account Thabo Mbeki Road Lusaka
+Elliott B and Elliott J. (2011), Financial Accounting and Reporting, England.
+
+Form 1 Term 3
+Teaching Module25
+APPENDIX 1: SAMPLE LESSON PLAN.
+SAMPLE LESSON PLAN
+NAME OF TEACHER: ………………….. DATE: 13/ 05/ 2025
+CLASS: Form 1 A DURATION: 80 Minutes
+TIME: 08:20-09:40 Enrolled Boys: … Girls: … Total: …
+SUBJECT: PRINCIPLES OF ACCOUNTS Present: Boys: 21 Girls: 29 Total: 50
+TOPIC: Books of Prime Entry
+SUB-TOPIC: Types of Books of Prime Entry
+SPECIFIC COMPETENCES: Record Business Transactions in the Books of Prime Entry
+LEARNING GOAL: 1. Identifying Books of Prime Entry
+2. Explaining Books of Prime Entry
+METHODOLOGY: Group Discussion
+RATIONALE: To provide an accurate record to help in financial reporting and enable financial
+analysis.
+PRIOR KNOWLEDGE: Ledger Books and learners’ experiences about basic business
+operations.
+REFERENCES:
+● Term Two, Principles of Account, Scheme of Work.
+● 2024 Commerce and Principles of Accounts Secondary Education Ordinary Level Sylla-
+bus-Form 1-4 page….
+● 2025 Principles of Accounts Form 1 Teaching Module Term 2 page….
+● Complete Accounts for Cambridge Ordinary Level and IGCSE
+● Business Accounting Volume 1
+LEARNING ENVIRONMENT
+Artificial Environment: (Class Room)
+TEACHING AND LEARNING MATERIALS/RESOURCES: Chart, Accounts Text Books,
+Pens /Markers e.t.c.
+EXPECTED STANDARD: Business Transactions recorded in the Books of Prime Entry
+correctly.
+
+Principles of Accounts
+Teaching Module26
+LESSON PROGRESSION:
+STAGES TEACHER’S ROLE L E A R N E R S ’
+ROLE
+ASSESSMENT
+CRITERIA
+INTRODUCTION
+10 Minutes
+● Randomly pick learners one
+after the other and narrate the
+following:
+ “you are a cashier and you
+have received K10.00 for
+payment of Jiggies”
+ “you are a seller you have
+just sold a phone worth
+K900.00 on credit to Lubo-
+na”
+ “you have bought exercise
+books on credit K100.00”
+● Ask the following:
+ Who remembers what has
+just transpired?
+ Who still owes us money?
+ Who do we still owe mon-
+ey?
+● Explains the importance of re-
+cord keeping.
+● Observe and lis-
+ten quietly
+● Answer ques-
+tions orally
+Oral questions
+LESSON DEVEL-
+OPMENT
+15 Minutes
+● On a chart draw a table as in ta-
+ble 1 of the module on types of
+books of prime entry.
+● Display the chart.
+● Participate in:
+ drawing the
+table on a
+chart,
+ Displaying
+the chart.
+Observe
+learner’s
+participation.
+5 Minutes ● Divide the learners in groups ● Be in assigned
+groups
+● Choose group
+chair persons
+and secretar-
+ies.
+Observe
+learner’s
+participation
+15 Minutes ● Give the scenario to each
+group on pieces of paper
+● Monitor group discussions
+● Clear any learners’
+misconceptions
+● Identify the
+book of Prime
+entry for each
+transaction
+● Explain each
+book of prime
+entry identi-
+fied
+Group presen-
+tation (Assess
+whether learn-
+ers are able to
+identify books of
+prime entry).
+Group presen-
+tation (Assess
+learner’s ability
+to explain each
+book of prime
+entry).
+
+Form 1 Term 3
+Teaching Module27
+EXERCISE /AP-
+PLICATION
+25 Minutes
+● From the proposed tasks for
+assessment in the teaching
+module for term 2 give:
+ Class Exercises,
+ Give feedback by marking
+learners’ exercise books.
+Copy and answer
+the given tasks
+Class exercises
+( A s s e s s
+i n d i v i d u a l
+learners’ ability
+in identifying
+books of prime
+entry).
+Class exercises
+( A s s e s s
+i n d i v i d u a l
+learner’s ability
+in explaining
+each book of
+prime entry).
+CONCLUSION
+10 Minutes
+With reference to the table make
+a brief summary of the Books of
+Prime Entry.
+● Listening
+● Clearing own
+m i s c o n c e p -
+tions (Make
+corrections).
+● Observations.
+HOMEWORK:
+ Give learners Task………. As from the teaching module page …….. as Home Work.
+LESSON EVALUATION:
+ Successes of the lesson – Out of 50 learners, 40 were able to identify the Books of Prime
+entry correctly.
+ Challenges of the lesson – 10 learners had challenges in explaining the Books of Prime
+entry.
+ Follow up Action – give remedial work to the learners with challenges and keep a record
+for tracking their break through
