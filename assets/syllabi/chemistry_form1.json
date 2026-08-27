@@ -1,0 +1,318 @@
+{
+  "_source": "Curriculum Development Centre Teaching Module — \"Chemestry Teaching Module\" (https://library.cdcrepository.info/resource.php?id=405). Topic/sub-topic structure and competencies extracted with AI assistance (Gemini) directly from this module's own stated content — never invented; the extraction was instructed to use only what the module itself says, and to flag anything unclear rather than guess. Term confirmed directly against the CDC library's own term filter (browse.php?...&term=2), not assumed. AI-flagged completeness notes from extraction: The text begins at Topic 3 ('Elements, Compounds and Mixtures'), indicating that Topics 1 and 2 belong to Term 1 or previous units not provided in this excerpt. Explicit week numbers are absent from the module content. Stated learning objectives are presented as 'Expected standard' at the end of each sub-topic section. ADDED (2026-08-28): Term 3 content. Curriculum Development Centre Teaching Module — \"Chemestry Teaching Module\" (https://library.cdcrepository.info/resource.php?id=406). Topic/sub-topic structure and competencies extracted with AI assistance (Gemini) directly from this module's own stated content — never invented; the extraction was instructed to use only what the module itself says, and to flag anything unclear rather than guess. Term confirmed directly against the CDC library's own term filter (browse.php?...&term=3), not assumed. AI-flagged completeness notes from extraction: The module begins at Topic 4 ('Atomic Structure'), as it covers Term 3 of Form 1 following earlier terms that covered Topics 1 to 3. The document does not use explicit 'Week Number' or 'Learning Objectives' headings; instead, it states 'Specific Competence' per sub-topic and closes sub-topics with an 'Expected Standard' summary.",
+  "curriculum": {
+    "code": "CBC_2023",
+    "name": "2023 Competency-Based Curriculum",
+    "description": "Zambia's current competency-based curriculum."
+  },
+  "subject": {
+    "name": "Chemistry",
+    "code": "CHEM",
+    "description": "Chemistry syllabus, Form 1-4 (Curriculum Development Centre)."
+  },
+  "grade": {
+    "name": "Form 1",
+    "code": "F1_CBC",
+    "level": 1,
+    "phase": "Secondary — the source scheme itself uses \"Form 1\" for this level under the 2023 CBC."
+  },
+  "terms": [
+    {
+      "name": "Term 2",
+      "sequence_number": 2,
+      "topics": [
+        {
+          "name": "Topic 3: Elements, Compounds and Mixtures",
+          "sequence_number": 1,
+          "description": "In nature, substances exist in different forms. Some exist in their native form (uncombined form), while others are in combined forms. This topic will explore different types of substances in nature. Substances can be classified into elements, compounds and mixtures. The topic will look at these three classes of substances in terms of what they are, their properties and differences, and how they are represented diagrammatically.",
+          "week_number": null,
+          "learning_objectives": [],
+          "competencies": [
+            {
+              "sequence_number": 1,
+              "description": "Collaboration",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 2,
+              "description": "Communication",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 3,
+              "description": "Environmental Sustainability",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 4,
+              "description": "Problem Solving",
+              "category": "General Competence"
+            }
+          ],
+          "sub_topics": [
+            {
+              "name": "Sub-Topic 1: Elements",
+              "sequence_number": 1,
+              "description": "Everything in our environment, from the air we breathe in, the food we eat to the gadgets we use on a daily basis, are made up of elements. Elements are actually so essential to our everyday existence that we often take them for granted. This sub topic will look at what elements are, their classification and diagrammatic representation.",
+              "week_number": null,
+              "learning_objectives": [
+                "Understanding of elements in everyday life demonstrated correctly"
+              ],
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Demonstrate understanding of elements in everyday life",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "Sub-Topic 2: Compounds",
+              "sequence_number": 2,
+              "description": "Most elements do not exist in their native (un combined) form. Such elements occur in form of compounds. Compounds are pure substances formed when two or more different elements chemically combine in a fixed ratio. Compounds have several uses and applications in our daily life. Some of the uses and applications of compounds include development of new materials such as medicines, fertilizers and plastics. This sub topic will explore compounds in everyday life and their diagrammatic representation. Furthermore, the sub topic will analyse the different characteristics of compounds.",
+              "week_number": null,
+              "learning_objectives": [
+                "Understanding of compounds demonstrated correctly"
+              ],
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Demonstrate understanding of compounds",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "Sub-Topic 3: Mixtures",
+              "sequence_number": 3,
+              "description": "Several substances in nature are mixtures. Components in a mixture can be elements, compounds or elements and compounds. This sub topic will look at mixtures in our daily life, classification of mixtures, diagrammatic representation of mixtures and comparing and contrasting mixtures and compounds.",
+              "week_number": null,
+              "learning_objectives": [
+                "Understanding mixtures demonstrated correctly"
+              ],
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Demonstrate understanding of mixtures",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "Sub-Topic 4: Physical and Chemical Changes",
+              "sequence_number": 4,
+              "description": "This subtopic is about differentiating physical and chemical changes. It will help learners to explore how matter can change form, under different conditions, identify signs of chemical reactions, and understand the differences between these two types of changes. The two types of changes are physical and chemical changes. This subtopic sparks curiosity, setting the stage for learning about physical and chemical changes.",
+              "week_number": null,
+              "learning_objectives": [
+                "Physical and chemical changes differentiated accordingly"
+              ],
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Differentiate physical and chemical changes",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "Sub-Topic 5: Criteria of Purity",
+              "sequence_number": 5,
+              "description": "This subtopic teaches learners about the concept of purity, which is determined by consistent properties like melting point, boiling point, and density. It emphasizes its importance in fields like science, medicine, and industry. Learners will learn how to test for purity and its impact on properties and applications in pharmaceuticals, food science, and environmental science. Through discussions, demonstrations, and hands-on experiments, learners will develop practical skills for assessing substance purity.",
+              "week_number": null,
+              "learning_objectives": [
+                "The purity of a substance determined correctly"
+              ],
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Determine the purity of a substance",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "Sub-Topic 6: Purification and Separation Techniques",
+              "sequence_number": 6,
+              "description": "Purification and separation techniques are important in Chemistry for isolating components from mixtures to obtain pure substances. Separation of mixtures can be done using various techniques. This requires understanding the principles behind each separation technique, the nature of the mixture to be separated and the component(s) of interest in the mixture.",
+              "week_number": null,
+              "learning_objectives": [
+                "Mixtures separated into their desired components accordingly"
+              ],
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Separate mixtures into their desired components",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 3",
+      "sequence_number": 3,
+      "topics": [
+        {
+          "name": "Topic 4: Atomic Structure",
+          "sequence_number": 1,
+          "description": "Atomic structure is a topic consisting of six subtopics namely structure of an atom, properties of sub atomic particles, atomic number and mass number, chemical symbols and nuclide notation, electronic configuration. Atomic structure is the foundation of all forms of matter. Atoms are the building blocks that compose everything we see, touch, and interact with in daily life, from the air we breathe to the materials in our homes. The arrangement of subatomic particles in an atom determines the chemical reactions each form of matter can undergo and influences how substances behave and interact. For example, understanding atomic structure enables advancements in energy generation through nuclear power and the creation of nanoscale materials used in electronics and medicine. Concepts such as cooking, electricity, and even breathing rely on the interaction of atoms.",
+          "week_number": null,
+          "learning_objectives": [],
+          "competencies": [
+            {
+              "sequence_number": 1,
+              "description": "Collaboration",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 2,
+              "description": "Communication",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 3,
+              "description": "Environmental Sustainability",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 4,
+              "description": "Problem Solving",
+              "category": "General Competence"
+            }
+          ],
+          "sub_topics": [
+            {
+              "name": "Sub-Topic 1: Structure of an Atom",
+              "sequence_number": 1,
+              "description": "Studying the structure of an atom helps scientists and ourselves to explain the chemical behaviour of atoms and develop innovations that improve daily life across medicine, technology, and energy sectors among others. There are different theories that explain the structure of an atom among them, Bohr’s and Dalton’s theories.",
+              "week_number": null,
+              "learning_objectives": [
+                "Understanding of an atom and its structure demonstrated correctly"
+              ],
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Demonstrate understanding of an atom and its structure",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "Sub-Topic 2: Properties of Sub-atomic Particles",
+              "sequence_number": 2,
+              "description": "Atoms are composed of three primary subatomic particles: protons, neutrons, and electrons. Each of these particles has distinct properties, including charge and mass, which play crucial roles in the behaviour of atoms and their interactions in reactions.",
+              "week_number": null,
+              "learning_objectives": [
+                "Properties of sub-atomic particles explored accordingly"
+              ],
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Collaboration",
+                  "category": "General Competence"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Communication",
+                  "category": "General Competence"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Environmental Sustainability",
+                  "category": "General Competence"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Problem Solving",
+                  "category": "General Competence"
+                },
+                {
+                  "sequence_number": 5,
+                  "description": "Real-world Applications",
+                  "category": "General Competence"
+                },
+                {
+                  "sequence_number": 6,
+                  "description": "Explore the properties of sub-atomic particles",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "Sub–Topic 3: Atomic Number and Mass Number",
+              "sequence_number": 3,
+              "description": "Atomic number and mass number are fundamental concepts in understanding the structure of atoms. The atomic number tells us how many protons are present in the nucleus of an atom, which defines the element and its position in the Periodic Table. On the other hand, the mass number is the total count of protons and neutrons in the nucleus, providing insight into the atom’s relative mass. Calculating the number of protons, neutrons and electrons in an atom is also very pivotal in this sub topic.",
+              "week_number": null,
+              "learning_objectives": [
+                "The number of subatomic particles manipulated correctly"
+              ],
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Manipulate the numbers of sub-atomic particles",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "Sub-Topic 4: Chemical Symbols and Nuclide Notation",
+              "sequence_number": 4,
+              "description": "Chemical symbols and nuclide notations are essential concepts in Chemistry, providing a concise shorthand way of representing elements and their isotopes. This system enhances understanding of atomic structure and facilitates scientific communication.",
+              "week_number": null,
+              "learning_objectives": [
+                "Chemical symbols and nuclide notation interpreted correctly"
+              ],
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Interpret chemical symbols and nuclide notation",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "Sub–Topic 5: Electronic Configuration",
+              "sequence_number": 5,
+              "description": "Electronic configuration refers to the distribution of electrons in the various energy levels or shells surrounding an atom's nucleus. Understanding how electrons are arranged in these shells is essential for grasping how atoms interact chemically and how they form bonds. The arrangement follows specific rules, where electrons occupy the lowest available energy levels first based on the maximum capacity of each shell. This foundational concept serves as an initiator to more advanced topics in Chemistry and atomic theory.",
+              "week_number": null,
+              "learning_objectives": [
+                "Electronic configuration of atoms applied correctly"
+              ],
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Apply electronic configuration of atoms",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "Sub-Topic 6: Isotopic Nature of Elements",
+              "sequence_number": 6,
+              "description": "Isotopes are variations of atoms that share the same number of protons but have different mass numbers due to varying numbers of neutrons. Understanding isotopes is crucial in fields such as Chemistry, Physics, and medicine, as they can affect the properties and behaviour of elements.",
+              "week_number": null,
+              "learning_objectives": [
+                "Relative atomic mass of an element from relative isotopic masses determined correctly",
+                "Radioisotopes managed sustainably"
+              ],
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Determine relative atomic mass of an element from relative isotopic masses",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Manage radioisotopes",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

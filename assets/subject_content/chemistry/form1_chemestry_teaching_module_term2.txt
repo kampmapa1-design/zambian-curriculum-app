@@ -1,0 +1,1446 @@
+Chemistry as a fundamental science subject, which plays an important role in shaping learners'
+understanding of the natural world. As learners transition from upper primary to secondary education,
+it is necessary to provide them with an all-inclusive and engaging introduction to
+Chemistry. Therefore, the Chemistry Teaching Module for Form 1 is a comprehensive
+educational resource designed to support the teaching and learning of Chemistry for learners in their
+first year of secondary education. It covers fundamental concepts and principles of Chemistry,
+aligning with the 2024 Chemistry syllabus. The module includes topic and subtopic
+overviews, suggested teaching and learning materials, environment set-up, learning activities,
+and assessment guides. Additionally, it incorporates teaching methods and strategies like inquiry-
+based learning, problem-solving activities, group discussions, hands-on experiments, multimedia
+resources, and interactive simulations. The aim is to provide a solid foundation in Chemistry, foster
+critical thinking and problem-solving skills, and inspire further studies in science.
+Suggested Teaching and Learning Materials
+The study of Chemistry content requires hands-on experiences, visual aids, and interactive resources
+to strengthen deep understanding and appreciation. To support the teaching and learning of Chemistry
+in Form 1, the suggested teaching and learning materials are meant to:
+ Enhance learner engagement and motivation in Chemistry
+ Develop practical skills and laboratory techniques
+ Promote critical thinking, problem-solving, and analytical skills
+ Support differentiated instruction and inclusive learning
+The suggested teaching and learning materials are either artificial or natural. By utilising these
+suggested teaching and learning materials, teachers can create a dynamic and supportive learning
+environment that promotes academic excellence, creativity, and scientific literacy in Chemistry for
+Form 1 learners.
+Learning Environment Set Up
+To create an effective learning environment for teaching and learning Chemistry is important
+in deepening understanding of the concepts and application in real life context. The
+learning environment set-up aims to create a safe, inclusive, and engaging space.
+ Natural Environment: A natural learning environment is a setting where learners explore and
+learn naturally, often without explicit instruction or formal teaching, such as in school
+surroundings
+ Man-Made Environment: Man-made learning environments are intentionally designed safe
+spaces, such as classrooms, laboratories, and libraries, designed for formal instruction, hands-
+on activities, and games and songs
+
+Chemistry Teaching Module: Form 1 – Term 2
+x
+ Technological Learning Environment: Access educational apps, games, and software for
+learning, including game-based platforms, virtual platforms, and simulations, to engage
+learners and promote learning
+Safety in the learning environment
+Safety in the learning environment is a requirement in learning Chemistry, as learners are exposed to
+potential hazards during hands-on experiments. Collaboration between teachers, and learners, is
+important to create a responsible learning environment that promotes scientific inquiry. Guidelines
+for maintaining a safe learning environment include laboratory safety rules (protocols), risk
+identification, personal protective equipment, emergency response plans, chemical handling, storage,
+and disposal, and learner responsibilities. Prioritising safety minimises risks, prevents accidents, and
+ensures a positive learning experience.
+Suggested Teaching Methodology
+The effective teaching methodologies in STEM Chemistry include:
+ Conducting experiments: Demonstrate key principles and encourage curiosity among
+learners.
+ Collaborative learning: Pair learners to work together, promoting peer-to-peer teaching,
+discussion, and problem-solving.
+ Conceptual learning: Connect chemical concepts to everyday life, industry, or current events,
+making learning relevant and meaningful.
+ Differentiated instructions: Tailor teaching to meet diverse learning styles, abilities, and
+interests of different learners.
+ Feedback and reflection: Encourage learners to reflect on their learning, providing
+constructive feedback to guide improvement.
+ Inquiry-based learning: Encourage learners to explore, investigate, and discover chemical
+concepts through hands-on experiments and activities.
+ Integration of technology: Use digital tools, simulations, and visualisations to enhance
+engagement, understanding, and analysis.
+ Problem-based learning: Present real-world problems or case studies or scenarios, requiring
+learners to apply chemical knowledge to develop solutions.
+ Project -based learning: Assign open-ended projects, allowing learners to design, conduct,
+and present research or applications of chemical concepts.
+By implementing these methodologies, a teacher can create an engaging, inclusive, and effective
+STEM Chemistry learning environment.
+Learning Activities
+Learning activities are intentional educational experiences aimed at promoting learning, engagement,
+and achievement among learners. Facilitated by teachers, they help acquire new knowledge, skills,
+
+Chemistry Teaching Module: Form 1 – Term 2
+xi
+attitudes, and behaviour change. To create an inclusive environment, teachers should use a "hook" or
+problem posing or scenario or key question or case studies to introduce new learning activities in an
+interactive and interesting way.
+Icons used in this Module
+This module utilises icons as visual symbols or graphics to represent instructions, enhancing the
+learning experience for learners. Icons categorize and organise instructions, making navigation easier
+for teachers.
+Key Terms Assessment Guide Discussion
+Learners Activities Tips Skills Developed Key Learning Points
+Time Allocation
+The standard minimum learner-teacher contact time for Chemistry at secondary school level is 4
+hours per week, translating into Six (6) periods with at least two double periods per week. The
+duration for a single period is 40 minutes. The contact time at Secondary school level is planned in
+such a way as to give ample time for practical activities.
+Assessment
+Formative Assessments: To monitor learner progress, identify areas of improvement, and adjust
+instruction to meet learner needs.
+ Quizzes: Regular quizzes to assess learners' understanding of concepts.
+ Tests: Periodic tests to evaluate learners' knowledge and application of Chemistry concepts.
+ Class Discussions: Observing learners'' participation and engagement in class discussions.
+ Laboratory Reports: Evaluating learners' laboratory reports for accuracy, completeness, and
+understanding.
+ Group Work: Assessing learners' ability to work collaboratively and contribute to group tasks.
+ Projects: Evaluating learners' ability to design, conduct, and present a Chemistry project.
+
+Chemistry Teaching Module: Form 1 – Term 2
+xii
+ Presentations: Assessing learners' ability to communicate Chemistry concepts and ideas
+effectively
+Summative Assessments: To evaluate learner learning at the end of a lesson, sub-topic, topic or term,
+and to provide a comprehensive picture of learner achievement.
+ Unit Tests: Comprehensive tests to evaluate learners' understanding of Chemistry concepts at
+the end of each unit.
+ Mock Exams: Comprehensive exams to evaluate learners' overall understanding of Chemistry
+concepts at the end of the semester.
+ Practical Tasks: Assessing learners' laboratory skills and techniques through practical exams.
+ Project-Based Assessments: Evaluating learners' ability to design, conduct, and present a
+Chemistry project.
+Key Competences
+Competence Descriptors
+Analytical Thinking  Identify patterns
+ Compile data, create mental images and address issues
+ Evaluate solutions
+Collaboration  Solving puzzle in groups
+ Play with peers to build relationships
+ Participate in and express themselves through play activities
+Communication  Use mathematical/scientific language in different situations
+ Express oneself using different media and symbols
+ Ask for feedback
+Critical Thinking
+ Ask and answer simple questions
+ Classify objects according to their attributes
+ Manipulate different objects
+ Solve simple problems in life
+ Match different things according attributes
+ Arrange objects according to attributes
+ Compare similarities or differences between objects
+ Explore the environment
+ Differentiate good from bad
+ Recognize and name items in the environment
+Environmental
+Sustainability
+ Dispose trash in the designated place.
+ Adhere to best practices in environmental management.
+ Identify a clean environment.
+ Identify types of waste in local environment
+Problem Solving
+ Make connections/link with the inner world or social
+environment
+ Use numeracy patterns and relations to solve problems
+ Manipulate numbers, shapes and symbols to complete a task
+
+Chemistry Teaching Module: Form 1 – Term 2
+1
+Topic 3: Elements, Compounds and Mixtures
+Introduction
+In nature, substances exist in different forms. Some exist in their native form (uncombined form),
+while others are in combined forms. This topic will explore different types of substances in nature.
+Substances can be classified into elements, compounds and mixtures. The topic will look at these
+three classes of substances in terms of what they are, their properties and differences, and how they
+are represented diagrammatically.
+General Competences:
+ Collaboration
+ Communication
+ Environmental Sustainability
+ Problem Solving
+Sub-Topic 1: Elements
+Introduction
+Everything in our environment, from the air we breathe in, the food we eat to the gadgets we use on
+a daily basis, are made up of elements. Elements are actually so essential to our everyday existence
+that we often take them for granted. This sub topic will look at what elements are, their classification
+and diagrammatic representation.
+Specific Competence:
+ Demonstrate understanding of elements in everyday life
+Key Terms:
+ Element: A pure substance that has only one kind of atoms and cannot be chemically broken
+down into simpler substances
+ Metallic elements: A group of elements that ionise by losing electrons and exhibit
+characteristic properties such as shiny, electrical conductivity and high melting and boiling
+points
+ Non-metallic elements: A group of elements that ionise by gaining electrons and exhibit
+characteristic properties such as dull, brittle, and poor electrical conductivity
+Learning Activities
+There are two learning activities designed to help learners demonstrate an understanding of elements
+in everyday life. One activity focuses on classifying the elements into metallic and non-metallic while
+the other activity is on exploring the diagrammatic representation of elements.
+
+Chemistry Teaching Module: Form 1 – Term 2
+2
+Learning Activity 1: Classifying elements
+In this activity, learners will work in small groups describing elements and classifying them as
+metallic and non-metallic.
+Suggested Teaching and Learning Materials
+ Natural Materials: Not applicable
+ Artificial Materials: Periodic Tables, flip charts, markers, Bostic
+Learning Environment Set-up:
+ Natural Environment: School surroundings
+ Artificial Environment: Chemistry laboratory/classroom
+Teacher’s Roles:
+ž Introduce the activity using the hook
+ž Put the learners in small groups
+ž Distribute the suggested or any improvised materials
+ž Ask learners to:
+i. describe what elements are in their own words
+ii. make two tables (for metallic and non-metallic) with headings: name of element,
+where it is used or found
+iii. discuss characteristics of elements and how these characteristics differentiate them
+from other substances
+iv. make presentations to the class
+Learners’ Activities:
+ Providing responses to the hook
+ Describing what elements are based on their prior knowledge
+ Classifying elements using two tables (for metallic and non-metallic) with headings: name of
+element, where it is used or found
+ Discussing characteristics of elements and how these characteristics differentiate them from
+other substances
+ Making presentations on characteristics of elements and how these characteristics differentiate
+them from other substances
+Hook: Did you know that the air we breathe is made up of elements?
+
+Chemistry Teaching Module: Form 1 – Term 2
+3
+Assessment Guide:
+ Observe learners’ participation during the activity
+ Check if learners are classifying the elements correctly
+ Ask learners to explain the characteristics of elements and how they differentiate elements from
+other substances
+Key Learning Points:
+ An element is a pure substance that consists of only one type of atoms. Elements cannot be
+broken down into simpler substances by chemical means
+ Elements are classified as metallic or non-metallic
+ Some of the metallic elements and their uses in daily life are:
+i. Copper in making electrical wires and alloys
+ii. Aluminium in kitchen utensils and aeroplane bodies
+iii. Lithium in rechargeable cells
+iv. Lead in car batteries
+v. Potassium in fertilizers and soap
+vi. Sodium in soap, glass and street lights
+vii. Calcium in cement
+viii. Magnesium in fire works
+ix. Gold and silver in jewelry
+ Non-metallic elements and their uses in daily life include the following:
+i. Oxygen in respiration
+ii. Nitrogen and phosphorus in fertilizers
+iii. Hydrogen and carbon as fuels
+iv. Helium in weather balloons
+v. Fluorine in toothpastes
+vi. Silicon in electronic devices
+vii. Neon in advertising signs
+viii. Argon in light bulbs
+Skills Developed:
+ Analytical Thinking
+ Collaborating
+
+Chemistry Teaching Module: Form 1 – Term 2
+4
+ Communicating
+ Observing
+Learning Activity 2: Exploring the diagrammatic representation of Elements
+This activity will help learners explore the representation of elements using particle diagrams. In this
+activity, learners will work in small groups to draw diagrams representing elements.
+Suggested Teaching and Learning Materials
+ Natural Materials: Not Applicable
+ Artificial Materials: Flip charts, markers, Bostic
+Learning Environment Set-up:
+ Natural Environment: School surroundings
+ Artificial Environment: Classroom/Chemistry laboratory
+Teacher’s Roles:
+ Introduce the activity using the hook
+ Put learners in small groups
+ Provide each group with the suggested or any improvised appropriate materials
+ Ask learners to draw particle diagrams showing the following:
+i. a metallic element such as potassium
+ii. a monoatomic gaseous element such as helium
+iii. a diatomic gaseous element such as oxygen
+ Ask learners to make presentations
+Learners’ Activities:
+ Drawing particle diagrams showing the following:
+(i) a metallic element such as potassium
+(ii) a monoatomic gaseous element such as helium
+(iii) a diatomic gaseous element such as oxygen
+ Making presentations to the class
+Hook: How can we visually represent an element?
+
+Chemistry Teaching Module: Form 1 – Term 2
+5
+Assessment Guide:
+ Check if learners are drawing correct diagrams
+Key Learning Points:
+ Metallic elements are diagrammatically represented as uncombined particles closely packed,
+while in monoatomic gaseous elements, particles are uncombined and far apart
+ For diatomic gases, diagrams have combined particles in pairs, and are far apart
+ The particle diagrams below illustrate the examples:
+Metallic element such as potassium
+Monoatomic gaseous element such as helium
+Diatomic gaseous element such as oxygen
+Skills Developed:
+ Analytical Thinking
+ Collaborating
+ Communicating
+Expected standard:
+ Understanding of elements in everyday life demonstrated correctly
+
+Chemistry Teaching Module: Form 1 – Term 2
+6
+Sub-Topic 2: Compounds
+Introduction
+Most elements do not exist in their native (un combined) form. Such elements occur in form of
+compounds. Compounds are pure substances formed when two or more different elements chemically
+combine in a fixed ratio. Compounds have several uses and applications in our daily life. Some of the
+uses and applications of compounds include development of new materials such as medicines,
+fertilizers and plastics. This sub topic will explore compounds in everyday life and their diagrammatic
+representation. Furthermore, the sub topic will analyse the different characteristics of compounds.
+Specific Competence:
+ Demonstrate understanding of compounds
+Key Terms:
+ Compounds: Pure substances formed when two or more different elements are chemically
+bonded together
+ Chemical bonding: A process by which atoms share or exchange electrons to form a chemical
+compound
+Learning Activities
+The learning activities will help learners to discover how elements come together to form compounds.
+Through hands-on activities and experiments, learners will explore the properties and formation of
+compounds, and learn how they are essential in our daily lives. These activities spark curiosity and
+sets the stage for engaging learning experiences on compounds There are three learning activities
+designed to introduce the concept of compounds to the learners.
+Learning Activity 1: Exploring compounds in everyday life.
+This activity will help learners explore compounds in everyday life. In this activity learners will work
+in groups to identify various compounds used in everyday life.
+Suggested Teaching and Learning Materials
+ Natural Materials: Water, iron bar, charcoal
+ Artificial Materials: Salt, soap, toothpaste, soda, vinegar, sugar
+Learning Environment Set-up:
+ Natural Environment: School surroundings
+ Artificial Environment: Chemistry laboratory/classroom
+Hook: What is the most common compound in your body?
+
+Chemistry Teaching Module: Form 1 – Term 2
+7
+Teacher’s Roles:
+ Introduce the concept of compounds using the hook
+ Ask learners to describe a compound
+ Ask learners to share examples of compounds they use in everyday life
+ Put learners in pairs or small groups and provide the materials
+ Ask learners to identify compounds from the materials provided
+ Move around to assist learners and facilitate discussions
+ Ask each group to present findings
+Learners’ Activities:
+ Providing responses to the hook
+ Describing a compound
+ Sharing examples of compounds, and their use in everyday life
+ Identifying compounds from the materials provided
+ Presenting the findings
+Assessment Guide:
+ Observe learner participation during the activity
+ Assess learners with questions to identify compounds in different substances
+Key Learning Points:
+ Compounds are necessary in daily life and have special qualities that make them useful in a
+variety of applications
+ A compound is a substance formed when two or more distinct elements are chemically bonded
+together
+ Compounds include substances like water (H2 O), carbon dioxide (CO2 ), table salt (NaCl), and
+sugar (C6 H12 O6 )
+ Compounds are utilised in a variety of industries, including manufacturing, construction,
+agriculture, and medicine
+ They also have special qualities like solubility, reactivity, melting and boiling points, and even
+more
+ Water bottles, soap, fertilisers, cleaning supplies, and food items are examples of substances
+that contain compounds
+ Chemical formulas, such as H2 O for water, indicate a compound's composition
+
+Chemistry Teaching Module: Form 1 – Term 2
+8
+ Compounds can be categorised into various groups, including organic compounds, bases, acids,
+and salts
+Skills Developed:
+ Analytical Thinking
+ Collaborating
+ Communicating
+ Observing
+ Problem solving
+Learning Activity 2: Exploring the diagrammatic representation of compounds.
+This activity will help learners explore diagrammatic representation of compounds. In this activity,
+learners will draw the particle diagrams representing compounds according to their own
+understanding.
+Suggested Teaching and Learning Materials
+ Natural Materials: Not applicable
+ Artificial Materials: Flip charts, markers of different colours, Bostic
+Learning Environment Set-up:
+ Natural Environment: School surroundings
+ Artificial Environment: Chemistry laboratory/classroom
+Teacher’s Roles:
+ Introduce the activity using the hook
+ Put learners in small groups
+ Provide the suggested or improvised appropriate materials to each group
+ Ask learners to draw the particle diagrams representing compounds according to their own
+understanding
+ Ask the groups to display their charts
+ Let learners discuss sampled diagrammatic representations
+Learners’ Activities:
+ Drawing the particle diagrams representing compounds according to their own understanding
+Hook: In which ways do a compound differ from an element?
+
+Chemistry Teaching Module: Form 1 – Term 2
+9
+ Displaying their charts in the classroom
+Discussion:
+ Discussing sampled diagrammatic representations and presenting their work
+Assessment Guide:
+ Observe learners’ participation during the activity
+Key Learning Points:
+ A compound consists two or more different elements chemically combined
+ The particles in the diagrammatic representation of a compound therefore, will have two or
+more elements combined as shown in the diagram
+Skills Developed:
+ Analytical Thinking
+ Communicating
+ Collaborating
+ Observing
+ Problem solving
+Learning Activity 3: Analysing the characteristics of compounds
+In this activity, learners will engage in research to find out characteristics of compounds.
+Suggested Teaching and Learning Materials
+ Natural Materials: Not applicable
+ Artificial Materials: Text books
+ Technological Materials: Computers connected to internet
+Learning Environment Set-up:
+ Natural Environment: School surroundings
+Hook: Have you ever wondered how compounds with same elements could be different?
+
+Chemistry Teaching Module: Form 1 – Term 2
+10
+ Artificial Environment: Computer laboratory /classroom
+Teacher’s Roles:
+ Introduce the activity using the hook
+ Put learners in small groups
+ Ask learners to research on characteristics of compounds
+ Ask learners to present their findings
+Learners’ Activities:
+ Researching on characteristics of compounds using computers, text books and other sources
+ Presenting findings on characteristics of compounds
+Assessment Guide:
+ Check if learners are correctly doing the activity
+ Ask learners questions such as:
+i. Describe the characteristics of compounds
+ii. Demonstrate with examples, the fixed composition nature of compounds
+Key Learning Points
+Compounds are many in number and types. However, compounds share the following common
+characteristics:
+ Compounds are formed by chemical combination (bonding) of elements
+ They have fixed composition
+ They can be separated by chemical means
+ Properties of a compound differ from those of the individual elements they contain
+ Formation of compounds involves absorption or release of energy
+Skills Developed:
+ Analytical Thinking
+ Communicating
+ Collaborating
+ Observing
+
+Chemistry Teaching Module: Form 1 – Term 2
+11
+ Problem solving
+Expected Standard:
+ Understanding of compounds demonstrated correctly
+Sub-Topic 3: Mixtures
+Introduction
+Several substances in nature are mixtures. Components in a mixture can be elements, compounds or
+elements and compounds. This sub topic will look at mixtures in our daily life, classification of
+mixtures, diagrammatic representation of mixtures and comparing and contrasting mixtures and
+compounds.
+Specific Competence:
+ Demonstrate understanding of mixtures
+Key Terms:
+ Mixtures: Physical combinations of two or more substances
+ Homogeneous: Uniform nature or composition of substances
+ Heterogeneous: Non-uniform nature or composition of substances
+Learning Activities
+The learning activities are developed to help learners explore mixtures. Through hands-on
+experiments and activities, learners will learn about different types of mixtures and their applications
+in everyday life. There are three learning activities under this sub topic which can be used to introduce
+learners to the concept of mixtures, emphasising experimentation and real-world connections.
+Learning Activity 1: Exploring mixtures in everyday life
+The following activity is designed to help learners develop an understanding of what mixtures are,
+and explore examples of mixtures in daily life. In this activity, learners will identify
+different materials (mixtures) that are found in a kitchen, laboratory and the school environment.
+Suggested Teaching and Learning Materials
+ Natural Materials: Not applicable
+ Artificial Materials: Flip charts, markers, Bostic, work cards
+Hook: What mixtures do you encounter and how do they affect your daily life?
+
+Chemistry Teaching Module: Form 1 – Term 2
+12
+Learning Environment Set-up:
+ Natural Environment: School surroundings
+ Artificial Environment: Classroom/Chemistry laboratory
+Teacher’s Roles:
+ Introduce the activity using the hook
+ Put learners in small groups
+ Provide each group with flip charts, markers, Bostic and work cards
+ Give work cards with the following instructions to the learners:
+i. Gather and name substances that are mixtures in the school environment
+ii. Identify and list various substances that are mixtures in a home or science laboratory
+ Discuss with the learners what mixtures are
+Learners’ Activities:
+ Gathering and naming substances that are mixtures in the school environment
+ Identifying and listing various substances that are mixtures in a home or science laboratory
+Discussion:
+ Discussing what mixtures are
+Assessment Guide:
+ Check if learners are:
+ž Gathering and naming substances that are mixtures in the school environment correctly
+ž Identifying and listing various substances that are mixtures in a home or science laboratory
+ Check if learners are describing mixtures correctly
+ Ask questions about the uses of the examples of mixtures they have listed
+Skills Developed:
+ Analytical Thinking
+ Collaborating
+ Communicating
+
+Chemistry Teaching Module: Form 1 – Term 2
+13
+Learning Activity 2: Classifying Mixtures as Homogeneous and Heterogeneous
+This activity will help learners classify mixtures. In this activity, learners will make mixtures of sugar
+and sand; sand and water; sugar and water; water and cooking oil; salt and sugar; ethanol and water.
+They will observe, compare, and classify them as either homogeneous or heterogeneous.
+Suggested Teaching and Learning Materials
+ Natural Materials: Sand, brown sugar, table salt, water, cooking oil, ethanol
+ Artificial Materials: Flip charts, markers, Bostic, beakers, stirring rods and work cards
+Learning Environment Set-up:
+ Natural Environment: School surroundings
+ Artificial Environment: Classroom/Chemistry laboratory
+Teacher’s Roles:
+ Introduce the activity using the hook
+ Put learners in small groups
+ Provide each group with the suggested or improvised materials needed
+ Distribute work cards with the instructions on which mixtures to make
+ Ask learners to observe and compare the mixtures
+ Ask learners to classify the mixtures as either homogeneous or heterogeneous
+ Ask learners to describe homogeneous or heterogeneous mixtures
+Learners’ Activities:
+ Making the mixtures in different beakers
+ Observing and comparing the mixtures
+ Classifying the mixtures as either homogeneous or heterogeneous
+ Describing homogeneous or heterogeneous mixtures
+Assessment Guide:
+ Check if learners are making mixtures correctly according to instructions
+ Ask learners to give their observations on the mixtures
+ Ask learners to:
+i. explain the basis of their classification of the mixtures
+ii. tabulate the examples of homogeneous and heterogeneous mixtures in daily life
+Hook: What do you think makes some mixtures look uniform while others look non-uniform?
+
+Chemistry Teaching Module: Form 1 – Term 2
+14
+iii. differentiate homogeneous and heterogeneous mixtures
+Key Learning Points:
+ Mixtures are of different types
+ Some substances mix uniformly and form homogeneous mixtures. A homogenous mixture is
+one in which the components mix uniformly. For example, sugar and water, water and ethanol
+ Other substances form heterogeneous mixtures. A heterogenous mixture is one in which the
+components don’t mix uniformly. For example, salt and sand, cooking oil and water
+Skills Developed:
+ Analytical Thinking
+ Collaborating
+ Communicating
+Learning Activity 3: Exploring the diagrammatic representation of mixtures
+This activity will help learners explore the representation of mixtures using particle diagrams. In this
+activity, learners will draw diagrams representing mixtures of different types such as: mixture of
+atoms of two different elements; mixture of atoms and molecules; mixture of different molecules.
+Suggested Teaching and Learning Materials
+ Natural Materials: Sand, water, sugar, coarse salt
+ Artificial Materials: Flip charts, markers of different colours, Bostic
+Learning Environment Set-up:
+ Natural Environment: School surroundings
+ Artificial Environment: Classroom/Chemistry laboratory
+Teacher’s Roles:
+ Introduce the activity using the hook
+ Put learners in small groups
+ Provide each group with the materials
+ Ask learners to make the following mixtures:
+(i) Mixture of sugar and water
+Hook: How can we visually represent a mixture?
+
+Chemistry Teaching Module: Form 1 – Term 2
+15
+(ii) Mixture of sand and coarse salt
+ Ask learners to draw particle diagrams representing the mixtures they have made
+ Ask learners to make presentations on the drawn particle diagrams representing the mixtures
+they have made
+ Consolidate presentations made by learners
+Learners’ Activities:
+ Making the following mixtures:
+(i) Mixture of sugar and water
+(ii) Mixture of sand and coarse salt
+ Drawing particle diagrams representing the mixtures made
+ Making presentations on the drawn particle diagrams representing the mixtures they have made
+Assessment Guide:
+ Check if learners are:
+(i) mixing the substances correctly
+(ii) drawing correct diagrams
+ Ask learners to draw particle diagrams for the following mixtures:
+(i) mixture of atoms of two different elements,
+(ii) mixture of atoms and molecules,
+(iii) mixture of different molecules
+Key Learning Points
+Diagrammatically, mixtures are represented using particle diagrams. In these diagrams, mixtures are
+differentiated based on the types of particles (atoms or molecules) contained in the constituent
+substances in the mixtures. For example, a mixture of an element and a molecular compound would
+be represented as shown below:
+Skills Developed:
+ Analytical Thinking
+ Collaborating
+
+Chemistry Teaching Module: Form 1 – Term 2
+16
+ Communicating
+Learning Activity 4: Comparing and contrasting compounds and mixtures
+In this activity, learners will identify similarities and differences between compounds and mixtures,
+enhancing their comprehension of chemical substances and their properties.
+Suggested Teaching and Learning Materials
+ Natural Materials: Samples of compounds such as sugar, salt and mixtures such as fruit salads,
+sand and salt
+ Artificial Materials: Flip charts comparing characteristics of compounds and mixtures, Venn
+diagrams for comparing and contrasting compounds and mixtures
+ Technological Materials: Videos explaining the differences between compounds and mixtures
+Learning Environment Set-Up:
+ Natural Environment: School surroundings
+ Artificial Environment: Classroom/Chemistry laboratory
+Teacher’s Roles
+ Introduce the activity using the hook
+ Using question and answer, engage learners to describe compounds and mixtures, highlighting
+key characteristics
+ Divide learners into small groups and provide them with different samples of compounds and
+mixtures
+ In groups, encourage discussions about the properties and behaviours of the samples provided
+ Ask learners to illustrate the similarities and differences between compounds and mixtures
+using visual aids
+ Allow groups to analyse the samples, noting the physical properties and how each type can be
+separated or formed
+ Provide worksheets to learners for use when drawing Venn diagrams
+ Facilitate a class discussion where groups share their findings and clarify concepts
+ Ask learners to make presentations
+ Consolidate on learners’ presentations
+Learners’ Activities:
+ Providing responses to the hook
+Hook: Can you think of what differentiates compounds from mixtures, giving daily life examples?
+
+Chemistry Teaching Module: Form 1 – Term 2
+17
+ Responding to questions on compounds and mixtures, highlighting key characteristics
+Discusion:
+ Discussing the properties and behaviours of the samples provided
+ Illustrating similarities and differences between compounds and mixtures using visual aids
+ Analysing the samples, noting the physical properties and how each type can be separated or
+formed
+ Drawing Venn diagrams showing similarities and differences between compounds and
+mixtures
+ Making presentations on comparisons between compounds and mixtures
+Assessment Guide
+ Monitor learner engagement and contributions during group discussions and activities
+ Assess the completeness and accuracy of the Venn diagrams created by learners
+ Evaluate group presentations for clarity, accuracy, and depth of understanding
+ Ask learners to complete the following Venn diagram:
+ Ask questions such as:
+1. Discuss the significance of understanding the differences between compounds and
+mixtures in Chemistry and daily life
+2. Analyze how the properties of compounds and mixtures affect their applications in various
+fields, such as medicine, cooking, and manufacturing
+Key Learning Points:
+Compounds are pure substances formed when two or more elements chemically bond, resulting in a
+substance with distinct properties. In contrast, mixtures consist of two or more substances that are
+
+Chemistry Teaching Module: Form 1 – Term 2
+18
+physically combined and retain their individual properties. Understanding these differences is
+essential for grasping fundamental concepts in Chemistry and their practical applications.
+Compounds and mixtures have the following similarities:
+ Both contain two or more elements
+ Both can be separated
+ Both exhibit physical and chemical properties
+The table below shows the differences between mixtures and compounds:
+Compound Mixture
+Elements are chemically combined Component substances physically combined.
+Composition of a compound is fixed Composition of mixtures can vary
+Properties of a compound are different from
+its individual elements
+Properties of mixture are same as properties of
+individual substances
+Individual elements can be separated by
+chemical means
+Individual substances can be separated by physical
+means
+Formation of compounds involves absorption
+or release of energy
+Formation of mixtures involves little or no energy
+Skills Developed:
+ Analytical Thinking
+ Communicating
+ Collaborating
+ Critical Thinking
+Expected Standard:
+ Understanding mixtures demonstrated correctly
+Sub-Topic 4: Physical and Chemical Changes
+Introduction
+This subtopic is about differentiating physical and chemical changes. It will help learners to explore
+how matter can change form, under different conditions, identify signs of chemical reactions, and
+understand the differences between these two types of changes. The two types of changes are physical
+and chemical changes. This subtopic sparks curiosity, setting the stage for learning about physical
+and chemical changes.
+
+Chemistry Teaching Module: Form 1 – Term 2
+19
+Specific Competence:
+ Differentiate physical and chemical changes
+Key Terms:
+ Physical change: A change in which no new substance is formed
+ Chemical change: A change in which a new substance is formed
+Learning Activities
+These learning activities are designed to help learners to investigate physical and chemical changes.
+Learners will explore examples and experiments to understand these changes. There are two learning
+activities prescribed to help learners differentiate physical and chemical changes, highlighting their
+distinct characteristics.
+Learning Activity 1: Exploring, with examples, the physical and chemical changes
+The following activities will help learners to explore the physical and chemical changes with
+examples.
+Activity 1.1: Exploring physical changes
+This activity will help learners explore physical changes with examples. In this activity, learners will
+perform some tasks that involve changing the state, shape and size of some substances.
+: The data generated here by learners will be required for use in activity 2
+Suggested Teaching and Learning Materials
+ Natural Materials: Coarse salt, sugar, water ice, candle wax, pieces of wire
+ Artificial Materials: Flip charts, markers of different colours, pairs of scissors, paper, source
+of heat, mortars and pestles, electronic balances, beakers
+Learning Environment Set-up:
+ Natural Environment: School surroundings
+ Artificial Environment: Classroom/Chemistry laboratory
+Teacher’s Roles:
+ Introduce the activity using the hook
+ Put learners in small groups
+ Provide each group with the necessary materials
+Hook: Can the melting of ice be reversed? If so, how?
+
+Chemistry Teaching Module: Form 1 – Term 2
+20
+ Ask learners to perform the following tasks:
+(i) Weigh and record the mass of ice. Heat the ice and weigh the mass of water formed after
+melting
+(ii) Weigh and record the mass of the wax. Heat the wax and weigh its mass after melting
+(iii) Weigh and record the mass of the paper. Cut the paper into small pieces, and weigh the
+mass of the small pieces of paper
+(iv) Weigh and record the mass of wire. Fold the wire many times then weigh and record its
+mass again
+(v) Weigh and record the mass of crystals of the salt. Then grind salt crystals into powder,
+weigh and record its mass again
+(vi) Dissolve the sugar in water
+ Let learners make observations
+ Ask learners to tabulate their data for presentation
+ Ask learners to present their data
+ Ask learners to keep the data for use in activity 2
+Learners’ Activities:
+ Providing responses to the hook
+ Weighing and recording the mass of ice. Heating the ice and weighing the mass of water formed
+after melting
+ Weighing and recording the mass of the wax. Heating the wax and weighing its mass after
+melting
+ Weighing and recording the mass of the paper. Cutting the paper into small pieces, and
+weighing the mass of the small pieces of paper
+ Weighing and recording the mass of wire. Folding the wire many times then weighing and
+recording its mass again
+ Weighing and recording the mass of crystals of the salt. Then grinding salt crystals into powder,
+weighing and record its mass again
+ Dissolving sugar in water
+ Making observations
+ Tabulating data for presentation
+ Presenting data collected
+ Keeping the data for use in activity 2
+Assessment Guide:
+ Check if learners are conducting the tasks properly and safely
+ Ask learners questions such as:
+
+Chemistry Teaching Module: Form 1 – Term 2
+21
+(i) Did the substances change their nature (did they change into different substances) in the
+process?
+(ii) Do you think the changes can be reversed?
+(iii) Did the mass of a substance change or remained the same?
+(iv) What do you call such changes?
+(v) What are the other examples of such changes?
+Key Learning Points:
+ Changes in which a substance retains its chemical nature are classified as physical changes.
+During such changes, no new substance is formed
+ Physical changes include changes of state (melting, evaporation, condensation, freezing),
+changes in shape and size, dissolution of a solute in a solvent and others
+ Physical changes are generally characterized by reversibility, little or no energy involvement
+among others
+Skills Developed:
+ Analytical Thinking
+ Collaborating
+ Communicating
+ Manipulating
+Activity 1.2: Exploring Chemical Changes
+This activity will help learners explore chemical changes with examples. In this activity learners will
+perform some tasks that involve changing the nature of substances.
+: The data generated here by learners will be required for use in activity 2
+Suggested Teaching and Learning Materials
+ Natural Materials: Vinegar, baking soda, paper
+ Artificial Materials: Flip charts, markers, spatulas, beakers, matches, electronic balances.
+Learning Environment Set-up:
+ Natural Environment: School surroundings
+ Artificial Environment: Classroom/Chemistry laboratory
+Teacher’s Roles:
+ Introduce the activity using the hook
+ Put learners in small groups
+Hook: Can the ashes obtained after burning a paper be turned back into a paper? If not, why?
+
+Chemistry Teaching Module: Form 1 – Term 2
+22
+ Provide each group with the necessary materials
+ Ask learners to perform the following tasks:
+(i) weigh and record the mass of the paper. Burn the paper completely, then weigh and record
+the mass of the ashes formed
+(ii) mix the baking soda with vinegar in a beaker and immediately place it on a balance.
+Record the initial mass of the mixture. When the reaction is over, record the mass of the
+mixture again
+(iii) ask learners to make observations
+(iv) tabulate the data for presentation
+ Ask the learners to present findings to the class
+ Ask learners to keep the data for use in activity 2
+Learners’ Activities:
+ Providing responses to the hook
+ Weighing and recording the mass of the paper. Burning the paper completely, then weighing
+and recording the mass of the ashes formed
+ Mixing the baking soda with vinegar in a beaker and immediately place it on a balance.
+Recording the initial mass of the mixture. When the reaction is over, recording the mass of the
+mixture again
+ Making observations
+ Tabulating the data for presentation
+ Presenting findings to the class
+ Keeping the data for use in activity 2
+Assessment Guide:
+ Check if learners are conducting the tasks properly and safely
+ Ask learners questions such as:
+(i) Did the substances change their nature (did they change into different substances) in the
+process?
+(ii) Do you think the changes can be reversed?
+(iii) Did the mass of a substance change or remained the same?
+(iv) What do you call such changes?
+(v) What are the other examples of such changes?
+Key Learning Points:
+ Changes in which a substance changes its chemical nature are classified as chemical changes.
+During chemical changes, a new substance is formed
+ Chemical changes include burning substances in air, passing an electric current in a solution,
+rusting of iron, fermentation, and radioactivity among others
+
+Chemistry Teaching Module: Form 1 – Term 2
+23
+ Chemical changes are generally not reversible, involve great amounts of energy and changes in
+mass
+Skills Developed:
+ Analytical Thinking
+ Collaborating
+ Communicating
+ Manipulating
+Learning Activity 2: Comparing and Contrasting Physical and Chemical Changes
+In this activity, learners will compare and contrast physical and chemical changes. In small groups,
+learners will engage in discussions reviewing the tabulated data they collected in activities 1.1 and
+1.2 under this sub topic. This will help them to come up with comparisons and differences between
+physical and chemical changes.
+Learners will be required to use data generated from activities 1.1 and 1.2
+Suggested Teaching and Learning Materials
+ Natural Materials: Not applicable
+ Artificial Materials: Books, tables of data generated in activities 1.1 and 1.2, flip charts,
+markers, Bostic
+Learning Environment Set-up:
+ Natural Environment: School surroundings
+ Artificial Environment: Chemistry laboratory/classroom
+Teacher’s Roles:
+x Introduce the activity using the hook
+x Put the learners in small groups
+x Distribute the materials
+x Ask learners to:
+(i) review the data on the tables they generated in activities 1.1 and 1.2 noting the
+similarities and differences between physical and chemical changes
+(ii) make a list of similarities between physical and chemical changes
+(iii) tabulate the differences between physical and chemical changes
+(iv) make presentations to the class
+ Consolidate on the presentations by learners
+Hook: How would you determine whether a change is physical or chemical?
+
+Chemistry Teaching Module: Form 1 – Term 2
+24
+Learners’ Activities:
+ Providing responses to the hook
+ Reviewing the data on the tables they generated in activities 1.1 and 1.2 noting the similarities
+and differences between physical and chemical changes
+ Making a list of similarities between physical and chemical changes
+ Tabulating the differences between physical and chemical changes
+ Making presentations to the class on similarities and differences between physical and chemical
+properties
+Assessment Guide:
+ Observe learners’ participation during group discussions
+ Check if learners are correctly comparing and contrasting the changes
+Key Learning Points:
+During both physical and chemical changes, a substance undergoes some transformation of some
+kind such as changes in appearance, mass, shape and nature.
+On the other hand, physical and chemical changes can be differentiated by asking the following
+questions:
+(i) Is a new substance formed (has the substance changed nature?) in the process?
+(ii) Is the change reversible?
+(iii) Has the mass of the substance changed in the process?
+(iv) How much energy is involved in the change?
+The following table summarises the differences between physical and chemical changes:
+Physical change Chemical change
+No new substance is formed A new substance is formed
+The change is generally reversible The change is generally not reversible
+The mass of a substance remains the same The mass of a substance changes
+Generally little or no energy is absorbed or
+released during the change
+Generally large amounts of energy is absorbed
+or released during the change
+Skills Developed:
+ Analytical Thinking
+ Collaborating
+ Communicating
+ Critical Thinking
+
+Chemistry Teaching Module: Form 1 – Term 2
+25
+ Observing
+Expected Standard:
+ Physical and chemical changes differentiated accordingly
+Sub-Topic 5: Criteria of Purity
+Introduction
+This subtopic teaches learners about the concept of purity, which is determined by consistent
+properties like melting point, boiling point, and density. It emphasizes its importance in fields like
+science, medicine, and industry. Learners will learn how to test for purity and its impact on properties
+and applications in pharmaceuticals, food science, and environmental science. Through discussions,
+demonstrations, and hands-on experiments, learners will develop practical skills for assessing
+substance purity.
+Specific Competence:
+ Determine the purity of a substance
+Key Terms:
+ Boiling Point: The temperature at which vapour pressure of the liquid equals the atmospheric
+pressure
+ Chromatography: A separation technique used to separate a mixture of solutes using a solvent
+and a separating medium
+ Chromatogram: This is a visual or graphical representation of the separation of components
+in a mixture, produced by chromatography
+ Density: The mass of a substance per unit volume
+ Impurities: Uunwanted substances or contaminants mixed with another substance
+ Melting Point: The temperature at which a solid change into a liquid
+ Mobile phase: A liquid or gas phase that moves through the stationary phase
+ Purity: The extent to which a substance is free from contamination
+ Refractive Index: A dimensionless number that describes how light propagates through a
+medium
+ Stationary phase: It is a solid or liquid phase that remains fixed
+Learning Activities
+The learning activities have been developed to help learners determine substance purity. Through
+experiments and analysis, learners will learn techniques to determine purity, such as measuring
+melting and boiling points, and chromatography, to understand the importance of purity in science
+and everyday life. The two learning activities engages learners in hands-on activities to understand
+purity determination methods.
+
+Chemistry Teaching Module: Form 1 – Term 2
+26
+Learning Activity 1: Determining the purity of a substance
+This activity provides learners with hands-on experience in assessing purity through various methods.
+In this activity learners will determine the purity of a substance using various and appropriate methods
+including melting and boiling points determination, density calculation, refractive index
+determination and paper chromatography analysis. Further, leaners will explore the effects of
+impurities on the physical properties of a substance.
+Activity 1.1: Determining Purity using Melting Point
+Melting point is a fundamental physical property of substances that help us understand their behavior
+under different conditions. In this activity, learners will explore the concepts of melting point and
+how it relates to the structure and properties of substances with regards to purity.
+Suggested Teaching and Learning Materials:
+ Natural Materials: Ice
+ Artificial Materials: Melting point apparatus, thermometer, beakers, source of heat
+Learning Environment Set-Up:
+ Natural Environment: School surroundings
+ Artificial Environment: Classroom/Chemistry laboratory
+Teacher’s Roles:
+ Introduce the activity using the hook
+ Put learners in small groups
+ Provide learners with a work sheet on the procedure to follow during the activity
+ Ensure safety is observed especially when heating
+Learners’ Activities:
+ Providing responses to the hook
+ Using the melting point apparatus to heat a small sample of ice slowly
+ Recording the temperature at which the ice starts to melt
+ Comparing this temperature with known melting point of pure ice
+ Discussing the comparison to decide whether the sample of ice was pure or not
+Assessment Guide:
+ Check if learners are conducting the activity safely
+ Observe learner participation during activity
+Hook: Imagine you have a sample of ice – how would you determine if it’s pure or contains
+impurities?
+
+Chemistry Teaching Module: Form 1 – Term 2
+27
+ Ask learners questions on key concepts and terminologies related to melting point and purity
+Key Learning Points:
+Melting Point is one of the physical properties used to determine the purity of substances. It is the
+temperature at which a solid changes into a liquid. At this specific temperature, the particles in the
+solid gain enough energy to overcome intermolecular forces and transition into the liquid state. The
+melting point of a pure substance is sharp and definite. However, impurities in a substance tend to
+generally lower its melting point.
+Skills Developed:
+ Analytical Thinking
+ Collaborating
+ Communicating
+ Manipulation
+Activity 1.2: Determining Purity using Boiling Point
+Boiling point is a fundamental physical property of substances that help us understand their behavior
+under different conditions. In this activity, learners will explore the concepts of boiling point and how
+it relates to the structure and properties of substances with regards to purity.
+Suggested Teaching and Learning Materials:
+ Natural Materials: Water
+ Artificial Materials: Boiling point apparatus, thermometer, beakers, source of heat
+Learning Environment Set-Up:
+ Natural Environment: School surroundings
+ Artificial Environment: Classroom/Chemistry laboratory
+Teacher’s Roles:
+ Introduce the activity using the hook
+ Put learners in small groups
+ Provide learners with a work sheet on the procedure to follow during the activity
+ Ensure safety is observed especially when heating
+Hook: Imagine you have a sample of water from a local river how would you determine if it’s
+pure or contains impurities? What methods would you use to ensure the water is safe for
+drinking?
+
+Chemistry Teaching Module: Form 1 – Term 2
+28
+Learners’ Activities:
+ Providing responses to the hook
+ Heating a small sample of water slowly using the boiling point apparatus
+ Recording the temperature at which the water starts to boil
+ Comparing this temperature with known boiling point of pure water
+Discussion:
+ Discussing the comparison to decide whether the sample of water was pure or not
+Assessment Guide:
+ Check if learners are conducting the activity safely
+ Observe learner participation during activity
+ Ask learners questions on key concepts and terminologies related to boiling point and purity
+Key Learning Points:
+Boiling Point is one of the physical properties used to determine the purity of substances. It is the
+temperature at which vapour pressure of a liquid equals the atmospheric pressure. At this specific
+temperature, the particles in the liquid gain enough energy to overcome intermolecular forces and
+transition into vapour state. The boiling point of a pure substance is sharp and definite. However,
+impurities in a substance tend to generally raise its boiling point.
+Skills Developed:
+ Analytical Thinking
+ Collaborating
+ Communicating
+ Manipulating
+Activity 1.3: Determining Purity using Chromatography
+Chromatography, as a process, can be used to determine the purity of a substance. This is based on
+the interpretation of the chromatogram produced from process. In this activity, learners will use
+chromatography to determine whether the given sample is pure or not. Learners will set up paper
+chromatography using inks or coloured substances such as chlorophyll or a dye using a suitable
+solvent. They will observe the separation of different components and analyse the resulting
+chromatograms for purity.
+Hook: You are given a soluble sample. How would you use chromatography to determine whether
+it is pure or not?
+
+Chemistry Teaching Module: Form 1 – Term 2
+29
+Suggest Teaching and Learning Materials
+ Natural Materials: Water, ethanol, a soluble sample such as plant extracts from leaves,
+flowers, natural dyes
+ Artificial Materials: Beakers, chromatography papers/filter papers, column chromatography
+equipment, samples of different mixtures such as ink
+Learning Environment Set-Up:
+ Natural Environment: School surroundings
+ Artificial Environment: Classroom/Chemistry laboratory
+Teacher’s Roles:
+ Introduce the activity using the hook
+ Put learners in small groups
+ Provide learners with a work sheet on the procedure to follow during the activity
+ Ask learners to discuss the chromatograms obtained and make conclusions
+ Ask learners to make presentations to the class
+ Consolidate the on the learner presentations
+Learners’ Activities:
+ Providing responses to the hook
+ Setting up paper chromatography using inks or coloured substances
+ Observing the separation of different components
+ Analysing the resulting chromatograms for purity.
+ Concluding whether a substance was pure or not
+Discussion:
+ Discussing what these findings reveal about the substance
+ Making presentations of the findings
+Assessment Guide:
+ Check if learners are conducting the activity correctly
+ Observe learner participation during activity
+
+Chemistry Teaching Module: Form 1 – Term 2
+30
+ Ask learners questions relating to chromatography and purity
+Key Learning Points
+Chromatography is a technique used to separate and identify components of a mixture. Some factors
+affecting chromatography include; stationary phase, mobile phase, column temperature, component
+properties, column dimensions, sample preparations among others. Chromatography can be used to
+determine whether a substance is pure or not. A pure substance does not separate out; hence it results
+into a single spot or band on the chromatogram. On the other, an impure substance or mixture
+separates out into a number of spots or bands on the chromatogram representing the number of
+components in a mixture as illustrated in the diagram:
+Skills Developed:
+ Analytical Thinking
+ Collaborating
+ Communicating
+ Manipulating
+Activity 1.4: Determining Purity using Density
+Density is a physical property that help in understanding the behavior of substances. Density can be
+used to determine the purity of a substance as it remains constant for a pure substance. In this activity,
+learners will explore the concepts of density and how it relates to the composition and properties of
+substances with regards to purity.
+Suggested Teaching and Learning Materials:
+ Natural Materials: Not applicable
+ Artificial Materials: Steel object (to be referred to as iron object), electronic balance, apparatus
+to measure volume
+Hook: How would you use density to determine whether a substance is pure or not?
+
+Chemistry Teaching Module: Form 1 – Term 2
+31
+Learning Environment Set-Up:
+ Natural Environment: School surroundings
+ Artificial Environment: Classroom/Chemistry laboratory
+Teacher’s Roles:
+ Introduce the activity using the hook
+ Put learners in small groups
+ Provide learners with a work sheet on the procedure to follow during the activity
+Learners’ Activities:
+ Providing responses to the hook
+ Measuring the mass and volume of the piece of iron
+ Calculating the density of the iron object.
+ Comparing their findings to standard density reference value for iron
+Discussion:
+ Discussing the findings and make conclusions on the purity of the object
+ Discussing how density helps in assessing purity and what deviations signify
+Assessment Guide:
+ Check if learners are conducting the activity correctly
+ Observe learner participation during activity
+ Ask learners questions on key concepts and terminologies related to density and purity
+Key Learning Points:
+Density is described as mass per unit volume. Each pure substance has a specific density at a given
+temperature and pressure. The density of a pure substance is constant at a given temperature and
+pressure. Impurities can raise or lower this value. Determining the purity of a substance using
+density involves determining the density of a sample and comparing it to the known density
+of a pure substance.
+Skills Developed:
+ Analytical Thinking
+ Collaborating
+ Communicating
+ Manipulating
+
+Chemistry Teaching Module: Form 1 – Term 2
+32
+Activity 1.5: Determining Purity using Refractive Index
+Refractive index can be used to determine the purity of a substance. Each material has its own specific
+value for refractive index. In this activity, learners will use a refractometer to determine the refractive
+index of the material provided
+Suggested Teaching and Learning Materials:
+ Natural Materials: Not applicable
+ Artificial Materials: Perspex/glass block, refractometer
+Learning Environment Set-Up:
+ Natural Environment: School surroundings
+ Artificial Environment: Classroom/Chemistry laboratory
+Teacher’s Roles:
+ Introduce the activity using the hook
+ Put learners in small groups
+ Provide the suggested or improvised materials
+ Provide guidance on how to use the refractometer
+Learners’ Tasks:
+ Providing responses to the hook
+ Using a refractometer to measure the refractive index of the material provided
+ Comparing the value obtained with reference refractive index value of the material
+Discussion:
+ Discussing what variations in refractive index value of the material signify
+Assessment Guide:
+ Check learner participation during the discussions
+ Ask questions on refractive index in relation to purity of materials
+Hook: Did you know that refractive index can be used to determine the purity of a substance?
+
+Chemistry Teaching Module: Form 1 – Term 2
+33
+Key Learning Points:
+The refractive index (n) is a measure of how much light slows down when it passes through a
+substance compared to air. It is the ratio of the speed of light in a vacuum to its speed in a substance.
+It varies for different substances and can indicate purity. Pure substances have specific refractive
+indices. For example, the refractive index of Pyrex glass is 1.47. Deviations in refractive index value
+may indicate the presence of impurities. Generally, impurities can cause the refractive index to be
+lower or higher than that of the pure substance.
+Skills Developed:
+ Analytical Thinking
+ Collaborating
+ Communicating
+Learning Activity 2: Exploring the Importance of Pure and Impure Substances
+In this activity, learners will explore the critical role that both pure and impure substances play in our
+daily lives. Understanding the implications of purity is essential for promoting health, safety, and
+well-being. In this activity, learners will engage in research to investigate the significance of pure and
+impure substances in daily life.
+Suggested Teaching and Learning Materials:
+ Natural materials: Not applicable
+ Artificial Materials: Books, smart phones, computers connected to internet, flip charts,
+markers
+Learning Environment Set-up:
+ Natural Environment: School surroundings
+ Artificial Environment: Library, Computer laboratory/classroom
+Teacher’s Roles:
+ Introduce the activity using the hook
+ Put learners in small groups
+ Provide the materials to learners to research on the importance of pure and impure substances
+ Assign the tasks to learners
+ Ask learners to make presentations
+ Consolidate on the learners’ presentations
+Hook: Why do you think it is important to observe purity in the manufacture of medicines?
+
+Chemistry Teaching Module: Form 1 – Term 2
+34
+Learner’s Activities:
+ Providing responses to the hook
+ Researching on the tasks assigned
+ Documenting findings
+ Making presentations to the class on the importance of pure and impure substances
+Assessment Guide:
+ Check learner participation
+ Check the correctness of the findings by learners
+Skills Developed:
+ Analytical Thinking
+ Collaborating
+ Communicating
+Expected Standard:
+ The purity of a substance determined correctly
+Sub-Topic 6: Purification and Separation Techniques
+Introduction:
+Purification and separation techniques are important in Chemistry for isolating components from
+mixtures to obtain pure substances. Separation of mixtures can be done using various techniques.
+This requires understanding the principles behind each separation technique, the nature of the mixture
+to be separated and the component(s) of interest in the mixture.
+Specific Competence:
+ Separate mixtures into their desired components
+Key Terms:
+ Centrifugation: A separation technique used to separate suspended particles in a liquid by
+applying a rapid spinning motion to a mixture
+ Chromatography: A separation technique used to separate a mixture of solutes using a solvent
+and a separating medium
+ Crystallisation: The process of obtaining crystals from a homogeneous solution
+ Decantation: The process of separating liquid from solid residues by pouring off the liquid
+without disturbing the sediment
+
+Chemistry Teaching Module: Form 1 – Term 2
+35
+ Distillation: A separation technique that involves heating a liquid to form vapour and then
+condensing the vapour back into a liquid
+ Evaporation: The process of turning a liquid into vapor, typically by heating
+ Filtration: A physical separation process used to separate solids from liquids or gases using a
+filter medium that allows the fluid to pass through while retaining the solid particles
+ Separating Funnel: A laboratory apparatus used to separate immiscible liquids based on their
+different densities
+ Sublimation: The process in which a solid turns directly into vapor without passing through
+the liquid phase
+Learning Activities
+The learning activities aim to explore ways to separate and purify substances. Learners will learn
+various techniques like filtration, distillation, chromatography, and crystallisation to obtain pure
+substances, and understand their applications in science, industry, and daily life. The activities
+introduce learners to essential techniques for purification and separation.
+Learning Activity 1: Separating Mixtures into their desired Components using Appropriate
+Techniques
+In this learning activity, learners will separate mixtures into their desired components using
+appropriate techniques among them filtration, evaporation, distillation, crystallisation,
+chromatography, separating funnel, centrifugation, sublimation, and decantation. In this activity,
+learners should conduct all the tasks on separation techniques. The activity should be conducted in
+several lessons.
+Suggested Teaching and Learning Materials:
+ Natural Materials: Sand, salt, oil, water, milk
+ Artificial Materials: Beakers, test tubes, filtration apparatus (filter paper, funnels), distillation
+apparatus, chromatography paper, centrifuge machine, separating funnel, ink samples
+Learning Environment Set-up:
+ Natural Environment: School surroundings
+ Artificial Environment: Chemistry laboratory/classroom equipped with necessary apparatus
+Teacher’s Roles:
+ Introduce the task for that particular lesson
+ Put learners in small groups
+ Provide the materials needed to carry out the task
+Hook: If you had a mixture of sand and salt, how could you separate the two materials effectively?
+
+Chemistry Teaching Module: Form 1 – Term 2
+36
+ Provide guidance on the procedure of conducting the task
+ Move around the groups to ensure learners are following the procedure safely
+ Ask learners to share experiences with the class
+Learner’s Activities:
+ Providing responses to the hook
+ Carrying out the task as assigned
+ Engaging actively in hands-on experiments
+ Collaborating with peers during group activities
+ Sharing experiences with the class
+Content Tip:
+ the tasks on separation techniques will be done through a number of lessons:
+1. Filtration:
+ Procedure: Learners will set up a filtration apparatus using filter paper and a funnel to
+separate sand from saltwater. They will pour the mixture slowly into the funnel and collect
+the filtrate (saltwater) in a beaker while the sand remains on the filter paper.
+ Criteria of Separation: This technique exploits the difference in particle size, where
+sand (solid) is larger than the dissolved salt (solution).
+2. Evaporation:
+ Procedure: Learners will heat a saltwater solution in a beaker until all the water
+evaporates, leaving behind solid salt. They will observe the process and discuss how heat
+energy causes the separation of salt as it crystallizes.
+ Criteria of Separation: Evaporation is based on the volatility of the solvent (water)
+compared to the solute (salt).
+3. Simple Distillation:
+ Procedure: Using a distillation setup, learners will heat a mixture of water and salt (salt
+solution) in a flask. They will collect the distillate at the condenser. Observations will be
+noted regarding the different boiling points.
+ Criteria of Separation: This method relies on the difference in boiling points, with water
+evaporating, condensed and collected as distillate.
+4. Fractional Distillation:
+ Procedure: In a similar setup as simple distillation, but with a fractionating column in
+place learners will separate a mixture of water and ethanol, allowing them to observe how
+
+Chemistry Teaching Module: Form 1 – Term 2
+37
+the fractional distillation column works to separate the two liquids based on their boiling
+point differences.
+ Criteria of Separation: Fractional distillation utilises the multiple phases of
+vaporisation and condensation in the fractionating column to separate miscible liquids.
+5. Crystallisation:
+ Procedure: Learners will prepare a concentrated hot salt solution and allow it to cool
+slowly in a petri dish to form crystals. They will examine the crystallisation process and
+calculate the yield.
+ Criteria of Separation: This technique exploits solubility differences, as the solute (salt)
+crystallises out of the solution upon cooling.
+6. Chromatography:
+ Procedure: Using chromatography paper, learners will apply different ink samples onto
+the paper and then place it in a solvent to separate the dyes based on their solubility and
+affinity to the paper.
+ Criteria of Separation: This method focuses on the differential movement of
+compounds through a medium, where some travel faster and further than others based on
+their interactions.
+7. Separating Funnel:
+ Procedure: Learners will use a separating funnel to separate an oil-water mixture. They
+will allow the components to settle, and then open the tap to drain the lower layer
+(water).
+ Criteria of Separation: This separation exploits the immiscibility and density
+differences between oil (less dense) and water (more dense)
+8. Centrifugation:
+ Procedure: In a centrifuge, learners will place milk samples and spin them to separate
+cream from the liquid due to different densities. They will observe the layers created
+after spinning.
+ Criteria of Separation: Centrifugation uses centrifugal force to separate particles
+based on their density and size.
+9. Sublimation:
+ Procedure: Learners will heat iodine or dry ice to demonstrate sublimation. They will
+observe the transition from solid to gas and then condense back to solid on a cooler
+surface.
+ Criteria of Separation: This technique relies on the ability of certain solids to transition
+directly into vapour without becoming liquid.
+
+Chemistry Teaching Module: Form 1 – Term 2
+38
+ Procedure: Learners will prepare a mixture of sand and water and allow it to settle. They
+will then carefully pour off the water without disturbing the sediment to separate the solid
+from the liquid.
+ Criteria of Separation: This technique capitalizes on the gravitational settling of solids,
+allowing them to be physically separated from the liquid.
+Assessment Guide:
+ Continuous observations and feedback during the practical activities
+ Ask application questions to assess learner understanding of the principles of separation
+techniques
+Skills Developed:
+ Analytical Thinking
+ Collaborating
+ Communicating
+ Manipulating
+Learning Activity 2: Investigating the Applications and Effects of Separation Techniques on the
+Environment
+Separation techniques have several domestic and industrial applications in daily life. However,
+separation of some substances has negative impact on the environment. In this activity learners will
+investigate, and discuss the applications and effects of separation techniques on the environment.
+Learners will engage research projects and field trips to industries as they investigate.
+Suggested Teaching and Learning Materials:
+ Natural Materials: Not applicable
+ Artificial Materials: Note books, text books, computers connected to internet
+Learning Environment Set-up:
+ Natural Environment: Industry surroundings
+ Artificial Environment: Industry plant
+Teacher’s Roles:
+ Introduce the activity using the hook
+ Put learners in small groups
+ Ask learners to research on the applications of separation techniques and their effects on the
+environment
+Hook: Can you think of a situation where separation techniques are used to protect the
+environment?
+10. Decantation:
+
+Chemistry Teaching Module: Form 1 – Term 2
+39
+ Alternatively, take learners to industries involved in separation of substances and ask them to
+collect information on applications and effects of separation techniques used in those industries
+(guide learners on safety)
+ Ask learners to present findings on the effects of separation techniques on the environment
+Learner’s Activities:
+ Providing responses to the hook
+ Researching on the applications of separation techniques and their effects on the environment
+ Collecting information on applications and effects separation techniques used in industries
+visited
+ Presenting findings
+Assessment Guide:
+ A comprehensive project report detailing research on a specific separation technique, its
+applications, and environmental impact
+Skills Developed:
+ Analytical Thinking
+ Collaborating
+ Communicating
+Expected standard:
+Mixtures separated into their desired components accordingly
+
+BIBLIOGRAPHY
+Artherton M. A., and Lawrence J. K. (1982). Chemistry for Today and Tomorrow. John Murray.
+Atkins, P. W., and De Paula, J. (2010). Atkins’ Physical Chemistry. Oxford university Press
+Brown, T. E., LeMay, H.E., Bursten, B. E., and Murphy, C. (2017). Chemistry: The Central Science.
+Pearson Education
+Chang, R. (2010). Chemistry. McGraw – Hill Education
+Chikele, A. J. (2018). Knowing Examiner’s Mind Success series (ESS) - Chemistry. Lusaka:
+Initiative publishers Production
+Clegg, A. Mundongo, K. Njapau, S (2014) Science Grade 10 Pupils book. Longman Zambia
+Educational Publishers Ltd
+Curriculum Development Centre, (2024). Chemistry Syllabus Form 1 – 4: ZEPH
+Curriculum Development Centre, (2025). Chemistry Teaching Module Form 1, Term 1. Lusaka:
+ZEPH.
+Gallagher R. and Ingram P. (2021). Complete Chemistry. Oxford University Press.
+Holderness A., Lambert J. and Thompson J. J. (1987). A New Certificate Chemistry. Heinemann
+Educational Publishers.
+Lewis, M., Waller, G. (1986). Thinking Chemistry (GCSE edition). New York: Oxford University
+Press
+Ministry of Education, Zambia Education Curriculum Framework (2023), Lusaka, Zambia
+Mukuma J., Swazi H., and Chirwa C. S., (1997). Senior Secondary Science Course, Chemistry 10 –
+Pupil’s Book. Macmilan Education.
+Muzumara, P., Zulu, L. James, H. ( ). Progress in Science: Learners Book (10). Cape Town: Oxford
+University Press
+Mwansa B. A., (2018). Senior Secondary Chemistry - Learner’s Book Grade 12. Bookworld Africa
+Limited.
+Naosa, D.K., (2019) Fundamentals of Chemistry - Grade 10 - 12. Potential Fraternity Systems.
+Lusaka, Zambia
+Napwora J. N., Waweru M. and Ogari D. N., (2007). Chemistry For Secondary Schools. Moran
+Publishers.
+Zulu F., Mungai J., Omutiti P., Kiptanu J., (2016) Excel and Advanced in Chemistry – learner’s Book
+Grade 10. Longhorn Publishers

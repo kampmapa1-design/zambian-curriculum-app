@@ -1,6 +1,30 @@
 {
   "items": [
     {
+      "title": "Chemestry Teaching Module — Form 1, Term 2",
+      "subjectName": "Chemistry",
+      "resourceType": "module",
+      "sourceUrl": "https://library.cdcrepository.info/resource.php?id=405",
+      "fileName": "chemistry/form1_chemestry_teaching_module_term2.txt",
+      "_source": "Curriculum Development Centre Teaching Module, downloaded from the CDC Digital Library catalog — real curriculum content, front matter (authorship/credits) stripped during extraction and never bundled."
+    },
+    {
+      "title": "Chemestry Teaching Module — Form 1, Term 3",
+      "subjectName": "Chemistry",
+      "resourceType": "module",
+      "sourceUrl": "https://library.cdcrepository.info/resource.php?id=406",
+      "fileName": "chemistry/form1_chemestry_teaching_module_term3.txt",
+      "_source": "Curriculum Development Centre Teaching Module, downloaded from the CDC Digital Library catalog — real curriculum content, front matter (authorship/credits) stripped during extraction and never bundled."
+    },
+    {
+      "title": "Geography Teaching Module — Form 1, Term 3",
+      "subjectName": "Geography",
+      "resourceType": "module",
+      "sourceUrl": "https://library.cdcrepository.info/resource.php?id=443",
+      "fileName": "geography/form1_geography_teaching_module_term3.txt",
+      "_source": "Curriculum Development Centre Teaching Module, downloaded from the CDC Digital Library catalog — real curriculum content, front matter (authorship/credits) stripped during extraction and never bundled."
+    },
+    {
       "title": "Civic Education Teaching Module — Form 1, Term 3",
       "subjectName": "Civic Education",
       "resourceType": "module",

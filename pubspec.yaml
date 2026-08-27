@@ -115,7 +115,11 @@ flutter:
     - assets/subject_content/computer_science/form1_computer_science_teaching_module_form_1_term_2.txt
     - assets/syllabi/computer_science_form1.json
     - assets/subject_content/geography/form1_geography_teaching_module_form_1_term_2.txt
+    - assets/subject_content/geography/form1_geography_teaching_module_term3.txt
     - assets/syllabi/geography_form1.json
+    - assets/subject_content/chemistry/form1_chemestry_teaching_module_term2.txt
+    - assets/subject_content/chemistry/form1_chemestry_teaching_module_term3.txt
+    - assets/syllabi/chemistry_form1.json
     - assets/subject_content/agricultural_science/form1_agricultural_science_teaching_module_form_1_term_2.txt
     - assets/syllabi/agricultural_science_form1.json
     - assets/subject_content/biology/form1_biology_teaching_module_form_1_term_2.txt

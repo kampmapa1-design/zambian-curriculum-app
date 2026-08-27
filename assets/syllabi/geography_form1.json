@@ -1,5 +1,5 @@
 {
-  "_source": "Curriculum Development Centre Teaching Module — \"Geography Teaching Module Form 1 - Term 2\" (https://library.cdcrepository.info/resource.php?id=292). Topic/sub-topic structure and competencies extracted with AI assistance (Gemini) directly from this module's own stated content — never invented; the extraction was instructed to use only what the module itself says, and to flag anything unclear rather than guess. Covers only the term this specific module addresses (Term 2) — other terms are not included since no source document for them was available at extraction time. AI-flagged completeness notes from extraction: General competences were specified at the main topic level in the module (e.g., Analytical thinking, Citizenship, Collaboration, Environmental Sustainability), but because the schema specifies competencies under sub-topics, only the sub-topic specific competences were included in the array. Note that heading numbering formats vary slightly across subtopics (e.g., SUB-TOPIC 1.1.1 vs 1.1.2 SUB-TOPIC 2), and the sample lesson plan at the end of the text references topic numbers 1.4/1.4.1 which contradict the body numbering.",
+  "_source": "Curriculum Development Centre Teaching Module — \"Geography Teaching Module Form 1 - Term 2\" (https://library.cdcrepository.info/resource.php?id=292). Topic/sub-topic structure and competencies extracted with AI assistance (Gemini) directly from this module's own stated content — never invented; the extraction was instructed to use only what the module itself says, and to flag anything unclear rather than guess. Covers only the term this specific module addresses (Term 2) — other terms are not included since no source document for them was available at extraction time. AI-flagged completeness notes from extraction: General competences were specified at the main topic level in the module (e.g., Analytical thinking, Citizenship, Collaboration, Environmental Sustainability), but because the schema specifies competencies under sub-topics, only the sub-topic specific competences were included in the array. Note that heading numbering formats vary slightly across subtopics (e.g., SUB-TOPIC 1.1.1 vs 1.1.2 SUB-TOPIC 2), and the sample lesson plan at the end of the text references topic numbers 1.4/1.4.1 which contradict the body numbering. ADDED (2026-08-28): Term 3 content. Curriculum Development Centre Teaching Module — \"Geography Teaching Module\" (https://library.cdcrepository.info/resource.php?id=443). Topic/sub-topic structure and competencies extracted with AI assistance (Gemini) directly from this module's own stated content — never invented; the extraction was instructed to use only what the module itself says, and to flag anything unclear rather than guess. Term confirmed directly against the CDC library's own term filter (browse.php?...&term=3), not assumed. AI-flagged completeness notes from extraction: The module text presents two main topics: Topic 1 (1.1. TOPIC 1: SETTLEMENTS) and Topic 2 (1.2. TOPIC 2: URBANISATION). Week numbers are not specified for any topic or sub-topic. Learning objectives are not presented under explicit objective headings but rather as individual 'Activity' titles under each sub-topic. An irregular heading number '1.6.2 Introduction' appears directly underneath the title of sub-topic 1.1.2. Additionally, Topic 2 lists its Specific Competence prior to sub-topic 1.2.1, and the document concludes with a sample lesson plan referencing 'TOPIC: 1.4. Natural Resources', which is not presented as a full content module in the body text.",
   "curriculum": {
     "code": "CBC_2023",
     "name": "2023 Competency-Based Curriculum",
@@ -113,6 +113,157 @@
                 {
                   "sequence_number": 1,
                   "description": "Apply knowledge of migration in aspects of daily life",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 3",
+      "sequence_number": 3,
+      "topics": [
+        {
+          "name": "1.1. TOPIC 1: SETTLEMENTS",
+          "sequence_number": 1,
+          "description": "Settlements are fundamental aspects of human society, representing the places where people establish communities and live. They range from small villages to large metropolitan areas, reflecting diverse forms and functions across different regions and cultures. This topic will focus on identification of the various patterns of settlements, analysing factors that influence their location, identification of challenges faced by settlements and ways of resolving such challenges.",
+          "week_number": null,
+          "learning_objectives": [],
+          "competencies": [
+            {
+              "sequence_number": 1,
+              "description": "analytical thinking",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 2,
+              "description": "collaboration",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 3,
+              "description": "creativity",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 4,
+              "description": "problem solving",
+              "category": "General Competence"
+            }
+          ],
+          "sub_topics": [
+            {
+              "name": "1.1.1.SUB-TOPIC 1: SETTLEMENTS",
+              "sequence_number": 1,
+              "description": "Settlements have historically evolved from simple traditional villages to complex urban centres driven by industrialisation and globalisation. Each settlement type has its unique characteristics, challenges and opportunities, impacting both local environment and the broader region. The examination of settlements do not only provide insights on how people organise spaces and resources, but also illustrates the dynamic nature of human progress and adaptation.",
+              "week_number": null,
+              "learning_objectives": [
+                "Identifying different types of settlements (rural and urban settlements)",
+                "Classifying settlements according to their hierarchy (homestead, hamlet, village, town, city…)",
+                "Identifying the various patterns of settlements.",
+                "Drawing the various patterns of settlements (linear/ribbon, nucleated/clustered, dispersed/Isolated)."
+              ],
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Promote orderliness in the Settlements",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "1.1.2. SUB TOPIC 2: LOCATION OF SETTLEMENTS",
+              "sequence_number": 2,
+              "description": "The location of settlements is one of the crucial aspect in the study of human adaptation as it influences the development, growth and sustainability of communities. Settlements have been established in various locations determined by factors such as access to water, fertility of the soils, natural resources, transportation and defence. This sub-topic is based on the factors that influence location of settlements, functions of settlements and choosing of a place to live that aligns with one’s needs and lifestyle. Understanding of these aspects is essential for appreciating the complexities of human habitation, economic development and environmental sustainability.",
+              "week_number": null,
+              "learning_objectives": [
+                "Identifying factors that influence the location of settlements (relief, soil fertility, transport, water…).",
+                "Describing functions of different settlements (administrative, commercial, agricultural, mining…)",
+                "Choosing a place to live that aligns with one’s needs and lifestyle (considering factors such as proximity to school or work, availability of resources; water and food, transportation, options, safety and amenities…)."
+              ],
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Make settlement choices",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "1.1.3. SUB TOPIC 3: CHALLENGES IN SETTLEMENTS",
+              "sequence_number": 3,
+              "description": "Settlements, whether urban or rural, face multitude of challenges that can impact the quality of life of the residents. These challenges can be broadly categorized into environmental, social, economic, and health. The challenges can have far-reaching consequences such as decreased quality of life, increase poverty and crime, reduced economic opportunities, etc. Understanding these challenges is crucial for developing effective solutions to address them and create more sustainable, equitable, and healthy settlement.",
+              "week_number": null,
+              "learning_objectives": [
+                "Identifying challenges faced in settlements (Rural - limited access to basic services, poor infrastructure, environmental degradation… Urban - overcrowding, inadequate infrastructure, limited access to green spaces, unemployment, environmental degradation).",
+                "Resolving challenges experienced in settlements (Rural - Sustainable agriculture, environmental conservation, clean water and sanitation campaign, health care campaigns…Urban - managing waste, urban greening, energy conservation, water conservation, sustainable urban mobility campaigns, disasters preparedness campaigns …)"
+              ],
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Resolve challenges experienced in settlements.",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "1.2. TOPIC 2: URBANISATION",
+          "sequence_number": 2,
+          "description": "Urbanisation is the process of people moving from rural areas to cities and urban centres, it is the global phenomenon, with increasing numbers of people living in urban areas. Zambia’s urban population is growing rapidly with significant implications for economies, societies, and environments. The country has experienced significant urbanisation in recent decades, driven by physical, social and economic factors. Major cities like Lusaka, Kitwe, and Ndola are hubs of economic activities, innovation, and cultural diversity. Urbanisation in Zambia presents both opportunities for economic growth and development, as well as challenges such as housing shortages, infrastructure strain, and environmental degradation. Understanding urbanisation in Zambia is crucial for addressing the country’s development challenges and promoting sustainable urban growth. This topic will explore the relationship between urbanisation, daily lives and the environment",
+          "week_number": null,
+          "learning_objectives": [],
+          "competencies": [
+            {
+              "sequence_number": 1,
+              "description": "analytical thinking",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 2,
+              "description": "collaboration",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 3,
+              "description": "creativity",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 4,
+              "description": "digital",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 5,
+              "description": "problem solving",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 6,
+              "description": "Relate urbanisation to daily lives and environment.",
+              "category": "Specific Competence"
+            }
+          ],
+          "sub_topics": [
+            {
+              "name": "1.2.1. SUB- TOPIC 1: URBANISATION",
+              "sequence_number": 1,
+              "description": "Urbanisation happens worldwide, and many people now live in urban areas. Urbanisation brings good things like economic growth but also problems like not enough houses, crowded roads, and harm to the environment. To help Zambia grow in a smart and sustainable way, we need to understand how urbanisation affects daily life and nature.",
+              "week_number": null,
+              "learning_objectives": [
+                "Discussing urbanisation",
+                "Discussing causes of rapid urbanisation (physical, social and economic factors)",
+                "Analysing the impacts of urbanisation in different areas (Business owners, farmers and town planners…)",
+                "Relating urbanisation to daily lives and the environment (Basic Problem solving, learning different cultures and life styles, road safety and traffic congestion solutions, clean-up and tree planting, appreciating local community growth … )"
+              ],
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Relate urbanisation to daily lives and environment.",
                   "category": "Specific Competence"
                 }
               ]

@@ -471,6 +471,15 @@
     {
       "curriculum_code": "CBC_2023",
       "curriculum_name": "2023 Competency-Based Curriculum",
+      "subject_code": "CHEM",
+      "subject_name": "Chemistry",
+      "grade_level": 1,
+      "grade_name": "Form 1",
+      "file": "chemistry_form1.json"
+    },
+    {
+      "curriculum_code": "CBC_2023",
+      "curriculum_name": "2023 Competency-Based Curriculum",
       "subject_code": "AGR",
       "subject_name": "Agricultural Science",
       "grade_level": 1,
