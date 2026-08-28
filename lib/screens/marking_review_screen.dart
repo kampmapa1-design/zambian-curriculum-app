@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../models/marking_scheme.dart';
 import '../models/marking_script.dart';
@@ -88,10 +89,18 @@ class _MarkingReviewScreenState extends State<MarkingReviewScreen> {
     super.dispose();
   }
 
+  /// Matches exactly what [_confirmAndFinish] will actually save (same
+  /// parse-or-zero, same clamp to [maxMarks]) so what's shown while
+  /// editing never drifts from what gets recorded — an unparseable or
+  /// out-of-range entry is clamped/zeroed the same way here as at save
+  /// time, not just silently at the last moment.
+  double _awardedFor(_AnswerControllers r) =>
+      (double.tryParse(r.marks.text.trim()) ?? 0).clamp(0, r.maxMarks);
+
   double get _totalAwarded {
     var total = 0.0;
     for (final r in _rows) {
-      total += double.tryParse(r.marks.text.trim()) ?? 0;
+      total += _awardedFor(r);
     }
     return total;
   }
@@ -125,7 +134,7 @@ class _MarkingReviewScreenState extends State<MarkingReviewScreen> {
           questionLabel: _rows[i].questionLabel,
           maxMarks: _rows[i].maxMarks,
           transcribedAnswer: _rows[i].answer.text.trim(),
-          marksAwarded: (double.tryParse(_rows[i].marks.text.trim()) ?? 0).clamp(0, _rows[i].maxMarks),
+          marksAwarded: _awardedFor(_rows[i]),
           confidence: _rows[i].confidence,
           teacherEdited: i < originalAnswers.length ? _rows[i].changedFrom(originalAnswers[i]) : true,
         ),
@@ -232,6 +241,21 @@ class _MarkingReviewScreenState extends State<MarkingReviewScreen> {
     );
   }
 
+  /// Warns a teacher, right on the field, whenever what's typed won't be
+  /// saved as-is — an empty/unparseable entry is about to become 0, and an
+  /// over-max entry is about to be clamped down. Without this, either
+  /// would silently happen at Confirm & Finish with no indication which
+  /// answer it hit.
+  String? _marksWarning(_AnswerControllers row) {
+    final raw = row.marks.text.trim();
+    if (raw.isEmpty) return 'Will be saved as 0';
+    final parsed = double.tryParse(raw);
+    if (parsed == null) return 'Not a number — will be saved as 0';
+    if (parsed < 0) return 'Will be saved as 0';
+    if (parsed > row.maxMarks) return 'Max is ${row.maxMarks} — will be capped';
+    return null;
+  }
+
   Color _confidenceColor(MarkingConfidence c) => switch (c) {
         MarkingConfidence.high => Colors.green,
         MarkingConfidence.medium => Colors.orange,
@@ -283,13 +307,20 @@ class _MarkingReviewScreenState extends State<MarkingReviewScreen> {
             ),
             const SizedBox(height: 8),
             Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 SizedBox(
                   width: 100,
                   child: TextField(
                     controller: row.marks,
-                    decoration: InputDecoration(labelText: 'Marks (of ${row.maxMarks})', border: const OutlineInputBorder()),
+                    decoration: InputDecoration(
+                      labelText: 'Marks (of ${row.maxMarks})',
+                      border: const OutlineInputBorder(),
+                      errorText: _marksWarning(row),
+                      errorMaxLines: 2,
+                    ),
                     keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                    inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*$'))],
                     onChanged: (_) => setState(() {}),
                   ),
                 ),

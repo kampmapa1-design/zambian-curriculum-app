@@ -221,6 +221,21 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
     await _loadRemainingFreeGradings();
   }
 
+  /// Stage 8 — the other half of retry handling: after the automatic
+  /// double-attempt in [_processBatch] fails, a script lands in
+  /// [MarkingScriptStatus.needsRetry] and stays there until a teacher asks
+  /// for another attempt. Puts it back to [MarkingScriptStatus.queued]
+  /// (keeping its scheme link) so the next "Process" run for that scheme
+  /// picks it up again alongside anything else queued.
+  Future<void> _retryScript(MarkingScript script) async {
+    await _repository.update(script.copyWith(status: MarkingScriptStatus.queued, clearLastError: true));
+    await _load();
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Moved back to queued — process its batch again to retry.')),
+    );
+  }
+
   Future<void> _deleteScript(MarkingScript script) async {
     final confirmed = await showDialog<bool>(
       context: context,
@@ -500,10 +515,21 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
                 : null,
         trailing: selectable
             ? Checkbox(value: selected, onChanged: (_) => _toggleSelected(script))
-            : IconButton(
-                icon: const Icon(Icons.delete_outline),
-                tooltip: 'Delete',
-                onPressed: () => _deleteScript(script),
+            : Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (script.status == MarkingScriptStatus.needsRetry)
+                    IconButton(
+                      icon: const Icon(Icons.refresh),
+                      tooltip: 'Retry',
+                      onPressed: () => _retryScript(script),
+                    ),
+                  IconButton(
+                    icon: const Icon(Icons.delete_outline),
+                    tooltip: 'Delete',
+                    onPressed: () => _deleteScript(script),
+                  ),
+                ],
               ),
       ),
     );

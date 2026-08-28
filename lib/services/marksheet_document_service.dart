@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:path/path.dart' as p;
@@ -142,8 +143,11 @@ class MarksheetDocumentService {
     }
 
     // A UTF-8 BOM so Excel (which otherwise guesses the wrong encoding
-    // for anything beyond plain ASCII) opens this correctly.
-    final bytes = [0xEF, 0xBB, 0xBF, ...buffer.toString().codeUnits];
+    // for anything beyond plain ASCII) opens this correctly. Actual UTF-8
+    // encoding matters here, not just the BOM — `.codeUnits` would give
+    // UTF-16 code units instead, silently corrupting any name with a
+    // character outside plain ASCII.
+    final bytes = [0xEF, 0xBB, 0xBF, ...utf8.encode(buffer.toString())];
     return _writeToTempFile('csv', bytes, scheme);
   }
 }

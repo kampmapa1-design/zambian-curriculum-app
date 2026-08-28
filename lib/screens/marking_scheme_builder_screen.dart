@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../models/marking_scheme.dart';
 import '../services/marking_scheme_repository.dart';
@@ -217,6 +218,7 @@ class _MarkingSchemeBuilderScreenState extends State<MarkingSchemeBuilderScreen>
                     controller: row.marks,
                     decoration: const InputDecoration(labelText: 'Marks', border: OutlineInputBorder()),
                     keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                    inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*$'))],
                     onChanged: (_) => setState(() {}),
                   ),
                 ),
