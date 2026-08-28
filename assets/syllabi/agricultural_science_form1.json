@@ -1,5 +1,5 @@
 {
-  "_source": "Curriculum Development Centre Teaching Module — \"Agricultural Science Teaching Module Form 1 - Term 2\" (https://library.cdcrepository.info/resource.php?id=291). Topic/sub-topic structure and competencies extracted with AI assistance (Gemini) directly from this module's own stated content — never invented; the extraction was instructed to use only what the module itself says, and to flag anything unclear rather than guess. Covers only the term this specific module addresses (Term 2) — other terms are not included since no source document for them was available at extraction time. AI-flagged completeness notes from extraction: Topic 4 only includes Sub-Topic 4.1 (Garden tools and Equipment) and Topic 5 only includes Sub-Topic 5.1 (Vegetable Production), leaving other aspects implied by the main topic titles (such as farm structures or field crops) unaddressed in the source text. There are typographical errors in topic titles in the original text ('AGRICUTURE' missing an 'L'). Specific competencies were explicitly given per sub-topic while general competences were listed at topic level.",
+  "_source": "Curriculum Development Centre Teaching Module — \"Agricultural Science Teaching Module Form 1 - Term 2\" (https://library.cdcrepository.info/resource.php?id=291). Topic/sub-topic structure and competencies extracted with AI assistance (Gemini) directly from this module's own stated content — never invented; the extraction was instructed to use only what the module itself says, and to flag anything unclear rather than guess. Covers only the term this specific module addresses (Term 2) — other terms are not included since no source document for them was available at extraction time. AI-flagged completeness notes from extraction: Topic 4 only includes Sub-Topic 4.1 (Garden tools and Equipment) and Topic 5 only includes Sub-Topic 5.1 (Vegetable Production), leaving other aspects implied by the main topic titles (such as farm structures or field crops) unaddressed in the source text. There are typographical errors in topic titles in the original text ('AGRICUTURE' missing an 'L'). Specific competencies were explicitly given per sub-topic while general competences were listed at topic level. ADDED (2026-08-28): Term 3 content. Curriculum Development Centre Teaching Module — \"Agricultural Science Teaching Module\" (https://library.cdcrepository.info/resource.php?id=399). Topic/sub-topic structure and competencies extracted with AI assistance (Gemini) directly from this module's own stated content — never invented; the extraction was instructed to use only what the module itself says, and to flag anything unclear rather than guess. Term confirmed directly against the CDC library's own term filter (browse.php?...&term=3), not assumed. AI-flagged completeness notes from extraction: Topic 5.0 explicitly starts mid-sequence from Term 2, resuming at activity 5.1.5 (activities 5.1.1 through 5.1.4 are omitted as already covered). There is a numbering duplication in Sub-Topic 5.1 where code '5.1.5' is assigned to both 'Managing vegetable growing...' and 'Adding value, storing, and marketing vegetables'. No week numbers are specified anywhere in this module text.",
   "curriculum": {
     "code": "CBC_2023",
     "name": "2023 Competency-Based Curriculum",
@@ -96,6 +96,250 @@
                 {
                   "sequence_number": 1,
                   "description": "Grow a variety of vegetables.",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 3",
+      "sequence_number": 3,
+      "topics": [
+        {
+          "name": "TOPIC 5.0 CROP PRODUCTION",
+          "sequence_number": 1,
+          "description": "Crop production is the practice of cultivation of plants for food, fiber, and other products. This topic focuses on the fundamentals of crop production and post-harvest management. Some of the activities in this topic were already covered in term 2. This topic will cover the remaining activities in vegetable production.",
+          "week_number": null,
+          "learning_objectives": [],
+          "competencies": [
+            {
+              "sequence_number": 1,
+              "description": "Analytical thinking",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 2,
+              "description": "Communication",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 3,
+              "description": "Creativity and innovation",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 4,
+              "description": "Collaboration",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 5,
+              "description": "Critical Thinking",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 6,
+              "description": "Environmental sustainability",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 7,
+              "description": "Problem solving",
+              "category": "General Competence"
+            }
+          ],
+          "sub_topics": [
+            {
+              "name": "Sub-Topic 5.1: Vegetable Production",
+              "sequence_number": 1,
+              "description": "Vegetable production is the branch of horticulture that focuses on growing vegetables for human consumption. It involves seed/ site selection, seedbed preparation, crop establishment, irrigation, pest and disease management, and harvesting. The goal is to cultivate various edible plant parts, including shoots, leaves, fruits, and roots, for food production.",
+              "week_number": null,
+              "learning_objectives": [
+                "5.1.5 Managing vegetable growing from nursery stage to harvesting (seedbed preparation, sowing/planting, irrigation, weeding, fertilizer application, pest and disease control, harvesting)",
+                "5.1.5 Adding value, storing, and marketing vegetables.",
+                "5.1.6 Analysing yields and quality of the produce for possible improvement.",
+                "5.1.7 Exploring innovative ways of increasing productivity"
+              ],
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Grow a variety of vegetables.",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Analytical thinking – Learners will be analysing yields for possible improvement",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Communicating – Learners will share notes, consult one another, and report findings.",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Creativity and innovation – Learners will be making seedbeds and suggesting innovative ways of increasing the productivity of their vegetable production venture.",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 5,
+                  "description": "Collaborating – Learners will be working together to achieve tasks from seedbed preparation to adding value to their produce.",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 6,
+                  "description": "Critical Thinking – Learners will be making critical decisions like determining appropriate depths for sowing seeds and stages of transplanting seedlings, irrigation and other activities to ensure success of the activity.",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 7,
+                  "description": "Environmental sustainability – Learners will be using vegetable production methods that are environmentally friendly.",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 8,
+                  "description": "Problem identifying and managing situations like pests and diseases, seedlings (and hardening), and improvising and repairing tools when needed.",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "TOPIC 6.0: LIVESTOCK PRODUCTION",
+          "sequence_number": 2,
+          "description": "Livestock production is a practice of raising and maintaining domesticated animals primarily for the purpose of producing meat, milk and eggs. By so doing, livestock production contributes significantly to food security, income generation and rural development.",
+          "week_number": null,
+          "learning_objectives": [],
+          "competencies": [
+            {
+              "sequence_number": 1,
+              "description": "Analytical thinking",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 2,
+              "description": "Communication",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 3,
+              "description": "Creativity and innovation",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 4,
+              "description": "Collaboration",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 5,
+              "description": "Critical Thinking",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 6,
+              "description": "Environmental sustainability",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 7,
+              "description": "Problem solving",
+              "category": "General Competence"
+            }
+          ],
+          "sub_topics": [
+            {
+              "name": "Sub-Topic 6.1- Importance of Livestock",
+              "sequence_number": 1,
+              "description": "In this subtopic, learners will explore their immediate environment (i.e. local farms) and farming activities that are happening elsewhere through farm visits, participating in agricultural shows, watching videos and studying pictures of farming and farming related activities. By so doing, they will appreciate and demonstrate understanding of the value and challenges of livestock production to the household, community, and nation.",
+              "week_number": null,
+              "learning_objectives": [
+                "6.1.1 Describing livestock Production",
+                "6.1.2 Evaluating the economic value of livestock",
+                "6.1.3 Exploring the challenges faced in livestock production (Pest and diseases, nutrition, market…)"
+              ],
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Demonstrate understanding of the importance of livestock production",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Communicating - Learners making presentations on types of livestock and reporting on the economic value of livestock",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Collaborating - Learners work together to collect data about livestock and identify challenges.",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Critically Thinking - Learners identifying challenges and proposing solutions on livestock production",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 5,
+                  "description": "Problem Solving - Learners finding solutions to the challenges identified",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 6,
+                  "description": "Creativity and Innovation - Learners develop a model solution to livestock production challenges",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "Sub-Topic 6.2 -Nutrition and Feed Formulation in Livestock",
+              "sequence_number": 2,
+              "description": "Farm animals, like all other living things, need feed to maintain life processes. Additionally, they need quality feed to produce the meat, milk, and eggs for which they are reared. The subtopic will introduce learners to the feeds available on the market, the nutritive constituents of feed, the value of feed to livestock, and how feed may be formulated on the farm by visiting farms, feed suppliers, and feed constituent sellers.",
+              "week_number": null,
+              "learning_objectives": [
+                "6.2.1 Identifying different types of livestock feeds",
+                "6.2.2 Describing the nutritive value of feed, (proteins, carbohydrate, fats, fiber, minerals, vitamins and water).",
+                "6.2.3 Distinguishing between maintenance and production ration",
+                "6.2.4 Formulating rations for specific animals"
+              ],
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Formulate animal feeds",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Analytical thinking – Learners classifying feeds according to intended function (maintenance, production, starter grower, finisher, lactating….)",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Communicating - Learners discussing data about available feeds and feed ingredients, and sharing findings on feeds and feed ingredients with others.",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Creativity and innovation- Learners will be making rations for named livestock classes.",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 5,
+                  "description": "Collaboration - Learners working with others to inquire about available feeds and feed ingredients and sharing findings on feeds and feed ingredients with others.",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 6,
+                  "description": "Critical Thinking- Learners deciding on what ingredients to mix and the amounts in rations to make.",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 7,
+                  "description": "Problem solving- Learners formulating rations for different categories of animals.",
                   "category": "Specific Competence"
                 }
               ]

@@ -1,0 +1,823 @@
+The introduction of the competence-based curriculum (CBC) marks a transformative step in
+improving education quality and relevance. This Form 1 Computer Science Teaching Module
+has been meticulously designed to support teachers in effectively delivering Computer Science
+lessons under the new curriculum. The module aims to bridge the gap created by the absence
+of approved textbooks and to equip educators with practical tools, activities, and assessments
+tailored to the learners’ level and needs.
+As a Ministry, we understand the challenges that come with transitioning to a new curriculum
+framework. This module reflects our commitment to making this journey as smooth as possible
+for teachers, by providing structured guidance, suggested activities, and formative assessments
+that align with the CBC’s objectives. However, we also encourage educators to supplement this
+module with their own research and innovations to address any gaps that may arise during
+implementation.
+The suggested activities and assessments provided in this module are designed to foster practical
+and critical thinking skills in learners while ensuring relevance and adaptability to different school
+contexts. Teachers are encouraged to tailor these suggestions to their unique classroom dynamics
+and to explore alternative, acceptable approaches when necessary. This flexibility is key to
+ensuring that all learners, regardless of their environment, benefit from meaningful and impactful
+Computer Science education.
+We hope this module will serve as a valuable resource for teachers as they navigate the new
+competence-based curriculum, enhancing their ability to inspire and equip learners with essential
+Computer Science knowledge and skills. Together, let us work towards creating a vibrant and
+responsive education system that prepares our learners for the demands of the digital age.
+Faculty of Technology and Entrepreneurship
+The Curriculum Development Centre
+Ministry of Education
+Guidelines for Teachers on Using Computer Science Module
+The Computer Science modules for Forms 1 to 4 are designed to equip learners with foundational
+knowledge of how computers work, programming skills, and problem-solving abilities. In the
+absence of approved textbooks, these modules will serve as comprehensive teaching resources
+for delivering impactful Computer Science lessons.
+1. Understand the Nature of Computer Science as a Subject
+Computer Science focuses on:
+• The science behind computers, including understanding hardware, software, and networks.
+• Developing computational thinking skills to analyze and solve problems.
+• Writing and debugging programs in programming languages like Python or Scratch.
+• Exploring how data is stored, processed, and managed.
+As a science, it goes beyond just using tools—it explains how those tools work and
+empowers learners to create solutions.
+
+Form 1 Term 3
+Teaching Moduleix
+• Start by introducing problem-solving techniques, such as breaking down a problem into
+smaller steps (decomposition).
+• Use examples like designing algorithms or flowcharts to help learners visualize solutions.
+• Encourage learners to explain their thought processes when solving programming problems.
+3. Teach Programming Through Practice
+Programming is a hands-on skill that requires regular practice. To teach programming:
+• Use the modules to introduce programming fundamentals, such as variables, loops, and
+decision-making structures.
+• Guide learners to write simple programs, such as a calculator, using the provided examples
+in the modules.
+• Introduce platforms like Python, Scratch, or Code.org for interactive coding sessions.
+• Encourage learners to debug their code and explore why errors occur. This reinforces
+problem-solving skills.
+4. Use Examples and Exercises to Explain Concepts
+The modules contain worked examples and exercises to simplify complex concepts. Teachers
+should:
+• Guide learners through each example, explaining the logic behind the solution. For instance,
+demonstrate how a loop works by writing a program that counts from 1 to 10.
+• Assign practical exercises from the modules, such as creating algorithms or designing
+flowcharts.
+• Relate programming concepts to real-life applications, such as creating a simple weather
+app or automating a task.
+5. Relate Concepts to Real-World Applications
+Learners grasp concepts better when they understand their relevance. For example:
+• Explain how databases are used in everyday life, such as managing inventory in a store.
+• Discuss how programming is used to develop games, apps, or websites.
+• Highlight how artificial intelligence and robotics rely on programming skills.
+6. Foster Collaboration and Problem-Solving
+Collaborative learning builds confidence and teamwork. Teachers can:
+• Organize coding challenges where learners solve problems in pairs or groups.
+• Assign group projects, such as designing a game or creating a data management program.
+• Encourage learners to share their approaches to problem-solving and learn from one
+another.
+7. Focus on Assessment and Feedback
+Assessment in Computer Science should test both theoretical understanding and practical skills.
+Teachers should:
+• Use quizzes in the modules to evaluate learners’ knowledge of hardware, software, and
+algorithms.
+• Assign coding tasks and grade learners based on functionality, efficiency, and creativity of
+their programs.
+• Provide constructive feedback, pointing out errors in logic and suggesting improvements.
+2. Focus on Developing Computational Thinking
+The modules emphasize logical reasoning and problem-solving skills. Teachers should:
+
+Computer Science
+Teaching Modulex
+household budgets or create a chatbot.
+• Use examples in the modules to discuss advancements in technology, such as machine
+learning and blockchain.
+9. Integrate ICT Where Necessary
+While Computer Science focuses on programming and system understanding, ICT tools can
+enhance teaching. For example:
+• Use presentation software to explain complex concepts like data flow or computer
+architecture.
+• Incorporate online coding platforms to give learners more exposure to coding environments.
+Topi
+8. Promote Innovation and Critical Thinking
+Computer Science encourages learners to think creatively and solve real-world problems. Teachers
+should:
+• Inspire learners to come up with innovative solutions, such as writing a program to calculate
+
+Form 1 Term 3
+Teaching Module1
+Topic 9: Databases
+Introduction
+This topic introduces learners to the basics of databases, focusing on how data is stored,
+organized, and managed in computer systems. It highlights the importance of databases in real-
+world applications and provides practical skills in creating and managing simple databases using
+common database management systems (DBMS). The topic serves as a foundation for advanced
+learning in areas such as database design, SQL programming, and application integration
+General Competence(s):
+• Comprehensive understanding of database concepts.
+• Designing and normalize database schemas.
+Learning Environment
+Physical
+ Access to computers and printers in schools or libraries
+Or
+ Community centers where shared resources and support can be offered.
+Virtual
+ High-speed internet access for online Microsoft Access, oracle and Maria dB.
+Or
+ Limited internet access, but mobile devices may be used for basic tasks.
+Technological
+ Microsoft Access, oracle and Maria dB, Wamp or Xampp.
+Or
+ Basic software may be available, with limited access to advanced features.
+Hook
+Thought-provoking question: “If every click, swipe, and search ends up in a database—who
+really owns our digital footprint?”
+Key Terms
+ Database
+ DBMS
+ SQL
+ Table
+ Record
+ Field
+ Relational Database
+Sub-Topic 1: 1.9.1 Introduction to Databases
+Overview
+This topic introduces learners to the basics of databases, including key concepts like tables,
+records, and fields. It covers types of databases, common DBMS tools (Access, Oracle), and
+involves practical tasks to help students create and manage simple databases—building essential
+skills for future learning and real-world use
+
+Computer Science
+Teaching Module2
+Specific Competence(s)
+1.9.1.1 Create and manage databases
+Learning Activities
+1. Discussing the key concepts of databases such as tables, records, fields and keys.
+Activity: Discussing the key concepts of databases (database, tables, records, fields, keys…)
+2. Differentiate types of databases
+Activity: Learners differentiating types of databases (Relational, Non-relational …)
+3. Describing the types of database models
+Activity: Learners describing the types of database models (Relational Database Model,
+Hierarchical Database Model, Object-Oriented Database Model…)
+4. Identifying popular DBMS software
+Activity: Learners identifying popular DBMS software (Access, Oracle, Maria db)
+5. Create tables and define their structures using database tools
+Activity: Learners Creating tables and define their structures using database tools (Microsoft
+access, Xampp/Wamp, Maria db …)
+- Learners creating simple database (class list, register …)
+How will the Activities Be Conducted?
+• Hands-on practice using Microsoft access, Xampp/Wamp software.
+• Group discussions
+• Demonstrations
+Content Tips
+Database
+A database is a structured way to store, organize, manage, and retrieve data.
+Key Terms
+• Table – Collection of data in rows and columns (spreadsheet …).
+• Record – A single row in a table; one complete set of related data.
+• Field – A column; defines a specific type of data (Name, ID …).
+• Primary Key – Uniquely identifies each record in a table.
+• Foreign Key – Connects records between two related tables.
+Types of Databases
+• Relational Databases – Data organized in related tables (MySQL …).
+• Non-Relational Databases – Handle unstructured/semi-structured data (MongoDB …).
+
+Form 1 Term 3
+Teaching Module3
+2. Network Model
+o Many-to-many relationships.
+o Example: Students ↔ Courses.
+3. Relational Model
+o Data in tables; uses keys to link.
+o Example: MySQL, Oracle.
+4. Object-Oriented Model
+o Stores data as objects (good for multimedia).
+o Example: ObjectDB.
+5. Document Model (NoSQL)
+o Uses documents like JSON/XML.
+o Example: MongoDB.
+6. Key-Value Model (NoSQL)
+o Simple key-value pairs.
+o Example: Redis.
+7. Graph Model
+o Nodes and relationships (great for social data).
+o Example: Neo4j.
+Popular Database Management Systems (DBMS)
+• Microsoft Access
+• Oracle
+• MySQL
+• MariaDB
+• SQLit
+Suggested Teaching and Learning Materials
+• Computers with Access and Wamp/ Xampp software installed.
+• Sample database for practice.
+• Online tutorials and guides.
+Expected Standard
+• Databases successfully created and managed.
+Database Models
+1. Hierarchical Model
+o Tree structure (one-to-many).
+o Example: Employee → Department.
+
+Computer Science
+Teaching Module4
+• Key Points
+ Tables: Collections of related data arranged in rows and columns.
+ Records: Individual entries/rows in a table.
+ Fields: Columns in a table, each representing a specific data type or attribute.
+ Keys: Unique identifiers used to link records (e.g., primary key).
+Database Models:
+ Hierarchical Model
+ Network Model
+ Relational Model (most commonly used)
+ Object-Oriented Model
+Popular Database Management Systems (DBMS):
+ Microsoft Access
+ Oracle
+ MariaDB
+Assessment Strategies:
+1.. ormative Assessment:
+Observation & Feedback, Quizzes, Peer Review
+2.. Sum tive Assessment:
+Project-Based Task
+
+Form 1 Term 3
+Teaching Module5
+Topic 10: Artificial Intelligence (AI)
+Introduction
+This topic introduces learners to the foundational concepts of Artificial Intelligence (AI), emphasizing
+its principles and societal impact. It aims to foster an understanding of AI’s role in daily life and its
+ethical implications, preparing learners for advanced exploration in subsequent years.
+General Competence(s)
+• Demonstrate understanding of AI concepts
+• Use AI applications in everyday life
+• Analyse AI societal impact.
+• Advocate for ethical AI practices and address potential risks.
+Learning Environment
+Physical
+• Computer labs equipped with desktops or laptops, projectors, whiteboards.
+Or
+• Shared computer stations or mobile devices, printed materials, portable projectors.
+Virtual
+• Online platforms (Google Classroom, Microsoft Teams…)
+Technological
+• Access to AI simulation tools (Scratch with AI extensions, Google Colab …), high-speed
+internet, and cloud-based platforms.
+Or
+• Basic computers or tablets with pre-installed AI software (Scratch offline editor …)
+Hook
+Thought-provoking question: How can machines mimic human thinking, and what impact will
+this have on our future?
+Key Terms
+• Artificial Intelligence (AI)
+• Machine Learning
+• Deep Learning
+• Natural Language Processing (NLP)
+• Algorithm
+• Dataset
+Sub-Topic 1.10.1 Fundamentals of Artificial Intelligence
+Overview
+This subtopic introduces learners to the basics of Artificial Intelligence (AI), showing how machines
+can learn from data and make decisions. Learners will explore real-life examples and discover how
+AI is used in fields like healthcare, education, and agriculture, while also considering its benefits
+and challenges in society
+
+Computer Science
+Teaching Module6
+Specific Competence(s)
+1.10.1.1 Design Artificial Intelligence (AI) Models
+Learning Activities
+1. Discussing the core concepts of AI including machine learning, deep learning and natural
+language processing
+Activity: Learners discussing the core concepts of AI (machine learning, deep learning,
+natural language processing …)
+2. Identifying the problems to be solved
+Activity: learners identifying the problems to be solved (predicting weather, detecting spam
+emails…)
+3. Determining objectives of the model.
+Activity: Learners determining objectives of the model (Automation of Task, Learning from
+Data, Pattern Recognition…)
+4. Collecting and preparing datasets for creating AI models
+Activity: Learners collecting and preparing datasets for creating AI models (data collection,
+data cleaning …)
+5. Using simple machine learning to create AI models.
+Activity: Learners creating simple AI models using different tools (MIT App Inventor + AI
+Extension, Scratch, Python …)
+How will the Activities Be Conducted?
+ In groups, pairs, and individually.
+ Learners will use local examples to understand global concepts.
+ Activities will be interactive, with minimal teacher interference.
+Content Tips
+• Artificial Intelligence (AI): The ability of machines or computer programs to perform tasks
+that normally require human intelligence. (Voice assistants (Siri), face recognition, chat-
+bots, self-driving cars…)
+Key Concepts of AI
+• Machine Learning: AI that learns from data (teaching a computer to recognize animals …).
+• Data: The fuel of AI; machines learn patterns from large amounts of data.
+• Training a Model: Teaching the AI using examples (showing it many pictures of cats and
+dogs …).
+Uses of AI in Everyday Life
+• Education: Personalized learning apps.
+• Healthcare: Disease detection from images.
+• Banking: Fraud detection.
+• Entertainment: Recommendations on YouTube or Netflix.
+• Smart Homes: Devices that respond to voice commands.
+
+Form 1 Term 3
+Teaching Module7
+Simple AI Tools for Learners
+• Teachable Machine (by Google) – train models using images or sounds.
+• Machine Learning for Kids – create AI projects with Scratch or Python.
+Steps to Create a Simple AI Model
+• Define the problem (“Is this a cat or a dog?”)
+• Collect and label data (images of cats and dogs).
+• Train the model using an AI tool.
+• Test and improve the model.
+• Use the model to make predictions.
+Ethical Use of AI
+• Bias: AI can be unfair if trained with limited or biased data.
+• Privacy: AI must not misuse personal information.
+• Responsibility: Humans must guide and monitor how AI is used
+Suggested Teaching and Learning Materials
+• Teachable Machine
+• Machine Learning for Kids
+• Scratch with AI Extension
+• Cognimates
+• Lobe (by Microsoft)
+Expected Standard
+Artificial Intelligence (AI) Models designed.
+Assessment Activities
+• Project Assessment
+• Written Quiz
+• Peer Review
+• Portfolio Entry
+• Oral Examination (Low-Tech Option)
+Key Points:
+• AI is Simulating human intelligence by machines.
+• To help learners understand what AI is and how it works.
+• Key Concepts Covered:
+• What AI is and how it mimics human thinking.
+• History and evolution of AI.
+• Real-life applications of AI (e.g., chatbots, facial recognition, recommendations).
+• Ethical concerns and societal impact (e.g., privacy, job automation, bias).
+
+Computer Science
+Teaching Module8
+Topic 11: Internet of Things (IoT)
+Introduction
+This Topic introduces learners to the basic concepts and components of IoT systems, fostering an
+understanding of how these technologies are integrated into daily life. The focus is on identifying
+and understanding the roles of key IoT components such as sensors, actuators, microcontrollers,
+and communication modules.
+General Competence(s)
+• Analyze IoT components and their functions in interconnected systems.
+• Apply foundational knowledge of IoT to solve simple real-world problems.
+Learning Environment
+Physical
+• Access to computer labs equipped with microcontrollers (Arduino, Raspberry Pi), sensors,
+internet connectivity, classrooms with projectors or smart boards.
+Or
+• Use of shared devices or simulation software on available computers, Offline resources like
+diagrams and physical models of IoT components for demonstrations.
+Virtual
+• Online platforms (Tinkercad, Wokwi, supplemented by video tutorials and interactive IoT
+courses.
+Or
+• Offline digital resources (pre-downloaded simulations or videos) due to limited internet
+access. Use of mobile apps for IoT learning when internet is intermittently available.
+Technological
+• Laptops/ desktops, internet connectivity, microcontrollers with sensors/ actuators; Software
+(Arduino IDE, Scratch for Arduino…)
+Or
+• Shared computers or low-spec devices with pre-installed simulation software. Basic
+microcontrollers or physical IoT kits for group activities.
+Hook
+Thought-provoking question: “How can everyday objects (fridges, watches, or streetlights …)
+become ‘smart’ and talk to each other to make life more convenient and efficient?
+Key Terms
+• Internet of Things (IoT)
+• Sensor
+• Actuator
+• Microcontroller
+• Communication Module
+
+Form 1 Term 3
+Teaching Module9
+• Data Transmission
+• Connectivity
+Subtopic 1.11.1 Basic Components of Internet of Things (IoT)
+Overview
+This subtopic introduces learners to the Internet of Things (IoT). IoT is a network of physical devices,
+such as appliances, vehicles, or sensors, embedded with electronics, software, and connectivity to
+collect and exchange data over the internet. IoT enables automation, efficiency, and innovation in
+applications like smart homes, healthcare, agriculture, and industrial systems. These components
+form the foundation of IoT systems, enabling devices to sense, process, act, and communicate.
+Specific Competence(s)
+1.11.1.1 Demonstrate understanding of IoT components.
+Learning Activities
+1. Discussing the concepts of IoT
+Activity: Learners discussing the concepts of IoT (interconnectivity, data collection, sensing,
+automation …)
+2. Identifying key components of IoT systems, such as sensors, actuators, microcontrollers and
+communication modules.
+Activity: Learners identifying key components of IoT systems sensors (motion, temperature,
+humidity…), actuators (buzzer, Solenoids, Electric Motors …), microcontrollers (Arduino Uno,
+Raspberry Pi Pico, ESP8266 / ESP32, PIC Microcontrollers…) and communication modules
+(Zigbee Module, LoRa Module, GSM/GPRS Module, Bluetooth Module, Wi-Fi Module, USB
+to Serial Converter, RS232 Module …. )
+How will the Activities Be Conducted?
+ In groups, pairs, and individually.
+ Learners will use local examples to understand global concepts.
+ Activities will be interactive, with minimal teacher interference.
+Content Tips
+What is IoT?
+A network of devices connected to the internet.
+These devices collect, share, and use data to perform tasks automatically.
+Why is IoT Important?
+• Makes life easier, safer, and more efficient.
+• Used in homes (smart lights), hospitals (patient monitors), farms (soil sensors), etc.
+• Helps improve decision-making using real-time data.
+Key Components of IoT
+1. Sensors (“Eyes”)
+o Detect things like motion, temperature, moisture.
+o Example: Motion sensor in security systems.
+
+Computer Science
+Teaching Module10
+2. Actuators (“Hands”)
+o Perform actions like turning lights on or opening valves.
+o Example: Automatic door that opens when someone approaches.
+3. Microcontrollers (“Brain”)
+o Process information and give commands.
+o Example: Arduino or ESP32 used in small devices.
+4. Communication Modules (“Voice”)
+o Help devices talk to each other via the internet.
+o Example: Wi-Fi module in a smart bulb or Bluetooth in fitness bands.
+5. Data Transmission
+o The movement of data from one device to another or to a server/cloud.
+6. Connectivity
+o How all parts stay linked (e.g., Wi-Fi, Bluetooth, Zigbee).
+Local Examples (Zambia)
+• Agriculture: Soil moisture sensors help in watering crops efficiently.
+• Healthcare: Patient monitors send alerts to doctors.
+• Homes: Smart lighting and alarm systems for security.
+Learning Aids
+• Use diagrams and videos to show how IoT devices work together.
+• Simple class demos using toy models or apps
+Suggested Teaching and Learning Materials
+• Physical Resources: Microcontrollers (Arduino, Raspberry Pi), sensors (temperature, light,
+motion), actuators (LEDs, motors), breadboards, and jumper wires.
+• Digital Resources: Tinkercad, Wokwi, or Arduino IDE for simulations and programming.
+Pre-downloaded videos or slideshows on IoT basics.
+• Offline Resources: Printed diagrams of IoT systems, flashcards with component names
+and functions, and worksheets for matching or flowchart activities.
+• Supplementary Materials: Real-world IoT device examples (e.g., smart plugs, fitness track-
+ers) for demonstration, if available.
+Expected Standard
+• Understanding of IoT components demonstrated appropriately.
+Assessment Activities
+• Project Assessment
+• Written Quiz
+• Peer Review
+• Portfolio Entry
+• Oral Examination (Low-Tech Option)
+
+Form 1 Term 3
+Teaching Module11
+Key Points
+• IoT connects everyday devices to the internet, enabling data collection and intelligent
+actions.
+• Key components include sensors (detect), actuators (act), microcontrollers (process), and
+communication modules (connect).
+• IoT has practical applications in areas like smart homes, agriculture, and healthcare,
+enhancing efficiency and convenience.
+• Understanding IoT components equips learners to design simple solutions for real-world
+problems.
+
+Computer Science
+Teaching Module12
+Topic 12: Logic Gates
+Introduction
+This topic introduces learners to logic gates as basic building blocks of digital systems that process
+binary inputs to produce outputs. Learners will explore various types of gates (AND, OR, NOT,
+NAND, NOR, XOR, XNOR) and their practical applications in digital circuits such as computers,
+alarms, and traffic lights. Emphasis is placed on understanding how logic gates contribute to the
+efficiency, functionality, and security of digital technologies, forming a foundation for further
+study in electronics and system design.
+General Competence(s)
+• Demonstrate understanding of logic gates
+• Identify their types and functions,
+• Design circuits, and applying them to solve real-world problems.
+• Construct truth tables,
+• Derive logical expressions
+Learning Environment
+Physical
+• Computer labs equipped with circuit simulation tools (Digital Works, Logically …)
+Or
+• Use of printed circuit diagrams, charts, and cardboard models of gates.
+Virtual
+• Access to online simulation platforms (academo.org, Tinkecad circuits).
+Or
+• Offline digital content stored on school intranet/ flash drives.
+Technological
+• Projectors, logic circuit kits, computers with simulation software.
+Or
+• Printed truth tables and cardboard logic gate templates.
+Hook
+Thought-provoking question: “How does a traffic light know when to change colors, and what
+role do logic gates play in making that decision?”
+Key Terms
+• Logic Gate
+• AND, OR, NOT, NAND, NOR, XOR, XNOR
+• Truth Table
+• Input
+• Output
+• Digital Circuit
+• Boolean Expression
+• Combinational Logic
+• Sequential Logic
+
+Form 1 Term 3
+Teaching Module13
+Specific Competence(s)
+1.12.1.1 Create Digital Control Systems
+Learning Activities
+1. Discussing the concept of logic gates and their role in digital circuits
+Activity: Learners discussing the concept (truth tables, binary input & output …) of logic
+gates and their role (digital circuits design, signal control and switching, data processing …)
+in digital circuits
+2. Identifying types of logic gates and their symbols
+Activity: Learners identifying types of logic gates and their symbols (AND, OR, NOT, NAND,
+NOR, XOR, XNOR)
+3. Analyzing combinational and sequential logic gates
+Activity: Learners analyzing combinational and sequential logic gates (XOR, NAND…)
+4. Working with Truth Tables
+Activity: Learners Working with Truth Tables (Basic Logic Gates, Compound Logic Gates,
+Multiple Input Truth Tables, Logic Expressions …)
+5. Creating a simple digital control system such as alarm system, traffic lights
+Activity: Learners creating a simple digital control system (Alarm System, Traffic Light System
+…)
+How will the Activities Be Conducted?
+• In groups, pairs, and individually.
+• Learners will use local examples to understand global concepts.
+• Activities will be interactive, with minimal teacher interference.
+Content Tips
+A Logic Gate
+a logic gate is a basic building block of a digital circuit. It takes one or more binary inputs (0 or
+1) and gives one output based on a logical rule.
+Binary Inputs and Outputs:
+All logic gates operate using binary values — either 1 (True/ON) or 0 (False/OFF). This is the
+language computers use to make decisions.
+Truth Table Definition:
+A truth table shows how a logic gate responds to different combinations of input. It’s a tool for
+predicting gate output.
+AND Gate:
+Outputs 1 only when both inputs are 1.
+E.g., 1 AND 1 = 1; else, output is 0.
+
+Computer Science
+Teaching Module14
+OR Gate:
+Outputs 1 if at least one input is 1.
+E.g., 0 OR 1 = 1.
+NOT Gate:
+Reverses the input.
+E.g., NOT 1 = 0.
+NAND, NOR, XOR, XNOR:
+• NAND = NOT + AND (opposite of AND)
+• NOR = NOT + OR (opposite of OR)
+• XOR = Exclusive OR (1 only when inputs are different)
+• XNOR = Exclusive NOR (1 only when inputs are the same)
+Build Step-by-Step:
+Start with individual gates, then show how they can be combined to create simple circuits.
+Use Diagrams and Symbols:
+Visuals help learners remember gate types and how they are represented in circuits.
+Use Real-Life Analogies:
+For example, an AND gate can be explained like a door that opens only if two switches are ON.
+This links theory to reality.
+Practice Makes Perfect:
+Reinforce concepts with hands-on activities—use simulations or paper models if electronics kits
+aren’t available.
+Link to Boolean Expressions:
+Introduce simple Boolean algebra to show how logic gates represent mathematical logic (e.g., A
+B = A AND B).
+Suggested Teaching and Learning Materials
+• Circuit simulation software (Logic.ly, Digital Works, CircuitVerse)
+• Cardboard/paper logic gate flashcards
+• Printed truth tables
+• Projector or printed circuit diagrams
+• Basic electronics kits (if available)
+Expected Standard
+• Digital control systems successfully created
+Assessment Activities
+• Project Assessment
+• Written Quiz
+
+Form 1 Term 3
+Teaching Module15
+• Peer Review
+• Portfolio Entry
+• Oral Examination (Low-Tech Option)
+Key Points
+• Logic gates process binary inputs to produce outputs.
+• Basic types include AND, OR, NOT, NAND, NOR, XOR, and XNOR.
+• Truth tables help predict outputs.
+• Logic gates can be combined to create digital control systems.
+• Applications include alarms, traffic lights, and computing systems.
+
+Computer Science
+Teaching Module16
+SAMPLE OF LESSON PLAN
+MINISTRY OF EDUCATION
+MAPUTOSA SECONDARY SCHOOL
+LESSON PLAN
+SUBJECT: Computer science
+NAME OF TEACHER: John K TIME: 07:00-09:00
+LEVEL: Form 1 K DURATION: 120 Minutes
+TOPIC: 1.5 Cyber Security NO. OF PUPILS: 50
+SUB-TOPIC: 1.5.1 Fundamentals of cyber security BOYS: 25 GIRLS: 25
+GENERAL COMPETENCES:
+• Analyze potential cyber threats in different online scenarios.
+• Evaluate the risks of unsafe online behavior.
+• Assess the ethical implications of digital actions
+• Apply preventive measures to secure personal and shared digital spaces.
+• Demonstrate safe online practices
+• Respond appropriately to cyber security incidents
+SPECIFIC COMPETENCES:
+1.1.1.1 Apply online safety and security measures
+LESSON GOAL: Explore and analyse cybersecurity concepts
+PRIOR KNOWLEDGE:
+Basic internet use, Password familiarity
+REFERENCES:
+• Computer Science Module 2, Term 2 Page… (2023 Curriculum)
+• Computer Science Ordinary Level Syllabus (2023)
+• Common Sense Education: Digital Citizenship Curriculum
+• YouTube: Crash Course - Cyber security Series
+• Cyber Security & Digital Citizenship (Google for Education Resources)
+• Local cyber security awareness campaigns or government guidelines (if available)
+LEARNING ENVIRONMENT
+Physical (Natural environment)
+• Classrooms with computers and internet access, projectors, and whiteboards.
+Virtual
+• Access to learning platforms like Moodle, Google Classroom, or Zoom for remote sessions.
+Technological
+• Laptops/desktops with antivirus software, access to firewalls or simulation tools and
+op-portunities for fields trips.
+TEACHING AND LEARNING MATERIALS/RESOURCES
+• Internet-connected devices
+• Projector or whiteboard
+• Cyber security videos (YouTube clips…)
+• Paper, markers (for posters)
+
+Form 1 Term 3
+Teaching Module17
+• Case study printouts
+• Interactive quiz tools (Kahoot, Quizizz…)
+EXPECTED STANDARD:
+• Online Safety and Security measures successfully applied.
+LESSON PROGRESSION
+STAGES TEACHER’S ROLE LEARNERS’ ROLE ASSESSMENT
+CRITERIA
+INTRODUCTION
+10 Minutes
+Present a Hook Ques-
+tion:
+‘‘What would happen
+if someone accessed
+all your personal data
+online without your
+permission?
+Brainstorm answers in pairs
+and share with the class.
+Participation
+and relevance
+of responses.
+LESSON DEVELOP-
+MENT
+5 minutes
+Divide learners into
+small groups
+Move into groups and pre-
+pare to work collaboratively.
+Groups formed
+• Activity1
+Discussing Termi-
+nologies and Key
+Concepts in Cyber
+security
+35 Minutes
+• Distribute cyber se-
+curity term cards
+• Guide group discus-
+sions
+- Research terms
+Discussing Terminologies
+and Key Concepts in Cy-
+ber security (Encryption,
+Authentication, malware,
+phishing, firewall …)
+- Creating poster or slides
+- Make presentations
+Accuracy and
+clarity of defini-
+tions.
+Creativity in
+presentation.
+• Activity 2
+Identifying Differ-
+ent Types of Cyber
+Threats
+35 Minutes
+Distribute case studies
+(phishing email, ransom-
+ware attack…).
+• Identifying Different
+Types of Cyber Threats
+(hacking, phishing, ran-
+somware attack…).
+• Analyzing, classifying
+threats, and present find-
+ings to the class.
+Correct iden-
+tification and
+explanation of
+threats.
+EXERCISE 20 Min-
+utes
+• Distribute new sce-
+nario cards
+“Your friend shares a
+suspicious link on a
+group chat”
+• Task groups to devel-
+op a response plan.
+• Collect and review
+group plans briefly
+for feedback.
+• Provide feedback
+• Collaborating to analyze
+the scenario
+• Identify the threat, and
+propose a detailed re-
+sponse (report the link,
+avoid clicking...).
+• Creating a poster or writ-
+ten plan outlining their
+response
+• Making presentations
+Critical thinking,
+relevance, and
+teamwork.
+
+Computer Science
+Teaching Module18
+STAGES TEACHER’S ROLE LEARNERS’ ROLE ASSESSMENT
+CRITERIA
+CONCLUSION
+15 Minutes
+• Summarize key
+points
+• Address questions
+• Relate content to
+real-world situations
+• Clarify doubts and
+misconception
+• Introduce next topic
+briefly
+• Share reflections, ask
+questions, and note key
+takeaways
+• Engagement,
+understand-
+ing of key
+concepts.
+HOMEWORK/
+ASSIGNMENT
+• Assign homework or
+assignment
+“Research on a recent
+cybercrime case in Zam-
+bia or internationally.
+Write a one-page report
+describing:
+• What happened?
+• What cyber threat
+was involved?
+• How it was resolved
+(or could have been
+prevented)”
+• Note homework or As-
+signment
+• Relevance
+• Understand-
+ing of Cyber
+Threat
+• Analysis
+• Preventive
+Measures /
+Response
+• Presentation
+and Structure
+LESSON EVALUATION:
+Evaluation criteria: Lesson planning and competencies, teaching strategies, student engagement,
+reflection and improvement.
+Example:
+The majority of learners were able to identify different types of cyber threats. They participated
+actively in discussions and demonstrated understanding through practical tasks. Some learners
+may need further reinforcement on describing key concepts in cyber security.

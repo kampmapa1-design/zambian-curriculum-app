@@ -1,5 +1,5 @@
 {
-  "_source": "Curriculum Development Centre Teaching Module — \"Food and Nutrition Teaching Module Form 1 - Term 2\" (https://library.cdcrepository.info/resource.php?id=315). Topic/sub-topic structure and competencies extracted with AI assistance (Gemini) directly from this module's own stated content — never invented; the extraction was instructed to use only what the module itself says, and to flag anything unclear rather than guess. Covers only the term this specific module addresses (Term 2) — other terms are not included since no source document for them was available at extraction time. AI-flagged completeness notes from extraction: The source text begins at Topic 1.2, implying earlier topics (e.g., Topic 1.1) are missing from the provided excerpt. General competences are listed in summary tables at the topic level, while specific competences are stated explicitly per sub-topic. Appendix 1 contains a sample lesson plan on 'Cooking Food' which is not structured as a standard module topic in the main text.",
+  "_source": "Curriculum Development Centre Teaching Module — \"Food and Nutrition Teaching Module Form 1 - Term 2\" (https://library.cdcrepository.info/resource.php?id=315). Topic/sub-topic structure and competencies extracted with AI assistance (Gemini) directly from this module's own stated content — never invented; the extraction was instructed to use only what the module itself says, and to flag anything unclear rather than guess. Covers only the term this specific module addresses (Term 2) — other terms are not included since no source document for them was available at extraction time. AI-flagged completeness notes from extraction: The source text begins at Topic 1.2, implying earlier topics (e.g., Topic 1.1) are missing from the provided excerpt. General competences are listed in summary tables at the topic level, while specific competences are stated explicitly per sub-topic. Appendix 1 contains a sample lesson plan on 'Cooking Food' which is not structured as a standard module topic in the main text. ADDED (2026-08-28): Term 3 content. Curriculum Development Centre Teaching Module — \"Food and Nutrition Teaching Module\" (https://library.cdcrepository.info/resource.php?id=438). Topic/sub-topic structure and competencies extracted with AI assistance (Gemini) directly from this module's own stated content — never invented; the extraction was instructed to use only what the module itself says, and to flag anything unclear rather than guess. Term confirmed directly against the CDC library's own term filter (browse.php?...&term=3), not assumed. AI-flagged completeness notes from extraction: The module's sub-topic numbering starts mid-sequence at Sub-Topic 1.4.5 (Cookery Terms), leaving sub-topics 1.4.1 through 1.4.4 omitted or unaccounted for in this text section. Additionally, the sub-topic numbering duplicates '1.4.7' for two consecutive sub-topics: 'Heat Transfer' and 'Methods of cooking'.",
   "curriculum": {
     "code": "CBC_2023",
     "name": "2023 Competency-Based Curriculum",
@@ -113,6 +113,109 @@
                 {
                   "sequence_number": 1,
                   "description": "Design a personalized nutritional plan.",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 3",
+      "sequence_number": 3,
+      "topics": [
+        {
+          "name": "1.4 COOKING FOOD",
+          "sequence_number": 1,
+          "description": "Cooking is a vital life skill that empowers individuals to prepare nutritious meals, fostering independence, creativity, and healthy eating habits. This topic introduces learners to foundational culinary concepts, including basic cookery terms alongside essential cooking techniques, energy sources for cooking, heat transfer mechanisms, and methods of cooking.",
+          "week_number": null,
+          "learning_objectives": [],
+          "competencies": [
+            {
+              "sequence_number": 1,
+              "description": "Developing skills in teamwork, communication, and problem-solving. Engage in hands-on cooking sessions, peer assessments, and project-based learning.",
+              "category": "General Competence - Collaboration and Communication"
+            },
+            {
+              "sequence_number": 2,
+              "description": "Experimenting with ingredients and cooking techniques. Adapting recipes and coming up with innovative culinary solutions.",
+              "category": "General Competence - Creativity and Innovation"
+            },
+            {
+              "sequence_number": 3,
+              "description": "Understanding and application of scientific principles (heat transfer). Ability to analyze and evaluate information.",
+              "category": "General Competence - Critical Thinking"
+            }
+          ],
+          "sub_topics": [
+            {
+              "name": "Sub-Topic 1.4.5: COOKERY TERMS",
+              "sequence_number": 1,
+              "description": "Cooking is an essential life skill that allows people to prepare healthy, delicious, and balanced meals. During cooking, learners are introduced to basic cookery terms such as au gratin, croutons, sauté, and bake blind, to help them understand different cooking techniques as a foundation of culinary skills.",
+              "week_number": null,
+              "learning_objectives": [
+                "Interpreting cookery terms: (Au gratin, croutons, bake blind…).",
+                "Demonstrating the use of cookery terms in meal preparations (poaching, dredge, julienned, poaching...).",
+                "Preparing dishes using specific cooking terms: (potato au gratin, Sauté, Stir-fry)."
+              ],
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Apply cookery terms in meal preparation",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "Sub-Topic 1.4.6: Fuel",
+              "sequence_number": 2,
+              "description": "Cooking food requires energy, and that energy comes from various sources known as fuels. Fuels are substances that release energy when they are burned or combusted, providing the heat needed to cook food. Learners explore various fuels, their advantages, disadvantages, safe usage, climate impacts, and alternative energy sources.",
+              "week_number": null,
+              "learning_objectives": [
+                "Discussing different types of fuel: (solid, liquid, solar…).",
+                "Comparing and contrasting different types of fuel.",
+                "Researching on the other sources of fuel: (bio gas, solar…)."
+              ],
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Make use of different types of fuel",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "Sub-Topic 1.4.7: Heat Transfer",
+              "sequence_number": 3,
+              "description": "This sub-topic highlights the transfer of heat that results into cooking of food. Heat transfer is a process by which thermal energy moves from one place to another due to temperature difference. Heat transfer occurs through three primary mechanisms, namely conduction, convection and radiation.",
+              "week_number": null,
+              "learning_objectives": [
+                "Analysing methods of heat transfer: (Conduction, convection, radiation…).",
+                "Associating methods of heat transfer to methods of cooking: (Radiation - grilling, convection - boiling, conduction – (dry or shallow) frying…)."
+              ],
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Apply principles underlying heat transfer",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "Sub-Topic 1.4.7: Methods of cooking",
+              "sequence_number": 4,
+              "description": "Cooking is a fundamental human activity, transforming raw ingredients into palatable and nutritious meals. It's a blend of art and science, where understanding various cooking methods is crucial for achieving desired textures, flavours, and nutritional outcomes.",
+              "week_number": null,
+              "learning_objectives": [
+                "Explaining reasons for cooking food.",
+                "Discussing methods of cooking food: (Moist, dry, combination...).",
+                "Preparing and cooking dishes using different methods of cooking: (Festival dishes – Matebeto, chilanga mulilo, weddings…)."
+              ],
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Prepare dishes using various methods of cooking",
                   "category": "Specific Competence"
                 }
               ]

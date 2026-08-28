@@ -1,5 +1,5 @@
 {
-  "_source": "Curriculum Development Centre Teaching Module — \"Biology Teaching Module Form 1 - Term 2\" (https://library.cdcrepository.info/resource.php?id=289). Topic/sub-topic structure and competencies extracted with AI assistance (Gemini) directly from this module's own stated content — never invented; the extraction was instructed to use only what the module itself says, and to flag anything unclear rather than guess. Covers only the term this specific module addresses (Term 2) — other terms are not included since no source document for them was available at extraction time. AI-flagged completeness notes from extraction: General competences were listed at the concept overview level, while each sub-topic explicitly provided a single 'Specific competence' which was extracted into the competencies field. Additional skills developed ('Skills attained') were described within activity sections but omitted to strictly maintain explicit competence statements.",
+  "_source": "Curriculum Development Centre Teaching Module — \"Biology Teaching Module Form 1 - Term 2\" (https://library.cdcrepository.info/resource.php?id=289). Topic/sub-topic structure and competencies extracted with AI assistance (Gemini) directly from this module's own stated content — never invented; the extraction was instructed to use only what the module itself says, and to flag anything unclear rather than guess. Covers only the term this specific module addresses (Term 2) — other terms are not included since no source document for them was available at extraction time. AI-flagged completeness notes from extraction: General competences were listed at the concept overview level, while each sub-topic explicitly provided a single 'Specific competence' which was extracted into the competencies field. Additional skills developed ('Skills attained') were described within activity sections but omitted to strictly maintain explicit competence statements. ADDED (2026-08-28): Term 3 content. Curriculum Development Centre Teaching Module — \"Biology Teaching Module\" (https://library.cdcrepository.info/resource.php?id=404). Topic/sub-topic structure and competencies extracted with AI assistance (Gemini) directly from this module's own stated content — never invented; the extraction was instructed to use only what the module itself says, and to flag anything unclear rather than guess. Term confirmed directly against the CDC library's own term filter (browse.php?...&term=3), not assumed. AI-flagged completeness notes from extraction: 1. No week numbers are specified anywhere in the module text for topics or sub-topics.\n2. Although Concept 6.0 is titled 'ECOLOGICAL RELATIONSHIPS AND EVOLUTION', no content, sub-topics, or learning objectives regarding evolution are actually presented in the body of the module text.\n3. Section headings 6.1.2 and 6.1.3 are combined under a single heading ('6.1.2 Observing key features of terrestrial and aquatic ecosystems in the local environment 6.1.3 Recording key features in the ecosystems under study.').\n4. Under Sub-topic 6.4, sections following 6.4.4 ('Practicing ways to improve and retain soil fertility' and 'Comparing crop yield in different types of soil.') drop the numbered heading format (6.4.5, 6.4.6) present in earlier sub-topics.",
   "curriculum": {
     "code": "CBC_2023",
     "name": "2023 Competency-Based Curriculum",
@@ -113,6 +113,207 @@
                 {
                   "sequence_number": 1,
                   "description": "Demonstrate understanding of reproduction in viruses, protozoa, bacteria and fungi",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 3",
+      "sequence_number": 3,
+      "topics": [
+        {
+          "name": "CONCEPT 5.0: COORDINATION & RESPONSE",
+          "sequence_number": 1,
+          "description": "Coordination and response in living organisms involve specific mechanisms for detecting and reacting to environmental stimuli. Two key types of responses are tropic responses in plants and taxic responses in motile organisms, which are critical for survival, growth and reproduction. In this concept, the sub-topics coordination and response in plants as well as coordination and response in animals will be covered.",
+          "week_number": null,
+          "learning_objectives": [],
+          "competencies": [
+            {
+              "sequence_number": 1,
+              "description": "Collaboration",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 2,
+              "description": "Communication",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 3,
+              "description": "Analytical thinking",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 4,
+              "description": "Critical thinking",
+              "category": "General Competence"
+            }
+          ],
+          "sub_topics": [
+            {
+              "name": "Sub-topic 5.1- Coordination and response in plants",
+              "sequence_number": 1,
+              "description": "Plants, though lacking a nervous system, exhibit remarkable coordination and response mechanisms to adapt to their environment. These processes are vital for survival, growth, reproduction, and ecological balance. A knowledge of coordination and responses in plants can be applied to climate change mitigation, agriculture and food security, environmental interactions, ecosystem services and many more.",
+              "week_number": null,
+              "learning_objectives": [
+                "Describe tropisms in plants",
+                "Investigate the effect of light and gravity on shoots and roots",
+                "Investigate the effect of water and chemicals on roots",
+                "Evaluate the importance of tropisms"
+              ],
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Explore tropisms in plants and their relevance",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "Sub-topic 5.2. Coordination and response in animal",
+              "sequence_number": 2,
+              "description": "Coordination and responses in animals are vital for survival and adaptation to dynamic environments. Taxic responses are critical as they enable animals to move directionally towards or away from a specific stimulus. The study of coordination and responses in animals particularly taxic responses provides valuable insights into animal behaviour, survival strategies and ecological roles.",
+              "week_number": null,
+              "learning_objectives": [
+                "Describe taxic responses",
+                "Investigate taxic responses to light, chemicals and gravity",
+                "Evaluate the relevance of taxic responses to the organism",
+                "Apply the mechanism of taxic responses to eliminate pests and insects in homes",
+                "Differentiate tropic responses from taxic responses"
+              ],
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Explore taxic responses in invertebrates and their relevance",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "CONCEPT 6.0: ECOLOGICAL RELATIONSHIPS AND EVOLUTION",
+          "sequence_number": 2,
+          "description": "Ecology is described as the study of the relationships between organisms and their environment. Ecological relationships refer to interactions between different species or organisms within an ecosystem while evolution refers to the scientifically supported theory that species of life have developed from a common ancestor. In this concept, learners will cover the following sub-topics: Ecosystems, Biotic and Abiotic Interactions, Waste Management as well as Soil Composition and Fertility.",
+          "week_number": null,
+          "learning_objectives": [],
+          "competencies": [
+            {
+              "sequence_number": 1,
+              "description": "Analytical Thinking",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 2,
+              "description": "Communication",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 3,
+              "description": "Critical Thinking",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 4,
+              "description": "Environmental sustainability",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 5,
+              "description": "Creativity and innovation",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 6,
+              "description": "Problem solving",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 7,
+              "description": "Collaboration",
+              "category": "General Competence"
+            }
+          ],
+          "sub_topics": [
+            {
+              "name": "Sub-topic 6.1 Ecosystem",
+              "sequence_number": 1,
+              "description": "An ecosystem refers to the community of organisms and their physical surrounding. Ecosystems can exist as terrestrial and aquatic. In every ecosystem there are biotic and abiotic components. The study of ecosystems is essential for understanding conservation and management, ecosystem services, human wellbeing and also climate change and environmental issues.",
+              "week_number": null,
+              "learning_objectives": [
+                "Describe an ecosystem",
+                "Observe key features of terrestrial and aquatic ecosystems in the local environment",
+                "Record key features in the ecosystems under study",
+                "Apply best practices to protect ecosystems",
+                "Construct models of different ecosystems"
+              ],
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Explore features of ecosystems in the local environment.",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "Sub-topic 6.2. Biotic and abiotic interactions",
+              "sequence_number": 2,
+              "description": "Biotic factors refer to the living components of an ecosystem and the interactions among them. These include predator-prey relationships, parasite-host dynamics and competition between individuals for limited resources such as food, mates and nesting sites. Abiotic factors on the other hand, are the non-living components of the environment.",
+              "week_number": null,
+              "learning_objectives": [
+                "Distinguish biotic and abiotic factors in an ecosystem",
+                "Analyse the three kinds of relationships that exist in an ecosystem"
+              ],
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Interpret biotic and abiotic interactions",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "Sub-topic: 6.3 Waste Management",
+              "sequence_number": 3,
+              "description": "Waste management refers to the collection, transportation, processing, recycling and disposal of waste materials to reduce the negative impact of waste on the environment, human health and aesthetics. Effective waste management results in conservation of resources, reduction of pollution and promotes sustainability.",
+              "week_number": null,
+              "learning_objectives": [
+                "Analyse types of waste found in the environment",
+                "Evaluate the benefits of living in waste-free environment",
+                "Devise different ways of managing wastes in the local environment",
+                "Identify the challenges communities face which lead to accumulation of waste in the environment",
+                "Create waste-free zones in the environment",
+                "Reach out to communities in creating awareness on effective waste management practices"
+              ],
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Manage waste in the local environment",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "Sub-topic 6.4 The soil - Composition and Fertility",
+              "sequence_number": 4,
+              "description": "Soil is a complex mixture of minerals, organic matter, water, air and living organisms. Soil fertility refers to the soil's ability to provide essential nutrients to plants in adequate amounts and proportions for optimal growth. Furthermore, soil composition and fertility are essential for optimising agricultural productivity, ensuring environmental sustainability, supporting ecosystem health, as well as achieving economic and food security benefits.",
+              "week_number": null,
+              "learning_objectives": [
+                "Identify different soil components",
+                "Classify types of soil",
+                "Investigate features of fertile soil",
+                "Investigate causes of loss of soil fertility",
+                "Practice ways to improve and retain soil fertility",
+                "Compare crop yield in different types of soil"
+              ],
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Analyse soil composition and fertility",
                   "category": "Specific Competence"
                 }
               ]

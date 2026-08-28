@@ -1,5 +1,5 @@
 {
-  "_source": "Curriculum Development Centre Teaching Module — \"Fashion and Fabrics Teaching Module Form 1 - Term 2\" (https://library.cdcrepository.info/resource.php?id=310). Topic/sub-topic structure and competencies extracted with AI assistance (Gemini) directly from this module's own stated content — never invented; the extraction was instructed to use only what the module itself says, and to flag anything unclear rather than guess. Covers only the term this specific module addresses (Term 2) — other terms are not included since no source document for them was available at extraction time. AI-flagged completeness notes from extraction: 1. Section 1.6 contains minor numbering irregularities in the source text where 'Sub-topic: Yarns' is marked with heading '1.6.1 Sub-topic: Yarns' immediately following '1.6.1 Sub-topic: Fibres', and Specific Competence '1.6.2.1' is listed under it.\n2. In Topic 1.7, section 1.7.1 lacks an explicit 'Sub-topic: [Name]' header, jumping directly to 'Specific Competence 1.7.1.1: Create suitable textile design' and 'Activity 1: Explaining the key elements of design'; it was extracted under the descriptive title '1.7.1 Elements of Design' based on the section activity content.\n3. Competencies were extracted from both the overarching 'General Competence(s)' blocks and the 'Specific Competence' headings explicit to each section.",
+  "_source": "Curriculum Development Centre Teaching Module — \"Fashion and Fabrics Teaching Module Form 1 - Term 2\" (https://library.cdcrepository.info/resource.php?id=310). Topic/sub-topic structure and competencies extracted with AI assistance (Gemini) directly from this module's own stated content — never invented; the extraction was instructed to use only what the module itself says, and to flag anything unclear rather than guess. Covers only the term this specific module addresses (Term 2) — other terms are not included since no source document for them was available at extraction time. AI-flagged completeness notes from extraction: 1. Section 1.6 contains minor numbering irregularities in the source text where 'Sub-topic: Yarns' is marked with heading '1.6.1 Sub-topic: Yarns' immediately following '1.6.1 Sub-topic: Fibres', and Specific Competence '1.6.2.1' is listed under it.\n2. In Topic 1.7, section 1.7.1 lacks an explicit 'Sub-topic: [Name]' header, jumping directly to 'Specific Competence 1.7.1.1: Create suitable textile design' and 'Activity 1: Explaining the key elements of design'; it was extracted under the descriptive title '1.7.1 Elements of Design' based on the section activity content.\n3. Competencies were extracted from both the overarching 'General Competence(s)' blocks and the 'Specific Competence' headings explicit to each section. ADDED (2026-08-28): Term 3 content. Curriculum Development Centre Teaching Module — \"Fashion and Fabrics Teaching Module\" (https://library.cdcrepository.info/resource.php?id=435). Topic/sub-topic structure and competencies extracted with AI assistance (Gemini) directly from this module's own stated content — never invented; the extraction was instructed to use only what the module itself says, and to flag anything unclear rather than guess. Term confirmed directly against the CDC library's own term filter (browse.php?...&term=3), not assumed. AI-flagged completeness notes from extraction: The module text starts mid-sequence at topic number 1.9 ('1.9 TOPIC: GARMENT CONSTRUCTION'), meaning topics 1.1 through 1.8 are missing from this text block. Under Suggested Teaching Methodologies, item 10 is listed with no text. Additionally, detailed sample lesson plans and appendices are appended after the main topics.",
   "curriculum": {
     "code": "CBC_2023",
     "name": "2023 Competency-Based Curriculum",
@@ -304,6 +304,334 @@
                 {
                   "sequence_number": 1,
                   "description": "Specific Competence: Press and Iron articles during construction",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 3",
+      "sequence_number": 3,
+      "topics": [
+        {
+          "name": "1.9 TOPIC: GARMENT CONSTRUCTION",
+          "sequence_number": 1,
+          "description": "Garment making is the craft of designing, cutting, and stitching clothing, fulfilling basic needs while enabling cultural expression. It contributes to economic growth, job creation, and innovation in the fashion industry. For learners, it builds creative, technical, and problem-solving skills, promoting self-expression and sustainable practices.",
+          "week_number": null,
+          "learning_objectives": [],
+          "competencies": [
+            {
+              "sequence_number": 1,
+              "description": "Analytical Thinking - Analyse different fabrics and garment designs to understand their suitability for specific needs and purposes.",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 2,
+              "description": "Collaboration - Work in teams to design, cut, and sew garments, sharing tasks, resources, and ideas effectively.",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 3,
+              "description": "Communication - Effectively communicate ideas and garment designs through sketches, verbal explanations, and written descriptions.",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 4,
+              "description": "Creativity and Innovation - Apply creative thinking to design unique garments or adapt existing designs, using innovative techniques and ideas.",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 5,
+              "description": "Critical Thinking - Evaluate garment-construction processes and designs critically, identifying areas for improvement or alternatives.",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 6,
+              "description": "Digital Literacy - Use digital tools to research garment design trends, create digital patterns, and enhance garment-making techniques.",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 7,
+              "description": "Environmental Sustainability - Practice sustainable garment construction processes by using eco-friendly materials, reducing waste, and promoting ethical production.",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 8,
+              "description": "Financial Literacy - Manage resources effectively in garment-construction projects, including budgeting for materials and time.",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 9,
+              "description": "Problem Solving - Apply problem-solving techniques to overcome challenges in garment construction, such as fabric defects or design issues.",
+              "category": "General Competence"
+            }
+          ],
+          "sub_topics": [
+            {
+              "name": "1.9.1 Sub-topic: Notions",
+              "sequence_number": 1,
+              "description": "This lesson introduces learners to notions which are; small items or accessories used in garment construction, such as zippers, buttons, threads, elastics, and trims. It highlights the importance of notions in enhancing the functionality, design, and durability of garments.",
+              "week_number": null,
+              "learning_objectives": [
+                "Activity 1: Define notions and describe their importance in garment construction.",
+                "Activity 2: Describe different types of notions used in fashion and fabric construction.",
+                "Activity 3: Explain functions of various notions in garment design and construction.",
+                "Activity 4: Using appropriate notions for different garments, sew a button onto fabric, ensuring you create a buttonhole and securely attach the button for both functional and decorative purposes."
+              ],
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "1.9.1.1 Specific Competences: Use notions",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "1.9.2 Sub-topic: Pattern markings",
+              "sequence_number": 2,
+              "description": "Pattern markings are crucial in garment construction as they serve as guides for cutting, assembling, and sewing garments accurately. Understanding and applying pattern markings ensure precision and efficiency, resulting in professional-quality garments.",
+              "week_number": null,
+              "learning_objectives": [
+                "Activities 1: Discussing the importance of pattern markings in garment construction",
+                "Activity 2: Demonstrating Methods of Transferring Pattern Markings",
+                "Activity 3: Recognizing Methods for Accurate Pattern Markings.",
+                "Activity 4: Interpreting symbols used in pattern markings",
+                "Activity 5: Applying Pattern markings on fabric altering and adapting patterns to fit different figures.",
+                "Activity 6: Practical alteration project."
+              ],
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "1.9.2.1 Specific Competences: Transfer different pattern markings",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "1.9.3 Sub-topic: Pattern drafting",
+              "sequence_number": 3,
+              "description": "Pattern drafting is a foundational skill in garment making that involves creating templates or patterns that guide the cutting and assembly of fabric into garments.",
+              "week_number": null,
+              "learning_objectives": [
+                "Activity 1: Discussing Types of Paper Patterns.",
+                "Activity 2: Importance of Pattern Drafting in Garment Making.",
+                "Activity 3: Taking Accurate Body Measurements.",
+                "Activity 4: Making Basic Patterns Using Measurements.",
+                "Activity 5: Modifying Basic Patterns for Different Designs and fits.",
+                "Activity 5: Modifying Basic Patterns For Different Designs and fits."
+              ],
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "1.9.3.1 Specific Competences: Draft different patterns",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "1.9.4 Sub-topic: Seams",
+              "sequence_number": 4,
+              "description": "Seams are the fundamental building blocks of garment construction as they join pieces of fabric together to create a finished product. When choosing the appropriate seam, several factors must be considered such as the type of fabric, the purpose of the garment and the desired appearance.",
+              "week_number": null,
+              "learning_objectives": [
+                "Activity 1: Discussing Seams. (definition, factor to consider when choosing seams).",
+                "Activity 2: Classifying Seams (conspicuous(visible)-overlaid, run and fell and inconspicuous (invisible) -open and French…)",
+                "Activity 3: Working out different Seams. (practical)"
+              ],
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "1.9.4.1 Specific Competence: Work out different Seams",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "1.9.5 Sub-topic: Disposal of fullness",
+              "sequence_number": 5,
+              "description": "In garment construction, disposal of fullness refers to managing excess fabric to ensure a proper fit and achieve the desired design. Fullness is often added to areas like skirts, bodices, or sleeves for comfort or style.",
+              "week_number": null,
+              "learning_objectives": [
+                "Activity 1: Discussing disposing of fullness in garments. (definition, Reasons of disposal of fullness…)",
+                "Activity 2: Explaining different methods of disposing of fullness (gathers, pleats, tucks, darts…).",
+                "Activity 3: Using suitable method on appropriate fabric (pleats- polyester, gathers- cotton…)",
+                "Activity 4: Identifying positions where different methods can be used (Gathers- Waistline and armholes, Darts: waistline, Bust, Tucks- armholes…)",
+                "Activity 5: Apply different methods of disposal of fullness on garment: (skirts, apron…)"
+              ],
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "1.9.5.1 Specific Competences: Apply different methods of reducing fullness of garments",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "1.9.6 Sub-topic: Pockets",
+              "sequence_number": 6,
+              "description": "Pockets are essential features in garments, adding both functionality and style. They are used to hold personal items and can enhance a garment's design.",
+              "week_number": null,
+              "learning_objectives": [
+                "Activity 1: Discussing pockets (definition, uses…)",
+                "Activity 2: Classifying pockets (Patch, Inside/Inseam, and Inset)",
+                "Activity 3: Discussing uses of pockets (storage, warmth, style, security)",
+                "Activity 4: Working out pockets."
+              ],
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "1.9.6.1 Specific Competences: Work out different pockets",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "1.9.7 Sub-topic: Waistline finishes",
+              "sequence_number": 7,
+              "description": "Waistline finishes are techniques used to finish the waist area of a garment, providing structure, comfort, and durability. These finishes help secure the garment at the waist and prevent fabric fraying.",
+              "week_number": null,
+              "learning_objectives": [
+                "Activity 1: Discuss different types of waistlines (empire, high, natural, dropped, hip hug...).",
+                "Activity 2: Choosing appropriate fabrics and materials for different types of waistline finishes.",
+                "Activity 3: Work out different waistline finishes: (Casing , waistband, Facing…)"
+              ],
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "1.9.7.1 Specific Competences: Finish waistline",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "1.10 TOPIC: CRAFTS",
+          "sequence_number": 2,
+          "description": "Crafts involve creating objects by hand using different materials and techniques. It is a form of artistic expression that can be functional, decorative, or both.",
+          "week_number": null,
+          "learning_objectives": [],
+          "competencies": [
+            {
+              "sequence_number": 1,
+              "description": "Analytical thinking - Understand the different types of crafts and their history.",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 2,
+              "description": "Creativity and Innovation - Develop basic skills in specific crafts (e.g., drawing, painting, clay modelling).",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 3,
+              "description": "Analytical thinking - Identify the tools and materials needed for various crafts.",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 4,
+              "description": "Critical thinking - Demonstrate safety measures when working with craft tools.",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 5,
+              "description": "Creativity and Innovation - Create simple craft projects using learned techniques.",
+              "category": "General Competence"
+            }
+          ],
+          "sub_topics": [
+            {
+              "name": "1.10.1 Sub-topic: Crocheting",
+              "sequence_number": 1,
+              "description": "Crocheting is a fun craft that involves a few basic tools and techniques. In this lesson you will need a crochet hook, scissors, and safety pins. You will also learn common crochet abbreviations like ss, sc, and dc.",
+              "week_number": null,
+              "learning_objectives": [
+                "Activity 1: Identifying tools to be used when crocheting. (crochet hook, scissors, safety pins)",
+                "Activity 2: Interpreting crocheting abbreviations. (ss, sc, dc…)",
+                "Activity 3: Working out crotchet stitches: (Double, Single)."
+              ],
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "1.10.1.1 Specific Competence: Work out crochet stitches",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "1.11 TOPIC: ENTREPRENEURSHIP",
+          "sequence_number": 3,
+          "description": "Entrepreneurship is the engine of innovation, growth, and change in today’s world. It is the process to develop, organise, and run a new business enterprise by accepting some risks and challenges in order to make profit.",
+          "week_number": null,
+          "learning_objectives": [],
+          "competencies": [
+            {
+              "sequence_number": 1,
+              "description": "Analytical Thinking - Analyse different small business ventures. Demonstrate understanding of entrepreneurship and entrepreneur.",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 2,
+              "description": "Communication - Effectively communicate ideas through verbal explanations, and written descriptions.",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 3,
+              "description": "Creativity and Innovation - Apply creative thinking to design unique garments or adapt existing designs, using innovative techniques and ideas. Discuss Entrepreneurship Skills in Fashion and Fabrics",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 4,
+              "description": "Digital Literacy - Using digital tools for marketing (social media, content creation…) Running e-commerce platforms or online boutiques",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 5,
+              "description": "Financial Literacy - Pricing garments or services competitively and managing startup capital and profits. Understanding taxes, investments, and financial risks.",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 6,
+              "description": "Problem Solving - Apply problem-solving techniques to overcome challenges in entrepreneurship. Finding solutions to maintain creativity while staying within budget.",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 7,
+              "description": "Empathy and Emotional Intelligence - Analyse the characteristics of an entrepreneur",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 8,
+              "description": "Critical thinking - Analyse the characteristics of an entrepreneur",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 9,
+              "description": "Planning and Organization - Make a Simple Business Plan",
+              "category": "General Competence"
+            }
+          ],
+          "sub_topics": [
+            {
+              "name": "1.11.1 Sub-topic: Entrepreneurship",
+              "sequence_number": 1,
+              "description": "Entrepreneurship is considered to be the combination of 'entrepreneur' and 'enterprise.' The word 'entrepreneur' is derived from the French verb entrepreneur, which means 'to undertake'. This refers to those who 'undertake' the risk of new enterprises.",
+              "week_number": null,
+              "learning_objectives": [
+                "Activity 1: Discussing the concept of entrepreneurship and its importance in the fashion and fabrics industry.",
+                "Activity 2: Identifying various business opportunities in the fashion and fabrics sector.",
+                "Activity 3: Developing a simple business idea related to fashion and fabrics.",
+                "Activity 4: Demonstrating basic principles of managing a small business in the fashion industry.",
+                "Activity 5: Writing a brief business plan, and presenting it to the class."
+              ],
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "1.11.1.1 Specific Competence: Apply entrepreneurial skills",
                   "category": "Specific Competence"
                 }
               ]

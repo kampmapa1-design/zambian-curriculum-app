@@ -1,5 +1,5 @@
 {
-  "_source": "Curriculum Development Centre Teaching Module — \"Travel and Tourism Teaching Module Form 1 - Term 2\" (https://library.cdcrepository.info/resource.php?id=316). Topic/sub-topic structure and competencies extracted with AI assistance (Gemini) directly from this module's own stated content — never invented; the extraction was instructed to use only what the module itself says, and to flag anything unclear rather than guess. Covers only the term this specific module addresses (Term 2) — other terms are not included since no source document for them was available at extraction time. AI-flagged completeness notes from extraction: The provided text is an excerpt from a larger curriculum module, containing only a single topic (TOPIC 1.3: MOTIVATION IN TOURISM) and one explicitly numbered sub-topic (Sub-Topic 1.3.1: Motivation to Travel). Although Sub-Topic 1.3.1 contains four detailed learning activities (factors influencing travel motivation, activities influencing motivation, types of motivators, and survey design), they are presented as learning activities under 1.3.1 rather than separate numbered sub-topics.",
+  "_source": "Curriculum Development Centre Teaching Module — \"Travel and Tourism Teaching Module Form 1 - Term 2\" (https://library.cdcrepository.info/resource.php?id=316). Topic/sub-topic structure and competencies extracted with AI assistance (Gemini) directly from this module's own stated content — never invented; the extraction was instructed to use only what the module itself says, and to flag anything unclear rather than guess. Covers only the term this specific module addresses (Term 2) — other terms are not included since no source document for them was available at extraction time. AI-flagged completeness notes from extraction: The provided text is an excerpt from a larger curriculum module, containing only a single topic (TOPIC 1.3: MOTIVATION IN TOURISM) and one explicitly numbered sub-topic (Sub-Topic 1.3.1: Motivation to Travel). Although Sub-Topic 1.3.1 contains four detailed learning activities (factors influencing travel motivation, activities influencing motivation, types of motivators, and survey design), they are presented as learning activities under 1.3.1 rather than separate numbered sub-topics. ADDED (2026-08-28): Term 3 content. Curriculum Development Centre Teaching Module — \"Travel and Tourism Teaching Module\" (https://library.cdcrepository.info/resource.php?id=278). Topic/sub-topic structure and competencies extracted with AI assistance (Gemini) directly from this module's own stated content — never invented; the extraction was instructed to use only what the module itself says, and to flag anything unclear rather than guess. Term confirmed directly against the CDC library's own term filter (browse.php?...&term=3), not assumed. AI-flagged completeness notes from extraction: The text contains only one main topic section (Topic 1.4: Tourism Products and Services) with one sub-topic (1.4.1: Products and Services in Tourism). Topic 1.3 ('Motivation in Tourism') is mentioned only inside Appendix 2 as part of a sample lesson plan template rather than as a content section of the module. No week numbers are specified in the module text.",
   "curriculum": {
     "code": "CBC_2023",
     "name": "2023 Competency-Based Curriculum",
@@ -59,6 +59,70 @@
                 {
                   "sequence_number": 6,
                   "description": "Problem solving",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 3",
+      "sequence_number": 3,
+      "topics": [
+        {
+          "name": "1.4 TOURISM PRODUCTS AND SERVICES",
+          "sequence_number": 1,
+          "description": "The tourism industry revolves around creating memorable experiences rather than selling physical goods. This module introduces learners to the core elements of tourism products and services, including transport, accommodation, food and beverage, attractions, activities, and supportive services, as well as their unique characteristics such as intangibility, inseparability, variability, and perishability.",
+          "week_number": null,
+          "learning_objectives": [
+            "Analyse tourism products and services.",
+            "Discuss key characteristics of tourism products and services (intangibility, inseparability, variability, perishability, etc.).",
+            "Categorize natural and man-made attraction centers in Zambia and evaluate their significance."
+          ],
+          "competencies": [
+            {
+              "sequence_number": 1,
+              "description": "Analytical Thinking: Analysing various components of tourism products and services.",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 2,
+              "description": "Creativity and Innovation: Designing or proposing appealing and marketable tourism products and services that suit different customer preferences and destinations.",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 3,
+              "description": "Critical Thinking: Evaluating the effectiveness of tourism products and services in different contexts.",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 4,
+              "description": "Problem-Solving: Suggesting improvements or alternatives for better tourist Satisfaction.",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 5,
+              "description": "Communication: Ability to describe and explain the characteristics of tourism products and services clearly (intangibility, inseparability, variability).",
+              "category": "General Competence"
+            }
+          ],
+          "sub_topics": [
+            {
+              "name": "1.4.1 Products and Services in Tourism",
+              "sequence_number": 1,
+              "description": "Focuses on analyzing types of tourism products and services, examining their defining service characteristics, and classifying natural and man-made tourist attraction centers across Zambia.",
+              "week_number": null,
+              "learning_objectives": [
+                "Analyse tourism products (transport, accommodation, food and beverage, activities, travel packages) and services (travel insurance, formalities, communication, booking, safety, tour services).",
+                "Discuss the key characteristics of tourism products and services using real-life scenarios, role-play simulations, and guest speakers.",
+                "Categorize natural attraction centers (national parks, waterfalls, rivers, mountains, etc.) and man-made attraction centers (museums, dams, wildlife sanctuaries, historical monuments, etc.) and research their significance in Zambia."
+              ],
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "1.4.1.1 Design Tourism products and services",
                   "category": "Specific Competence"
                 }
               ]

@@ -1,5 +1,5 @@
 {
-  "_source": "Curriculum Development Centre Teaching Module — \"Literature in English Teaching Module Form 1 - Term 2\" (https://library.cdcrepository.info/resource.php?id=305). Topic/sub-topic structure and competencies extracted with AI assistance (Gemini) directly from this module's own stated content — never invented; the extraction was instructed to use only what the module itself says, and to flag anything unclear rather than guess. Covers only the term this specific module addresses (Term 2) — other terms are not included since no source document for them was available at extraction time. AI-flagged completeness notes from extraction: The source text explicitly details SUBTOPIC 1.2.2.1 and SUB-TOPIC 1.2.2.2 in the main instructional body. SUB-TOPIC 1.2.2.3 is omitted entirely from the text, while SUB-TOPIC 1.2.2.4 (Poetry) is only present within a sample lesson plan at the end. General competences are specified at the topic level in the module text, whereas specific competences are listed per sub-topic.",
+  "_source": "Curriculum Development Centre Teaching Module — \"Literature in English Teaching Module Form 1 - Term 2\" (https://library.cdcrepository.info/resource.php?id=305). Topic/sub-topic structure and competencies extracted with AI assistance (Gemini) directly from this module's own stated content — never invented; the extraction was instructed to use only what the module itself says, and to flag anything unclear rather than guess. Covers only the term this specific module addresses (Term 2) — other terms are not included since no source document for them was available at extraction time. AI-flagged completeness notes from extraction: The source text explicitly details SUBTOPIC 1.2.2.1 and SUB-TOPIC 1.2.2.2 in the main instructional body. SUB-TOPIC 1.2.2.3 is omitted entirely from the text, while SUB-TOPIC 1.2.2.4 (Poetry) is only present within a sample lesson plan at the end. General competences are specified at the topic level in the module text, whereas specific competences are listed per sub-topic. ADDED (2026-08-28): Term 3 content. Curriculum Development Centre Teaching Module — \"Literature in English Teaching Module\" (https://library.cdcrepository.info/resource.php?id=439). Topic/sub-topic structure and competencies extracted with AI assistance (Gemini) directly from this module's own stated content — never invented; the extraction was instructed to use only what the module itself says, and to flag anything unclear rather than guess. Term confirmed directly against the CDC library's own term filter (browse.php?...&term=3), not assumed. AI-flagged completeness notes from extraction: The module content starts at Topic 1.2.2 (Written Literature) and its sub-topics begin at 1.2.2.3 (Drama) and 1.2.2.4 (Poetry), skipping sub-topics 1.2.2.1 and 1.2.2.2. No week numbers are assigned or mentioned anywhere in the text. Additionally, activity labeling has minor inconsistencies (e.g., 'Learning Ac vity 1a' is reused across different competences, and 'Ac vity 1 d' appears under poetry).",
   "curriculum": {
     "code": "CBC_2023",
     "name": "2023 Competency-Based Curriculum",
@@ -63,6 +63,92 @@
                 {
                   "sequence_number": 1,
                   "description": "Demonstrate understanding of poetry",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 3",
+      "sequence_number": 3,
+      "topics": [
+        {
+          "name": "1.2.2 WRITTEN LITERATURE",
+          "sequence_number": 1,
+          "description": "Wri en Literature has a number of genres that appeal to the mind of the audience. One such genre is drama. Drama is a genre of literature and performance that involves a serious emo onal, or thought-provoking narra ve, presented in front of the audience.",
+          "week_number": null,
+          "learning_objectives": [],
+          "competencies": [
+            {
+              "sequence_number": 1,
+              "description": "Analy cal Thinking: grasp and breakdown informa on and effec vely share with others.",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 2,
+              "description": "Collabora on: Learners to par cipate fully in groups and play the assigned roles or tasks.",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 3,
+              "description": "Communica on: Effec vely share one’s thoughts and emo ons, and understand others.",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 4,
+              "description": "Cri cal Thinking: Analyse texts, to improve the ability to understand.",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 5,
+              "description": "Emo onal Intelligence: communicate and relate effec vely with others",
+              "category": "General Competence"
+            }
+          ],
+          "sub_topics": [
+            {
+              "name": "1.2.2.3. DRAMA",
+              "sequence_number": 1,
+              "description": "In this sub topic, the defini on of drama and its key elements such as Plot, Character, Script/Play, Stage Direc ons and Audience will be discussed. Learners will be expected to perform plays.",
+              "week_number": null,
+              "learning_objectives": [
+                "Discussing Drama and its elements (script meant to be performed on stage: plot, character (actor), dialogue, se ng, conflict, staging, theme, symbolism, irony…)",
+                "Performing Plays (on cross cu ing themes such as gender, climate change, corrup on, governance...)."
+              ],
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "1.2.2.3.1. Demonstrate understanding of drama.",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "1.2.2.3.2. Perform Plays",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "1.2.2.4. POETRY",
+              "sequence_number": 2,
+              "description": "Poetry is a general term used for poems as a genre of literature. Poems are used to express ideas and emo ons. This sub topic discusses poetry, its elements and how to perform and review poems.",
+              "week_number": null,
+              "learning_objectives": [
+                "Discussing poetry and basic elements of poetry (piece of wri ng that uses aesthe c language: line, verse, stanza…)",
+                "Performing Poems (poems…on cross-cu ing issues; drug abuse, climate change, corrup on, human rights, teenage pregnancies…)"
+              ],
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "1.2.2.4.1. Demonstrate understanding of Poetry",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "1.2.2.4.2. Perform Poems",
                   "category": "Specific Competence"
                 }
               ]

@@ -1,5 +1,5 @@
 {
-  "_source": "Curriculum Development Centre Teaching Module — \"Design and Technology Teaching Module Form 1 - Term 2\" (https://library.cdcrepository.info/resource.php?id=304). Topic/sub-topic structure and competencies extracted with AI assistance (Gemini) directly from this module's own stated content — never invented; the extraction was instructed to use only what the module itself says, and to flag anything unclear rather than guess. Covers only the term this specific module addresses (Term 2) — other terms are not included since no source document for them was available at extraction time. AI-flagged completeness notes from extraction: Heading styles vary significantly across the module text: some sections use 'TOPIC:' and 'SUB-TOPIC:' explicit prefixes, while materials like 'PLASTICS' and 'OTHER MATERIALS' appear without the explicit 'TOPIC:' prefix, though they share equal structural weighting and competency declarations. In GRAPHICS, the topic overview explicitly mentions four sub-topics (Drafting Aids, Plane Geometry, Symbols, and CAD), but only 'PLANE GEOMETRY' contains detailed text content in this document fragment.",
+  "_source": "Curriculum Development Centre Teaching Module — \"Design and Technology Teaching Module Form 1 - Term 2\" (https://library.cdcrepository.info/resource.php?id=304). Topic/sub-topic structure and competencies extracted with AI assistance (Gemini) directly from this module's own stated content — never invented; the extraction was instructed to use only what the module itself says, and to flag anything unclear rather than guess. Covers only the term this specific module addresses (Term 2) — other terms are not included since no source document for them was available at extraction time. AI-flagged completeness notes from extraction: Heading styles vary significantly across the module text: some sections use 'TOPIC:' and 'SUB-TOPIC:' explicit prefixes, while materials like 'PLASTICS' and 'OTHER MATERIALS' appear without the explicit 'TOPIC:' prefix, though they share equal structural weighting and competency declarations. In GRAPHICS, the topic overview explicitly mentions four sub-topics (Drafting Aids, Plane Geometry, Symbols, and CAD), but only 'PLANE GEOMETRY' contains detailed text content in this document fragment. ADDED (2026-08-28): Term 3 content. Curriculum Development Centre Teaching Module — \"Design and Technology Teaching Module\" (https://library.cdcrepository.info/resource.php?id=421). Topic/sub-topic structure and competencies extracted with AI assistance (Gemini) directly from this module's own stated content — never invented; the extraction was instructed to use only what the module itself says, and to flag anything unclear rather than guess. Term confirmed directly against the CDC library's own term filter (browse.php?...&term=3), not assumed. AI-flagged completeness notes from extraction: The module text displays several structural irregularities, inconsistent numbering, and missing components: 1) Under TOPIC: GRAPHICS, the overview states the topic covers four subtopics ('i) Drafting Aids, ii) Plane Geometry, iii) Symbols, and iv) Introduction to Computer Aided Designs (CAD)'), but the module text completely omits 'Drafting Aids' and 'Plane Geometry', providing content only for 'SYMBOLS' and 'INTRODUCTION TO COMPUTER AIDED DESIGN (CAD)'. 2) Under TOPIC: MECHANISMS > SUB TOPIC: LEVERS, the competence is explicitly labeled as 'Specific Competence 2', but there is no 'Specific Competence 1' present. 3) Under TOPIC: DESIGNING > SUB-TOPIC: DESIGN PROCESS, there is duplicated learning activity numbering: two consecutive entries are labeled 'LEARNING ACTIVITY 3' (Describing the situation and Deriving a design Brief) and two are labeled 'LEARNING ACTIVITY 4' (Carryout research and Formulating Design Specification). 4) Under TOPIC: ENTREPRENURSHIP > SUB-TOPIC: BUSINESS PLAN, learning activity numbering jumps abruptly from an unnumbered first activity to 'LEARNING ACTIVITY 11' and 'Learning activity 12'. 5) In Entrepreneurship, Learning Activity 11 is titled 'Marketing plan (Financial Plan)', erroneously mislabeling the Financial Plan section under the Marketing Plan heading. 6) No week numbers are assigned or mentioned anywhere throughout the module text.",
   "curriculum": {
     "code": "CBC_2023",
     "name": "2023 Competency-Based Curriculum",
@@ -175,6 +175,318 @@
                 {
                   "sequence_number": 1,
                   "description": "Develop a Business plan",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 3",
+      "sequence_number": 3,
+      "topics": [
+        {
+          "name": "MATERIALS",
+          "sequence_number": 1,
+          "description": "Covers the journey of materials from raw form to finished products through manufacturing processes, focusing on joining methods and holding tools.",
+          "week_number": null,
+          "learning_objectives": [],
+          "competencies": [],
+          "sub_topics": [
+            {
+              "name": "MANUFACTURING PROCESSES",
+              "sequence_number": 1,
+              "description": "Explores temporary and permanent joining methods for metals, wood, and plastics, as well as the identification, safe usage, care, and maintenance of various holding tools.",
+              "week_number": null,
+              "learning_objectives": [],
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Join materials using different methods",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Use holding tools in product making",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "GRAPHICS",
+          "sequence_number": 2,
+          "description": "Covers visual communication concepts, symbols across technical disciplines, and two-dimensional Computer Aided Design (CAD).",
+          "week_number": null,
+          "learning_objectives": [],
+          "competencies": [
+            {
+              "sequence_number": 1,
+              "description": "Share ideas, thoughts, information and messages through graphics language.",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 2,
+              "description": "Coming up with ideas of graphics and products that would solve a real-life problem.",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 3,
+              "description": "Understand the critical process needed when constructing lines, angles, triangles, quadrilaterals, and symbols. Such processes will help learners to understand how each plane figure is interconnected to the other.",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 4,
+              "description": "Adopting the best graphical solution to a real-life challenge.",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 5,
+              "description": "Gaining a skill of how to manipulate software tools when designing various artefacts or objects",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 6,
+              "description": "Acquire a step by step skill on how to identify, analyse, and find graphical solutions to challenging situations.",
+              "category": "General Competence"
+            }
+          ],
+          "sub_topics": [
+            {
+              "name": "SYMBOLS",
+              "sequence_number": 1,
+              "description": "Covers identification, design, and application of standard graphical symbols used in building construction, welding, electrical, mechanical, pneumatics, and hydraulics.",
+              "week_number": null,
+              "learning_objectives": [],
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Design symbols",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "INTRODUCTION TO COMPUTER AIDED DESIGN (CAD)",
+              "sequence_number": 2,
+              "description": "Covers CAD software interfaces, command tools, basic 2D drawing (lines, circles, arcs, shapes), and auxiliary editing/dimensioning tasks.",
+              "week_number": null,
+              "learning_objectives": [],
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Produce Computer Aided Drawings in 2-Dimesion",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "MECHANISMS",
+          "sequence_number": 3,
+          "description": "Covers mechanical systems designed to transfer or transform motion and force, with a focus on levers and linkages.",
+          "week_number": null,
+          "learning_objectives": [],
+          "competencies": [
+            {
+              "sequence_number": 1,
+              "description": "Express themselves using different media and symbols as they make a presentation on mechanisms, i.e., motions, levers, and linkages",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 2,
+              "description": "Participate fully in the group towards accomplishing given tasks and projects through mechanisms.",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 3,
+              "description": "Break down complex information on mechanisms into components that would be easy to understand and help in creating interconnected mechanical systems.",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 4,
+              "description": "Generate new ideas and products by applying new processes and introducing new techniques that can add value to the way mechanical systems are used in comparison to the existing ideas.",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 5,
+              "description": "Conceptualising, applying, analysing, synthesising, and evaluating information to form a judgement or guide a belief or action of the environmentally friendly designs of structures.",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 6,
+              "description": "Identify, analyse, and find solutions to mechanical system failures, and devise new, stronger systems.",
+              "category": "General Competence"
+            }
+          ],
+          "sub_topics": [
+            {
+              "name": "LEVERS",
+              "sequence_number": 1,
+              "description": "Covers the three classes of levers, principles of moments, force calculations, and real-world applications of lever systems.",
+              "week_number": null,
+              "learning_objectives": [],
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Apply levers in different situations",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "LINKAGES",
+              "sequence_number": 2,
+              "description": "Covers types, operations, design principles, and applications of connected lever mechanisms such as reverse motion, parallel motion, push-pull, bell crank, pantograph, and crank mechanisms.",
+              "week_number": null,
+              "learning_objectives": [],
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Apply linkages in different situations",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "ELECTRONICS",
+          "sequence_number": 4,
+          "description": "Covers electronic components, conventional circuit symbols, and the construction/testing of basic electronic circuits.",
+          "week_number": null,
+          "learning_objectives": [],
+          "competencies": [
+            {
+              "sequence_number": 1,
+              "description": "Breaking down complex information on electronic components so that it would be ease to understood and help in creating interconnected electronic systems.",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 2,
+              "description": "Express themselves using different media and symbols as they make presentations on different electronic components and how they can be utilised in electronic circuits",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 3,
+              "description": "Participate fully in the group towards accomplishing given tasks and projects on designing electronic circuits.",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 4,
+              "description": "Generating new ideas and products by applying new techniques that can add value to the way electronic systems are used in comparison to the existing ones.",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 5,
+              "description": "Conceptualising, applying, analysing, synthesising and evaluating information to form judgement or guide a belief or action of the environmentally friendly electronic designs.",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 6,
+              "description": "Identifying, analysing and finding solutions to electronic systems challenges and inventing new systems.",
+              "category": "General Competence"
+            }
+          ],
+          "sub_topics": [
+            {
+              "name": "ELECTRONIC COMPONENTS",
+              "sequence_number": 1,
+              "description": "Covers identifying components, interpreting and drawing conventional circuit symbols, and utilizing components (diodes, resistors, transistors, capacitors, LEDs, switches) in simple circuits.",
+              "week_number": null,
+              "learning_objectives": [],
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Utilise electronic components",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "DESIGNING",
+          "sequence_number": 5,
+          "description": "Covers practical problem-solving using the systematic design process.",
+          "week_number": null,
+          "learning_objectives": [],
+          "competencies": [
+            {
+              "sequence_number": 1,
+              "description": "Identify a problem from a given situation.",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 2,
+              "description": "Work with others to complete tasks",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 3,
+              "description": "Relay information using drawings.",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 4,
+              "description": "Design products innovatively.",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 5,
+              "description": "Analyse a given theme.",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 6,
+              "description": "Identify problems in a given situation.",
+              "category": "General Competence"
+            }
+          ],
+          "sub_topics": [
+            {
+              "name": "DESIGN PROCESS",
+              "sequence_number": 1,
+              "description": "Covers the initial stages of the design process: theme identification, theme analysis, situation description, problem identification, design brief derivation, research, and design specifications.",
+              "week_number": null,
+              "learning_objectives": [],
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Apply Design Process stages in problem-solving.",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "ENTREPRENURSHIP",
+          "sequence_number": 6,
+          "description": "Covers business planning tools and entrepreneurial knowledge to evaluate and manage business ventures in Design and Technology.",
+          "week_number": null,
+          "learning_objectives": [],
+          "competencies": [],
+          "sub_topics": [
+            {
+              "name": "BUSINESS PLAN",
+              "sequence_number": 1,
+              "description": "Covers formulating key parts of a business plan, including organizational structure, financial planning, and compiling a complete business plan.",
+              "week_number": null,
+              "learning_objectives": [],
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Develop a Business plan.",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Generate a Business Idea",
                   "category": "Specific Competence"
                 }
               ]

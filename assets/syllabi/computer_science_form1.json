@@ -1,5 +1,5 @@
 {
-  "_source": "Curriculum Development Centre Teaching Module — \"Computer Science Teaching Module Form 1 - Term 2\" (https://library.cdcrepository.info/resource.php?id=294). Topic/sub-topic structure and competencies extracted with AI assistance (Gemini) directly from this module's own stated content — never invented; the extraction was instructed to use only what the module itself says, and to flag anything unclear rather than guess. Covers only the term this specific module addresses (Term 2) — other terms are not included since no source document for them was available at extraction time. AI-flagged completeness notes from extraction: The text only presents a single explicit sub-topic for each of the four topics (Topics 5 through 8). General competences were listed at the topic level in the module text, while specific competences were listed at the sub-topic level; only sub-topic specific competences were populated under subTopics per schema guidelines. Introductory teaching guidelines and trailing sample lesson plan text were excluded from the extracted structural hierarchy.",
+  "_source": "Curriculum Development Centre Teaching Module — \"Computer Science Teaching Module Form 1 - Term 2\" (https://library.cdcrepository.info/resource.php?id=294). Topic/sub-topic structure and competencies extracted with AI assistance (Gemini) directly from this module's own stated content — never invented; the extraction was instructed to use only what the module itself says, and to flag anything unclear rather than guess. Covers only the term this specific module addresses (Term 2) — other terms are not included since no source document for them was available at extraction time. AI-flagged completeness notes from extraction: The text only presents a single explicit sub-topic for each of the four topics (Topics 5 through 8). General competences were listed at the topic level in the module text, while specific competences were listed at the sub-topic level; only sub-topic specific competences were populated under subTopics per schema guidelines. Introductory teaching guidelines and trailing sample lesson plan text were excluded from the extracted structural hierarchy. ADDED (2026-08-28): Term 3 content. Curriculum Development Centre Teaching Module — \"Computer Science Teaching Module\" (https://library.cdcrepository.info/resource.php?id=415). Topic/sub-topic structure and competencies extracted with AI assistance (Gemini) directly from this module's own stated content — never invented; the extraction was instructed to use only what the module itself says, and to flag anything unclear rather than guess. Term confirmed directly against the CDC library's own term filter (browse.php?...&term=3), not assumed. AI-flagged completeness notes from extraction: The module text covers Form 1 Term 3 (Topics 9 to 12). No week numbers are specified anywhere in the document. Dedicated 'Learning Objectives' sections are missing across all topics, with the module relying instead on General Competencies, Specific Competencies, Learning Activities, and Expected Standards. Topic 12 lacks an explicit Sub-Topic title heading preceding Specific Competence 1.12.1.1, unlike Topics 9, 10, and 11. Additionally, a Sample Lesson Plan for Topic 1.5 Cyber Security (Form 1 Term 2) is attached at the end of the text.",
   "curriculum": {
     "code": "CBC_2023",
     "name": "2023 Competency-Based Curriculum",
@@ -91,6 +91,177 @@
                 {
                   "sequence_number": 1,
                   "description": "Demonstrate Ethical Behavior in a Digital Environment",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 3",
+      "sequence_number": 3,
+      "topics": [
+        {
+          "name": "Topic 9: Databases",
+          "sequence_number": 1,
+          "description": "This topic introduces learners to the basics of databases, focusing on how data is stored, organized, and managed in computer systems. It highlights the importance of databases in real-world applications and provides practical skills in creating and managing simple databases using common database management systems (DBMS). The topic serves as a foundation for advanced learning in areas such as database design, SQL programming, and application integration",
+          "week_number": null,
+          "learning_objectives": [],
+          "competencies": [
+            {
+              "sequence_number": 1,
+              "description": "Comprehensive understanding of database concepts.",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 2,
+              "description": "Designing and normalize database schemas.",
+              "category": "General Competence"
+            }
+          ],
+          "sub_topics": [
+            {
+              "name": "1.9.1 Introduction to Databases",
+              "sequence_number": 1,
+              "description": "This topic introduces learners to the basics of databases, including key concepts like tables, records, and fields. It covers types of databases, common DBMS tools (Access, Oracle), and involves practical tasks to help students create and manage simple databases—building essential skills for future learning and real-world use",
+              "week_number": null,
+              "learning_objectives": [],
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "1.9.1.1 Create and manage databases",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Topic 10: Artificial Intelligence (AI)",
+          "sequence_number": 2,
+          "description": "This topic introduces learners to the foundational concepts of Artificial Intelligence (AI), emphasizing its principles and societal impact. It aims to foster an understanding of AI’s role in daily life and its ethical implications, preparing learners for advanced exploration in subsequent years.",
+          "week_number": null,
+          "learning_objectives": [],
+          "competencies": [
+            {
+              "sequence_number": 1,
+              "description": "Demonstrate understanding of AI concepts",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 2,
+              "description": "Use AI applications in everyday life",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 3,
+              "description": "Analyse AI societal impact.",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 4,
+              "description": "Advocate for ethical AI practices and address potential risks.",
+              "category": "General Competence"
+            }
+          ],
+          "sub_topics": [
+            {
+              "name": "Sub-Topic 1.10.1 Fundamentals of Artificial Intelligence",
+              "sequence_number": 1,
+              "description": "This subtopic introduces learners to the basics of Artificial Intelligence (AI), showing how machines can learn from data and make decisions. Learners will explore real-life examples and discover how AI is used in fields like healthcare, education, and agriculture, while also considering its benefits and challenges in society",
+              "week_number": null,
+              "learning_objectives": [],
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "1.10.1.1 Design Artificial Intelligence (AI) Models",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Topic 11: Internet of Things (IoT)",
+          "sequence_number": 3,
+          "description": "This Topic introduces learners to the basic concepts and components of IoT systems, fostering an understanding of how these technologies are integrated into daily life. The focus is on identifying and understanding the roles of key IoT components such as sensors, actuators, microcontrollers, and communication modules.",
+          "week_number": null,
+          "learning_objectives": [],
+          "competencies": [
+            {
+              "sequence_number": 1,
+              "description": "Analyze IoT components and their functions in interconnected systems.",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 2,
+              "description": "Apply foundational knowledge of IoT to solve simple real-world problems.",
+              "category": "General Competence"
+            }
+          ],
+          "sub_topics": [
+            {
+              "name": "Subtopic 1.11.1 Basic Components of Internet of Things (IoT)",
+              "sequence_number": 1,
+              "description": "This subtopic introduces learners to the Internet of Things (IoT). IoT is a network of physical devices, such as appliances, vehicles, or sensors, embedded with electronics, software, and connectivity to collect and exchange data over the internet. IoT enables automation, efficiency, and innovation in applications like smart homes, healthcare, agriculture, and industrial systems. These components form the foundation of IoT systems, enabling devices to sense, process, act, and communicate.",
+              "week_number": null,
+              "learning_objectives": [],
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "1.11.1.1 Demonstrate understanding of IoT components.",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Topic 12: Logic Gates",
+          "sequence_number": 4,
+          "description": "This topic introduces learners to logic gates as basic building blocks of digital systems that process binary inputs to produce outputs. Learners will explore various types of gates (AND, OR, NOT, NAND, NOR, XOR, XNOR) and their practical applications in digital circuits such as computers, alarms, and traffic lights. Emphasis is placed on understanding how logic gates contribute to the efficiency, functionality, and security of digital technologies, forming a foundation for further study in electronics and system design.",
+          "week_number": null,
+          "learning_objectives": [],
+          "competencies": [
+            {
+              "sequence_number": 1,
+              "description": "Demonstrate understanding of logic gates",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 2,
+              "description": "Identify their types and functions,",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 3,
+              "description": "Design circuits, and applying them to solve real-world problems.",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 4,
+              "description": "Construct truth tables,",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 5,
+              "description": "Derive logical expressions",
+              "category": "General Competence"
+            }
+          ],
+          "sub_topics": [
+            {
+              "name": "Sub-topic 1.12.1 Digital Control Systems",
+              "sequence_number": 1,
+              "description": "Focuses on analyzing logic gate concepts, truth tables, and creating digital control systems such as alarms and traffic lights.",
+              "week_number": null,
+              "learning_objectives": [],
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "1.12.1.1 Create Digital Control Systems",
                   "category": "Specific Competence"
                 }
               ]

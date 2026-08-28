@@ -1,5 +1,5 @@
 {
-  "_source": "Curriculum Development Centre Teaching Module — \"French Language Teaching Module Form 1 - Term 2\" (https://library.cdcrepository.info/resource.php?id=314). Topic/sub-topic structure and competencies extracted with AI assistance (Gemini) directly from this module's own stated content — never invented; the extraction was instructed to use only what the module itself says, and to flag anything unclear rather than guess. Covers only the term this specific module addresses (Term 2) — other terms are not included since no source document for them was available at extraction time. AI-flagged completeness notes from extraction: The source text opens mid-module at Sub-topic 1.6.1 without an explicit top-level topic header for 1.6.0, and Sub-topic 1.6.1 itself lacks a formal title header (though its focus on colours is stated in text). TOPIC 1.6.0 and Sub-Topic 1.6.1 names were structured based on the numbering scheme (1.6.1, 1.6.2) and clear textual content.",
+  "_source": "Curriculum Development Centre Teaching Module — \"French Language Teaching Module Form 1 - Term 2\" (https://library.cdcrepository.info/resource.php?id=314). Topic/sub-topic structure and competencies extracted with AI assistance (Gemini) directly from this module's own stated content — never invented; the extraction was instructed to use only what the module itself says, and to flag anything unclear rather than guess. Covers only the term this specific module addresses (Term 2) — other terms are not included since no source document for them was available at extraction time. AI-flagged completeness notes from extraction: The source text opens mid-module at Sub-topic 1.6.1 without an explicit top-level topic header for 1.6.0, and Sub-topic 1.6.1 itself lacks a formal title header (though its focus on colours is stated in text). TOPIC 1.6.0 and Sub-Topic 1.6.1 names were structured based on the numbering scheme (1.6.1, 1.6.2) and clear textual content. ADDED (2026-08-28): Term 3 content. Curriculum Development Centre Teaching Module — \"French Language Teaching Module\" (https://library.cdcrepository.info/resource.php?id=441). Topic/sub-topic structure and competencies extracted with AI assistance (Gemini) directly from this module's own stated content — never invented; the extraction was instructed to use only what the module itself says, and to flag anything unclear rather than guess. Term confirmed directly against the CDC library's own term filter (browse.php?...&term=3), not assumed. AI-flagged completeness notes from extraction: 1. The text begins mid-sequence at page 2 without an explicit main title header for Unit 11 / Topic 1.11.0 or Sub-Topic 1.11.1; it opens directly with introductory text for classroom orders followed by Specific Competence 1.11.1.1. 2. Topic 1.11.0 lacks a 'General Competences' section, unlike Units 12, 13, and 14. 3. There is a typographical error in the source text for Specific Competence 1.14.1.2, which is mislabeled as 'Specific- Competence 1.14.12'. 4. Page header for Unit 14 reads 'French Teaching Module: Form 1 - Term 1' on page 17, whereas all other page headers state 'Term 3'.",
   "curriculum": {
     "code": "CBC_2023",
     "name": "2023 Competency-Based Curriculum",
@@ -202,6 +202,252 @@
                 {
                   "sequence_number": 2,
                   "description": "Discuss personal hygiene",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 3",
+      "sequence_number": 3,
+      "topics": [
+        {
+          "name": "Topic 1.11.0 Classroom Communication",
+          "sequence_number": 1,
+          "description": "This topic covers classroom orders and instructions, school subjects, school timetables, and classroom objects.",
+          "week_number": null,
+          "learning_objectives": [],
+          "competencies": [],
+          "sub_topics": [
+            {
+              "name": "Sub-Topic 1.11.1 Classroom Orders and Instructions",
+              "sequence_number": 1,
+              "description": "Classroom orders and instructions are essential for creating a productive and supportive learning environment. A well ordered classroom minimizes distractions allowing learners to focus more on their studies. In this subtopic, learners will learn key phrases used by teachers and learners in a French speaking classroom such as common commands, instructions and questions that facilitate communication.",
+              "week_number": null,
+              "learning_objectives": [],
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use classroom orders and instructions in French.",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "Sub-Topic 1.11.2 My School Subjects",
+              "sequence_number": 2,
+              "description": "This sub topic will enable learners to learn names of different school subjects in French and be able to express preferences about their favorite and least favorite subjects. The sub-topic will also introduce how to ask questions about subjects and discuss the subjects learners study.",
+              "week_number": null,
+              "learning_objectives": [],
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Identify different school subjects in French.",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "Sub-Topic 1.11.3 School Timetable",
+              "sequence_number": 3,
+              "description": "Planning is an important aspect of every person's daily activities. In this sub-topic, learners will learn how to plan for their daily activities and come up with timetables in French. A school timetable is a summarised plan that describes learners activities. It smoothly guides learners to pursue their academic activities without any stress. This sub-topic discusses school and personal timetable and classroom objects.",
+              "week_number": null,
+              "learning_objectives": [],
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Draw up a school/personal time table",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Describe different classroom objects.",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "UNIT 12 TOPIC 1.12.0 DAILY ACTIVITIES",
+          "sequence_number": 2,
+          "description": "Expressing daily activities is a universal concept that is relevant and relatable to all learners, regardless of their cultural background. This topic lays a foundation for everyday communication and helps learners to gain confidence in daily conversations, whether discussing their morning routines or leisure activities. It will enable learners to use key verbs and vocabulary while understanding the rhythm of daily life in French-speaking cultures. Thus, this topic will help learners understand the language and apply it to their real-life experiences and promote a more natural and practical use of French this topic has one sub-topic namely Telling Time",
+          "week_number": null,
+          "learning_objectives": [],
+          "competencies": [
+            {
+              "sequence_number": 1,
+              "description": "Develop basic conversational skills to clearly and confidently describe daily routines in French.",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 2,
+              "description": "Engage in basic dialogues, asking and answering questions about daily routines.",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 3,
+              "description": "Recognise and respond to emotions related to daily activities.",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 4,
+              "description": "Express personal feelings and emotions.",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 5,
+              "description": "Show empathy towards other people’s daily routines.",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 6,
+              "description": "Compare and analyse different daily routines and habits among peers.",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 7,
+              "description": "Reflect on how daily habits can influence language use and social interaction.",
+              "category": "General Competence"
+            }
+          ],
+          "sub_topics": [
+            {
+              "name": "Sub-Topic 1.12.1 Telling Time",
+              "sequence_number": 1,
+              "description": "Understanding how to tell time in French is a fundamental skill for learners. Time is an essential aspect of daily life, and knowing how to express it accurately enables learners to engage in a variety of everyday activities, from scheduling appointments to discussing plans and routines. In French, telling time differs slightly from English, particularly in expressing hours and minutes, as well as in the formal and informal structures used in conversations about time. This sub-topic will help learners not only learn how to read a clock in French but also understand the rhythm and structure of French time expressions.",
+              "week_number": null,
+              "learning_objectives": [],
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Tell Time in French.",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Narrate daily activities in French.",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Identify days of the week and months of the year in French.",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "UNIT 13 TOPIC 1 .13.0 THE PAST",
+          "sequence_number": 3,
+          "description": "The past refers to a time that has already happened, before the present moment. It could be recent (yesterday, last week) or distant (years ago). The past usually means past tense and it is used to talk about actions or events that have already happened. In French, learners start by learning passé compose which is the most commonly used past tense in everyday conversations. It is used to talk about completed actions in the past. This topic introduces learners to time expressions often used with the past. It lays a foundation for expressing oneself more fully in French and leads to future learning of other past tenses like imparfait. The topic has one Sub-topic namely, Past Actions.",
+          "week_number": null,
+          "learning_objectives": [],
+          "competencies": [
+            {
+              "sequence_number": 1,
+              "description": "Develop communication skills by learning how to express past events share personal experiences and engage in conversations using the passé composé both in their spoken and written French.",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 2,
+              "description": "Analyse sentence structures, choose between the correct helping verbs (avoir or être) and apply rules to various verbs and contexts.",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 3,
+              "description": "Create short stories about past experiences, encouraging them to use their imagination.",
+              "category": "General Competence"
+            }
+          ],
+          "sub_topics": [
+            {
+              "name": "Sub-Topic 1.13.1 The Past Actions",
+              "sequence_number": 1,
+              "description": "Understanding past actions and the tenses used to describe them is essential as it allows learners to share their experiences, tell stories and connect events that shape their day to day lives. In this sub topic, learners will learn how to use le passé composé and l'imparfait to talk about completed actions in the past.",
+              "week_number": null,
+              "learning_objectives": [],
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe past actions in French.",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "UNIT 14 WEATHER 1.14.0",
+          "sequence_number": 4,
+          "description": "The term weather encompasses a set of atmospheric conditions like temperature, rain, wind and sun that are observed at specific time in a particular place. The topic is essential for learners as it provides practical vocabulary and expressions useful in daily life. In French, discussing the weather not only helps the learners build their conversational skills but also enables them to engage in everyday interactions, whether making small talk with friends, checking the forecast, or planning activities. Understanding the weather introduces important grammar structures that help learners to practice both present tense and adjectives. This topic has three sub-topics namely, Weather conditions, Clothes and Activities and Factors affecting Weather.",
+          "week_number": null,
+          "learning_objectives": [],
+          "competencies": [
+            {
+              "sequence_number": 1,
+              "description": "Engage in basic conversations about the weather, providing an excellent opportunity to practice their listening and speaking skills.",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 2,
+              "description": "Make observations, comparisons and predictions as they discuss how the weather impacts their daily lives or how it changes with the seasons.",
+              "category": "General Competence"
+            },
+            {
+              "sequence_number": 3,
+              "description": "Identify and interpret patterns in both the language and the world around them.",
+              "category": "General Competence"
+            }
+          ],
+          "sub_topics": [
+            {
+              "name": "Sub-Topic 1.14.1 Weather Conditions",
+              "sequence_number": 1,
+              "description": "Weather conditions refers to the temporary and local state of the atmosphere at a specific place and time, including factors such as: temperature, rain, clouds, wind. This sub-topic is essential for learners as it equips them with the basic vocabulary and expressions needed to describe the various weather conditions they encounter daily. The sub-topic will also enhance the learner's comprehension skills and enable them to discuss and respond appropriately in social situations. Furthermore, it will provide them with opportunities to practice adjectives and verbs in context, helping them to construct simple sentences.",
+              "week_number": null,
+              "learning_objectives": [],
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe what the weather is like in French.",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Identify various seasons in French.",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "Sub-Topic 1.14.2 Clothes and Activities",
+              "sequence_number": 2,
+              "description": "Weather plays an important role in our daily lives. It influences our activities, mood, and clothes. Depending on the season, we adapt our clothes and activities to feel comfortable and enjoy the weather.",
+              "week_number": null,
+              "learning_objectives": [],
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe activities and clothes associated with seasons in French.",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "Sub-Topic 1.14.3 Factors affecting Weather",
+              "sequence_number": 3,
+              "description": "Weather is a complex phenomenon that is influenced by many factors such as atmospheric conditions, geographic factors and human activities. Understanding the factors that influence the weather is essential for predicting weather conditions and marking informed decisions to protect people and the world we live in.",
+              "week_number": null,
+              "learning_objectives": [],
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Discuss factors affecting weather in Zambia",
                   "category": "Specific Competence"
                 }
               ]
