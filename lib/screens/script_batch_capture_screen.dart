@@ -13,24 +13,29 @@ import '../services/marking_scheme_repository.dart';
 import '../services/marking_script_repository.dart';
 import 'subject_grade_topic_picker_screen.dart';
 
-/// AI-Assisted Marking — continuous batch capture for a whole stack of
-/// scripts in one uninterrupted camera session, instead of the one-
-/// script-at-a-time flow in BurstCaptureScreen. A teacher captures pages,
-/// taps "Script Completed" whenever one candidate's script ends and the
-/// next begins, and taps "Complete Session" when the whole stack is done
-/// — nothing is sent anywhere until they then explicitly confirm "Mark
-/// all scripts?", matching this feature's offline-until-confirmed
-/// requirement exactly (entirely on-device up to that one point).
+/// AI-Assisted Marking — "Upload Script" → "Upload through camera". One
+/// script (its whole batch of pages — typically around 6) per screen,
+/// not several scripts chained together: a teacher captures every page
+/// of ONE candidate's script, taps "Script Completed", and the screen
+/// stays put (pages still visible, still addable) until they explicitly
+/// tap "Complete Session" to finish with this script and return to the
+/// hub. Starting the NEXT script is a fresh, deliberate action from the
+/// hub ("Upload Script" again) — not automatic — so a teacher can stop
+/// and review/correct a script (via the hub, or MarkingReviewScreen once
+/// it's graded) before ever starting the next one.
 ///
-/// Subject/grade and the marking scheme to grade against are picked once,
-/// up front, for the whole session — re-asking per script would defeat
-/// the point of a continuous flow. Candidate names are auto-detected per
-/// script (see CandidateNameDetectionService), same convenience/never-
-/// blocking behavior as BurstCaptureScreen; gender is NOT asked during
-/// capture (would require stopping for every single script) — every
-/// script this screen creates is saved with
-/// MarkingScript.genderConfirmed: false, and MarkingReviewScreen requires
-/// a teacher to confirm it before a script can be finalized.
+/// Subject/grade and the marking scheme to grade against are picked once
+/// at the start, so they don't need re-entering for this one script. The
+/// candidate's name is auto-detected from the first page (see
+/// CandidateNameDetectionService), same convenience/never-blocking
+/// behavior as BurstCaptureScreen; gender is NOT asked here — asking per
+/// script would defeat "just capture, keep going" — every script this
+/// screen creates has MarkingScript.genderConfirmed: false, and
+/// MarkingReviewScreen requires a teacher to confirm it before the
+/// script can be finalized as Reviewed.
+///
+/// Nothing is sent anywhere until "Complete Session" → an explicit "Mark
+/// this script now?" Yes — capture itself is entirely offline.
 class ScriptBatchCaptureScreen extends StatefulWidget {
   const ScriptBatchCaptureScreen({
     super.key,
@@ -59,14 +64,19 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
   bool _settingUp = true;
   SyllabusTemplate? _subjectGrade;
   MarkingScheme? _scheme;
-  int _nextScriptNumber = 1;
+  int _scriptNumber = 1;
 
-  final List<File> _currentScriptPages = [];
+  final List<File> _pages = [];
   String _detectedFirstName = '';
   String _detectedSurname = '';
   bool _detectingName = false;
 
-  final List<MarkingScript> _finalizedScripts = [];
+  /// Set once "Script Completed" is tapped — the script is saved from
+  /// that point on (and re-saved if more pages are added afterward), but
+  /// the screen stays open so the teacher can still add a missed page
+  /// before "Complete Session".
+  bool _scriptSaved = false;
+  MarkingScript? _savedScript;
   bool _finishing = false;
 
   @override
@@ -78,7 +88,7 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
   Future<void> _setUp() async {
     final template = await Navigator.of(context).push<SyllabusTemplate>(
       MaterialPageRoute(
-        builder: (_) => const SubjectGradeTopicPickerScreen(title: 'Subject & Grade for This Batch', pickTopic: false),
+        builder: (_) => const SubjectGradeTopicPickerScreen(title: 'Subject & Grade', pickTopic: false),
       ),
     );
     if (!mounted) return;
@@ -95,7 +105,7 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
         builder: (dialogContext) => AlertDialog(
           title: const Text('No marking scheme yet'),
           content: const Text(
-            'This batch needs a marking key to grade against. Upload or build one first, then start this batch again.',
+            'This script needs a marking key to grade against. Upload or build one first, then capture this script again.',
           ),
           actions: [FilledButton(onPressed: () => Navigator.of(dialogContext).pop(), child: const Text('OK'))],
         ),
@@ -108,7 +118,7 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
     final scheme = await showDialog<MarkingScheme>(
       context: context,
       builder: (dialogContext) => SimpleDialog(
-        title: const Text('Which marking key is this batch for?'),
+        title: const Text('Which marking key is this script for?'),
         children: [
           for (final s in schemes.schemes)
             SimpleDialogOption(
@@ -129,7 +139,7 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
     setState(() {
       _subjectGrade = template;
       _scheme = scheme;
-      _nextScriptNumber = nextNumber;
+      _scriptNumber = nextNumber;
       _settingUp = false;
     });
     _captureNextPage();
@@ -145,9 +155,9 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
           enableAutoCapture: true,
           showCloseButton: true,
           imageQuality: 75,
-          bottomHintText: _currentScriptPages.isEmpty
-              ? 'New script — page 1 (scripts typically run around 6 pages; tap "Script Completed" whenever this one ends)'
-              : 'Page ${_currentScriptPages.length + 1} of this script',
+          bottomHintText: _pages.isEmpty
+              ? 'Page 1 of this script (scripts typically run around 6 pages)'
+              : 'Page ${_pages.length + 1} of this script',
           onDocumentSaved: (data) => Navigator.of(context).pop(data),
         ),
       ),
@@ -155,22 +165,23 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
 
     if (!mounted) return;
     if (result == null || !result.hasFrontSide || result.frontImagePath == null) {
-      // Backed out of a page — if nothing at all has been captured yet
-      // (no pages, no finalized scripts), there's nothing to salvage.
-      if (_currentScriptPages.isEmpty && _finalizedScripts.isEmpty) Navigator.of(context).pop();
+      if (_pages.isEmpty) Navigator.of(context).pop();
       return;
     }
 
-    final isFirstPageOfScript = _currentScriptPages.isEmpty;
-    setState(() => _currentScriptPages.add(File(result.frontImagePath!)));
+    final isFirstPage = _pages.isEmpty;
+    setState(() => _pages.add(File(result.frontImagePath!)));
+    if (isFirstPage) _detectName();
 
-    if (isFirstPageOfScript) _detectNameForCurrentScript();
+    // If the script was already saved (a page added after "Script
+    // Completed" — the resume-capture path) keep it in sync immediately.
+    if (_scriptSaved) await _saveOrUpdateScript();
   }
 
-  Future<void> _detectNameForCurrentScript() async {
-    if (_currentScriptPages.isEmpty) return;
+  Future<void> _detectName() async {
+    if (_pages.isEmpty) return;
     setState(() => _detectingName = true);
-    final detected = await _nameDetectionService.detect(_currentScriptPages.first);
+    final detected = await _nameDetectionService.detect(_pages.first);
     if (!mounted) return;
     setState(() {
       _detectingName = false;
@@ -179,71 +190,69 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
     });
   }
 
-  /// Finalizes the in-progress script (if it has any pages) as one saved
-  /// [MarkingScript] — genderConfirmed: false throughout, since this
-  /// continuous flow never stops to ask; linked to the scheme picked at
-  /// the start of the session so it's ready to grade once "Mark all
-  /// scripts?" is confirmed.
-  Future<void> _finalizeCurrentScript() async {
-    if (_currentScriptPages.isEmpty) return;
-    final script = await _repository.saveScript(
-      firstName: _detectedFirstName,
-      surname: _detectedSurname,
-      gender: CandidateGender.male,
-      scriptNumber: _nextScriptNumber,
-      subjectName: _subjectGrade!.subject.name,
-      gradeName: _subjectGrade!.grade.name,
-      capturedPageFiles: _currentScriptPages,
-    );
-    final linked = script.copyWith(schemeId: _scheme!.id, genderConfirmed: false);
-    await _repository.update(linked);
-
-    setState(() {
-      _finalizedScripts.add(linked);
-      _currentScriptPages.clear();
-      _detectedFirstName = '';
-      _detectedSurname = '';
-      _nextScriptNumber++;
-    });
+  Future<void> _saveOrUpdateScript() async {
+    if (_pages.isEmpty) return;
+    if (_savedScript == null) {
+      final script = await _repository.saveScript(
+        firstName: _detectedFirstName,
+        surname: _detectedSurname,
+        gender: CandidateGender.male,
+        scriptNumber: _scriptNumber,
+        subjectName: _subjectGrade!.subject.name,
+        gradeName: _subjectGrade!.grade.name,
+        capturedPageFiles: _pages,
+      );
+      final linked = script.copyWith(schemeId: _scheme!.id, genderConfirmed: false);
+      await _repository.update(linked);
+      _savedScript = linked;
+    } else {
+      // A page was added after the script was already saved once — the
+      // simplest correct way to keep the saved copy in sync is to remove
+      // and re-save it with the current full page set.
+      await _repository.remove(_savedScript!);
+      final script = await _repository.saveScript(
+        firstName: _detectedFirstName,
+        surname: _detectedSurname,
+        gender: CandidateGender.male,
+        scriptNumber: _scriptNumber,
+        subjectName: _subjectGrade!.subject.name,
+        gradeName: _subjectGrade!.grade.name,
+        capturedPageFiles: _pages,
+      );
+      final linked = script.copyWith(schemeId: _scheme!.id, genderConfirmed: false);
+      await _repository.update(linked);
+      _savedScript = linked;
+    }
   }
 
   Future<void> _onScriptCompleted() async {
-    await _finalizeCurrentScript();
-    if (mounted) _captureNextPage();
+    if (_pages.isEmpty) return;
+    await _saveOrUpdateScript();
+    if (mounted) setState(() => _scriptSaved = true);
   }
 
   Future<void> _onCompleteSession() async {
-    await _finalizeCurrentScript();
-    if (!mounted) return;
-
-    if (_finalizedScripts.isEmpty) {
-      Navigator.of(context).pop();
-      return;
-    }
+    if (!_scriptSaved) await _onScriptCompleted();
+    if (!mounted || _savedScript == null) return;
 
     final markNow = await showDialog<bool>(
       context: context,
       barrierDismissible: false,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('Mark all scripts?'),
+        title: const Text('Mark this script?'),
         content: Text(
-          '${_finalizedScripts.length} script(s) were captured this session, entirely offline. Nothing has '
-          'been sent anywhere yet.\n\nMark them all now against "${_scheme!.title}"? This is the point '
-          "where they're sent for AI grading.",
+          'This script was captured entirely offline — nothing has been sent anywhere yet.\n\nMark it now '
+          'against "${_scheme!.title}"? This is the point where it\'s sent for AI grading.',
         ),
         actions: [
           TextButton(onPressed: () => Navigator.of(dialogContext).pop(false), child: const Text('Not yet')),
-          FilledButton(onPressed: () => Navigator.of(dialogContext).pop(true), child: const Text('Yes, Mark All')),
+          FilledButton(onPressed: () => Navigator.of(dialogContext).pop(true), child: const Text('Yes, Mark It')),
         ],
       ),
     );
     if (!mounted) return;
 
-    // Queue every script either way — "Not yet" still leaves them ready
-    // to process later from the main hub, exactly like manually queuing.
-    for (final script in _finalizedScripts) {
-      await _repository.update(script.copyWith(status: MarkingScriptStatus.queued));
-    }
+    await _repository.update(_savedScript!.copyWith(status: MarkingScriptStatus.queued));
     if (!mounted) return;
 
     if (markNow != true) {
@@ -254,7 +263,7 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
     setState(() => _finishing = true);
     var ranOutOfFreeGradings = false;
     await runBatchGrading(
-      scripts: _finalizedScripts,
+      scripts: [_savedScript!],
       scheme: _scheme!,
       repository: _repository,
       gradingService: _gradingService,
@@ -266,7 +275,7 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(
-            "You've used this month's free AI-graded scripts. The rest of this batch stays queued until "
+            "You've used this month's free AI-graded scripts this month — this script stays queued until "
             'next month (or an upgrade, once available).',
           ),
           duration: Duration(seconds: 6),
@@ -276,17 +285,17 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
     Navigator.of(context).pop();
   }
 
-  void _removeCurrentPage(int index) => setState(() => _currentScriptPages.removeAt(index));
+  void _removePage(int index) => setState(() => _pages.removeAt(index));
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Batch Capture Scripts'),
+        title: const Text('Capture Script'),
         actions: [
-          if (!_settingUp)
+          if (!_settingUp && !_finishing)
             TextButton(
-              onPressed: _finishing ? null : _onCompleteSession,
+              onPressed: _pages.isEmpty ? null : _onCompleteSession,
               child: const Text('Complete Session', style: TextStyle(color: Colors.white)),
             ),
         ],
@@ -299,7 +308,7 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
                   const CircularProgressIndicator(),
                   if (_finishing) ...[
                     const SizedBox(height: 12),
-                    const Text('Grading all scripts…'),
+                    const Text('Grading this script…'),
                   ],
                 ],
               ),
@@ -312,8 +321,11 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
                     children: [
                       Expanded(
                         child: Text(
-                          '${_finalizedScripts.length} script(s) completed this session'
-                          '${_detectedFirstName.isNotEmpty ? ' — now: $_detectedFirstName $_detectedSurname' : ''}',
+                          _scriptSaved
+                              ? 'Script saved${_detectedFirstName.isNotEmpty ? ' — $_detectedFirstName $_detectedSurname' : ''}. '
+                                  'Add another page if needed, or tap "Complete Session" above when done.'
+                              : 'Capturing Script $_scriptNumber'
+                                  '${_detectedFirstName.isNotEmpty ? ' — $_detectedFirstName $_detectedSurname' : ''}',
                           style: Theme.of(context).textTheme.titleSmall,
                         ),
                       ),
@@ -323,8 +335,8 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
                   ),
                 ),
                 Expanded(
-                  child: _currentScriptPages.isEmpty
-                      ? const Center(child: Text('No pages captured for the current script yet.'))
+                  child: _pages.isEmpty
+                      ? const Center(child: Text('No pages captured yet.'))
                       : GridView.builder(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -333,13 +345,13 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
                             mainAxisSpacing: 8,
                             childAspectRatio: 0.75,
                           ),
-                          itemCount: _currentScriptPages.length,
+                          itemCount: _pages.length,
                           itemBuilder: (context, index) => Stack(
                             fit: StackFit.expand,
                             children: [
                               ClipRRect(
                                 borderRadius: BorderRadius.circular(8),
-                                child: Image.file(_currentScriptPages[index], fit: BoxFit.cover),
+                                child: Image.file(_pages[index], fit: BoxFit.cover),
                               ),
                               Positioned(
                                 top: 4,
@@ -355,7 +367,7 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
                                 right: 0,
                                 child: IconButton(
                                   icon: const Icon(Icons.close, color: Colors.white, shadows: [Shadow(blurRadius: 4)]),
-                                  onPressed: () => _removeCurrentPage(index),
+                                  onPressed: () => _removePage(index),
                                 ),
                               ),
                             ],
@@ -367,8 +379,9 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
                     padding: const EdgeInsets.all(16),
                     child: Row(
                       children: [
-                        // Bottom-left camera icon — resumes capturing
-                        // (the next page of the current script).
+                        // Bottom-left camera icon — keeps adding pages to
+                        // this same script, available even after "Script
+                        // Completed" in case a page was missed.
                         IconButton.filledTonal(
                           onPressed: _captureNextPage,
                           icon: const Icon(Icons.camera_alt_outlined),
@@ -377,9 +390,9 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
                         const SizedBox(width: 12),
                         Expanded(
                           child: FilledButton.icon(
-                            onPressed: _currentScriptPages.isEmpty ? null : _onScriptCompleted,
+                            onPressed: _pages.isEmpty || _scriptSaved ? null : _onScriptCompleted,
                             icon: const Icon(Icons.check_circle_outline),
-                            label: const Text('Script Completed'),
+                            label: Text(_scriptSaved ? 'Script Saved' : 'Script Completed'),
                           ),
                         ),
                       ],
