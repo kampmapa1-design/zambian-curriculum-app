@@ -1,0 +1,14 @@
+# Copy this file to key.properties (gitignored) and fill in real values to
+# enable release signing for Play Console uploads. Without this file, release
+# builds fall back to the debug key (fine for Firebase App Distribution
+# testing, not accepted by Play Console).
+#
+# Generate a keystore with:
+#   keytool -genkeypair -v -keystore smart-teacher-upload-key.jks \
+#     -alias smart_teacher_upload -keyalg RSA -keysize 2048 -validity 10950
+#
+# storeFile is resolved relative to android/app/ — put the .jks there.
+storePassword=
+keyPassword=
+keyAlias=smart_teacher_upload
+storeFile=smart-teacher-upload-key.jks
