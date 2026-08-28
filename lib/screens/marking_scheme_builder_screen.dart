@@ -23,6 +23,8 @@ class MarkingSchemeBuilderScreen extends StatefulWidget {
     required this.topicName,
     this.subTopicName,
     this.existing,
+    this.initialQuestions,
+    this.aiNotes,
     this.repository,
   });
 
@@ -33,6 +35,14 @@ class MarkingSchemeBuilderScreen extends StatefulWidget {
 
   /// Non-null when editing an already-saved scheme.
   final MarkingScheme? existing;
+
+  /// Stage B — pre-fills a NEW scheme's rows from an AI-generated draft
+  /// (see MarkingKeyGenerationService) without treating it as "editing an
+  /// existing scheme" the way [existing] does: title stays "New", and a
+  /// review banner shows [aiNotes]. Ignored if [existing] is set.
+  final List<MarkingSchemeQuestion>? initialQuestions;
+  final String? aiNotes;
+
   final MarkingSchemeRepository? repository;
 
   @override
@@ -75,6 +85,8 @@ class _MarkingSchemeBuilderScreenState extends State<MarkingSchemeBuilderScreen>
     );
     if (existing != null && existing.questions.isNotEmpty) {
       _rows.addAll(existing.questions.map(_RowControllers.from));
+    } else if (widget.initialQuestions case final initial? when initial.isNotEmpty) {
+      _rows.addAll(initial.map(_RowControllers.from));
     } else {
       _addRow();
     }
@@ -145,11 +157,43 @@ class _MarkingSchemeBuilderScreenState extends State<MarkingSchemeBuilderScreen>
 
   @override
   Widget build(BuildContext context) {
+    final isAiDraft = widget.existing == null && (widget.initialQuestions?.isNotEmpty ?? false);
     return Scaffold(
       appBar: AppBar(title: Text(widget.existing == null ? 'New Marking Scheme' : 'Edit Marking Scheme')),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 96),
         children: [
+          if (isAiDraft)
+            Container(
+              margin: const EdgeInsets.only(bottom: 12),
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.tertiaryContainer,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      const Icon(Icons.auto_awesome_outlined, size: 18),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          'AI-suggested from the uploaded question paper — review every answer and mark '
+                          'allocation below before saving. Nothing here is final until you do.',
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                      ),
+                    ],
+                  ),
+                  if (widget.aiNotes case final notes? when notes.trim().isNotEmpty) ...[
+                    const SizedBox(height: 6),
+                    Text(notes, style: Theme.of(context).textTheme.bodySmall?.copyWith(fontStyle: FontStyle.italic)),
+                  ],
+                ],
+              ),
+            ),
           Text(
             '${widget.subjectName} · ${widget.gradeName} · ${widget.subTopicName ?? widget.topicName}',
             style: Theme.of(context).textTheme.labelLarge,

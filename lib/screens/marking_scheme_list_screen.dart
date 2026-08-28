@@ -1,3 +1,4 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -5,9 +6,11 @@ import '../models/marking_scheme.dart';
 import '../models/marking_script.dart';
 import '../models/scheme_of_work.dart';
 import '../models/syllabus_models.dart';
+import '../services/marking_key_generation_service.dart';
 import '../services/marking_scheme_repository.dart';
 import '../services/marking_script_repository.dart';
 import '../services/marksheet_document_service.dart';
+import '../services/subject_content_extraction_service.dart';
 import 'marking_scheme_builder_screen.dart';
 import 'subject_grade_topic_picker_screen.dart';
 import 'term_topic_picker_screen.dart';
@@ -32,10 +35,13 @@ class _MarkingSchemeListScreenState extends State<MarkingSchemeListScreen> {
   late final MarkingSchemeRepository _repository = widget.repository ?? MarkingSchemeRepository();
   late final MarkingScriptRepository _scriptRepository = widget.scriptRepository ?? MarkingScriptRepository();
   late final MarksheetDocumentService _marksheetService = widget.marksheetService ?? MarksheetDocumentService();
+  final SubjectContentExtractionService _textExtractionService = SubjectContentExtractionService();
+  final MarkingKeyGenerationService _keyGenerationService = MarkingKeyGenerationService();
 
   MarkingSchemeCatalog _catalog = MarkingSchemeCatalog.empty();
   bool _loading = true;
   String? _exportingSchemeId;
+  bool _generatingKey = false;
 
   @override
   void initState() {
@@ -53,6 +59,36 @@ class _MarkingSchemeListScreenState extends State<MarkingSchemeListScreen> {
   }
 
   Future<void> _createNew() async {
+    final choice = await showDialog<_NewSchemeChoice>(
+      context: context,
+      builder: (dialogContext) => SimpleDialog(
+        title: const Text('New Marking Scheme'),
+        children: [
+          SimpleDialogOption(
+            onPressed: () => Navigator.of(dialogContext).pop(_NewSchemeChoice.manual),
+            child: const Row(
+              children: [
+                Icon(Icons.edit_outlined),
+                SizedBox(width: 12),
+                Expanded(child: Text('Enter manually')),
+              ],
+            ),
+          ),
+          SimpleDialogOption(
+            onPressed: () => Navigator.of(dialogContext).pop(_NewSchemeChoice.fromQuestionPaper),
+            child: const Row(
+              children: [
+                Icon(Icons.auto_awesome_outlined),
+                SizedBox(width: 12),
+                Expanded(child: Text('Generate from question paper (AI)')),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+    if (choice == null || !mounted) return;
+
     final template = await Navigator.of(context).push<SyllabusTemplate>(
       MaterialPageRoute(
         builder: (_) => const SubjectGradeTopicPickerScreen(title: 'New Marking Scheme', pickTopic: false),
@@ -65,18 +101,66 @@ class _MarkingSchemeListScreenState extends State<MarkingSchemeListScreen> {
     );
     if (entry == null || !mounted) return;
 
-    final saved = await Navigator.of(context).push<MarkingScheme>(
-      MaterialPageRoute(
-        builder: (_) => MarkingSchemeBuilderScreen(
-          subjectName: template.subject.name,
-          gradeName: template.grade.name,
-          topicName: entry.topic.name,
-          subTopicName: entry.subTopic?.name,
-          repository: _repository,
+    if (choice == _NewSchemeChoice.manual) {
+      final saved = await Navigator.of(context).push<MarkingScheme>(
+        MaterialPageRoute(
+          builder: (_) => MarkingSchemeBuilderScreen(
+            subjectName: template.subject.name,
+            gradeName: template.grade.name,
+            topicName: entry.topic.name,
+            subTopicName: entry.subTopic?.name,
+            repository: _repository,
+          ),
         ),
-      ),
-    );
-    if (saved != null) _load();
+      );
+      if (saved != null) _load();
+      return;
+    }
+
+    await _createFromQuestionPaper(template, entry);
+  }
+
+  /// Stage B — picks a question-paper PDF, extracts its text server-side
+  /// (reusing the same extraction path as Subject Content Database
+  /// uploads), sends that text to Gemini to derive a draft marking key,
+  /// then hands off to the SAME builder screen used for manual entry —
+  /// pre-filled, always reviewed, never auto-saved. See
+  /// MarkingKeyGenerationService and the Cloud Function's own comment for
+  /// why this can't just be trusted directly.
+  Future<void> _createFromQuestionPaper(SyllabusTemplate template, SchemeOfWorkEntry entry) async {
+    final results = await FilePicker.pickFiles(type: FileType.custom, allowedExtensions: ['pdf']);
+    if (results.isEmpty || !mounted) return;
+    final file = results.single;
+
+    setState(() => _generatingKey = true);
+    try {
+      final bytes = await file.readAsBytes();
+      final text = await _textExtractionService.extractText(bytes);
+      final derived = await _keyGenerationService.derive(text);
+      if (!mounted) return;
+
+      final saved = await Navigator.of(context).push<MarkingScheme>(
+        MaterialPageRoute(
+          builder: (_) => MarkingSchemeBuilderScreen(
+            subjectName: template.subject.name,
+            gradeName: template.grade.name,
+            topicName: entry.topic.name,
+            subTopicName: entry.subTopic?.name,
+            initialQuestions: derived.questions,
+            aiNotes: derived.notes,
+            repository: _repository,
+          ),
+        ),
+      );
+      if (saved != null) _load();
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Could not generate a marking key: $error')),
+      );
+    } finally {
+      if (mounted) setState(() => _generatingKey = false);
+    }
   }
 
   Future<void> _edit(MarkingScheme scheme) async {
@@ -205,10 +289,14 @@ class _MarkingSchemeListScreenState extends State<MarkingSchemeListScreen> {
                   ],
                 ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: _createNew,
-        icon: const Icon(Icons.add),
-        label: const Text('New Scheme'),
+        onPressed: _generatingKey ? null : _createNew,
+        icon: _generatingKey
+            ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
+            : const Icon(Icons.add),
+        label: Text(_generatingKey ? 'Generating…' : 'New Scheme'),
       ),
     );
   }
 }
+
+enum _NewSchemeChoice { manual, fromQuestionPaper }

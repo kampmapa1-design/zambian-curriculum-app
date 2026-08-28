@@ -871,6 +871,207 @@ export const gradeMarkingScript = onCall<GradeMarkingScriptRequest>(
   }
 );
 
+// ---------------------------------------------------------------------
+// deriveMarkingKeyFromQuestionPaper — AI-Assisted Marking, Stage B (marking
+// key generation). Unlike syllabus extraction, a question paper does NOT
+// contain its own answer key — the AI has to actually answer each
+// question from its own subject knowledge, not just reformat what's on
+// the page. That's a materially different (and riskier) kind of AI
+// output than everything else in this file, so this function's result is
+// ALWAYS routed into the same editable MarkingSchemeBuilderScreen a
+// teacher would use for manual entry — pre-filled, never auto-saved,
+// exactly like editing any other scheme. See burst path in
+// marking_scheme_list_screen.dart.
+// ---------------------------------------------------------------------
+
+interface DeriveMarkingKeyRequest {
+  questionPaperText: string;
+}
+
+interface DerivedQuestion {
+  label: string;
+  expectedAnswerOrKeywords: string;
+  maxMarks: number;
+}
+
+interface DeriveMarkingKeyResponse {
+  questions: DerivedQuestion[];
+  notes: string;
+}
+
+const deriveMarkingKeySchema = {
+  type: "object",
+  properties: {
+    questions: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          label: { type: "string" },
+          expectedAnswerOrKeywords: { type: "string" },
+          maxMarks: { type: "number" },
+        },
+        required: ["label", "expectedAnswerOrKeywords", "maxMarks"],
+        additionalProperties: false,
+      },
+    },
+    notes: {
+      type: "string",
+      description:
+        "Anything a teacher should double-check before trusting this key - a mark allocation the paper " +
+        "didn't actually state (so one was assumed), a question whose correct answer is genuinely " +
+        "debatable or curriculum-dependent, ambiguous numbering, etc. Empty string if nothing stood out.",
+    },
+  },
+  required: ["questions", "notes"],
+  additionalProperties: false,
+};
+
+function buildDeriveMarkingKeyPrompt(questionPaperText: string): string {
+  return [
+    "The following is the extracted text of an exam/test question paper. For EACH question on it:",
+    "1. Use the paper's own question label/number (e.g. 'Q1', '1.', '1a)').",
+    "2. Write a concise, accurate model answer or a comma-separated list of key points a correct answer " +
+      "should include, drawing on your own subject knowledge - the paper itself does not contain the " +
+      "answers, so this is you actually answering the question, not transcribing something already there. " +
+      "Be precise and correct; if a question is genuinely ambiguous or you are not confident of the " +
+      "correct answer, say so plainly in that question's expectedAnswerOrKeywords AND mention it in notes, " +
+      "rather than stating an uncertain answer as if it were settled.",
+    "3. Use the mark allocation the paper itself states for that question (e.g. '[5]', '(10 marks)') " +
+      "whenever it's shown. If no mark allocation is shown for a question, make a reasonable estimate " +
+      "based on the question's apparent complexity/length relative to others on the paper, and say in " +
+      "notes which questions got an assumed rather than stated allocation.",
+    "4. Skip pure instructions/rubric text ('Answer ALL questions in Section A', page headers, etc.) - " +
+      "only real, answerable questions belong in the result.",
+    "",
+    "--- QUESTION PAPER TEXT ---",
+    questionPaperText,
+  ].join("\n");
+}
+
+export const deriveMarkingKeyFromQuestionPaper = onCall<DeriveMarkingKeyRequest>(
+  { secrets: [geminiApiKey], region: "us-central1", timeoutSeconds: 120, memory: "512MiB", maxInstances: 5 },
+  async (request): Promise<DeriveMarkingKeyResponse> => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "Sign in is required to generate a marking key.");
+    }
+
+    const { questionPaperText } = request.data ?? {};
+    if (typeof questionPaperText !== "string" || questionPaperText.trim().length === 0) {
+      throw new HttpsError("invalid-argument", "'questionPaperText' is required.");
+    }
+
+    const ai = new GoogleGenAI({ apiKey: geminiApiKey.value() });
+
+    let text: string | undefined;
+    try {
+      const response = await ai.models.generateContent({
+        model: GEMINI_MODEL,
+        contents: buildDeriveMarkingKeyPrompt(questionPaperText),
+        config: {
+          responseMimeType: "application/json",
+          responseJsonSchema: deriveMarkingKeySchema,
+        },
+      });
+      text = response.text;
+    } catch (err) {
+      console.error("deriveMarkingKeyFromQuestionPaper: Gemini call failed", err);
+      throw new HttpsError("internal", "Failed to generate a marking key. Please try again.");
+    }
+
+    if (!text) {
+      throw new HttpsError("internal", "The AI did not return a marking key.");
+    }
+
+    let parsed: DeriveMarkingKeyResponse;
+    try {
+      parsed = JSON.parse(text);
+    } catch (err) {
+      console.error("deriveMarkingKeyFromQuestionPaper: response was not valid JSON", text);
+      throw new HttpsError("internal", "The marking key response could not be parsed.");
+    }
+
+    return parsed;
+  }
+);
+
+// ---------------------------------------------------------------------
+// detectCandidateName — AI-Assisted Marking, Stage D. Reads the captured
+// script's first page for a handwritten (or printed) candidate name, so
+// the capture form can be pre-filled instead of typed from scratch. Pure
+// convenience, never authoritative: the caller always keeps the fields
+// editable, and this returns empty strings rather than guessing when no
+// name is genuinely visible.
+// ---------------------------------------------------------------------
+
+interface DetectCandidateNameRequest {
+  imageBase64: string;
+}
+
+interface DetectCandidateNameResponse {
+  firstName: string;
+  surname: string;
+}
+
+const detectCandidateNameSchema = {
+  type: "object",
+  properties: {
+    firstName: { type: "string" },
+    surname: { type: "string" },
+  },
+  required: ["firstName", "surname"],
+  additionalProperties: false,
+};
+
+export const detectCandidateName = onCall<DetectCandidateNameRequest>(
+  { secrets: [geminiApiKey], region: "us-central1", timeoutSeconds: 60, memory: "512MiB", maxInstances: 5 },
+  async (request): Promise<DetectCandidateNameResponse> => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "Sign in is required to use name detection.");
+    }
+
+    const { imageBase64 } = request.data ?? {};
+    if (typeof imageBase64 !== "string" || imageBase64.trim().length === 0) {
+      throw new HttpsError("invalid-argument", "'imageBase64' is required.");
+    }
+
+    const ai = new GoogleGenAI({ apiKey: geminiApiKey.value() });
+    const prompt = [
+      "This is a photo of one page of a student's answer script. Look for the candidate's name - " +
+        "handwritten in a name field, header, or cover area, or printed on a pre-labeled form.",
+      "Return firstName and surname separately. If you genuinely cannot find a name on this page (wrong " +
+        "page, illegible, or simply not present), return empty strings for both - never guess or invent a " +
+        "plausible-looking name.",
+    ].join("\n");
+
+    let text: string | undefined;
+    try {
+      const response = await ai.models.generateContent({
+        model: GEMINI_MODEL,
+        contents: [{ role: "user", parts: [{ text: prompt }, { inlineData: { mimeType: "image/jpeg", data: imageBase64 } }] }],
+        config: {
+          responseMimeType: "application/json",
+          responseJsonSchema: detectCandidateNameSchema,
+        },
+      });
+      text = response.text;
+    } catch (err) {
+      console.error("detectCandidateName: Gemini call failed", err);
+      throw new HttpsError("internal", "Failed to detect a name from this page.");
+    }
+
+    if (!text) {
+      return { firstName: "", surname: "" };
+    }
+
+    try {
+      return JSON.parse(text) as DetectCandidateNameResponse;
+    } catch (err) {
+      console.error("detectCandidateName: response was not valid JSON", text);
+      return { firstName: "", surname: "" };
+    }
+  }
+);
 
 // ---------------------------------------------------------------------
 // internalBatchSyllabusExtract — TEMPORARY, one-off use only. Same

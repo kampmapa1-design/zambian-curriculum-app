@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 import '../models/marking_script.dart';
 import '../models/syllabus_models.dart';
+import '../services/candidate_name_detection_service.dart';
 import '../services/marking_script_repository.dart';
 import 'subject_grade_topic_picker_screen.dart';
 
@@ -31,6 +32,7 @@ class BurstCaptureScreen extends StatefulWidget {
 
 class _BurstCaptureScreenState extends State<BurstCaptureScreen> {
   late final MarkingScriptRepository _repository = widget.repository ?? MarkingScriptRepository();
+  final CandidateNameDetectionService _nameDetectionService = CandidateNameDetectionService();
 
   final _formKey = GlobalKey<FormState>();
   final _firstNameController = TextEditingController();
@@ -44,6 +46,7 @@ class _BurstCaptureScreenState extends State<BurstCaptureScreen> {
   bool _sessionStarted = false;
   bool _loadingNextNumber = true;
   bool _saving = false;
+  bool _detectingName = false;
   final List<File> _capturedPages = [];
 
   @override
@@ -125,11 +128,42 @@ class _BurstCaptureScreenState extends State<BurstCaptureScreen> {
     }
 
     if (!mounted) return;
+    final isFirstPage = _capturedPages.isEmpty;
     setState(() => _capturedPages.add(File(result.frontImagePath!)));
+
+    // Stage D — attempt to auto-fill the name from the first page, but
+    // only if the teacher hasn't already typed something (either up
+    // front, or from a previous detection attempt) — never overwrite a
+    // real edit with a lower-confidence guess.
+    if (isFirstPage && _firstNameController.text.trim().isEmpty && _surnameController.text.trim().isEmpty) {
+      _detectNameFromFirstPage();
+    }
+  }
+
+  Future<void> _detectNameFromFirstPage() async {
+    if (_capturedPages.isEmpty) return;
+    setState(() => _detectingName = true);
+    final detected = await _nameDetectionService.detect(_capturedPages.first);
+    if (!mounted) return;
+    setState(() {
+      _detectingName = false;
+      // Still check emptiness here too — the teacher may have typed
+      // something manually while detection was running.
+      if (_firstNameController.text.trim().isEmpty && _surnameController.text.trim().isEmpty && !detected.isEmpty) {
+        _firstNameController.text = detected.firstName;
+        _surnameController.text = detected.surname;
+      }
+    });
   }
 
   Future<void> _finishAndSave() async {
     if (_capturedPages.isEmpty) return;
+    if (_firstNameController.text.trim().isEmpty || _surnameController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Enter (or correct) the candidate\'s first name and surname before saving.')),
+      );
+      return;
+    }
     setState(() => _saving = true);
     try {
       final script = await _repository.saveScript(
@@ -176,25 +210,31 @@ class _BurstCaptureScreenState extends State<BurstCaptureScreen> {
             Text('Whose script is this?', style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 4),
             const Text(
-              "Enter the student's details once — you'll capture each page of their script next, "
-              'one at a time.',
+              "Enter the student's details now, or leave the name blank — it can also be auto-filled "
+              'from the first captured page, and edited either way before saving.',
               style: TextStyle(fontSize: 13),
             ),
             const SizedBox(height: 16),
             // First name on top, surname below — matches the order the
             // candidate's name is displayed everywhere else in this
-            // feature (queue list, review screen, marksheet).
+            // feature (queue list, review screen, marksheet). Optional
+            // here (not validated) since auto-detect can fill these in
+            // after the first page is captured.
             TextFormField(
               controller: _firstNameController,
-              decoration: const InputDecoration(labelText: 'First name', border: OutlineInputBorder()),
-              validator: (v) => (v == null || v.trim().isEmpty) ? 'Required' : null,
+              decoration: const InputDecoration(
+                labelText: 'First name (optional — can auto-fill)',
+                border: OutlineInputBorder(),
+              ),
               textCapitalization: TextCapitalization.words,
             ),
             const SizedBox(height: 12),
             TextFormField(
               controller: _surnameController,
-              decoration: const InputDecoration(labelText: 'Surname', border: OutlineInputBorder()),
-              validator: (v) => (v == null || v.trim().isEmpty) ? 'Required' : null,
+              decoration: const InputDecoration(
+                labelText: 'Surname (optional — can auto-fill)',
+                border: OutlineInputBorder(),
+              ),
               textCapitalization: TextCapitalization.words,
             ),
             const SizedBox(height: 12),
@@ -265,17 +305,62 @@ class _BurstCaptureScreenState extends State<BurstCaptureScreen> {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Editable here too, not just on the details form — this is
+              // where an AI-detected name (or a blank left for it) first
+              // becomes visible, so correcting it should be possible right
+              // here without navigating back.
               Expanded(
-                child: Text(
-                  '${_firstNameController.text.trim()} ${_surnameController.text.trim()} — '
-                  'Script ${_scriptNumberController.text.trim()}',
-                  style: Theme.of(context).textTheme.titleMedium,
-                  overflow: TextOverflow.ellipsis,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: _firstNameController,
+                            decoration: const InputDecoration(
+                              isDense: true,
+                              labelText: 'First name',
+                              border: OutlineInputBorder(),
+                            ),
+                            textCapitalization: TextCapitalization.words,
+                            onChanged: (_) => setState(() {}),
+                          ),
+                        ),
+                        if (_detectingName) ...[
+                          const SizedBox(width: 8),
+                          const SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          ),
+                        ],
+                      ],
+                    ),
+                    const SizedBox(height: 6),
+                    TextField(
+                      controller: _surnameController,
+                      decoration: const InputDecoration(
+                        isDense: true,
+                        labelText: 'Surname',
+                        border: OutlineInputBorder(),
+                      ),
+                      textCapitalization: TextCapitalization.words,
+                      onChanged: (_) => setState(() {}),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Script ${_scriptNumberController.text.trim()}',
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ],
                 ),
               ),
+              const SizedBox(width: 8),
               Chip(label: Text('${_capturedPages.length} page(s)')),
             ],
           ),
