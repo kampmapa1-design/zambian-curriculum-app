@@ -132,6 +132,17 @@ class MarkingScriptRepository {
     await _saveCatalog(MarkingScriptCatalog(scripts: updated));
   }
 
+  /// Appends an already-fully-formed [script] straight to the catalog —
+  /// for records that don't go through [saveScript]'s capture-and-copy
+  /// path because there are no per-script page images to store, e.g. a
+  /// hand-marked entry transcribed from a class list (see
+  /// ClassListImportScreen). Unlike [update], this does add a genuinely
+  /// new catalog entry rather than only replacing an existing one.
+  Future<void> add(MarkingScript script) async {
+    final catalog = await loadCatalog();
+    await _saveCatalog(MarkingScriptCatalog(scripts: [...catalog.scripts, script]));
+  }
+
   /// Persists an already-modified [script] (e.g. via [MarkingScript.copyWith])
   /// back to the catalog — for updates richer than just [updateStatus],
   /// like linking a scheme or storing Stage 4's grading results.

@@ -873,19 +873,29 @@ export const gradeMarkingScript = onCall<GradeMarkingScriptRequest>(
 
 // ---------------------------------------------------------------------
 // deriveMarkingKeyFromQuestionPaper — AI-Assisted Marking, Stage B (marking
-// key generation). Unlike syllabus extraction, a question paper does NOT
-// contain its own answer key — the AI has to actually answer each
-// question from its own subject knowledge, not just reformat what's on
-// the page. That's a materially different (and riskier) kind of AI
-// output than everything else in this file, so this function's result is
-// ALWAYS routed into the same editable MarkingSchemeBuilderScreen a
-// teacher would use for manual entry — pre-filled, never auto-saved,
-// exactly like editing any other scheme. See burst path in
-// marking_scheme_list_screen.dart.
+// key generation). Two source types, two very different risk profiles:
+// - "questionPaper": the paper does NOT contain its own answer key, so the
+//   AI has to actually answer each question from its own subject
+//   knowledge, not just reformat what's on the page.
+// - "markingKey": an existing marking key/answer key DOES already contain
+//   the answers - this is a read-and-structure task like the app's other
+//   extraction features, not an answer-from-scratch task, and is
+//   instructed accordingly (never invent, flag anything unclear).
+// Either way, this function's result is ALWAYS routed into the same
+// editable MarkingSchemeBuilderScreen a teacher would use for manual
+// entry - pre-filled, never auto-saved. See marking_scheme_list_screen.dart.
+//
+// Accepts EITHER already-extracted text (questionPaperText - PDF path,
+// via extractSubjectContentTextFn) OR photographed page images
+// (pageImagesBase64 - camera-capture path) as the source content.
 // ---------------------------------------------------------------------
 
+type MarkingKeySourceType = "questionPaper" | "markingKey";
+
 interface DeriveMarkingKeyRequest {
-  questionPaperText: string;
+  sourceType?: MarkingKeySourceType;
+  questionPaperText?: string;
+  pageImagesBase64?: string[];
 }
 
 interface DerivedQuestion {
@@ -918,18 +928,46 @@ const deriveMarkingKeySchema = {
     notes: {
       type: "string",
       description:
-        "Anything a teacher should double-check before trusting this key - a mark allocation the paper " +
+        "Anything a teacher should double-check before trusting this key - a mark allocation the source " +
         "didn't actually state (so one was assumed), a question whose correct answer is genuinely " +
-        "debatable or curriculum-dependent, ambiguous numbering, etc. Empty string if nothing stood out.",
+        "debatable or curriculum-dependent, ambiguous/illegible numbering, etc. Empty string if nothing " +
+        "stood out.",
     },
   },
   required: ["questions", "notes"],
   additionalProperties: false,
 };
 
-function buildDeriveMarkingKeyPrompt(questionPaperText: string): string {
+function buildDeriveMarkingKeyPrompt(sourceType: MarkingKeySourceType, isImageSource: boolean): string {
+  const sourceDescription = isImageSource
+    ? "The attached images are photos of one document, in page order."
+    : "The following is the extracted text of one document.";
+
+  if (sourceType === "markingKey") {
+    return [
+      `${sourceDescription} It is an existing marking key / answer key for an assessment - it already ` +
+        "contains the expected answers and (usually) mark allocations. Read what is actually there and " +
+        "structure it - do NOT invent, improve, or second-guess an answer the key itself states, even if " +
+        "you think a different answer would be more correct; this is a transcription/structuring task, " +
+        "not an answering task.",
+      "For EACH question on it:",
+      "1. Use the key's own question label/number (e.g. 'Q1', '1.', '1a)').",
+      "2. Copy the expected answer/keywords as the key itself states them (handwritten or printed) - " +
+        "preserve the key's own wording rather than paraphrasing where practical.",
+      "3. Use the mark allocation the key itself states for that question. If none is shown for a " +
+        "question, make a reasonable estimate and say in notes which questions got an assumed allocation.",
+      "4. If any part of the key is illegible or ambiguous, say so plainly in that question's " +
+        "expectedAnswerOrKeywords AND in notes, rather than guessing at what it might say.",
+      "5. Skip pure instructions/rubric headers - only real, answerable questions belong in the result.",
+      "",
+      isImageSource ? "" : "--- MARKING KEY TEXT ---",
+      isImageSource ? "" : "",
+    ].join("\n");
+  }
+
   return [
-    "The following is the extracted text of an exam/test question paper. For EACH question on it:",
+    `${sourceDescription} It is an exam/test question paper - it does NOT contain its own answers. For ` +
+      "EACH question on it:",
     "1. Use the paper's own question label/number (e.g. 'Q1', '1.', '1a)').",
     "2. Write a concise, accurate model answer or a comma-separated list of key points a correct answer " +
       "should include, drawing on your own subject knowledge - the paper itself does not contain the " +
@@ -943,9 +981,6 @@ function buildDeriveMarkingKeyPrompt(questionPaperText: string): string {
       "notes which questions got an assumed rather than stated allocation.",
     "4. Skip pure instructions/rubric text ('Answer ALL questions in Section A', page headers, etc.) - " +
       "only real, answerable questions belong in the result.",
-    "",
-    "--- QUESTION PAPER TEXT ---",
-    questionPaperText,
   ].join("\n");
 }
 
@@ -956,18 +991,33 @@ export const deriveMarkingKeyFromQuestionPaper = onCall<DeriveMarkingKeyRequest>
       throw new HttpsError("unauthenticated", "Sign in is required to generate a marking key.");
     }
 
-    const { questionPaperText } = request.data ?? {};
-    if (typeof questionPaperText !== "string" || questionPaperText.trim().length === 0) {
-      throw new HttpsError("invalid-argument", "'questionPaperText' is required.");
+    const { questionPaperText, pageImagesBase64 } = request.data ?? {};
+    const sourceType: MarkingKeySourceType = request.data?.sourceType === "markingKey" ? "markingKey" : "questionPaper";
+    const hasText = typeof questionPaperText === "string" && questionPaperText.trim().length > 0;
+    const hasImages = Array.isArray(pageImagesBase64) && pageImagesBase64.length > 0;
+    if (!hasText && !hasImages) {
+      throw new HttpsError("invalid-argument", "Either 'questionPaperText' or 'pageImagesBase64' is required.");
     }
 
     const ai = new GoogleGenAI({ apiKey: geminiApiKey.value() });
+    const promptText = buildDeriveMarkingKeyPrompt(sourceType, hasImages);
+    const contents = hasImages
+      ? [
+          {
+            role: "user",
+            parts: [
+              { text: promptText },
+              ...pageImagesBase64!.map((b64) => ({ inlineData: { mimeType: "image/jpeg", data: b64 } })),
+            ],
+          },
+        ]
+      : `${promptText}\n${questionPaperText}`;
 
     let text: string | undefined;
     try {
       const response = await ai.models.generateContent({
         model: GEMINI_MODEL,
-        contents: buildDeriveMarkingKeyPrompt(questionPaperText),
+        contents,
         config: {
           responseMimeType: "application/json",
           responseJsonSchema: deriveMarkingKeySchema,
@@ -992,6 +1042,120 @@ export const deriveMarkingKeyFromQuestionPaper = onCall<DeriveMarkingKeyRequest>
     }
 
     return parsed;
+  }
+);
+
+// ---------------------------------------------------------------------
+// transcribeClassList — for teachers who mark scripts by hand and keep a
+// running handwritten class list (name + score) rather than using the
+// app's AI grading pipeline at all. Photographs of that list are
+// transcribed into a typed, structured list a teacher then reviews and
+// corrects (see ClassListImportScreen) before it becomes real
+// MarkingScript records - same "never trust AI output directly" pattern
+// as marking-key generation, just for names/scores instead of questions.
+// ---------------------------------------------------------------------
+
+interface TranscribeClassListRequest {
+  pageImagesBase64: string[];
+}
+
+interface TranscribedClassListEntry {
+  firstName: string;
+  surname: string;
+  score: number;
+}
+
+interface TranscribeClassListResponse {
+  entries: TranscribedClassListEntry[];
+  notes: string;
+}
+
+const transcribeClassListSchema = {
+  type: "object",
+  properties: {
+    entries: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          firstName: { type: "string" },
+          surname: { type: "string" },
+          score: { type: "number" },
+        },
+        required: ["firstName", "surname", "score"],
+        additionalProperties: false,
+      },
+    },
+    notes: {
+      type: "string",
+      description:
+        "Anything a teacher should double-check - a row whose handwriting was hard to read, a name that " +
+        "couldn't be confidently split into first/surname, a score that looked altered/unclear, a row " +
+        "skipped entirely because nothing legible could be read from it. Empty string if nothing stood out.",
+    },
+  },
+  required: ["entries", "notes"],
+  additionalProperties: false,
+};
+
+export const transcribeClassList = onCall<TranscribeClassListRequest>(
+  { secrets: [geminiApiKey], region: "us-central1", timeoutSeconds: 120, memory: "512MiB", maxInstances: 5 },
+  async (request): Promise<TranscribeClassListResponse> => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "Sign in is required to transcribe a class list.");
+    }
+
+    const { pageImagesBase64 } = request.data ?? {};
+    if (!Array.isArray(pageImagesBase64) || pageImagesBase64.length === 0) {
+      throw new HttpsError("invalid-argument", "'pageImagesBase64' must be a non-empty array.");
+    }
+
+    const ai = new GoogleGenAI({ apiKey: geminiApiKey.value() });
+    const prompt = [
+      "The attached images are photos of a handwritten (or printed) class list, in page order - each row " +
+        "is one student's name and their already-marked test score (a teacher marked these papers by " +
+        "hand and wrote down the totals).",
+      "For EACH row:",
+      "1. Read the student's name and split it into firstName and surname as best you can tell from the " +
+        "name's own order on the page (most name lists put surname first or last consistently - follow " +
+        "whichever the list itself appears to use, applied the same way for every row).",
+      "2. Read the numeric score exactly as written.",
+      "3. If a row's name or score is illegible or you are not confident, still include your best reading " +
+        "but say so plainly in notes (which row, what's uncertain) rather than silently guessing without " +
+        "flagging it. Never invent a row that isn't genuinely on the list.",
+      "4. Skip header rows, column titles, and anything that isn't an actual student entry.",
+    ].join("\n");
+
+    const imageParts = pageImagesBase64.map((b64) => ({
+      inlineData: { mimeType: "image/jpeg", data: b64 },
+    }));
+
+    let text: string | undefined;
+    try {
+      const response = await ai.models.generateContent({
+        model: GEMINI_MODEL,
+        contents: [{ role: "user", parts: [{ text: prompt }, ...imageParts] }],
+        config: {
+          responseMimeType: "application/json",
+          responseJsonSchema: transcribeClassListSchema,
+        },
+      });
+      text = response.text;
+    } catch (err) {
+      console.error("transcribeClassList: Gemini call failed", err);
+      throw new HttpsError("internal", "Failed to transcribe this class list. Please try again.");
+    }
+
+    if (!text) {
+      throw new HttpsError("internal", "The AI did not return any transcribed entries.");
+    }
+
+    try {
+      return JSON.parse(text) as TranscribeClassListResponse;
+    } catch (err) {
+      console.error("transcribeClassList: response was not valid JSON", text);
+      throw new HttpsError("internal", "The transcription response could not be parsed.");
+    }
   }
 );
 
