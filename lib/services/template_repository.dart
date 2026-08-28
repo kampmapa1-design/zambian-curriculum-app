@@ -39,11 +39,24 @@ class TemplateRepository {
   /// Each file supplies its own curriculum, so bundling templates from both
   /// the 2023 CBC and the 2013 OBC just means listing files from both in the
   /// manifest — no code change needed here.
+  ///
+  /// Each file is imported independently — one malformed template (a typo
+  /// in a hand-edited JSON file, a future asset that doesn't quite match
+  /// the expected shape) is logged and skipped rather than aborting the
+  /// whole loop, which would otherwise leave every OTHER subject/grade
+  /// unseeded too and surface as a raw error on every screen that opens
+  /// the subject/grade picker — far too broad a blast radius for one bad
+  /// file.
   Future<void> ensureAllSeeded() async {
     final manifest = await loadManifest();
     for (final entry in manifest) {
-      final raw = await rootBundle.loadString('assets/syllabi/${entry.file}');
-      await _db.importTemplate(jsonDecode(raw) as Map<String, dynamic>);
+      try {
+        final raw = await rootBundle.loadString('assets/syllabi/${entry.file}');
+        await _db.importTemplate(jsonDecode(raw) as Map<String, dynamic>);
+      } catch (error) {
+        // ignore: avoid_print
+        print('TemplateRepository.ensureAllSeeded: skipping ${entry.file} — $error');
+      }
     }
   }
 

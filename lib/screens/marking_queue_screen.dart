@@ -13,6 +13,7 @@ import '../services/marking_scheme_repository.dart';
 import '../services/marking_script_repository.dart';
 import 'burst_capture_screen.dart';
 import 'capture_manual_scores_screen.dart';
+import 'captured_list_analysis_intake_screen.dart';
 import 'marking_analysis_screen.dart';
 import 'marking_key_upload_flow.dart';
 import 'marking_review_screen.dart';
@@ -150,10 +151,56 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
     );
   }
 
-  /// "Analyze Results" — the 4th hub action. Asks which marking scheme
-  /// to analyze (skipping the question when there's only one) before
-  /// opening MarkingAnalysisScreen for it.
+  /// "Analyze Results" — the 4th hub action. First asks which source to
+  /// analyze: a fresh photo of an already-completed results list (not
+  /// tied to this app's own grading pipeline at all), or scripts already
+  /// marked/reviewed through the app.
   Future<void> _analyzeResults() async {
+    final choice = await showDialog<_AnalyzeSource>(
+      context: context,
+      builder: (dialogContext) => SimpleDialog(
+        title: const Text('Analyze Results'),
+        children: [
+          SimpleDialogOption(
+            onPressed: () => Navigator.of(dialogContext).pop(_AnalyzeSource.captureOnPaper),
+            child: const Row(
+              children: [
+                Icon(Icons.camera_alt_outlined),
+                SizedBox(width: 12),
+                Expanded(child: Text('Capture List On Paper?')),
+              ],
+            ),
+          ),
+          SimpleDialogOption(
+            onPressed: () => Navigator.of(dialogContext).pop(_AnalyzeSource.previousScripts),
+            child: const Row(
+              children: [
+                Icon(Icons.fact_check_outlined),
+                SizedBox(width: 12),
+                Expanded(child: Text('List of previously completed Scripts?')),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+    if (choice == null || !mounted) return;
+
+    if (choice == _AnalyzeSource.captureOnPaper) {
+      final scheme = await Navigator.of(context).push<MarkingScheme>(
+        MaterialPageRoute(
+          builder: (_) => CapturedListAnalysisIntakeScreen(schemeRepository: _schemeRepository, scriptRepository: _repository),
+        ),
+      );
+      if (scheme == null || !mounted) return;
+      await _load();
+      if (!mounted) return;
+      await Navigator.of(context).push(
+        MaterialPageRoute(builder: (_) => MarkingAnalysisScreen(scheme: scheme, scriptRepository: _repository)),
+      );
+      return;
+    }
+
     if (_schemes.schemes.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('No marking schemes yet — upload or build one first.')),
@@ -761,3 +808,5 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
     );
   }
 }
+
+enum _AnalyzeSource { captureOnPaper, previousScripts }
