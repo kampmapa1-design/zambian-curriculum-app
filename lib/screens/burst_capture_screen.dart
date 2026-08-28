@@ -22,9 +22,15 @@ import 'subject_grade_topic_picker_screen.dart';
 /// than a custom motion-detection pipeline, at the cost of a tap per page
 /// instead of true hands-free capture.
 class BurstCaptureScreen extends StatefulWidget {
-  const BurstCaptureScreen({super.key, this.repository});
+  const BurstCaptureScreen({super.key, this.repository, this.initialPageFiles});
 
   final MarkingScriptRepository? repository;
+
+  /// "Upload Script" → "Upload from device" — page images already picked
+  /// from the device's gallery/files, skipping the camera entirely. The
+  /// details form (name/gender/subject-grade) and everything after it
+  /// works identically either way; only how the pages arrive differs.
+  final List<File>? initialPageFiles;
 
   @override
   State<BurstCaptureScreen> createState() => _BurstCaptureScreenState();
@@ -101,7 +107,14 @@ class _BurstCaptureScreenState extends State<BurstCaptureScreen> {
       return;
     }
     setState(() => _sessionStarted = true);
-    _captureNextPage();
+    if (widget.initialPageFiles case final files? when files.isNotEmpty) {
+      setState(() => _capturedPages.addAll(files));
+      if (_firstNameController.text.trim().isEmpty && _surnameController.text.trim().isEmpty) {
+        _detectNameFromFirstPage();
+      }
+    } else {
+      _captureNextPage();
+    }
   }
 
   Future<void> _captureNextPage() async {

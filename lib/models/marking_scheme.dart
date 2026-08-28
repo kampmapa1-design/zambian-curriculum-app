@@ -58,6 +58,13 @@ class MarkingScheme {
   final List<MarkingSchemeQuestion> questions;
   final DateTime createdAt;
 
+  /// When true, MarksheetDocumentService keeps scripts in scriptNumber
+  /// order (capture/import order) instead of its normal alphabetical-by-
+  /// surname default — set from an explicit "Arrange in alphabetical
+  /// order?" / No answer at class-list-import time (see
+  /// ClassListImportScreen); false (alphabetical) for every other scheme.
+  final bool preserveScriptOrder;
+
   const MarkingScheme({
     required this.id,
     required this.title,
@@ -67,11 +74,13 @@ class MarkingScheme {
     this.subTopicName,
     required this.questions,
     required this.createdAt,
+    this.preserveScriptOrder = false,
   });
 
   double get totalMarks => questions.fold(0, (sum, q) => sum + q.maxMarks);
 
-  MarkingScheme copyWith({String? title, List<MarkingSchemeQuestion>? questions}) => MarkingScheme(
+  MarkingScheme copyWith({String? title, List<MarkingSchemeQuestion>? questions, bool? preserveScriptOrder}) =>
+      MarkingScheme(
         id: id,
         title: title ?? this.title,
         subjectName: subjectName,
@@ -80,6 +89,7 @@ class MarkingScheme {
         subTopicName: subTopicName,
         questions: questions ?? this.questions,
         createdAt: createdAt,
+        preserveScriptOrder: preserveScriptOrder ?? this.preserveScriptOrder,
       );
 
   factory MarkingScheme.fromJson(Map<String, dynamic> json) => MarkingScheme(
@@ -94,6 +104,7 @@ class MarkingScheme {
             .map(MarkingSchemeQuestion.fromJson)
             .toList(),
         createdAt: DateTime.parse(json['createdAt'] as String),
+        preserveScriptOrder: json['preserveScriptOrder'] as bool? ?? false,
       );
 
   Map<String, dynamic> toJson() => {
@@ -105,6 +116,7 @@ class MarkingScheme {
         'subTopicName': subTopicName,
         'questions': [for (final q in questions) q.toJson()],
         'createdAt': createdAt.toIso8601String(),
+        'preserveScriptOrder': preserveScriptOrder,
       };
 }
 

@@ -183,6 +183,23 @@ class _ClassListImportScreenState extends State<ClassListImportScreen> {
       }
     }
 
+    final alphabetical = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Arrange list in alphabetical order?'),
+        content: const Text(
+          'Yes sorts every marksheet export (PDF/Word/Excel) by surname. No keeps the order the rows are '
+          'in above — the order they were captured/transcribed in.',
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(dialogContext).pop(false), child: const Text('No')),
+          FilledButton(onPressed: () => Navigator.of(dialogContext).pop(true), child: const Text('Yes')),
+        ],
+      ),
+    );
+    if (!mounted || alphabetical == null) return;
+
     setState(() => _saving = true);
     try {
       final scheme = MarkingScheme(
@@ -196,6 +213,7 @@ class _ClassListImportScreenState extends State<ClassListImportScreen> {
           MarkingSchemeQuestion(label: 'Total', expectedAnswerOrKeywords: '(hand-marked by teacher)', maxMarks: total),
         ],
         createdAt: DateTime.now(),
+        preserveScriptOrder: !alphabetical,
       );
       await _schemeRepository.save(scheme);
 

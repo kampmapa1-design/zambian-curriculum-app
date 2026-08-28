@@ -36,19 +36,25 @@ class MarksheetDocumentService {
   /// Only [MarkingScriptStatus.reviewed] scripts count — anything still
   /// [MarkingScriptStatus.graded] hasn't cleared Stage 6's mandatory
   /// review yet, so it isn't a confirmed mark. Alphabetical by surname
-  /// (then first name) — the standard convention for a class list, and
-  /// scriptNumber (the old sort key) reflects nothing more meaningful
-  /// than capture/import order, which is especially arbitrary for a
-  /// class list transcribed all at once from a handwritten sheet.
-  List<MarkingScript> _confirmedScripts(List<MarkingScript> scripts) =>
-      scripts.where((s) => s.status == MarkingScriptStatus.reviewed && s.gradedAnswers != null).toList()
-        ..sort((a, b) {
-          final bySurname = a.surname.toLowerCase().compareTo(b.surname.toLowerCase());
-          return bySurname != 0 ? bySurname : a.firstName.toLowerCase().compareTo(b.firstName.toLowerCase());
-        });
+  /// (then first name) by default — the standard convention for a class
+  /// list — unless [MarkingScheme.preserveScriptOrder] says otherwise
+  /// (an explicit "keep list order" answer at class-list-import time), in
+  /// which case scriptNumber (capture/import order) is kept instead.
+  List<MarkingScript> _confirmedScripts(MarkingScheme scheme, List<MarkingScript> scripts) {
+    final confirmed = scripts.where((s) => s.status == MarkingScriptStatus.reviewed && s.gradedAnswers != null).toList();
+    if (scheme.preserveScriptOrder) {
+      confirmed.sort((a, b) => a.scriptNumber.compareTo(b.scriptNumber));
+    } else {
+      confirmed.sort((a, b) {
+        final bySurname = a.surname.toLowerCase().compareTo(b.surname.toLowerCase());
+        return bySurname != 0 ? bySurname : a.firstName.toLowerCase().compareTo(b.firstName.toLowerCase());
+      });
+    }
+    return confirmed;
+  }
 
   Future<File> generatePdf(MarkingScheme scheme, List<MarkingScript> scripts) async {
-    final confirmed = _confirmedScripts(scripts);
+    final confirmed = _confirmedScripts(scheme, scripts);
     final doc = pw.Document();
 
     doc.addPage(
@@ -132,7 +138,7 @@ class MarksheetDocumentService {
   // ---------------------------------------------------------------------
 
   Future<File> generateDocx(MarkingScheme scheme, List<MarkingScript> scripts) async {
-    final confirmed = _confirmedScripts(scripts);
+    final confirmed = _confirmedScripts(scheme, scripts);
     final archive = Archive();
     void addXml(String name, String xml) {
       final bytes = utf8.encode(xml);
@@ -280,7 +286,7 @@ class MarksheetDocumentService {
   /// app, with none of the binary-format risk of hand-building a real
   /// .xlsx file.
   Future<File> generateCsv(MarkingScheme scheme, List<MarkingScript> scripts) async {
-    final confirmed = _confirmedScripts(scripts);
+    final confirmed = _confirmedScripts(scheme, scripts);
     final buffer = StringBuffer();
 
     String csvField(String value) {

@@ -142,6 +142,15 @@ class MarkingScript {
   final String surname;
 
   final CandidateGender gender;
+
+  /// True when a teacher actually set [gender] (the details form always
+  /// requires it). False means it's a last-resort placeholder — see
+  /// ScriptBatchCaptureScreen, which doesn't stop to ask per script
+  /// during continuous capture — and the queue/review UI should visibly
+  /// flag it as needing a teacher's confirmation before it's trusted in
+  /// Analysis counts.
+  final bool genderConfirmed;
+
   final String? studentIdNumber;
   final int scriptNumber;
 
@@ -194,6 +203,7 @@ class MarkingScript {
     required this.firstName,
     required this.surname,
     required this.gender,
+    this.genderConfirmed = true,
     this.studentIdNumber,
     required this.scriptNumber,
     required this.subjectName,
@@ -231,6 +241,7 @@ class MarkingScript {
     String? firstName,
     String? surname,
     CandidateGender? gender,
+    bool? genderConfirmed,
     List<String>? pageFileNames,
     bool? photosDiscarded,
     MarkingScriptStatus? status,
@@ -245,6 +256,10 @@ class MarkingScript {
         firstName: firstName ?? this.firstName,
         surname: surname ?? this.surname,
         gender: gender ?? this.gender,
+        // Setting gender explicitly implies it's now confirmed, unless the
+        // caller says otherwise — covers both "teacher corrected it" (should
+        // become confirmed) and internal copies that pass neither.
+        genderConfirmed: genderConfirmed ?? (gender != null ? true : this.genderConfirmed),
         studentIdNumber: studentIdNumber,
         scriptNumber: scriptNumber,
         subjectName: subjectName,
@@ -287,6 +302,11 @@ class MarkingScript {
       firstName: firstName,
       surname: surname,
       gender: CandidateGender.fromDb(json['gender'] as String? ?? 'male'),
+      // Defaults true (not false) for back-compat: every script saved
+      // before this field existed came from the form-based capture flow,
+      // which always asked for gender explicitly - only the newer batch-
+      // capture flow ever writes false, and it always writes it explicitly.
+      genderConfirmed: json['genderConfirmed'] as bool? ?? true,
       studentIdNumber: json['studentIdNumber'] as String?,
       scriptNumber: json['scriptNumber'] as int,
       subjectName: json['subjectName'] as String? ?? 'Unknown subject',
@@ -310,6 +330,7 @@ class MarkingScript {
         'firstName': firstName,
         'surname': surname,
         'gender': gender.dbValue,
+        'genderConfirmed': genderConfirmed,
         'studentIdNumber': studentIdNumber,
         'scriptNumber': scriptNumber,
         'subjectName': subjectName,

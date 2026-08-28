@@ -1,14 +1,22 @@
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
 import '../models/marking_scheme.dart';
 import '../models/marking_script.dart';
+import '../services/batch_grading_runner.dart';
 import '../services/marking_entitlement_service.dart';
 import '../services/marking_grading_service.dart';
+import '../services/marking_key_generation_service.dart';
 import '../services/marking_scheme_repository.dart';
 import '../services/marking_script_repository.dart';
 import 'burst_capture_screen.dart';
+import 'class_list_import_screen.dart';
+import 'marking_key_upload_flow.dart';
 import 'marking_review_screen.dart';
 import 'marking_scheme_list_screen.dart';
+import 'script_batch_capture_screen.dart';
 
 /// AI-Assisted Marking, Stage 2 hub — every captured script sits here,
 /// grouped by status, until the teacher chooses to queue and process a
@@ -44,6 +52,7 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
   int _batchTotal = 0;
 
   int? _remainingFreeGradings;
+  bool _generatingKey = false;
 
   @override
   void initState() {
@@ -68,11 +77,76 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
     });
   }
 
-  Future<void> _startNewCapture() async {
+  /// "Upload Marking Key" — reveals the device/camera choice directly
+  /// (skipping "what do you have" — this button is explicitly for an
+  /// already-answered marking key, sourceType always
+  /// [MarkingKeySourceType.markingKey]) then runs the shared upload flow
+  /// (also used by MarkingSchemeListScreen's "New Scheme").
+  Future<void> _uploadMarkingKey(MarkingKeyUploadMethod method) async {
+    final saved = await runMarkingKeyUploadFlow(
+      context: context,
+      sourceType: MarkingKeySourceType.markingKey,
+      method: method,
+      schemeRepository: _schemeRepository,
+      onLoadingChanged: (loading) {
+        if (mounted) setState(() => _generatingKey = loading);
+      },
+    );
+    if (saved != null) _load();
+  }
+
+  /// "Upload Script" → "Upload from device" — one or more page images
+  /// already on the device (a script scanned/photographed elsewhere and
+  /// downloaded, or received via WhatsApp/email), fed into the same
+  /// details-form + save flow BurstCaptureScreen already uses for camera
+  /// capture, just skipping the camera itself.
+  Future<void> _uploadScriptFromDevice() async {
+    final results = await FilePicker.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['jpg', 'jpeg', 'png'],
+    );
+    if (results.isEmpty || !mounted) return;
+
+    final files = [for (final f in results) if (f.path != null) File(f.path!)];
+    if (files.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Could not read the selected file(s).')),
+      );
+      return;
+    }
+
     final result = await Navigator.of(context).push<MarkingScript>(
-      MaterialPageRoute(builder: (_) => BurstCaptureScreen(repository: _repository)),
+      MaterialPageRoute(builder: (_) => BurstCaptureScreen(repository: _repository, initialPageFiles: files)),
     );
     if (result != null) _load();
+  }
+
+  /// "Upload Script" → "Upload through camera" — the new continuous
+  /// batch-capture flow (many scripts in one session, offline until
+  /// explicitly confirmed) rather than BurstCaptureScreen's one-at-a-time
+  /// flow.
+  Future<void> _batchCaptureScripts() async {
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => ScriptBatchCaptureScreen(
+          repository: _repository,
+          schemeRepository: _schemeRepository,
+          gradingService: _gradingService,
+        ),
+      ),
+    );
+    _load();
+    _loadRemainingFreeGradings();
+  }
+
+  /// "Capture Manual Scores" — for teachers who mark entirely by hand.
+  Future<void> _captureManualScores() async {
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => ClassListImportScreen(schemeRepository: _schemeRepository, scriptRepository: _repository),
+      ),
+    );
+    _load();
   }
 
   void _toggleSelecting() {
@@ -149,12 +223,9 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
     );
   }
 
-  /// Stage 4 dispatch + a first-pass Stage 8: each script in the batch is
-  /// graded sequentially (never in parallel — keeps progress reporting
-  /// honest and avoids bursting the AI provider). A failure retries once
-  /// immediately; if that also fails the script is left as
-  /// [MarkingScriptStatus.needsRetry] with the error recorded, and the
-  /// rest of the batch keeps going rather than stopping cold.
+  /// Stage 4 dispatch + a first-pass Stage 8, via the shared
+  /// [runBatchGrading] runner (also used by ScriptBatchCaptureScreen's
+  /// "Mark all scripts?" confirmation, so both paths behave identically).
   ///
   /// The original spec's "retry via the fallback provider" isn't possible
   /// yet — this app doesn't have a second live provider (see the
@@ -172,58 +243,28 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
       _batchTotal = batch.length;
     });
 
-    for (final script in batch) {
-      // Stage 9 — checked per script, not once for the whole batch: a
-      // teacher partway through their free allowance should get as many
-      // scripts graded as they have left, then stop cleanly, rather than
-      // an all-or-nothing check against the batch size.
-      if (!await MarkingEntitlementService.instance.canGradeAnother()) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text(
-                "You've used this month's free AI-graded scripts. The rest of this batch stays queued "
-                'until next month (or an upgrade, once that\'s available).',
-              ),
-              duration: Duration(seconds: 6),
-            ),
-          );
-        }
-        break;
-      }
+    var ranOutOfFreeGradings = false;
+    await runBatchGrading(
+      scripts: batch,
+      scheme: scheme,
+      repository: _repository,
+      gradingService: _gradingService,
+      onProgress: (done, total) {
+        if (mounted) setState(() => _processedCount = done);
+      },
+      onOutOfFreeGradings: () => ranOutOfFreeGradings = true,
+    );
 
-      await _repository.update(script.copyWith(status: MarkingScriptStatus.processing));
-      if (mounted) setState(() {});
-
-      MarkingScript result;
-      try {
-        final pageFiles = await _repository.pageFilesFor(script);
-        final graded = await _gradingService.grade(pageFiles: pageFiles, scheme: scheme);
-        result = script.copyWith(
-          status: MarkingScriptStatus.graded,
-          gradedAnswers: graded.answers,
-          observations: graded.observations,
-          clearLastError: true,
-        );
-        await MarkingEntitlementService.instance.recordGradingUsed();
-      } catch (firstError) {
-        try {
-          final pageFiles = await _repository.pageFilesFor(script);
-          final graded = await _gradingService.grade(pageFiles: pageFiles, scheme: scheme);
-          result = script.copyWith(
-            status: MarkingScriptStatus.graded,
-            gradedAnswers: graded.answers,
-            observations: graded.observations,
-            clearLastError: true,
-          );
-          await MarkingEntitlementService.instance.recordGradingUsed();
-        } catch (secondError) {
-          result = script.copyWith(status: MarkingScriptStatus.needsRetry, lastError: secondError.toString());
-        }
-      }
-
-      await _repository.update(result);
-      if (mounted) setState(() => _processedCount++);
+    if (ranOutOfFreeGradings && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            "You've used this month's free AI-graded scripts. The rest of this batch stays queued "
+            'until next month (or an upgrade, once that\'s available).',
+          ),
+          duration: Duration(seconds: 6),
+        ),
+      );
     }
 
     setState(() => _processingBatchLabel = null);
@@ -404,15 +445,15 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
       ),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
-          : _catalog.scripts.isEmpty
-              ? _buildEmptyState(context)
-              : _buildQueueList(context, queuedByScheme),
-      floatingActionButton: _selecting
-          ? null
-          : FloatingActionButton.extended(
-              onPressed: _startNewCapture,
-              icon: const Icon(Icons.camera_alt_outlined),
-              label: const Text('New Script'),
+          : Column(
+              children: [
+                if (!_selecting) _buildActionButtons(context),
+                Expanded(
+                  child: _catalog.scripts.isEmpty
+                      ? _buildEmptyState(context)
+                      : _buildQueueList(context, queuedByScheme),
+                ),
+              ],
             ),
       bottomNavigationBar: _selecting && _selectedIds.isNotEmpty
           ? SafeArea(
@@ -429,6 +470,89 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
     );
   }
 
+  /// Left: "Upload Marking Key" and "Upload Script", each with a
+  /// device/camera dropdown. Right: "Capture Manual Scores", for
+  /// teachers who mark entirely by hand.
+  Widget _buildActionButtons(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(12, 12, 12, 4),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Column(
+              children: [
+                _buildDropdownActionButton(
+                  context,
+                  label: 'Upload Marking Key',
+                  icon: Icons.fact_check_outlined,
+                  busy: _generatingKey,
+                  items: const [
+                    PopupMenuItem(value: 'device', child: Text('Upload from device')),
+                    PopupMenuItem(value: 'camera', child: Text('Upload through camera')),
+                  ],
+                  onSelected: (value) => _uploadMarkingKey(
+                    value == 'device' ? MarkingKeyUploadMethod.uploadFromDevice : MarkingKeyUploadMethod.camera,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                _buildDropdownActionButton(
+                  context,
+                  label: 'Upload Script',
+                  icon: Icons.description_outlined,
+                  items: const [
+                    PopupMenuItem(value: 'device', child: Text('Upload from device')),
+                    PopupMenuItem(value: 'camera', child: Text('Upload through camera')),
+                  ],
+                  onSelected: (value) =>
+                      value == 'device' ? _uploadScriptFromDevice() : _batchCaptureScripts(),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: OutlinedButton.icon(
+              onPressed: _captureManualScores,
+              icon: const Icon(Icons.edit_note_outlined),
+              label: const Text('Capture Manual Scores', textAlign: TextAlign.center),
+              style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16)),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// A button that, when tapped, "reveals" its two options as a dropdown
+  /// (PopupMenuButton) — the Flutter-native equivalent of the requested
+  /// "click and it reveals two working option buttons in a drop-down
+  /// list".
+  Widget _buildDropdownActionButton(
+    BuildContext context, {
+    required String label,
+    required IconData icon,
+    required List<PopupMenuEntry<String>> items,
+    required ValueChanged<String> onSelected,
+    bool busy = false,
+  }) {
+    return PopupMenuButton<String>(
+      enabled: !busy,
+      itemBuilder: (context) => items,
+      onSelected: onSelected,
+      child: IgnorePointer(
+        child: FilledButton.icon(
+          onPressed: () {},
+          icon: busy
+              ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
+              : Icon(icon),
+          label: Expanded(child: Text(label, overflow: TextOverflow.ellipsis)),
+          style: FilledButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 12)),
+        ),
+      ),
+    );
+  }
+
   Widget _buildEmptyState(BuildContext context) {
     return Center(
       child: Padding(
@@ -439,8 +563,8 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
             Icon(Icons.document_scanner_outlined, size: 48, color: Theme.of(context).colorScheme.outline),
             const SizedBox(height: 12),
             const Text(
-              'No scripts captured yet. Tap "New Script" to photograph a student\'s answer script — '
-              'entirely offline.',
+              'No scripts captured yet. Use "Upload Script" above to photograph or upload a student\'s '
+              'answer script — entirely offline.',
               textAlign: TextAlign.center,
             ),
           ],
@@ -545,7 +669,8 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
           ],
         ),
         subtitle: Text(
-          '${script.subjectName} · ${script.gradeName} · ${script.gender.label}\n'
+          '${script.subjectName} · ${script.gradeName} · ${script.gender.label}'
+          '${script.genderConfirmed ? '' : ' (unconfirmed)'}\n'
           '${script.pageCount} page(s)${script.photosDiscarded ? ' (discarded)' : ''}'
           '${script.studentIdNumber != null ? ' · ID ${script.studentIdNumber}' : ''}'
           ' · ${script.status.label}'

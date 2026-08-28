@@ -60,6 +60,8 @@ class _AnswerControllers {
 class _MarkingReviewScreenState extends State<MarkingReviewScreen> {
   late final MarkingScriptRepository _repository = widget.repository ?? MarkingScriptRepository();
   late final List<_AnswerControllers> _rows;
+  late CandidateGender _gender = widget.script.gender;
+  late bool _genderConfirmed = widget.script.genderConfirmed;
   List<File> _pageFiles = [];
   bool _loadingPages = true;
   bool _saving = false;
@@ -108,6 +110,12 @@ class _MarkingReviewScreenState extends State<MarkingReviewScreen> {
   double get _totalPossible => _rows.fold(0, (sum, r) => sum + r.maxMarks);
 
   Future<void> _confirmAndFinish() async {
+    if (!_genderConfirmed) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Confirm this candidate's gender before finishing — it wasn't collected during batch capture.")),
+      );
+      return;
+    }
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
@@ -140,7 +148,12 @@ class _MarkingReviewScreenState extends State<MarkingReviewScreen> {
         ),
     ];
 
-    final updated = widget.script.copyWith(status: MarkingScriptStatus.reviewed, gradedAnswers: updatedAnswers);
+    final updated = widget.script.copyWith(
+      status: MarkingScriptStatus.reviewed,
+      gradedAnswers: updatedAnswers,
+      gender: _gender,
+      genderConfirmed: true,
+    );
     await _repository.update(updated);
     if (!mounted) return;
     Navigator.of(context).pop();
@@ -199,6 +212,7 @@ class _MarkingReviewScreenState extends State<MarkingReviewScreen> {
                             ],
                           ),
                         ),
+                      if (!_genderConfirmed) _buildGenderConfirmationCard(context),
                       if (widget.script.observations case final obs? when obs.isNotEmpty)
                         _buildObservationsCard(context, obs),
                       for (var i = 0; i < _rows.length; i++) _buildAnswerCard(context, i),
@@ -228,6 +242,52 @@ class _MarkingReviewScreenState extends State<MarkingReviewScreen> {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  /// Shown only when [MarkingScript.genderConfirmed] is false — a script
+  /// from ScriptBatchCaptureScreen's continuous capture, which doesn't
+  /// stop to ask per script. Required before [_confirmAndFinish] will
+  /// proceed, so an unconfirmed placeholder never silently counts toward
+  /// Analysis's gender breakdown.
+  Widget _buildGenderConfirmationCard(BuildContext context) {
+    return Card(
+      color: Theme.of(context).colorScheme.errorContainer,
+      margin: const EdgeInsets.only(bottom: 12),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.wc_outlined, size: 18, color: Theme.of(context).colorScheme.onErrorContainer),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    "Confirm this candidate's gender — not collected during batch capture.",
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Theme.of(context).colorScheme.onErrorContainer,
+                        ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            SegmentedButton<CandidateGender>(
+              segments: const [
+                ButtonSegment(value: CandidateGender.male, label: Text('Male')),
+                ButtonSegment(value: CandidateGender.female, label: Text('Female')),
+              ],
+              selected: {_gender},
+              onSelectionChanged: (selection) => setState(() {
+                _gender = selection.first;
+                _genderConfirmed = true;
+              }),
+            ),
+          ],
         ),
       ),
     );

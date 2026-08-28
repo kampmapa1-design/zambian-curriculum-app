@@ -1,6 +1,3 @@
-import 'dart:io';
-
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -12,10 +9,9 @@ import '../services/marking_key_generation_service.dart';
 import '../services/marking_scheme_repository.dart';
 import '../services/marking_script_repository.dart';
 import '../services/marksheet_document_service.dart';
-import '../services/subject_content_extraction_service.dart';
 import 'class_list_import_screen.dart';
-import 'document_pages_capture_screen.dart';
 import 'marking_analysis_screen.dart';
+import 'marking_key_upload_flow.dart';
 import 'marking_scheme_builder_screen.dart';
 import 'subject_grade_topic_picker_screen.dart';
 import 'term_topic_picker_screen.dart';
@@ -40,8 +36,6 @@ class _MarkingSchemeListScreenState extends State<MarkingSchemeListScreen> {
   late final MarkingSchemeRepository _repository = widget.repository ?? MarkingSchemeRepository();
   late final MarkingScriptRepository _scriptRepository = widget.scriptRepository ?? MarkingScriptRepository();
   late final MarksheetDocumentService _marksheetService = widget.marksheetService ?? MarksheetDocumentService();
-  final SubjectContentExtractionService _textExtractionService = SubjectContentExtractionService();
-  final MarkingKeyGenerationService _keyGenerationService = MarkingKeyGenerationService();
 
   MarkingSchemeCatalog _catalog = MarkingSchemeCatalog.empty();
   bool _loading = true;
@@ -136,13 +130,13 @@ class _MarkingSchemeListScreenState extends State<MarkingSchemeListScreen> {
         ? MarkingKeySourceType.markingKey
         : MarkingKeySourceType.questionPaper;
 
-    final method = await showDialog<_SourceMethod>(
+    final method = await showDialog<MarkingKeyUploadMethod>(
       context: context,
       builder: (dialogContext) => SimpleDialog(
         title: const Text('How will you provide it?'),
         children: [
           SimpleDialogOption(
-            onPressed: () => Navigator.of(dialogContext).pop(_SourceMethod.uploadFromDevice),
+            onPressed: () => Navigator.of(dialogContext).pop(MarkingKeyUploadMethod.uploadFromDevice),
             child: const Row(
               children: [
                 Icon(Icons.upload_file_outlined),
@@ -152,7 +146,7 @@ class _MarkingSchemeListScreenState extends State<MarkingSchemeListScreen> {
             ),
           ),
           SimpleDialogOption(
-            onPressed: () => Navigator.of(dialogContext).pop(_SourceMethod.camera),
+            onPressed: () => Navigator.of(dialogContext).pop(MarkingKeyUploadMethod.camera),
             child: const Row(
               children: [
                 Icon(Icons.camera_alt_outlined),
@@ -166,103 +160,14 @@ class _MarkingSchemeListScreenState extends State<MarkingSchemeListScreen> {
     );
     if (method == null || !mounted) return;
 
-    if (method == _SourceMethod.uploadFromDevice) {
-      await _generateFromDeviceFile(template, entry, sourceType);
-    } else {
-      await _generateFromCamera(template, entry, sourceType);
-    }
-  }
-
-  /// Stage B (device-upload path) — picks a file already on the device
-  /// (a marking key downloaded via email/WhatsApp/browser is just as
-  /// likely to be a photo/screenshot as an actual PDF) and routes it
-  /// correctly either way: a PDF goes through server-side text extraction
-  /// (reusing the same path as Subject Content Database uploads), an
-  /// image goes straight to Gemini vision, same as the camera-capture
-  /// path. Either way the derived draft hands off to the SAME builder
-  /// screen used for manual entry — pre-filled, always reviewed, never
-  /// auto-saved. See MarkingKeyGenerationService and the Cloud Function's
-  /// own comment for why this can't just be trusted directly.
-  Future<void> _generateFromDeviceFile(
-    SyllabusTemplate template,
-    SchemeOfWorkEntry entry,
-    MarkingKeySourceType sourceType,
-  ) async {
-    final results = await FilePicker.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png'],
-    );
-    if (results.isEmpty || !mounted) return;
-    final file = results.single;
-    final extension = file.name.contains('.') ? file.name.split('.').last.toLowerCase() : '';
-    final isImage = ['jpg', 'jpeg', 'png'].contains(extension);
-
-    setState(() => _generatingKey = true);
-    try {
-      final bytes = await file.readAsBytes();
-      final derived = isImage
-          ? await _keyGenerationService.deriveFromImageBytes([bytes], sourceType: sourceType)
-          : await _keyGenerationService.deriveFromText(
-              await _textExtractionService.extractText(bytes),
-              sourceType: sourceType,
-            );
-      await _finishGenerating(template, entry, derived);
-    } catch (error) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Could not generate a marking key: $error')),
-      );
-    } finally {
-      if (mounted) setState(() => _generatingKey = false);
-    }
-  }
-
-  /// Stage B (camera path) — same as [_generateFromDeviceFile] but
-  /// starting from photographed pages instead of an uploaded file, for a
-  /// question paper
-  /// or marking key that only exists on paper.
-  Future<void> _generateFromCamera(
-    SyllabusTemplate template,
-    SchemeOfWorkEntry entry,
-    MarkingKeySourceType sourceType,
-  ) async {
-    final pages = await Navigator.of(context).push<List<File>>(
-      MaterialPageRoute(
-        builder: (_) => DocumentPagesCaptureScreen(
-          title: sourceType == MarkingKeySourceType.markingKey ? 'Capture Marking Key' : 'Capture Question Paper',
-        ),
-      ),
-    );
-    if (pages == null || pages.isEmpty || !mounted) return;
-
-    setState(() => _generatingKey = true);
-    try {
-      final derived = await _keyGenerationService.deriveFromImages(pages, sourceType: sourceType);
-      await _finishGenerating(template, entry, derived);
-    } catch (error) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Could not generate a marking key: $error')),
-      );
-    } finally {
-      if (mounted) setState(() => _generatingKey = false);
-    }
-  }
-
-  Future<void> _finishGenerating(SyllabusTemplate template, SchemeOfWorkEntry entry, DerivedMarkingKey derived) async {
-    if (!mounted) return;
-    final saved = await Navigator.of(context).push<MarkingScheme>(
-      MaterialPageRoute(
-        builder: (_) => MarkingSchemeBuilderScreen(
-          subjectName: template.subject.name,
-          gradeName: template.grade.name,
-          topicName: entry.topic.name,
-          subTopicName: entry.subTopic?.name,
-          initialQuestions: derived.questions,
-          aiNotes: derived.notes,
-          repository: _repository,
-        ),
-      ),
+    final saved = await runMarkingKeyUploadFlow(
+      context: context,
+      sourceType: sourceType,
+      method: method,
+      schemeRepository: _repository,
+      onLoadingChanged: (loading) {
+        if (mounted) setState(() => _generatingKey = loading);
+      },
     );
     if (saved != null) _load();
   }
@@ -436,7 +341,5 @@ class _MarkingSchemeListScreenState extends State<MarkingSchemeListScreen> {
 }
 
 enum _NewSchemeChoice { manual, fromQuestionPaper, fromExistingKey }
-
-enum _SourceMethod { uploadFromDevice, camera }
 
 enum _MarksheetFormat { pdf, docx, csv }
