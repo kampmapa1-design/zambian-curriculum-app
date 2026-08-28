@@ -63,8 +63,10 @@ class MarkingGradingService {
       'gradeMarkingScript',
       options: HttpsCallableOptions(timeout: const Duration(seconds: 170)),
     );
+
+    Object? rawData;
     try {
-      final result = await callable.call<Map<Object?, Object?>>({
+      final result = await callable.call<Object?>({
         'pageImagesBase64': pageImagesBase64,
         'questions': [
           for (final q in scheme.questions)
@@ -75,39 +77,60 @@ class MarkingGradingService {
             },
         ],
       });
-
-      final answersRaw = (result.data['answers'] as List?) ?? const [];
-      final byLabel = {
-        for (final a in answersRaw.cast<Map<Object?, Object?>>()) a['questionLabel'] as String: a,
-      };
-
-      // Built from the scheme's own question list, not just whatever the
-      // AI returned — a question the AI skipped still shows up (as
-      // low-confidence/zero marks) rather than silently vanishing from
-      // the review screen.
-      final answers = [
-        for (final q in scheme.questions)
-          if (byLabel[q.label] case final a?)
-            GradedAnswer(
-              questionLabel: q.label,
-              maxMarks: q.maxMarks,
-              transcribedAnswer: a['transcribedAnswer'] as String? ?? '',
-              marksAwarded: ((a['marksAwarded'] as num?) ?? 0).toDouble().clamp(0, q.maxMarks),
-              confidence: MarkingConfidence.fromValue(a['confidence'] as String? ?? 'low'),
-            )
-          else
-            GradedAnswer(
-              questionLabel: q.label,
-              maxMarks: q.maxMarks,
-              transcribedAnswer: '(no answer returned by the AI for this question)',
-              marksAwarded: 0,
-              confidence: MarkingConfidence.low,
-            ),
-      ];
-      final observations = ((result.data['observations'] as List?) ?? const []).cast<String>();
-      return MarkingGradingResult(answers: answers, observations: observations);
+      rawData = result.data;
     } on FirebaseFunctionsException catch (e) {
       throw MarkingGradingUnavailable(e.message ?? 'Failed to grade this script.');
     }
+
+    // Defensive from here on — `is` checks rather than blind casts, so a
+    // response that doesn't match the expected shape produces a clear
+    // message (and a normal needsRetry, via runBatchGrading's own
+    // catch) instead of a raw Dart TypeError. See
+    // ClassListTranscriptionService.transcribe for the same pattern and
+    // the bug it was added to fix.
+    if (rawData is! Map) {
+      throw const MarkingGradingUnavailable('The grading response was in an unexpected format.');
+    }
+    final responseData = rawData;
+    final answersRaw = responseData['answers'];
+    if (answersRaw is! List) {
+      throw const MarkingGradingUnavailable('The grading response was in an unexpected format.');
+    }
+
+    final byLabel = <String, Map>{};
+    for (final a in answersRaw) {
+      if (a is! Map) continue;
+      final label = a['questionLabel'];
+      if (label is String) byLabel[label] = a;
+    }
+
+    // Built from the scheme's own question list, not just whatever the
+    // AI returned — a question the AI skipped still shows up (as
+    // low-confidence/zero marks) rather than silently vanishing from
+    // the review screen.
+    final answers = [
+      for (final q in scheme.questions)
+        if (byLabel[q.label] case final a?)
+          GradedAnswer(
+            questionLabel: q.label,
+            maxMarks: q.maxMarks,
+            transcribedAnswer: a['transcribedAnswer'] is String ? a['transcribedAnswer'] as String : '',
+            marksAwarded:
+                (a['marksAwarded'] is num ? (a['marksAwarded'] as num).toDouble() : 0.0).clamp(0, q.maxMarks).toDouble(),
+            confidence: MarkingConfidence.fromValue(a['confidence'] is String ? a['confidence'] as String : 'low'),
+          )
+        else
+          GradedAnswer(
+            questionLabel: q.label,
+            maxMarks: q.maxMarks,
+            transcribedAnswer: '(no answer returned by the AI for this question)',
+            marksAwarded: 0,
+            confidence: MarkingConfidence.low,
+          ),
+    ];
+
+    final observationsRaw = responseData['observations'];
+    final observations = observationsRaw is List ? observationsRaw.whereType<String>().toList() : <String>[];
+    return MarkingGradingResult(answers: answers, observations: observations);
   }
 }

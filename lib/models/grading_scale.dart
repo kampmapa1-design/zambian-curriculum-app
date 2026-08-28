@@ -11,33 +11,53 @@ enum GradingSystem {
       };
 }
 
-/// One named grade band under a [GradingSystem] — e.g. "Distinction" for
-/// British, "A" for American — with the percentage range that earns it.
+/// One named grade band under a [GradingSystem] — the numbered ECZ-style
+/// 1-9 scale for British, a plain letter for American — with the
+/// percentage range that earns it. [numericGrade] is null for American,
+/// since that system doesn't use one.
 class GradeBand {
   final String label;
+  final int? numericGrade;
   final double minPercentInclusive;
 
-  const GradeBand({required this.label, required this.minPercentInclusive});
+  const GradeBand({required this.label, this.numericGrade, required this.minPercentInclusive});
+
+  /// "1st Class Distinction (1)" for British, "A" for American (no
+  /// numeric grade to append).
+  String get fullLabel => numericGrade == null ? label : '$label ($numericGrade)';
 }
 
-/// British-style bands, highest first. These percentage boundaries come
-/// from a directly-quoted ECZ circular found during research (2026-08-28)
-/// — Distinction 75-100, Merit 60-74, Credit 50-59, Satisfactory 40-49,
-/// Fail 0-39 — but a second source gave a different Distinction/Merit
-/// split (70 instead of 75). Flagged to the user rather than silently
-/// resolved; change this one list if the correct figure turns out to be
-/// different — nothing else in this feature needs to change.
+/// The full numbered 1-9 ECZ-style scale, highest first — not the
+/// collapsed 5-band version (Distinction/Merit/Credit/Satisfactory/Fail)
+/// used before this was refined: each of the 9 individual grades gets
+/// its own named band, per the explicit spec (1st/2nd Class Distinction,
+/// Merit 3/4, Credit 5/6, Pass 7/8, Fail 9).
+///
+/// Percentage boundaries come from a finer 9-point breakdown found during
+/// research (2026-08-28) of ECZ's published grading circulars — the same
+/// source whose collapsed 5-band totals (Distinction 75-100, Merit
+/// 60-74, Credit 50-59, Satisfactory 40-49, Fail 0-39) a second source
+/// broadly agreed with, disagreeing only on exactly where Distinction
+/// ends and Merit begins (70 vs 75). This 9-point table resolves that by
+/// construction (grade 1 starts at 75, grade 2 covers 70-74), but if ECZ's
+/// exact current figures turn out to differ, this is the one list to
+/// change — nothing else in this feature depends on the specific numbers.
 const List<GradeBand> britishGradeBands = [
-  GradeBand(label: 'Distinction', minPercentInclusive: 75),
-  GradeBand(label: 'Merit', minPercentInclusive: 60),
-  GradeBand(label: 'Credit', minPercentInclusive: 50),
-  GradeBand(label: 'Satisfactory', minPercentInclusive: 40),
-  GradeBand(label: 'Fail', minPercentInclusive: 0),
+  GradeBand(label: '1st Class Distinction', numericGrade: 1, minPercentInclusive: 75),
+  GradeBand(label: '2nd Class Distinction', numericGrade: 2, minPercentInclusive: 70),
+  GradeBand(label: 'Merit', numericGrade: 3, minPercentInclusive: 65),
+  GradeBand(label: 'Merit', numericGrade: 4, minPercentInclusive: 60),
+  GradeBand(label: 'Credit', numericGrade: 5, minPercentInclusive: 55),
+  GradeBand(label: 'Credit', numericGrade: 6, minPercentInclusive: 50),
+  GradeBand(label: 'Pass', numericGrade: 7, minPercentInclusive: 45),
+  GradeBand(label: 'Pass', numericGrade: 8, minPercentInclusive: 40),
+  GradeBand(label: 'Fail', numericGrade: 9, minPercentInclusive: 0),
 ];
 
 /// Standard American letter-grade convention. Unlike the British bands,
 /// this one isn't contested in what was found - A/B/C/D/F on a 90/80/70/
-/// 60 split is the near-universal convention.
+/// 60 split is the near-universal convention. No numeric grade — the
+/// American system doesn't use one.
 const List<GradeBand> americanGradeBands = [
   GradeBand(label: 'A', minPercentInclusive: 90),
   GradeBand(label: 'B', minPercentInclusive: 80),

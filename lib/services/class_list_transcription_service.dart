@@ -59,24 +59,48 @@ class ClassListTranscriptionService {
       'transcribeClassList',
       options: HttpsCallableOptions(timeout: const Duration(seconds: 110)),
     );
+
+    Object? rawData;
     try {
       final images = [for (final f in pageFiles) base64Encode(await f.readAsBytes())];
-      final result = await callable.call<Map<Object?, Object?>>({'pageImagesBase64': images});
-      final entriesRaw = (result.data['entries'] as List?) ?? const [];
-      final entries = [
-        for (final e in entriesRaw.cast<Map<Object?, Object?>>())
-          TranscribedClassListEntry(
-            firstName: e['firstName'] as String? ?? '',
-            surname: e['surname'] as String? ?? '',
-            score: ((e['score'] as num?) ?? 0).toDouble(),
-          ),
-      ];
-      if (entries.isEmpty) {
-        throw const ClassListTranscriptionUnavailable('No rows could be found on that class list.');
-      }
-      return TranscribedClassList(entries: entries, notes: result.data['notes'] as String? ?? '');
+      final result = await callable.call<Object?>({'pageImagesBase64': images});
+      rawData = result.data;
     } on FirebaseFunctionsException catch (e) {
       throw ClassListTranscriptionUnavailable(e.message ?? 'Failed to transcribe this class list.');
     }
+
+    // Defensive from here on — validated with `is` checks rather than
+    // blind casts, so a response that doesn't match the expected shape
+    // (a genuine AI slip, or any future change to what the Cloud
+    // Function returns) produces a clear, actionable message instead of
+    // a raw Dart TypeError leaking to the UI. Rows that don't match are
+    // skipped individually rather than failing the whole transcription.
+    if (rawData is! Map) {
+      throw const ClassListTranscriptionUnavailable('The transcription response was in an unexpected format.');
+    }
+    final data = rawData;
+    final entriesRaw = data['entries'];
+    if (entriesRaw is! List) {
+      throw const ClassListTranscriptionUnavailable('The transcription response was in an unexpected format.');
+    }
+
+    final entries = <TranscribedClassListEntry>[];
+    for (final e in entriesRaw) {
+      if (e is! Map) continue;
+      final firstName = e['firstName'];
+      final surname = e['surname'];
+      final score = e['score'];
+      entries.add(TranscribedClassListEntry(
+        firstName: firstName is String ? firstName : '',
+        surname: surname is String ? surname : '',
+        score: score is num ? score.toDouble() : 0,
+      ));
+    }
+    if (entries.isEmpty) {
+      throw const ClassListTranscriptionUnavailable('No rows could be found on that class list.');
+    }
+
+    final notes = data['notes'];
+    return TranscribedClassList(entries: entries, notes: notes is String ? notes : '');
   }
 }

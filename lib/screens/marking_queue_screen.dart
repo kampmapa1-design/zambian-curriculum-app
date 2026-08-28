@@ -13,6 +13,7 @@ import '../services/marking_scheme_repository.dart';
 import '../services/marking_script_repository.dart';
 import 'burst_capture_screen.dart';
 import 'class_list_import_screen.dart';
+import 'marking_analysis_screen.dart';
 import 'marking_key_upload_flow.dart';
 import 'marking_review_screen.dart';
 import 'marking_scheme_list_screen.dart';
@@ -147,6 +148,39 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
       ),
     );
     _load();
+  }
+
+  /// "Analyze Results" — the 4th hub action. Asks which marking scheme
+  /// to analyze (skipping the question when there's only one) before
+  /// opening MarkingAnalysisScreen for it.
+  Future<void> _analyzeResults() async {
+    if (_schemes.schemes.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No marking schemes yet — upload or build one first.')),
+      );
+      return;
+    }
+
+    final scheme = _schemes.schemes.length == 1
+        ? _schemes.schemes.single
+        : await showDialog<MarkingScheme>(
+            context: context,
+            builder: (dialogContext) => SimpleDialog(
+              title: const Text('Analyze results for which marking key?'),
+              children: [
+                for (final s in _schemes.schemes)
+                  SimpleDialogOption(
+                    onPressed: () => Navigator.of(dialogContext).pop(s),
+                    child: Text(s.title),
+                  ),
+              ],
+            ),
+          );
+    if (scheme == null || !mounted) return;
+
+    await Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => MarkingAnalysisScreen(scheme: scheme, scriptRepository: _repository)),
+    );
   }
 
   void _toggleSelecting() {
@@ -512,11 +546,28 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
           ),
           const SizedBox(width: 8),
           Expanded(
-            child: OutlinedButton.icon(
-              onPressed: _captureManualScores,
-              icon: const Icon(Icons.edit_note_outlined),
-              label: const Text('Capture Manual Scores', textAlign: TextAlign.center),
-              style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16)),
+            child: Column(
+              children: [
+                OutlinedButton.icon(
+                  onPressed: _captureManualScores,
+                  icon: const Icon(Icons.edit_note_outlined),
+                  label: const Text('Capture Manual Scores', textAlign: TextAlign.center),
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    minimumSize: const Size.fromHeight(0),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                OutlinedButton.icon(
+                  onPressed: _analyzeResults,
+                  icon: const Icon(Icons.query_stats_outlined),
+                  label: const Text('Analyze Results', textAlign: TextAlign.center),
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    minimumSize: const Size.fromHeight(0),
+                  ),
+                ),
+              ],
             ),
           ),
         ],

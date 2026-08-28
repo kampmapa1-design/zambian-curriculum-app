@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../models/grading_scale.dart';
 import '../models/marking_scheme.dart';
 import '../models/marking_script.dart';
+import '../services/analysis_document_service.dart';
 import '../services/marking_script_repository.dart';
 import '../widgets/timed_choice_dialog.dart';
 
@@ -27,12 +29,14 @@ enum _SortMode { rankedHighestFirst, alphabetical }
 
 class _MarkingAnalysisScreenState extends State<MarkingAnalysisScreen> {
   late final MarkingScriptRepository _repository = widget.scriptRepository ?? MarkingScriptRepository();
+  final AnalysisDocumentService _documentService = AnalysisDocumentService();
 
   bool _loading = true;
   bool _cancelled = false;
   List<MarkingScript> _scripts = [];
   GradingSystem? _system;
   _SortMode _sortMode = _SortMode.rankedHighestFirst;
+  bool _exporting = false;
 
   @override
   void initState() {
@@ -79,16 +83,18 @@ class _MarkingAnalysisScreenState extends State<MarkingAnalysisScreen> {
     return (awarded / possible) * 100;
   }
 
-  /// gender -> band label -> count, plus the band order itself (so the
-  /// table renders highest-band-first regardless of Map iteration order).
+  /// gender -> band's fullLabel -> count. Keyed by fullLabel, not label —
+  /// the numbered scale has two bands sharing the same plain label
+  /// (Merit appears for both grade 3 and grade 4, etc.), so label alone
+  /// isn't a unique key; fullLabel ("Merit (3)") always is.
   Map<CandidateGender, Map<String, int>> get _counts {
     final system = _system!;
     final counts = <CandidateGender, Map<String, int>>{
-      for (final g in CandidateGender.values) g: {for (final b in gradeBandsFor(system)) b.label: 0},
+      for (final g in CandidateGender.values) g: {for (final b in gradeBandsFor(system)) b.fullLabel: 0},
     };
     for (final s in _scripts) {
       final band = classify(_percentFor(s), system);
-      counts[s.gender]![band.label] = (counts[s.gender]![band.label] ?? 0) + 1;
+      counts[s.gender]![band.fullLabel] = (counts[s.gender]![band.fullLabel] ?? 0) + 1;
     }
     return counts;
   }
@@ -104,6 +110,28 @@ class _MarkingAnalysisScreenState extends State<MarkingAnalysisScreen> {
       sorted.sort((a, b) => _percentFor(b).compareTo(_percentFor(a)));
     }
     return sorted;
+  }
+
+  List<AnalysisResultRow> get _resultRows => [
+        for (final s in _sortedScripts) AnalysisResultRow(script: s, percent: _percentFor(s), band: classify(_percentFor(s), _system!)),
+      ];
+
+  Future<void> _export({required bool asDocx}) async {
+    setState(() => _exporting = true);
+    try {
+      final file = asDocx
+          ? await _documentService.generateDocx(scheme: widget.scheme, rows: _resultRows, system: _system!, counts: _counts)
+          : await _documentService.generatePdf(scheme: widget.scheme, rows: _resultRows, system: _system!, counts: _counts);
+      if (!mounted) return;
+      await SharePlus.instance.share(
+        ShareParams(files: [XFile(file.path)], subject: 'Performance Analysis — ${widget.scheme.title}'),
+      );
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Could not create the analysis document: $error')));
+    } finally {
+      if (mounted) setState(() => _exporting = false);
+    }
   }
 
   Future<void> _changeGradingSystem() async {
@@ -123,8 +151,28 @@ class _MarkingAnalysisScreenState extends State<MarkingAnalysisScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final canExport = !_loading && !_cancelled && _scripts.isNotEmpty && _system != null;
     return Scaffold(
-      appBar: AppBar(title: Text('Analysis — ${widget.scheme.title}')),
+      appBar: AppBar(
+        title: Text('Analysis — ${widget.scheme.title}'),
+        actions: [
+          if (canExport)
+            _exporting
+                ? const Padding(
+                    padding: EdgeInsets.all(16),
+                    child: SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2)),
+                  )
+                : PopupMenuButton<String>(
+                    icon: const Icon(Icons.share_outlined),
+                    tooltip: 'Export & share',
+                    onSelected: (choice) => _export(asDocx: choice == 'docx'),
+                    itemBuilder: (context) => const [
+                      PopupMenuItem(value: 'pdf', child: Text('Export as PDF')),
+                      PopupMenuItem(value: 'docx', child: Text('Export as Word')),
+                    ],
+                  ),
+        ],
+      ),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : _cancelled
@@ -238,14 +286,14 @@ class _MarkingAnalysisScreenState extends State<MarkingAnalysisScreen> {
             columnSpacing: 20,
             columns: [
               const DataColumn(label: Text('')),
-              for (final band in bands) DataColumn(label: Text(band.label)),
+              for (final band in bands) DataColumn(label: Text(band.fullLabel)),
               const DataColumn(label: Text('Total')),
             ],
             rows: [
               for (final gender in CandidateGender.values)
                 DataRow(cells: [
                   DataCell(Text(gender.label, style: const TextStyle(fontWeight: FontWeight.bold))),
-                  for (final band in bands) DataCell(Text('${counts[gender]![band.label]}')),
+                  for (final band in bands) DataCell(Text('${counts[gender]![band.fullLabel]}')),
                   DataCell(Text(
                     '${counts[gender]!.values.fold(0, (a, b) => a + b)}',
                     style: const TextStyle(fontWeight: FontWeight.bold),
@@ -255,7 +303,7 @@ class _MarkingAnalysisScreenState extends State<MarkingAnalysisScreen> {
                 const DataCell(Text('All', style: TextStyle(fontWeight: FontWeight.bold))),
                 for (final band in bands)
                   DataCell(Text(
-                    '${CandidateGender.values.fold(0, (sum, g) => sum + (counts[g]![band.label] ?? 0))}',
+                    '${CandidateGender.values.fold(0, (sum, g) => sum + (counts[g]![band.fullLabel] ?? 0))}',
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   )),
                 DataCell(Text('${_scripts.length}', style: const TextStyle(fontWeight: FontWeight.bold))),
@@ -286,7 +334,7 @@ class _MarkingAnalysisScreenState extends State<MarkingAnalysisScreen> {
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                   Text(
-                    classify(_percentFor(script), _system!).label,
+                    classify(_percentFor(script), _system!).fullLabel,
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                 ],

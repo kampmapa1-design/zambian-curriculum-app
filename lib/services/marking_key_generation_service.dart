@@ -85,23 +85,46 @@ class MarkingKeyGenerationService {
       'deriveMarkingKeyFromQuestionPaper',
       options: HttpsCallableOptions(timeout: const Duration(seconds: 110)),
     );
+
+    Object? rawData;
     try {
-      final result = await callable.call<Map<Object?, Object?>>(data);
-      final questionsRaw = (result.data['questions'] as List?) ?? const [];
-      final questions = [
-        for (final q in questionsRaw.cast<Map<Object?, Object?>>())
-          MarkingSchemeQuestion(
-            label: q['label'] as String? ?? '',
-            expectedAnswerOrKeywords: q['expectedAnswerOrKeywords'] as String? ?? '',
-            maxMarks: ((q['maxMarks'] as num?) ?? 0).toDouble(),
-          ),
-      ];
-      if (questions.isEmpty) {
-        throw const MarkingKeyGenerationUnavailable('No questions could be found on that document.');
-      }
-      return DerivedMarkingKey(questions: questions, notes: result.data['notes'] as String? ?? '');
+      final result = await callable.call<Object?>(data);
+      rawData = result.data;
     } on FirebaseFunctionsException catch (e) {
       throw MarkingKeyGenerationUnavailable(e.message ?? 'Failed to generate a marking key.');
     }
+
+    // Defensive from here on — `is` checks rather than blind casts, so a
+    // response that doesn't match the expected shape produces a clear
+    // message instead of a raw Dart TypeError leaking to the UI. See
+    // ClassListTranscriptionService.transcribe for the same pattern and
+    // the bug it was added to fix.
+    if (rawData is! Map) {
+      throw const MarkingKeyGenerationUnavailable('The marking key response was in an unexpected format.');
+    }
+    final responseData = rawData;
+    final questionsRaw = responseData['questions'];
+    if (questionsRaw is! List) {
+      throw const MarkingKeyGenerationUnavailable('The marking key response was in an unexpected format.');
+    }
+
+    final questions = <MarkingSchemeQuestion>[];
+    for (final q in questionsRaw) {
+      if (q is! Map) continue;
+      final label = q['label'];
+      final expected = q['expectedAnswerOrKeywords'];
+      final maxMarks = q['maxMarks'];
+      questions.add(MarkingSchemeQuestion(
+        label: label is String ? label : '',
+        expectedAnswerOrKeywords: expected is String ? expected : '',
+        maxMarks: maxMarks is num ? maxMarks.toDouble() : 0,
+      ));
+    }
+    if (questions.isEmpty) {
+      throw const MarkingKeyGenerationUnavailable('No questions could be found on that document.');
+    }
+
+    final notes = responseData['notes'];
+    return DerivedMarkingKey(questions: questions, notes: notes is String ? notes : '');
   }
 }
