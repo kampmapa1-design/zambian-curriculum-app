@@ -1046,63 +1046,64 @@ export const deriveMarkingKeyFromQuestionPaper = onCall<DeriveMarkingKeyRequest>
 );
 
 // ---------------------------------------------------------------------
-// transcribeClassList — for teachers who mark scripts by hand and keep a
-// running handwritten class list (name + score) rather than using the
-// app's AI grading pipeline at all. Photographs of that list are
-// transcribed into a typed, structured list a teacher then reviews and
-// corrects (see ClassListImportScreen) before it becomes real
-// MarkingScript records - same "never trust AI output directly" pattern
-// as marking-key generation, just for names/scores instead of questions.
+// transcribeHandwrittenList — for teachers who mark scripts by hand and
+// keep a running handwritten class list rather than using the app's AI
+// grading pipeline at all. Photographs of that list (whatever pattern it
+// uses - a table with columns, a plain name+score list, anything else)
+// are transcribed GENERICALLY as a table (headers if the list has them,
+// plus rows of cells) - not forced into a fixed name/score shape, so it
+// reproduces whatever was actually on the page. See
+// GenericListDocumentService (client) for how this becomes an actual
+// editable .docx a teacher can open in Word and correct directly, rather
+// than a review UI inside the app.
 // ---------------------------------------------------------------------
 
-interface TranscribeClassListRequest {
+interface TranscribeHandwrittenListRequest {
   pageImagesBase64: string[];
 }
 
-interface TranscribedClassListEntry {
-  firstName: string;
-  surname: string;
-  score: number;
-}
-
-interface TranscribeClassListResponse {
-  entries: TranscribedClassListEntry[];
+interface TranscribeHandwrittenListResponse {
+  headers: string[];
+  rows: string[][];
   notes: string;
 }
 
-const transcribeClassListSchema = {
+const transcribeHandwrittenListSchema = {
   type: "object",
   properties: {
-    entries: {
+    headers: {
+      type: "array",
+      items: { type: "string" },
+      description:
+        "Column headers, in left-to-right order, exactly as they appear on the list (e.g. 'Name', " +
+        "'Score', 'Gender') - empty array if the list has no header row at all.",
+    },
+    rows: {
       type: "array",
       items: {
-        type: "object",
-        properties: {
-          firstName: { type: "string" },
-          surname: { type: "string" },
-          score: { type: "number" },
-        },
-        required: ["firstName", "surname", "score"],
-        additionalProperties: false,
+        type: "array",
+        items: { type: "string" },
+        description: "One row's cell values, in the same left-to-right column order as headers.",
       },
+      description: "One entry per array for each row on the list, top to bottom, page order.",
     },
     notes: {
       type: "string",
       description:
-        "Anything a teacher should double-check - a row whose handwriting was hard to read, a name that " +
-        "couldn't be confidently split into first/surname, a score that looked altered/unclear, a row " +
-        "skipped entirely because nothing legible could be read from it. Empty string if nothing stood out.",
+        "Anything a teacher should double-check - a cell whose handwriting was hard to read, a row that " +
+        "looked altered/unclear, a row skipped entirely because nothing legible could be read from it. " +
+        "Empty string if nothing stood out.",
     },
   },
-  required: ["entries", "notes"],
+  required: ["headers", "rows", "notes"],
   additionalProperties: false,
 };
 
-export const transcribeClassList = onCall<TranscribeClassListRequest>(
+export const transcribeHandwrittenList = onCall<TranscribeHandwrittenListRequest>(
   { secrets: [geminiApiKey], region: "us-central1", timeoutSeconds: 120, memory: "512MiB", maxInstances: 5 },
-  async (request): Promise<TranscribeClassListResponse> => {
+  async (request): Promise<TranscribeHandwrittenListResponse> => {
     if (!request.auth) {
-      throw new HttpsError("unauthenticated", "Sign in is required to transcribe a class list.");
+      throw new HttpsError("unauthenticated", "Sign in is required to transcribe a list.");
     }
 
     const { pageImagesBase64 } = request.data ?? {};
@@ -1112,18 +1113,23 @@ export const transcribeClassList = onCall<TranscribeClassListRequest>(
 
     const ai = new GoogleGenAI({ apiKey: geminiApiKey.value() });
     const prompt = [
-      "The attached images are photos of a handwritten (or printed) class list, in page order - each row " +
-        "is one student's name and their already-marked test score (a teacher marked these papers by " +
-        "hand and wrote down the totals).",
-      "For EACH row:",
-      "1. Read the student's name and split it into firstName and surname as best you can tell from the " +
-        "name's own order on the page (most name lists put surname first or last consistently - follow " +
-        "whichever the list itself appears to use, applied the same way for every row).",
-      "2. Read the numeric score exactly as written.",
-      "3. If a row's name or score is illegible or you are not confident, still include your best reading " +
-        "but say so plainly in notes (which row, what's uncertain) rather than silently guessing without " +
-        "flagging it. Never invent a row that isn't genuinely on the list.",
-      "4. Skip header rows, column titles, and anything that isn't an actual student entry.",
+      "The attached images are photos of a handwritten (or printed) list a teacher kept, in page order - " +
+        "typically a class list of student names and marks a teacher recorded after marking scripts by " +
+        "hand, but read whatever is ACTUALLY on the page, in whatever layout it genuinely uses.",
+      "1. If the list has column headers (e.g. 'Name', 'Score', 'Gender', 'Remarks'), read them exactly as " +
+        "written, left to right, into 'headers'. If there are no headers at all, return an empty array - " +
+        "do not invent headers that aren't genuinely on the page.",
+      "2. Read every data row, top to bottom in page order, into 'rows' - each row is an array of cell " +
+        "values in the same left-to-right column order as the headers (or, if there were no headers, in " +
+        "whatever consistent column order the list itself uses).",
+      "3. Preserve the list's own structure - if it's a table with ruled columns, follow those columns " +
+        "exactly. If it's a simpler list (e.g. just 'Name - Score' per line with no table), still split " +
+        "each line into logical cells the same way for every row.",
+      "4. If a cell is illegible or you're not confident, still include your best reading but say so " +
+        "plainly in notes (which row, what's uncertain) rather than silently guessing without flagging " +
+        "it. Never invent a row that isn't genuinely on the list.",
+      "5. Skip page headers/titles that aren't actually a column-header row, and skip anything that isn't " +
+        "genuinely an entry on the list.",
     ].join("\n");
 
     const imageParts = pageImagesBase64.map((b64) => ({
@@ -1137,23 +1143,23 @@ export const transcribeClassList = onCall<TranscribeClassListRequest>(
         contents: [{ role: "user", parts: [{ text: prompt }, ...imageParts] }],
         config: {
           responseMimeType: "application/json",
-          responseJsonSchema: transcribeClassListSchema,
+          responseJsonSchema: transcribeHandwrittenListSchema,
         },
       });
       text = response.text;
     } catch (err) {
-      console.error("transcribeClassList: Gemini call failed", err);
-      throw new HttpsError("internal", "Failed to transcribe this class list. Please try again.");
+      console.error("transcribeHandwrittenList: Gemini call failed", err);
+      throw new HttpsError("internal", "Failed to transcribe this list. Please try again.");
     }
 
     if (!text) {
-      throw new HttpsError("internal", "The AI did not return any transcribed entries.");
+      throw new HttpsError("internal", "The AI did not return any transcribed rows.");
     }
 
     try {
-      return JSON.parse(text) as TranscribeClassListResponse;
+      return JSON.parse(text) as TranscribeHandwrittenListResponse;
     } catch (err) {
-      console.error("transcribeClassList: response was not valid JSON", text);
+      console.error("transcribeHandwrittenList: response was not valid JSON", text);
       throw new HttpsError("internal", "The transcription response could not be parsed.");
     }
   }

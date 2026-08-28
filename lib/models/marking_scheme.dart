@@ -60,9 +60,10 @@ class MarkingScheme {
 
   /// When true, MarksheetDocumentService keeps scripts in scriptNumber
   /// order (capture/import order) instead of its normal alphabetical-by-
-  /// surname default — set from an explicit "Arrange in alphabetical
-  /// order?" / No answer at class-list-import time (see
-  /// ClassListImportScreen); false (alphabetical) for every other scheme.
+  /// surname default. False (alphabetical) for every scheme created
+  /// through the app's current flows; kept as a real, respected field
+  /// rather than removed in case a future capture path wants to offer
+  /// the choice again.
   final bool preserveScriptOrder;
 
   const MarkingScheme({

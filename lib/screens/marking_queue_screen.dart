@@ -12,7 +12,7 @@ import '../services/marking_key_generation_service.dart';
 import '../services/marking_scheme_repository.dart';
 import '../services/marking_script_repository.dart';
 import 'burst_capture_screen.dart';
-import 'class_list_import_screen.dart';
+import 'capture_manual_scores_screen.dart';
 import 'marking_analysis_screen.dart';
 import 'marking_key_upload_flow.dart';
 import 'marking_review_screen.dart';
@@ -140,14 +140,14 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
     _loadRemainingFreeGradings();
   }
 
-  /// "Capture Manual Scores" — for teachers who mark entirely by hand.
+  /// "Capture Manual Scores" — for teachers who mark entirely by hand:
+  /// photograph a handwritten list (any pattern/table) and get back an
+  /// editable Word document reproducing it. Self-contained — nothing
+  /// here touches this screen's own state, so no _load() needed after.
   Future<void> _captureManualScores() async {
     await Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => ClassListImportScreen(schemeRepository: _schemeRepository, scriptRepository: _repository),
-      ),
+      MaterialPageRoute(builder: (_) => const CaptureManualScoresScreen()),
     );
-    _load();
   }
 
   /// "Analyze Results" — the 4th hub action. Asks which marking scheme

@@ -9,7 +9,6 @@ import '../services/marking_key_generation_service.dart';
 import '../services/marking_scheme_repository.dart';
 import '../services/marking_script_repository.dart';
 import '../services/marksheet_document_service.dart';
-import 'class_list_import_screen.dart';
 import 'marking_analysis_screen.dart';
 import 'marking_key_upload_flow.dart';
 import 'marking_scheme_builder_screen.dart';
@@ -172,15 +171,6 @@ class _MarkingSchemeListScreenState extends State<MarkingSchemeListScreen> {
     if (saved != null) _load();
   }
 
-  Future<void> _importClassList() async {
-    final saved = await Navigator.of(context).push<MarkingScheme>(
-      MaterialPageRoute(
-        builder: (_) => ClassListImportScreen(schemeRepository: _repository, scriptRepository: _scriptRepository),
-      ),
-    );
-    if (saved != null) _load();
-  }
-
   Future<void> _edit(MarkingScheme scheme) async {
     final saved = await Navigator.of(context).push<MarkingScheme>(
       MaterialPageRoute(
@@ -253,16 +243,7 @@ class _MarkingSchemeListScreenState extends State<MarkingSchemeListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Marking Schemes'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.groups_outlined),
-            tooltip: 'Import Handwritten Class List',
-            onPressed: _importClassList,
-          ),
-        ],
-      ),
+      appBar: AppBar(title: const Text('Marking Schemes')),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : _catalog.schemes.isEmpty

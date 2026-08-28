@@ -97,7 +97,7 @@ class MarkingKeyGenerationService {
     // Defensive from here on — `is` checks rather than blind casts, so a
     // response that doesn't match the expected shape produces a clear
     // message instead of a raw Dart TypeError leaking to the UI. See
-    // ClassListTranscriptionService.transcribe for the same pattern and
+    // HandwrittenListTranscriptionService.transcribe for the same pattern and
     // the bug it was added to fix.
     if (rawData is! Map) {
       throw const MarkingKeyGenerationUnavailable('The marking key response was in an unexpected format.');

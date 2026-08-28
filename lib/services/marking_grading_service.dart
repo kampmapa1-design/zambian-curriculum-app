@@ -86,7 +86,7 @@ class MarkingGradingService {
     // response that doesn't match the expected shape produces a clear
     // message (and a normal needsRetry, via runBatchGrading's own
     // catch) instead of a raw Dart TypeError. See
-    // ClassListTranscriptionService.transcribe for the same pattern and
+    // HandwrittenListTranscriptionService.transcribe for the same pattern and
     // the bug it was added to fix.
     if (rawData is! Map) {
       throw const MarkingGradingUnavailable('The grading response was in an unexpected format.');
