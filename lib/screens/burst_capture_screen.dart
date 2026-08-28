@@ -113,6 +113,11 @@ class _BurstCaptureScreenState extends State<BurstCaptureScreen> {
           requireBothSides: false,
           enableAutoCapture: true,
           showCloseButton: true,
+          // Stage H — meaningfully smaller files than the package's
+          // default (90) while staying clear enough for both a teacher's
+          // own review and AI grading; document scans hold up fine well
+          // below photographic quality.
+          imageQuality: 75,
           bottomHintText: 'Page ${_capturedPages.length + 1} — hold the script flat and steady',
           onDocumentSaved: (data) => Navigator.of(context).pop(data),
         ),

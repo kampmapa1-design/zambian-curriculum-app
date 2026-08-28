@@ -153,8 +153,21 @@ class MarkingScript {
 
   /// File names only (relative to this script's own subdirectory), in
   /// page order — not full paths, since the app documents directory
-  /// itself can move between app versions/reinstalls.
+  /// itself can move between app versions/reinstalls. Still populated
+  /// (and [pageCount] still reports the real original count) even after
+  /// [photosDiscarded] — see that field's doc for why the list itself is
+  /// deliberately not cleared.
   final List<String> pageFileNames;
+
+  /// Stage H — once true, the files [pageFileNames] names no longer exist
+  /// on disk (deliberately deleted to free storage; see
+  /// MarkingScriptRepository.discardPhotos), while every mark/answer/
+  /// observation on this script is kept exactly as before. The names
+  /// themselves stay in [pageFileNames] purely so [pageCount] keeps
+  /// reporting how many pages this script originally had — no code should
+  /// ever attempt to actually open a file from [pageFileNames] once this
+  /// is true.
+  final bool photosDiscarded;
 
   final DateTime capturedAt;
   final MarkingScriptStatus status;
@@ -186,6 +199,7 @@ class MarkingScript {
     required this.subjectName,
     required this.gradeName,
     required this.pageFileNames,
+    this.photosDiscarded = false,
     required this.capturedAt,
     this.status = MarkingScriptStatus.captured,
     this.schemeId,
@@ -218,6 +232,7 @@ class MarkingScript {
     String? surname,
     CandidateGender? gender,
     List<String>? pageFileNames,
+    bool? photosDiscarded,
     MarkingScriptStatus? status,
     String? schemeId,
     List<GradedAnswer>? gradedAnswers,
@@ -235,6 +250,7 @@ class MarkingScript {
         subjectName: subjectName,
         gradeName: gradeName,
         pageFileNames: pageFileNames ?? this.pageFileNames,
+        photosDiscarded: photosDiscarded ?? this.photosDiscarded,
         capturedAt: capturedAt,
         status: status ?? this.status,
         schemeId: schemeId ?? this.schemeId,
@@ -276,6 +292,7 @@ class MarkingScript {
       subjectName: json['subjectName'] as String? ?? 'Unknown subject',
       gradeName: json['gradeName'] as String? ?? 'Unknown grade',
       pageFileNames: (json['pageFileNames'] as List).cast<String>(),
+      photosDiscarded: json['photosDiscarded'] as bool? ?? false,
       capturedAt: DateTime.parse(json['capturedAt'] as String),
       status: MarkingScriptStatus.fromDb(json['status'] as String? ?? 'captured'),
       schemeId: json['schemeId'] as String?,
@@ -298,6 +315,7 @@ class MarkingScript {
         'subjectName': subjectName,
         'gradeName': gradeName,
         'pageFileNames': pageFileNames,
+        'photosDiscarded': photosDiscarded,
         'capturedAt': capturedAt.toIso8601String(),
         'status': status.dbValue,
         'schemeId': schemeId,

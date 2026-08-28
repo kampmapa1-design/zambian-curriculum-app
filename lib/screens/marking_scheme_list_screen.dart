@@ -11,6 +11,7 @@ import '../services/marking_scheme_repository.dart';
 import '../services/marking_script_repository.dart';
 import '../services/marksheet_document_service.dart';
 import '../services/subject_content_extraction_service.dart';
+import 'marking_analysis_screen.dart';
 import 'marking_scheme_builder_screen.dart';
 import 'subject_grade_topic_picker_screen.dart';
 import 'term_topic_picker_screen.dart';
@@ -179,6 +180,12 @@ class _MarkingSchemeListScreenState extends State<MarkingSchemeListScreen> {
     if (saved != null) _load();
   }
 
+  Future<void> _openAnalysis(MarkingScheme scheme) async {
+    await Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => MarkingAnalysisScreen(scheme: scheme, scriptRepository: _scriptRepository)),
+    );
+  }
+
   Future<void> _delete(MarkingScheme scheme) async {
     final confirmed = await showDialog<bool>(
       context: context,
@@ -196,7 +203,7 @@ class _MarkingSchemeListScreenState extends State<MarkingSchemeListScreen> {
     _load();
   }
 
-  Future<void> _exportMarksheet(MarkingScheme scheme, {required bool asCsv}) async {
+  Future<void> _exportMarksheet(MarkingScheme scheme, {required _MarksheetFormat format}) async {
     final allScripts = (await _scriptRepository.loadCatalog()).scripts;
     final scripts = allScripts.where((s) => s.schemeId == scheme.id).toList();
     final reviewedCount = scripts.where((s) => s.status == MarkingScriptStatus.reviewed).length;
@@ -211,9 +218,11 @@ class _MarkingSchemeListScreenState extends State<MarkingSchemeListScreen> {
 
     setState(() => _exportingSchemeId = scheme.id);
     try {
-      final file = asCsv
-          ? await _marksheetService.generateCsv(scheme, scripts)
-          : await _marksheetService.generatePdf(scheme, scripts);
+      final file = switch (format) {
+        _MarksheetFormat.pdf => await _marksheetService.generatePdf(scheme, scripts),
+        _MarksheetFormat.docx => await _marksheetService.generateDocx(scheme, scripts),
+        _MarksheetFormat.csv => await _marksheetService.generateCsv(scheme, scripts),
+      };
       if (!mounted) return;
       await SharePlus.instance.share(ShareParams(files: [XFile(file.path)], subject: 'Marksheet — ${scheme.title}'));
     } catch (error) {
@@ -269,17 +278,23 @@ class _MarkingSchemeListScreenState extends State<MarkingSchemeListScreen> {
                                     switch (choice) {
                                       case 'edit':
                                         _edit(scheme);
+                                      case 'analysis':
+                                        _openAnalysis(scheme);
                                       case 'pdf':
-                                        _exportMarksheet(scheme, asCsv: false);
+                                        _exportMarksheet(scheme, format: _MarksheetFormat.pdf);
+                                      case 'docx':
+                                        _exportMarksheet(scheme, format: _MarksheetFormat.docx);
                                       case 'csv':
-                                        _exportMarksheet(scheme, asCsv: true);
+                                        _exportMarksheet(scheme, format: _MarksheetFormat.csv);
                                       case 'delete':
                                         _delete(scheme);
                                     }
                                   },
                                   itemBuilder: (context) => const [
                                     PopupMenuItem(value: 'edit', child: Text('Edit')),
+                                    PopupMenuItem(value: 'analysis', child: Text('Analysis')),
                                     PopupMenuItem(value: 'pdf', child: Text('Export Marksheet (PDF)')),
+                                    PopupMenuItem(value: 'docx', child: Text('Export Marksheet (Word)')),
                                     PopupMenuItem(value: 'csv', child: Text('Export Marksheet (Excel/CSV)')),
                                     PopupMenuItem(value: 'delete', child: Text('Delete')),
                                   ],
@@ -300,3 +315,5 @@ class _MarkingSchemeListScreenState extends State<MarkingSchemeListScreen> {
 }
 
 enum _NewSchemeChoice { manual, fromQuestionPaper }
+
+enum _MarksheetFormat { pdf, docx, csv }

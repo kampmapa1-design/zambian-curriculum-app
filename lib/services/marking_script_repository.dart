@@ -94,11 +94,34 @@ class MarkingScriptRepository {
   }
 
   /// Full local paths to a script's page images, in page order — for
-  /// display, review, or eventual upload to AI grading.
+  /// display, review, or eventual upload to AI grading. Enforced here,
+  /// not just documented on the model: once [MarkingScript.photosDiscarded]
+  /// is true the files genuinely no longer exist, so this always returns
+  /// empty rather than handing back paths to files that were deliberately
+  /// deleted (see [discardPhotos]).
   Future<List<File>> pageFilesFor(MarkingScript script) async {
+    if (script.photosDiscarded) return [];
     final root = await getApplicationDocumentsDirectory();
     final scriptDir = p.join(root.path, _contentDirName, script.id);
     return [for (final name in script.pageFileNames) File(p.join(scriptDir, name))];
+  }
+
+  /// Stage H — deletes a script's captured page images to free storage
+  /// while keeping everything else (marks, transcriptions, observations,
+  /// status) exactly as-is and retrievable. Irreversible: once the files
+  /// are gone there's no undo, so the caller (see MarkingQueueScreen)
+  /// confirms with the teacher first and only offers this for scripts
+  /// already [MarkingScriptStatus.reviewed] — a script whose grading
+  /// still might need a retry (which re-uploads the images) must keep
+  /// them.
+  Future<MarkingScript> discardPhotos(MarkingScript script) async {
+    final root = await getApplicationDocumentsDirectory();
+    final scriptDir = Directory(p.join(root.path, _contentDirName, script.id));
+    if (await scriptDir.exists()) await scriptDir.delete(recursive: true);
+
+    final updated = script.copyWith(photosDiscarded: true);
+    await update(updated);
+    return updated;
   }
 
   Future<void> updateStatus(MarkingScript script, MarkingScriptStatus status) async {

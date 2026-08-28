@@ -158,7 +158,27 @@ class _MarkingReviewScreenState extends State<MarkingReviewScreen> {
           ? const Center(child: CircularProgressIndicator())
           : Column(
               children: [
-                if (_pageFiles.isNotEmpty) _buildPageViewer(context),
+                if (_pageFiles.isNotEmpty)
+                  _buildPageViewer(context)
+                else if (widget.script.photosDiscarded)
+                  Container(
+                    width: double.infinity,
+                    color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+                    child: Row(
+                      children: [
+                        Icon(Icons.image_not_supported_outlined, size: 18, color: Theme.of(context).colorScheme.outline),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            'Photos for this script were discarded to free storage — the marks, '
+                            'transcriptions, and observations below are unaffected.',
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 Expanded(
                   child: ListView(
                     padding: const EdgeInsets.fromLTRB(16, 12, 16, 96),

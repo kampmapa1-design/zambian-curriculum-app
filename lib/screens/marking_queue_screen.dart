@@ -246,6 +246,30 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
     );
   }
 
+  /// Stage H — irreversible (see MarkingScriptRepository.discardPhotos'
+  /// own doc), so this confirms explicitly and states plainly what stays
+  /// and what goes, rather than a generic "are you sure?".
+  Future<void> _discardPhotos(MarkingScript script) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Discard captured photos?'),
+        content: Text(
+          "${script.fullName}'s ${script.pageCount} captured page image(s) will be permanently deleted to "
+          'free up storage. The grades, transcriptions, and AI observations already recorded for this '
+          'script are kept and remain fully viewable — only the photos themselves are removed.',
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(dialogContext).pop(false), child: const Text('Cancel')),
+          FilledButton(onPressed: () => Navigator.of(dialogContext).pop(true), child: const Text('Discard Photos')),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+    await _repository.discardPhotos(script);
+    _load();
+  }
+
   Future<void> _deleteScript(MarkingScript script) async {
     final confirmed = await showDialog<bool>(
       context: context,
@@ -522,7 +546,7 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
         ),
         subtitle: Text(
           '${script.subjectName} · ${script.gradeName} · ${script.gender.label}\n'
-          '${script.pageCount} page(s)'
+          '${script.pageCount} page(s)${script.photosDiscarded ? ' (discarded)' : ''}'
           '${script.studentIdNumber != null ? ' · ID ${script.studentIdNumber}' : ''}'
           ' · ${script.status.label}'
           '${script.status == MarkingScriptStatus.needsRetry && script.lastError != null ? ' — ${script.lastError}' : ''}',
@@ -543,6 +567,12 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
                       icon: const Icon(Icons.refresh),
                       tooltip: 'Retry',
                       onPressed: () => _retryScript(script),
+                    ),
+                  if (script.status == MarkingScriptStatus.reviewed && !script.photosDiscarded)
+                    IconButton(
+                      icon: const Icon(Icons.image_not_supported_outlined),
+                      tooltip: 'Discard photos (keep results)',
+                      onPressed: () => _discardPhotos(script),
                     ),
                   IconButton(
                     icon: const Icon(Icons.delete_outline),
