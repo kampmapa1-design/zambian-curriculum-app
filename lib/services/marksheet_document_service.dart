@@ -35,10 +35,17 @@ class MarksheetDocumentService {
 
   /// Only [MarkingScriptStatus.reviewed] scripts count — anything still
   /// [MarkingScriptStatus.graded] hasn't cleared Stage 6's mandatory
-  /// review yet, so it isn't a confirmed mark.
+  /// review yet, so it isn't a confirmed mark. Alphabetical by surname
+  /// (then first name) — the standard convention for a class list, and
+  /// scriptNumber (the old sort key) reflects nothing more meaningful
+  /// than capture/import order, which is especially arbitrary for a
+  /// class list transcribed all at once from a handwritten sheet.
   List<MarkingScript> _confirmedScripts(List<MarkingScript> scripts) =>
       scripts.where((s) => s.status == MarkingScriptStatus.reviewed && s.gradedAnswers != null).toList()
-        ..sort((a, b) => a.scriptNumber.compareTo(b.scriptNumber));
+        ..sort((a, b) {
+          final bySurname = a.surname.toLowerCase().compareTo(b.surname.toLowerCase());
+          return bySurname != 0 ? bySurname : a.firstName.toLowerCase().compareTo(b.firstName.toLowerCase());
+        });
 
   Future<File> generatePdf(MarkingScheme scheme, List<MarkingScript> scripts) async {
     final confirmed = _confirmedScripts(scripts);

@@ -66,6 +66,14 @@ class MarkingKeyGenerationService {
     return _derive({'pageImagesBase64': images, 'sourceType': sourceType.wireValue});
   }
 
+  /// Same as [deriveFromImages], but for bytes already in hand (e.g. from
+  /// a file_picker result whose `.path` may not be populated on every
+  /// platform) rather than re-reading from a [File].
+  Future<DerivedMarkingKey> deriveFromImageBytes(List<List<int>> imagesBytes, {required MarkingKeySourceType sourceType}) {
+    final images = [for (final bytes in imagesBytes) base64Encode(bytes)];
+    return _derive({'pageImagesBase64': images, 'sourceType': sourceType.wireValue});
+  }
+
   Future<DerivedMarkingKey> _derive(Map<String, dynamic> data) async {
     if (!await isOnline) {
       throw const MarkingKeyGenerationUnavailable("You're offline. Connect to the internet to generate a marking key.");

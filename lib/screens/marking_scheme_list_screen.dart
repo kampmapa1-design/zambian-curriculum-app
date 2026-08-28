@@ -142,12 +142,12 @@ class _MarkingSchemeListScreenState extends State<MarkingSchemeListScreen> {
         title: const Text('How will you provide it?'),
         children: [
           SimpleDialogOption(
-            onPressed: () => Navigator.of(dialogContext).pop(_SourceMethod.uploadPdf),
+            onPressed: () => Navigator.of(dialogContext).pop(_SourceMethod.uploadFromDevice),
             child: const Row(
               children: [
                 Icon(Icons.upload_file_outlined),
                 SizedBox(width: 12),
-                Expanded(child: Text('Upload a PDF')),
+                Expanded(child: Text('Upload from device (PDF or photo)')),
               ],
             ),
           ),
@@ -166,30 +166,46 @@ class _MarkingSchemeListScreenState extends State<MarkingSchemeListScreen> {
     );
     if (method == null || !mounted) return;
 
-    if (method == _SourceMethod.uploadPdf) {
-      await _generateFromPdf(template, entry, sourceType);
+    if (method == _SourceMethod.uploadFromDevice) {
+      await _generateFromDeviceFile(template, entry, sourceType);
     } else {
       await _generateFromCamera(template, entry, sourceType);
     }
   }
 
-  /// Stage B (PDF path) — picks a PDF, extracts its text server-side
-  /// (reusing the same extraction path as Subject Content Database
-  /// uploads), sends that text to Gemini to derive a draft marking key,
-  /// then hands off to the SAME builder screen used for manual entry —
-  /// pre-filled, always reviewed, never auto-saved. See
-  /// MarkingKeyGenerationService and the Cloud Function's own comment for
-  /// why this can't just be trusted directly.
-  Future<void> _generateFromPdf(SyllabusTemplate template, SchemeOfWorkEntry entry, MarkingKeySourceType sourceType) async {
-    final results = await FilePicker.pickFiles(type: FileType.custom, allowedExtensions: ['pdf']);
+  /// Stage B (device-upload path) — picks a file already on the device
+  /// (a marking key downloaded via email/WhatsApp/browser is just as
+  /// likely to be a photo/screenshot as an actual PDF) and routes it
+  /// correctly either way: a PDF goes through server-side text extraction
+  /// (reusing the same path as Subject Content Database uploads), an
+  /// image goes straight to Gemini vision, same as the camera-capture
+  /// path. Either way the derived draft hands off to the SAME builder
+  /// screen used for manual entry — pre-filled, always reviewed, never
+  /// auto-saved. See MarkingKeyGenerationService and the Cloud Function's
+  /// own comment for why this can't just be trusted directly.
+  Future<void> _generateFromDeviceFile(
+    SyllabusTemplate template,
+    SchemeOfWorkEntry entry,
+    MarkingKeySourceType sourceType,
+  ) async {
+    final results = await FilePicker.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png'],
+    );
     if (results.isEmpty || !mounted) return;
     final file = results.single;
+    final extension = file.name.contains('.') ? file.name.split('.').last.toLowerCase() : '';
+    final isImage = ['jpg', 'jpeg', 'png'].contains(extension);
 
     setState(() => _generatingKey = true);
     try {
       final bytes = await file.readAsBytes();
-      final text = await _textExtractionService.extractText(bytes);
-      final derived = await _keyGenerationService.deriveFromText(text, sourceType: sourceType);
+      final derived = isImage
+          ? await _keyGenerationService.deriveFromImageBytes([bytes], sourceType: sourceType)
+          : await _keyGenerationService.deriveFromText(
+              await _textExtractionService.extractText(bytes),
+              sourceType: sourceType,
+            );
       await _finishGenerating(template, entry, derived);
     } catch (error) {
       if (!mounted) return;
@@ -201,8 +217,9 @@ class _MarkingSchemeListScreenState extends State<MarkingSchemeListScreen> {
     }
   }
 
-  /// Stage B (camera path) — same as [_generateFromPdf] but starting from
-  /// photographed pages instead of an uploaded PDF, for a question paper
+  /// Stage B (camera path) — same as [_generateFromDeviceFile] but
+  /// starting from photographed pages instead of an uploaded file, for a
+  /// question paper
   /// or marking key that only exists on paper.
   Future<void> _generateFromCamera(
     SyllabusTemplate template,
@@ -420,6 +437,6 @@ class _MarkingSchemeListScreenState extends State<MarkingSchemeListScreen> {
 
 enum _NewSchemeChoice { manual, fromQuestionPaper, fromExistingKey }
 
-enum _SourceMethod { uploadPdf, camera }
+enum _SourceMethod { uploadFromDevice, camera }
 
 enum _MarksheetFormat { pdf, docx, csv }
