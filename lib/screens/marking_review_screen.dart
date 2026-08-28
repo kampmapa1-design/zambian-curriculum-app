@@ -113,7 +113,7 @@ class _MarkingReviewScreenState extends State<MarkingReviewScreen> {
       builder: (dialogContext) => AlertDialog(
         title: const Text('Mark this script as Final?'),
         content: Text(
-          '${widget.script.studentName} will be recorded with a final total of '
+          '${widget.script.fullName} will be recorded with a final total of '
           '${_totalAwarded.toStringAsFixed(_totalAwarded == _totalAwarded.roundToDouble() ? 0 : 1)} / '
           '${_totalPossible.toStringAsFixed(_totalPossible == _totalPossible.roundToDouble() ? 0 : 1)}. '
           "You've reviewed every answer, including any you edited.",
@@ -152,7 +152,7 @@ class _MarkingReviewScreenState extends State<MarkingReviewScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('${widget.script.studentName} — Script ${widget.script.scriptNumber}'),
+        title: Text('${widget.script.fullName} — Script ${widget.script.scriptNumber}'),
       ),
       body: _loadingPages
           ? const Center(child: CircularProgressIndicator())
@@ -179,6 +179,8 @@ class _MarkingReviewScreenState extends State<MarkingReviewScreen> {
                             ],
                           ),
                         ),
+                      if (widget.script.observations case final obs? when obs.isNotEmpty)
+                        _buildObservationsCard(context, obs),
                       for (var i = 0; i < _rows.length; i++) _buildAnswerCard(context, i),
                     ],
                   ),
@@ -206,6 +208,44 @@ class _MarkingReviewScreenState extends State<MarkingReviewScreen> {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  /// AI-generated strengths/weaknesses, grounded in the marking scheme
+  /// (see buildGradingPrompt on the Cloud Function side) — informational
+  /// only, not editable here, same "first-pass suggestion" status as the
+  /// grading itself.
+  Widget _buildObservationsCard(BuildContext context, List<String> observations) {
+    return Card(
+      color: Theme.of(context).colorScheme.surfaceContainerHighest,
+      margin: const EdgeInsets.only(bottom: 12),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.insights_outlined, size: 18, color: Theme.of(context).colorScheme.primary),
+                const SizedBox(width: 8),
+                Text('AI observations', style: Theme.of(context).textTheme.titleSmall),
+              ],
+            ),
+            const SizedBox(height: 8),
+            for (final o in observations)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 4),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('• '),
+                    Expanded(child: Text(o, style: Theme.of(context).textTheme.bodySmall)),
+                  ],
+                ),
+              ),
+          ],
         ),
       ),
     );

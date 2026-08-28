@@ -61,15 +61,17 @@ class MarksheetDocumentService {
             border: pw.TableBorder.all(width: 0.5),
             columnWidths: {
               0: const pw.FlexColumnWidth(2.2),
-              1: const pw.FlexColumnWidth(1.2),
-              for (var i = 0; i < scheme.questions.length; i++) i + 2: const pw.FlexColumnWidth(1),
-              scheme.questions.length + 2: const pw.FlexColumnWidth(1.2),
+              1: const pw.FlexColumnWidth(0.8),
+              2: const pw.FlexColumnWidth(1.2),
+              for (var i = 0; i < scheme.questions.length; i++) i + 3: const pw.FlexColumnWidth(1),
+              scheme.questions.length + 3: const pw.FlexColumnWidth(1.2),
             },
             children: [
               pw.TableRow(
                 decoration: const pw.BoxDecoration(color: PdfColors.grey300),
                 children: [
                   _pdfCell('Student', bold: true),
+                  _pdfCell('Gender', bold: true),
                   _pdfCell('ID', bold: true),
                   for (final q in scheme.questions) _pdfCell('${q.label}\n(${_fmt(q.maxMarks)})', bold: true),
                   _pdfCell('Total\n(${_fmt(scheme.totalMarks)})', bold: true),
@@ -78,7 +80,10 @@ class MarksheetDocumentService {
               for (final script in confirmed)
                 pw.TableRow(
                   children: [
-                    _pdfCell(script.studentName),
+                    // First name on top, surname below — same order used
+                    // everywhere else in this feature.
+                    _pdfCell('${script.firstName}\n${script.surname}'),
+                    _pdfCell(script.gender.label),
                     _pdfCell(script.studentIdNumber ?? '—'),
                     for (final q in scheme.questions)
                       _pdfCell(_fmt(
@@ -124,20 +129,26 @@ class MarksheetDocumentService {
     }
 
     final headers = [
-      'Student',
+      'First Name',
+      'Surname',
+      'Gender',
       'ID',
       for (final q in scheme.questions) '${q.label} (of ${_fmt(q.maxMarks)})',
       'Total (of ${_fmt(scheme.totalMarks)})',
+      'AI Observations',
     ];
     buffer.writeln(headers.map(csvField).join(','));
 
     for (final script in confirmed) {
       final row = [
-        script.studentName,
+        script.firstName,
+        script.surname,
+        script.gender.label,
         script.studentIdNumber ?? '',
         for (final q in scheme.questions)
           _fmt(script.gradedAnswers!.where((a) => a.questionLabel == q.label).map((a) => a.marksAwarded).firstOrNull ?? 0),
         _fmt(script.totalAwarded ?? 0),
+        (script.observations ?? const []).join(' | '),
       ];
       buffer.writeln(row.map(csvField).join(','));
     }

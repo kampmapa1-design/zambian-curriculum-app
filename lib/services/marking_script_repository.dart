@@ -55,12 +55,16 @@ class MarkingScriptRepository {
   /// this script's own permanent storage, in page order, and records it
   /// in the catalog.
   Future<MarkingScript> saveScript({
-    required String studentName,
+    required String firstName,
+    required String surname,
+    required CandidateGender gender,
     String? studentIdNumber,
     required int scriptNumber,
+    required String subjectName,
+    required String gradeName,
     required List<File> capturedPageFiles,
   }) async {
-    final id = '${DateTime.now().millisecondsSinceEpoch}_${_slug(studentName)}';
+    final id = '${DateTime.now().millisecondsSinceEpoch}_${_slug('$firstName $surname')}';
     final scriptDir = Directory(p.join((await _rootDir()).path, id));
     if (!await scriptDir.exists()) await scriptDir.create(recursive: true);
 
@@ -73,9 +77,13 @@ class MarkingScriptRepository {
 
     final script = MarkingScript(
       id: id,
-      studentName: studentName,
+      firstName: firstName,
+      surname: surname,
+      gender: gender,
       studentIdNumber: studentIdNumber,
       scriptNumber: scriptNumber,
+      subjectName: subjectName,
+      gradeName: gradeName,
       pageFileNames: pageFileNames,
       capturedAt: DateTime.now(),
     );

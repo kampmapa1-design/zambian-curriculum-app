@@ -1,4 +1,4 @@
-import { onCall, HttpsError } from "firebase-functions/v2/https";
+import { onCall, onRequest, HttpsError } from "firebase-functions/v2/https";
 import { defineSecret } from "firebase-functions/params";
 import { GoogleGenAI } from "@google/genai";
 import { stripKnownWatermarks } from "./watermark";
@@ -738,6 +738,7 @@ interface GradedAnswerResult {
 
 interface GradeMarkingScriptResponse {
   answers: GradedAnswerResult[];
+  observations: string[];
 }
 
 const gradeMarkingScriptSchema = {
@@ -757,8 +758,18 @@ const gradeMarkingScriptSchema = {
         additionalProperties: false,
       },
     },
+    // 3-5 short, specific observations about this candidate's performance
+    // on THIS script, grounded in what the marking scheme actually asked
+    // for — not generic praise/criticism. See buildGradingPrompt for the
+    // exact instruction.
+    observations: {
+      type: "array",
+      items: { type: "string" },
+      minItems: 3,
+      maxItems: 5,
+    },
   },
-  required: ["answers"],
+  required: ["answers", "observations"],
   additionalProperties: false,
 };
 
@@ -768,12 +779,22 @@ function buildGradingPrompt(questions: GradeMarkingScriptQuestion[]): string {
     .join("\n");
 
   return [
-    "The attached images are photos of one student's handwritten answer script, in page order. Your job:",
-    "1. Find each question's answer in the handwriting (questions are usually labeled the same way as " +
-      "in the marking scheme below, e.g. 'Q1', '1.', '1)' — match by number/order, not exact formatting).",
-    "2. Transcribe that handwritten answer as accurately as you can. If handwriting is illegible or the " +
-      "answer is missing entirely, say so plainly in transcribedAnswer (e.g. 'illegible' or 'no answer " +
-      "found') rather than guessing at words that aren't really there.",
+    "The attached images are photos of one student's answer script, in page order. Some scripts are " +
+      "entirely handwritten; others mix pre-printed material (typed/printed question text, multiple-choice " +
+      "options, answer-blank labels) with the student's own handwritten answers filled into blanks, margins, " +
+      "or circled/ticked options. Distinguish the two: pre-printed question text is never the student's " +
+      "answer, even if it's the only text near a question — look specifically for what the student " +
+      "themselves wrote, marked, circled, or ticked by hand. If a question's blank was left genuinely " +
+      "empty (nothing handwritten there at all), that's a missing answer, not something to infer from the " +
+      "printed question text.",
+    "Your job:",
+    "1. Find each question's answer — in the student's own handwriting, or their handwritten mark/circle/" +
+      "tick on a printed option — matching questions by number/label the same way as in the marking scheme " +
+      "below (e.g. 'Q1', '1.', '1)' — match by number/order, not exact formatting).",
+    "2. Transcribe that answer as accurately as you can (for a circled/ticked printed option, transcribe " +
+      "which option was selected). If handwriting is illegible or the answer is missing entirely, say so " +
+      "plainly in transcribedAnswer (e.g. 'illegible' or 'no answer found') rather than guessing at words " +
+      "that aren't really there.",
     "3. Compare the transcribed answer against the expected answer/keywords and award marks out of that " +
       "question's maximum — partial credit is expected and normal, not just full marks or zero.",
     "4. Give a confidence level for EACH answer: 'high' only when both the handwriting was clearly " +
@@ -781,13 +802,19 @@ function buildGradingPrompt(questions: GradeMarkingScriptQuestion[]): string {
       "was hard to read, the answer was ambiguous, or you're unsure the mark is right; 'medium' " +
       "otherwise. Confidence reflects your own uncertainty honestly — it is what determines whether a " +
       "teacher is required to double-check this specific answer, so do not default to 'high'.",
+    "5. Separately, write 3 to 5 short observations about this candidate's performance on THIS script — " +
+      "specific strengths and/or weaknesses grounded in what the marking scheme actually asked for (e.g. " +
+      "'Consistently applied the correct formula but made arithmetic slips in Q2 and Q4' or 'Strong on " +
+      "definitions (Q1, Q3) but answers to application questions were too brief to earn full marks'), not " +
+      "generic praise or criticism that could apply to any script. Base these only on what you actually " +
+      "observed while grading, never on assumptions about the candidate.",
     "",
     "Marking scheme:",
     schemeText,
     "",
-    "Return exactly one answer per question in the marking scheme, using the same question label. Every " +
-      "mark you award must be a first-pass suggestion for a teacher to review, never a final grade — " +
-      "never fabricate an answer that isn't genuinely visible in the images.",
+    "Return exactly one answer per question in the marking scheme, using the same question label, plus " +
+      "the 3-5 observations. Every mark you award must be a first-pass suggestion for a teacher to review, " +
+      "never a final grade — never fabricate an answer that isn't genuinely visible in the images.",
   ].join("\n");
 }
 
@@ -844,3 +871,145 @@ export const gradeMarkingScript = onCall<GradeMarkingScriptRequest>(
   }
 );
 
+
+// ---------------------------------------------------------------------
+// internalBatchSyllabusExtract — TEMPORARY, one-off use only. Same
+// purpose as the batch extraction function used for the original
+// 18-subject CBC expansion: turns a Teaching Module's raw text into a
+// structured syllabus outline (topics/sub-topics/competencies) via
+// Gemini, for a local batch script to convert into the app's syllabus
+// JSON schema. Not called from the Flutter app. Token-gated (not
+// onCall/auth-gated) because it's driven by a local Node script, not
+// the app. DELETE THIS FUNCTION (and run
+// `firebase functions:delete internalBatchSyllabusExtract --region us-central1 --force`)
+// once the current batch (Stage 2 of the CBC expansion, 2026-08) is done.
+// ---------------------------------------------------------------------
+
+const INTERNAL_BATCH_TOKEN = "3384ee250d75b2f6619317a1850d73de7d3ffb11f271060b";
+
+const syllabusOutlineSchema = {
+  type: "object",
+  properties: {
+    topics: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          name: { type: "string" },
+          description: { type: "string" },
+          weekNumber: { type: "number" },
+          learningObjectives: { type: "array", items: { type: "string" } },
+          competencies: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                description: { type: "string" },
+                category: { type: "string" },
+              },
+              required: ["description", "category"],
+              additionalProperties: false,
+            },
+          },
+          subTopics: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                name: { type: "string" },
+                description: { type: "string" },
+                weekNumber: { type: "number" },
+                learningObjectives: { type: "array", items: { type: "string" } },
+                competencies: {
+                  type: "array",
+                  items: {
+                    type: "object",
+                    properties: {
+                      description: { type: "string" },
+                      category: { type: "string" },
+                    },
+                    required: ["description", "category"],
+                    additionalProperties: false,
+                  },
+                },
+              },
+              required: ["name", "description"],
+              additionalProperties: false,
+            },
+          },
+        },
+        required: ["name", "description"],
+        additionalProperties: false,
+      },
+    },
+    completenessNotes: {
+      type: "string",
+      description:
+        "Anything unclear, missing, ambiguous, or irregular about how this module presents its own " +
+        "content — inconsistent numbering, a topic that seems to start mid-sequence, a section with no " +
+        "explicit competences, etc. Empty string if nothing stood out.",
+    },
+  },
+  required: ["topics", "completenessNotes"],
+  additionalProperties: false,
+};
+
+function buildSyllabusExtractPrompt(moduleText: string): string {
+  return [
+    "The following is the raw extracted text of a CDC (Curriculum Development Centre, Zambia) Teaching " +
+      "Module for one subject/form/term. Extract its topic/sub-topic outline exactly as the module itself " +
+      "presents it — its own topic numbers, its own topic and sub-topic titles, its own stated learning " +
+      "objectives and competencies (labelling each as 'General Competence' or 'Specific Competence' as the " +
+      "module itself labels them, or your best judgement if unlabelled).",
+    "Never invent content that is not genuinely present in the text below. If a topic has no sub-topics, " +
+      "sub-topics may be an empty array. If something about the module's own structure is unclear, " +
+      "ambiguous, or looks incomplete (e.g. it starts mid-sequence, a heading convention changes partway " +
+      "through, a competences section is missing), say so plainly in completenessNotes rather than guessing " +
+      "or silently smoothing it over.",
+    "",
+    "--- MODULE TEXT ---",
+    moduleText,
+  ].join("\n");
+}
+
+export const internalBatchSyllabusExtract = onRequest(
+  { secrets: [geminiApiKey], region: "us-central1", timeoutSeconds: 300, memory: "1GiB" },
+  async (req, res) => {
+    if (req.method !== "POST") {
+      res.status(405).send("POST only");
+      return;
+    }
+    if (req.get("x-batch-token") !== INTERNAL_BATCH_TOKEN) {
+      res.status(403).send("forbidden");
+      return;
+    }
+
+    const moduleText = req.body?.moduleText;
+    if (typeof moduleText !== "string" || moduleText.trim().length === 0) {
+      res.status(400).send("'moduleText' is required");
+      return;
+    }
+
+    const ai = new GoogleGenAI({ apiKey: geminiApiKey.value() });
+
+    try {
+      const response = await ai.models.generateContent({
+        model: GEMINI_MODEL,
+        contents: [{ role: "user", parts: [{ text: buildSyllabusExtractPrompt(moduleText) }] }],
+        config: {
+          responseMimeType: "application/json",
+          responseJsonSchema: syllabusOutlineSchema,
+        },
+      });
+      const text = response.text;
+      if (!text) {
+        res.status(500).send("empty response from Gemini");
+        return;
+      }
+      res.status(200).json(JSON.parse(text));
+    } catch (err) {
+      console.error("internalBatchSyllabusExtract failed", err);
+      res.status(500).send(String(err));
+    }
+  }
+);

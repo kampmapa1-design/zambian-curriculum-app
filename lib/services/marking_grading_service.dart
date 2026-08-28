@@ -8,6 +8,17 @@ import '../models/marking_scheme.dart';
 import '../models/marking_script.dart';
 import 'auth_service.dart';
 
+/// [MarkingGradingService.grade]'s result — the per-question answers plus
+/// the 3-5 script-level performance observations, kept together since
+/// they come from the same Cloud Function call and are stored together
+/// on [MarkingScript].
+class MarkingGradingResult {
+  final List<GradedAnswer> answers;
+  final List<String> observations;
+
+  const MarkingGradingResult({required this.answers, required this.observations});
+}
+
 /// Thrown for both "can't reach the function" (offline) and "the function
 /// rejected the request" — either way there's a user-facing message and a
 /// script to leave in [MarkingScriptStatus.needsRetry] (Stage 8).
@@ -34,7 +45,7 @@ class MarkingGradingService {
     return !result.contains(ConnectivityResult.none);
   }
 
-  Future<List<GradedAnswer>> grade({
+  Future<MarkingGradingResult> grade({
     required List<File> pageFiles,
     required MarkingScheme scheme,
   }) async {
@@ -74,7 +85,7 @@ class MarkingGradingService {
       // AI returned — a question the AI skipped still shows up (as
       // low-confidence/zero marks) rather than silently vanishing from
       // the review screen.
-      return [
+      final answers = [
         for (final q in scheme.questions)
           if (byLabel[q.label] case final a?)
             GradedAnswer(
@@ -93,6 +104,8 @@ class MarkingGradingService {
               confidence: MarkingConfidence.low,
             ),
       ];
+      final observations = ((result.data['observations'] as List?) ?? const []).cast<String>();
+      return MarkingGradingResult(answers: answers, observations: observations);
     } on FirebaseFunctionsException catch (e) {
       throw MarkingGradingUnavailable(e.message ?? 'Failed to grade this script.');
     }

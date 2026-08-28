@@ -4,7 +4,9 @@ import 'package:document_camera_frame/document_camera_frame.dart';
 import 'package:flutter/material.dart';
 
 import '../models/marking_script.dart';
+import '../models/syllabus_models.dart';
 import '../services/marking_script_repository.dart';
+import 'subject_grade_topic_picker_screen.dart';
 
 /// AI-Assisted Marking, Stage 1 — burst capture. A teacher photographs one
 /// student script (several pages) in a single session: enter the student's
@@ -31,9 +33,13 @@ class _BurstCaptureScreenState extends State<BurstCaptureScreen> {
   late final MarkingScriptRepository _repository = widget.repository ?? MarkingScriptRepository();
 
   final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
+  final _firstNameController = TextEditingController();
+  final _surnameController = TextEditingController();
   final _idController = TextEditingController();
   final _scriptNumberController = TextEditingController();
+
+  CandidateGender? _gender;
+  SyllabusTemplate? _subjectGrade;
 
   bool _sessionStarted = false;
   bool _loadingNextNumber = true;
@@ -57,14 +63,40 @@ class _BurstCaptureScreenState extends State<BurstCaptureScreen> {
 
   @override
   void dispose() {
-    _nameController.dispose();
+    _firstNameController.dispose();
+    _surnameController.dispose();
     _idController.dispose();
     _scriptNumberController.dispose();
     super.dispose();
   }
 
+  Future<void> _pickSubjectGrade() async {
+    final result = await Navigator.of(context).push<SyllabusTemplate>(
+      MaterialPageRoute(
+        builder: (_) => const SubjectGradeTopicPickerScreen(
+          title: 'Subject & Grade',
+          pickTopic: false,
+        ),
+      ),
+    );
+    if (result != null && mounted) setState(() => _subjectGrade = result);
+  }
+
   void _startSession() {
-    if (!(_formKey.currentState?.validate() ?? false)) return;
+    final formValid = _formKey.currentState?.validate() ?? false;
+    if (!formValid) return;
+    if (_gender == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Select the candidate\'s gender.')),
+      );
+      return;
+    }
+    if (_subjectGrade == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Select the subject and grade this script is for.')),
+      );
+      return;
+    }
     setState(() => _sessionStarted = true);
     _captureNextPage();
   }
@@ -101,9 +133,13 @@ class _BurstCaptureScreenState extends State<BurstCaptureScreen> {
     setState(() => _saving = true);
     try {
       final script = await _repository.saveScript(
-        studentName: _nameController.text.trim(),
+        firstName: _firstNameController.text.trim(),
+        surname: _surnameController.text.trim(),
+        gender: _gender!,
         studentIdNumber: _idController.text.trim().isEmpty ? null : _idController.text.trim(),
         scriptNumber: int.parse(_scriptNumberController.text.trim()),
+        subjectName: _subjectGrade!.subject.name,
+        gradeName: _subjectGrade!.grade.name,
         capturedPageFiles: _capturedPages,
       );
       if (!mounted) return;
@@ -145,11 +181,48 @@ class _BurstCaptureScreenState extends State<BurstCaptureScreen> {
               style: TextStyle(fontSize: 13),
             ),
             const SizedBox(height: 16),
+            // First name on top, surname below — matches the order the
+            // candidate's name is displayed everywhere else in this
+            // feature (queue list, review screen, marksheet).
             TextFormField(
-              controller: _nameController,
-              decoration: const InputDecoration(labelText: 'Student name', border: OutlineInputBorder()),
+              controller: _firstNameController,
+              decoration: const InputDecoration(labelText: 'First name', border: OutlineInputBorder()),
               validator: (v) => (v == null || v.trim().isEmpty) ? 'Required' : null,
               textCapitalization: TextCapitalization.words,
+            ),
+            const SizedBox(height: 12),
+            TextFormField(
+              controller: _surnameController,
+              decoration: const InputDecoration(labelText: 'Surname', border: OutlineInputBorder()),
+              validator: (v) => (v == null || v.trim().isEmpty) ? 'Required' : null,
+              textCapitalization: TextCapitalization.words,
+            ),
+            const SizedBox(height: 12),
+            Text('Gender', style: Theme.of(context).textTheme.labelLarge),
+            const SizedBox(height: 4),
+            SegmentedButton<CandidateGender>(
+              segments: const [
+                ButtonSegment(value: CandidateGender.male, label: Text('Male')),
+                ButtonSegment(value: CandidateGender.female, label: Text('Female')),
+              ],
+              selected: {if (_gender != null) _gender!},
+              emptySelectionAllowed: true,
+              onSelectionChanged: (selection) => setState(() => _gender = selection.firstOrNull),
+            ),
+            const SizedBox(height: 12),
+            InkWell(
+              onTap: _pickSubjectGrade,
+              child: InputDecorator(
+                decoration: const InputDecoration(labelText: 'Subject & grade', border: OutlineInputBorder()),
+                child: Text(
+                  _subjectGrade == null
+                      ? 'Tap to select'
+                      : '${_subjectGrade!.subject.name} · ${_subjectGrade!.grade.name}',
+                  style: _subjectGrade == null
+                      ? TextStyle(color: Theme.of(context).colorScheme.outline)
+                      : null,
+                ),
+              ),
             ),
             const SizedBox(height: 12),
             TextFormField(
@@ -197,7 +270,8 @@ class _BurstCaptureScreenState extends State<BurstCaptureScreen> {
             children: [
               Expanded(
                 child: Text(
-                  '${_nameController.text.trim()} — Script ${_scriptNumberController.text.trim()}',
+                  '${_firstNameController.text.trim()} ${_surnameController.text.trim()} — '
+                  'Script ${_scriptNumberController.text.trim()}',
                   style: Theme.of(context).textTheme.titleMedium,
                   overflow: TextOverflow.ellipsis,
                 ),

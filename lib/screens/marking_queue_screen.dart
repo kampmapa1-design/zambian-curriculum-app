@@ -198,14 +198,24 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
       MarkingScript result;
       try {
         final pageFiles = await _repository.pageFilesFor(script);
-        final answers = await _gradingService.grade(pageFiles: pageFiles, scheme: scheme);
-        result = script.copyWith(status: MarkingScriptStatus.graded, gradedAnswers: answers, clearLastError: true);
+        final graded = await _gradingService.grade(pageFiles: pageFiles, scheme: scheme);
+        result = script.copyWith(
+          status: MarkingScriptStatus.graded,
+          gradedAnswers: graded.answers,
+          observations: graded.observations,
+          clearLastError: true,
+        );
         await MarkingEntitlementService.instance.recordGradingUsed();
       } catch (firstError) {
         try {
           final pageFiles = await _repository.pageFilesFor(script);
-          final answers = await _gradingService.grade(pageFiles: pageFiles, scheme: scheme);
-          result = script.copyWith(status: MarkingScriptStatus.graded, gradedAnswers: answers, clearLastError: true);
+          final graded = await _gradingService.grade(pageFiles: pageFiles, scheme: scheme);
+          result = script.copyWith(
+            status: MarkingScriptStatus.graded,
+            gradedAnswers: graded.answers,
+            observations: graded.observations,
+            clearLastError: true,
+          );
           await MarkingEntitlementService.instance.recordGradingUsed();
         } catch (secondError) {
           result = script.copyWith(status: MarkingScriptStatus.needsRetry, lastError: secondError.toString());
@@ -241,7 +251,7 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
       context: context,
       builder: (dialogContext) => AlertDialog(
         title: const Text('Delete this script?'),
-        content: Text('${script.studentName} — Script ${script.scriptNumber} (${script.pageCount} page(s)) '
+        content: Text('${script.fullName} — Script ${script.scriptNumber} (${script.pageCount} page(s)) '
             'will be permanently deleted, including its captured pages.'),
         actions: [
           TextButton(onPressed: () => Navigator.of(dialogContext).pop(false), child: const Text('Cancel')),
@@ -501,13 +511,23 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
           backgroundColor: _statusColor(script.status, context),
           child: Text('${script.scriptNumber}', style: const TextStyle(fontSize: 13)),
         ),
-        title: Text(script.studentName),
+        // First name on top, surname below.
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(script.firstName),
+            Text(script.surname, style: Theme.of(context).textTheme.bodySmall),
+          ],
+        ),
         subtitle: Text(
+          '${script.subjectName} · ${script.gradeName} · ${script.gender.label}\n'
           '${script.pageCount} page(s)'
           '${script.studentIdNumber != null ? ' · ID ${script.studentIdNumber}' : ''}'
           ' · ${script.status.label}'
           '${script.status == MarkingScriptStatus.needsRetry && script.lastError != null ? ' — ${script.lastError}' : ''}',
         ),
+        isThreeLine: true,
         onTap: selectable
             ? () => _toggleSelected(script)
             : openable
