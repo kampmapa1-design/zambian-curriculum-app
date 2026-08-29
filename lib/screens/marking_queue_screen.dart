@@ -13,6 +13,7 @@ import '../services/marking_gap_report_service.dart';
 import '../services/marking_grading_service.dart';
 import '../services/marking_key_generation_service.dart';
 import '../services/marking_scheme_repository.dart';
+import '../services/pending_marking_key_draft_repository.dart';
 import '../services/marking_script_repository.dart';
 import 'burst_capture_screen.dart';
 import 'capture_manual_scores_screen.dart';
@@ -74,6 +75,48 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
     super.initState();
     _load();
     _loadRemainingFreeGradings();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _checkForResumableMarkingKey());
+  }
+
+  /// A real fix for a real reported problem: Android can (and, on many
+  /// devices, regularly does) kill this app's process in the background
+  /// under memory pressure — losing everything an in-progress screen held
+  /// only in memory. runMarkingKeyUploadFlow now persists the AI's
+  /// derived marking key to disk the moment it succeeds, so even after a
+  /// process kill mid-flow, that already-completed (and expensive) work
+  /// isn't gone — offer to pick back up right after it instead.
+  Future<void> _checkForResumableMarkingKey() async {
+    final draft = await checkForResumableMarkingKeyDraft();
+    if (draft == null || !mounted) return;
+    final resume = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Unfinished marking key found'),
+        content: Text(
+          'A marking key with ${draft.questions.length} question(s) was read but never saved '
+          '(from ${_formatDraftTime(draft.savedAt)}). Continue with it?',
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(dialogContext).pop(false), child: const Text('Discard')),
+          FilledButton(onPressed: () => Navigator.of(dialogContext).pop(true), child: const Text('Continue')),
+        ],
+      ),
+    );
+    if (!mounted) return;
+    if (resume != true) {
+      await PendingMarkingKeyDraftRepository().clear();
+      return;
+    }
+    final saved = await resumeMarkingKeyFlow(context: context, draft: draft, schemeRepository: _schemeRepository);
+    if (saved != null) _load();
+  }
+
+  String _formatDraftTime(DateTime time) {
+    final diff = DateTime.now().difference(time);
+    if (diff.inMinutes < 1) return 'just now';
+    if (diff.inHours < 1) return '${diff.inMinutes} minute(s) ago';
+    if (diff.inDays < 1) return '${diff.inHours} hour(s) ago';
+    return '${diff.inDays} day(s) ago';
   }
 
   Future<void> _loadRemainingFreeGradings() async {

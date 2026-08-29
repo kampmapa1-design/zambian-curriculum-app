@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import '../models/marking_scheme.dart';
 import '../services/marking_key_generation_service.dart';
 import '../services/marking_scheme_repository.dart';
+import '../services/pending_marking_key_draft_repository.dart';
 import '../services/subject_content_extraction_service.dart';
 import 'document_pages_capture_screen.dart';
 import 'marking_key_details_form_screen.dart';
@@ -30,6 +31,16 @@ enum MarkingKeyUploadMethod { uploadFromDevice, camera }
 /// track"). Replaced with a plain manual-entry form (subject name, level,
 /// type of exam — see MarkingKeyDetailsFormScreen) — no dropdown at all
 /// for this flow now.
+///
+/// **2026-08-29, same day**: also now saves the AI's derived result to
+/// disk (PendingMarkingKeyDraftRepository) the moment it succeeds, before
+/// the confirmation dialog even shows — the single most expensive,
+/// hardest-to-repeat step in this whole flow. If Android kills the app in
+/// the background anywhere after that (a real, normal part of the Android
+/// lifecycle under memory pressure — reported as "the app switches off
+/// and I lose all my progress"), [checkForResumableMarkingKeyDraft] +
+/// [resumeMarkingKeyFlow] let the app pick back up right after the AI
+/// step instead of making the teacher wait through it again.
 ///
 /// Returns the saved scheme, or null if the teacher backed out at any
 /// step. [onLoadingChanged] still fires around the AI call for a caller
@@ -110,6 +121,37 @@ Future<MarkingScheme?> runMarkingKeyUploadFlow({
   if (context.mounted) Navigator.of(context, rootNavigator: true).pop(); // close the progress dialog
   if (!context.mounted) return null;
 
+  // The expensive part is done — persist it to disk immediately, before
+  // anything else can go wrong (app backgrounded and killed, teacher
+  // distracted, etc). See this function's own doc comment.
+  await PendingMarkingKeyDraftRepository().save(derived);
+  if (!context.mounted) return null;
+
+  return _finishMarkingKeyFlow(context: context, derived: derived, schemeRepository: schemeRepository);
+}
+
+/// Whether there's an AI-derived marking key sitting on disk, not yet
+/// turned into a saved MarkingScheme — call this wherever a teacher might
+/// re-enter AI-Assisted Marking (e.g. MarkingQueueScreen.initState) to
+/// offer resuming it.
+Future<PendingMarkingKeyDraft?> checkForResumableMarkingKeyDraft() => PendingMarkingKeyDraftRepository().load();
+
+/// Resumes a previously-saved [PendingMarkingKeyDraft] — skips the device/
+/// camera pickup and the AI call entirely (already done, and expensive to
+/// repeat), going straight to the confirmation → details form → builder
+/// tail that [runMarkingKeyUploadFlow] also uses.
+Future<MarkingScheme?> resumeMarkingKeyFlow({
+  required BuildContext context,
+  required PendingMarkingKeyDraft draft,
+  required MarkingSchemeRepository schemeRepository,
+}) =>
+    _finishMarkingKeyFlow(context: context, derived: draft.asDerivedMarkingKey, schemeRepository: schemeRepository);
+
+Future<MarkingScheme?> _finishMarkingKeyFlow({
+  required BuildContext context,
+  required DerivedMarkingKey derived,
+  required MarkingSchemeRepository schemeRepository,
+}) async {
   // Explicit acknowledgement before moving on — a real reported gap:
   // teachers had no confirmation that the key was actually read before
   // the app moved to the next screen, which felt unexplained.
@@ -145,7 +187,7 @@ Future<MarkingScheme?> runMarkingKeyUploadFlow({
   );
   if (details == null || !context.mounted) return null;
 
-  return Navigator.of(context).push<MarkingScheme>(
+  final saved = await Navigator.of(context).push<MarkingScheme>(
     MaterialPageRoute(
       builder: (_) => MarkingSchemeBuilderScreen(
         subjectName: details.subjectName,
@@ -157,6 +199,11 @@ Future<MarkingScheme?> runMarkingKeyUploadFlow({
       ),
     ),
   );
+  // Only clear the pending draft once it's actually a saved MarkingScheme
+  // — backing out of the builder screen (saved == null) leaves the draft
+  // in place so it's still resumable next time.
+  if (saved != null) await PendingMarkingKeyDraftRepository().clear();
+  return saved;
 }
 
 /// A non-dismissible modal with live-updating status text — replaces the
