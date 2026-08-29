@@ -73,23 +73,30 @@ class HandwrittenListTranscriptionService {
   }
 
   Future<TranscribedTable> transcribe(List<File> pageFiles, {void Function(String status)? onProgress}) async {
-    if (!await isOnline) {
-      throw const HandwrittenListTranscriptionUnavailable("You're offline. Connect to the internet to transcribe this list.");
+    // Tracks the last progress step reached, so a timeout error names
+    // exactly where it got stuck (e.g. "Checking connection…" vs "Reading
+    // the list with AI…") — real diagnostic signal instead of a generic
+    // "it's stuck" report, since there's no device log access here.
+    var lastStatus = 'starting';
+    void track(String status) {
+      lastStatus = status;
+      onProgress?.call(status);
     }
 
-    // Hard backstop: whatever actually happens inside (a stalled auth
-    // handshake, a plugin call that never resolves, a slow connection),
-    // this can never hang the screen forever — it always either finishes
-    // or surfaces a clear, actionable error within this window. This is
-    // the direct fix for "gets stuck after Done": previously nothing
-    // bounded how long the whole chain (auth + upload + AI read) could
-    // silently sit there with no feedback and no way out.
+    // Hard backstop covering EVERYTHING, including the connectivity check
+    // itself — a previous version only wrapped the auth+upload+AI-read
+    // chain, leaving the connectivity check free to hang forever ahead of
+    // it (a real, confirmed cause: on-device connectivity plugin calls can
+    // themselves stall on some Android setups). Nothing in this method
+    // runs outside this timeout now, so it always either finishes or
+    // surfaces a clear, actionable error within this window.
     try {
-      return await _doTranscribe(pageFiles, onProgress).timeout(
+      return await _run(pageFiles, track).timeout(
         const Duration(seconds: 75),
-        onTimeout: () => throw const HandwrittenListTranscriptionUnavailable(
-          "This is taking too long and may be stuck. Check your mobile data/Wi-Fi signal and try again — "
-          'if it keeps happening with a good connection, the photos may be too large or the server may be busy.',
+        onTimeout: () => throw HandwrittenListTranscriptionUnavailable(
+          'This is taking too long and may be stuck (last step: "$lastStatus"). Check your mobile data/Wi-Fi '
+          'signal and try again — if it keeps happening with a good connection, please report which step it '
+          'names here.',
         ),
       );
     } on HandwrittenListTranscriptionUnavailable {
@@ -98,11 +105,16 @@ class HandwrittenListTranscriptionService {
       // Anything else (a plugin-level PlatformException, a raw network
       // error not wrapped as FirebaseFunctionsException, etc.) must still
       // surface here rather than propagate as an unlabelled crash.
-      throw HandwrittenListTranscriptionUnavailable('Could not transcribe this list: $error');
+      throw HandwrittenListTranscriptionUnavailable('Could not transcribe this list (last step: "$lastStatus"): $error');
     }
   }
 
-  Future<TranscribedTable> _doTranscribe(List<File> pageFiles, void Function(String status)? onProgress) async {
+  Future<TranscribedTable> _run(List<File> pageFiles, void Function(String status)? onProgress) async {
+    onProgress?.call('Checking connection…');
+    if (!await isOnline) {
+      throw const HandwrittenListTranscriptionUnavailable("You're offline. Connect to the internet to transcribe this list.");
+    }
+
     onProgress?.call('Signing in…');
     await AuthService.instance.ensureSignedIn();
 

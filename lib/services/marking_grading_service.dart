@@ -49,14 +49,10 @@ class MarkingGradingService {
     required List<File> pageFiles,
     required MarkingScheme scheme,
   }) async {
-    if (!await isOnline) {
-      throw const MarkingGradingUnavailable("You're offline. Connect to the internet to grade this script.");
-    }
-
-    // Hard backstop so a stalled auth handshake or a plugin call that never
-    // resolves can't hang a batch-grading run forever — see
-    // HandwrittenListTranscriptionService.transcribe for the same pattern
-    // and the "stuck after Done" bug class this guards against.
+    // Hard backstop covering EVERYTHING, including the connectivity check
+    // itself — see HandwrittenListTranscriptionService.transcribe for the
+    // full reasoning: a connectivity-plugin call that stalls ahead of the
+    // timeout wrapper defeats it entirely, so nothing runs outside this.
     try {
       return await _doGrade(pageFiles, scheme).timeout(
         const Duration(seconds: 200),
@@ -72,6 +68,9 @@ class MarkingGradingService {
   }
 
   Future<MarkingGradingResult> _doGrade(List<File> pageFiles, MarkingScheme scheme) async {
+    if (!await isOnline) {
+      throw const MarkingGradingUnavailable("You're offline. Connect to the internet to grade this script.");
+    }
     await AuthService.instance.ensureSignedIn();
 
     final pageImagesBase64 = [

@@ -38,10 +38,10 @@ class CandidateNameDetectionService {
 
   Future<DetectedCandidateName> detect(File pageImage) async {
     try {
-      if (!await isOnline) return const DetectedCandidateName(firstName: '', surname: '');
-      // Hard backstop, same reasoning as HandwrittenListTranscriptionService
-      // — a stalled auth handshake or plugin call must not hang the small
-      // "detecting…" spinner next to the name field forever.
+      // Hard backstop covering EVERYTHING, including the connectivity
+      // check itself — a version that only wrapped auth+upload left the
+      // connectivity-plugin call free to stall ahead of the timeout,
+      // defeating it entirely. Nothing here runs outside this timeout.
       return await _doDetect(pageImage).timeout(
         const Duration(seconds: 60),
         onTimeout: () => const DetectedCandidateName(firstName: '', surname: ''),
@@ -54,6 +54,7 @@ class CandidateNameDetectionService {
   }
 
   Future<DetectedCandidateName> _doDetect(File pageImage) async {
+    if (!await isOnline) return const DetectedCandidateName(firstName: '', surname: '');
     await AuthService.instance.ensureSignedIn();
 
     final callable = _functions.httpsCallable(

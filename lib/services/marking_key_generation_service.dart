@@ -75,14 +75,10 @@ class MarkingKeyGenerationService {
   }
 
   Future<DerivedMarkingKey> _derive(Map<String, dynamic> data) async {
-    if (!await isOnline) {
-      throw const MarkingKeyGenerationUnavailable("You're offline. Connect to the internet to generate a marking key.");
-    }
-
-    // Hard backstop so a stalled auth handshake or a plugin call that never
-    // resolves can't hang this screen forever — see
-    // HandwrittenListTranscriptionService.transcribe for the same pattern
-    // and the "stuck after Done" bug class this guards against.
+    // Hard backstop covering EVERYTHING, including the connectivity check
+    // itself — see HandwrittenListTranscriptionService.transcribe for the
+    // full reasoning: a connectivity-plugin call that stalls ahead of the
+    // timeout wrapper defeats it entirely, so nothing runs outside this.
     try {
       return await _doDerive(data).timeout(
         const Duration(seconds: 130),
@@ -98,6 +94,9 @@ class MarkingKeyGenerationService {
   }
 
   Future<DerivedMarkingKey> _doDerive(Map<String, dynamic> data) async {
+    if (!await isOnline) {
+      throw const MarkingKeyGenerationUnavailable("You're offline. Connect to the internet to generate a marking key.");
+    }
     await AuthService.instance.ensureSignedIn();
 
     final callable = _functions.httpsCallable(
