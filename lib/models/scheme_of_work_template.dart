@@ -49,6 +49,21 @@ class SchemeOfWorkTemplate {
 /// / References. Only the column structure was kept — any teacher-identifying
 /// or vendor-branding details in the source document were left out, per
 /// this project's sourcing rules (see feedback-sourcing-rules memory).
+///
+/// **2026-08-29**: previously only 6-7 of these 11 columns ever got real
+/// content — Key Competences, Strategies & Methodologies, and TL Aids &
+/// Materials have no corresponding field anywhere in this app's bundled
+/// syllabus data, so they rendered blank on every generated scheme
+/// regardless of subject (a real, reported bug — schemes "looked like
+/// only two columns were filled out"). Now populated with rule-based,
+/// always-editable starting suggestions — see
+/// scheme_of_work_suggestions.dart for exactly what these are grounded
+/// in (well-corroborated general CBC competency themes and standard
+/// pedagogy, NOT a transcription of CDC's own document). Learning
+/// Activities (Content) also gained a fallback to the topic/sub-topic's
+/// description when the syllabus has no learning_objectives for it
+/// (true for ~43% of bundled CBC sub-topics) — previously that column
+/// went blank in exactly those cases too.
 const defaultCbcSchemeOfWorkTemplate = SchemeOfWorkTemplate(
   id: 'cbc_scheme_of_work_v1',
   name: 'CBC Scheme of Work',
@@ -60,12 +75,12 @@ const defaultCbcSchemeOfWorkTemplate = SchemeOfWorkTemplate(
     SchemeOfWorkColumnDef(id: 'stage', label: 'Stage', autoFilled: true),
     SchemeOfWorkColumnDef(id: 'topic', label: 'Topic', autoFilled: true),
     SchemeOfWorkColumnDef(id: 'subTopic', label: 'Sub-topic', autoFilled: true),
-    SchemeOfWorkColumnDef(id: 'keyCompetences', label: 'Key Competences'),
+    SchemeOfWorkColumnDef(id: 'keyCompetences', label: 'Key Competences', suggested: true),
     SchemeOfWorkColumnDef(id: 'specificCompetence', label: 'Specific Competence', autoFilled: true),
     SchemeOfWorkColumnDef(id: 'learningActivities', label: 'Learning Activities (Content)', autoFilled: true),
     SchemeOfWorkColumnDef(id: 'expectedStandards', label: 'Expected Standards', suggested: true),
-    SchemeOfWorkColumnDef(id: 'strategiesMethodologies', label: 'Strategies & Methodologies'),
-    SchemeOfWorkColumnDef(id: 'tlAidsMaterials', label: 'TL Aids & Materials'),
+    SchemeOfWorkColumnDef(id: 'strategiesMethodologies', label: 'Strategies & Methodologies', suggested: true),
+    SchemeOfWorkColumnDef(id: 'tlAidsMaterials', label: 'TL Aids & Materials', suggested: true),
     SchemeOfWorkColumnDef(id: 'references', label: 'References'),
   ],
 );
@@ -89,8 +104,8 @@ const defaultObcSchemeOfWorkTemplate = SchemeOfWorkTemplate(
     SchemeOfWorkColumnDef(id: 'week', label: 'Week', autoFilled: true),
     SchemeOfWorkColumnDef(id: 'topicContent', label: 'Topic/Content', autoFilled: true),
     SchemeOfWorkColumnDef(id: 'specificOutcomes', label: 'Specific Outcomes', autoFilled: true),
-    SchemeOfWorkColumnDef(id: 'methods', label: 'Methods'),
-    SchemeOfWorkColumnDef(id: 'resources', label: 'Resources'),
+    SchemeOfWorkColumnDef(id: 'methods', label: 'Methods', suggested: true),
+    SchemeOfWorkColumnDef(id: 'resources', label: 'Resources', suggested: true),
     SchemeOfWorkColumnDef(id: 'references', label: 'References'),
   ],
 );

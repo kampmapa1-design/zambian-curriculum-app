@@ -1,3 +1,4 @@
+import '../services/scheme_of_work_suggestions.dart';
 import 'scheme_of_work.dart';
 import 'scheme_of_work_template.dart';
 
@@ -85,6 +86,30 @@ class SchemeOfWorkRowDraft {
       final description = entries.first.subTopic?.description ?? entries.first.topic.description;
       if (description != null) values['expectedStandards'] = description;
     }
+
+    // Key Competences / Strategies & Methodologies / TL Aids & Materials
+    // have no source data anywhere in this app's bundled syllabi — these
+    // three columns were previously left completely blank on every
+    // generated scheme. Rule-based, always-editable starting suggestions
+    // now fill them, grounded in the topic's own text — see
+    // scheme_of_work_suggestions.dart for what these are and, importantly,
+    // what they deliberately are NOT (not a claim of official CDC wording).
+    final combinedText = [
+      entries.first.topic.name,
+      entries.first.subTopic?.name ?? '',
+      entries.first.topic.description ?? '',
+      entries.first.subTopic?.description ?? '',
+      ...entries.expand((e) => e.competencies).map((c) => c.description),
+      ...entries.expand((e) => e.objectives).map((o) => o.description),
+    ].join(' ');
+    values['keyCompetences'] = suggestKeyCompetences(combinedText);
+    values['strategiesMethodologies'] = suggestStrategiesMethodologies(combinedText);
+    values['tlAidsMaterials'] = suggestTlAidsMaterials(combinedText);
+    // OBC's simpler template uses different column ids for the same kind
+    // of content — same suggestions, just filed under 'methods'/'resources'.
+    values['methods'] = suggestStrategiesMethodologies(combinedText);
+    values['resources'] = suggestTlAidsMaterials(combinedText);
+
     return SchemeOfWorkRowDraft(entries: entries, lessonNumber: lessonNumber, spellWeek: spellWeek, values: values);
   }
 
@@ -129,7 +154,15 @@ class SchemeOfWorkRowDraft {
       case 'specificOutcomes':
         return entries.expand((e) => e.competencies).map((c) => c.description).join('\n');
       case 'learningActivities':
-        return entries.expand((e) => e.objectives).map((o) => o.description).join('\n');
+        final objectives = entries.expand((e) => e.objectives).map((o) => o.description).join('\n');
+        if (objectives.isNotEmpty) return objectives;
+        // Real syllabus content has learning_objectives populated for only
+        // some subjects/topics (verified 2026-08-29: ~57% of sub-topics
+        // across bundled CBC syllabi) — previously this column just went
+        // blank for the rest, which was a real contributor to schemes
+        // looking mostly empty. Falls back to the topic/sub-topic's own
+        // description, which is populated almost everywhere.
+        return entries.first.subTopic?.description ?? entries.first.topic.description ?? '';
       default:
         return values[column.id] ?? '';
     }

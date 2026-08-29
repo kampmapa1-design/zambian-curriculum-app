@@ -190,8 +190,9 @@ class _SchemeOfWorkDocumentScreenState extends State<SchemeOfWorkDocumentScreen>
         children: [
           Text(
             '${_activeTemplate.name} layout. ${[for (final c in _activeTemplate.columns) if (c.autoFilled) c.label].join(', ')} '
-            'are filled in from the syllabus already on your device; fill in the remaining columns below '
-            'before exporting.',
+            'are filled in from the syllabus already on your device. '
+            '${[for (final c in _activeTemplate.columns) if (c.suggested) c.label].join(', ')} get a suggested '
+            'starting point you should review and adjust — check the remaining columns below before exporting.',
             style: Theme.of(context).textTheme.bodySmall?.copyWith(fontStyle: FontStyle.italic),
           ),
           const SizedBox(height: 16),
