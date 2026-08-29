@@ -42,6 +42,19 @@ class GradeBand {
 /// construction (grade 1 starts at 75, grade 2 covers 70-74), but if ECZ's
 /// exact current figures turn out to differ, this is the one list to
 /// change — nothing else in this feature depends on the specific numbers.
+///
+/// **Re-checked 2026-08-29, deliberately NOT changed**: a follow-up search
+/// surfaced intracolleges.com claiming the opposite direction entirely —
+/// grade 9 = best/Distinction, grade 1 = worst/fail. That contradicts both
+/// this table AND a separate ECZ Grade 9 source found in the same search
+/// pass ("75-100: ONE DISTINCTION... 40-49: FOUR PASS" — grade 1 = best,
+/// same direction as here). intracolleges.com is a low-authority SEO
+/// aggregator, not ECZ itself, and disagrees with a more internally-
+/// consistent source, so it was NOT used to change anything — flagging
+/// this here rather than silently dropping the finding. Still genuinely
+/// unverified against ECZ's own site directly; the "1 = best" direction
+/// has two independent-ish sources now, the exact percentage cutoffs
+/// still only one.
 const List<GradeBand> britishGradeBands = [
   GradeBand(label: '1st Class Distinction', numericGrade: 1, minPercentInclusive: 75),
   GradeBand(label: '2nd Class Distinction', numericGrade: 2, minPercentInclusive: 70),
