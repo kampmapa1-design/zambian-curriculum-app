@@ -2,11 +2,14 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../models/marking_scheme.dart';
 import '../models/marking_script.dart';
 import '../services/batch_grading_runner.dart';
 import '../services/marking_entitlement_service.dart';
+import '../services/marking_gap_report_document_service.dart';
+import '../services/marking_gap_report_service.dart';
 import '../services/marking_grading_service.dart';
 import '../services/marking_key_generation_service.dart';
 import '../services/marking_scheme_repository.dart';
@@ -41,6 +44,16 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
   late final MarkingScriptRepository _repository = widget.repository ?? MarkingScriptRepository();
   late final MarkingSchemeRepository _schemeRepository = widget.schemeRepository ?? MarkingSchemeRepository();
   late final MarkingGradingService _gradingService = widget.gradingService ?? MarkingGradingService();
+  late final MarkingGapReportService _gapReportService = MarkingGapReportService(schemeRepository: _schemeRepository);
+  final MarkingGapReportDocumentService _gapReportDocumentService = MarkingGapReportDocumentService();
+
+  /// How many marked (graded or reviewed) students form one "batch reports"
+  /// checkpoint — see [_buildMarkedStudentsSummary]. Scripts are still
+  /// captured and graded one at a time (or in whatever batch size the
+  /// teacher chooses via "Process N script(s)") exactly as before; this
+  /// only gates when the bundled batch-report action becomes available,
+  /// as a natural class-sized review checkpoint.
+  static const _reportBatchSize = 10;
 
   MarkingScriptCatalog _catalog = MarkingScriptCatalog.empty();
   MarkingSchemeCatalog _schemes = MarkingSchemeCatalog.empty();
@@ -423,6 +436,72 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
     _load();
   }
 
+  /// Every graded-or-reviewed script — the "Marked Students" list. Sorted
+  /// by surname (the app's usual convention, see MarkingScript's own doc)
+  /// so the growing list reads like a class register.
+  List<MarkingScript> get _markedScripts {
+    final scripts = [
+      ...(_byStatus[MarkingScriptStatus.graded] ?? const []),
+      ...(_byStatus[MarkingScriptStatus.reviewed] ?? const []),
+    ];
+    scripts.sort((a, b) => a.surname.toLowerCase().compareTo(b.surname.toLowerCase()));
+    return scripts;
+  }
+
+  /// "Report on [Name]" for one script — the present/missing comparison
+  /// against the marking key, generated from data already produced by
+  /// grading (no new AI call) and shared as an editable Word document.
+  /// Purely additive: does not touch the existing marks/confidence review
+  /// flow (MarkingReviewScreen) at all.
+  Future<void> _viewGapReport(MarkingScript script) async {
+    try {
+      final report = await _gapReportService.build(script);
+      final file = await _gapReportDocumentService.generateDocx(report);
+      if (!mounted) return;
+      await SharePlus.instance.share(
+        ShareParams(files: [XFile(file.path)], subject: 'Report on ${report.studentName}'),
+      );
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Could not build this report: $error')),
+      );
+    }
+  }
+
+  /// The batch-reports checkpoint action — bundles every marked student's
+  /// report into one share action, available once [_markedScripts] has
+  /// reached a multiple of [_reportBatchSize].
+  Future<void> _shareBatchReports() async {
+    final scripts = _markedScripts;
+    final files = <XFile>[];
+    final failed = <String>[];
+    for (final script in scripts) {
+      try {
+        final report = await _gapReportService.build(script);
+        final file = await _gapReportDocumentService.generateDocx(report);
+        files.add(XFile(file.path));
+      } catch (_) {
+        failed.add(script.fullName);
+      }
+    }
+    if (!mounted) return;
+    if (files.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No reports could be built.')),
+      );
+      return;
+    }
+    await SharePlus.instance.share(
+      ShareParams(files: files, subject: 'Marking reports (${files.length} student(s))'),
+    );
+    if (failed.isNotEmpty && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('${failed.length} report(s) could not be built: ${failed.join(', ')}')),
+      );
+    }
+  }
+
   Map<MarkingScriptStatus, List<MarkingScript>> get _byStatus {
     final grouped = <MarkingScriptStatus, List<MarkingScript>>{};
     for (final s in _catalog.scripts) {
@@ -651,6 +730,67 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
     );
   }
 
+  /// "Marked Students" — the growing list of graded/reviewed scripts for
+  /// this device, with a per-student report action always available, and
+  /// a bundled "batch reports" checkpoint that lights up once a multiple
+  /// of [_reportBatchSize] students have been marked.
+  Widget _buildMarkedStudentsSummary(BuildContext context) {
+    final scripts = _markedScripts;
+    final count = scripts.length;
+    final toNextCheckpoint = _reportBatchSize - (count % _reportBatchSize);
+    final atCheckpoint = count % _reportBatchSize == 0;
+
+    return Card(
+      margin: const EdgeInsets.only(bottom: 12),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.groups_outlined, color: Theme.of(context).colorScheme.primary),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text('Marked Students ($count)', style: Theme.of(context).textTheme.titleMedium),
+                ),
+              ],
+            ),
+            const SizedBox(height: 4),
+            Text(
+              atCheckpoint
+                  ? 'Batch reports ready for these $count student(s).'
+                  : '$toNextCheckpoint more to reach the next batch-reports checkpoint (every $_reportBatchSize).',
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+            const SizedBox(height: 8),
+            if (atCheckpoint)
+              OutlinedButton.icon(
+                onPressed: _shareBatchReports,
+                icon: const Icon(Icons.summarize_outlined),
+                label: Text('Share Reports for All $count Student(s)'),
+              ),
+            const SizedBox(height: 8),
+            ...scripts.map(
+              (script) => ListTile(
+                dense: true,
+                contentPadding: EdgeInsets.zero,
+                leading: const Icon(Icons.person_outline, size: 20),
+                title: Text(script.fullName),
+                subtitle: Text('${script.subjectName} · ${script.gradeName}'),
+                trailing: IconButton(
+                  icon: const Icon(Icons.description_outlined),
+                  tooltip: 'Report on ${script.fullName}',
+                  onPressed: () => _viewGapReport(script),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildEmptyState(BuildContext context) {
     return Center(
       child: Padding(
@@ -698,6 +838,7 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
             ),
           ),
         if (_buildConfidenceSummary(context) case final summary?) summary,
+        if (_markedScripts.isNotEmpty) _buildMarkedStudentsSummary(context),
         if (_processingBatchLabel case final label?)
           Card(
             margin: const EdgeInsets.only(bottom: 12),
