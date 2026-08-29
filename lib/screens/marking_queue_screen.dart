@@ -440,7 +440,7 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
   /// by surname (the app's usual convention, see MarkingScript's own doc)
   /// so the growing list reads like a class register.
   List<MarkingScript> get _markedScripts {
-    final scripts = [
+    final scripts = <MarkingScript>[
       ...(_byStatus[MarkingScriptStatus.graded] ?? const []),
       ...(_byStatus[MarkingScriptStatus.reviewed] ?? const []),
     ];
