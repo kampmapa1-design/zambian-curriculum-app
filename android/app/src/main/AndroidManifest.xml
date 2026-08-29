@@ -2,15 +2,15 @@
     <!-- AI-Assisted Marking (Stage 1): burst-capturing student script pages. -->
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-feature android:name="android.hardware.camera" android:required="true"/>
-    <!-- 2026-08-29: android:largeHeap reduces the chance Android's low-
-         memory killer picks this process specifically during memory-heavy
+    <!-- 2026-08-29: android:largeHeap reduces the chance Android's low
+         memory killer picks this process specifically during memory heavy
          moments (base64-encoding a bulky marking key PDF, holding several
-         photographed pages in memory at once) -- one real contributor to
+         photographed pages in memory at once), one real contributor to
          reported "app switches off, loses progress" reports. Does NOT
-         prevent process death outright -- no app can fully prevent that;
+         prevent process death outright; no app can fully prevent that,
          it's normal Android behavior under real memory pressure. See the
-         draft-persistence work in marking_key_upload_flow.dart for the
-         actual "don't lose already-completed work" fix. -->
+         draft persistence work in marking_key_upload_flow.dart for the
+         actual "don't lose already completed work" fix. -->
     <application
         android:label="Smart Teacher"
         android:name="${applicationName}"
