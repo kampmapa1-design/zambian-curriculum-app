@@ -132,7 +132,11 @@ class _BurstCaptureScreenState extends State<BurstCaptureScreen> {
           // below photographic quality.
           imageQuality: 75,
           bottomHintText: 'Page ${_capturedPages.length + 1} — hold the script flat and steady',
-          onDocumentSaved: (data) => Navigator.of(context).pop(data),
+          // No onDocumentSaved here — see the identical comment in
+          // DocumentPagesCaptureScreen._captureNextPage for why: the
+          // plugin already pops itself with the result, and also popping
+          // here double-popped the navigator, silently closing this
+          // screen right after each capture.
         ),
       ),
     );

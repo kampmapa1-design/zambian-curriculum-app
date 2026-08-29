@@ -41,7 +41,16 @@ class _DocumentPagesCaptureScreenState extends State<DocumentPagesCaptureScreen>
           showCloseButton: true,
           imageQuality: 75,
           bottomHintText: 'Page ${_capturedPages.length + 1} — hold the document flat and steady',
-          onDocumentSaved: (data) => Navigator.of(context).pop(data),
+          // No onDocumentSaved here — DocumentCameraFrame's own handleSave()
+          // already pops itself with the result (per its own changelog: the
+          // package "always pops itself with the result", onDocumentSaved is
+          // only an optional side-channel notification, called BEFORE that
+          // internal pop). Also popping here was a real double-pop bug: our
+          // pop closed the camera route (correctly resolving this await),
+          // then the plugin's own still-pending pop fired right after and
+          // silently closed the NEXT route down — this screen itself — which
+          // is why "Done" looked unresponsive and a second tap could reach a
+          // stale/relaunched camera view. Just await the push's own result.
         ),
       ),
     );

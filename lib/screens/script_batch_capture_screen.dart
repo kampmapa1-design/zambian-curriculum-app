@@ -158,7 +158,11 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
           bottomHintText: _pages.isEmpty
               ? 'Page 1 of this script (scripts typically run around 6 pages)'
               : 'Page ${_pages.length + 1} of this script',
-          onDocumentSaved: (data) => Navigator.of(context).pop(data),
+          // No onDocumentSaved here — see the identical comment in
+          // DocumentPagesCaptureScreen._captureNextPage for why: the
+          // plugin already pops itself with the result, and also popping
+          // here double-popped the navigator, silently closing this
+          // screen right after each capture.
         ),
       ),
     );
