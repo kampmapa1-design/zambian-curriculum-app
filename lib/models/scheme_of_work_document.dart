@@ -1,6 +1,8 @@
+import '../services/scheme_of_work_calendar_pacing.dart';
 import '../services/scheme_of_work_suggestions.dart';
 import 'scheme_of_work.dart';
 import 'scheme_of_work_template.dart';
+import 'zambian_term_calendar.dart';
 
 /// Once-per-document header fields for the CDC "Scheme of Work" template
 /// (Ministry of Education / Name of School / Name of Teacher / Level /
@@ -64,12 +66,34 @@ class SchemeOfWorkRowDraft {
 
   final Map<String, String> values;
 
+  /// Set only for a synthetic row with no real topic behind it — the
+  /// Mid-Term Break week the calendar-pacing engine inserts explicitly
+  /// (see SchemeOfWorkCalendarPacing) rather than silently skipping.
+  /// [entries] is empty for such a row; [overrideWeekNumber] supplies the
+  /// week number that would otherwise come from an entry.
+  final String? specialRowLabel;
+  final int? overrideWeekNumber;
+
   const SchemeOfWorkRowDraft({
     required this.entries,
     this.lessonNumber = 1,
     this.spellWeek = false,
     this.values = const {},
+    this.specialRowLabel,
+    this.overrideWeekNumber,
   });
+
+  factory SchemeOfWorkRowDraft.special({
+    required String label,
+    required int weekNumber,
+    bool spellWeek = false,
+  }) =>
+      SchemeOfWorkRowDraft(
+        entries: const [],
+        spellWeek: spellWeek,
+        specialRowLabel: label,
+        overrideWeekNumber: weekNumber,
+      );
 
   SchemeOfWorkEntry get primaryEntry => entries.first;
 
@@ -136,9 +160,17 @@ class SchemeOfWorkRowDraft {
   /// The cell text for [column] — computed directly from [entries] for
   /// auto-filled columns, otherwise whatever's in [values].
   String value(SchemeOfWorkColumnDef column) {
+    if (specialRowLabel case final label?) {
+      if (column.id == 'week') {
+        final week = overrideWeekNumber ?? 0;
+        return spellWeek && week < _weekWords.length ? _weekWords[week] : '$week';
+      }
+      const labelColumns = {'topic', 'topicContent', 'subTopic', 'topicSubTopic', 'specificCompetence', 'specificOutcomes'};
+      return labelColumns.contains(column.id) ? label : '';
+    }
     switch (column.id) {
       case 'week':
-        final week = primaryEntry.realWeekNumber ?? primaryEntry.weekNumber;
+        final week = overrideWeekNumber ?? primaryEntry.realWeekNumber ?? primaryEntry.weekNumber;
         return spellWeek && week < _weekWords.length ? _weekWords[week] : '$week';
       case 'stage':
         return 'Lesson $lessonNumber';
@@ -181,8 +213,21 @@ class SchemeOfWorkDocumentDraft {
 
   /// Builds rows from [entries] (assumed already ordered by week), grouped
   /// to match each curriculum's real template structure.
+  ///
+  /// Two real fixes applied here, both grounded in verified Zambian
+  /// Ministry of Education calendar data (2026-08-29 — see
+  /// zambian_term_calendar.dart): [applyCalendarPacing] stretches real
+  /// topics across the term's real 12 teaching weeks when the syllabus
+  /// data has no real per-topic week numbers of its own (previously
+  /// produced schemes covering only as many weeks as there were topics —
+  /// e.g. 6 of 13, a real reported bug), and an explicit "Mid-Term Break"
+  /// row is always inserted at week 7 — confirmed by both the formula AND
+  /// real sourced data (civic_education_form2's own real week numbers
+  /// skip week 7 in every term) to be a stable structural fact of the
+  /// real calendar, not something to silently omit.
   factory SchemeOfWorkDocumentDraft.fromEntries(List<SchemeOfWorkEntry> entries, {required String curriculumCode}) {
     final isCbc = curriculumCode.toUpperCase().contains('CBC');
+    final pacedEntries = applyCalendarPacing(entries);
     final rows = <SchemeOfWorkRowDraft>[];
 
     if (isCbc) {
@@ -190,18 +235,19 @@ class SchemeOfWorkDocumentDraft {
       // within its week.
       int? currentWeek;
       var lessonInWeek = 0;
-      for (final entry in entries) {
+      for (final entry in pacedEntries) {
         final week = entry.realWeekNumber ?? entry.weekNumber;
         lessonInWeek = (week == currentWeek) ? lessonInWeek + 1 : 1;
         currentWeek = week;
         rows.add(SchemeOfWorkRowDraft.build([entry], lessonNumber: lessonInWeek, spellWeek: false));
       }
+      _insertMidtermBreakRow(rows, spellWeek: false);
     } else {
       // One row per week — every topic/sub-topic taught that week merges
       // into shared cells, matching the real OBC template.
       final byWeek = <int, List<SchemeOfWorkEntry>>{};
       final weekOrder = <int>[];
-      for (final entry in entries) {
+      for (final entry in pacedEntries) {
         final week = entry.realWeekNumber ?? entry.weekNumber;
         if (!byWeek.containsKey(week)) weekOrder.add(week);
         byWeek.putIfAbsent(week, () => []).add(entry);
@@ -209,9 +255,27 @@ class SchemeOfWorkDocumentDraft {
       for (final week in weekOrder) {
         rows.add(SchemeOfWorkRowDraft.build(byWeek[week]!, lessonNumber: 1, spellWeek: true));
       }
+      _insertMidtermBreakRow(rows, spellWeek: true);
     }
 
     return SchemeOfWorkDocumentDraft(header: const SchemeOfWorkHeader(), rows: rows);
+  }
+
+  /// Inserts a synthetic "Mid-Term Break" row at week 7's position in
+  /// [rows] (already in week order), unless a row for week 7 genuinely
+  /// already exists (a subject whose real sourced data puts something
+  /// else there — trust the real data over this assumption).
+  static void _insertMidtermBreakRow(List<SchemeOfWorkRowDraft> rows, {required bool spellWeek}) {
+    const midtermWeek = TermDates.midtermBreakWeek;
+    int weekOf(SchemeOfWorkRowDraft r) => r.overrideWeekNumber ?? r.primaryEntry.realWeekNumber ?? r.primaryEntry.weekNumber;
+    if (rows.any((r) => weekOf(r) == midtermWeek)) return;
+    final insertAt = rows.indexWhere((r) => weekOf(r) > midtermWeek);
+    final row = SchemeOfWorkRowDraft.special(label: 'MID-TERM BREAK', weekNumber: midtermWeek, spellWeek: spellWeek);
+    if (insertAt == -1) {
+      rows.add(row);
+    } else {
+      rows.insert(insertAt, row);
+    }
   }
 
   SchemeOfWorkDocumentDraft withHeader(SchemeOfWorkHeader header) =>

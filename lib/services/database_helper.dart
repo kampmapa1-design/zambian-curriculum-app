@@ -5,6 +5,25 @@ import 'package:sqflite/sqflite.dart';
 import '../models/lesson_history_entry.dart';
 import '../models/syllabus_models.dart';
 
+/// Normalizes one 'learning_objectives' entry to the {sequence_number,
+/// description} shape every other part of this file assumes. Most bundled
+/// syllabus files already use that shape, but a real batch of AI-extracted
+/// subjects (agricultural_science, biology, chemistry, fashion_and_fabrics,
+/// food_and_nutrition, geography, literature_in_english, travel_and_tourism
+/// — confirmed 2026-08-29) has plain strings instead. The unguarded
+/// `.cast<Map<String, dynamic>>()` that used to run directly on this list
+/// threw for every one of those 8 subjects, which — given
+/// TemplateRepository.ensureAllSeeded()'s per-file try/catch — meant their
+/// entire topic tree silently failed to load into the on-device database
+/// at all, not just this one field. Defensive from here on: a plain string
+/// becomes {sequence_number: <its position>, description: <the string>};
+/// an already-correct map passes through unchanged.
+Map<String, dynamic> _normalizeObjectiveEntry(Object? raw, int index) {
+  if (raw is String) return {'sequence_number': index + 1, 'description': raw};
+  if (raw is Map) return raw.cast<String, dynamic>();
+  return {'sequence_number': index + 1, 'description': ''};
+}
+
 /// Local SQLite storage for syllabus templates. Schema: curricula ->
 /// subjects/grades/terms -> topics -> sub_topics -> learning_objectives /
 /// competencies. A curriculum (e.g. the 2023 Competency-Based Curriculum or
@@ -278,8 +297,9 @@ class DatabaseHelper {
             },
           );
 
-          for (final obj in (topicJson['learning_objectives'] as List? ?? [])
-              .cast<Map<String, dynamic>>()) {
+          final topicObjectivesRaw = topicJson['learning_objectives'] as List? ?? [];
+          for (var i = 0; i < topicObjectivesRaw.length; i++) {
+            final obj = _normalizeObjectiveEntry(topicObjectivesRaw[i], i);
             final existing = await _findObjectiveOrCompetency(
                 txn, 'learning_objectives', 'topic_id', topicId, obj['description']);
             if (existing == null) {
@@ -319,8 +339,9 @@ class DatabaseHelper {
               },
             );
 
-            for (final obj in (subTopicJson['learning_objectives'] as List? ?? [])
-                .cast<Map<String, dynamic>>()) {
+            final subTopicObjectivesRaw = subTopicJson['learning_objectives'] as List? ?? [];
+            for (var i = 0; i < subTopicObjectivesRaw.length; i++) {
+              final obj = _normalizeObjectiveEntry(subTopicObjectivesRaw[i], i);
               final existing = await _findObjectiveOrCompetency(
                   txn, 'learning_objectives', 'sub_topic_id', subTopicId, obj['description']);
               if (existing == null) {
