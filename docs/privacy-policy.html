@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Smart Teacher — Privacy Policy</title>
+<style>
+  :root { color-scheme: light dark; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 32px 20px 80px;
+    line-height: 1.6;
+    color: #1a1a1a;
+    background: #ffffff;
+  }
+  @media (prefers-color-scheme: dark) {
+    body { color: #e6e6e6; background: #14161a; }
+    a { color: #7db3ff; }
+    .callout { background: #1e2128 !important; }
+  }
+  h1 { font-size: 1.8rem; margin-bottom: 4px; }
+  h2 { font-size: 1.2rem; margin-top: 2.2em; border-bottom: 1px solid rgba(128,128,128,0.3); padding-bottom: 6px; }
+  .effective-date { color: #767676; font-size: 0.95rem; margin-top: 0; }
+  .callout {
+    background: #f4f6f8;
+    border-radius: 10px;
+    padding: 16px 18px;
+    margin: 20px 0;
+  }
+  ul { padding-left: 1.3em; }
+  code { background: rgba(128,128,128,0.15); padding: 1px 5px; border-radius: 4px; font-size: 0.92em; }
+  footer { margin-top: 3em; font-size: 0.85rem; color: #8a8a8a; }
+</style>
+</head>
+<body>
+
+<h1>Privacy Policy — Smart Teacher</h1>
+<p class="effective-date">Effective date: August 29, 2026</p>
+
+<p>Smart Teacher ("the app") is developed by Kampamba Mashabe ("we", "us"). This policy explains what data the app collects, why, and how it is handled. It applies to the Android app distributed on Google Play under the package name <code>com.kampmapa1design.smartteacher</code>.</p>
+
+<div class="callout">
+<strong>Summary:</strong> Smart Teacher is built offline-first. Lesson plans, schemes of work, captured scripts, and marking records are generated and stored on your device only. The app does not run ads, does not use analytics or tracking SDKs, and does not sell or share your data with advertisers. The only data that ever leaves your device is described below, and only when you actively use an AI-assisted feature.
+</div>
+
+<h2>What we collect and why</h2>
+
+<p><strong>1. Camera access.</strong> The app requests camera permission to let you photograph documents — question papers, marking keys, student scripts, and handwritten score lists. Captured photos are processed on-device (cropping, deskewing, contrast enhancement) and stored locally. They are only sent off-device if you choose an AI-assisted feature (see below).</p>
+
+<p><strong>2. AI-assisted features (optional, only when you use them).</strong> Features such as AI-assisted marking, marking-key generation from a photographed paper, and handwritten-list transcription send the relevant photographed page(s) and/or text to our backend (Google Cloud Functions), which forwards them to Google's Gemini AI service for one-time processing and returns the result to your device. We do not store these images or the AI's responses on our servers — they pass through for processing and are not retained by us. Google's own handling of data sent to its AI services is governed by <a href="https://policies.google.com/privacy">Google's Privacy Policy</a> and Gemini API terms.</p>
+
+<p><strong>3. Anonymous app identifier.</strong> To prevent abuse of the AI processing quota, the app signs in anonymously via Firebase Authentication before calling an AI feature. This creates a random device-associated identifier — no name, email address, phone number, or other personal identifier is collected or requested by the app itself.</p>
+
+<p><strong>4. Locally-stored content.</strong> Everything else the app generates or that you enter — lesson plans, schemes of work, record of work, captured scripts, marking schemes, grades, and analysis documents — is stored in a local database on your device and is never transmitted to us. Documents you choose to share (Word/PDF exports) go through your device's own share menu, entirely under your control; we have no visibility into where they end up.</p>
+
+<h2>What we do not do</h2>
+<ul>
+  <li>We do not run advertising or use any advertising SDK in this version of the app.</li>
+  <li>We do not use analytics, crash-reporting, or tracking SDKs.</li>
+  <li>We do not collect your name, email address, location, contacts, or any other personal profile information.</li>
+  <li>We do not sell your data, and we do not share it with third parties for their own marketing purposes.</li>
+</ul>
+<p><em>If a future version adds advertising, in-app purchases, or account sign-in, this policy will be updated first, and the update will be reflected in the app's Play Store listing.</em></p>
+
+<h2>Data retention and deletion</h2>
+<p>Since your content is stored on your device, uninstalling the app deletes it. Photos sent for AI processing are not retained by us after the response is returned. If you have questions about a specific processing request, contact us using the details below.</p>
+
+<h2>Children's privacy</h2>
+<p>Smart Teacher is a professional tool intended for teachers and educators, not for use by children. We do not knowingly collect personal information from children.</p>
+
+<h2>Changes to this policy</h2>
+<p>We may update this policy as the app's features change. The effective date above reflects the most recent update.</p>
+
+<h2>Contact</h2>
+<p>Questions about this policy or your data can be sent to: <strong><a href="mailto:kampmapa1@gmail.com">kampmapa1@gmail.com</a></strong></p>
+
+<footer>Smart Teacher — Zambian Curriculum Companion</footer>
+
+</body>
+</html>
