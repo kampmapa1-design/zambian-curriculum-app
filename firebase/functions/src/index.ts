@@ -1166,6 +1166,138 @@ export const transcribeHandwrittenList = onCall<TranscribeHandwrittenListRequest
 );
 
 // ---------------------------------------------------------------------
+// transcribeHandwrittenDocument — "Handwriting to Word Document
+// Conversion". Unlike transcribeHandwrittenList (a table of rows), this
+// is for free-form handwritten notes/documents of any shape — a letter,
+// a set of notes, an essay, anything with real paragraph/heading/list
+// structure rather than rows and columns. Returns a sequence of typed
+// blocks (heading/paragraph/bullet/numbered) in reading order, which the
+// client renders into an actual editable .docx.
+// ---------------------------------------------------------------------
+
+interface TranscribeHandwrittenDocumentRequest {
+  pageImagesBase64: string[];
+}
+
+type DocumentBlockType = "heading" | "subheading" | "paragraph" | "bullet" | "numbered";
+
+interface DocumentBlock {
+  type: DocumentBlockType;
+  text: string;
+}
+
+interface TranscribeHandwrittenDocumentResponse {
+  title: string;
+  blocks: DocumentBlock[];
+  notes: string;
+}
+
+const transcribeHandwrittenDocumentSchema = {
+  type: "object",
+  properties: {
+    title: {
+      type: "string",
+      description:
+        "A short title for the document - the page's own heading/title if it has one, otherwise a brief " +
+        "descriptive title based on the content. Never leave empty.",
+    },
+    blocks: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          type: {
+            type: "string",
+            enum: ["heading", "subheading", "paragraph", "bullet", "numbered"],
+            description:
+              "'heading' for a main section title, 'subheading' for a smaller section title, 'paragraph' for " +
+              "normal prose, 'bullet' for one unordered list item, 'numbered' for one ordered list item.",
+          },
+          text: { type: "string", description: "The block's text content, exactly as written." },
+        },
+        required: ["type", "text"],
+        additionalProperties: false,
+      },
+      description: "The document's content, in reading order (top to bottom, page by page).",
+    },
+    notes: {
+      type: "string",
+      description:
+        "Anything a reader should double-check - a word or passage that was hard to read, a section that " +
+        "looked cut off or unclear. Empty string if nothing stood out.",
+    },
+  },
+  required: ["title", "blocks", "notes"],
+  additionalProperties: false,
+};
+
+export const transcribeHandwrittenDocument = onCall<TranscribeHandwrittenDocumentRequest>(
+  { secrets: [geminiApiKey], region: "us-central1", timeoutSeconds: 120, memory: "512MiB", maxInstances: 5 },
+  async (request): Promise<TranscribeHandwrittenDocumentResponse> => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "Sign in is required to transcribe a document.");
+    }
+
+    const { pageImagesBase64 } = request.data ?? {};
+    if (!Array.isArray(pageImagesBase64) || pageImagesBase64.length === 0) {
+      throw new HttpsError("invalid-argument", "'pageImagesBase64' must be a non-empty array.");
+    }
+
+    const ai = new GoogleGenAI({ apiKey: geminiApiKey.value() });
+    const prompt = [
+      "The attached images are photos of handwritten (or printed) page(s) of a document, in page order - " +
+        "notes, a letter, an essay, a set of instructions, anything. Read everything genuinely written on " +
+        "the page(s) and reproduce it faithfully as structured content, never inventing or paraphrasing away " +
+        "what's actually there.",
+      "1. Give the document a short 'title' - use the page's own heading/title if it has one, otherwise a " +
+        "brief descriptive title.",
+      "2. Break the content into 'blocks' in reading order: 'heading' for a main section title, 'subheading' " +
+        "for a smaller section title, 'paragraph' for ordinary prose (keep a paragraph as one block even if " +
+        "it wraps several lines), 'bullet' for each unordered list item as its own block, 'numbered' for " +
+        "each ordered list item as its own block.",
+      "3. Preserve the actual wording exactly as written, including spelling as the writer wrote it - do not " +
+        "correct spelling/grammar, do not summarize, do not omit content.",
+      "4. If a word or passage is illegible or you're not confident, still include your best reading but say " +
+        "so plainly in notes (which section, what's uncertain) rather than silently guessing without " +
+        "flagging it.",
+      "5. Skip page numbers, margin scribbles, and anything that isn't genuinely part of the document's own " +
+        "content.",
+    ].join("\n");
+
+    const imageParts = pageImagesBase64.map((b64) => ({
+      inlineData: { mimeType: "image/jpeg", data: b64 },
+    }));
+
+    let text: string | undefined;
+    try {
+      const response = await ai.models.generateContent({
+        model: GEMINI_MODEL,
+        contents: [{ role: "user", parts: [{ text: prompt }, ...imageParts] }],
+        config: {
+          responseMimeType: "application/json",
+          responseJsonSchema: transcribeHandwrittenDocumentSchema,
+        },
+      });
+      text = response.text;
+    } catch (err) {
+      console.error("transcribeHandwrittenDocument: Gemini call failed", err);
+      throw new HttpsError("internal", "Failed to transcribe this document. Please try again.");
+    }
+
+    if (!text) {
+      throw new HttpsError("internal", "The AI did not return any transcribed content.");
+    }
+
+    try {
+      return JSON.parse(text) as TranscribeHandwrittenDocumentResponse;
+    } catch (err) {
+      console.error("transcribeHandwrittenDocument: response was not valid JSON", text);
+      throw new HttpsError("internal", "The transcription response could not be parsed.");
+    }
+  }
+);
+
+// ---------------------------------------------------------------------
 // detectCandidateName — AI-Assisted Marking, Stage D. Reads the captured
 // script's first page for a handwritten (or printed) candidate name, so
 // the capture form can be pre-filled instead of typed from scratch. Pure

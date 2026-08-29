@@ -17,7 +17,7 @@ import 'term_topic_picker_screen.dart';
 enum MarkingKeyUploadMethod { uploadFromDevice, camera }
 
 /// Stage B — the full "AI, read this marking key/question paper for me"
-/// flow: subject/grade → term/topic → device-or-camera → Gemini →
+/// flow: device-or-camera → Gemini → subject/grade → term/topic →
 /// MarkingSchemeBuilderScreen (pre-filled, always reviewed, never
 /// auto-saved — see the Cloud Function's own comment for why a question
 /// paper especially can't just be trusted directly). Shared by
@@ -36,18 +36,13 @@ Future<MarkingScheme?> runMarkingKeyUploadFlow({
   required MarkingSchemeRepository schemeRepository,
   void Function(bool loading)? onLoadingChanged,
 }) async {
-  final template = await Navigator.of(context).push<SyllabusTemplate>(
-    MaterialPageRoute(
-      builder: (_) => const SubjectGradeTopicPickerScreen(title: 'Subject & Grade', pickTopic: false),
-    ),
-  );
-  if (template == null || !context.mounted) return null;
-
-  final entry = await Navigator.of(context).push<SchemeOfWorkEntry>(
-    MaterialPageRoute(builder: (_) => TermTopicPickerScreen(template: template)),
-  );
-  if (entry == null || !context.mounted) return null;
-
+  // Device/camera pickup and AI extraction happen FIRST, with no picker in
+  // front of them — the AI extraction never actually uses subject/grade
+  // (see MarkingKeyGenerationService.deriveFromText/deriveFromImages, which
+  // send only the document itself), so there's no reason to make a teacher
+  // pick a subject before even opening the gallery or camera. Subject/grade/
+  // topic is asked afterwards, once there's a real derived key to file it
+  // under — see MarkingSchemeBuilderScreen below.
   final keyGenerationService = MarkingKeyGenerationService();
   DerivedMarkingKey derived;
 
@@ -90,6 +85,21 @@ Future<MarkingScheme?> runMarkingKeyUploadFlow({
   }
   onLoadingChanged?.call(false);
   if (!context.mounted) return null;
+
+  // Now that there's a real derived key in hand, ask which subject/grade/
+  // topic it belongs to — needed to file the saved MarkingScheme, but no
+  // longer blocking the camera/gallery from opening immediately above.
+  final template = await Navigator.of(context).push<SyllabusTemplate>(
+    MaterialPageRoute(
+      builder: (_) => const SubjectGradeTopicPickerScreen(title: 'Subject & Grade', pickTopic: false),
+    ),
+  );
+  if (template == null || !context.mounted) return null;
+
+  final entry = await Navigator.of(context).push<SchemeOfWorkEntry>(
+    MaterialPageRoute(builder: (_) => TermTopicPickerScreen(template: template)),
+  );
+  if (entry == null || !context.mounted) return null;
 
   return Navigator.of(context).push<MarkingScheme>(
     MaterialPageRoute(

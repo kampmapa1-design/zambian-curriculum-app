@@ -5,6 +5,7 @@ import '../models/scheme_of_work.dart';
 import '../models/syllabus_models.dart';
 import 'cdc_resources_screen.dart';
 import 'generate_lesson_plan_flow.dart';
+import 'handwriting_to_word_screen.dart';
 import 'marking_queue_screen.dart';
 import 'record_of_work_screen.dart';
 import 'scheme_of_work_document_screen.dart';
@@ -266,6 +267,14 @@ class HomeScreen extends StatelessWidget {
                   subtitle: 'Capture and queue student scripts for AI-assisted grading (early build)',
                   onTap: () => Navigator.of(context).push(
                     MaterialPageRoute(builder: (_) => const MarkingQueueScreen()),
+                  ),
+                ),
+                _FunctionButton(
+                  icon: Icons.edit_document,
+                  label: 'Handwriting to Word Document Conversion',
+                  subtitle: 'Photograph or upload a handwritten page, get back an editable Word document',
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const HandwritingToWordScreen()),
                   ),
                 ),
               ],
