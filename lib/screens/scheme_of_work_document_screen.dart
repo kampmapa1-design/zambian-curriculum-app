@@ -8,6 +8,7 @@ import '../models/scheme_of_work.dart';
 import '../models/scheme_of_work_document.dart';
 import '../models/scheme_of_work_template.dart';
 import '../models/syllabus_models.dart';
+import '../models/zambian_term_calendar.dart';
 import '../services/lesson_history_repository.dart';
 import '../services/progress_repository.dart';
 import '../services/related_marking_key_finder.dart';
@@ -59,8 +60,13 @@ class _SchemeOfWorkDocumentScreenState extends State<SchemeOfWorkDocumentScreen>
 
     _controllers['schoolName'] = TextEditingController(text: _draft.header.schoolName);
     _controllers['teacherName'] = TextEditingController(text: _draft.header.teacherName);
-    _controllers['year'] = TextEditingController(text: _draft.header.year);
+    // Defaults to the current year rather than staying blank — needed to
+    // compute the real calendar dates shown in the header (see
+    // _realCalendarNote), and still fully editable for planning a future
+    // year's scheme ahead of time.
+    _controllers['year'] = TextEditingController(text: _draft.header.year.isEmpty ? '${DateTime.now().year}' : _draft.header.year);
     _controllers['philosophy'] = TextEditingController(text: _draft.header.curriculumPhilosophyAndGoals);
+    _controllers['year']!.addListener(() => setState(() {}));
 
     for (var i = 0; i < _draft.rows.length; i++) {
       final row = _draft.rows[i];
@@ -110,6 +116,7 @@ class _SchemeOfWorkDocumentScreenState extends State<SchemeOfWorkDocumentScreen>
         curriculumName: widget.template.curriculum.name,
         curriculumCode: widget.template.curriculum.code,
         termLabel: widget.entries.isEmpty ? '' : _termLabel(),
+        realCalendarNote: _realCalendarNote(),
       );
 
   String _termLabel() {
@@ -121,6 +128,31 @@ class _SchemeOfWorkDocumentScreenState extends State<SchemeOfWorkDocumentScreen>
     }
     return termNames.join(', ');
   }
+
+  /// The real Ministry of Education term calendar for whatever year is
+  /// entered in the header, shown alongside the generated scheme so a
+  /// teacher can see exactly which real dates each week corresponds to —
+  /// see zambian_term_calendar.dart for how this is computed and verified.
+  /// Only computed when both a single recognizable term number ("Term 2")
+  /// and a valid 4-digit year are available; returns null (silently
+  /// omitted from the document) otherwise rather than guessing.
+  String? _realCalendarNote() {
+    final termNumberMatch = RegExp(r'Term\s*(\d)').firstMatch(_termLabel());
+    final termNumber = termNumberMatch == null ? null : int.tryParse(termNumberMatch.group(1)!);
+    final year = int.tryParse(_controllers['year']?.text.trim() ?? '');
+    if (termNumber == null || termNumber < 1 || termNumber > 3) return null;
+    if (year == null || year < 2000 || year > 2100) return null;
+
+    final term = computeZambianSchoolYear(year).term(termNumber);
+    String fmt(DateTime d) => '${d.day} ${_monthName(d.month)}';
+    return 'Real Ministry of Education calendar: opens ${fmt(term.open)}, closes ${fmt(term.close)}. '
+        'Mid-term break: ${fmt(term.midtermBreakStart)}–${fmt(term.midtermBreakEnd)}.';
+  }
+
+  static const _monthNames = [
+    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+  ];
+  String _monthName(int month) => _monthNames[month - 1];
 
   Future<void> _export(bool asPdf) async {
     _syncDraftFromControllers();

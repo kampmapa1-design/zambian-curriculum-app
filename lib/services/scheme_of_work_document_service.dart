@@ -24,12 +24,19 @@ class SchemeOfWorkDocumentContext {
   final String curriculumCode;
   final String termLabel;
 
+  /// The real Zambian Ministry of Education term calendar for this
+  /// scheme's term/year, when it could be confidently computed (see
+  /// SchemeOfWorkDocumentScreen._realCalendarNote) — null omits it from
+  /// the document entirely rather than showing a guess.
+  final String? realCalendarNote;
+
   const SchemeOfWorkDocumentContext({
     required this.subjectName,
     required this.gradeName,
     required this.curriculumName,
     required this.curriculumCode,
     required this.termLabel,
+    this.realCalendarNote,
   });
 
   SchemeOfWorkTemplate get template => schemeOfWorkTemplateFor(curriculumCode);
@@ -84,6 +91,10 @@ class SchemeOfWorkDocumentService {
           _pdfLabeledLine('Curriculum', context.curriculumName),
           _pdfLabeledLine('Term', context.termLabel),
           _pdfLabeledLine('Year', header.year),
+          if (context.realCalendarNote case final note?) ...[
+            pw.SizedBox(height: 4),
+            pw.Text(note, style: pw.TextStyle(fontSize: 9, fontStyle: pw.FontStyle.italic)),
+          ],
           if (header.curriculumPhilosophyAndGoals.trim().isNotEmpty) ...[
             pw.SizedBox(height: 6),
             pw.Text('Curriculum Philosophy and Goals',
@@ -189,6 +200,13 @@ class SchemeOfWorkDocumentService {
     buffer.write(_docxLabeledParagraph('Curriculum', context.curriculumName));
     buffer.write(_docxLabeledParagraph('Term', context.termLabel));
     buffer.write(_docxLabeledParagraph('Year', header.year));
+    if (context.realCalendarNote case final note?) {
+      buffer.write(
+        '<w:p><w:pPr><w:spacing w:after="80"/></w:pPr>'
+        '<w:r><w:rPr><w:i/><w:sz w:val="18"/></w:rPr>'
+        '<w:t xml:space="preserve">${_xmlEscape(note)}</w:t></w:r></w:p>',
+      );
+    }
     if (header.curriculumPhilosophyAndGoals.trim().isNotEmpty) {
       buffer.write(_docxLabeledParagraph('Curriculum Philosophy and Goals', header.curriculumPhilosophyAndGoals));
     }
