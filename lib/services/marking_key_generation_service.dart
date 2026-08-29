@@ -58,45 +58,67 @@ class MarkingKeyGenerationService {
     return !result.contains(ConnectivityResult.none);
   }
 
-  Future<DerivedMarkingKey> deriveFromText(String documentText, {required MarkingKeySourceType sourceType}) =>
-      _derive({'questionPaperText': documentText, 'sourceType': sourceType.wireValue});
+  Future<DerivedMarkingKey> deriveFromText(
+    String documentText, {
+    required MarkingKeySourceType sourceType,
+    void Function(String status)? onProgress,
+  }) =>
+      _derive({'questionPaperText': documentText, 'sourceType': sourceType.wireValue}, onProgress);
 
-  Future<DerivedMarkingKey> deriveFromImages(List<File> pageFiles, {required MarkingKeySourceType sourceType}) async {
+  Future<DerivedMarkingKey> deriveFromImages(
+    List<File> pageFiles, {
+    required MarkingKeySourceType sourceType,
+    void Function(String status)? onProgress,
+  }) async {
+    onProgress?.call('Preparing photos…');
     final images = [for (final f in pageFiles) base64Encode(await f.readAsBytes())];
-    return _derive({'pageImagesBase64': images, 'sourceType': sourceType.wireValue});
+    return _derive({'pageImagesBase64': images, 'sourceType': sourceType.wireValue}, onProgress);
   }
 
   /// Same as [deriveFromImages], but for bytes already in hand (e.g. from
   /// a file_picker result whose `.path` may not be populated on every
   /// platform) rather than re-reading from a [File].
-  Future<DerivedMarkingKey> deriveFromImageBytes(List<List<int>> imagesBytes, {required MarkingKeySourceType sourceType}) {
+  Future<DerivedMarkingKey> deriveFromImageBytes(
+    List<List<int>> imagesBytes, {
+    required MarkingKeySourceType sourceType,
+    void Function(String status)? onProgress,
+  }) {
+    onProgress?.call('Preparing photo…');
     final images = [for (final bytes in imagesBytes) base64Encode(bytes)];
-    return _derive({'pageImagesBase64': images, 'sourceType': sourceType.wireValue});
+    return _derive({'pageImagesBase64': images, 'sourceType': sourceType.wireValue}, onProgress);
   }
 
-  Future<DerivedMarkingKey> _derive(Map<String, dynamic> data) async {
+  Future<DerivedMarkingKey> _derive(Map<String, dynamic> data, void Function(String status)? onProgress) async {
+    var lastStatus = 'starting';
+    void track(String status) {
+      lastStatus = status;
+      onProgress?.call(status);
+    }
+
     // Hard backstop covering EVERYTHING, including the connectivity check
     // itself — see HandwrittenListTranscriptionService.transcribe for the
     // full reasoning: a connectivity-plugin call that stalls ahead of the
     // timeout wrapper defeats it entirely, so nothing runs outside this.
     try {
-      return await _doDerive(data).timeout(
+      return await _doDerive(data, track).timeout(
         const Duration(seconds: 130),
-        onTimeout: () => throw const MarkingKeyGenerationUnavailable(
-          'This is taking too long and may be stuck. Check your connection and try again.',
+        onTimeout: () => throw MarkingKeyGenerationUnavailable(
+          'This is taking too long and may be stuck (last step: "$lastStatus"). Check your connection and try again.',
         ),
       );
     } on MarkingKeyGenerationUnavailable {
       rethrow;
     } catch (error) {
-      throw MarkingKeyGenerationUnavailable('Could not generate a marking key: $error');
+      throw MarkingKeyGenerationUnavailable('Could not generate a marking key (last step: "$lastStatus"): $error');
     }
   }
 
-  Future<DerivedMarkingKey> _doDerive(Map<String, dynamic> data) async {
+  Future<DerivedMarkingKey> _doDerive(Map<String, dynamic> data, void Function(String status) onProgress) async {
+    onProgress('Checking connection…');
     if (!await isOnline) {
       throw const MarkingKeyGenerationUnavailable("You're offline. Connect to the internet to generate a marking key.");
     }
+    onProgress('Signing in…');
     await AuthService.instance.ensureSignedIn();
 
     final callable = _functions.httpsCallable(
@@ -106,6 +128,7 @@ class MarkingKeyGenerationService {
 
     Object? rawData;
     try {
+      onProgress('Reading with AI…');
       final result = await callable.call<Object?>(data);
       rawData = result.data;
     } on FirebaseFunctionsException catch (e) {
