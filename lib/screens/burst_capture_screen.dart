@@ -423,28 +423,31 @@ class _BurstCaptureScreenState extends State<BurstCaptureScreen> {
                   ),
                 ),
         ),
-        Padding(
-          padding: const EdgeInsets.all(16),
-          child: Row(
-            children: [
-              Expanded(
-                child: OutlinedButton.icon(
-                  onPressed: _saving ? null : _captureNextPage,
-                  icon: const Icon(Icons.add_a_photo_outlined),
-                  label: const Text('Capture Next Page'),
+        SafeArea(
+          top: false,
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: _saving ? null : _captureNextPage,
+                    icon: const Icon(Icons.add_a_photo_outlined),
+                    label: const Text('Capture Next Page'),
+                  ),
                 ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: FilledButton.icon(
-                  onPressed: (_saving || _capturedPages.isEmpty) ? null : _finishAndSave,
-                  icon: _saving
-                      ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
-                      : const Icon(Icons.check),
-                  label: Text(_saving ? 'Saving…' : 'Finish & Save'),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: FilledButton.icon(
+                    onPressed: (_saving || _capturedPages.isEmpty) ? null : _finishAndSave,
+                    icon: _saving
+                        ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
+                        : const Icon(Icons.check),
+                    label: Text(_saving ? 'Saving…' : 'Finish & Save'),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ],

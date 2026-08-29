@@ -119,26 +119,29 @@ class _DocumentPagesCaptureScreenState extends State<DocumentPagesCaptureScreen>
                           ),
                         ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: OutlinedButton.icon(
-                          onPressed: _captureNextPage,
-                          icon: const Icon(Icons.add_a_photo_outlined),
-                          label: const Text('Capture Next Page'),
+                SafeArea(
+                  top: false,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton.icon(
+                            onPressed: _captureNextPage,
+                            icon: const Icon(Icons.add_a_photo_outlined),
+                            label: const Text('Capture Next Page'),
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: FilledButton.icon(
-                          onPressed: _capturedPages.isEmpty ? null : _finish,
-                          icon: const Icon(Icons.check),
-                          label: const Text('Done'),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: FilledButton.icon(
+                            onPressed: _capturedPages.isEmpty ? null : _finish,
+                            icon: const Icon(Icons.check),
+                            label: const Text('Done'),
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ],
