@@ -38,7 +38,14 @@ class DerivedMarkingKey {
   final List<MarkingSchemeQuestion> questions;
   final String notes;
 
-  const DerivedMarkingKey({required this.questions, required this.notes});
+  /// The document's own title/heading, exactly as the AI found it on the
+  /// page (e.g. "Grade 12 Mathematics Final Examination") — empty string
+  /// if none was genuinely visible. Used to gently flag a mismatch
+  /// against what the teacher manually types for "type of exam" on the
+  /// intake form, not to auto-fill or override it.
+  final String detectedTitle;
+
+  const DerivedMarkingKey({required this.questions, required this.notes, this.detectedTitle = ''});
 }
 
 /// AI-Assisted Marking, Stage B — calls `deriveMarkingKeyFromQuestionPaper`
@@ -166,6 +173,11 @@ class MarkingKeyGenerationService {
     }
 
     final notes = responseData['notes'];
-    return DerivedMarkingKey(questions: questions, notes: notes is String ? notes : '');
+    final detectedTitle = responseData['detectedTitle'];
+    return DerivedMarkingKey(
+      questions: questions,
+      notes: notes is String ? notes : '',
+      detectedTitle: detectedTitle is String ? detectedTitle : '',
+    );
   }
 }

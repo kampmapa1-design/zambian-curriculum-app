@@ -907,6 +907,7 @@ interface DerivedQuestion {
 interface DeriveMarkingKeyResponse {
   questions: DerivedQuestion[];
   notes: string;
+  detectedTitle: string;
 }
 
 const deriveMarkingKeySchema = {
@@ -933,8 +934,16 @@ const deriveMarkingKeySchema = {
         "debatable or curriculum-dependent, ambiguous/illegible numbering, etc. Empty string if nothing " +
         "stood out.",
     },
+    detectedTitle: {
+      type: "string",
+      description:
+        "The exam/document's own title, heading, or exam name exactly as printed or written on the page " +
+        "(e.g. 'Grade 12 Mathematics Final Examination', 'BSc Semester 2 Marking Scheme') - whatever it " +
+        "genuinely says at the top of the document. Empty string if no such title/heading is visible " +
+        "anywhere on the document - never invent one.",
+    },
   },
-  required: ["questions", "notes"],
+  required: ["questions", "notes", "detectedTitle"],
   additionalProperties: false,
 };
 
@@ -959,6 +968,9 @@ function buildDeriveMarkingKeyPrompt(sourceType: MarkingKeySourceType, isImageSo
       "4. If any part of the key is illegible or ambiguous, say so plainly in that question's " +
         "expectedAnswerOrKeywords AND in notes, rather than guessing at what it might say.",
       "5. Skip pure instructions/rubric headers - only real, answerable questions belong in the result.",
+      "6. Set detectedTitle to the document's own title/heading exactly as printed or written (e.g. 'Grade " +
+        "12 Mathematics Final Examination'), or an empty string if none is genuinely visible - never invent " +
+        "one.",
       "",
       isImageSource ? "" : "--- MARKING KEY TEXT ---",
       isImageSource ? "" : "",
@@ -981,6 +993,9 @@ function buildDeriveMarkingKeyPrompt(sourceType: MarkingKeySourceType, isImageSo
       "notes which questions got an assumed rather than stated allocation.",
     "4. Skip pure instructions/rubric text ('Answer ALL questions in Section A', page headers, etc.) - " +
       "only real, answerable questions belong in the result.",
+    "5. Set detectedTitle to the document's own title/heading exactly as printed or written (e.g. 'Grade " +
+      "12 Mathematics Final Examination'), or an empty string if none is genuinely visible - never invent " +
+      "one.",
   ].join("\n");
 }
 

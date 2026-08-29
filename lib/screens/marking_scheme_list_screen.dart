@@ -16,8 +16,10 @@ import 'subject_grade_topic_picker_screen.dart';
 import 'term_topic_picker_screen.dart';
 
 /// AI-Assisted Marking, Stage 3 hub — every saved marking scheme, and the
-/// entry point to build a new one (always starting from a real
-/// subject/grade/topic pick, never free text — see [_createNew]). Also
+/// entry point to build a new one: "Enter manually" starts from a real
+/// bundled subject/grade/topic pick, while both AI-derived paths collect
+/// subject/level/exam-type as plain manual text instead (see
+/// [_createNew] and marking_key_upload_flow.dart). Also
 /// Stage 7's entry point: exporting a class marksheet aggregated from
 /// every reviewed script linked to a scheme (see [_exportMarksheet]).
 class MarkingSchemeListScreen extends StatefulWidget {
@@ -97,19 +99,27 @@ class _MarkingSchemeListScreenState extends State<MarkingSchemeListScreen> {
     );
     if (choice == null || !mounted) return;
 
-    final template = await Navigator.of(context).push<SyllabusTemplate>(
-      MaterialPageRoute(
-        builder: (_) => const SubjectGradeTopicPickerScreen(title: 'New Marking Scheme', pickTopic: false),
-      ),
-    );
-    if (template == null || !mounted) return;
-
-    final entry = await Navigator.of(context).push<SchemeOfWorkEntry>(
-      MaterialPageRoute(builder: (_) => TermTopicPickerScreen(template: template)),
-    );
-    if (entry == null || !mounted) return;
-
+    // "Enter manually" is the only path still tied to a real bundled
+    // subject/grade/topic — a teacher building a scheme from scratch for
+    // a specific topic they're teaching. Both AI paths skip this picker
+    // entirely now: runMarkingKeyUploadFlow collects subject/level/exam-
+    // type as plain manual text itself once the document is actually
+    // read (a full mock exam or past paper doesn't map to one bundled
+    // topic) — running this picker first as well would ask the teacher
+    // the same kind of question twice.
     if (choice == _NewSchemeChoice.manual) {
+      final template = await Navigator.of(context).push<SyllabusTemplate>(
+        MaterialPageRoute(
+          builder: (_) => const SubjectGradeTopicPickerScreen(title: 'New Marking Scheme', pickTopic: false),
+        ),
+      );
+      if (template == null || !mounted) return;
+
+      final entry = await Navigator.of(context).push<SchemeOfWorkEntry>(
+        MaterialPageRoute(builder: (_) => TermTopicPickerScreen(template: template)),
+      );
+      if (entry == null || !mounted) return;
+
       final saved = await Navigator.of(context).push<MarkingScheme>(
         MaterialPageRoute(
           builder: (_) => MarkingSchemeBuilderScreen(

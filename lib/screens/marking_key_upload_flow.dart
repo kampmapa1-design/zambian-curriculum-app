@@ -5,26 +5,31 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../models/marking_scheme.dart';
-import '../models/scheme_of_work.dart';
-import '../models/syllabus_models.dart';
 import '../services/marking_key_generation_service.dart';
 import '../services/marking_scheme_repository.dart';
 import '../services/subject_content_extraction_service.dart';
 import 'document_pages_capture_screen.dart';
+import 'marking_key_details_form_screen.dart';
 import 'marking_scheme_builder_screen.dart';
-import 'subject_grade_topic_picker_screen.dart';
-import 'term_topic_picker_screen.dart';
 
 enum MarkingKeyUploadMethod { uploadFromDevice, camera }
 
 /// Stage B — the full "AI, read this marking key/question paper for me"
-/// flow: device-or-camera → Gemini → confirmation → subject/grade → term/
-/// topic → MarkingSchemeBuilderScreen (pre-filled, always reviewed, never
-/// auto-saved — see the Cloud Function's own comment for why a question
-/// paper especially can't just be trusted directly). Shared by
-/// MarkingSchemeListScreen's "New Scheme" flow and the AI-Assisted
-/// Marking hub's direct "Upload Marking Key" button so both go through
-/// identical behavior rather than two copies drifting apart.
+/// flow: device-or-camera → Gemini → confirmation → manual Subject/Level/
+/// Exam-type entry → MarkingSchemeBuilderScreen (pre-filled, always
+/// reviewed, never auto-saved — see the Cloud Function's own comment for
+/// why a question paper especially can't just be trusted directly).
+/// Shared by MarkingSchemeListScreen's "New Scheme" flow and the AI-
+/// Assisted Marking hub's direct "Upload Marking Key" button so both go
+/// through identical behavior rather than two copies drifting apart.
+///
+/// **2026-08-29**: previously this asked for subject/grade/topic via the
+/// app's bundled-syllabus PICKER, one topic at a time. Real complaint: a
+/// full mock exam or past paper doesn't map to a single topic, and the
+/// picker felt disconnected from what was actually just uploaded ("loses
+/// track"). Replaced with a plain manual-entry form (subject name, level,
+/// type of exam — see MarkingKeyDetailsFormScreen) — no dropdown at all
+/// for this flow now.
 ///
 /// Returns the saved scheme, or null if the teacher backed out at any
 /// step. [onLoadingChanged] still fires around the AI call for a caller
@@ -105,10 +110,9 @@ Future<MarkingScheme?> runMarkingKeyUploadFlow({
   if (context.mounted) Navigator.of(context, rootNavigator: true).pop(); // close the progress dialog
   if (!context.mounted) return null;
 
-  // Explicit acknowledgement before jumping into subject/grade/topic
-  // pickers — a real reported gap: teachers had no confirmation that the
-  // key was actually read before the app moved on, making the following
-  // subject picker feel unexplained ("for reasons not clear to the user").
+  // Explicit acknowledgement before moving on — a real reported gap:
+  // teachers had no confirmation that the key was actually read before
+  // the app moved to the next screen, which felt unexplained.
   final proceed = await showDialog<bool>(
     context: context,
     barrierDismissible: false,
@@ -117,7 +121,7 @@ Future<MarkingScheme?> runMarkingKeyUploadFlow({
       content: Text(
         'Found ${derived.questions.length} question(s).'
         '${derived.notes.trim().isNotEmpty ? '\n\n${derived.notes}' : ''}'
-        '\n\nNext, choose which subject/grade/topic this belongs to, then review every question before saving.',
+        '\n\nNext, fill in a few details, then review every question before saving.',
       ),
       actions: [
         TextButton(onPressed: () => Navigator.of(dialogContext).pop(false), child: const Text('Cancel')),
@@ -127,28 +131,26 @@ Future<MarkingScheme?> runMarkingKeyUploadFlow({
   );
   if (proceed != true || !context.mounted) return null;
 
-  // Now that there's a real derived key in hand, ask which subject/grade/
-  // topic it belongs to — needed to file the saved MarkingScheme, but no
-  // longer blocking the camera/gallery from opening immediately above.
-  final template = await Navigator.of(context).push<SyllabusTemplate>(
+  // Manual entry — subject name, level, and type of exam are plain text
+  // the teacher types themselves, not picked from the app's bundled
+  // syllabus data. A full mock exam/past paper doesn't map to one topic,
+  // so there's no topic picker in this flow at all anymore.
+  final details = await Navigator.of(context).push<MarkingKeyDetails>(
     MaterialPageRoute(
-      builder: (_) => const SubjectGradeTopicPickerScreen(title: 'Subject & Grade', pickTopic: false),
+      builder: (_) => MarkingKeyDetailsFormScreen(
+        detectedTitle: derived.detectedTitle,
+        questionCount: derived.questions.length,
+      ),
     ),
   );
-  if (template == null || !context.mounted) return null;
-
-  final entry = await Navigator.of(context).push<SchemeOfWorkEntry>(
-    MaterialPageRoute(builder: (_) => TermTopicPickerScreen(template: template)),
-  );
-  if (entry == null || !context.mounted) return null;
+  if (details == null || !context.mounted) return null;
 
   return Navigator.of(context).push<MarkingScheme>(
     MaterialPageRoute(
       builder: (_) => MarkingSchemeBuilderScreen(
-        subjectName: template.subject.name,
-        gradeName: template.grade.name,
-        topicName: entry.topic.name,
-        subTopicName: entry.subTopic?.name,
+        subjectName: details.subjectName,
+        gradeName: details.level,
+        topicName: details.examType,
         initialQuestions: derived.questions,
         aiNotes: derived.notes,
         repository: schemeRepository,

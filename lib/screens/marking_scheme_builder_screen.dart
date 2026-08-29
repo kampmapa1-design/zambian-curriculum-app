@@ -10,11 +10,12 @@ import '../services/marking_scheme_repository.dart';
 /// assessment (Stage 4 onward sends this alongside each script's page
 /// images to the AI provider).
 ///
-/// Always reached already linked to a real subject/grade/topic from the
-/// app's syllabus data — [subjectName]/[gradeName]/[topicName] are
-/// required, not free text a teacher could type any name into (see
-/// startCreateMarkingScheme, which does that picking before this screen
-/// ever opens).
+/// [subjectName]/[gradeName]/[topicName] are required strings, but their
+/// source varies by caller: the marking-key upload flow
+/// (marking_key_upload_flow.dart) collects them as plain manual text
+/// entry (subject name / level / type of exam — a full mock exam or past
+/// paper doesn't map to one bundled syllabus topic), not picked from the
+/// app's syllabus data.
 class MarkingSchemeBuilderScreen extends StatefulWidget {
   const MarkingSchemeBuilderScreen({
     super.key,
