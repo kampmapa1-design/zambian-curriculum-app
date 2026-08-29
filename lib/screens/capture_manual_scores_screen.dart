@@ -32,10 +32,12 @@ class _CaptureManualScoresScreenState extends State<CaptureManualScoresScreen> {
   late final HandwrittenListDocumentService _documentService = widget.documentService ?? HandwrittenListDocumentService();
 
   _Step _step = _Step.capturing;
+  String _statusText = '';
   String? _errorMessage;
   File? _generatedFile;
   String? _notes;
   int _rowCount = 0;
+  List<File>? _capturedPages;
 
   @override
   void initState() {
@@ -58,16 +60,35 @@ class _CaptureManualScoresScreenState extends State<CaptureManualScoresScreen> {
       Navigator.of(context).pop();
       return;
     }
+    _capturedPages = pages;
+    await _transcribeAndBuild(pages);
+  }
 
-    setState(() => _step = _Step.transcribing);
+  Future<void> _transcribeAndBuild(List<File> pages) async {
+    setState(() {
+      _step = _Step.transcribing;
+      _statusText = 'Starting…';
+    });
     try {
-      final table = await _transcriptionService.transcribe(pages);
-      final file = await _documentService.generateDocx(table, title: 'Captured List');
+      final table = await _transcriptionService.transcribe(
+        pages,
+        onProgress: (status) {
+          if (mounted) setState(() => _statusText = status);
+        },
+      );
+      if (!mounted) return;
+
+      final arrangeAlphabetically = await _askArrangeAlphabetically();
+      if (!mounted) return;
+      final finalTable = arrangeAlphabetically ? table.sortedAlphabetically() : table;
+
+      setState(() => _statusText = 'Building the Word document…');
+      final file = await _documentService.generateDocx(finalTable, title: 'Captured List');
       if (!mounted) return;
       setState(() {
         _generatedFile = file;
-        _notes = table.notes;
-        _rowCount = table.rows.length;
+        _notes = finalTable.notes;
+        _rowCount = finalTable.rows.length;
         _step = _Step.done;
       });
       await SharePlus.instance.share(
@@ -80,6 +101,40 @@ class _CaptureManualScoresScreenState extends State<CaptureManualScoresScreen> {
         _step = _Step.error;
       });
     }
+  }
+
+  /// Matches the original spec's "Arrange list in alphabetical order?
+  /// Yes/No" prompt — asked once transcription is done and the table's
+  /// actual columns are known, so the sort can target whichever column
+  /// genuinely looks like a name column.
+  Future<bool> _askArrangeAlphabetically() async {
+    final result = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        title: const Text('Arrange list in alphabetical order?'),
+        content: const Text('The Word document can list rows alphabetically by name, or keep the order they were written in.'),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(context).pop(false), child: const Text('No, keep original order')),
+          FilledButton(onPressed: () => Navigator.of(context).pop(true), child: const Text('Yes, arrange alphabetically')),
+        ],
+      ),
+    );
+    return result ?? false;
+  }
+
+  Future<void> _retryTranscription() async {
+    final pages = _capturedPages;
+    if (pages == null) {
+      setState(() {
+        _step = _Step.capturing;
+        _errorMessage = null;
+      });
+      await _startCapture();
+      return;
+    }
+    setState(() => _errorMessage = null);
+    await _transcribeAndBuild(pages);
   }
 
   Future<void> _shareAgain() async {
@@ -97,12 +152,12 @@ class _CaptureManualScoresScreenState extends State<CaptureManualScoresScreen> {
           padding: const EdgeInsets.all(24),
           child: switch (_step) {
             _Step.capturing => const CircularProgressIndicator(),
-            _Step.transcribing => const Column(
+            _Step.transcribing => Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  CircularProgressIndicator(),
-                  SizedBox(height: 12),
-                  Text('Reading the list and building the Word document…'),
+                  const CircularProgressIndicator(),
+                  const SizedBox(height: 12),
+                  Text(_statusText.isEmpty ? 'Reading the list and building the Word document…' : _statusText),
                 ],
               ),
             _Step.done => Column(
@@ -150,14 +205,20 @@ class _CaptureManualScoresScreenState extends State<CaptureManualScoresScreen> {
                   Text('Could not transcribe this list: $_errorMessage', textAlign: TextAlign.center),
                   const SizedBox(height: 20),
                   FilledButton(
+                    onPressed: _retryTranscription,
+                    child: const Text('Try Again'),
+                  ),
+                  const SizedBox(height: 8),
+                  OutlinedButton(
                     onPressed: () {
                       setState(() {
                         _step = _Step.capturing;
                         _errorMessage = null;
+                        _capturedPages = null;
                       });
                       _startCapture();
                     },
-                    child: const Text('Try Again'),
+                    child: const Text('Re-capture Photos Instead'),
                   ),
                 ],
               ),

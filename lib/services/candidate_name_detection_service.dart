@@ -39,22 +39,32 @@ class CandidateNameDetectionService {
   Future<DetectedCandidateName> detect(File pageImage) async {
     try {
       if (!await isOnline) return const DetectedCandidateName(firstName: '', surname: '');
-      await AuthService.instance.ensureSignedIn();
-
-      final callable = _functions.httpsCallable(
-        'detectCandidateName',
-        options: HttpsCallableOptions(timeout: const Duration(seconds: 50)),
-      );
-      final bytes = await pageImage.readAsBytes();
-      final result = await callable.call<Map<Object?, Object?>>({'imageBase64': base64Encode(bytes)});
-      return DetectedCandidateName(
-        firstName: result.data['firstName'] as String? ?? '',
-        surname: result.data['surname'] as String? ?? '',
+      // Hard backstop, same reasoning as HandwrittenListTranscriptionService
+      // — a stalled auth handshake or plugin call must not hang the small
+      // "detecting…" spinner next to the name field forever.
+      return await _doDetect(pageImage).timeout(
+        const Duration(seconds: 60),
+        onTimeout: () => const DetectedCandidateName(firstName: '', surname: ''),
       );
     } catch (_) {
       // Convenience feature only - never block or alarm the teacher over
       // a failed auto-detect attempt, they can just type the name.
       return const DetectedCandidateName(firstName: '', surname: '');
     }
+  }
+
+  Future<DetectedCandidateName> _doDetect(File pageImage) async {
+    await AuthService.instance.ensureSignedIn();
+
+    final callable = _functions.httpsCallable(
+      'detectCandidateName',
+      options: HttpsCallableOptions(timeout: const Duration(seconds: 50)),
+    );
+    final bytes = await pageImage.readAsBytes();
+    final result = await callable.call<Map<Object?, Object?>>({'imageBase64': base64Encode(bytes)});
+    return DetectedCandidateName(
+      firstName: result.data['firstName'] as String? ?? '',
+      surname: result.data['surname'] as String? ?? '',
+    );
   }
 }

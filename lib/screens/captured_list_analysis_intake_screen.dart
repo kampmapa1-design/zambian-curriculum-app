@@ -56,7 +56,7 @@ class _RowEntry {
   }
 }
 
-enum _Step { subjectGrade, details, capturing, review }
+enum _Step { subjectGrade, details, capturing, transcribeError, review }
 
 class _CapturedListAnalysisIntakeScreenState extends State<CapturedListAnalysisIntakeScreen> {
   late final MarkingSchemeRepository _schemeRepository = widget.schemeRepository ?? MarkingSchemeRepository();
@@ -73,6 +73,9 @@ class _CapturedListAnalysisIntakeScreenState extends State<CapturedListAnalysisI
   bool _transcribing = false;
   bool _saving = false;
   String? _aiNotes;
+  String _statusText = '';
+  String? _lastError;
+  List<File>? _capturedPages;
   final List<_RowEntry> _rows = [];
 
   @override
@@ -133,10 +136,29 @@ class _CapturedListAnalysisIntakeScreenState extends State<CapturedListAnalysisI
       setState(() => _step = _Step.details);
       return;
     }
+    _capturedPages = pages;
+    await _transcribe(pages);
+  }
 
-    setState(() => _transcribing = true);
+  Future<void> _retryTranscription() async {
+    final pages = _capturedPages;
+    if (pages == null) return;
+    setState(() => _step = _Step.capturing);
+    await _transcribe(pages);
+  }
+
+  Future<void> _transcribe(List<File> pages) async {
+    setState(() {
+      _transcribing = true;
+      _statusText = 'Starting…';
+    });
     try {
-      final table = await _transcriptionService.transcribe(pages);
+      final table = await _transcriptionService.transcribe(
+        pages,
+        onProgress: (status) {
+          if (mounted) setState(() => _statusText = status);
+        },
+      );
       if (!mounted) return;
       setState(() {
         _rows
@@ -147,8 +169,8 @@ class _CapturedListAnalysisIntakeScreenState extends State<CapturedListAnalysisI
       });
     } catch (error) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Could not transcribe this list: $error')));
-      setState(() => _step = _Step.details);
+      setState(() => _step = _Step.transcribeError);
+      _lastError = error.toString();
     } finally {
       if (mounted) setState(() => _transcribing = false);
     }
@@ -275,15 +297,40 @@ class _CapturedListAnalysisIntakeScreenState extends State<CapturedListAnalysisI
         _Step.details => _buildDetailsForm(context),
         _Step.capturing => Center(
             child: _transcribing
-                ? const Column(
+                ? Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      CircularProgressIndicator(),
-                      SizedBox(height: 12),
-                      Text('Reading the results list…'),
+                      const CircularProgressIndicator(),
+                      const SizedBox(height: 12),
+                      Text(_statusText.isEmpty ? 'Reading the results list…' : _statusText),
                     ],
                   )
                 : const CircularProgressIndicator(),
+          ),
+        _Step.transcribeError => Center(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.error_outline, size: 48, color: Theme.of(context).colorScheme.error),
+                  const SizedBox(height: 12),
+                  Text('Could not read this list: $_lastError', textAlign: TextAlign.center),
+                  const SizedBox(height: 20),
+                  FilledButton(onPressed: _retryTranscription, child: const Text('Try Again')),
+                  const SizedBox(height: 8),
+                  OutlinedButton(
+                    onPressed: () {
+                      setState(() {
+                        _step = _Step.details;
+                        _capturedPages = null;
+                      });
+                    },
+                    child: const Text('Re-capture Photos Instead'),
+                  ),
+                ],
+              ),
+            ),
           ),
         _Step.review => _buildReview(context),
       },
