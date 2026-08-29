@@ -3,12 +3,14 @@ import 'dart:async' show unawaited;
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../models/marking_scheme.dart';
 import '../models/scheme_of_work.dart';
 import '../models/scheme_of_work_document.dart';
 import '../models/scheme_of_work_template.dart';
 import '../models/syllabus_models.dart';
 import '../services/lesson_history_repository.dart';
 import '../services/progress_repository.dart';
+import '../services/related_marking_key_finder.dart';
 import '../services/scheme_of_work_document_service.dart';
 import '../services/syllabus_document_service.dart';
 
@@ -42,9 +44,11 @@ class _SchemeOfWorkDocumentScreenState extends State<SchemeOfWorkDocumentScreen>
   final LessonHistoryRepository _lessonHistoryRepository = LessonHistoryRepository();
   final _syllabusDocumentService = SyllabusDocumentService();
   final _progressRepository = ProgressRepository();
+  final RelatedMarkingKeyFinder _markingKeyFinder = RelatedMarkingKeyFinder();
   bool _exporting = false;
   bool _sharingSyllabus = false;
   final Set<int> _markedTaughtTopicIds = {};
+  List<MarkingScheme> _relatedMarkingKeys = const [];
 
   Iterable<SchemeOfWorkColumnDef> get _manualColumns => _activeTemplate.columns.where((c) => c.manualEntry);
 
@@ -64,6 +68,16 @@ class _SchemeOfWorkDocumentScreenState extends State<SchemeOfWorkDocumentScreen>
         _controllers['row_${i}_${column.id}'] = TextEditingController(text: row.value(column));
       }
     }
+    _loadRelatedMarkingKeys();
+  }
+
+  /// Marking keys uploaded through AI-Assisted Marking, for this same
+  /// subject — appended to the exported scheme as a real "Reference:
+  /// Assessment Content" section, entirely offline. See the identical
+  /// pattern/reasoning in lesson_plan_screen.dart.
+  Future<void> _loadRelatedMarkingKeys() async {
+    final matches = await _markingKeyFinder.find(widget.template.subject.name);
+    if (mounted && matches.isNotEmpty) setState(() => _relatedMarkingKeys = matches);
   }
 
   @override
@@ -113,8 +127,8 @@ class _SchemeOfWorkDocumentScreenState extends State<SchemeOfWorkDocumentScreen>
     setState(() => _exporting = true);
     try {
       final file = asPdf
-          ? await _documentService.generatePdf(_context, _draft)
-          : await _documentService.generateDocx(_context, _draft);
+          ? await _documentService.generatePdf(_context, _draft, relatedMarkingKeys: _relatedMarkingKeys)
+          : await _documentService.generateDocx(_context, _draft, relatedMarkingKeys: _relatedMarkingKeys);
       if (!mounted) return;
       // The OS share sheet is what actually surfaces WhatsApp, email,
       // Bluetooth, and every other installed share target — one call here

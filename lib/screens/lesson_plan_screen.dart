@@ -7,6 +7,7 @@ import '../models/embedded_lesson_plan.dart';
 import '../models/lesson_checkpoint.dart';
 import '../models/lesson_plan.dart';
 import '../models/lesson_stage.dart';
+import '../models/marking_scheme.dart';
 import '../models/scheme_of_work.dart';
 import '../models/subject_content_item.dart';
 import '../services/custom_template_repository.dart';
@@ -15,6 +16,7 @@ import '../services/lesson_checkpoint_repository.dart';
 import '../services/lesson_history_repository.dart';
 import '../services/lesson_plan_document_service.dart';
 import '../services/lesson_progression_generator.dart';
+import '../services/related_marking_key_finder.dart';
 import '../services/subject_content_repository.dart';
 
 /// Lets a teacher fill in a lesson plan template for one scheme-of-work
@@ -97,6 +99,7 @@ class _LessonPlanScreenState extends State<LessonPlanScreen> {
       widget.embeddedLessonPlanRepository ?? EmbeddedLessonPlanRepository();
   final SubjectContentRepository _subjectContentRepository = SubjectContentRepository();
   final LessonHistoryRepository _lessonHistoryRepository = LessonHistoryRepository();
+  final RelatedMarkingKeyFinder _markingKeyFinder = RelatedMarkingKeyFinder();
 
   List<LessonPlanTemplate> _availableTemplates = const [];
   late LessonPlanTemplate _activeTemplate;
@@ -108,6 +111,7 @@ class _LessonPlanScreenState extends State<LessonPlanScreen> {
   bool _usingEmbedded = false;
   List<SubjectContentItem> _relatedMaterials = const [];
   String? _subjectContentExcerpt;
+  List<MarkingScheme> _relatedMarkingKeys = const [];
 
   @override
   void initState() {
@@ -119,6 +123,7 @@ class _LessonPlanScreenState extends State<LessonPlanScreen> {
     _loadEmbeddedMatches();
     _loadRelatedMaterials();
     _loadSubjectContentExcerpt();
+    _loadRelatedMarkingKeys();
     WidgetsBinding.instance.addPostFrameCallback((_) => _checkForCheckpoint());
   }
 
@@ -131,6 +136,17 @@ class _LessonPlanScreenState extends State<LessonPlanScreen> {
     final catalog = await _subjectContentRepository.loadCatalog();
     final matches = catalog.items.where((i) => i.subjectName.toLowerCase() == widget.subjectName.toLowerCase()).toList();
     if (mounted && matches.isNotEmpty) setState(() => _relatedMaterials = matches);
+  }
+
+  /// Marking keys uploaded through AI-Assisted Marking, for this same
+  /// subject — appended to the exported document as a real "Reference:
+  /// Assessment Content" section (see related_marking_key_section.dart)
+  /// so a teacher's plan can be informed by what's actually been
+  /// assessed on this subject before. Entirely offline, same data source
+  /// AI-Assisted Marking already uses.
+  Future<void> _loadRelatedMarkingKeys() async {
+    final matches = await _markingKeyFinder.find(widget.subjectName);
+    if (mounted && matches.isNotEmpty) setState(() => _relatedMarkingKeys = matches);
   }
 
   /// Entirely local/offline (the text is already on-device — see
@@ -463,8 +479,8 @@ class _LessonPlanScreenState extends State<LessonPlanScreen> {
     setState(() => _exporting = true);
     try {
       final file = asPdf
-          ? await _documentService.generatePdf(_activeTemplate, _draft)
-          : await _documentService.generateDocx(_activeTemplate, _draft);
+          ? await _documentService.generatePdf(_activeTemplate, _draft, relatedMarkingKeys: _relatedMarkingKeys)
+          : await _documentService.generateDocx(_activeTemplate, _draft, relatedMarkingKeys: _relatedMarkingKeys);
       if (!mounted) return;
       // The OS share sheet is what actually surfaces WhatsApp, email,
       // Bluetooth, and every other installed share target — one call here

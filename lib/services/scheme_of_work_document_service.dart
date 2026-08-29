@@ -7,8 +7,10 @@ import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
+import '../models/marking_scheme.dart';
 import '../models/scheme_of_work_document.dart';
 import '../models/scheme_of_work_template.dart';
+import 'related_marking_key_section.dart';
 
 /// Identifies which subject/grade/curriculum a scheme-of-work document is
 /// for — display-only context, not stored in the draft itself. The actual
@@ -57,7 +59,11 @@ class SchemeOfWorkDocumentService {
   // PDF — landscape, since the CDC layout has 11 columns.
   // ---------------------------------------------------------------------
 
-  Future<File> generatePdf(SchemeOfWorkDocumentContext context, SchemeOfWorkDocumentDraft draft) async {
+  Future<File> generatePdf(
+    SchemeOfWorkDocumentContext context,
+    SchemeOfWorkDocumentDraft draft, {
+    List<MarkingScheme> relatedMarkingKeys = const [],
+  }) async {
     final doc = pw.Document();
     final header = draft.header;
     final columns = context.template.columns;
@@ -102,6 +108,7 @@ class SchemeOfWorkDocumentService {
                 pw.TableRow(children: [for (final c in columns) _pdfCell(row.value(c))]),
             ],
           ),
+          ...buildRelatedMarkingKeyPdfSection(relatedMarkingKeys),
         ],
       ),
     );
@@ -139,7 +146,11 @@ class SchemeOfWorkDocumentService {
   // package dependency.
   // ---------------------------------------------------------------------
 
-  Future<File> generateDocx(SchemeOfWorkDocumentContext context, SchemeOfWorkDocumentDraft draft) async {
+  Future<File> generateDocx(
+    SchemeOfWorkDocumentContext context,
+    SchemeOfWorkDocumentDraft draft, {
+    List<MarkingScheme> relatedMarkingKeys = const [],
+  }) async {
     final archive = Archive();
     void addXml(String name, String xml) {
       final bytes = utf8.encode(xml);
@@ -151,13 +162,17 @@ class SchemeOfWorkDocumentService {
     addXml('word/_rels/document.xml.rels', _documentRelsXml);
     addXml('docProps/core.xml', _corePropsXml);
     addXml('docProps/app.xml', _appPropsXml);
-    addXml('word/document.xml', _buildDocumentXml(context, draft));
+    addXml('word/document.xml', _buildDocumentXml(context, draft, relatedMarkingKeys));
 
     final zipped = ZipEncoder().encode(archive);
     return _writeToTempFile('docx', zipped, context);
   }
 
-  String _buildDocumentXml(SchemeOfWorkDocumentContext context, SchemeOfWorkDocumentDraft draft) {
+  String _buildDocumentXml(
+    SchemeOfWorkDocumentContext context,
+    SchemeOfWorkDocumentDraft draft,
+    List<MarkingScheme> relatedMarkingKeys,
+  ) {
     final header = draft.header;
     final buffer = StringBuffer();
     buffer.write(
@@ -179,6 +194,7 @@ class SchemeOfWorkDocumentService {
     }
 
     buffer.write(_docxTable(context, draft));
+    buffer.write(buildRelatedMarkingKeyDocxSection(relatedMarkingKeys));
 
     buffer.write('<w:sectPr><w:pgSz w:w="16838" w:h="11906" w:orient="landscape"/></w:sectPr></w:body></w:document>');
     return buffer.toString();

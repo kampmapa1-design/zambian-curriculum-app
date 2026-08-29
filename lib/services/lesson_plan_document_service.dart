@@ -8,6 +8,8 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
 import '../models/lesson_plan.dart';
+import '../models/marking_scheme.dart';
+import 'related_marking_key_section.dart';
 
 /// Renders a [LessonPlanDraft] against a [LessonPlanTemplate] as a PDF or a
 /// Word (.docx) file, entirely on-device — no network, no server round trip.
@@ -32,7 +34,11 @@ class LessonPlanDocumentService {
   // PDF
   // ---------------------------------------------------------------------
 
-  Future<File> generatePdf(LessonPlanTemplate template, LessonPlanDraft draft) async {
+  Future<File> generatePdf(
+    LessonPlanTemplate template,
+    LessonPlanDraft draft, {
+    List<MarkingScheme> relatedMarkingKeys = const [],
+  }) async {
     final doc = pw.Document();
 
     doc.addPage(
@@ -97,6 +103,7 @@ class LessonPlanDocumentService {
             pw.Divider(thickness: 0.5),
             for (final field in section.fields) _pdfField(field, draft.value(field.id)),
           ],
+          ...buildRelatedMarkingKeyPdfSection(relatedMarkingKeys),
         ],
       ),
     );
@@ -164,7 +171,11 @@ class LessonPlanDocumentService {
   // word/document.xml (+ its rels and docProps for good measure).
   // ---------------------------------------------------------------------
 
-  Future<File> generateDocx(LessonPlanTemplate template, LessonPlanDraft draft) async {
+  Future<File> generateDocx(
+    LessonPlanTemplate template,
+    LessonPlanDraft draft, {
+    List<MarkingScheme> relatedMarkingKeys = const [],
+  }) async {
     final archive = Archive();
     void addXml(String name, String xml) {
       final bytes = utf8.encode(xml);
@@ -176,13 +187,13 @@ class LessonPlanDocumentService {
     addXml('word/_rels/document.xml.rels', _documentRelsXml);
     addXml('docProps/core.xml', _corePropsXml);
     addXml('docProps/app.xml', _appPropsXml);
-    addXml('word/document.xml', _buildDocumentXml(template, draft));
+    addXml('word/document.xml', _buildDocumentXml(template, draft, relatedMarkingKeys));
 
     final zipped = ZipEncoder().encode(archive);
     return _writeToTempFile('docx', zipped, draft);
   }
 
-  String _buildDocumentXml(LessonPlanTemplate template, LessonPlanDraft draft) {
+  String _buildDocumentXml(LessonPlanTemplate template, LessonPlanDraft draft, List<MarkingScheme> relatedMarkingKeys) {
     final buffer = StringBuffer();
     buffer.write(
       '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
@@ -212,6 +223,8 @@ class LessonPlanDocumentService {
         buffer.write(_docxField(field, draft.value(field.id)));
       }
     }
+
+    buffer.write(buildRelatedMarkingKeyDocxSection(relatedMarkingKeys));
 
     buffer.write('<w:sectPr/></w:body></w:document>');
     return buffer.toString();
