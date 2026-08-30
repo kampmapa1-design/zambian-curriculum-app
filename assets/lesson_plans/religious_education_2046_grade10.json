@@ -1,5 +1,5 @@
 {
-  "_source": "Real Religious Education 2046 Grade 10 lesson plans (Drive folder shared by the user 2026-08-30, 'GRADE 10-12 RELIGIOUS EDUCATION 2046 LESSON PLANS (2).pdf') — the same real Ministry document family already used to term-split religious_education_grade10.json (see that file's own UPDATE note). This document's own header carried a real individual's name, TS number, and a real school name on every one of its 26 lessons ('BERNARD TITO', 'TS NO: 20158602', 'MKUSHI BOARDING STEM SECONDARY SCHOOL') — all stripped entirely, none of it entered this file. UPDATE (2026-08-30): now covers all 8 real sub-topics of Topic 10.1 (the document's own 'Topic Review & Synthesis' lesson, which doesn't map to one specific sub-topic, was deliberately left out rather than force-fit). The document has ~17 more lessons covering Topics 10.2-10.4, left for a follow-up pass rather than rushed. Progression stages are faithful condensed summaries of genuinely rich, detailed source content (each real lesson ran Introduction/Development/Exercise/Homework/Conclusion with full dialogue and worked answers) — not a verbatim reproduction, which would be excessive for this app's purposes, but every activity/example named is real, none invented.",
+  "_source": "Real Religious Education 2046 Grade 10 lesson plans (Drive folder shared by the user 2026-08-30, 'GRADE 10-12 RELIGIOUS EDUCATION 2046 LESSON PLANS (2).pdf') — the same real Ministry document family already used to term-split religious_education_grade10.json (see that file's own UPDATE note). This document's own header carried a real individual's name, TS number, and a real school name on every one of its 26 lessons ('BERNARD TITO', 'TS NO: 20158602', 'MKUSHI BOARDING STEM SECONDARY SCHOOL') — all stripped entirely, none of it entered this file. UPDATE (2026-08-30): now covers all 8 real sub-topics of Topic 10.1 and all 7 real sub-topics of Topic 10.2 (the document's own 'Topic Review & Synthesis' lesson, which doesn't map to one specific sub-topic, was deliberately left out rather than force-fit). The document has ~10 more lessons covering Topics 10.3-10.4, left for a follow-up pass rather than rushed. Progression stages are faithful condensed summaries of genuinely rich, detailed source content (each real lesson ran Introduction/Development/Exercise/Homework/Conclusion with full dialogue and worked answers) — not a verbatim reproduction, which would be excessive for this app's purposes, but every activity/example named is real, none invented.",
   "curriculum_code": "OBC_2013",
   "subject_code": "RE",
   "grade_levels": [10],
@@ -334,6 +334,293 @@
           "stage": "Conclusion",
           "teacherRole": "Recaps that Christians rely on the Bible and Holy Spirit, Muslims on the Quran and Sharia, and Hindus on Dharma and gurus, closing Topic 10.1 and transitioning to John the Baptist's adult ministry.",
           "learnersRole": "Review the comparative chart and understand the transition to the next topic."
+        }
+      ]
+    },
+    {
+      "topic_name": "10.2 Ministry and Death of John the Baptist",
+      "subtopic_name": "Speaking Against Sin and Evil",
+      "grade_level": 10,
+      "majorLearningPoint": "Identifying contemporary Zambian voices and organizations that challenge social and moral wrongs.",
+      "lessonGoal": "By the end of the lesson, learners will be able to identify and describe the work of at least two Zambian individuals or organizations that speak out against social evils.",
+      "references": "2046 Religious Education Syllabus Grades 10-12 (Specific Outcome 10.2.1.1 and Content)",
+      "tlm": "Chalkboard; pictures/names of known Zambian activists, faith leaders or NGOs; newspaper headlines about social issues",
+      "rationale": "This lesson connects John the Baptist's prophetic role to modern Zambia, developing civic awareness and critical thinking about social justice — recognizing that speaking against wrongs is a necessary, ongoing role in society.",
+      "objectives": [
+        "Identify organisations and people in Zambia who denounce sin and evil in the nation."
+      ],
+      "priorKnowledge": "Understanding of John the Baptist as a prophet who spoke against sin, and general awareness of social issues in Zambia (e.g. corruption, injustice).",
+      "progression": [
+        {
+          "stage": "Introduction",
+          "teacherRole": "Writes 'SPEAK TRUTH TO POWER' on the board and asks who does this, then links John's confrontation of Herod to modern 'John the Baptists' in Zambia.",
+          "learnersRole": "Suggest names and understand the link between the biblical figure and contemporary activists."
+        },
+        {
+          "stage": "Development",
+          "teacherRole": "Defines 'denounce' and outlines categories of modern voices — religious leaders, civil society organizations (e.g. Transparency International Zambia), activists/journalists, and artists/musicians — with brief real Zambian case studies (a church body speaking against gender-based violence, an NGO reporting misuse of school funds, a musician's song on alcoholism).",
+          "learnersRole": "Contribute examples to each category, learn the Zambian examples, and in groups identify a local social evil and who currently speaks against it."
+        },
+        {
+          "stage": "Exercise",
+          "teacherRole": "Poses questions on why religious leaders should address social issues, naming a Zambian organization and its method, and how to respectfully speak against lunch-money theft at school.",
+          "learnersRole": "Answer individually, applying the lesson's concepts."
+        },
+        {
+          "stage": "Homework",
+          "teacherRole": "Assigns a short respectful 'public statement' denouncing a local community issue and proposing a positive change.",
+          "learnersRole": "Write the statement."
+        },
+        {
+          "stage": "Conclusion",
+          "teacherRole": "Recaps that speaking against evil is the role of religious leaders, CSOs, activists, and responsible citizens alike, then links to John's specific preached message.",
+          "learnersRole": "Review the categories of modern voices and anticipate studying John's core message."
+        }
+      ]
+    },
+    {
+      "topic_name": "10.2 Ministry and Death of John the Baptist",
+      "subtopic_name": "The Message of John the Baptist",
+      "grade_level": 10,
+      "majorLearningPoint": "Analyzing the core themes of John's preaching: Repentance, Change of Behaviour, and Baptism.",
+      "lessonGoal": "By the end of the lesson, learners will be able to outline the three key elements of John the Baptist's message and explain the meaning of repentance.",
+      "references": "2046 Religious Education Syllabus Grades 10-12 (Specific Outcome 10.2.2.1 and Content); Bible: Luke 3:1-20; Mark 1:1-8; Matthew 3:13-17",
+      "tlm": "Chalkboard; Bibles; a sign reading 'REPENT! FOR THE KINGDOM OF HEAVEN HAS COME NEAR'",
+      "rationale": "This lesson delves into the heart of John's ministry, developing scriptural analysis skills and understanding of repentance not as mere guilt but as a positive, transformative turn towards God.",
+      "objectives": [
+        "Outline the main message of John the Baptist."
+      ],
+      "priorKnowledge": "Awareness that John the Baptist was a wilderness preacher who baptized people.",
+      "progression": [
+        {
+          "stage": "Introduction",
+          "teacherRole": "Shows the 'REPENT!' sign and asks how learners would react to seeing it held by a man in camel hair, then frames the lesson as breaking down John's urgent message.",
+          "learnersRole": "React to the hypothetical scenario and listen with curiosity."
+        },
+        {
+          "stage": "Development",
+          "teacherRole": "Guides reading of Luke 3:1-14 and outlines the three-fold message: Repentance (metanoia — a decisive change of mind and direction), Change of Behaviour/Fruit (John's practical examples: sharing, honesty, not extorting), and Baptism (a public sign of repentance and cleansing, Mark 1:4), motivated by the nearness of God's kingdom.",
+          "learnersRole": "Read and highlight key commands, understand repentance as transformative, and in pairs translate one of John's commands into a modern Zambian equivalent."
+        },
+        {
+          "stage": "Exercise",
+          "teacherRole": "Poses questions distinguishing feeling sorry from true repentance, which modern profession might receive John's tax-collector advice, and why baptism mattered.",
+          "learnersRole": "Answer individually using scripture and notes."
+        },
+        {
+          "stage": "Homework",
+          "teacherRole": "Assigns a modern-day rewrite of Luke 3:7-14's speech, addressing a similar group in Zambian society today.",
+          "learnersRole": "Write the parody/rewrite."
+        },
+        {
+          "stage": "Conclusion",
+          "teacherRole": "Recaps the three-fold message (repent, change actions, be baptized) as preparation for Jesus, then links to applying it in Zambia today.",
+          "learnersRole": "Review the three-fold message and anticipate the practical application lesson."
+        }
+      ]
+    },
+    {
+      "topic_name": "10.2 Ministry and Death of John the Baptist",
+      "subtopic_name": "Right Behaviour in Zambia Today",
+      "grade_level": 10,
+      "majorLearningPoint": "Translating John the Baptist's ethical teachings into specific, positive actions for contemporary Zambian society.",
+      "lessonGoal": "By the end of the lesson, learners will be able to propose concrete examples of how John's calls for honesty, fairness, and generosity can be lived out in their schools, homes, and communities.",
+      "references": "2046 Religious Education Syllabus Grades 10-12 (Specific Outcome 10.2.3.1 and Content); Bible: Luke 3:10-14",
+      "tlm": "Chalkboard; scenario cards depicting ethical dilemmas (a lost phone, a bribe request, shoplifting); large sheets of paper for group posters",
+      "rationale": "This lesson moves from theory to practice, developing moral reasoning and civic responsibility, making the values of accountability, sincerity, and honesty practical and relevant.",
+      "objectives": [
+        "Explain how John the Baptist's instructions about right behaviour could be applied in Zambia today."
+      ],
+      "priorKnowledge": "Understanding of John the Baptist's specific instructions (Luke 3:10-14) from the previous lesson.",
+      "progression": [
+        {
+          "stage": "Introduction",
+          "teacherRole": "Recalls John's specific commands and asks what he'd address if he spoke at a school assembly today, framing the lesson as crafting modern instructions for right behaviour.",
+          "learnersRole": "Recall John's commands and suggest modern issues (corruption, greed, tribalism)."
+        },
+        {
+          "stage": "Development",
+          "teacherRole": "Reviews John's core principles (generosity, honesty, fairness/non-violence, integrity) and their application across school, home, community/market, and national levels, then sets a group 'Code of Conduct' poster task per sector.",
+          "learnersRole": "Review the principles, brainstorm applications, and in groups create a poster listing specific positive behaviours, then present to the class."
+        },
+        {
+          "stage": "Exercise",
+          "teacherRole": "Poses questions on a marketeer selling underweight goods, a bus conductor tempted to overcharge, sharing in the classroom, and a PSA against exam malpractice.",
+          "learnersRole": "Answer individually, applying the principles to real-world scenarios."
+        },
+        {
+          "stage": "Homework",
+          "teacherRole": "Assigns practicing one of John's principles for a day and writing a diary entry about the experience.",
+          "learnersRole": "Practice the principle and write the reflection."
+        },
+        {
+          "stage": "Conclusion",
+          "teacherRole": "Recaps that John's message calls for generosity, honesty, and fairness in every area of life, then links to comparing John's work with Jesus's.",
+          "learnersRole": "Review the sectors of application and anticipate the comparative lesson."
+        }
+      ]
+    },
+    {
+      "topic_name": "10.2 Ministry and Death of John the Baptist",
+      "subtopic_name": "The Work of John and That of Jesus",
+      "grade_level": 10,
+      "majorLearningPoint": "Contrasting and connecting the ministries of John (the forerunner) and Jesus (the Messiah).",
+      "lessonGoal": "By the end of the lesson, learners will be able to clearly state at least two key differences and one key similarity between the work of John the Baptist and the work of Jesus Christ.",
+      "references": "2046 Religious Education Syllabus Grades 10-12 (Specific Outcome 10.2.4.1 and Content); Bible: Matthew 3:11-12; John 1:29-34; Matthew 11:2-11",
+      "tlm": "Chalkboard; Bibles; a T-chart ('John the Baptist' | 'Jesus Christ')",
+      "rationale": "This lesson develops theological clarity, distinguishing the preparer from the fulfiller as foundational to Christian thought, using a comparative T-chart and guided scripture analysis.",
+      "objectives": [
+        "Compare the work of John with that of Jesus."
+      ],
+      "priorKnowledge": "Knowledge of John's message (repentance, baptism) and basic knowledge of Jesus's work (teaching, healing, forgiving).",
+      "progression": [
+        {
+          "stage": "Introduction",
+          "teacherRole": "Uses a road-grader/motorcade analogy — John preparing the road, Jesus the king arriving — to frame comparing their work.",
+          "learnersRole": "Understand the preparation-versus-arrival analogy."
+        },
+        {
+          "stage": "Development",
+          "teacherRole": "Guides reading of Matthew 3:11-12, John 1:29-34, and Matthew 11:7-11, filling a T-chart contrasting John's work (preached repentance, baptized with water, called for moral reform, could not forgive sins) with Jesus's (preached the Kingdom, forgave sins, healed, baptized with the Holy Spirit, died and rose), highlighting that John dealt with sinful behaviour while Jesus dealt with sin itself, though both called people to turn to God.",
+          "learnersRole": "Read scriptures, help populate the T-chart, and in pairs classify Gospel quotes as sounding more like John or Jesus."
+        },
+        {
+          "stage": "Exercise",
+          "teacherRole": "Poses questions on the symbolic difference between water and Holy Spirit baptism, why only Jesus could forgive sins, and correcting the claim that John and Jesus were 'basically the same'.",
+          "learnersRole": "Answer individually, demonstrating comparative understanding."
+        },
+        {
+          "stage": "Homework",
+          "teacherRole": "Assigns a dialogue between John and Jesus meeting at the Jordan, with Jesus explaining how his work continues and completes John's.",
+          "learnersRole": "Write the dialogue (6-8 lines)."
+        },
+        {
+          "stage": "Conclusion",
+          "teacherRole": "Recaps John as preparation and Jesus as fulfilment, then links to how people responded to John's challenging message.",
+          "learnersRole": "Review the comparative framework and anticipate the lesson on contemporary responses."
+        }
+      ]
+    },
+    {
+      "topic_name": "10.2 Ministry and Death of John the Baptist",
+      "subtopic_name": "Responses to Religious and Moral Messages in Zambia",
+      "grade_level": 10,
+      "majorLearningPoint": "Analyzing the spectrum of public reactions to prophetic or moral voices in contemporary Zambia.",
+      "lessonGoal": "By the end of the lesson, learners will be able to categorize and explain at least three different types of responses people have to public religious and moral messages in Zambia.",
+      "references": "2046 Religious Education Syllabus Grades 10-12 (Specific Outcome 10.2.5.1 and Content)",
+      "tlm": "Chalkboard; written descriptions of hypothetical public messages (a pastor on corruption, an activist on deforestation, a youth leader on drug abuse)",
+      "rationale": "This lesson develops social and emotional intelligence by analyzing public discourse, helping learners understand why moral messages are often resisted and how to be effective advocates for right behaviour.",
+      "objectives": [
+        "Explain how people in Zambia respond to people who publicly proclaim religious and moral messages."
+      ],
+      "priorKnowledge": "Awareness of public figures (preachers, activists) who speak on moral issues, and personal experience of reactions to moral advice.",
+      "progression": [
+        {
+          "stage": "Introduction",
+          "teacherRole": "Asks what goes through people's minds when told to stop a bad habit publicly, framing the lesson around typical Zambian responses to moral messages.",
+          "learnersRole": "Share immediate reactions (conviction, defensiveness, indifference)."
+        },
+        {
+          "stage": "Development",
+          "teacherRole": "Introduces five response categories — Positive Reception & Repentance, Indifference/Apathy, Criticism & Rejection, Hypocritical Agreement, Hostility/Persecution — discusses why responses differ (challenged interests, messenger credibility, cultural/political factors), with real/plausible Zambian examples (a bishop against corruption, a campaign against child marriage), then sets a group role-play task.",
+          "learnersRole": "Learn the categories, discuss underlying reasons, connect to Zambian contexts, and in groups perform a skit showing two response types."
+        },
+        {
+          "stage": "Exercise",
+          "teacherRole": "Poses questions on context-dependent responses (church vs. political rally), classifying an apathetic street-preacher audience, advising a young pastor on reducing hostility, and classifying WhatsApp status reactions.",
+          "learnersRole": "Answer individually, applying the categories and reasoning."
+        },
+        {
+          "stage": "Homework",
+          "teacherRole": "Assigns observing a real public moral message during the week and categorizing two reactions to it.",
+          "learnersRole": "Make the observation and write it up."
+        },
+        {
+          "stage": "Conclusion",
+          "teacherRole": "Recaps the five response categories, then links to John facing the most extreme negative response: imprisonment and death.",
+          "learnersRole": "Review the categories and anticipate the lesson on the cost of prophetic witness."
+        }
+      ]
+    },
+    {
+      "topic_name": "10.2 Ministry and Death of John the Baptist",
+      "subtopic_name": "Imprisonment and Death of John the Baptist",
+      "grade_level": 10,
+      "majorLearningPoint": "Analyzing the political and moral circumstances that led to John's execution.",
+      "lessonGoal": "By the end of the lesson, learners will be able to narrate the events leading to John's death and explain the central conflict (speaking truth to power) that caused it.",
+      "references": "2046 Religious Education Syllabus Grades 10-12 (Specific Outcome 10.2.6.1 and Content); Bible: Mark 6:17-29",
+      "tlm": "Chalkboard; Bibles; a family-tree diagram of Herod, Herodias, and Salome",
+      "rationale": "This lesson addresses the cost of discipleship and prophetic witness, developing critical thinking about the clash between moral integrity and corrupt power, instilling values of courage and commitment to truth even when dangerous.",
+      "objectives": [
+        "Explain why John the Baptist was imprisoned and killed."
+      ],
+      "priorKnowledge": "Knowledge that John was killed by Herod and that he criticized Herod's marriage.",
+      "progression": [
+        {
+          "stage": "Introduction",
+          "teacherRole": "Poses a dilemma about reporting a powerful person's relative for wrongdoing, then frames John's much greater version of that dilemma.",
+          "learnersRole": "Grapple with the ethical dilemma of truth-telling versus safety."
+        },
+        {
+          "stage": "Development",
+          "teacherRole": "Narrates Mark 6:17-29 with the family tree (Herod had taken his brother Philip's wife, Herodias), explains John's 'crime' was repeatedly declaring the marriage unlawful, and analyzes the motives — John's faithfulness to God's law, Herod's fear of losing face, Herodias's desire for revenge — and how a reckless oath at a party led to the execution.",
+          "learnersRole": "Follow the story using the family tree, understand the specific moral accusation behind the imprisonment, and discuss whether John was foolish or brave and what the story reveals about how power reacts to moral criticism."
+        },
+        {
+          "stage": "Exercise",
+          "teacherRole": "Poses questions on Herod's contradictory fear-yet-imprisonment of John, why John kept speaking from prison, a modern Zambian example of choosing God's law over an unjust order, and writing a news headline for the execution.",
+          "learnersRole": "Answer individually, demonstrating comprehension and application."
+        },
+        {
+          "stage": "Homework",
+          "teacherRole": "Assigns a diary entry from Herod's perspective the night after the execution, reflecting his guilt, fear, and self-justification.",
+          "learnersRole": "Write the diary entry."
+        },
+        {
+          "stage": "Conclusion",
+          "teacherRole": "Recaps that John died for courageously calling Herod's marriage immoral, valuing truth over his own life, then links to other people who suffered for their beliefs.",
+          "learnersRole": "Review the chain of cause and effect and anticipate the lesson on modern heroes of conscience."
+        }
+      ]
+    },
+    {
+      "topic_name": "10.2 Ministry and Death of John the Baptist",
+      "subtopic_name": "Other People Who Suffered for Their Beliefs",
+      "grade_level": 10,
+      "majorLearningPoint": "Recognizing historical and contemporary figures who exemplify courage and sacrifice for their convictions.",
+      "lessonGoal": "By the end of the lesson, learners will be able to name and briefly describe the sacrifice of at least two individuals (one global, one Zambian/African) who suffered for their beliefs.",
+      "references": "2046 Religious Education Syllabus Grades 10-12 (Specific Outcome 10.2.7.1 and Content)",
+      "tlm": "Chalkboard; pictures and short bios of Martin Luther King Jr., Nelson Mandela, Mahatma Gandhi, Kenneth Kaunda and other Zambian activists",
+      "rationale": "This lesson provides a broader human context for John's story, showing the struggle for truth and justice is a recurring theme in history, inspiring learners with values of courage and resilience and fostering national pride through Zambian examples.",
+      "objectives": [
+        "Mention people who suffered or died because of their beliefs."
+      ],
+      "priorKnowledge": "Knowledge of major global figures like Martin Luther King Jr. or Nelson Mandela, and awareness of Zambian history.",
+      "progression": [
+        {
+          "stage": "Introduction",
+          "teacherRole": "Asks who learners admire for standing up for what's right despite difficulty, framing John as joining a line of heroes of conscience.",
+          "learnersRole": "Suggest names of admired figures."
+        },
+        {
+          "stage": "Development",
+          "teacherRole": "Defines 'martyr' and 'activist', presents case studies (Martin Luther King Jr., Nelson Mandela, Mahatma Gandhi, Kenneth Kaunda's imprisonment during Zambia's independence struggle), and discusses that suffering for belief in the Zambian context can also mean imprisonment, exile, or social ostracism, then sets a group 'Hero Poster' task.",
+          "learnersRole": "Learn the terms, listen to the stories, think of Zambian examples, and in groups research and present an assigned figure's poster."
+        },
+        {
+          "stage": "Exercise",
+          "teacherRole": "Poses questions comparing John and MLK's reasons for being killed, what Mandela's story teaches about long-term impact, why Zambians should remember independence-era figures, and designing a monument with two chosen figures.",
+          "learnersRole": "Answer individually, making connections across time and context."
+        },
+        {
+          "stage": "Homework",
+          "teacherRole": "Assigns researching one additional person who suffered for their beliefs and writing a 'profile of courage'.",
+          "learnersRole": "Write the profile (8-10 lines)."
+        },
+        {
+          "stage": "Conclusion",
+          "teacherRole": "Recaps that history is shaped by people who paid a price for truth and justice, closing Topic 10.2 and transitioning to the sacrament of Baptism.",
+          "learnersRole": "Reflect on the legacy of courage and understand the transition to the next topic."
         }
       ]
     }
