@@ -1,5 +1,5 @@
 {
-  "_source": "Ministry of Education / Curriculum Development Centre, Zambia. 'History Syllabus, Grade 10-12' (2013, published by CDC) — Grade 12, Part III: History of Central Africa, Topics 12.1-12.6. Topic, sub-topic and Specific Outcome statements only; the 'Content' column is omitted for the reasons documented in the Grade 10 file. This document's printed outcome numbering drifts throughout (as in Grades 10 and 11), so outcomes were reconstructed positionally against each sub-topic heading in the table's own reading order. Under 12.5 (European Settlers in Central Africa), sub-topic headers 12.5.4-12.5.6 are printed as a block on the page after eight outcomes that are all printed with 12.5.3.x/12.5.4.x codes but belong entirely to the single 12.5.3 heading that precedes them on the prior page (the same 'sub-topic headers as a block, then outcomes' layout seen throughout these OBC syllabi); two outcomes in that block are printed twice with identical wording and were deduplicated. Cross-checked against the syllabus's own Scope and Sequence Chart, which confirms the topic list and theme names used here. The syllabus organizes content by Grade only, not by Term, so all of Grade 12 is modeled as a single term here.",
+  "_source": "Ministry of Education / Curriculum Development Centre, Zambia. 'History Syllabus, Grade 10-12' (2013, published by CDC) — Grade 12, Part III: History of Central Africa, Topics 12.1-12.6. Topic, sub-topic and Specific Outcome statements only; the 'Content' column is omitted for the reasons documented in the Grade 10 file. This document's printed outcome numbering drifts throughout (as in Grades 10 and 11), so outcomes were reconstructed positionally against each sub-topic heading in the table's own reading order. Under 12.5 (European Settlers in Central Africa), sub-topic headers 12.5.4-12.5.6 are printed as a block on the page after eight outcomes that are all printed with 12.5.3.x/12.5.4.x codes but belong entirely to the single 12.5.3 heading that precedes them on the prior page (the same 'sub-topic headers as a block, then outcomes' layout seen throughout these OBC syllabi); two outcomes in that block are printed twice with identical wording and were deduplicated. Cross-checked against the syllabus's own Scope and Sequence Chart, which confirms the topic list and theme names used here. The syllabus organizes content by Grade only, not by Term, so all of Grade 12 is modeled as a single term here. UPDATE (2026-08-30): term-split and references added, sourced from the same real 'HISTORY COMMON SCHEMES OF WORK' document used for Grade 10 (see that file's UPDATE note for the general sourcing approach -- same document, no PII, week-level granularity grouped under this file's existing coarser sub-topics). '12.5 European Settlers in Central Africa' splits across Term 2 (colonial establishment/administration/early resistance) and Term 3 (nationalism/federation/independence), matching the source. '12.2 Indigenous African Population' has some real Term 2 continuation content too (the Chewa/Undi and Lozi kingdoms, weeks 2-3) beyond its Term 1 majority (Tonga, Kazembe, Bemba, Kalonga, weeks 8-11) -- kept anchored entirely in Term 1 rather than also splitting it, a simplification rather than a full 1:1 reproduction of the source's exact week boundaries. References list the five authors cited on nearly every real row of this Grade's source section (fuller citation set than Grade 10's, matching what the source itself actually lists here).",
   "curriculum": {
     "code": "OBC_2013",
     "name": "2013 Outcome-Based Curriculum",
@@ -18,7 +18,7 @@
   },
   "terms": [
     {
-      "name": "Year (not term-divided in the source syllabus)",
+      "name": "Term 1",
       "sequence_number": 1,
       "topics": [
         {
@@ -26,95 +26,314 @@
           "sequence_number": 1,
           "description": "Part III: History of Central Africa.",
           "sub_topics": [
-            { "name": "12.1.1 Physical and Climatic Features and Their Influence on Population Distribution", "sequence_number": 1, "competencies": [
-              { "sequence_number": 1, "description": "Describe the physical features of Central Africa in relation to population distribution by 1800", "category": "Specific Outcome" }
-            ]}
-          ]
+            {
+              "name": "12.1.1 Physical and Climatic Features and Their Influence on Population Distribution",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe the physical features of Central Africa in relation to population distribution by 1800",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 3,
+              "references": "Dasgupta, K.K., In Search of the Central African Past; Fagan, B.M., Iron Age Cultures in Zambia; Haantobolo, G., Senior Secondary History for Central and Southern Africa; Needham, D.E. et al, From Iron Age to Independence; Wills, A.J., An Introduction to the History of Central Africa"
+            }
+          ],
+          "week_number": 3,
+          "references": "Dasgupta, K.K., In Search of the Central African Past; Fagan, B.M., Iron Age Cultures in Zambia; Haantobolo, G., Senior Secondary History for Central and Southern Africa; Needham, D.E. et al, From Iron Age to Independence; Wills, A.J., An Introduction to the History of Central Africa"
         },
         {
           "name": "12.2 Indigenous African Population",
           "sequence_number": 2,
           "description": "Part III: History of Central Africa.",
           "sub_topics": [
-            { "name": "12.2.1 Bantu Migrations into Central Africa", "sequence_number": 1, "competencies": [
-              { "sequence_number": 1, "description": "Describe the causes and courses of Bantu migrations", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Locate on the map the areas of Bantu settlement after migration", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Discuss the results of the Bantu migrations", "category": "Specific Outcome" }
-            ]},
-            { "name": "12.2.2 Decentralised Societies", "sequence_number": 2, "competencies": [
-              { "sequence_number": 1, "description": "Identify decentralised societies of Zambia", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Describe the social, political and economic organisation of decentralised societies", "category": "Specific Outcome" }
-            ]},
-            { "name": "12.2.3 Centralised Societies of Central Africa", "sequence_number": 3, "competencies": [
-              { "sequence_number": 1, "description": "Identify centralised societies of Central Africa", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Describe the social, political and economic organisation of centralised societies", "category": "Specific Outcome" }
-            ]}
-          ]
-        },
+            {
+              "name": "12.2.1 Bantu Migrations into Central Africa",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe the causes and courses of Bantu migrations",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Locate on the map the areas of Bantu settlement after migration",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Discuss the results of the Bantu migrations",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 4,
+              "references": "Dasgupta, K.K., In Search of the Central African Past; Fagan, B.M., Iron Age Cultures in Zambia; Haantobolo, G., Senior Secondary History for Central and Southern Africa; Needham, D.E. et al, From Iron Age to Independence; Wills, A.J., An Introduction to the History of Central Africa"
+            },
+            {
+              "name": "12.2.2 Decentralised Societies",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Identify decentralised societies of Zambia",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Describe the social, political and economic organisation of decentralised societies",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 8,
+              "references": "Dasgupta, K.K., In Search of the Central African Past; Fagan, B.M., Iron Age Cultures in Zambia; Haantobolo, G., Senior Secondary History for Central and Southern Africa; Needham, D.E. et al, From Iron Age to Independence; Wills, A.J., An Introduction to the History of Central Africa"
+            },
+            {
+              "name": "12.2.3 Centralised Societies of Central Africa",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Identify centralised societies of Central Africa",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Describe the social, political and economic organisation of centralised societies",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 9,
+              "references": "Dasgupta, K.K., In Search of the Central African Past; Fagan, B.M., Iron Age Cultures in Zambia; Haantobolo, G., Senior Secondary History for Central and Southern Africa; Needham, D.E. et al, From Iron Age to Independence; Wills, A.J., An Introduction to the History of Central Africa"
+            }
+          ],
+          "week_number": 4,
+          "references": "Dasgupta, K.K., In Search of the Central African Past; Fagan, B.M., Iron Age Cultures in Zambia; Haantobolo, G., Senior Secondary History for Central and Southern Africa; Needham, D.E. et al, From Iron Age to Independence; Wills, A.J., An Introduction to the History of Central Africa"
+        }
+      ]
+    },
+    {
+      "name": "Term 2",
+      "sequence_number": 2,
+      "topics": [
         {
           "name": "12.3 Exploration of Central Africa",
-          "sequence_number": 3,
+          "sequence_number": 1,
           "description": "Part III: History of Central Africa.",
           "sub_topics": [
-            { "name": "12.3.1 Opening Up of Central Africa by Europeans", "sequence_number": 1, "competencies": [
-              { "sequence_number": 1, "description": "Identify Europeans who opened up Central Africa prior to colonisation", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "State the results of the activities of explorers and missionaries in Central Africa", "category": "Specific Outcome" }
-            ]}
-          ]
+            {
+              "name": "12.3.1 Opening Up of Central Africa by Europeans",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Identify Europeans who opened up Central Africa prior to colonisation",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "State the results of the activities of explorers and missionaries in Central Africa",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 4,
+              "references": "Dasgupta, K.K., In Search of the Central African Past; Fagan, B.M., Iron Age Cultures in Zambia; Haantobolo, G., Senior Secondary History for Central and Southern Africa; Needham, D.E. et al, From Iron Age to Independence; Wills, A.J., An Introduction to the History of Central Africa"
+            }
+          ],
+          "week_number": 4,
+          "references": "Dasgupta, K.K., In Search of the Central African Past; Fagan, B.M., Iron Age Cultures in Zambia; Haantobolo, G., Senior Secondary History for Central and Southern Africa; Needham, D.E. et al, From Iron Age to Independence; Wills, A.J., An Introduction to the History of Central Africa"
         },
         {
           "name": "12.4 European Acquisition of Territories in Central Africa",
-          "sequence_number": 4,
+          "sequence_number": 2,
           "description": "Part III: History of Central Africa.",
           "sub_topics": [
-            { "name": "12.4.1 European Scramble for and the Colonisation of Central Africa", "sequence_number": 1, "competencies": [
-              { "sequence_number": 1, "description": "Describe the Scramble for and Partition of Central Africa", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Discuss the steps leading to the colonisation of Central Africa by the British and Portuguese", "category": "Specific Outcome" }
-            ]}
-          ]
+            {
+              "name": "12.4.1 European Scramble for and the Colonisation of Central Africa",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe the Scramble for and Partition of Central Africa",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Discuss the steps leading to the colonisation of Central Africa by the British and Portuguese",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 8,
+              "references": "Dasgupta, K.K., In Search of the Central African Past; Fagan, B.M., Iron Age Cultures in Zambia; Haantobolo, G., Senior Secondary History for Central and Southern Africa; Needham, D.E. et al, From Iron Age to Independence; Wills, A.J., An Introduction to the History of Central Africa"
+            }
+          ],
+          "week_number": 8,
+          "references": "Dasgupta, K.K., In Search of the Central African Past; Fagan, B.M., Iron Age Cultures in Zambia; Haantobolo, G., Senior Secondary History for Central and Southern Africa; Needham, D.E. et al, From Iron Age to Independence; Wills, A.J., An Introduction to the History of Central Africa"
         },
         {
           "name": "12.5 European Settlers in Central Africa",
-          "sequence_number": 5,
+          "sequence_number": 3,
           "description": "Part III: History of Central Africa.",
           "sub_topics": [
-            { "name": "12.5.1 Relationship Between Indigenous Africans and White Settlers", "sequence_number": 1, "competencies": [
-              { "sequence_number": 1, "description": "Describe the relationship between Africans and Europeans", "category": "Specific Outcome" }
-            ]},
-            { "name": "12.5.2 Colonial Administration", "sequence_number": 2, "competencies": [
-              { "sequence_number": 1, "description": "Discuss colonial direct and indirect methods of ruling Africans", "category": "Specific Outcome" }
-            ]},
-            { "name": "12.5.3 African Resistance to European Domination", "sequence_number": 3, "competencies": [
-              { "sequence_number": 1, "description": "Distinguish between primary and secondary resistance", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Discuss specific incidents of early African resistance to colonialism", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Describe important welfare associations which represented the interests of Africans in Northern Rhodesia", "category": "Specific Outcome" },
-              { "sequence_number": 4, "description": "Describe how early African church leaders resisted colonial rule", "category": "Specific Outcome" },
-              { "sequence_number": 5, "description": "Describe the methods employed by Africans in resisting colonial rule", "category": "Specific Outcome" },
-              { "sequence_number": 6, "description": "Explain the role of educated Africans in the struggle for independence", "category": "Specific Outcome" },
-              { "sequence_number": 7, "description": "Describe the role played by the labour movement in fighting colonial rule", "category": "Specific Outcome" }
-            ]},
-            { "name": "12.5.4 The Rise of African Nationalism", "sequence_number": 4, "competencies": [
-              { "sequence_number": 1, "description": "Analyse the political parties and liberation movements in Central Africa that fought for independence", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Describe the role played by the labour movement in fighting colonial rule", "category": "Specific Outcome" }
-            ]},
-            { "name": "12.5.5 The Federation of Rhodesia and Nyasaland", "sequence_number": 5, "competencies": [
-              { "sequence_number": 1, "description": "Discuss the reasons for and against the formation of the Federation", "category": "Specific Outcome" }
-            ]},
-            { "name": "12.5.6 Steps Leading to the Independence of the Three Central African Territories", "sequence_number": 6, "competencies": [
-              { "sequence_number": 1, "description": "Analyse the successes and failures of the Federation", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Analyse the steps leading to the independence of the three Central African territories (Northern Rhodesia, Southern Rhodesia and Nyasaland)", "category": "Specific Outcome" }
-            ]}
-          ]
+            {
+              "name": "12.5.1 Relationship Between Indigenous Africans and White Settlers",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe the relationship between Africans and Europeans",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 8,
+              "references": "Dasgupta, K.K., In Search of the Central African Past; Fagan, B.M., Iron Age Cultures in Zambia; Haantobolo, G., Senior Secondary History for Central and Southern Africa; Needham, D.E. et al, From Iron Age to Independence; Wills, A.J., An Introduction to the History of Central Africa"
+            },
+            {
+              "name": "12.5.2 Colonial Administration",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Discuss colonial direct and indirect methods of ruling Africans",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 10,
+              "references": "Dasgupta, K.K., In Search of the Central African Past; Fagan, B.M., Iron Age Cultures in Zambia; Haantobolo, G., Senior Secondary History for Central and Southern Africa; Needham, D.E. et al, From Iron Age to Independence; Wills, A.J., An Introduction to the History of Central Africa"
+            },
+            {
+              "name": "12.5.3 African Resistance to European Domination",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Distinguish between primary and secondary resistance",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Discuss specific incidents of early African resistance to colonialism",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Describe important welfare associations which represented the interests of Africans in Northern Rhodesia",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Describe how early African church leaders resisted colonial rule",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 5,
+                  "description": "Describe the methods employed by Africans in resisting colonial rule",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 6,
+                  "description": "Explain the role of educated Africans in the struggle for independence",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 7,
+                  "description": "Describe the role played by the labour movement in fighting colonial rule",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 10,
+              "references": "Dasgupta, K.K., In Search of the Central African Past; Fagan, B.M., Iron Age Cultures in Zambia; Haantobolo, G., Senior Secondary History for Central and Southern Africa; Needham, D.E. et al, From Iron Age to Independence; Wills, A.J., An Introduction to the History of Central Africa"
+            }
+          ],
+          "week_number": 8,
+          "references": "Dasgupta, K.K., In Search of the Central African Past; Fagan, B.M., Iron Age Cultures in Zambia; Haantobolo, G., Senior Secondary History for Central and Southern Africa; Needham, D.E. et al, From Iron Age to Independence; Wills, A.J., An Introduction to the History of Central Africa"
+        }
+      ]
+    },
+    {
+      "name": "Term 3",
+      "sequence_number": 3,
+      "topics": [
+        {
+          "name": "12.5 European Settlers in Central Africa",
+          "sequence_number": 1,
+          "description": "Part III: History of Central Africa.",
+          "sub_topics": [
+            {
+              "name": "12.5.4 The Rise of African Nationalism",
+              "sequence_number": 4,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Analyse the political parties and liberation movements in Central Africa that fought for independence",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Describe the role played by the labour movement in fighting colonial rule",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 3,
+              "references": "Dasgupta, K.K., In Search of the Central African Past; Fagan, B.M., Iron Age Cultures in Zambia; Haantobolo, G., Senior Secondary History for Central and Southern Africa; Needham, D.E. et al, From Iron Age to Independence; Wills, A.J., An Introduction to the History of Central Africa"
+            },
+            {
+              "name": "12.5.5 The Federation of Rhodesia and Nyasaland",
+              "sequence_number": 5,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Discuss the reasons for and against the formation of the Federation",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 2,
+              "references": "Dasgupta, K.K., In Search of the Central African Past; Fagan, B.M., Iron Age Cultures in Zambia; Haantobolo, G., Senior Secondary History for Central and Southern Africa; Needham, D.E. et al, From Iron Age to Independence; Wills, A.J., An Introduction to the History of Central Africa"
+            },
+            {
+              "name": "12.5.6 Steps Leading to the Independence of the Three Central African Territories",
+              "sequence_number": 6,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Analyse the successes and failures of the Federation",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Analyse the steps leading to the independence of the three Central African territories (Northern Rhodesia, Southern Rhodesia and Nyasaland)",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 3,
+              "references": "Dasgupta, K.K., In Search of the Central African Past; Fagan, B.M., Iron Age Cultures in Zambia; Haantobolo, G., Senior Secondary History for Central and Southern Africa; Needham, D.E. et al, From Iron Age to Independence; Wills, A.J., An Introduction to the History of Central Africa"
+            }
+          ],
+          "week_number": 3,
+          "references": "Dasgupta, K.K., In Search of the Central African Past; Fagan, B.M., Iron Age Cultures in Zambia; Haantobolo, G., Senior Secondary History for Central and Southern Africa; Needham, D.E. et al, From Iron Age to Independence; Wills, A.J., An Introduction to the History of Central Africa"
         },
         {
           "name": "12.6 Majority Rule",
-          "sequence_number": 6,
+          "sequence_number": 2,
           "description": "Part III: History of Central Africa.",
           "sub_topics": [
-            { "name": "12.6.1 Post-Independence Developments", "sequence_number": 1, "competencies": [
-              { "sequence_number": 1, "description": "Analyse the development of post-independence economic and political systems of the three Central African territories", "category": "Specific Outcome" }
-            ]}
-          ]
+            {
+              "name": "12.6.1 Post-Independence Developments",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Analyse the development of post-independence economic and political systems of the three Central African territories",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 4,
+              "references": "Dasgupta, K.K., In Search of the Central African Past; Fagan, B.M., Iron Age Cultures in Zambia; Haantobolo, G., Senior Secondary History for Central and Southern Africa; Needham, D.E. et al, From Iron Age to Independence; Wills, A.J., An Introduction to the History of Central Africa"
+            }
+          ],
+          "week_number": 4,
+          "references": "Dasgupta, K.K., In Search of the Central African Past; Fagan, B.M., Iron Age Cultures in Zambia; Haantobolo, G., Senior Secondary History for Central and Southern Africa; Needham, D.E. et al, From Iron Age to Independence; Wills, A.J., An Introduction to the History of Central Africa"
         }
       ]
     }
