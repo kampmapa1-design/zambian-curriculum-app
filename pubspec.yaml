@@ -26,6 +26,8 @@ dependencies:
   document_camera_frame: ^2.6.11
   file_saver: ^0.4.0
   syncfusion_flutter_pdf: ^33.2.13
+  pdf_manipulator: 4.1.0
+  google_mobile_ads: ^9.1.0
 
 dev_dependencies:
   flutter_test:

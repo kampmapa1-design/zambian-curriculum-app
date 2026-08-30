@@ -1,5 +1,7 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 
+import 'rewarded_ad_service.dart';
+
 /// Whether the entitlement gate actually blocks generation. [verifySubscription]
 /// and [watchRewardedAd] are still unimplemented placeholders (no real store
 /// or ad SDK wired up yet — see class doc), so with this left `true` nobody
@@ -90,13 +92,17 @@ class EntitlementService {
     _subscription = SubscriptionRecord(lastVerifiedAt: DateTime.now());
   }
 
-  /// TODO: replace with a real rewarded-ad SDK call. Requires internet —
-  /// throws if called offline, matching the "block new ad-watching while
-  /// offline" rule.
-  Future<void> watchRewardedAd() async {
+  /// Real rewarded-ad call (see [RewardedAdService]) — throws if called
+  /// offline, matching the "block new ad-watching while offline" rule.
+  /// Returns false (without unlocking) if the ad was shown but not
+  /// watched to completion, rather than throwing — a dismissed ad isn't
+  /// an error, just "not unlocked yet."
+  Future<bool> watchRewardedAd() async {
     if (!await isOnline) {
       throw StateError('Cannot watch an ad while offline.');
     }
-    _adUnlockedThisSession = true;
+    final watched = await RewardedAdService.instance.showAd();
+    if (watched) _adUnlockedThisSession = true;
+    return watched;
   }
 }

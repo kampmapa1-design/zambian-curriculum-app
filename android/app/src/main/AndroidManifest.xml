@@ -43,6 +43,19 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+        <!-- 2026-08-30: Admin Tools ad-gate (Word/PDF converter, Minutes
+             Maker). This is Google's own public SAMPLE AdMob App ID
+             (ca-app-pub-3940256099942544~3347511713), documented at
+             https://developers.google.com/admob/android/test-ads as safe to
+             ship with — it serves only Google's test ad creatives, never
+             real ads, so it can't earn revenue and can't get an account
+             flagged for invalid traffic during development. Swap for the
+             real AdMob App ID once a live AdMob account exists (also update
+             RewardedAdService's ad unit IDs at the same time — both must
+             change together). -->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-3940256099942544~3347511713"/>
     </application>
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and

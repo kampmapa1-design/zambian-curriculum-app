@@ -7,11 +7,13 @@ import 'cdc_resources_screen.dart';
 import 'generate_lesson_plan_flow.dart';
 import 'handwriting_to_word_screen.dart';
 import 'marking_queue_screen.dart';
+import 'minutes_maker_screen.dart';
 import 'record_of_work_screen.dart';
 import 'scheme_of_work_document_screen.dart';
 import 'settings_screen.dart';
 import 'subject_grade_topic_picker_screen.dart';
 import 'teaching_notes_sheet.dart';
+import 'word_pdf_converter_screen.dart';
 
 /// The app's home screen: a branded header (not a bare list dropped
 /// straight under the system status bar) followed by one clearly labeled
@@ -275,6 +277,35 @@ class HomeScreen extends StatelessWidget {
                   subtitle: 'Photograph or upload a handwritten page, get back an editable Word document',
                   onTap: () => Navigator.of(context).push(
                     MaterialPageRoute(builder: (_) => const HandwritingToWordScreen()),
+                  ),
+                ),
+                // Admin Tools — deliberately separate from the
+                // curriculum/lesson features above: general-purpose office
+                // utilities rather than anything syllabus-driven.
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(4, 20, 4, 8),
+                  child: Text(
+                    'ADMIN TOOLS',
+                    style: Theme.of(context)
+                        .textTheme
+                        .labelMedium
+                        ?.copyWith(color: colorScheme.onSurfaceVariant, letterSpacing: 0.8),
+                  ),
+                ),
+                _FunctionButton(
+                  icon: Icons.picture_as_pdf_outlined,
+                  label: 'Word ↔ PDF Converter',
+                  subtitle: 'Convert a .docx file to PDF, entirely on-device',
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const WordPdfConverterScreen()),
+                  ),
+                ),
+                _FunctionButton(
+                  icon: Icons.groups_outlined,
+                  label: 'Minutes Maker',
+                  subtitle: 'Photograph handwritten meeting notes, get back formatted minutes (coming soon)',
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const MinutesMakerScreen()),
                   ),
                 ),
               ],
