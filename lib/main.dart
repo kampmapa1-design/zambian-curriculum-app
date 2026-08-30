@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import 'firebase_options.dart';
 import 'screens/home_screen.dart';
@@ -16,15 +15,9 @@ void main() async {
     // e.g. before `flutterfire configure` has been run (see firebase/README.md).
     debugPrint('Firebase did not initialize: $error');
   }
-  try {
-    // Admin Tools ad-gate (Word/PDF converter, Minutes Maker) — see
-    // RewardedAdService. Same non-blocking pattern as Firebase above: an
-    // ad SDK that fails to initialize (offline at first launch, etc.)
-    // shouldn't take the rest of the app down with it.
-    await MobileAds.instance.initialize();
-  } catch (error) {
-    debugPrint('Mobile Ads SDK did not initialize: $error');
-  }
+  // MobileAds.instance.initialize() removed (2026-08-30) — google_mobile_ads
+  // was the confirmed cause of a crash-on-launch on a real device. See
+  // rewarded_ad_service.dart for the full removal note.
   runApp(const CurriculumApp());
 }
 

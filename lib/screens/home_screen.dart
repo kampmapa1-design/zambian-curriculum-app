@@ -303,7 +303,7 @@ class HomeScreen extends StatelessWidget {
                 _FunctionButton(
                   icon: Icons.groups_outlined,
                   label: 'Minutes Maker',
-                  subtitle: 'Photograph handwritten meeting notes, get back formatted minutes (coming soon)',
+                  subtitle: 'Photograph handwritten meeting notes, get back formatted minutes',
                   onTap: () => Navigator.of(context).push(
                     MaterialPageRoute(builder: (_) => const MinutesMakerScreen()),
                   ),

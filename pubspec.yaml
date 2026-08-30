@@ -27,7 +27,10 @@ dependencies:
   file_saver: ^0.4.0
   syncfusion_flutter_pdf: ^33.2.13
   pdf_manipulator: 4.1.0
-  google_mobile_ads: ^9.1.0
+  # google_mobile_ads REMOVED (2026-08-30): confirmed root cause of an
+  # app-wide crash-on-launch on a real device (Moto G05), isolated via two
+  # separate diagnostic test builds. See rewarded_ad_service.dart for the
+  # full removal note and what re-adding this properly would require.
 
 dev_dependencies:
   flutter_test:
