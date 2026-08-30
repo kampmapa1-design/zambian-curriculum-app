@@ -142,6 +142,7 @@ flutter:
     - assets/lesson_plans/religious_education_grade10-11.json
     - assets/lesson_plans/civic_education_form2.json
     - assets/lesson_plans/physics_grade10.json
+    - assets/lesson_plans/religious_education_2046_grade10.json
     - assets/icon/icon.png
 
 # Run `flutter pub run flutter_launcher_icons` after `flutter create` (see
