@@ -16,8 +16,7 @@ import '../services/lesson_checkpoint_repository.dart';
 import '../services/lesson_history_repository.dart';
 import '../services/lesson_plan_document_service.dart';
 import '../services/lesson_progression_generator.dart';
-import '../services/related_marking_key_finder.dart';
-import '../services/subject_content_repository.dart';
+import '../services/subject_content_index.dart';
 
 /// Lets a teacher fill in a lesson plan template for one scheme-of-work
 /// entry (topic/sub-topic already known from the syllabus), then export it
@@ -95,11 +94,9 @@ class _LessonPlanScreenState extends State<LessonPlanScreen> {
       widget.customTemplateRepository ?? CustomTemplateRepository();
   late final LessonCheckpointRepository _checkpointRepository =
       widget.checkpointRepository ?? LessonCheckpointRepository();
-  late final EmbeddedLessonPlanRepository _embeddedRepository =
-      widget.embeddedLessonPlanRepository ?? EmbeddedLessonPlanRepository();
-  final SubjectContentRepository _subjectContentRepository = SubjectContentRepository();
+  late final SubjectContentIndex _contentIndex =
+      SubjectContentIndex(embeddedLessonPlanRepository: widget.embeddedLessonPlanRepository);
   final LessonHistoryRepository _lessonHistoryRepository = LessonHistoryRepository();
-  final RelatedMarkingKeyFinder _markingKeyFinder = RelatedMarkingKeyFinder();
 
   List<LessonPlanTemplate> _availableTemplates = const [];
   late LessonPlanTemplate _activeTemplate;
@@ -120,50 +117,39 @@ class _LessonPlanScreenState extends State<LessonPlanScreen> {
     _availableTemplates = [widget.template];
     _rebuildForActiveTemplate();
     _loadCustomTemplates();
-    _loadEmbeddedMatches();
-    _loadRelatedMaterials();
-    _loadSubjectContentExcerpt();
-    _loadRelatedMarkingKeys();
+    _loadSubjectContentIndex();
     WidgetsBinding.instance.addPostFrameCallback((_) => _checkForCheckpoint());
   }
 
-  /// Materials for this same subject already saved in the on-device Subject
-  /// Content Database (see [SubjectContentRepository]) — offered as
-  /// reference to open/share while writing this lesson plan, alongside
-  /// [_loadSubjectContentExcerpt] weaving real content from the same
-  /// materials directly into the Development stage below.
-  Future<void> _loadRelatedMaterials() async {
-    final catalog = await _subjectContentRepository.loadCatalog();
-    final matches = catalog.items.where((i) => i.subjectName.toLowerCase() == widget.subjectName.toLowerCase()).toList();
-    if (mounted && matches.isNotEmpty) setState(() => _relatedMaterials = matches);
-  }
-
-  /// Marking keys uploaded through AI-Assisted Marking, for this same
-  /// subject — appended to the exported document as a real "Reference:
-  /// Assessment Content" section (see related_marking_key_section.dart)
-  /// so a teacher's plan can be informed by what's actually been
-  /// assessed on this subject before. Entirely offline, same data source
-  /// AI-Assisted Marking already uses.
-  Future<void> _loadRelatedMarkingKeys() async {
-    final matches = await _markingKeyFinder.find(widget.subjectName);
-    if (mounted && matches.isNotEmpty) setState(() => _relatedMarkingKeys = matches);
-  }
-
-  /// Entirely local/offline (the text is already on-device — see
-  /// SubjectContentRepository) but still done async, after the initial
-  /// synchronous build, so opening the screen never waits on a disk scan.
-  /// Silently does nothing on failure or no match — the syllabus-derived
+  /// Everything this app already knows on-device about this exact
+  /// topic/sub-topic — embedded real lesson plans, related Subject Content
+  /// Database materials, a matching content excerpt, and related marking
+  /// keys — resolved in one coordinated call via [SubjectContentIndex]
+  /// rather than four separate uncoordinated futures. Entirely local/offline
+  /// (see [SubjectContentIndex]'s own doc comment) but still done async,
+  /// after the initial synchronous build, so opening the screen never waits
+  /// on a disk scan. Silently does nothing on failure — the syllabus-derived
   /// progression already shown stands on its own; this only enriches it.
-  Future<void> _loadSubjectContentExcerpt() async {
+  Future<void> _loadSubjectContentIndex() async {
     try {
-      final excerpt = await _subjectContentRepository.findRelevantExcerpt(
+      final resolution = await _contentIndex.resolve(
         subjectName: widget.subjectName,
+        curriculumCode: widget.curriculumCode,
+        subjectCode: widget.subjectCode,
+        gradeLevel: widget.gradeLevel,
         topicName: widget.entry.topic.name,
         subTopicName: widget.entry.subTopic?.name,
       );
-      if (excerpt == null || !mounted) return;
-      _subjectContentExcerpt = excerpt;
-      _mergeExcerptIntoDevelopmentRow(excerpt);
+      if (!mounted) return;
+      setState(() {
+        if (resolution.embeddedLessonPlans.isNotEmpty) _embeddedMatches = resolution.embeddedLessonPlans;
+        if (resolution.relatedMaterials.isNotEmpty) _relatedMaterials = resolution.relatedMaterials;
+        if (resolution.relatedMarkingKeys.isNotEmpty) _relatedMarkingKeys = resolution.relatedMarkingKeys;
+      });
+      if (resolution.contentExcerpt != null) {
+        _subjectContentExcerpt = resolution.contentExcerpt;
+        _mergeExcerptIntoDevelopmentRow(resolution.contentExcerpt!);
+      }
     } catch (_) {
       // Best-effort enrichment only.
     }
@@ -191,25 +177,9 @@ class _LessonPlanScreenState extends State<LessonPlanScreen> {
   }
 
   Future<void> _openRelatedMaterial(SubjectContentItem item) async {
-    final file = await _subjectContentRepository.fileFor(item);
+    final file = await _contentIndex.fileFor(item);
     if (!mounted) return;
     await SharePlus.instance.share(ShareParams(files: [XFile(file.path)], subject: item.title));
-  }
-
-  /// Real, sanitized lesson plans sourced from the user's own Drive
-  /// documents (see assets/lesson_plans/*.json and each file's `_source`)
-  /// that match this exact topic/sub-topic — usually none (most topics have
-  /// no embedded source yet), sometimes several (one topic is often taught
-  /// across multiple real lessons).
-  Future<void> _loadEmbeddedMatches() async {
-    final matches = await _embeddedRepository.find(
-      curriculumCode: widget.curriculumCode,
-      subjectCode: widget.subjectCode,
-      gradeLevel: widget.gradeLevel,
-      topicName: widget.entry.topic.name,
-      subtopicName: widget.entry.subTopic?.name,
-    );
-    if (mounted && matches.isNotEmpty) setState(() => _embeddedMatches = matches);
   }
 
   /// Replaces the current (generated) draft's content with a real embedded

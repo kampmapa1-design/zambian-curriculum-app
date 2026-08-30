@@ -11,8 +11,8 @@ import '../models/syllabus_models.dart';
 import '../models/zambian_term_calendar.dart';
 import '../services/lesson_history_repository.dart';
 import '../services/progress_repository.dart';
-import '../services/related_marking_key_finder.dart';
 import '../services/scheme_of_work_document_service.dart';
+import '../services/subject_content_index.dart';
 import '../services/syllabus_document_service.dart';
 
 /// Lets a teacher fill in whichever scheme-of-work columns aren't part of
@@ -45,7 +45,7 @@ class _SchemeOfWorkDocumentScreenState extends State<SchemeOfWorkDocumentScreen>
   final LessonHistoryRepository _lessonHistoryRepository = LessonHistoryRepository();
   final _syllabusDocumentService = SyllabusDocumentService();
   final _progressRepository = ProgressRepository();
-  final RelatedMarkingKeyFinder _markingKeyFinder = RelatedMarkingKeyFinder();
+  final SubjectContentIndex _contentIndex = SubjectContentIndex();
   bool _exporting = false;
   bool _sharingSyllabus = false;
   final Set<int> _markedTaughtTopicIds = {};
@@ -82,7 +82,7 @@ class _SchemeOfWorkDocumentScreenState extends State<SchemeOfWorkDocumentScreen>
   /// Assessment Content" section, entirely offline. See the identical
   /// pattern/reasoning in lesson_plan_screen.dart.
   Future<void> _loadRelatedMarkingKeys() async {
-    final matches = await _markingKeyFinder.find(widget.template.subject.name);
+    final matches = await _contentIndex.relatedMarkingKeys(widget.template.subject.name);
     if (mounted && matches.isNotEmpty) setState(() => _relatedMarkingKeys = matches);
   }
 
