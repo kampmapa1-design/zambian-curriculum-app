@@ -1,5 +1,5 @@
 {
-  "_source": "Ministry of Education / Curriculum Development Centre, Zambia. 'Religious Education 2046 Syllabus, Grade 10-12' (2013, published by CDC) — Grade 11, Units 1-7 (Topics 11.1-11.7), Part One: Themes from the Gospels (based on the Gospel of Luke), continued. Cross-referenced against a parallel provincial Religious Education teaching-notes booklet covering the same unit structure, prepared for provincial use with no usage restriction; per standing instruction, no individual name is cited from either source, credit given only to CDC / Ministry of Education. Topic, sub-topic and Specific Outcome statements only; the 'Content' column (Bible passage references, knowledge points, skills, values) is omitted for the reasons documented in the Grade 10 file. As with Grade 10, this document's printed outcome numbering codes are unreliable throughout, so every sub-topic and outcome below was reconstructed by position — matching each outcome to the sub-topic heading it appears directly under in the source table, in the table's own reading order — and given clean sequential numbering rather than reproducing the unreliable printed codes. The syllabus organizes content by Grade only, not by Term in this file (a suggested termly Scheme of Work exists in the syllabus introduction assigning Units to terms), so all of Grade 11 is modeled as a single term here.",
+  "_source": "Ministry of Education / Curriculum Development Centre, Zambia. 'Religious Education 2046 Syllabus, Grade 10-12' (2013, published by CDC) — Grade 11, Units 1-7 (Topics 11.1-11.7), Part One: Themes from the Gospels (based on the Gospel of Luke), continued. Cross-referenced against a parallel provincial Religious Education teaching-notes booklet covering the same unit structure, prepared for provincial use with no usage restriction; per standing instruction, no individual name is cited from either source, credit given only to CDC / Ministry of Education. Topic, sub-topic and Specific Outcome statements only; the 'Content' column (Bible passage references, knowledge points, skills, values) is omitted for the reasons documented in the Grade 10 file. As with Grade 10, this document's printed outcome numbering codes are unreliable throughout, so every sub-topic and outcome below was reconstructed by position — matching each outcome to the sub-topic heading it appears directly under in the source table, in the table's own reading order — and given clean sequential numbering rather than reproducing the unreliable printed codes. The syllabus organizes content by Grade only, not by Term in this file (a suggested termly Scheme of Work exists in the syllabus introduction assigning Units to terms), so all of Grade 11 is modeled as a single term here. UPDATE (2026-08-30): term-split and references added, sourced from the same real Ministry-approved Grade 10-12 RE 2046 common scheme of work used for the Grade 10 file (see that file's own UPDATE note for the sourcing/sanitization details — identical source, identical PII stripped). This source gave week RANGES per topic block (e.g. 'weeks 4-7') rather than one exact week per sub-topic — sub-topics were spread evenly across their real stated range rather than assigned a single invented week, and Grade 12's own content (which appears partially merged into this source's Term 3 section, labelled 'GRADE 12 WORK') was deliberately excluded from this file.",
   "curriculum": {
     "code": "OBC_2013",
     "name": "2013 Outcome-Based Curriculum",
@@ -18,174 +18,620 @@
   },
   "terms": [
     {
-      "name": "Year (not term-divided in this file; see _source)",
+      "name": "Term 1",
       "sequence_number": 1,
       "topics": [
         {
           "name": "11.1 Judgement",
           "sequence_number": 1,
           "sub_topics": [
-            { "name": "Meaning of Judgement", "sequence_number": 1, "competencies": [
-              { "sequence_number": 1, "description": "Describe judgement", "category": "Specific Outcome" }
-            ]},
-            { "name": "Christian Teaching About Christ's Return", "sequence_number": 2, "competencies": [
-              { "sequence_number": 1, "description": "Explain ways Christian teaching about Christ's return leads them to witnessing and serving others", "category": "Specific Outcome" }
-            ]},
-            { "name": "Personal Judgement", "sequence_number": 3, "competencies": [
-              { "sequence_number": 1, "description": "Compare the teaching about personal judgement in the four religions", "category": "Specific Outcome" }
-            ]}
-          ]
+            {
+              "name": "Meaning of Judgement",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe judgement",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 1,
+              "references": "Religious Education (2046/1) Syllabus 10-12; RE Grade 11 Pupil's Book; Good News Bible; Newspapers"
+            },
+            {
+              "name": "Christian Teaching About Christ's Return",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Explain ways Christian teaching about Christ's return leads them to witnessing and serving others",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 2,
+              "references": "Religious Education (2046/1) Syllabus 10-12; RE Grade 11 Pupil's Book; Good News Bible; Newspapers"
+            },
+            {
+              "name": "Personal Judgement",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Compare the teaching about personal judgement in the four religions",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 3,
+              "references": "Religious Education (2046/1) Syllabus 10-12; RE Grade 11 Pupil's Book; Good News Bible; Newspapers"
+            }
+          ],
+          "week_number": 1,
+          "references": "Religious Education (2046/1) Syllabus 10-12; RE Grade 11 Pupil's Book; Good News Bible; Newspapers"
         },
         {
           "name": "11.2 Prayer",
           "sequence_number": 2,
           "sub_topics": [
-            { "name": "Personal Prayer", "sequence_number": 1, "competencies": [
-              { "sequence_number": 1, "description": "Describe prayer", "category": "Specific Outcome" }
-            ]},
-            { "name": "Christian Patterns of Prayer", "sequence_number": 2, "competencies": [
-              { "sequence_number": 1, "description": "Describe Christian patterns of prayer", "category": "Specific Outcome" }
-            ]},
-            { "name": "Christ's Attitude to Prayer", "sequence_number": 3, "competencies": [
-              { "sequence_number": 1, "description": "Describe occasions when Jesus prayed", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "State examples of attitudes of prayer", "category": "Specific Outcome" }
-            ]},
-            { "name": "How God Answers Prayer", "sequence_number": 4, "competencies": [
-              { "sequence_number": 1, "description": "Discuss various ways and conditions in which God answers prayer", "category": "Specific Outcome" }
-            ]},
-            { "name": "Prayer in Christianity and Other Religions in Zambia", "sequence_number": 5, "competencies": [
-              { "sequence_number": 1, "description": "Compare the nature and significance of prayer in Christianity with other religions", "category": "Specific Outcome" }
-            ]}
-          ]
+            {
+              "name": "Personal Prayer",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe prayer",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 4,
+              "references": "Religious Education (2046/1) Syllabus 10-12; RE Grade 11 Pupil's Book; Good News Bible; Newspapers"
+            },
+            {
+              "name": "Christian Patterns of Prayer",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe Christian patterns of prayer",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 5,
+              "references": "Religious Education (2046/1) Syllabus 10-12; RE Grade 11 Pupil's Book; Good News Bible; Newspapers"
+            },
+            {
+              "name": "Christ's Attitude to Prayer",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe occasions when Jesus prayed",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "State examples of attitudes of prayer",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 5,
+              "references": "Religious Education (2046/1) Syllabus 10-12; RE Grade 11 Pupil's Book; Good News Bible; Newspapers"
+            },
+            {
+              "name": "How God Answers Prayer",
+              "sequence_number": 4,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Discuss various ways and conditions in which God answers prayer",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 6,
+              "references": "Religious Education (2046/1) Syllabus 10-12; RE Grade 11 Pupil's Book; Good News Bible; Newspapers"
+            },
+            {
+              "name": "Prayer in Christianity and Other Religions in Zambia",
+              "sequence_number": 5,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Compare the nature and significance of prayer in Christianity with other religions",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 7,
+              "references": "Religious Education (2046/1) Syllabus 10-12; RE Grade 11 Pupil's Book; Good News Bible; Newspapers"
+            }
+          ],
+          "week_number": 4,
+          "references": "Religious Education (2046/1) Syllabus 10-12; RE Grade 11 Pupil's Book; Good News Bible; Newspapers"
         },
         {
           "name": "11.3 Jesus' Attitude to People",
           "sequence_number": 3,
           "sub_topics": [
-            { "name": "Despised People in Zambia", "sequence_number": 1, "competencies": [
-              { "sequence_number": 1, "description": "Give examples of despised people in Zambia", "category": "Specific Outcome" }
-            ]},
-            { "name": "Jesus' Attitude to Despised and Unpopular People", "sequence_number": 2, "competencies": [
-              { "sequence_number": 1, "description": "Describe attitudes towards unpopular or despised people", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Identify the attitude of Jesus to various despised people", "category": "Specific Outcome" }
-            ]},
-            { "name": "Kindness and Selfishness", "sequence_number": 3, "competencies": [
-              { "sequence_number": 1, "description": "Explain what Jesus taught about kindness and selfishness from the parable of the Good Samaritan", "category": "Specific Outcome" }
-            ]},
-            { "name": "Forgiveness, Love and Tolerance", "sequence_number": 4, "competencies": [
-              { "sequence_number": 1, "description": "Compare Christian teachings on love, forgiveness and tolerance with those of other religions", "category": "Specific Outcome" }
-            ]}
-          ]
-        },
+            {
+              "name": "Despised People in Zambia",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Give examples of despised people in Zambia",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 8,
+              "references": "Religious Education (2046/1) Syllabus 10-12; RE Grade 11 Pupil's Book; Good News Bible; Newspapers"
+            },
+            {
+              "name": "Jesus' Attitude to Despised and Unpopular People",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe attitudes towards unpopular or despised people",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Identify the attitude of Jesus to various despised people",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 9,
+              "references": "Religious Education (2046/1) Syllabus 10-12; RE Grade 11 Pupil's Book; Good News Bible; Newspapers"
+            },
+            {
+              "name": "Kindness and Selfishness",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Explain what Jesus taught about kindness and selfishness from the parable of the Good Samaritan",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 10,
+              "references": "Religious Education (2046/1) Syllabus 10-12; RE Grade 11 Pupil's Book; Good News Bible; Newspapers"
+            },
+            {
+              "name": "Forgiveness, Love and Tolerance",
+              "sequence_number": 4,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Compare Christian teachings on love, forgiveness and tolerance with those of other religions",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 11,
+              "references": "Religious Education (2046/1) Syllabus 10-12; RE Grade 11 Pupil's Book; Good News Bible; Newspapers"
+            }
+          ],
+          "week_number": 8,
+          "references": "Religious Education (2046/1) Syllabus 10-12; RE Grade 11 Pupil's Book; Good News Bible; Newspapers"
+        }
+      ]
+    },
+    {
+      "name": "Term 2",
+      "sequence_number": 2,
+      "topics": [
         {
           "name": "11.4 Suffering",
-          "sequence_number": 4,
+          "sequence_number": 1,
           "sub_topics": [
-            { "name": "Different Types of Suffering in Zambia", "sequence_number": 1, "competencies": [
-              { "sequence_number": 1, "description": "Identify different types of suffering in Zambia", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Identify different ways people react to suffering", "category": "Specific Outcome" }
-            ]},
-            { "name": "Sources of Suffering", "sequence_number": 2, "competencies": [
-              { "sequence_number": 1, "description": "State various sources of suffering", "category": "Specific Outcome" }
-            ]},
-            { "name": "Avoidable Suffering", "sequence_number": 3, "competencies": [
-              { "sequence_number": 1, "description": "Give examples of suffering that could be avoided", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Explain how HIV and AIDS is transmitted", "category": "Specific Outcome" }
-            ]},
-            { "name": "Effects of Suffering", "sequence_number": 4, "competencies": [
-              { "sequence_number": 1, "description": "Describe the effects of STIs and HIV and AIDS on a family", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Describe strategies of family survival during crises", "category": "Specific Outcome" }
-            ]},
-            { "name": "God's Involvement in Our Sufferings", "sequence_number": 5, "competencies": [
-              { "sequence_number": 1, "description": "Mention the biblical teachings about God's concern for our suffering", "category": "Specific Outcome" }
-            ]},
-            { "name": "Jesus' Willingness to Suffer for Us", "sequence_number": 6, "competencies": [
-              { "sequence_number": 1, "description": "Describe occasions when Jesus spoke of His suffering", "category": "Specific Outcome" }
-            ]},
-            { "name": "Christians Should Be Willing to Suffer", "sequence_number": 7, "competencies": [
-              { "sequence_number": 1, "description": "Describe ways in which Christians should be willing to suffer", "category": "Specific Outcome" }
-            ]},
-            { "name": "Various Religious Teachings on Suffering", "sequence_number": 8, "competencies": [
-              { "sequence_number": 1, "description": "Compare Christian teachings on suffering with those of other religions", "category": "Specific Outcome" }
-            ]}
-          ]
+            {
+              "name": "Different Types of Suffering in Zambia",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Identify different types of suffering in Zambia",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Identify different ways people react to suffering",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 1,
+              "references": "Religious Education (2046/1) Syllabus 10-12; RE Grade 11 Pupil's Book; Good News Bible; Newspapers"
+            },
+            {
+              "name": "Sources of Suffering",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "State various sources of suffering",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 1,
+              "references": "Religious Education (2046/1) Syllabus 10-12; RE Grade 11 Pupil's Book; Good News Bible; Newspapers"
+            },
+            {
+              "name": "Avoidable Suffering",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Give examples of suffering that could be avoided",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Explain how HIV and AIDS is transmitted",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 2,
+              "references": "Religious Education (2046/1) Syllabus 10-12; RE Grade 11 Pupil's Book; Good News Bible; Newspapers"
+            },
+            {
+              "name": "Effects of Suffering",
+              "sequence_number": 4,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe the effects of STIs and HIV and AIDS on a family",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Describe strategies of family survival during crises",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 2,
+              "references": "Religious Education (2046/1) Syllabus 10-12; RE Grade 11 Pupil's Book; Good News Bible; Newspapers"
+            },
+            {
+              "name": "God's Involvement in Our Sufferings",
+              "sequence_number": 5,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Mention the biblical teachings about God's concern for our suffering",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 3,
+              "references": "Religious Education (2046/1) Syllabus 10-12; RE Grade 11 Pupil's Book; Good News Bible; Newspapers"
+            },
+            {
+              "name": "Jesus' Willingness to Suffer for Us",
+              "sequence_number": 6,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe occasions when Jesus spoke of His suffering",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 3,
+              "references": "Religious Education (2046/1) Syllabus 10-12; RE Grade 11 Pupil's Book; Good News Bible; Newspapers"
+            },
+            {
+              "name": "Christians Should Be Willing to Suffer",
+              "sequence_number": 7,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe ways in which Christians should be willing to suffer",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 4,
+              "references": "Religious Education (2046/1) Syllabus 10-12; RE Grade 11 Pupil's Book; Good News Bible; Newspapers"
+            },
+            {
+              "name": "Various Religious Teachings on Suffering",
+              "sequence_number": 8,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Compare Christian teachings on suffering with those of other religions",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 4,
+              "references": "Religious Education (2046/1) Syllabus 10-12; RE Grade 11 Pupil's Book; Good News Bible; Newspapers"
+            }
+          ],
+          "week_number": 1,
+          "references": "Religious Education (2046/1) Syllabus 10-12; RE Grade 11 Pupil's Book; Good News Bible; Newspapers"
         },
         {
           "name": "11.5 Opposition to Jesus",
-          "sequence_number": 5,
+          "sequence_number": 2,
           "sub_topics": [
-            { "name": "Reactions to Criticism in Zambia", "sequence_number": 1, "competencies": [
-              { "sequence_number": 1, "description": "Identify different reactions to criticism and opposition", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Discuss the effects of aggressive reaction to criticism and opposition", "category": "Specific Outcome" }
-            ]},
-            { "name": "Occasions When Jesus Was Criticized", "sequence_number": 2, "competencies": [
-              { "sequence_number": 1, "description": "Describe how Jesus reacted when criticized", "category": "Specific Outcome" }
-            ]},
-            { "name": "Priests and Scribes Challenge Jesus' Authority", "sequence_number": 3, "competencies": [
-              { "sequence_number": 1, "description": "Relate occasions when religious leaders questioned Jesus' authority", "category": "Specific Outcome" }
-            ]},
-            { "name": "Betrayal of Jesus and His Arrest", "sequence_number": 4, "competencies": [
-              { "sequence_number": 1, "description": "Give an account of the betrayal of Jesus and his arrest", "category": "Specific Outcome" }
-            ]},
-            { "name": "The Trials of Jesus", "sequence_number": 5, "competencies": [
-              { "sequence_number": 1, "description": "Describe the trials of Jesus before the Sanhedrin, Pilate and Herod", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Give reasons why Jesus was condemned to death", "category": "Specific Outcome" }
-            ]},
-            { "name": "Jesus' Teaching About Opposition", "sequence_number": 6, "competencies": [
-              { "sequence_number": 1, "description": "State Jesus' teachings on reaction to opposition and persecution", "category": "Specific Outcome" }
-            ]},
-            { "name": "Reactions to Persecution and Opposition in Christianity and Other Religions", "sequence_number": 7, "competencies": [
-              { "sequence_number": 1, "description": "Compare Christian teaching on persecution and opposition with those of other religions", "category": "Specific Outcome" }
-            ]}
-          ]
+            {
+              "name": "Reactions to Criticism in Zambia",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Identify different reactions to criticism and opposition",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Discuss the effects of aggressive reaction to criticism and opposition",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 5,
+              "references": "Religious Education (2046/1) Syllabus 10-12; RE Grade 11 Pupil's Book; Good News Bible; Newspapers"
+            },
+            {
+              "name": "Occasions When Jesus Was Criticized",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe how Jesus reacted when criticized",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 5,
+              "references": "Religious Education (2046/1) Syllabus 10-12; RE Grade 11 Pupil's Book; Good News Bible; Newspapers"
+            },
+            {
+              "name": "Priests and Scribes Challenge Jesus' Authority",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Relate occasions when religious leaders questioned Jesus' authority",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 6,
+              "references": "Religious Education (2046/1) Syllabus 10-12; RE Grade 11 Pupil's Book; Good News Bible; Newspapers"
+            },
+            {
+              "name": "Betrayal of Jesus and His Arrest",
+              "sequence_number": 4,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Give an account of the betrayal of Jesus and his arrest",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 6,
+              "references": "Religious Education (2046/1) Syllabus 10-12; RE Grade 11 Pupil's Book; Good News Bible; Newspapers"
+            },
+            {
+              "name": "The Trials of Jesus",
+              "sequence_number": 5,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe the trials of Jesus before the Sanhedrin, Pilate and Herod",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Give reasons why Jesus was condemned to death",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 7,
+              "references": "Religious Education (2046/1) Syllabus 10-12; RE Grade 11 Pupil's Book; Good News Bible; Newspapers"
+            },
+            {
+              "name": "Jesus' Teaching About Opposition",
+              "sequence_number": 6,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "State Jesus' teachings on reaction to opposition and persecution",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 7,
+              "references": "Religious Education (2046/1) Syllabus 10-12; RE Grade 11 Pupil's Book; Good News Bible; Newspapers"
+            },
+            {
+              "name": "Reactions to Persecution and Opposition in Christianity and Other Religions",
+              "sequence_number": 7,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Compare Christian teaching on persecution and opposition with those of other religions",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 8,
+              "references": "Religious Education (2046/1) Syllabus 10-12; RE Grade 11 Pupil's Book; Good News Bible; Newspapers"
+            }
+          ],
+          "week_number": 5,
+          "references": "Religious Education (2046/1) Syllabus 10-12; RE Grade 11 Pupil's Book; Good News Bible; Newspapers"
         },
         {
           "name": "11.6 The Last Supper and the Crucifixion",
-          "sequence_number": 6,
+          "sequence_number": 3,
           "sub_topics": [
-            { "name": "How People React to Bereavement", "sequence_number": 1, "competencies": [
-              { "sequence_number": 1, "description": "Describe different ways people react to death", "category": "Specific Outcome" }
-            ]},
-            { "name": "The Lord's Supper", "sequence_number": 2, "competencies": [
-              { "sequence_number": 1, "description": "Relate what happened at the Last Supper", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Explain the meaning and importance of the Lord's Supper for Christians", "category": "Specific Outcome" }
-            ]},
-            { "name": "The Crucifixion and Death of Jesus", "sequence_number": 3, "competencies": [
-              { "sequence_number": 1, "description": "Relate what happened at the crucifixion and death of Jesus", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Explain the teaching of the New Testament about the significance of the death of Jesus", "category": "Specific Outcome" }
-            ]},
-            { "name": "How Christ's Death Affects Christians Today", "sequence_number": 4, "competencies": [
-              { "sequence_number": 1, "description": "Show ways Christ's death affects Christians", "category": "Specific Outcome" }
-            ]},
-            { "name": "Funerals, Burials and Teachings About Death", "sequence_number": 5, "competencies": [
-              { "sequence_number": 1, "description": "Compare funeral and burial practices and teachings about death in Christianity with those of other religions", "category": "Specific Outcome" }
-            ]}
-          ]
-        },
+            {
+              "name": "How People React to Bereavement",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe different ways people react to death",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 9,
+              "references": "Religious Education (2046/1) Syllabus 10-12; RE Grade 11 Pupil's Book; Good News Bible; Newspapers"
+            },
+            {
+              "name": "The Lord's Supper",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Relate what happened at the Last Supper",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Explain the meaning and importance of the Lord's Supper for Christians",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 9,
+              "references": "Religious Education (2046/1) Syllabus 10-12; RE Grade 11 Pupil's Book; Good News Bible; Newspapers"
+            },
+            {
+              "name": "The Crucifixion and Death of Jesus",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Relate what happened at the crucifixion and death of Jesus",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Explain the teaching of the New Testament about the significance of the death of Jesus",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 10,
+              "references": "Religious Education (2046/1) Syllabus 10-12; RE Grade 11 Pupil's Book; Good News Bible; Newspapers"
+            },
+            {
+              "name": "How Christ's Death Affects Christians Today",
+              "sequence_number": 4,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Show ways Christ's death affects Christians",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 10,
+              "references": "Religious Education (2046/1) Syllabus 10-12; RE Grade 11 Pupil's Book; Good News Bible; Newspapers"
+            },
+            {
+              "name": "Funerals, Burials and Teachings About Death",
+              "sequence_number": 5,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Compare funeral and burial practices and teachings about death in Christianity with those of other religions",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 11,
+              "references": "Religious Education (2046/1) Syllabus 10-12; RE Grade 11 Pupil's Book; Good News Bible; Newspapers"
+            }
+          ],
+          "week_number": 9,
+          "references": "Religious Education (2046/1) Syllabus 10-12; RE Grade 11 Pupil's Book; Good News Bible; Newspapers"
+        }
+      ]
+    },
+    {
+      "name": "Term 3",
+      "sequence_number": 3,
+      "topics": [
         {
           "name": "11.7 Jesus' Triumph Over Death",
-          "sequence_number": 7,
+          "sequence_number": 1,
           "sub_topics": [
-            { "name": "Ideas About Life After Death", "sequence_number": 1, "competencies": [
-              { "sequence_number": 1, "description": "Describe different ideas people have about life after death", "category": "Specific Outcome" }
-            ]},
-            { "name": "Jesus Raising Dead People", "sequence_number": 2, "competencies": [
-              { "sequence_number": 1, "description": "Relate the stories of Jesus raising people from death", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Explain what these stories teach about Jesus", "category": "Specific Outcome" }
-            ]},
-            { "name": "The Resurrection of Jesus", "sequence_number": 3, "competencies": [
-              { "sequence_number": 1, "description": "Relate the experiences of the disciples at Christ's Resurrection", "category": "Specific Outcome" }
-            ]},
-            { "name": "Meaning of Christ's Resurrection to Christians", "sequence_number": 4, "competencies": [
-              { "sequence_number": 1, "description": "Explain the meaning of Jesus' resurrection for Christians", "category": "Specific Outcome" }
-            ]},
-            { "name": "What Christians Believe About Life After Death", "sequence_number": 5, "competencies": [
-              { "sequence_number": 1, "description": "Explain what Christians believe about life after death", "category": "Specific Outcome" }
-            ]},
-            { "name": "Beliefs About Life After Death in Christianity and Other Religions", "sequence_number": 6, "competencies": [
-              { "sequence_number": 1, "description": "Compare beliefs about life after death in Christianity and other religions", "category": "Specific Outcome" }
-            ]}
-          ]
+            {
+              "name": "Ideas About Life After Death",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe different ideas people have about life after death",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 1,
+              "references": "Religious Education (2046/1) Syllabus 10-12; RE Grade 11 Pupil's Book; Good News Bible; Newspapers"
+            },
+            {
+              "name": "Jesus Raising Dead People",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Relate the stories of Jesus raising people from death",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Explain what these stories teach about Jesus",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 2,
+              "references": "Religious Education (2046/1) Syllabus 10-12; RE Grade 11 Pupil's Book; Good News Bible; Newspapers"
+            },
+            {
+              "name": "The Resurrection of Jesus",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Relate the experiences of the disciples at Christ's Resurrection",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 3,
+              "references": "Religious Education (2046/1) Syllabus 10-12; RE Grade 11 Pupil's Book; Good News Bible; Newspapers"
+            },
+            {
+              "name": "Meaning of Christ's Resurrection to Christians",
+              "sequence_number": 4,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Explain the meaning of Jesus' resurrection for Christians",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 4,
+              "references": "Religious Education (2046/1) Syllabus 10-12; RE Grade 11 Pupil's Book; Good News Bible; Newspapers"
+            },
+            {
+              "name": "What Christians Believe About Life After Death",
+              "sequence_number": 5,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Explain what Christians believe about life after death",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 5,
+              "references": "Religious Education (2046/1) Syllabus 10-12; RE Grade 11 Pupil's Book; Good News Bible; Newspapers"
+            },
+            {
+              "name": "Beliefs About Life After Death in Christianity and Other Religions",
+              "sequence_number": 6,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Compare beliefs about life after death in Christianity and other religions",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 6,
+              "references": "Religious Education (2046/1) Syllabus 10-12; RE Grade 11 Pupil's Book; Good News Bible; Newspapers"
+            }
+          ],
+          "week_number": 1,
+          "references": "Religious Education (2046/1) Syllabus 10-12; RE Grade 11 Pupil's Book; Good News Bible; Newspapers"
         }
       ]
     }
