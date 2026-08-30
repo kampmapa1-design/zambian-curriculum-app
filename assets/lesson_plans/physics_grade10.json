@@ -1,0 +1,234 @@
+{
+  "_source": "Ministry of General Education 'School Board Teacher's Lesson Plan' template, real lessons for Physics Grade 10 (Drive folder shared by the user 2026-08-30, 'Physics grade 10-12 lesson plans.pdf'). Every 'Name of Teacher' field in the source was a blank template — no personal name, TS number, or phone number anywhere, so nothing needed stripping (confirmed by scanning the entire 113K-character extracted document for phone-number patterns and filled name fields before use). The source document's own per-lesson 'TOPIC:' label was 'Measurements' for every lesson here, but the first lesson's actual content (SI units, scalar vs vector) matches the bundled syllabus's '10.1.1 International System of Units (SI)' sub-topic more closely than '10.1.2 Length and Time' — matched by real content, not the source's own possibly-imprecise label. Only these 7 lessons (of an estimated ~38 in the full source) are included here: the rest use inconsistent field formatting in the extracted text (not all say TOPIC:/LESSON: the same way) and need individual parsing rather than a rushed bulk pass — a genuine follow-up task, not done here. Lesson progression stages are summarized from a real but messily-formatted source table (columns not always in the same order lesson to lesson) — faithful to the real content, not a verbatim table reproduction.",
+  "curriculum_code": "OBC_2013",
+  "subject_code": "PHY",
+  "grade_levels": [10],
+  "lesson_plans": [
+    {
+      "topic_name": "10.1 Measurements",
+      "subtopic_name": "10.1.1 International System of Units (SI)",
+      "grade_level": 10,
+      "duration": "80 minutes",
+      "references": "Essentials of Physics and Complete Physics Text Book",
+      "tlm": "Chart",
+      "rationale": "This lesson is about Measurements. This will equip learners with the learnt knowledge and skills of Measurements. In this lesson, discussion method and question and answer method will be used.",
+      "objectives": [
+        "Discuss the basic unit for measurement of length correctly."
+      ],
+      "progression": [
+        {
+          "stage": "Introduction (5 min)",
+          "teacherRole": "Introduces the lesson by asking pupils to state types of physical quantities.",
+          "learnersRole": "State types of physical quantities. Physical quantities are divided into two types: scalar and vector."
+        },
+        {
+          "stage": "Lesson Development (50 min)",
+          "teacherRole": "Discusses SI units — the International System of Units adopted in Physics — and asks pupils to define a scalar and a vector.",
+          "learnersRole": "Define scalar (a quantity having magnitude only, e.g. mass, length, area, volume, density, time, distance, speed, energy, temperature, current, voltage) and vector (a quantity having both magnitude and direction, e.g. weight, displacement, velocity, acceleration, force, moment). Complete a written exercise: define vector/scalar quantity, give four examples of each, and differentiate a vector from a scalar quantity."
+        },
+        {
+          "stage": "Conclusion (5 min)",
+          "teacherRole": "Concludes the lesson by going through it while stressing the main points.",
+          "learnersRole": "Review the lesson's main points."
+        }
+      ]
+    },
+    {
+      "topic_name": "10.1 Measurements",
+      "subtopic_name": "10.1.2 Length and Time",
+      "grade_level": 10,
+      "sequence_label": "Lesson 1 of 6",
+      "duration": "80 minutes",
+      "references": "Essentials of Physics and Complete Physics Text Book",
+      "tlm": "Chart",
+      "rationale": "This lesson is about Measurements of Length. This will equip learners with the learnt knowledge and skills of Measurements. In this lesson, discussion method and question and answer method will be used.",
+      "objectives": [
+        "Define the term length of an object.",
+        "Describe how to use rulers, micrometers, Vernier scales and callipers to determine lengths.",
+        "Discuss some precautions to be taken when measuring length using the said instruments."
+      ],
+      "priorKnowledge": "Physical quantities and their two types (scalar and vector), from the previous lesson.",
+      "progression": [
+        {
+          "stage": "Introduction (5-15 min)",
+          "teacherRole": "Reviews the previous lesson on physical quantities, then discusses with pupils what length is.",
+          "learnersRole": "Recall that length is the measurement of something from one end to the other; SI unit is the metre (symbol m)."
+        },
+        {
+          "stage": "Lesson Development (50 min)",
+          "teacherRole": "Discusses instruments for measuring length (measuring tape, ruler, Vernier callipers) and their accuracy, and demonstrates how to use a ruler or measuring tape: put the 0 mark at one end of the object, read the mark at the other end.",
+          "learnersRole": "Discuss the instruments and their accuracy with the teacher, then attempt an exercise using a ruler to measure the length of a metal rod (accounting for a damaged rule end)."
+        },
+        {
+          "stage": "Conclusion (5 min)",
+          "teacherRole": "Concludes the lesson, stressing the main points. Sets homework: identify the most appropriate instrument for measuring several everyday objects (a scratch card's thickness, a thin metal rod's diameter, a hardcover book's thickness, a thin wire's diameter, a football pitch's width, a hair's thickness).",
+          "learnersRole": "Complete the homework exercise."
+        }
+      ]
+    },
+    {
+      "topic_name": "10.1 Measurements",
+      "subtopic_name": "10.1.2 Length and Time",
+      "grade_level": 10,
+      "sequence_label": "Lesson 2 of 6",
+      "duration": "80 minutes",
+      "references": "Essentials of Physics and Complete Physics Text Book",
+      "tlm": "Chart",
+      "rationale": "This lesson is about Measurements of Length. This will equip learners with the learnt knowledge and skills of Measurements. In this lesson, discussion method and question and answer method will be used.",
+      "objectives": [
+        "Define the term length of an object.",
+        "Describe how to use rulers, micrometres, Vernier scales and callipers to determine lengths.",
+        "Discuss some precautions to be taken when measuring length using the said instruments."
+      ],
+      "priorKnowledge": "How to use a ruler or measuring tape to measure length, from the previous lesson.",
+      "progression": [
+        {
+          "stage": "Introduction",
+          "teacherRole": "Gives pupils rulers, micrometers, Vernier scales and callipers and asks them to identify each instrument and define length.",
+          "learnersRole": "Identify each instrument and define length."
+        },
+        {
+          "stage": "Lesson Development",
+          "teacherRole": "Explains how to use Vernier callipers: put the object between the jaws, read the main scale before the 0 mark of the Vernier scale, find the Vernier-scale marking in line with the main scale, and add the two readings together. Explains how each instrument determines length, including measuring internal and external diameters with callipers.",
+          "learnersRole": "Measure internal and external diameters of objects using callipers; use micrometers and rulers to measure diameters of objects. Complete a class exercise on parallax error and choosing the right instrument for a given measurement, then mark/correct their own work."
+        },
+        {
+          "stage": "Conclusion",
+          "teacherRole": "Goes through the main points of the lesson.",
+          "learnersRole": "Review the main points."
+        }
+      ]
+    },
+    {
+      "topic_name": "10.1 Measurements",
+      "subtopic_name": "10.1.2 Length and Time",
+      "grade_level": 10,
+      "sequence_label": "Lesson 3 of 6",
+      "duration": "80 minutes",
+      "references": "Essentials of Physics and Complete Physics Text Book",
+      "tlm": "Chart",
+      "rationale": "This lesson is about Measurements of Length. This will equip learners with the learnt knowledge and skills of Measurements. In this lesson, discussion method and question and answer method will be used.",
+      "objectives": [
+        "Define the term length of an object.",
+        "Describe how to use rulers, micrometers, Vernier scales and callipers to determine lengths.",
+        "Discuss some precautions to be taken when measuring length using the said instrument."
+      ],
+      "priorKnowledge": "The previous lesson's introduction to Vernier callipers and measuring instruments.",
+      "progression": [
+        {
+          "stage": "Introduction",
+          "teacherRole": "Reviews the previous lesson.",
+          "learnersRole": "Recall the previous lesson."
+        },
+        {
+          "stage": "Lesson Development",
+          "teacherRole": "Discusses Vernier callipers in more detail: a pair has outside jaws (for external diameters) and inside jaws (for internal diameters of a tube or cylinder), and demonstrates the reading procedure again.",
+          "learnersRole": "Discuss how to use the ruler/measuring tape and Vernier callipers with the teacher; attempt an exercise identifying parts of a Vernier calliper diagram and stating what physical quantity it measures."
+        },
+        {
+          "stage": "Conclusion (5 min)",
+          "teacherRole": "Concludes the lesson, stressing the main points. Sets homework on mechanical methods for measuring short lengths.",
+          "learnersRole": "Complete the homework exercise."
+        }
+      ]
+    },
+    {
+      "topic_name": "10.1 Measurements",
+      "subtopic_name": "10.1.2 Length and Time",
+      "grade_level": 10,
+      "sequence_label": "Lesson 4 of 6",
+      "duration": "80 minutes",
+      "references": "Essentials of Physics and Complete Physics Text Book",
+      "tlm": "Chart",
+      "rationale": "This lesson is about Measurements of Length. This will equip learners with the learnt knowledge and skills of Measurements. In this lesson, discussion method and question and answer method will be used.",
+      "objectives": [
+        "Define the term length of an object.",
+        "Describe how to use rulers, micrometers, Vernier scales and callipers to determine lengths.",
+        "Discuss some precautions to be taken when measuring length using the said instrument."
+      ],
+      "priorKnowledge": "Vernier calliper usage, from earlier lessons in this set.",
+      "progression": [
+        {
+          "stage": "Introduction",
+          "teacherRole": "Reviews the previous lesson with pupils.",
+          "learnersRole": "Recall the previous lesson."
+        },
+        {
+          "stage": "Lesson Development",
+          "teacherRole": "Introduces the micrometer screw gauge: the thimble is turned until the object is gripped gently between the anvil and spindle; the main scale on the sleeve is read before the thimble edge; the circular scale marking in line with the main scale is found (each division represents 0.01mm); the two readings are added.",
+          "learnersRole": "Discuss with the teacher how to use a micrometer screw gauge; attempt an exercise identifying the parts of a micrometer diagram (anvil, spindle, sleeve, thimble, ratchet), the ratchet's function, and precautions needed before use."
+        },
+        {
+          "stage": "Conclusion (5 min)",
+          "teacherRole": "Concludes the lesson, stressing the main points. Sets homework identifying the most appropriate instrument for several everyday measurements.",
+          "learnersRole": "Complete the homework exercise."
+        }
+      ]
+    },
+    {
+      "topic_name": "10.1 Measurements",
+      "subtopic_name": "10.1.2 Length and Time",
+      "grade_level": 10,
+      "sequence_label": "Lesson 5 of 6",
+      "duration": "80 minutes",
+      "references": "Essentials of Physics and Complete Physics Text Book",
+      "tlm": "Pendulum, stop watch",
+      "rationale": "This lesson is about Measurements of time. This will equip learners with the learnt knowledge and skills of Measurements. In this lesson, discussion method and question and answer method will be used.",
+      "objectives": [
+        "Define the term period, frequency and oscillation.",
+        "Describe how to use a stop watch and pendulum to determine the period of an event.",
+        "Discuss some precautions to be taken when measuring time using the said instruments."
+      ],
+      "priorKnowledge": "Length-measuring instruments, from earlier lessons in this set.",
+      "progression": [
+        {
+          "stage": "Introduction",
+          "teacherRole": "Takes pupils to the football pitch, gives them a stop watch and pendulum, and asks them to identify each instrument.",
+          "learnersRole": "Identify each instrument. Define period (T) as the time taken for one complete oscillation."
+        },
+        {
+          "stage": "Lesson Development",
+          "teacherRole": "Sets up a timing exercise (a 100m sprint) and a pendulum-oscillation recording exercise with varying amplitude and length.",
+          "learnersRole": "Record the time taken for a 100m sprint and for the pendulum bob to complete one oscillation at different amplitudes/lengths; solve a worked example (a pendulum taking 3s to go from A to C and back to B — find its period)."
+        },
+        {
+          "stage": "Conclusion",
+          "teacherRole": "Discusses precautions to take when timing an event.",
+          "learnersRole": "Complete a field-event period-recording exercise, mark/correct their own work."
+        }
+      ]
+    },
+    {
+      "topic_name": "10.1 Measurements",
+      "subtopic_name": "10.1.2 Length and Time",
+      "grade_level": 10,
+      "sequence_label": "Lesson 6 of 6",
+      "duration": "80 minutes",
+      "references": "Essentials of Physics and Complete Physics Text Book",
+      "tlm": "Chart",
+      "rationale": "This lesson is about Measurements of Length and time. This will equip learners with the learnt knowledge and skills of Measurements. In this lesson, discussion method and question and answer method will be used.",
+      "objectives": [
+        "Define the term length and time.",
+        "Identify factors that affect the period of a simple pendulum."
+      ],
+      "priorKnowledge": "Simple pendulum and period, from the previous lesson.",
+      "progression": [
+        {
+          "stage": "Introduction (5 min)",
+          "teacherRole": "Reviews the previous lesson.",
+          "learnersRole": "Recall the previous lesson."
+        },
+        {
+          "stage": "Lesson Development (50 min)",
+          "teacherRole": "Guides an experiment investigating what changes the period of a pendulum.",
+          "learnersRole": "Conclude that the period of a pendulum depends on its length and on the acceleration due to gravity; solve a worked example (a pendulum taking 3s to go from A to C and back to B)."
+        },
+        {
+          "stage": "Conclusion (5 min)",
+          "teacherRole": "Concludes the lesson, stressing that a longer pendulum increases the period, while greater gravitational force decreases it. Sets homework.",
+          "learnersRole": "Complete the homework exercise."
+        }
+      ]
+    }
+  ]
+}
