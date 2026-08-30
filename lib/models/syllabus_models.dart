@@ -138,6 +138,15 @@ class SubTopic {
   /// merged under one sub-topic) — the first/introducing week is used.
   final int? weekNumber;
 
+  /// Real reference material for this sub-topic, taken directly from a
+  /// sourced scheme of work (e.g. "RE syllabus 2046; Grade 10 pupil's
+  /// book; RE teacher's book; Good News Bible") — null when no such source
+  /// exists yet, in which case the Scheme of Work generator falls back to
+  /// just naming the syllabus itself (always true, never fabricated) rather
+  /// than leaving the References column blank. Never an invented textbook
+  /// title/citation — see feedback-sourcing-rules.
+  final String? references;
+
   const SubTopic({
     required this.id,
     required this.sequenceNumber,
@@ -146,6 +155,7 @@ class SubTopic {
     this.objectives = const [],
     this.competencies = const [],
     this.weekNumber,
+    this.references,
   });
 }
 
@@ -163,6 +173,10 @@ class Topic {
   /// schedulable leaf, see `generateSchemeOfWork`).
   final int? weekNumber;
 
+  /// See [SubTopic.references] — same meaning, for a topic with no
+  /// sub-topics of its own.
+  final String? references;
+
   const Topic({
     required this.id,
     required this.sequenceNumber,
@@ -172,6 +186,7 @@ class Topic {
     this.objectives = const [],
     this.competencies = const [],
     this.weekNumber,
+    this.references,
   });
 }
 

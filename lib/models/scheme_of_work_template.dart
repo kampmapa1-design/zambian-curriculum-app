@@ -64,6 +64,15 @@ class SchemeOfWorkTemplate {
 /// description when the syllabus has no learning_objectives for it
 /// (true for ~43% of bundled CBC sub-topics) — previously that column
 /// went blank in exactly those cases too.
+///
+/// **2026-08-30**: References was the last column that could still render
+/// completely blank — no field for it existed anywhere in the syllabus
+/// data model at all (not specific to any one subject). Fixed the same
+/// way as [SubTopic.weekNumber]: a real, sourced `references` field
+/// (populated where a genuine scheme of work exists — see
+/// religious_education_grade10.json for the first real example), with a
+/// safe, never-fabricated fallback (just naming the syllabus itself) for
+/// everything not yet sourced — see [SchemeOfWorkRowDraft.build].
 const defaultCbcSchemeOfWorkTemplate = SchemeOfWorkTemplate(
   id: 'cbc_scheme_of_work_v1',
   name: 'CBC Scheme of Work',
@@ -81,7 +90,7 @@ const defaultCbcSchemeOfWorkTemplate = SchemeOfWorkTemplate(
     SchemeOfWorkColumnDef(id: 'expectedStandards', label: 'Expected Standards', suggested: true),
     SchemeOfWorkColumnDef(id: 'strategiesMethodologies', label: 'Strategies & Methodologies', suggested: true),
     SchemeOfWorkColumnDef(id: 'tlAidsMaterials', label: 'TL Aids & Materials', suggested: true),
-    SchemeOfWorkColumnDef(id: 'references', label: 'References'),
+    SchemeOfWorkColumnDef(id: 'references', label: 'References', suggested: true),
   ],
 );
 
@@ -106,7 +115,7 @@ const defaultObcSchemeOfWorkTemplate = SchemeOfWorkTemplate(
     SchemeOfWorkColumnDef(id: 'specificOutcomes', label: 'Specific Outcomes', autoFilled: true),
     SchemeOfWorkColumnDef(id: 'methods', label: 'Methods', suggested: true),
     SchemeOfWorkColumnDef(id: 'resources', label: 'Resources', suggested: true),
-    SchemeOfWorkColumnDef(id: 'references', label: 'References'),
+    SchemeOfWorkColumnDef(id: 'references', label: 'References', suggested: true),
   ],
 );
 

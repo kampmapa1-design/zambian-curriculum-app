@@ -35,7 +35,7 @@ class DatabaseHelper {
   DatabaseHelper._internal();
   static final DatabaseHelper instance = DatabaseHelper._internal();
 
-  static const _schemaVersion = 4;
+  static const _schemaVersion = 5;
 
   Database? _db;
 
@@ -131,6 +131,7 @@ class DatabaseHelper {
         sequence_number INTEGER NOT NULL,
         description TEXT,
         week_number INTEGER,
+        references_text TEXT,
         UNIQUE (subject_id, grade_id, term_id, name)
       )
     ''');
@@ -145,6 +146,7 @@ class DatabaseHelper {
         sequence_number INTEGER NOT NULL,
         description TEXT,
         week_number INTEGER,
+        references_text TEXT,
         UNIQUE (topic_id, name)
       )
     ''');
@@ -294,6 +296,7 @@ class DatabaseHelper {
               'sequence_number': topicJson['sequence_number'],
               'description': topicJson['description'],
               'week_number': topicJson['week_number'],
+              'references_text': topicJson['references'],
             },
           );
 
@@ -336,6 +339,7 @@ class DatabaseHelper {
                 'sequence_number': subTopicJson['sequence_number'],
                 'description': subTopicJson['description'],
                 'week_number': subTopicJson['week_number'],
+                'references_text': subTopicJson['references'],
               },
             );
 
@@ -446,6 +450,7 @@ class DatabaseHelper {
             objectives: objectives,
             competencies: competencies,
             weekNumber: row['week_number'] as int?,
+            references: row['references_text'] as String?,
           ));
     }
 
@@ -671,6 +676,7 @@ class DatabaseHelper {
         objectives: await _loadObjectives(db, subTopicId: subTopicId),
         competencies: await _loadCompetencies(db, subTopicId: subTopicId),
         weekNumber: row['week_number'] as int?,
+        references: row['references_text'] as String?,
       ));
     }
     return result;

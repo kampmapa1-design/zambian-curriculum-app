@@ -101,6 +101,8 @@ class SchemeOfWorkRowDraft {
     List<SchemeOfWorkEntry> entries, {
     required int lessonNumber,
     required bool spellWeek,
+    String? curriculumCode,
+    String? subjectName,
   }) {
     final values = <String, String>{};
     final competencies = entries.expand((e) => e.competencies).toList();
@@ -109,6 +111,22 @@ class SchemeOfWorkRowDraft {
     } else {
       final description = entries.first.subTopic?.description ?? entries.first.topic.description;
       if (description != null) values['expectedStandards'] = description;
+    }
+
+    // References: real sourced values (from a genuine scheme of work — see
+    // SubTopic.references) whenever any entry on this row has one, merged
+    // if several entries genuinely differ. When nothing was ever sourced,
+    // fall back to naming the syllabus itself — always true and never
+    // fabricated, unlike inventing a specific textbook title/citation with
+    // no real source behind it (see feedback-sourcing-rules). This means
+    // References is never blank on a generated scheme, but a fallback
+    // citation is visually distinguishable from a real one by content, not
+    // by any special formatting — it's still real, just less specific.
+    final realReferences = entries.map((e) => e.references).whereType<String>().toSet();
+    if (realReferences.isNotEmpty) {
+      values['references'] = realReferences.join('; ');
+    } else if (subjectName != null && curriculumCode != null) {
+      values['references'] = '$subjectName Syllabus ($curriculumCode)';
     }
 
     // Key Competences / Strategies & Methodologies / TL Aids & Materials
@@ -225,7 +243,11 @@ class SchemeOfWorkDocumentDraft {
   /// real sourced data (civic_education_form2's own real week numbers
   /// skip week 7 in every term) to be a stable structural fact of the
   /// real calendar, not something to silently omit.
-  factory SchemeOfWorkDocumentDraft.fromEntries(List<SchemeOfWorkEntry> entries, {required String curriculumCode}) {
+  factory SchemeOfWorkDocumentDraft.fromEntries(
+    List<SchemeOfWorkEntry> entries, {
+    required String curriculumCode,
+    String? subjectName,
+  }) {
     final isCbc = curriculumCode.toUpperCase().contains('CBC');
     final pacedEntries = applyCalendarPacing(entries);
     final rows = <SchemeOfWorkRowDraft>[];
@@ -239,7 +261,13 @@ class SchemeOfWorkDocumentDraft {
         final week = entry.realWeekNumber ?? entry.weekNumber;
         lessonInWeek = (week == currentWeek) ? lessonInWeek + 1 : 1;
         currentWeek = week;
-        rows.add(SchemeOfWorkRowDraft.build([entry], lessonNumber: lessonInWeek, spellWeek: false));
+        rows.add(SchemeOfWorkRowDraft.build(
+          [entry],
+          lessonNumber: lessonInWeek,
+          spellWeek: false,
+          curriculumCode: curriculumCode,
+          subjectName: subjectName,
+        ));
       }
       _insertMidtermBreakRow(rows, spellWeek: false);
     } else {
@@ -253,7 +281,13 @@ class SchemeOfWorkDocumentDraft {
         byWeek.putIfAbsent(week, () => []).add(entry);
       }
       for (final week in weekOrder) {
-        rows.add(SchemeOfWorkRowDraft.build(byWeek[week]!, lessonNumber: 1, spellWeek: true));
+        rows.add(SchemeOfWorkRowDraft.build(
+          byWeek[week]!,
+          lessonNumber: 1,
+          spellWeek: true,
+          curriculumCode: curriculumCode,
+          subjectName: subjectName,
+        ));
       }
       _insertMidtermBreakRow(rows, spellWeek: true);
     }

@@ -56,7 +56,11 @@ class _SchemeOfWorkDocumentScreenState extends State<SchemeOfWorkDocumentScreen>
   @override
   void initState() {
     super.initState();
-    _draft = SchemeOfWorkDocumentDraft.fromEntries(widget.entries, curriculumCode: widget.template.curriculum.code);
+    _draft = SchemeOfWorkDocumentDraft.fromEntries(
+      widget.entries,
+      curriculumCode: widget.template.curriculum.code,
+      subjectName: widget.template.subject.name,
+    );
 
     _controllers['schoolName'] = TextEditingController(text: _draft.header.schoolName);
     _controllers['teacherName'] = TextEditingController(text: _draft.header.teacherName);

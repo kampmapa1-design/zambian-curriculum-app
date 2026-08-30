@@ -26,6 +26,12 @@ class SchemeOfWorkEntry {
   /// [SubTopic.weekNumber]. Null for content ingested before real week data
   /// was tracked; callers should fall back to [weekNumber] in that case.
   int? get realWeekNumber => subTopic?.weekNumber ?? topic.weekNumber;
+
+  /// Real sourced reference material, when known — see
+  /// [SubTopic.references]. Null for content with no sourced references
+  /// yet; callers should fall back to a generic syllabus citation rather
+  /// than leaving the References column blank.
+  String? get references => subTopic?.references ?? topic.references;
 }
 
 /// Groups [entries] by [SchemeOfWorkEntry.realWeekNumber] for a week-picker
