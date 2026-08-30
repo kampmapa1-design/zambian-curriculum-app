@@ -1,5 +1,5 @@
 {
-  "_source": "Ministry of Education / Curriculum Development Centre, Zambia. 'History Syllabus, Grade 10-12' (2013, published by CDC) — Grade 10, Part I: History of Southern Africa, Topics 10.1-10.5. Topic, sub-topic and Specific Outcome statements only; the 'Content' (Knowledge/Skills/Values) columns are omitted, consistent with the approach used for the other 2013 OBC subjects in this app. As with the other OBC syllabi processed, this document's printed outcome numbering codes drift (most sub-topic outcomes in 10.2 and 10.4 are all printed under one shared code prefix rather than incrementing), so outcomes were reconstructed positionally against each sub-topic heading rather than trusting the printed codes. Under 10.3, only 5 outcomes are printed for 6 named sub-topics; the outcome 'Describe the arrival of the European settlers at the Cape' clearly covers both 10.3.1 (arrival of the Dutch) and 10.3.2 (arrival of the British) together, so those two sub-topics are merged into one entry here rather than inventing a second outcome. This is distinct from the CBC_2023 History syllabus already in this app (history_form1.json, Form 1 only, Ordinary Level 2024 syllabus) — this file is the older 2013 Outcome-Based Curriculum's senior-secondary History syllabus. The syllabus organizes content by Grade only, not by Term, so all of Grade 10 is modeled as a single term here.",
+  "_source": "Ministry of Education / Curriculum Development Centre, Zambia. 'History Syllabus, Grade 10-12' (2013, published by CDC) — Grade 10, Part I: History of Southern Africa, Topics 10.1-10.5. Topic, sub-topic and Specific Outcome statements only; the 'Content' (Knowledge/Skills/Values) columns are omitted, consistent with the approach used for the other 2013 OBC subjects in this app. As with the other OBC syllabi processed, this document's printed outcome numbering codes drift (most sub-topic outcomes in 10.2 and 10.4 are all printed under one shared code prefix rather than incrementing), so outcomes were reconstructed positionally against each sub-topic heading rather than trusting the printed codes. Under 10.3, only 5 outcomes are printed for 6 named sub-topics; the outcome 'Describe the arrival of the European settlers at the Cape' clearly covers both 10.3.1 (arrival of the Dutch) and 10.3.2 (arrival of the British) together, so those two sub-topics are merged into one entry here rather than inventing a second outcome. This is distinct from the CBC_2023 History syllabus already in this app (history_form1.json, Form 1 only, Ordinary Level 2024 syllabus) — this file is the older 2013 Outcome-Based Curriculum's senior-secondary History syllabus. The syllabus organizes content by Grade only, not by Term, so all of Grade 10 is modeled as a single term here. UPDATE (2026-08-30): term-split and references added, sourced from a real, clean (no PII found) Ministry 'HISTORY COMMON SCHEMES OF WORK' covering all three terms for Grade 10-12 (Drive folder shared by the user 2026-08-30). The real document is far more granular (distinct weekly topics, e.g. separate weeks for the San/Khoikhoi/Bantu/Nguni/Great Trek/Mineral Revolution/Mfecane) than this file's existing coarser sub-topic grouping -- each existing sub-topic was assigned the real week where its core content is introduced in the source, grouping several real weeks under one sub-topic where they clearly belong together, rather than fragmenting the existing (already reliable) sub-topic structure to match the source 1:1. One genuine structural finding: the source places 'The Mfecane' in Term 2 even though its bundled siblings under '10.2 Indigenous Communities' are Term 1 content -- that topic is split across both Term objects rather than forced into one, reflecting what the source actually shows. References use the two authors cited on nearly every real row (G. Haantobolo; N.E. Davis) -- the introductory weeks' additional citations (Needham, Fagan, Dasgupta) apply to syllabus-overview/methodology content this file doesn't separately model.",
   "curriculum": {
     "code": "OBC_2013",
     "name": "2013 Outcome-Based Curriculum",
@@ -18,7 +18,7 @@
   },
   "terms": [
     {
-      "name": "Year (not term-divided in the source syllabus)",
+      "name": "Term 1",
       "sequence_number": 1,
       "topics": [
         {
@@ -26,83 +26,292 @@
           "sequence_number": 1,
           "description": "Part I: History of Southern Africa.",
           "sub_topics": [
-            { "name": "10.1.1 Physical and Climatic Features of Southern Africa", "sequence_number": 1, "competencies": [
-              { "sequence_number": 1, "description": "Describe the physical and climatic features of Southern Africa and their influence on the distribution of people", "category": "Specific Outcome" }
-            ]}
-          ]
+            {
+              "name": "10.1.1 Physical and Climatic Features of Southern Africa",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe the physical and climatic features of Southern Africa and their influence on the distribution of people",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 3,
+              "references": "G. Haantobolo, Senior Secondary History for Central and Southern Africa; N.E. Davis, A History of Southern Africa"
+            }
+          ],
+          "week_number": 3,
+          "references": "G. Haantobolo, Senior Secondary History for Central and Southern Africa; N.E. Davis, A History of Southern Africa"
         },
         {
           "name": "10.2 Indigenous Communities",
           "sequence_number": 2,
           "description": "Part I: History of Southern Africa.",
           "sub_topics": [
-            { "name": "10.2.1 Earlier Inhabitants of Southern Africa", "sequence_number": 1, "competencies": [
-              { "sequence_number": 1, "description": "Discuss the socio-economic and political organisation of the Saan and Khoi-khoi", "category": "Specific Outcome" }
-            ]},
-            { "name": "10.2.2 Bantu Migration into Southern Africa", "sequence_number": 2, "competencies": [
-              { "sequence_number": 1, "description": "Describe the movements of Bantu-speaking people into Southern Africa", "category": "Specific Outcome" }
-            ]},
-            { "name": "10.2.3 Kingdoms and Nation-States", "sequence_number": 3, "competencies": [
-              { "sequence_number": 1, "description": "Describe the establishment of kingdoms and nation-states in south-eastern South Africa", "category": "Specific Outcome" }
-            ]},
-            { "name": "10.2.4 The Mfecane", "sequence_number": 4, "competencies": [
-              { "sequence_number": 1, "description": "Explain the causes and results of the Mfecane", "category": "Specific Outcome" }
-            ]},
-            { "name": "10.2.5 Relationships Between the Bantu and Saan and Khoi-khoi", "sequence_number": 5, "competencies": [
-              { "sequence_number": 1, "description": "Explain the conflict between the Khoi-Saan and the Bantu", "category": "Specific Outcome" }
-            ]}
-          ]
+            {
+              "name": "10.2.1 Earlier Inhabitants of Southern Africa",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Discuss the socio-economic and political organisation of the Saan and Khoi-khoi",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 4,
+              "references": "G. Haantobolo, Senior Secondary History for Central and Southern Africa; N.E. Davis, A History of Southern Africa"
+            },
+            {
+              "name": "10.2.2 Bantu Migration into Southern Africa",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe the movements of Bantu-speaking people into Southern Africa",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 6,
+              "references": "G. Haantobolo, Senior Secondary History for Central and Southern Africa; N.E. Davis, A History of Southern Africa"
+            },
+            {
+              "name": "10.2.3 Kingdoms and Nation-States",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe the establishment of kingdoms and nation-states in south-eastern South Africa",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 8,
+              "references": "G. Haantobolo, Senior Secondary History for Central and Southern Africa; N.E. Davis, A History of Southern Africa"
+            },
+            {
+              "name": "10.2.5 Relationships Between the Bantu and Saan and Khoi-khoi",
+              "sequence_number": 5,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Explain the conflict between the Khoi-Saan and the Bantu",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 6,
+              "references": "G. Haantobolo, Senior Secondary History for Central and Southern Africa; N.E. Davis, A History of Southern Africa"
+            }
+          ],
+          "week_number": 4,
+          "references": "G. Haantobolo, Senior Secondary History for Central and Southern Africa; N.E. Davis, A History of Southern Africa"
         },
         {
           "name": "10.3 European Settler Communities",
           "sequence_number": 3,
           "description": "Part I: History of Southern Africa.",
           "sub_topics": [
-            { "name": "10.3.1-10.3.2 Arrival of the Dutch and British at the Cape", "sequence_number": 1, "competencies": [
-              { "sequence_number": 1, "description": "Describe the arrival of the European settlers at the Cape", "category": "Specific Outcome" }
-            ]},
-            { "name": "10.3.3 Relationship Between the British and Dutch Settlers at the Cape", "sequence_number": 2, "competencies": [
-              { "sequence_number": 1, "description": "Explain the conflicting political and economic interests between the British and the Dutch", "category": "Specific Outcome" }
-            ]},
-            { "name": "10.3.4 The Great Trek", "sequence_number": 3, "competencies": [
-              { "sequence_number": 1, "description": "Describe the causes and course of the Great Trek", "category": "Specific Outcome" }
-            ]},
-            { "name": "10.3.5 Anglo-Boer War", "sequence_number": 4, "competencies": [
-              { "sequence_number": 1, "description": "Describe the Anglo-Boer Wars", "category": "Specific Outcome" }
-            ]},
-            { "name": "10.3.6 The Union of South Africa", "sequence_number": 5, "competencies": [
-              { "sequence_number": 1, "description": "Describe the steps leading to the Union of South Africa", "category": "Specific Outcome" }
-            ]}
-          ]
+            {
+              "name": "10.3.1-10.3.2 Arrival of the Dutch and British at the Cape",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe the arrival of the European settlers at the Cape",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 9,
+              "references": "G. Haantobolo, Senior Secondary History for Central and Southern Africa; N.E. Davis, A History of Southern Africa"
+            },
+            {
+              "name": "10.3.3 Relationship Between the British and Dutch Settlers at the Cape",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Explain the conflicting political and economic interests between the British and the Dutch",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 11,
+              "references": "G. Haantobolo, Senior Secondary History for Central and Southern Africa; N.E. Davis, A History of Southern Africa"
+            }
+          ],
+          "week_number": 9,
+          "references": "G. Haantobolo, Senior Secondary History for Central and Southern Africa; N.E. Davis, A History of Southern Africa"
+        }
+      ]
+    },
+    {
+      "name": "Term 2",
+      "sequence_number": 2,
+      "topics": [
+        {
+          "name": "10.2 Indigenous Communities",
+          "sequence_number": 1,
+          "description": "Part I: History of Southern Africa.",
+          "sub_topics": [
+            {
+              "name": "10.2.4 The Mfecane",
+              "sequence_number": 4,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Explain the causes and results of the Mfecane",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 9,
+              "references": "G. Haantobolo, Senior Secondary History for Central and Southern Africa; N.E. Davis, A History of Southern Africa"
+            }
+          ],
+          "week_number": 9,
+          "references": "G. Haantobolo, Senior Secondary History for Central and Southern Africa; N.E. Davis, A History of Southern Africa"
+        },
+        {
+          "name": "10.3 European Settler Communities",
+          "sequence_number": 2,
+          "description": "Part I: History of Southern Africa.",
+          "sub_topics": [
+            {
+              "name": "10.3.4 The Great Trek",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe the causes and course of the Great Trek",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 2,
+              "references": "G. Haantobolo, Senior Secondary History for Central and Southern Africa; N.E. Davis, A History of Southern Africa"
+            },
+            {
+              "name": "10.3.5 Anglo-Boer War",
+              "sequence_number": 4,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe the Anglo-Boer Wars",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 6,
+              "references": "G. Haantobolo, Senior Secondary History for Central and Southern Africa; N.E. Davis, A History of Southern Africa"
+            }
+          ],
+          "week_number": 2,
+          "references": "G. Haantobolo, Senior Secondary History for Central and Southern Africa; N.E. Davis, A History of Southern Africa"
+        }
+      ]
+    },
+    {
+      "name": "Term 3",
+      "sequence_number": 3,
+      "topics": [
+        {
+          "name": "10.3 European Settler Communities",
+          "sequence_number": 1,
+          "description": "Part I: History of Southern Africa.",
+          "sub_topics": [
+            {
+              "name": "10.3.6 The Union of South Africa",
+              "sequence_number": 5,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe the steps leading to the Union of South Africa",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 2,
+              "references": "G. Haantobolo, Senior Secondary History for Central and Southern Africa; N.E. Davis, A History of Southern Africa"
+            }
+          ],
+          "week_number": 2,
+          "references": "G. Haantobolo, Senior Secondary History for Central and Southern Africa; N.E. Davis, A History of Southern Africa"
         },
         {
           "name": "10.4 Race Relations in Southern Africa",
-          "sequence_number": 4,
+          "sequence_number": 2,
           "description": "Part I: History of Southern Africa.",
           "sub_topics": [
-            { "name": "10.4.1 Relationships Between Indigenous Africans and the White Settlers", "sequence_number": 1, "competencies": [
-              { "sequence_number": 1, "description": "Describe the socio-economic interactions between the European settlers and the indigenous communities", "category": "Specific Outcome" }
-            ]},
-            { "name": "10.4.2 African Resistance to White Domination and the Rise of African Nationalism", "sequence_number": 2, "competencies": [
-              { "sequence_number": 1, "description": "Explain the reasons leading to African resistance to white domination", "category": "Specific Outcome" }
-            ]}
-          ]
+            {
+              "name": "10.4.1 Relationships Between Indigenous Africans and the White Settlers",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe the socio-economic interactions between the European settlers and the indigenous communities",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 4,
+              "references": "G. Haantobolo, Senior Secondary History for Central and Southern Africa; N.E. Davis, A History of Southern Africa"
+            },
+            {
+              "name": "10.4.2 African Resistance to White Domination and the Rise of African Nationalism",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Explain the reasons leading to African resistance to white domination",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 5,
+              "references": "G. Haantobolo, Senior Secondary History for Central and Southern Africa; N.E. Davis, A History of Southern Africa"
+            }
+          ],
+          "week_number": 4,
+          "references": "G. Haantobolo, Senior Secondary History for Central and Southern Africa; N.E. Davis, A History of Southern Africa"
         },
         {
           "name": "10.5 Majority Rule",
-          "sequence_number": 5,
+          "sequence_number": 3,
           "description": "Part I: History of Southern Africa.",
           "sub_topics": [
-            { "name": "10.5.1 Liberation Movements in Southern Africa", "sequence_number": 1, "competencies": [
-              { "sequence_number": 1, "description": "Describe the various liberation movements in South Africa after the formation of the Union of South Africa", "category": "Specific Outcome" }
-            ]},
-            { "name": "10.5.2 Attainment of Majority Rule", "sequence_number": 2, "competencies": [
-              { "sequence_number": 1, "description": "Describe the process leading to the end of Apartheid and introduction of majority rule", "category": "Specific Outcome" }
-            ]},
-            { "name": "10.5.3 Post-Independence Developments", "sequence_number": 3, "competencies": [
-              { "sequence_number": 1, "description": "Analyse the social, economic, political and industrial developments in post-Apartheid South Africa", "category": "Specific Outcome" }
-            ]}
-          ]
+            {
+              "name": "10.5.1 Liberation Movements in Southern Africa",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe the various liberation movements in South Africa after the formation of the Union of South Africa",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 8,
+              "references": "G. Haantobolo, Senior Secondary History for Central and Southern Africa; N.E. Davis, A History of Southern Africa"
+            },
+            {
+              "name": "10.5.2 Attainment of Majority Rule",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe the process leading to the end of Apartheid and introduction of majority rule",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 9,
+              "references": "G. Haantobolo, Senior Secondary History for Central and Southern Africa; N.E. Davis, A History of Southern Africa"
+            },
+            {
+              "name": "10.5.3 Post-Independence Developments",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Analyse the social, economic, political and industrial developments in post-Apartheid South Africa",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 11,
+              "references": "G. Haantobolo, Senior Secondary History for Central and Southern Africa; N.E. Davis, A History of Southern Africa"
+            }
+          ],
+          "week_number": 8,
+          "references": "G. Haantobolo, Senior Secondary History for Central and Southern Africa; N.E. Davis, A History of Southern Africa"
         }
       ]
     }
