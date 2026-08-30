@@ -41,9 +41,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
       _subjectContent = subjectContent;
       _loading = false;
     });
-    // Opportunistic — converts any item still stored as a raw PDF (saved
-    // before text extraction existed, or saved while offline) to the lean
-    // text format, silently, if the app happens to be online right now.
+    // Opportunistic — upgrades any item not yet holding AI-quality text
+    // (still a raw PDF, or usable only via the on-device extraction
+    // fallback) to the lean AI-extracted text format, silently, if the app
+    // happens to be online right now.
     final converted = await _subjectContentRepository.migrateLegacyItems();
     if (converted > 0 && mounted) {
       final refreshed = await _subjectContentRepository.loadCatalog();
@@ -219,7 +220,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         title: Text(item.title),
                         subtitle: Text(
                           '${item.resourceType} · ${_formatSize(item.sizeBytes)}'
-                          '${item.isLegacyPdf ? ' · will convert next time you\'re online' : ''}',
+                          '${item.isLegacyPdf ? ' · will convert next time you\'re online' : ''}'
+                          '${item.extractedOnDevice ? ' · extracted offline, will refine next time you\'re online' : ''}',
                         ),
                         trailing: IconButton(
                           icon: const Icon(Icons.delete_outline),

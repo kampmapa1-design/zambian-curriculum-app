@@ -9,6 +9,14 @@
 /// and text is what generation actually needs. [isLegacyPdf] marks an
 /// item saved before this format existed, still holding a raw PDF file
 /// pending conversion — see `SubjectContentRepository.migrateLegacyItems`.
+///
+/// AI extraction (Gemini, via `SubjectContentExtractionService`) is always
+/// tried first and needs a live connection. [extractedOnDevice] marks an
+/// item whose text instead came from the on-device fallback
+/// (`OnDevicePdfTextExtractionService`, used when offline or the AI call
+/// fails) — usable immediately, but flagged for a one-time AI re-extraction
+/// pass the next time the app is online, since AI extraction is generally
+/// cleaner (drops headers/footers/page numbers, OCRs scans).
 class SubjectContentItem {
   final String title;
   final String subjectName;
@@ -23,6 +31,7 @@ class SubjectContentItem {
   final DateTime downloadedAt;
   final int sizeBytes;
   final bool isLegacyPdf;
+  final bool extractedOnDevice;
 
   const SubjectContentItem({
     required this.title,
@@ -33,6 +42,7 @@ class SubjectContentItem {
     required this.downloadedAt,
     required this.sizeBytes,
     this.isLegacyPdf = false,
+    this.extractedOnDevice = false,
   });
 
   factory SubjectContentItem.fromJson(Map<String, dynamic> json) => SubjectContentItem(
@@ -44,6 +54,7 @@ class SubjectContentItem {
         downloadedAt: DateTime.parse(json['downloadedAt'] as String),
         sizeBytes: json['sizeBytes'] as int,
         isLegacyPdf: json['isLegacyPdf'] as bool? ?? false,
+        extractedOnDevice: json['extractedOnDevice'] as bool? ?? false,
       );
 
   Map<String, dynamic> toJson() => {
@@ -55,9 +66,16 @@ class SubjectContentItem {
         'downloadedAt': downloadedAt.toIso8601String(),
         'sizeBytes': sizeBytes,
         'isLegacyPdf': isLegacyPdf,
+        'extractedOnDevice': extractedOnDevice,
       };
 
-  SubjectContentItem copyWith({String? fileName, int? sizeBytes, bool? isLegacyPdf}) => SubjectContentItem(
+  SubjectContentItem copyWith({
+    String? fileName,
+    int? sizeBytes,
+    bool? isLegacyPdf,
+    bool? extractedOnDevice,
+  }) =>
+      SubjectContentItem(
         title: title,
         subjectName: subjectName,
         resourceType: resourceType,
@@ -66,6 +84,7 @@ class SubjectContentItem {
         downloadedAt: downloadedAt,
         sizeBytes: sizeBytes ?? this.sizeBytes,
         isLegacyPdf: isLegacyPdf ?? this.isLegacyPdf,
+        extractedOnDevice: extractedOnDevice ?? this.extractedOnDevice,
       );
 }
 

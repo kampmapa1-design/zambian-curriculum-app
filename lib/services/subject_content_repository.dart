@@ -7,6 +7,7 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
 import '../models/subject_content_item.dart';
+import 'on_device_pdf_text_extraction_service.dart';
 import 'subject_content_extraction_service.dart';
 
 /// The app's on-device "Subject Content Database" — a physical local store
@@ -21,10 +22,14 @@ import 'subject_content_extraction_service.dart';
 /// extraction and never stored — see subjectContent.ts server-side for
 /// exactly how.
 class SubjectContentRepository {
-  SubjectContentRepository({SubjectContentExtractionService? extractionService})
-      : _extractionService = extractionService ?? SubjectContentExtractionService();
+  SubjectContentRepository({
+    SubjectContentExtractionService? extractionService,
+    OnDevicePdfTextExtractionService? onDeviceExtractionService,
+  })  : _extractionService = extractionService ?? SubjectContentExtractionService(),
+        _onDeviceExtractionService = onDeviceExtractionService ?? OnDevicePdfTextExtractionService();
 
   final SubjectContentExtractionService _extractionService;
+  final OnDevicePdfTextExtractionService _onDeviceExtractionService;
 
   static const _catalogFileName = 'subject_content_catalog.json';
   static const _contentDirName = 'subject_content';
@@ -134,11 +139,17 @@ class SubjectContentRepository {
 
   /// Saves a material into the database under [subjectName], extracting
   /// its real teaching-content text so it's stored lean and is usable
-  /// offline forever after (only the extraction step itself needs a live
-  /// connection). If extraction fails right now (offline, or a transient
-  /// function error), the original PDF is kept instead, marked
-  /// [SubjectContentItem.isLegacyPdf] — nothing is lost, and
-  /// [migrateLegacyItems] converts it the next time the app is online.
+  /// offline forever after. AI extraction (Gemini) is always tried first —
+  /// it needs a live connection but produces the cleanest text. When that
+  /// can't run right now (offline, or a transient function error), an
+  /// on-device fallback (`OnDevicePdfTextExtractionService`, no network
+  /// needed) is tried next so the material is usable immediately either
+  /// way; the result is marked [SubjectContentItem.extractedOnDevice] and
+  /// gets a one-time AI re-extraction pass next time [migrateLegacyItems]
+  /// runs online, for the cleaner text. Only if *both* fail (e.g. a
+  /// scanned-image PDF with no text layer, while offline) is the original
+  /// PDF kept as-is, marked [SubjectContentItem.isLegacyPdf] — nothing is
+  /// ever lost.
   Future<SubjectContentItem> store({
     required String title,
     required String subjectName,
@@ -154,16 +165,38 @@ class SubjectContentRepository {
     String fileName;
     List<int> contentToStore;
     bool isLegacyPdf;
+    bool extractedOnDevice;
     try {
       final text = await _extractionService.extractText(bytes);
       fileName = '$baseName.txt';
       contentToStore = utf8.encode(text);
       isLegacyPdf = false;
+      extractedOnDevice = false;
+      // If this call is upgrading a previously on-device-extracted item,
+      // its stashed source PDF has now served its purpose.
+      final sourceFile = File(p.join(subjectDir.path, '$baseName.source.pdf'));
+      if (await sourceFile.exists()) await sourceFile.delete();
     } on SubjectContentExtractionUnavailable catch (e) {
-      debugPrint('SubjectContentRepository: extraction unavailable ($e), storing raw PDF for later migration');
-      fileName = '$baseName.pdf';
-      contentToStore = bytes;
-      isLegacyPdf = true;
+      debugPrint('SubjectContentRepository: AI extraction unavailable ($e), trying on-device extraction');
+      final onDeviceText = _onDeviceExtractionService.extractText(bytes);
+      if (onDeviceText != null) {
+        fileName = '$baseName.txt';
+        contentToStore = utf8.encode(onDeviceText);
+        isLegacyPdf = false;
+        extractedOnDevice = true;
+        // Also stash the original PDF bytes alongside (not the catalog's
+        // "main" file — that stays the .txt) purely so migrateLegacyItems
+        // can re-run *AI* extraction on the real PDF later, rather than
+        // re-feeding it the on-device text. Cleaned up once that succeeds.
+        final sourceFile = File(p.join(subjectDir.path, '$baseName.source.pdf'));
+        await sourceFile.writeAsBytes(bytes, flush: true);
+      } else {
+        debugPrint('SubjectContentRepository: on-device extraction also unavailable, storing raw PDF for later migration');
+        fileName = '$baseName.pdf';
+        contentToStore = bytes;
+        isLegacyPdf = true;
+        extractedOnDevice = false;
+      }
     }
 
     final file = File(p.join(subjectDir.path, fileName));
@@ -178,6 +211,7 @@ class SubjectContentRepository {
       downloadedAt: DateTime.now(),
       sizeBytes: contentToStore.length,
       isLegacyPdf: isLegacyPdf,
+      extractedOnDevice: extractedOnDevice,
     );
 
     final catalog = await loadCatalog();
@@ -190,30 +224,40 @@ class SubjectContentRepository {
       final root = await getApplicationDocumentsDirectory();
       final oldFile = File(p.join(root.path, _contentDirName, previous.fileName));
       if (await oldFile.exists()) await oldFile.delete();
+      if (previous.extractedOnDevice) {
+        final oldSourceFile = await _onDeviceSourceFileFor(previous);
+        if (await oldSourceFile.exists()) await oldSourceFile.delete();
+      }
     }
     byUrl[item.sourceUrl] = item;
     await _saveCatalog(SubjectContentCatalog(items: byUrl.values.toList()));
     return item;
   }
 
-  /// Re-runs extraction for every item still stored as a raw PDF (saved
-  /// before text extraction existed, or saved while offline) — converts
-  /// each to the lean text format in place. Call opportunistically
-  /// whenever the app is online (e.g. opening Settings); silently does
-  /// nothing if there's nothing to migrate or the app is offline.
-  /// Returns how many items were converted.
+  /// Re-runs *AI* extraction for every item not yet holding AI-quality
+  /// text — either still a raw PDF ([SubjectContentItem.isLegacyPdf], saved
+  /// before text extraction existed or while offline with no on-device
+  /// fallback available either) or already usable but only via the
+  /// on-device fallback ([SubjectContentItem.extractedOnDevice]) — and
+  /// upgrades each to the lean AI-extracted text format in place. Call
+  /// opportunistically whenever the app is online (e.g. opening Settings);
+  /// silently does nothing if there's nothing to migrate or the app is
+  /// offline. Returns how many items were converted.
   Future<int> migrateLegacyItems() async {
     final catalog = await loadCatalog();
-    final legacy = catalog.items.where((i) => i.isLegacyPdf).toList();
-    if (legacy.isEmpty) return 0;
+    final pending = catalog.items.where((i) => i.isLegacyPdf || i.extractedOnDevice).toList();
+    if (pending.isEmpty) return 0;
     if (!await _extractionService.isOnline) return 0;
 
     var converted = 0;
-    for (final item in legacy) {
+    for (final item in pending) {
       try {
-        final oldFile = await fileFor(item);
-        if (!await oldFile.exists()) continue;
-        final bytes = await oldFile.readAsBytes();
+        // A legacy item's stored file IS the raw PDF; an on-device item's
+        // stored file is the extracted .txt, so its raw PDF was instead
+        // stashed alongside as "<basename>.source.pdf" — see [store].
+        final sourceFile = item.isLegacyPdf ? await fileFor(item) : await _onDeviceSourceFileFor(item);
+        if (!await sourceFile.exists()) continue;
+        final bytes = await sourceFile.readAsBytes();
         await store(
           title: item.title,
           subjectName: item.subjectName,
@@ -235,6 +279,10 @@ class SubjectContentRepository {
     final root = await getApplicationDocumentsDirectory();
     final file = File(p.join(root.path, _contentDirName, item.fileName));
     if (await file.exists()) await file.delete();
+    if (item.extractedOnDevice) {
+      final sourceFile = await _onDeviceSourceFileFor(item);
+      if (await sourceFile.exists()) await sourceFile.delete();
+    }
 
     final catalog = await loadCatalog();
     await _saveCatalog(SubjectContentCatalog(items: catalog.items.where((i) => i.sourceUrl != item.sourceUrl).toList()));
@@ -244,6 +292,16 @@ class SubjectContentRepository {
   Future<File> fileFor(SubjectContentItem item) async {
     final root = await getApplicationDocumentsDirectory();
     return File(p.join(root.path, _contentDirName, item.fileName));
+  }
+
+  /// The stashed original-PDF companion file for an [item] that was
+  /// extracted on-device (see [store]) — sits next to the item's real
+  /// (`.txt`) file under the same base name, `.source.pdf` suffixed.
+  Future<File> _onDeviceSourceFileFor(SubjectContentItem item) async {
+    final root = await getApplicationDocumentsDirectory();
+    final txtPath = p.join(root.path, _contentDirName, item.fileName);
+    final base = txtPath.substring(0, txtPath.length - p.extension(txtPath).length);
+    return File('$base.source.pdf');
   }
 
   /// The stored plain text for [item], or null for a not-yet-migrated
