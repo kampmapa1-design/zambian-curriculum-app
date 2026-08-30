@@ -629,7 +629,7 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('AI-Assisted Marking'),
+        title: const Text('AutoGrade'),
         actions: [
           IconButton(
             icon: const Icon(Icons.fact_check_outlined),
@@ -820,7 +820,10 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
                 contentPadding: EdgeInsets.zero,
                 leading: const Icon(Icons.person_outline, size: 20),
                 title: Text(script.fullName),
-                subtitle: Text('${script.subjectName} · ${script.gradeName}'),
+                subtitle: Text(
+                  '${script.subjectName} · ${script.gradeName}'
+                  '${script.classLevel.isNotEmpty ? ' · ${script.classLevel}' : ''}',
+                ),
                 trailing: IconButton(
                   icon: const Icon(Icons.description_outlined),
                   tooltip: 'Report on ${script.fullName}',
@@ -955,6 +958,7 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
           '${script.genderConfirmed ? '' : ' (unconfirmed)'}\n'
           '${script.pageCount} page(s)${script.photosDiscarded ? ' (discarded)' : ''}'
           '${script.studentIdNumber != null ? ' · ID ${script.studentIdNumber}' : ''}'
+          '${script.classLevel.isNotEmpty ? ' · ${script.classLevel}' : ''}'
           ' · ${script.status.label}'
           '${script.status == MarkingScriptStatus.needsRetry && script.lastError != null ? ' — ${script.lastError}' : ''}',
         ),

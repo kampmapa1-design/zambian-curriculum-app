@@ -263,8 +263,8 @@ class HomeScreen extends StatelessWidget {
                 ),
                 _FunctionButton(
                   icon: Icons.document_scanner_outlined,
-                  label: 'AI-Assisted Marking',
-                  subtitle: 'Capture and queue student scripts for AI-assisted grading (early build)',
+                  label: 'AutoGrade',
+                  subtitle: 'Marking assistant — capture and queue student scripts for AI-assisted grading (early build)',
                   onTap: () => Navigator.of(context).push(
                     MaterialPageRoute(builder: (_) => const MarkingQueueScreen()),
                   ),

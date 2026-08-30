@@ -1313,7 +1313,16 @@ export const transcribeHandwrittenDocument = onCall<TranscribeHandwrittenDocumen
 );
 
 // ---------------------------------------------------------------------
-// detectCandidateName — AI-Assisted Marking, Stage D. Reads the captured
+// detectCandidateName — SUSPENDED (2026-08-30). The Flutter app no longer
+// calls this function: it sent one full-resolution page image to Gemini
+// per script purely to pre-fill a name field a teacher can type in a few
+// seconds anyway, and turned out to be a significant, easily-avoidable
+// share of this app's AI cost at real usage volume. Capture screens now
+// ask for name/ID/class up front via plain manual entry instead. Left
+// deployed (not deleted) in case a genuinely cheap detection path is
+// worth revisiting later — costs nothing while unused.
+//
+// AI-Assisted Marking, Stage D (as originally built) — reads the captured
 // script's first page for a handwritten (or printed) candidate name, so
 // the capture form can be pre-filled instead of typed from scratch. Pure
 // convenience, never authoritative: the caller always keeps the fields

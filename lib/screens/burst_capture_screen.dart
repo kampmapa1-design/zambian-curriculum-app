@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 
 import '../models/marking_script.dart';
 import '../models/syllabus_models.dart';
-import '../services/candidate_name_detection_service.dart';
 import '../services/marking_script_repository.dart';
 import 'subject_grade_topic_picker_screen.dart';
 
@@ -16,6 +15,16 @@ import 'subject_grade_topic_picker_screen.dart';
 /// [DocumentCameraFrame]) — no network needed. The finished set is saved
 /// as one [MarkingScript], ready for later stages (batch queue, marking
 /// scheme, AI grading) to pick up.
+///
+/// Name/ID/class are always typed by the teacher, up front, before capture
+/// starts — this screen used to auto-detect the candidate's name from the
+/// first photographed page via a Gemini call (CandidateNameDetectionService),
+/// but that call turned out to be a significant, avoidable share of this
+/// app's AI cost at real scale (2026-08-30) for something a teacher can
+/// type in two seconds while they already have the script in hand.
+/// CandidateNameDetectionService/detectCandidateName are suspended, not
+/// deleted, in case a faster/cheaper detection path is worth revisiting
+/// later.
 ///
 /// Per-page capture is a deliberate choice over a single continuous
 /// hold-to-capture session: it reuses a proven crop/deskew engine rather
@@ -38,12 +47,12 @@ class BurstCaptureScreen extends StatefulWidget {
 
 class _BurstCaptureScreenState extends State<BurstCaptureScreen> {
   late final MarkingScriptRepository _repository = widget.repository ?? MarkingScriptRepository();
-  final CandidateNameDetectionService _nameDetectionService = CandidateNameDetectionService();
 
   final _formKey = GlobalKey<FormState>();
   final _firstNameController = TextEditingController();
   final _surnameController = TextEditingController();
   final _idController = TextEditingController();
+  final _classLevelController = TextEditingController();
   final _scriptNumberController = TextEditingController();
 
   CandidateGender? _gender;
@@ -52,7 +61,6 @@ class _BurstCaptureScreenState extends State<BurstCaptureScreen> {
   bool _sessionStarted = false;
   bool _loadingNextNumber = true;
   bool _saving = false;
-  bool _detectingName = false;
   final List<File> _capturedPages = [];
 
   @override
@@ -75,6 +83,7 @@ class _BurstCaptureScreenState extends State<BurstCaptureScreen> {
     _firstNameController.dispose();
     _surnameController.dispose();
     _idController.dispose();
+    _classLevelController.dispose();
     _scriptNumberController.dispose();
     super.dispose();
   }
@@ -109,9 +118,6 @@ class _BurstCaptureScreenState extends State<BurstCaptureScreen> {
     setState(() => _sessionStarted = true);
     if (widget.initialPageFiles case final files? when files.isNotEmpty) {
       setState(() => _capturedPages.addAll(files));
-      if (_firstNameController.text.trim().isEmpty && _surnameController.text.trim().isEmpty) {
-        _detectNameFromFirstPage();
-      }
     } else {
       _captureNextPage();
     }
@@ -150,39 +156,14 @@ class _BurstCaptureScreenState extends State<BurstCaptureScreen> {
     }
 
     if (!mounted) return;
-    final isFirstPage = _capturedPages.isEmpty;
     setState(() => _capturedPages.add(File(result.frontImagePath!)));
-
-    // Stage D — attempt to auto-fill the name from the first page, but
-    // only if the teacher hasn't already typed something (either up
-    // front, or from a previous detection attempt) — never overwrite a
-    // real edit with a lower-confidence guess.
-    if (isFirstPage && _firstNameController.text.trim().isEmpty && _surnameController.text.trim().isEmpty) {
-      _detectNameFromFirstPage();
-    }
-  }
-
-  Future<void> _detectNameFromFirstPage() async {
-    if (_capturedPages.isEmpty) return;
-    setState(() => _detectingName = true);
-    final detected = await _nameDetectionService.detect(_capturedPages.first);
-    if (!mounted) return;
-    setState(() {
-      _detectingName = false;
-      // Still check emptiness here too — the teacher may have typed
-      // something manually while detection was running.
-      if (_firstNameController.text.trim().isEmpty && _surnameController.text.trim().isEmpty && !detected.isEmpty) {
-        _firstNameController.text = detected.firstName;
-        _surnameController.text = detected.surname;
-      }
-    });
   }
 
   Future<void> _finishAndSave() async {
     if (_capturedPages.isEmpty) return;
     if (_firstNameController.text.trim().isEmpty || _surnameController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Enter (or correct) the candidate\'s first name and surname before saving.')),
+        const SnackBar(content: Text("Enter the candidate's first name and surname before saving.")),
       );
       return;
     }
@@ -196,6 +177,7 @@ class _BurstCaptureScreenState extends State<BurstCaptureScreen> {
         scriptNumber: int.parse(_scriptNumberController.text.trim()),
         subjectName: _subjectGrade!.subject.name,
         gradeName: _subjectGrade!.grade.name,
+        classLevel: _classLevelController.text.trim(),
         capturedPageFiles: _capturedPages,
       );
       if (!mounted) return;
@@ -232,32 +214,31 @@ class _BurstCaptureScreenState extends State<BurstCaptureScreen> {
             Text('Whose script is this?', style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 4),
             const Text(
-              "Enter the student's details now, or leave the name blank — it can also be auto-filled "
-              'from the first captured page, and edited either way before saving.',
+              "Enter the student's details now, before capturing pages.",
               style: TextStyle(fontSize: 13),
             ),
             const SizedBox(height: 16),
             // First name on top, surname below — matches the order the
             // candidate's name is displayed everywhere else in this
-            // feature (queue list, review screen, marksheet). Optional
-            // here (not validated) since auto-detect can fill these in
-            // after the first page is captured.
+            // feature (queue list, review screen, marksheet).
             TextFormField(
               controller: _firstNameController,
               decoration: const InputDecoration(
-                labelText: 'First name (optional — can auto-fill)',
+                labelText: 'First name',
                 border: OutlineInputBorder(),
               ),
               textCapitalization: TextCapitalization.words,
+              validator: (v) => (v == null || v.trim().isEmpty) ? 'Required' : null,
             ),
             const SizedBox(height: 12),
             TextFormField(
               controller: _surnameController,
               decoration: const InputDecoration(
-                labelText: 'Surname (optional — can auto-fill)',
+                labelText: 'Surname',
                 border: OutlineInputBorder(),
               ),
               textCapitalization: TextCapitalization.words,
+              validator: (v) => (v == null || v.trim().isEmpty) ? 'Required' : null,
             ),
             const SizedBox(height: 12),
             Text('Gender', style: Theme.of(context).textTheme.labelLarge),
@@ -293,6 +274,15 @@ class _BurstCaptureScreenState extends State<BurstCaptureScreen> {
                 labelText: 'Student ID (optional)',
                 border: OutlineInputBorder(),
               ),
+            ),
+            const SizedBox(height: 12),
+            TextFormField(
+              controller: _classLevelController,
+              decoration: const InputDecoration(
+                labelText: 'Class / Level (e.g. "10A", "Form 2 Blue")',
+                border: OutlineInputBorder(),
+              ),
+              textCapitalization: TextCapitalization.words,
             ),
             const SizedBox(height: 12),
             TextFormField(
@@ -339,29 +329,15 @@ class _BurstCaptureScreenState extends State<BurstCaptureScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextField(
-                            controller: _firstNameController,
-                            decoration: const InputDecoration(
-                              isDense: true,
-                              labelText: 'First name',
-                              border: OutlineInputBorder(),
-                            ),
-                            textCapitalization: TextCapitalization.words,
-                            onChanged: (_) => setState(() {}),
-                          ),
-                        ),
-                        if (_detectingName) ...[
-                          const SizedBox(width: 8),
-                          const SizedBox(
-                            width: 16,
-                            height: 16,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          ),
-                        ],
-                      ],
+                    TextField(
+                      controller: _firstNameController,
+                      decoration: const InputDecoration(
+                        isDense: true,
+                        labelText: 'First name',
+                        border: OutlineInputBorder(),
+                      ),
+                      textCapitalization: TextCapitalization.words,
+                      onChanged: (_) => setState(() {}),
                     ),
                     const SizedBox(height: 6),
                     TextField(

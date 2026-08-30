@@ -62,6 +62,7 @@ class MarkingScriptRepository {
     required int scriptNumber,
     required String subjectName,
     required String gradeName,
+    String classLevel = '',
     required List<File> capturedPageFiles,
   }) async {
     final id = '${DateTime.now().millisecondsSinceEpoch}_${_slug('$firstName $surname')}';
@@ -84,6 +85,7 @@ class MarkingScriptRepository {
       scriptNumber: scriptNumber,
       subjectName: subjectName,
       gradeName: gradeName,
+      classLevel: classLevel,
       pageFileNames: pageFileNames,
       capturedAt: DateTime.now(),
     );

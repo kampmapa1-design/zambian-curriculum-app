@@ -20,12 +20,24 @@ class DetectedCandidateName {
   bool get isEmpty => firstName.isEmpty && surname.isEmpty;
 }
 
-/// AI-Assisted Marking, Stage D — calls `detectCandidateName` with a
-/// script's first captured page to pre-fill the (always-editable) name
-/// fields during capture. Pure convenience: any failure here (offline,
-/// function error) is swallowed and treated as "nothing detected" rather
-/// than interrupting the capture session a teacher is mid-way through -
-/// see BurstCaptureScreen, which calls this fire-and-forget.
+/// SUSPENDED (2026-08-30) — no longer called anywhere in the app.
+/// `detectCandidateName` sent one full-resolution page image to Gemini per
+/// script purely to pre-fill a name field a teacher could type in a few
+/// seconds anyway; at real usage volume it turned out to be a significant,
+/// easily-avoidable share of this app's AI cost (see the cost sizing that
+/// prompted this). BurstCaptureScreen and ScriptBatchCaptureScreen now ask
+/// for name/ID/class up front via a plain manual entry form instead.
+/// Left in place (Dart service + `detectCandidateName` Cloud Function,
+/// still deployed) rather than deleted, in case a genuinely cheap
+/// detection path is worth revisiting later — but nothing calls it, so it
+/// costs nothing sitting idle.
+///
+/// AI-Assisted Marking, Stage D (as originally built) — calls
+/// `detectCandidateName` with a script's first captured page to pre-fill
+/// the (always-editable) name fields during capture. Pure convenience: any
+/// failure here (offline, function error) is swallowed and treated as
+/// "nothing detected" rather than interrupting the capture session a
+/// teacher is mid-way through.
 class CandidateNameDetectionService {
   CandidateNameDetectionService({FirebaseFunctions? functions}) : _functions = functions ?? FirebaseFunctions.instance;
 

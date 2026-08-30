@@ -7,7 +7,6 @@ import '../models/marking_scheme.dart';
 import '../models/marking_script.dart';
 import '../models/syllabus_models.dart';
 import '../services/batch_grading_runner.dart';
-import '../services/candidate_name_detection_service.dart';
 import '../services/marking_grading_service.dart';
 import '../services/marking_scheme_repository.dart';
 import '../services/marking_script_repository.dart';
@@ -25,14 +24,20 @@ import 'subject_grade_topic_picker_screen.dart';
 /// it's graded) before ever starting the next one.
 ///
 /// Subject/grade and the marking scheme to grade against are picked once
-/// at the start, so they don't need re-entering for this one script. The
-/// candidate's name is auto-detected from the first page (see
-/// CandidateNameDetectionService), same convenience/never-blocking
-/// behavior as BurstCaptureScreen; gender is NOT asked here — asking per
-/// script would defeat "just capture, keep going" — every script this
-/// screen creates has MarkingScript.genderConfirmed: false, and
-/// MarkingReviewScreen requires a teacher to confirm it before the
-/// script can be finalized as Reviewed.
+/// at the start, then the candidate's name/ID/class are typed via
+/// [_askScriptDetails] before any page is captured — this screen used to
+/// auto-detect the name from the first captured page (a Gemini call, see
+/// CandidateNameDetectionService), but that turned out to be a
+/// significant, avoidable share of this app's AI cost at real scale
+/// (2026-08-30) for something a teacher can type in a few seconds while
+/// the script is already in hand. CandidateNameDetectionService/
+/// detectCandidateName are suspended, not deleted, in case a faster/
+/// cheaper detection path is worth revisiting later. Gender is still NOT
+/// asked here — asking per script would defeat "just capture, keep
+/// going" — every script this screen creates has
+/// MarkingScript.genderConfirmed: false, and MarkingReviewScreen requires
+/// a teacher to confirm it before the script can be finalized as
+/// Reviewed.
 ///
 /// Nothing is sent anywhere until "Complete Session" → an explicit "Mark
 /// this script now?" Yes — capture itself is entirely offline.
@@ -42,13 +47,11 @@ class ScriptBatchCaptureScreen extends StatefulWidget {
     this.repository,
     this.schemeRepository,
     this.gradingService,
-    this.nameDetectionService,
   });
 
   final MarkingScriptRepository? repository;
   final MarkingSchemeRepository? schemeRepository;
   final MarkingGradingService? gradingService;
-  final CandidateNameDetectionService? nameDetectionService;
 
   @override
   State<ScriptBatchCaptureScreen> createState() => _ScriptBatchCaptureScreenState();
@@ -58,8 +61,6 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
   late final MarkingScriptRepository _repository = widget.repository ?? MarkingScriptRepository();
   late final MarkingSchemeRepository _schemeRepository = widget.schemeRepository ?? MarkingSchemeRepository();
   late final MarkingGradingService _gradingService = widget.gradingService ?? MarkingGradingService();
-  late final CandidateNameDetectionService _nameDetectionService =
-      widget.nameDetectionService ?? CandidateNameDetectionService();
 
   bool _settingUp = true;
   SyllabusTemplate? _subjectGrade;
@@ -67,9 +68,10 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
   int _scriptNumber = 1;
 
   final List<File> _pages = [];
-  String _detectedFirstName = '';
-  String _detectedSurname = '';
-  bool _detectingName = false;
+  String _firstName = '';
+  String _surname = '';
+  String _studentId = '';
+  String _classLevel = '';
 
   /// Set once "Script Completed" is tapped — the script is saved from
   /// that point on (and re-saved if more pages are added afterward), but
@@ -134,15 +136,97 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
       return;
     }
 
+    final details = await _askScriptDetails();
+    if (!mounted) return;
+    if (details == null) {
+      Navigator.of(context).pop();
+      return;
+    }
+
     final nextNumber = await _repository.nextScriptNumber();
     if (!mounted) return;
     setState(() {
       _subjectGrade = template;
       _scheme = scheme;
       _scriptNumber = nextNumber;
+      _firstName = details.firstName;
+      _surname = details.surname;
+      _studentId = details.studentId;
+      _classLevel = details.classLevel;
       _settingUp = false;
     });
     _captureNextPage();
+  }
+
+  /// Asked once, before any page is captured — replaces the AI name
+  /// detection this screen used to run after the first photo (see this
+  /// class's doc comment). Returns null if the teacher backs out.
+  Future<_ScriptDetails?> _askScriptDetails() {
+    final firstNameController = TextEditingController();
+    final surnameController = TextEditingController();
+    final idController = TextEditingController();
+    final classLevelController = TextEditingController();
+    final formKey = GlobalKey<FormState>();
+
+    return showDialog<_ScriptDetails>(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Whose script is this?'),
+        content: Form(
+          key: formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextFormField(
+                controller: firstNameController,
+                decoration: const InputDecoration(labelText: 'First name', border: OutlineInputBorder()),
+                textCapitalization: TextCapitalization.words,
+                validator: (v) => (v == null || v.trim().isEmpty) ? 'Required' : null,
+              ),
+              const SizedBox(height: 12),
+              TextFormField(
+                controller: surnameController,
+                decoration: const InputDecoration(labelText: 'Surname', border: OutlineInputBorder()),
+                textCapitalization: TextCapitalization.words,
+                validator: (v) => (v == null || v.trim().isEmpty) ? 'Required' : null,
+              ),
+              const SizedBox(height: 12),
+              TextFormField(
+                controller: idController,
+                decoration: const InputDecoration(labelText: 'Student ID (optional)', border: OutlineInputBorder()),
+              ),
+              const SizedBox(height: 12),
+              TextFormField(
+                controller: classLevelController,
+                decoration: const InputDecoration(
+                  labelText: 'Class / Level (e.g. "10A", "Form 2 Blue")',
+                  border: OutlineInputBorder(),
+                ),
+                textCapitalization: TextCapitalization.words,
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(dialogContext).pop(), child: const Text('Cancel')),
+          FilledButton(
+            onPressed: () {
+              if (!(formKey.currentState?.validate() ?? false)) return;
+              Navigator.of(dialogContext).pop(
+                _ScriptDetails(
+                  firstName: firstNameController.text.trim(),
+                  surname: surnameController.text.trim(),
+                  studentId: idController.text.trim(),
+                  classLevel: classLevelController.text.trim(),
+                ),
+              );
+            },
+            child: const Text('Continue'),
+          ),
+        ],
+      ),
+    );
   }
 
   Future<void> _captureNextPage() async {
@@ -173,60 +257,35 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
       return;
     }
 
-    final isFirstPage = _pages.isEmpty;
     setState(() => _pages.add(File(result.frontImagePath!)));
-    if (isFirstPage) _detectName();
 
     // If the script was already saved (a page added after "Script
     // Completed" — the resume-capture path) keep it in sync immediately.
     if (_scriptSaved) await _saveOrUpdateScript();
   }
 
-  Future<void> _detectName() async {
-    if (_pages.isEmpty) return;
-    setState(() => _detectingName = true);
-    final detected = await _nameDetectionService.detect(_pages.first);
-    if (!mounted) return;
-    setState(() {
-      _detectingName = false;
-      _detectedFirstName = detected.firstName;
-      _detectedSurname = detected.surname;
-    });
-  }
-
   Future<void> _saveOrUpdateScript() async {
     if (_pages.isEmpty) return;
-    if (_savedScript == null) {
-      final script = await _repository.saveScript(
-        firstName: _detectedFirstName,
-        surname: _detectedSurname,
-        gender: CandidateGender.male,
-        scriptNumber: _scriptNumber,
-        subjectName: _subjectGrade!.subject.name,
-        gradeName: _subjectGrade!.grade.name,
-        capturedPageFiles: _pages,
-      );
-      final linked = script.copyWith(schemeId: _scheme!.id, genderConfirmed: false);
-      await _repository.update(linked);
-      _savedScript = linked;
-    } else {
+    if (_savedScript != null) {
       // A page was added after the script was already saved once — the
       // simplest correct way to keep the saved copy in sync is to remove
       // and re-save it with the current full page set.
       await _repository.remove(_savedScript!);
-      final script = await _repository.saveScript(
-        firstName: _detectedFirstName,
-        surname: _detectedSurname,
-        gender: CandidateGender.male,
-        scriptNumber: _scriptNumber,
-        subjectName: _subjectGrade!.subject.name,
-        gradeName: _subjectGrade!.grade.name,
-        capturedPageFiles: _pages,
-      );
-      final linked = script.copyWith(schemeId: _scheme!.id, genderConfirmed: false);
-      await _repository.update(linked);
-      _savedScript = linked;
     }
+    final script = await _repository.saveScript(
+      firstName: _firstName,
+      surname: _surname,
+      gender: CandidateGender.male,
+      studentIdNumber: _studentId.isEmpty ? null : _studentId,
+      scriptNumber: _scriptNumber,
+      subjectName: _subjectGrade!.subject.name,
+      gradeName: _subjectGrade!.grade.name,
+      classLevel: _classLevel,
+      capturedPageFiles: _pages,
+    );
+    final linked = script.copyWith(schemeId: _scheme!.id, genderConfirmed: false);
+    await _repository.update(linked);
+    _savedScript = linked;
   }
 
   Future<void> _onScriptCompleted() async {
@@ -326,15 +385,12 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
                       Expanded(
                         child: Text(
                           _scriptSaved
-                              ? 'Script saved${_detectedFirstName.isNotEmpty ? ' — $_detectedFirstName $_detectedSurname' : ''}. '
+                              ? 'Script saved — $_firstName $_surname. '
                                   'Add another page if needed, or tap "Complete Session" above when done.'
-                              : 'Capturing Script $_scriptNumber'
-                                  '${_detectedFirstName.isNotEmpty ? ' — $_detectedFirstName $_detectedSurname' : ''}',
+                              : 'Capturing Script $_scriptNumber — $_firstName $_surname',
                           style: Theme.of(context).textTheme.titleSmall,
                         ),
                       ),
-                      if (_detectingName)
-                        const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2)),
                     ],
                   ),
                 ),
@@ -407,4 +463,20 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
             ),
     );
   }
+}
+
+/// Result of [_ScriptBatchCaptureScreenState._askScriptDetails] — plain
+/// data, no behavior.
+class _ScriptDetails {
+  const _ScriptDetails({
+    required this.firstName,
+    required this.surname,
+    required this.studentId,
+    required this.classLevel,
+  });
+
+  final String firstName;
+  final String surname;
+  final String studentId;
+  final String classLevel;
 }

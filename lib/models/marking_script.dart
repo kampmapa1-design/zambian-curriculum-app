@@ -160,6 +160,16 @@ class MarkingScript {
   final String subjectName;
   final String gradeName;
 
+  /// The candidate's actual class/stream (e.g. "10A", "Form 2 Blue") — a
+  /// teacher-entered free-text field, distinct from [gradeName] (the
+  /// syllabus level picked once for the whole capture flow). Added
+  /// 2026-08-30 alongside manual name/ID entry replacing AI candidate-name
+  /// detection (cost reduction — see CandidateNameDetectionService's doc
+  /// comment). Optional since scripts saved before this field existed have
+  /// no value for it; empty string, not null, for newly-saved scripts with
+  /// nothing entered.
+  final String classLevel;
+
   /// File names only (relative to this script's own subdirectory), in
   /// page order — not full paths, since the app documents directory
   /// itself can move between app versions/reinstalls. Still populated
@@ -208,6 +218,7 @@ class MarkingScript {
     required this.scriptNumber,
     required this.subjectName,
     required this.gradeName,
+    this.classLevel = '',
     required this.pageFileNames,
     this.photosDiscarded = false,
     required this.capturedAt,
@@ -242,6 +253,7 @@ class MarkingScript {
     String? surname,
     CandidateGender? gender,
     bool? genderConfirmed,
+    String? classLevel,
     List<String>? pageFileNames,
     bool? photosDiscarded,
     MarkingScriptStatus? status,
@@ -264,6 +276,7 @@ class MarkingScript {
         scriptNumber: scriptNumber,
         subjectName: subjectName,
         gradeName: gradeName,
+        classLevel: classLevel ?? this.classLevel,
         pageFileNames: pageFileNames ?? this.pageFileNames,
         photosDiscarded: photosDiscarded ?? this.photosDiscarded,
         capturedAt: capturedAt,
@@ -311,6 +324,7 @@ class MarkingScript {
       scriptNumber: json['scriptNumber'] as int,
       subjectName: json['subjectName'] as String? ?? 'Unknown subject',
       gradeName: json['gradeName'] as String? ?? 'Unknown grade',
+      classLevel: json['classLevel'] as String? ?? '',
       pageFileNames: (json['pageFileNames'] as List).cast<String>(),
       photosDiscarded: json['photosDiscarded'] as bool? ?? false,
       capturedAt: DateTime.parse(json['capturedAt'] as String),
@@ -335,6 +349,7 @@ class MarkingScript {
         'scriptNumber': scriptNumber,
         'subjectName': subjectName,
         'gradeName': gradeName,
+        'classLevel': classLevel,
         'pageFileNames': pageFileNames,
         'photosDiscarded': photosDiscarded,
         'capturedAt': capturedAt.toIso8601String(),
