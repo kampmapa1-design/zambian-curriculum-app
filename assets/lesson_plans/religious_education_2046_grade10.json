@@ -1,5 +1,5 @@
 {
-  "_source": "Real Religious Education 2046 Grade 10 lesson plans (Drive folder shared by the user 2026-08-30, 'GRADE 10-12 RELIGIOUS EDUCATION 2046 LESSON PLANS (2).pdf') — the same real Ministry document family already used to term-split religious_education_grade10.json (see that file's own UPDATE note). This document's own header carried a real individual's name, TS number, and a real school name on every one of its ~26 lessons ('BERNARD TITO', 'TS NO: 20158602', 'MKUSHI BOARDING STEM SECONDARY SCHOOL') — all stripped entirely, none of it entered this file. Only the first 4 lessons (Topic 10.1's first 4 sub-topics, matching Term 1 week 3-4 of the already-built syllabus) are included here — the document has an estimated ~22 more lessons covering the rest of Grade 10's syllabus, left for a follow-up pass rather than rushed. Progression stages are faithful condensed summaries of genuinely rich, detailed source content (each real lesson ran Introduction/Development/Exercise/Homework/Conclusion with full dialogue and worked answers) — not a verbatim reproduction, which would be excessive for this app's purposes, but every activity/example named is real, none invented.",
+  "_source": "Real Religious Education 2046 Grade 10 lesson plans (Drive folder shared by the user 2026-08-30, 'GRADE 10-12 RELIGIOUS EDUCATION 2046 LESSON PLANS (2).pdf') — the same real Ministry document family already used to term-split religious_education_grade10.json (see that file's own UPDATE note). This document's own header carried a real individual's name, TS number, and a real school name on every one of its 26 lessons ('BERNARD TITO', 'TS NO: 20158602', 'MKUSHI BOARDING STEM SECONDARY SCHOOL') — all stripped entirely, none of it entered this file. UPDATE (2026-08-30): now covers all 8 real sub-topics of Topic 10.1 (the document's own 'Topic Review & Synthesis' lesson, which doesn't map to one specific sub-topic, was deliberately left out rather than force-fit). The document has ~17 more lessons covering Topics 10.2-10.4, left for a follow-up pass rather than rushed. Progression stages are faithful condensed summaries of genuinely rich, detailed source content (each real lesson ran Introduction/Development/Exercise/Homework/Conclusion with full dialogue and worked answers) — not a verbatim reproduction, which would be excessive for this app's purposes, but every activity/example named is real, none invented.",
   "curriculum_code": "OBC_2013",
   "subject_code": "RE",
   "grade_levels": [10],
@@ -170,6 +170,170 @@
           "stage": "Conclusion",
           "teacherRole": "Recaps that conflict often stems from generation gaps, communication issues, unmet expectations, and stress, then links to a childhood incident that caused Jesus's own parents worry.",
           "learnersRole": "Review the list of conflict sources and anticipate the biblical example."
+        }
+      ]
+    },
+    {
+      "topic_name": "10.1 Birth and Infancy of John the Baptist and Jesus",
+      "subtopic_name": "Incidents from Jesus' Childhood",
+      "grade_level": 10,
+      "majorLearningPoint": "Examining the presentation of baby Jesus at the Temple and the episode of the 12-year-old Jesus in the Temple.",
+      "lessonGoal": "By the end of the lesson, learners will be able to narrate the two childhood incidents of Jesus in the Temple and explain their religious and cultural significance.",
+      "references": "2046 Religious Education Syllabus Grades 10-12 (Specific Outcome 10.1.5.1); Bible: Luke 2:22-40 (Presentation at Temple); Luke 2:41-52 (Jesus at age 12)",
+      "tlm": "Chalkboard; Bibles; a picture or sketch of the Temple in Jerusalem",
+      "rationale": "This lesson provides rare scriptural insight into Jesus's early life, connecting Jewish religious law (presentation, Passover) to family obedience and divine calling. It fosters appreciation for religious rituals and highlights the tension between familial duty and a higher purpose.",
+      "objectives": [
+        "Relate from Luke's gospel the stories about Jesus in the Temple as a baby and at 12 years."
+      ],
+      "priorKnowledge": "Knowledge of Jewish practices like dedication and Passover from earlier lessons, and understanding of parent-child dynamics from the previous lesson.",
+      "progression": [
+        {
+          "stage": "Introduction",
+          "teacherRole": "Recalls the previous lesson on parent-child misunderstandings, then hooks with Jesus's Temple presentation as a baby, drawing a parallel to Zambian infant-dedication customs.",
+          "learnersRole": "Recall the previous lesson and connect infant dedication in their own culture to the biblical story."
+        },
+        {
+          "stage": "Development",
+          "teacherRole": "Narrates Luke 2:22-40 (the presentation, Simeon's prophecy that Jesus would be a light for the nations and a sword would pierce Mary's soul, and Anna's recognition of him) and Luke 2:41-52 (the 12-year-old Jesus staying behind at the Temple, found after 3 days questioning the teachers, and his reply 'Didn't you know I had to be in my Father's house?'). Leads discussion on how Jesus balanced obedience to his earthly parents with his sense of a higher duty.",
+          "learnersRole": "Follow the readings, understand the cultural/religious context, and discuss the complexity of Jesus's actions and Mary's feelings."
+        },
+        {
+          "stage": "Exercise",
+          "teacherRole": "Poses questions on what Simeon and Anna's presence reveals about God's plans spanning generations, the source of the Temple conflict (linking back to Lesson 10.1.4's term), and what Jesus's statement reveals about his own identity.",
+          "learnersRole": "Answer individually using their Bibles and notes."
+        },
+        {
+          "stage": "Homework",
+          "teacherRole": "Assigns a diary entry from Mary's perspective on the night they found the 12-year-old Jesus in the Temple, describing her worry, relief, and confusion.",
+          "learnersRole": "Write the diary entry (minimum 8 sentences)."
+        },
+        {
+          "stage": "Conclusion",
+          "teacherRole": "Recaps that Jesus's childhood showed unique devotion to God alongside obedience to his earthly parents, then links to how the Bible teaches God directs human lives.",
+          "learnersRole": "Review what each story reveals about Jesus and anticipate the next lesson."
+        }
+      ]
+    },
+    {
+      "topic_name": "10.1 Birth and Infancy of John the Baptist and Jesus",
+      "subtopic_name": "How God Directs Human Lives",
+      "grade_level": 10,
+      "majorLearningPoint": "Synthesizing lessons from the infancy narratives about God's methods of guidance.",
+      "lessonGoal": "By the end of the lesson, learners will be able to extract and explain three key ways God directed events in the infancy narratives of Jesus and John.",
+      "references": "2046 Religious Education Syllabus Grades 10-12 (Specific Outcome 10.1.6.1); Bible: recap of Luke 1-2 and Matthew 1-2",
+      "tlm": "Chalkboard; summary flashcards or a chart reviewing key events from previous lessons",
+      "rationale": "This lesson moves from storytelling to theological reflection, synthesizing the previous narratives to draw general principles about divine providence, developing critical thinking as learners identify patterns of God's action across the stories already covered.",
+      "objectives": [
+        "Explain what the infancy narratives in the Gospel of Luke and Matthew teach about God's direction of human lives."
+      ],
+      "priorKnowledge": "Detailed knowledge of the birth and childhood stories of John the Baptist and Jesus from previous lessons in this topic.",
+      "progression": [
+        {
+          "stage": "Introduction",
+          "teacherRole": "Uses a maze/winding-road image to ask who or what guides people's lives, then focuses learners on identifying HOW God directed events in the stories already studied.",
+          "learnersRole": "Share ideas about guidance in life and understand the lesson's analytical goal."
+        },
+        {
+          "stage": "Development",
+          "teacherRole": "Reviews the major events, then guides learners to identify God's five methods of direction: through angels/messengers, through dreams, through prophecy and scripture, through circumstances (the census, the star), and through people (Elizabeth, Simeon, Anna). Defines 'Divine Providence'.",
+          "learnersRole": "Recall the stories, contribute to the list of methods, learn the term 'divine providence', and in groups find a Bible verse evidencing their assigned method."
+        },
+        {
+          "stage": "Exercise",
+          "teacherRole": "Poses questions on God's use of a Roman census, the contrast between how God guided Zechariah versus the Magi, and the connection between hearing and obeying God's direction (Mary's 'may your word be fulfilled').",
+          "learnersRole": "Answer individually, applying the discovered principles, including to their own Grade 11 subject-choice decision."
+        },
+        {
+          "stage": "Homework",
+          "teacherRole": "Assigns a reflection on a real decision the learner is making, explaining how one of the five methods could apply today.",
+          "learnersRole": "Write the reflection."
+        },
+        {
+          "stage": "Conclusion",
+          "teacherRole": "Recaps the five methods of divine direction, then links to how Christians today can identify and respond to God's direction.",
+          "learnersRole": "Review the five methods and anticipate the next lesson's practical application."
+        }
+      ]
+    },
+    {
+      "topic_name": "10.1 Birth and Infancy of John the Baptist and Jesus",
+      "subtopic_name": "How Christians Can Identify and Respond to God's Direction",
+      "grade_level": 10,
+      "majorLearningPoint": "Translating biblical principles of divine guidance into practical steps for contemporary Christian living.",
+      "lessonGoal": "By the end of the lesson, learners will be able to propose practical ways to discern God's guidance in their lives and describe a correct Christian response to it.",
+      "references": "2046 Religious Education Syllabus Grades 10-12 (Specific Outcome 10.1.7.1); Bible: Proverbs 3:5-6; James 1:5; John 10:27; Psalm 119:105",
+      "tlm": "Chalkboard; scenario cards for group work (e.g. choosing between university offers, peer pressure to cheat)",
+      "rationale": "A pivotal application lesson moving from biblical analysis to personal spirituality, equipping learners with a faith-rooted decision-making framework that combats passivity or superstition, making God's guidance relevant and accessible.",
+      "objectives": [
+        "Discuss how Christians today can identify and respond to God's direction of their lives."
+      ],
+      "priorKnowledge": "Understanding of the ways God directed lives in the infancy narratives (previous lesson), and basic knowledge of Christian practices like prayer and Bible study.",
+      "progression": [
+        {
+          "stage": "Introduction",
+          "teacherRole": "Asks whether learners have wished for a clear sign like Joseph's dream when facing a big decision, then focuses on practical everyday ways Christians can identify God's direction.",
+          "learnersRole": "Relate to the feeling of needing guidance and listen for practical advice."
+        },
+        {
+          "stage": "Development",
+          "teacherRole": "Teaches the 'Five Lamps' framework for discernment using Psalm 119:105: the Lamp of Scripture, the Lamp of Prayer, the Lamp of Wise Counsel, the Lamp of Circumstances, and the Lamp of Peace — then how to respond, with obedience, trust, and patience.",
+          "learnersRole": "Understand scripture and prayer as foundational guides, learn the Five Lamps framework, and in groups apply it to a realistic scenario card."
+        },
+        {
+          "stage": "Exercise",
+          "teacherRole": "Poses questions on why the Lamp of Scripture is the most important check, what questions to ask a friend who feels led to drop out of school for music, and when patient waiting is the correct response.",
+          "learnersRole": "Answer individually, using the lesson's framework."
+        },
+        {
+          "stage": "Homework",
+          "teacherRole": "Assigns a week-long 'Guidance Journal': noting one decision each day and which Lamp was or could have been used.",
+          "learnersRole": "Keep the journal."
+        },
+        {
+          "stage": "Conclusion",
+          "teacherRole": "Recaps the Five Lamps and the required response of obedience, trust and patience, then links to how other major religions in Zambia understand God's direction.",
+          "learnersRole": "Review the Five Lamps and anticipate the comparative religious study."
+        }
+      ]
+    },
+    {
+      "topic_name": "10.1 Birth and Infancy of John the Baptist and Jesus",
+      "subtopic_name": "Christian, Muslim and Hindu Teachings on How God Directs Human Lives",
+      "grade_level": 10,
+      "majorLearningPoint": "Comparing and contrasting the concepts of divine guidance in Christianity, Islam, and Hinduism.",
+      "lessonGoal": "By the end of the lesson, learners will be able to describe one key similarity and one key difference in how Christianity and one other religion (Islam or Hinduism) understand God's guidance.",
+      "references": "2046 Religious Education Syllabus Grades 10-12 (Specific Outcome 10.1.8.1 and Content)",
+      "tlm": "Chalkboard; a three-column chart (Christianity | Islam | Hinduism); factual summaries of each religion's view on guidance",
+      "rationale": "This lesson fulfils the syllabus's inter-religious learning requirement, promoting religious literacy, tolerance, and a clearer understanding of one's own faith by respectful contrast.",
+      "objectives": [
+        "Compare Christian, Muslim and Hindu teaching on how God directs human lives."
+      ],
+      "priorKnowledge": "Understanding of Christian teachings on God's direction from the previous two lessons, and basic awareness that Islam and Hinduism are practiced in Zambia.",
+      "progression": [
+        {
+          "stage": "Introduction",
+          "teacherRole": "Asks where Zambians facing a big problem might seek guidance (pastor/Bible, Imam/Quran, Hindu priest/holy books, sangoma/ancestral spirits), then frames the lesson as a respectful comparison of three major world religions.",
+          "learnersRole": "Contribute ideas from their observation of Zambian society and understand the comparative aim."
+        },
+        {
+          "stage": "Development",
+          "teacherRole": "Reviews the Christian view (Bible, Holy Spirit, prayer, counsel, circumstances, a personal relationship through Jesus), explains the Islamic view (Tawhid — the Quran as Allah's literal final word, the Hadith, submission to Sharia), and the Hindu view (Vedas/Upanishads/Bhagavad Gita, the concept of Dharma, gurus, life-cycle rites/Samskaras), then facilitates comparison of similarities and differences.",
+          "learnersRole": "Recall the Christian perspective, learn the key terms for Islam and Hinduism, take three-column notes, and formulate a respectful question about the Islamic or Hindu perspective."
+        },
+        {
+          "stage": "Exercise",
+          "teacherRole": "Poses questions on how Christians and Muslims differ in viewing their holy books, the role of a Hindu guru versus a similar Christian figure, and what career-guidance source each religion's follower would consult.",
+          "learnersRole": "Answer individually, using their notes."
+        },
+        {
+          "stage": "Homework",
+          "teacherRole": "Assigns an interview of a Muslim or Hindu classmate/family member/neighbour (or research) on how their faith guides their decisions.",
+          "learnersRole": "Conduct the interview or research and write a respectful summary."
+        },
+        {
+          "stage": "Conclusion",
+          "teacherRole": "Recaps that Christians rely on the Bible and Holy Spirit, Muslims on the Quran and Sharia, and Hindus on Dharma and gurus, closing Topic 10.1 and transitioning to John the Baptist's adult ministry.",
+          "learnersRole": "Review the comparative chart and understand the transition to the next topic."
         }
       ]
     }
