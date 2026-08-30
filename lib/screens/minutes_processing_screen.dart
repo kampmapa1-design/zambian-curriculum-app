@@ -63,7 +63,7 @@ class _MinutesProcessingScreenState extends State<MinutesProcessingScreen> {
     }
   }
 
-  bool get _entitled => EntitlementService.instance.hasLocalEntitlement;
+  bool get _entitled => EntitlementService.instance.adGateBypassed;
   int get _totalSteps => (_entitled ? 0 : MinutesProcessingScreen.kRequiredAds) + 1;
   int get _completedSteps => (_entitled ? 0 : _adsCompleted) + (_processingDone ? 1 : 0);
   double get _progress => _totalSteps == 0 ? 0 : _completedSteps / _totalSteps;

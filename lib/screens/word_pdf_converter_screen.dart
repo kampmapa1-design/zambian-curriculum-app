@@ -82,7 +82,7 @@ class _WordPdfConverterScreenState extends State<WordPdfConverterScreen> {
       if (!mounted) return;
 
       final withinFreeLimit = pageCount <= WordPdfConverterScreen.kFreePageLimit;
-      final entitled = EntitlementService.instance.hasLocalEntitlement;
+      final entitled = EntitlementService.instance.adGateBypassed;
       setState(() {
         _convertedFile = outputFile;
         _pageCount = pageCount;

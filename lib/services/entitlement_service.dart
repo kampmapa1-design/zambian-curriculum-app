@@ -53,6 +53,19 @@ class EntitlementService {
   bool get hasLocalEntitlement =>
       (_subscription?.isWithinGracePeriod() ?? false) || _adUnlockedThisSession;
 
+  /// Whether any ad-gate in the app should actually require watching an
+  /// ad right now — the single switch for "are ads on or off," covering
+  /// every gated feature (Scheme of Work, Word/PDF Converter, Minutes
+  /// Maker) consistently. `false` whenever [kEntitlementEnforced] is off
+  /// (the current, deliberate state — see that flag's own doc comment) or
+  /// the user already has a local entitlement. Screens should check this,
+  /// not [hasLocalEntitlement] directly, when deciding whether to show
+  /// the ad-gate at all — [hasLocalEntitlement] alone doesn't account for
+  /// [kEntitlementEnforced], which is exactly the bug this fixes (Word/PDF
+  /// Converter and Minutes Maker were checking [hasLocalEntitlement] only,
+  /// so their ad requirement stayed live even with enforcement off).
+  bool get adGateBypassed => !kEntitlementEnforced || hasLocalEntitlement;
+
   Future<bool> get isOnline async {
     final result = await Connectivity().checkConnectivity();
     return !result.contains(ConnectivityResult.none);
