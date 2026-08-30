@@ -6,6 +6,7 @@ import 'package:share_plus/share_plus.dart';
 
 import '../models/marking_scheme.dart';
 import '../models/marking_script.dart';
+import '../models/syllabus_models.dart';
 import '../services/batch_grading_runner.dart';
 import '../services/marking_entitlement_service.dart';
 import '../services/marking_gap_report_document_service.dart';
@@ -58,6 +59,17 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
 
   MarkingScriptCatalog _catalog = MarkingScriptCatalog.empty();
   MarkingSchemeCatalog _schemes = MarkingSchemeCatalog.empty();
+
+  /// Remembered from the most recent script captured via "Upload Script"
+  /// → camera (2026-08-31) — see ScriptBatchCaptureScreen.initialTemplate.
+  /// Lets every subsequent script in the same marking session skip
+  /// straight past the Subject & Grade and "which marking key" pickers,
+  /// since those details don't change script to script within one
+  /// session. Cleared by "Change subject / marking key" in the Upload
+  /// Script menu, for the (rare) case a teacher genuinely needs to
+  /// switch mid-session.
+  SyllabusTemplate? _lastTemplate;
+  MarkingScheme? _lastScheme;
   bool _loading = true;
   bool _selecting = false;
   final Set<String> _selectedIds = {};
@@ -190,12 +202,26 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
           repository: _repository,
           schemeRepository: _schemeRepository,
           gradingService: _gradingService,
+          initialTemplate: _lastTemplate,
+          initialScheme: _lastScheme,
+          onSetupComplete: (template, scheme) => setState(() {
+            _lastTemplate = template;
+            _lastScheme = scheme;
+          }),
         ),
       ),
     );
     _load();
     _loadRemainingFreeGradings();
   }
+
+  /// Clears the remembered subject/grade/marking-key so the next "Upload
+  /// Script" asks again — for the rare case a teacher genuinely needs to
+  /// switch mid-session (see [_lastTemplate]'s doc).
+  void _changeRememberedSubjectScheme() => setState(() {
+        _lastTemplate = null;
+        _lastScheme = null;
+      });
 
   /// "Capture Manual Scores" — for teachers who mark entirely by hand:
   /// photograph a handwritten list (any pattern/table) and get back an
@@ -466,16 +492,49 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
     _load();
   }
 
+  /// Opens [script] for review, then — as long as each screen is left via
+  /// a real Confirm & Finish, not by backing out — keeps opening whatever
+  /// [MarkingReviewScreen] hands back as the next script to mark
+  /// (2026-08-31), so a teacher reviews a whole batch back-to-back
+  /// without returning here in between. [_load] only runs once, after
+  /// the loop actually ends, so the queue never shows stale data from
+  /// partway through a chain.
   Future<void> _openScript(MarkingScript script) async {
     if (script.status != MarkingScriptStatus.graded && script.status != MarkingScriptStatus.reviewed) return;
-    final scheme = script.schemeId == null
-        ? null
-        : _schemes.schemes.where((s) => s.id == script.schemeId).cast<MarkingScheme?>().firstWhere((s) => true, orElse: () => null);
-    await Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => MarkingReviewScreen(script: script, scheme: scheme, repository: _repository),
-      ),
-    );
+
+    // The rest of this scheme's still-graded scripts, in the same order
+    // the "Marked Students" list uses — computed once up front so the
+    // chain doesn't shift under the teacher's feet if something else
+    // changes the underlying data mid-review.
+    final queue = (_byStatus[MarkingScriptStatus.graded] ?? const <MarkingScript>[])
+        .where((s) => s.schemeId == script.schemeId && s.id != script.id)
+        .toList()
+      ..sort((a, b) => a.scriptNumber.compareTo(b.scriptNumber));
+
+    MarkingScript? current = script;
+    var remaining = queue;
+    while (current != null) {
+      final scheme = current.schemeId == null
+          ? null
+          : _schemes.schemes.where((s) => s.id == current!.schemeId).cast<MarkingScheme?>().firstWhere((s) => true, orElse: () => null);
+      final next = remaining.isEmpty ? null : remaining.first;
+      final rest = remaining.isEmpty ? remaining : remaining.skip(1).toList();
+
+      final result = await Navigator.of(context).push<MarkingScript?>(
+        MaterialPageRoute(
+          builder: (_) => MarkingReviewScreen(
+            script: current!,
+            scheme: scheme,
+            repository: _repository,
+            nextInQueue: next,
+            remainingAfterNext: rest.length,
+          ),
+        ),
+      );
+      if (!mounted) return;
+      current = result;
+      remaining = rest;
+    }
     _load();
   }
 
@@ -703,12 +762,20 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
                   context,
                   label: 'Upload Script',
                   icon: Icons.description_outlined,
-                  items: const [
-                    PopupMenuItem(value: 'device', child: Text('Upload from device')),
-                    PopupMenuItem(value: 'camera', child: Text('Upload through camera')),
+                  items: [
+                    const PopupMenuItem(value: 'device', child: Text('Upload from device')),
+                    const PopupMenuItem(value: 'camera', child: Text('Upload through camera')),
+                    if (_lastTemplate != null)
+                      PopupMenuItem(
+                        value: 'change',
+                        child: Text('Change subject / marking key (currently: ${_lastTemplate!.subject.name})'),
+                      ),
                   ],
-                  onSelected: (value) =>
-                      value == 'device' ? _uploadScriptFromDevice() : _batchCaptureScripts(),
+                  onSelected: (value) => switch (value) {
+                    'device' => _uploadScriptFromDevice(),
+                    'change' => _changeRememberedSubjectScheme(),
+                    _ => _batchCaptureScripts(),
+                  },
                 ),
               ],
             ),

@@ -183,6 +183,118 @@ class AnalysisDocumentService {
     return _writeToTempFile('pdf', await doc.save(), scheme);
   }
 
+  // ---------------------------------------------------------------------
+  // Graph — a hand-drawn bar chart (Container heights, not the `pdf`
+  // package's Chart/CartesianGrid API) so results can be sent out as a
+  // graph, not just a table. Built from plain boxes rather than that API
+  // deliberately: this app has no way to visually preview a rendered PDF
+  // on the dev machine it's built on (no poppler/pdftoppm installed), so
+  // a simpler, fully-controlled layout is far more trustworthy to ship
+  // correctly on the first try than a fancier widget whose exact output
+  // can't be checked here.
+  // ---------------------------------------------------------------------
+
+  static const _maleColor = PdfColor.fromInt(0xFF2563EB);
+  static const _femaleColor = PdfColor.fromInt(0xFFDB2777);
+  static const _barMaxHeight = 160.0;
+  static const _barWidth = 16.0;
+
+  Future<File> generateGraphPdf({
+    required MarkingScheme scheme,
+    required List<AnalysisResultRow> rows,
+    required GradingSystem system,
+    required Map<CandidateGender, Map<String, int>> counts,
+  }) async {
+    final bands = gradeBandsFor(system);
+    final stats = _summaryStats(rows, system);
+    final maxCount = bands
+        .expand((b) => CandidateGender.values.map((g) => counts[g]![b.fullLabel] ?? 0))
+        .fold(0, (a, b) => a > b ? a : b);
+    final scale = maxCount == 0 ? 0.0 : _barMaxHeight / maxCount;
+
+    final doc = pw.Document();
+    doc.addPage(
+      pw.Page(
+        pageFormat: PdfPageFormat.a4.landscape,
+        margin: const pw.EdgeInsets.all(24),
+        build: (context) => pw.Column(
+          crossAxisAlignment: pw.CrossAxisAlignment.start,
+          children: [
+            pw.Text('PERFORMANCE ANALYSIS — GRAPH', style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold)),
+            pw.SizedBox(height: 4),
+            pw.Text(
+              '${scheme.title}  ·  ${scheme.subjectName}  ·  ${scheme.gradeName}  ·  ${system.label} grading',
+              style: const pw.TextStyle(fontSize: 11),
+            ),
+            pw.SizedBox(height: 10),
+            pw.Wrap(
+              spacing: 16,
+              runSpacing: 6,
+              children: [for (final entry in stats.entries) _pdfStat(entry.key, entry.value)],
+            ),
+            pw.SizedBox(height: 6),
+            pw.Row(
+              children: [
+                _legendSwatch(_maleColor, 'Male'),
+                pw.SizedBox(width: 16),
+                _legendSwatch(_femaleColor, 'Female'),
+              ],
+            ),
+            pw.SizedBox(height: 12),
+            pw.Expanded(
+              child: pw.Row(
+                crossAxisAlignment: pw.CrossAxisAlignment.end,
+                mainAxisAlignment: pw.MainAxisAlignment.spaceEvenly,
+                children: [for (final band in bands) _pdfBandGroup(band, counts, scale)],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+
+    return _writeToTempFile('pdf', await doc.save(), scheme);
+  }
+
+  pw.Widget _legendSwatch(PdfColor color, String label) => pw.Row(
+        mainAxisSize: pw.MainAxisSize.min,
+        children: [
+          pw.Container(width: 10, height: 10, color: color),
+          pw.SizedBox(width: 4),
+          pw.Text(label, style: const pw.TextStyle(fontSize: 10)),
+        ],
+      );
+
+  pw.Widget _pdfBandGroup(GradeBand band, Map<CandidateGender, Map<String, int>> counts, double scale) {
+    final male = counts[CandidateGender.male]![band.fullLabel] ?? 0;
+    final female = counts[CandidateGender.female]![band.fullLabel] ?? 0;
+    return pw.Column(
+      mainAxisSize: pw.MainAxisSize.min,
+      children: [
+        pw.Row(
+          crossAxisAlignment: pw.CrossAxisAlignment.end,
+          mainAxisSize: pw.MainAxisSize.min,
+          children: [
+            _pdfBar(male, scale, _maleColor),
+            pw.SizedBox(width: 3),
+            _pdfBar(female, scale, _femaleColor),
+          ],
+        ),
+        pw.SizedBox(height: 4),
+        pw.Container(width: 70, child: pw.Text(band.fullLabel, style: const pw.TextStyle(fontSize: 8), textAlign: pw.TextAlign.center)),
+      ],
+    );
+  }
+
+  pw.Widget _pdfBar(int count, double scale, PdfColor color) => pw.Column(
+        mainAxisSize: pw.MainAxisSize.min,
+        children: [
+          pw.Text('$count', style: const pw.TextStyle(fontSize: 8)),
+          pw.SizedBox(height: 2),
+          pw.Container(width: _barWidth, height: count * scale, color: color),
+        ],
+      );
+
   pw.Widget _pdfStat(String label, String value) => pw.Container(
         padding: const pw.EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         decoration: pw.BoxDecoration(border: pw.Border.all(width: 0.5), borderRadius: pw.BorderRadius.circular(4)),

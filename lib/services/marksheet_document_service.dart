@@ -91,7 +91,7 @@ class MarksheetDocumentService {
                   _pdfCell('Gender', bold: true),
                   _pdfCell('ID', bold: true),
                   for (final q in scheme.questions) _pdfCell('${q.label}\n(${_fmt(q.maxMarks)})', bold: true),
-                  _pdfCell('Total\n(${_fmt(scheme.totalMarks)})', bold: true),
+                  _pdfCell('Final Result\n(% of ${_fmt(scheme.totalMarks)})', bold: true),
                 ],
               ),
               for (final script in confirmed)
@@ -106,7 +106,7 @@ class MarksheetDocumentService {
                       _pdfCell(_fmt(
                         script.gradedAnswers!.where((a) => a.questionLabel == q.label).map((a) => a.marksAwarded).firstOrNull ?? 0,
                       )),
-                    _pdfCell(_fmt(script.totalAwarded ?? 0), bold: true),
+                    _pdfCell(_percentLabel(scheme, script), bold: true),
                   ],
                 ),
             ],
@@ -130,6 +130,20 @@ class MarksheetDocumentService {
       );
 
   String _fmt(double n) => n == n.roundToDouble() ? n.toInt().toString() : n.toStringAsFixed(1);
+
+  /// The recorded final result for one script — a percentage of
+  /// [MarkingScheme.totalMarks] (whatever that paper's questions actually
+  /// sum to, not a fixed assumed total), so results are comparable across
+  /// papers with different total marks. Per-question raw marks stay in
+  /// their own columns for the breakdown; this is what's recorded as the
+  /// headline final result.
+  double _percentFor(MarkingScheme scheme, MarkingScript script) {
+    final total = scheme.totalMarks;
+    if (total == 0) return 0;
+    return ((script.totalAwarded ?? 0) / total) * 100;
+  }
+
+  String _percentLabel(MarkingScheme scheme, MarkingScript script) => '${_fmt(_percentFor(scheme, script))}%';
 
   // ---------------------------------------------------------------------
   // DOCX — hand-built minimal OOXML package, same approach as
@@ -191,7 +205,7 @@ class MarksheetDocumentService {
       'Gender',
       'ID',
       for (final q in scheme.questions) '${q.label} (${_fmt(q.maxMarks)})',
-      'Total (${_fmt(scheme.totalMarks)})',
+      'Final Result (% of ${_fmt(scheme.totalMarks)})',
     ], bold: true));
     for (final script in confirmed) {
       buffer.write(_docxTableRow([
@@ -201,7 +215,7 @@ class MarksheetDocumentService {
         script.studentIdNumber ?? '—',
         for (final q in scheme.questions)
           _fmt(script.gradedAnswers!.where((a) => a.questionLabel == q.label).map((a) => a.marksAwarded).firstOrNull ?? 0),
-        _fmt(script.totalAwarded ?? 0),
+        _percentLabel(scheme, script),
       ]));
     }
     buffer.write('</w:tbl>');
@@ -302,7 +316,7 @@ class MarksheetDocumentService {
       'Gender',
       'ID',
       for (final q in scheme.questions) '${q.label} (of ${_fmt(q.maxMarks)})',
-      'Total (of ${_fmt(scheme.totalMarks)})',
+      'Final Result (% of ${_fmt(scheme.totalMarks)})',
       'AI Observations',
     ];
     buffer.writeln(headers.map(csvField).join(','));
@@ -315,7 +329,7 @@ class MarksheetDocumentService {
         script.studentIdNumber ?? '',
         for (final q in scheme.questions)
           _fmt(script.gradedAnswers!.where((a) => a.questionLabel == q.label).map((a) => a.marksAwarded).firstOrNull ?? 0),
-        _fmt(script.totalAwarded ?? 0),
+        _percentLabel(scheme, script),
         (script.observations ?? const []).join(' | '),
       ];
       buffer.writeln(row.map(csvField).join(','));

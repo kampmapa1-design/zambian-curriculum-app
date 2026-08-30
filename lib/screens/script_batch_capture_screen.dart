@@ -24,7 +24,7 @@ import 'subject_grade_topic_picker_screen.dart';
 /// it's graded) before ever starting the next one.
 ///
 /// Subject/grade and the marking scheme to grade against are picked once
-/// at the start, then the candidate's name/ID/class are typed via
+/// at the start, then the candidate's name/gender/ID/class are typed via
 /// [_askScriptDetails] before any page is captured — this screen used to
 /// auto-detect the name from the first captured page (a Gemini call, see
 /// CandidateNameDetectionService), but that turned out to be a
@@ -32,12 +32,11 @@ import 'subject_grade_topic_picker_screen.dart';
 /// (2026-08-30) for something a teacher can type in a few seconds while
 /// the script is already in hand. CandidateNameDetectionService/
 /// detectCandidateName are suspended, not deleted, in case a faster/
-/// cheaper detection path is worth revisiting later. Gender is still NOT
-/// asked here — asking per script would defeat "just capture, keep
-/// going" — every script this screen creates has
-/// MarkingScript.genderConfirmed: false, and MarkingReviewScreen requires
-/// a teacher to confirm it before the script can be finalized as
-/// Reviewed.
+/// cheaper detection path is worth revisiting later. Gender is required
+/// right after the name fields (2026-08-31) — every script this screen
+/// creates now has a real, teacher-given MarkingScript.genderConfirmed:
+/// true from the start, not a placeholder MarkingReviewScreen has to
+/// stop and ask about later.
 ///
 /// Nothing is sent anywhere until "Complete Session" → an explicit "Mark
 /// this script now?" Yes — capture itself is entirely offline.
@@ -47,11 +46,29 @@ class ScriptBatchCaptureScreen extends StatefulWidget {
     this.repository,
     this.schemeRepository,
     this.gradingService,
+    this.initialTemplate,
+    this.initialScheme,
+    this.onSetupComplete,
   });
 
   final MarkingScriptRepository? repository;
   final MarkingSchemeRepository? schemeRepository;
   final MarkingGradingService? gradingService;
+
+  /// When both are given (2026-08-31), [_setUp] skips straight past the
+  /// Subject & Grade and "which marking key" pickers and starts this
+  /// script's details form directly — set by MarkingQueueScreen from
+  /// whatever the *previous* script in this session used, since asking
+  /// again for every single script in the same marking session is pure
+  /// repetition: those details were already given once, at the start.
+  /// Null (the ordinary case) runs the pickers as before.
+  final SyllabusTemplate? initialTemplate;
+  final MarkingScheme? initialScheme;
+
+  /// Fired once [_setUp] has a confirmed template+scheme — whether just
+  /// picked fresh or reused from [initialTemplate]/[initialScheme] — so
+  /// MarkingQueueScreen can remember them for the *next* script too.
+  final void Function(SyllabusTemplate template, MarkingScheme scheme)? onSetupComplete;
 
   @override
   State<ScriptBatchCaptureScreen> createState() => _ScriptBatchCaptureScreenState();
@@ -70,6 +87,7 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
   final List<File> _pages = [];
   String _firstName = '';
   String _surname = '';
+  CandidateGender _gender = CandidateGender.male;
   String _studentId = '';
   String _classLevel = '';
 
@@ -88,53 +106,68 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
   }
 
   Future<void> _setUp() async {
-    final template = await Navigator.of(context).push<SyllabusTemplate>(
-      MaterialPageRoute(
-        builder: (_) => const SubjectGradeTopicPickerScreen(title: 'Subject & Grade', pickTopic: false),
-      ),
-    );
-    if (!mounted) return;
-    if (template == null) {
-      Navigator.of(context).pop();
-      return;
-    }
+    SyllabusTemplate template;
+    MarkingScheme scheme;
 
-    final schemes = await _schemeRepository.loadCatalog();
-    if (!mounted) return;
-    if (schemes.schemes.isEmpty) {
-      await showDialog<void>(
-        context: context,
-        builder: (dialogContext) => AlertDialog(
-          title: const Text('No marking scheme yet'),
-          content: const Text(
-            'This script needs a marking key to grade against. Upload or build one first, then capture this script again.',
-          ),
-          actions: [FilledButton(onPressed: () => Navigator.of(dialogContext).pop(), child: const Text('OK'))],
+    if (widget.initialTemplate != null && widget.initialScheme != null) {
+      // Reused from the previous script in this session — see
+      // [ScriptBatchCaptureScreen.initialTemplate]'s doc. Skips both
+      // pickers entirely.
+      template = widget.initialTemplate!;
+      scheme = widget.initialScheme!;
+    } else {
+      final pickedTemplate = await Navigator.of(context).push<SyllabusTemplate>(
+        MaterialPageRoute(
+          builder: (_) => const SubjectGradeTopicPickerScreen(title: 'Subject & Grade', pickTopic: false),
         ),
       );
       if (!mounted) return;
-      Navigator.of(context).pop();
-      return;
+      if (pickedTemplate == null) {
+        Navigator.of(context).pop();
+        return;
+      }
+
+      final schemes = await _schemeRepository.loadCatalog();
+      if (!mounted) return;
+      if (schemes.schemes.isEmpty) {
+        await showDialog<void>(
+          context: context,
+          builder: (dialogContext) => AlertDialog(
+            title: const Text('No marking scheme yet'),
+            content: const Text(
+              'This script needs a marking key to grade against. Upload or build one first, then capture this script again.',
+            ),
+            actions: [FilledButton(onPressed: () => Navigator.of(dialogContext).pop(), child: const Text('OK'))],
+          ),
+        );
+        if (!mounted) return;
+        Navigator.of(context).pop();
+        return;
+      }
+
+      final pickedScheme = await showDialog<MarkingScheme>(
+        context: context,
+        builder: (dialogContext) => SimpleDialog(
+          title: const Text('Which marking key is this script for?'),
+          children: [
+            for (final s in schemes.schemes)
+              SimpleDialogOption(
+                onPressed: () => Navigator.of(dialogContext).pop(s),
+                child: Text('${s.title} (${s.questions.length} question(s))'),
+              ),
+          ],
+        ),
+      );
+      if (!mounted) return;
+      if (pickedScheme == null) {
+        Navigator.of(context).pop();
+        return;
+      }
+      template = pickedTemplate;
+      scheme = pickedScheme;
     }
 
-    final scheme = await showDialog<MarkingScheme>(
-      context: context,
-      builder: (dialogContext) => SimpleDialog(
-        title: const Text('Which marking key is this script for?'),
-        children: [
-          for (final s in schemes.schemes)
-            SimpleDialogOption(
-              onPressed: () => Navigator.of(dialogContext).pop(s),
-              child: Text('${s.title} (${s.questions.length} question(s))'),
-            ),
-        ],
-      ),
-    );
-    if (!mounted) return;
-    if (scheme == null) {
-      Navigator.of(context).pop();
-      return;
-    }
+    widget.onSetupComplete?.call(template, scheme);
 
     final details = await _askScriptDetails();
     if (!mounted) return;
@@ -151,6 +184,7 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
       _scriptNumber = nextNumber;
       _firstName = details.firstName;
       _surname = details.surname;
+      _gender = details.gender;
       _studentId = details.studentId;
       _classLevel = details.classLevel;
       _settingUp = false;
@@ -160,71 +194,106 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
 
   /// Asked once, before any page is captured — replaces the AI name
   /// detection this screen used to run after the first photo (see this
-  /// class's doc comment). Returns null if the teacher backs out.
+  /// class's doc comment). Gender is required here too (2026-08-31) —
+  /// right after the name fields — rather than deferred to review: a
+  /// two-tap selector doesn't meaningfully slow down "just capture, keep
+  /// going" the way per-script AI detection did, and every script this
+  /// screen saves now has a real, teacher-confirmed gender from the start
+  /// instead of a placeholder needing correction later. Returns null if
+  /// the teacher backs out.
   Future<_ScriptDetails?> _askScriptDetails() {
     final firstNameController = TextEditingController();
     final surnameController = TextEditingController();
     final idController = TextEditingController();
     final classLevelController = TextEditingController();
     final formKey = GlobalKey<FormState>();
+    CandidateGender? gender;
+    String? genderError;
 
     return showDialog<_ScriptDetails>(
       context: context,
       barrierDismissible: false,
-      builder: (dialogContext) => AlertDialog(
-        title: const Text('Whose script is this?'),
-        content: Form(
-          key: formKey,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextFormField(
-                controller: firstNameController,
-                decoration: const InputDecoration(labelText: 'First name', border: OutlineInputBorder()),
-                textCapitalization: TextCapitalization.words,
-                validator: (v) => (v == null || v.trim().isEmpty) ? 'Required' : null,
-              ),
-              const SizedBox(height: 12),
-              TextFormField(
-                controller: surnameController,
-                decoration: const InputDecoration(labelText: 'Surname', border: OutlineInputBorder()),
-                textCapitalization: TextCapitalization.words,
-                validator: (v) => (v == null || v.trim().isEmpty) ? 'Required' : null,
-              ),
-              const SizedBox(height: 12),
-              TextFormField(
-                controller: idController,
-                decoration: const InputDecoration(labelText: 'Student ID (optional)', border: OutlineInputBorder()),
-              ),
-              const SizedBox(height: 12),
-              TextFormField(
-                controller: classLevelController,
-                decoration: const InputDecoration(
-                  labelText: 'Class / Level (e.g. "10A", "Form 2 Blue")',
-                  border: OutlineInputBorder(),
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (dialogContext, setDialogState) => AlertDialog(
+          title: const Text('Whose script is this?'),
+          content: Form(
+            key: formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextFormField(
+                  controller: firstNameController,
+                  decoration: const InputDecoration(labelText: 'First name', border: OutlineInputBorder()),
+                  textCapitalization: TextCapitalization.words,
+                  validator: (v) => (v == null || v.trim().isEmpty) ? 'Required' : null,
                 ),
-                textCapitalization: TextCapitalization.words,
-              ),
-            ],
+                const SizedBox(height: 12),
+                TextFormField(
+                  controller: surnameController,
+                  decoration: const InputDecoration(labelText: 'Surname', border: OutlineInputBorder()),
+                  textCapitalization: TextCapitalization.words,
+                  validator: (v) => (v == null || v.trim().isEmpty) ? 'Required' : null,
+                ),
+                const SizedBox(height: 12),
+                Text('Gender', style: Theme.of(dialogContext).textTheme.labelLarge),
+                const SizedBox(height: 4),
+                SegmentedButton<CandidateGender>(
+                  segments: const [
+                    ButtonSegment(value: CandidateGender.male, label: Text('Male')),
+                    ButtonSegment(value: CandidateGender.female, label: Text('Female')),
+                  ],
+                  selected: {if (gender != null) gender!},
+                  emptySelectionAllowed: true,
+                  onSelectionChanged: (selection) => setDialogState(() {
+                    gender = selection.firstOrNull;
+                    genderError = null;
+                  }),
+                ),
+                if (genderError != null) ...[
+                  const SizedBox(height: 4),
+                  Text(genderError!, style: TextStyle(color: Theme.of(dialogContext).colorScheme.error, fontSize: 12)),
+                ],
+                const SizedBox(height: 12),
+                TextFormField(
+                  controller: idController,
+                  decoration: const InputDecoration(labelText: 'Student ID (optional)', border: OutlineInputBorder()),
+                ),
+                const SizedBox(height: 12),
+                TextFormField(
+                  controller: classLevelController,
+                  decoration: const InputDecoration(
+                    labelText: 'Class / Level (e.g. "10A", "Form 2 Blue")',
+                    border: OutlineInputBorder(),
+                  ),
+                  textCapitalization: TextCapitalization.words,
+                ),
+              ],
+            ),
           ),
+          actions: [
+            TextButton(onPressed: () => Navigator.of(dialogContext).pop(), child: const Text('Cancel')),
+            FilledButton(
+              onPressed: () {
+                final formOk = formKey.currentState?.validate() ?? false;
+                if (gender == null) {
+                  setDialogState(() => genderError = 'Required');
+                }
+                if (!formOk || gender == null) return;
+                Navigator.of(dialogContext).pop(
+                  _ScriptDetails(
+                    firstName: firstNameController.text.trim(),
+                    surname: surnameController.text.trim(),
+                    gender: gender!,
+                    studentId: idController.text.trim(),
+                    classLevel: classLevelController.text.trim(),
+                  ),
+                );
+              },
+              child: const Text('Continue'),
+            ),
+          ],
         ),
-        actions: [
-          TextButton(onPressed: () => Navigator.of(dialogContext).pop(), child: const Text('Cancel')),
-          FilledButton(
-            onPressed: () {
-              if (!(formKey.currentState?.validate() ?? false)) return;
-              Navigator.of(dialogContext).pop(
-                _ScriptDetails(
-                  firstName: firstNameController.text.trim(),
-                  surname: surnameController.text.trim(),
-                  studentId: idController.text.trim(),
-                  classLevel: classLevelController.text.trim(),
-                ),
-              );
-            },
-            child: const Text('Continue'),
-          ),
-        ],
       ),
     );
   }
@@ -275,7 +344,7 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
     final script = await _repository.saveScript(
       firstName: _firstName,
       surname: _surname,
-      gender: CandidateGender.male,
+      gender: _gender,
       studentIdNumber: _studentId.isEmpty ? null : _studentId,
       scriptNumber: _scriptNumber,
       subjectName: _subjectGrade!.subject.name,
@@ -283,7 +352,10 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
       classLevel: _classLevel,
       capturedPageFiles: _pages,
     );
-    final linked = script.copyWith(schemeId: _scheme!.id, genderConfirmed: false);
+    // Gender is now collected up front (see _askScriptDetails) and is
+    // real, teacher-given data — genderConfirmed: true, not the
+    // placeholder-needing-review flag this used to always set.
+    final linked = script.copyWith(schemeId: _scheme!.id, genderConfirmed: true);
     await _repository.update(linked);
     _savedScript = linked;
   }
@@ -471,12 +543,14 @@ class _ScriptDetails {
   const _ScriptDetails({
     required this.firstName,
     required this.surname,
+    required this.gender,
     required this.studentId,
     required this.classLevel,
   });
 
   final String firstName;
   final String surname;
+  final CandidateGender gender;
   final String studentId;
   final String classLevel;
 }

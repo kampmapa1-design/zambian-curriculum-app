@@ -2,10 +2,12 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../models/marking_scheme.dart';
 import '../models/marking_script.dart';
 import '../services/marking_script_repository.dart';
+import '../services/student_performance_report_service.dart';
 
 /// AI-Assisted Marking, Stage 6 — the review screen. Every AI-graded
 /// answer (Stage 4) is shown next to the page it came from, fully
@@ -15,7 +17,14 @@ import '../services/marking_script_repository.dart';
 /// scripts already in [MarkingScriptStatus.graded] or
 /// [MarkingScriptStatus.reviewed] (see MarkingQueueScreen._openScript).
 class MarkingReviewScreen extends StatefulWidget {
-  const MarkingReviewScreen({super.key, required this.script, required this.scheme, this.repository});
+  const MarkingReviewScreen({
+    super.key,
+    required this.script,
+    required this.scheme,
+    this.repository,
+    this.nextInQueue,
+    this.remainingAfterNext = 0,
+  });
 
   final MarkingScript script;
 
@@ -25,6 +34,22 @@ class MarkingReviewScreen extends StatefulWidget {
   final MarkingScheme? scheme;
 
   final MarkingScriptRepository? repository;
+
+  /// The next still-[MarkingScriptStatus.graded] script for the same
+  /// scheme, if any — set by whoever opens this screen (see
+  /// MarkingQueueScreen._openScript). On a successful
+  /// [_confirmAndFinish], this screen pops with [nextInQueue] as the
+  /// result instead of null (2026-08-31); the queue screen's open loop
+  /// reads that and pushes straight into it, so a teacher can review a
+  /// whole batch back-to-back without returning to the queue between
+  /// each one. Backing out normally (system back / AppBar back) always
+  /// pops with null regardless of this, so only a real Confirm & Finish
+  /// advances the chain.
+  final MarkingScript? nextInQueue;
+
+  /// How many more scripts are queued up *after* [nextInQueue] — shown in
+  /// the AppBar as a "N more to mark" hint, purely informational.
+  final int remainingAfterNext;
 
   @override
   State<MarkingReviewScreen> createState() => _MarkingReviewScreenState();
@@ -59,12 +84,14 @@ class _AnswerControllers {
 
 class _MarkingReviewScreenState extends State<MarkingReviewScreen> {
   late final MarkingScriptRepository _repository = widget.repository ?? MarkingScriptRepository();
+  final StudentPerformanceReportService _reportService = StudentPerformanceReportService();
   late final List<_AnswerControllers> _rows;
   late CandidateGender _gender = widget.script.gender;
   late bool _genderConfirmed = widget.script.genderConfirmed;
   List<File> _pageFiles = [];
   bool _loadingPages = true;
   bool _saving = false;
+  bool _sharingReport = false;
   int _viewerIndex = 0;
 
   @override
@@ -109,6 +136,14 @@ class _MarkingReviewScreenState extends State<MarkingReviewScreen> {
 
   double get _totalPossible => _rows.fold(0, (sum, r) => sum + r.maxMarks);
 
+  /// The recorded final result — a percentage, not a raw mark, since raw
+  /// totals aren't comparable across papers with different total marks.
+  /// Always derived from whatever [_totalPossible] this scheme's
+  /// questions actually sum to, never a fixed assumed total.
+  double get _percentAwarded => _totalPossible == 0 ? 0 : (_totalAwarded / _totalPossible) * 100;
+
+  String get _percentLabel => '${_percentAwarded.toStringAsFixed(1)}%';
+
   Future<void> _confirmAndFinish() async {
     if (!_genderConfirmed) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -121,9 +156,9 @@ class _MarkingReviewScreenState extends State<MarkingReviewScreen> {
       builder: (dialogContext) => AlertDialog(
         title: const Text('Mark this script as Final?'),
         content: Text(
-          '${widget.script.fullName} will be recorded with a final total of '
-          '${_totalAwarded.toStringAsFixed(_totalAwarded == _totalAwarded.roundToDouble() ? 0 : 1)} / '
-          '${_totalPossible.toStringAsFixed(_totalPossible == _totalPossible.roundToDouble() ? 0 : 1)}. '
+          '${widget.script.fullName} will be recorded with a final result of $_percentLabel '
+          '(${_totalAwarded.toStringAsFixed(_totalAwarded == _totalAwarded.roundToDouble() ? 0 : 1)} of '
+          '${_totalPossible.toStringAsFixed(_totalPossible == _totalPossible.roundToDouble() ? 0 : 1)} marks). '
           "You've reviewed every answer, including any you edited.",
         ),
         actions: [
@@ -156,7 +191,11 @@ class _MarkingReviewScreenState extends State<MarkingReviewScreen> {
     );
     await _repository.update(updated);
     if (!mounted) return;
-    Navigator.of(context).pop();
+    // Pops with the next script to review (or null) — see [nextInQueue]'s
+    // doc. MarkingQueueScreen._openScript's loop reads this result and
+    // pushes straight into it when non-null, chaining review of a whole
+    // batch without returning to the queue in between.
+    Navigator.of(context).pop(widget.nextInQueue);
   }
 
   @override
@@ -165,7 +204,25 @@ class _MarkingReviewScreenState extends State<MarkingReviewScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('${widget.script.fullName} — Script ${widget.script.scriptNumber}'),
+        title: Text(
+          widget.nextInQueue == null
+              ? '${widget.script.fullName} — Script ${widget.script.scriptNumber}'
+              : '${widget.script.fullName} — Script ${widget.script.scriptNumber} '
+                  '(${widget.remainingAfterNext + 1} more to mark)',
+        ),
+        actions: [
+          if (_rows.isNotEmpty)
+            _sharingReport
+                ? const Padding(
+                    padding: EdgeInsets.all(16),
+                    child: SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2)),
+                  )
+                : IconButton(
+                    onPressed: _shareReport,
+                    icon: const Icon(Icons.share_outlined),
+                    tooltip: 'Share performance report (PDF)',
+                  ),
+        ],
       ),
       body: _loadingPages
           ? const Center(child: CircularProgressIndicator())
@@ -227,10 +284,20 @@ class _MarkingReviewScreenState extends State<MarkingReviewScreen> {
           child: Row(
             children: [
               Expanded(
-                child: Text(
-                  'Total: ${_totalAwarded.toStringAsFixed(_totalAwarded == _totalAwarded.roundToDouble() ? 0 : 1)} / '
-                  '${_totalPossible.toStringAsFixed(_totalPossible == _totalPossible.roundToDouble() ? 0 : 1)}',
-                  style: Theme.of(context).textTheme.titleMedium,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'Result: $_percentLabel',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      '${_totalAwarded.toStringAsFixed(_totalAwarded == _totalAwarded.roundToDouble() ? 0 : 1)} of '
+                      '${_totalPossible.toStringAsFixed(_totalPossible == _totalPossible.roundToDouble() ? 0 : 1)} marks',
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ],
                 ),
               ),
               FilledButton.icon(
@@ -245,6 +312,27 @@ class _MarkingReviewScreenState extends State<MarkingReviewScreen> {
         ),
       ),
     );
+  }
+
+  /// "Share Report" — the student's own performance report (final
+  /// percentage, per-question breakdown, AI observations) as a standalone
+  /// PDF, shareable right from wherever a script is currently being
+  /// reviewed (2026-08-31) — available once it's been graded, whether or
+  /// not it's been confirmed as Reviewed/Final yet.
+  Future<void> _shareReport() async {
+    setState(() => _sharingReport = true);
+    try {
+      final file = await _reportService.generatePdf(widget.script, widget.scheme);
+      if (!mounted) return;
+      await SharePlus.instance.share(
+        ShareParams(files: [XFile(file.path)], subject: 'Performance Report — ${widget.script.fullName}'),
+      );
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Could not create the report: $error')));
+    } finally {
+      if (mounted) setState(() => _sharingReport = false);
+    }
   }
 
   /// Shown only when [MarkingScript.genderConfirmed] is false — a script

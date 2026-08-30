@@ -8,13 +8,27 @@ import '../services/analysis_document_service.dart';
 import '../services/marking_script_repository.dart';
 import '../widgets/timed_choice_dialog.dart';
 
+/// Minimum scripts needed before Analysis will show anything at all
+/// (2026-08-31) — a single script's grade-band breakdown isn't a
+/// meaningful class picture. Below this, the screen shows how many more
+/// are needed rather than a report.
+const int kAnalysisMinimumScripts = 10;
+
 /// AI-Assisted Marking, Stage F — "Analysis": gender-segmented grade-band
 /// counts (British Distinction/Merit/Credit/Satisfactory/Fail, or
-/// American A-F) across every fully-reviewed script for one marking
-/// scheme, plus a results list sortable alphabetically or by rank. Only
-/// [MarkingScriptStatus.reviewed] scripts count — same rule as the
-/// marksheet export, since anything still [MarkingScriptStatus.graded]
-/// hasn't cleared the mandatory teacher review yet.
+/// American A-F) across scripts for one marking scheme, plus a results
+/// list sortable alphabetically or by rank.
+///
+/// Two modes, gated by [kAnalysisMinimumScripts] (2026-08-31):
+/// - **Final**: once at least [kAnalysisMinimumScripts]
+///   [MarkingScriptStatus.reviewed] scripts exist — the same rule the
+///   marksheet export uses, since a reviewed script is a confirmed mark.
+/// - **Preliminary**: once at least [kAnalysisMinimumScripts] scripts are
+///   *scored* (reviewed OR still awaiting review) — an early read on
+///   trends before every script has been individually checked, clearly
+///   labeled as such and using AI marks that haven't all been confirmed
+///   yet. Final mode is preferred whenever there are enough reviewed
+///   scripts to use it on its own.
 class MarkingAnalysisScreen extends StatefulWidget {
   const MarkingAnalysisScreen({super.key, required this.scheme, this.scriptRepository});
 
@@ -27,6 +41,8 @@ class MarkingAnalysisScreen extends StatefulWidget {
 
 enum _SortMode { rankedHighestFirst, alphabetical }
 
+enum _ExportFormat { pdf, docx, graph }
+
 class _MarkingAnalysisScreenState extends State<MarkingAnalysisScreen> {
   late final MarkingScriptRepository _repository = widget.scriptRepository ?? MarkingScriptRepository();
   final AnalysisDocumentService _documentService = AnalysisDocumentService();
@@ -34,6 +50,9 @@ class _MarkingAnalysisScreenState extends State<MarkingAnalysisScreen> {
   bool _loading = true;
   bool _cancelled = false;
   List<MarkingScript> _scripts = [];
+  bool _isPreliminary = false;
+  int _reviewedCount = 0;
+  int _scoredSoFarCount = 0;
   GradingSystem? _system;
   _SortMode _sortMode = _SortMode.rankedHighestFirst;
   bool _exporting = false;
@@ -46,12 +65,34 @@ class _MarkingAnalysisScreenState extends State<MarkingAnalysisScreen> {
 
   Future<void> _load() async {
     final all = (await _repository.loadCatalog()).scripts;
-    final scripts = all
-        .where((s) => s.schemeId == widget.scheme.id && s.status == MarkingScriptStatus.reviewed && s.gradedAnswers != null)
+    final forScheme = all.where((s) => s.schemeId == widget.scheme.id && s.gradedAnswers != null);
+    final reviewed = forScheme.where((s) => s.status == MarkingScriptStatus.reviewed).toList();
+    final scoredSoFar = forScheme
+        .where((s) => s.status == MarkingScriptStatus.reviewed || s.status == MarkingScriptStatus.graded)
         .toList();
+
+    // Prefer Final (reviewed-only) whenever there are enough reviewed
+    // scripts on their own; otherwise fall back to Preliminary (reviewed
+    // + still-awaiting-review) once that pool alone clears the minimum.
+    final List<MarkingScript> scripts;
+    final bool preliminary;
+    if (reviewed.length >= kAnalysisMinimumScripts) {
+      scripts = reviewed;
+      preliminary = false;
+    } else if (scoredSoFar.length >= kAnalysisMinimumScripts) {
+      scripts = scoredSoFar;
+      preliminary = true;
+    } else {
+      scripts = [];
+      preliminary = false;
+    }
+
     if (!mounted) return;
     setState(() {
       _scripts = scripts;
+      _isPreliminary = preliminary;
+      _reviewedCount = reviewed.length;
+      _scoredSoFarCount = scoredSoFar.length;
       _loading = false;
     });
 
@@ -116,15 +157,21 @@ class _MarkingAnalysisScreenState extends State<MarkingAnalysisScreen> {
         for (final s in _sortedScripts) AnalysisResultRow(script: s, percent: _percentFor(s), band: classify(_percentFor(s), _system!)),
       ];
 
-  Future<void> _export({required bool asDocx}) async {
+  Future<void> _export({required _ExportFormat format}) async {
     setState(() => _exporting = true);
     try {
-      final file = asDocx
-          ? await _documentService.generateDocx(scheme: widget.scheme, rows: _resultRows, system: _system!, counts: _counts)
-          : await _documentService.generatePdf(scheme: widget.scheme, rows: _resultRows, system: _system!, counts: _counts);
+      final file = switch (format) {
+        _ExportFormat.docx =>
+          await _documentService.generateDocx(scheme: widget.scheme, rows: _resultRows, system: _system!, counts: _counts),
+        _ExportFormat.pdf =>
+          await _documentService.generatePdf(scheme: widget.scheme, rows: _resultRows, system: _system!, counts: _counts),
+        _ExportFormat.graph =>
+          await _documentService.generateGraphPdf(scheme: widget.scheme, rows: _resultRows, system: _system!, counts: _counts),
+      };
       if (!mounted) return;
+      final subjectPrefix = _isPreliminary ? 'Preliminary Performance Analysis' : 'Performance Analysis';
       await SharePlus.instance.share(
-        ShareParams(files: [XFile(file.path)], subject: 'Performance Analysis — ${widget.scheme.title}'),
+        ShareParams(files: [XFile(file.path)], subject: '$subjectPrefix — ${widget.scheme.title}'),
       );
     } catch (error) {
       if (!mounted) return;
@@ -154,7 +201,7 @@ class _MarkingAnalysisScreenState extends State<MarkingAnalysisScreen> {
     final canExport = !_loading && !_cancelled && _scripts.isNotEmpty && _system != null;
     return Scaffold(
       appBar: AppBar(
-        title: Text('Analysis — ${widget.scheme.title}'),
+        title: Text('${_isPreliminary ? 'Preliminary Analysis' : 'Analysis'} — ${widget.scheme.title}'),
         actions: [
           if (canExport)
             _exporting
@@ -162,13 +209,14 @@ class _MarkingAnalysisScreenState extends State<MarkingAnalysisScreen> {
                     padding: EdgeInsets.all(16),
                     child: SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2)),
                   )
-                : PopupMenuButton<String>(
+                : PopupMenuButton<_ExportFormat>(
                     icon: const Icon(Icons.share_outlined),
                     tooltip: 'Export & share',
-                    onSelected: (choice) => _export(asDocx: choice == 'docx'),
+                    onSelected: (format) => _export(format: format),
                     itemBuilder: (context) => const [
-                      PopupMenuItem(value: 'pdf', child: Text('Export as PDF')),
-                      PopupMenuItem(value: 'docx', child: Text('Export as Word')),
+                      PopupMenuItem(value: _ExportFormat.pdf, child: Text('Export as PDF (table)')),
+                      PopupMenuItem(value: _ExportFormat.docx, child: Text('Export as Word (table)')),
+                      PopupMenuItem(value: _ExportFormat.graph, child: Text('Export as Graph (PDF)')),
                     ],
                   ),
         ],
@@ -186,6 +234,7 @@ class _MarkingAnalysisScreenState extends State<MarkingAnalysisScreen> {
   }
 
   Widget _buildEmptyState(BuildContext context) {
+    final remaining = kAnalysisMinimumScripts - _scoredSoFarCount;
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24),
@@ -194,10 +243,18 @@ class _MarkingAnalysisScreenState extends State<MarkingAnalysisScreen> {
           children: [
             Icon(Icons.query_stats_outlined, size: 48, color: Theme.of(context).colorScheme.outline),
             const SizedBox(height: 12),
-            const Text(
-              'No fully-reviewed scripts yet for this scheme. Analysis only counts scripts a teacher has '
-              'confirmed as Reviewed/Final.',
+            Text(
+              _scoredSoFarCount == 0
+                  ? 'No scripts scored yet for this scheme. Analysis needs at least $kAnalysisMinimumScripts scored '
+                      'scripts before it can show anything meaningful.'
+                  : '$_scoredSoFarCount of $kAnalysisMinimumScripts scripts scored so far — $remaining more '
+                      'needed before a preliminary analysis becomes available.',
               textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 12),
+            LinearProgressIndicator(
+              value: (_scoredSoFarCount / kAnalysisMinimumScripts).clamp(0, 1).toDouble(),
+              minHeight: 6,
             ),
           ],
         ),
@@ -234,6 +291,7 @@ class _MarkingAnalysisScreenState extends State<MarkingAnalysisScreen> {
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
       children: [
+        if (_isPreliminary) _buildPreliminaryBanner(context),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -273,6 +331,37 @@ class _MarkingAnalysisScreenState extends State<MarkingAnalysisScreen> {
         const SizedBox(height: 8),
         _buildResultsList(context, bands),
       ],
+    );
+  }
+
+  /// Shown only in preliminary mode ([_isPreliminary]) — makes it obvious
+  /// this isn't the final picture: it includes scripts still awaiting
+  /// teacher review, so counts may shift once every script is confirmed.
+  Widget _buildPreliminaryBanner(BuildContext context) {
+    final awaitingReview = _scoredSoFarCount - _reviewedCount;
+    return Container(
+      margin: const EdgeInsets.only(bottom: 14),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.tertiaryContainer,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.hourglass_top_outlined, size: 18, color: Theme.of(context).colorScheme.onTertiaryContainer),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              'PRELIMINARY — based on $_scoredSoFarCount scored scripts ($_reviewedCount reviewed, '
+              '$awaitingReview still awaiting review). This will update as more scripts are reviewed.',
+              style: Theme.of(context)
+                  .textTheme
+                  .bodySmall
+                  ?.copyWith(color: Theme.of(context).colorScheme.onTertiaryContainer, fontWeight: FontWeight.bold),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
