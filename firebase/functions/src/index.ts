@@ -1540,3 +1540,141 @@ export const internalBatchSyllabusExtract = onRequest(
     }
   }
 );
+
+// ---------------------------------------------------------------------
+// generateMinutes — Minutes Maker, Stage 5. Reads photographed pages of
+// handwritten (or typed) meeting notes, however disordered, and
+// reorganizes them into a professional minutes structure: Attendees,
+// Agenda, Discussion Points, Decisions Made, Action Items. Same
+// transcribe-then-structure discipline as transcribeHandwrittenList: real
+// content only, flagged uncertainty rather than invented content, never a
+// section fabricated wholesale when the source genuinely doesn't cover it.
+// ---------------------------------------------------------------------
+
+interface GenerateMinutesRequest {
+  pageImagesBase64: string[];
+}
+
+interface MinutesSectionResult {
+  heading: string;
+  lines: string[];
+}
+
+interface GenerateMinutesResponse {
+  meetingTitle: string;
+  sections: MinutesSectionResult[];
+  notes: string;
+}
+
+const generateMinutesSchema = {
+  type: "object",
+  properties: {
+    meetingTitle: {
+      type: "string",
+      description:
+        "A short title for these minutes - the meeting's own stated name/purpose if the notes state one, " +
+        "otherwise a brief descriptive title grounded in what the notes actually cover. Never invented " +
+        "beyond what the notes support.",
+    },
+    sections: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          heading: {
+            type: "string",
+            description:
+              "One of: 'Attendees', 'Agenda', 'Discussion Points', 'Decisions Made', 'Action Items'. Only " +
+              "include a section the notes actually give real content for - never include a section with " +
+              "an invented or placeholder line just to complete the set.",
+          },
+          lines: {
+            type: "array",
+            items: { type: "string" },
+            description:
+              "One entry per line. For Action Items specifically, write each as a single line naming the " +
+              "action, and append ' — Owner: <name>' and/or ', Deadline: <date>' only when the notes " +
+              "genuinely state an owner/deadline for that item - never invent either.",
+          },
+        },
+        required: ["heading", "lines"],
+        additionalProperties: false,
+      },
+    },
+    notes: {
+      type: "string",
+      description:
+        "Anything a reader should double-check - a passage that was hard to read, content that seemed to " +
+        "belong to a section but was too ambiguous to place confidently. Empty string if nothing stood out.",
+    },
+  },
+  required: ["meetingTitle", "sections", "notes"],
+  additionalProperties: false,
+};
+
+function buildGenerateMinutesPrompt(): string {
+  return [
+    "The attached images are photos of one set of handwritten (or partly typed) meeting notes, in page " +
+      "order. The notes may be disordered, non-linear, or jump between topics - your job is to READ every " +
+      "genuine point made in them, then REORGANIZE that real content into a professional minutes " +
+      "structure. This is a transcribe-and-structure task, not a writing task: every fact, decision, and " +
+      "action item in your output must trace back to something actually written in the notes.",
+    "Sort what you read into these categories, using ONLY sections the notes genuinely support:",
+    "1. Attendees - names/roles listed as present, if the notes state any.",
+    "2. Agenda - topics the meeting covered, if stated or clearly inferable from the notes' own structure.",
+    "3. Discussion Points - what was actually discussed on each topic, summarized faithfully, not " +
+      "invented or embellished.",
+    "4. Decisions Made - anything the notes record as agreed/decided/resolved.",
+    "5. Action Items - concrete tasks assigned or agreed to be done, each as one line naming the action, " +
+      "with owner and/or deadline appended only when the notes genuinely state them.",
+    "Do not fabricate content for a category the notes don't actually cover - omit that section entirely " +
+      "rather than inventing a placeholder. If a passage is illegible or its category is genuinely " +
+      "ambiguous, say so in notes rather than guessing silently.",
+  ].join("\n");
+}
+
+export const generateMinutes = onCall<GenerateMinutesRequest>(
+  { secrets: [geminiApiKey], region: "us-central1", timeoutSeconds: 120, memory: "1GiB", maxInstances: 5 },
+  async (request): Promise<GenerateMinutesResponse> => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "Sign in is required to generate minutes.");
+    }
+
+    const { pageImagesBase64 } = request.data ?? {};
+    if (!Array.isArray(pageImagesBase64) || pageImagesBase64.length === 0) {
+      throw new HttpsError("invalid-argument", "'pageImagesBase64' must be a non-empty array.");
+    }
+
+    const ai = new GoogleGenAI({ apiKey: geminiApiKey.value() });
+    const imageParts = pageImagesBase64.map((b64) => ({
+      inlineData: { mimeType: "image/jpeg", data: b64 },
+    }));
+
+    let text: string | undefined;
+    try {
+      const response = await ai.models.generateContent({
+        model: GEMINI_MODEL,
+        contents: [{ role: "user", parts: [{ text: buildGenerateMinutesPrompt() }, ...imageParts] }],
+        config: {
+          responseMimeType: "application/json",
+          responseJsonSchema: generateMinutesSchema,
+        },
+      });
+      text = response.text;
+    } catch (err) {
+      console.error("generateMinutes: Gemini call failed", err);
+      throw new HttpsError("internal", "Failed to generate minutes from these notes. Please try again.");
+    }
+
+    if (!text) {
+      throw new HttpsError("internal", "The AI did not return any minutes.");
+    }
+
+    try {
+      return JSON.parse(text) as GenerateMinutesResponse;
+    } catch (err) {
+      console.error("generateMinutes: response was not valid JSON", text);
+      throw new HttpsError("internal", "The minutes response could not be parsed.");
+    }
+  }
+);

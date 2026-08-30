@@ -3,11 +3,12 @@ import 'package:flutter/material.dart';
 import '../models/minutes_session.dart';
 import '../services/minutes_session_repository.dart';
 import 'minutes_capture_screen.dart';
+import 'minutes_processing_screen.dart';
 
-/// Admin Tools — Minutes Maker hub (Stage 4). Every captured meeting-notes
-/// session sits here, queued locally, until Stage 5 (AI reconstruction —
-/// not built yet) can process it. Mirrors MarkingQueueScreen's hub
-/// pattern: a list of what's captured, an "Add" action to capture more.
+/// Admin Tools — Minutes Maker hub. Every captured meeting-notes session
+/// sits here, queued locally, until processed (tap it) into a downloadable
+/// minutes document. Mirrors MarkingQueueScreen's hub pattern: a list of
+/// what's captured, an "Add" action to capture more.
 class MinutesMakerScreen extends StatefulWidget {
   const MinutesMakerScreen({super.key, this.repository});
 
@@ -91,7 +92,8 @@ class _MinutesMakerScreenState extends State<MinutesMakerScreen> {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          '(AI reconstruction into formatted minutes is coming in the next update.)',
+                          'Tap "Add Meeting Notes" to capture your first set — you\'ll process them into '
+                          'formatted minutes afterward.',
                           style: Theme.of(context).textTheme.bodySmall,
                           textAlign: TextAlign.center,
                         ),
@@ -111,6 +113,14 @@ class _MinutesMakerScreenState extends State<MinutesMakerScreen> {
                         subtitle: Text(
                           '${_formatDate(session.meetingDate)} · ${session.pageCount} page(s) · ${session.status.label}',
                         ),
+                        onTap: () async {
+                          await Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => MinutesProcessingScreen(session: session, repository: _repository),
+                            ),
+                          );
+                          if (mounted) await _load();
+                        },
                         trailing: IconButton(
                           icon: const Icon(Icons.delete_outline),
                           tooltip: 'Delete',
