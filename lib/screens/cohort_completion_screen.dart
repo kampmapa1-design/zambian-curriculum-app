@@ -135,6 +135,42 @@ class _CohortCompletionScreenState extends State<CohortCompletionScreen> {
     await _load();
   }
 
+  /// For the real case a red-flagged script doesn't get fixed in place —
+  /// the original capture had a real glitch (a torn page, an unreadable
+  /// photo, wrong pages attached) and the teacher instead re-captured the
+  /// whole script fresh as a new entry for the same learner. Once that
+  /// clean replacement exists, the old flagged one is dead weight, not
+  /// something to review — this deletes it outright, same underlying
+  /// action as the main queue's own "Delete" (MarkingScriptRepository
+  /// .remove), just reachable from where a flagged entry is actually
+  /// looked at, and worded for this specific situation so it isn't
+  /// confused with deleting a script that still needs fixing.
+  Future<void> _deleteFlaggedScript(MarkingScript script) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Delete this flagged entry?'),
+        content: Text(
+          'Use this only if the problem with ${script.fullName}\'s script (Script ${script.scriptNumber}) has '
+          'already been corrected by capturing a fresh, clearer entry for the same learner elsewhere in the '
+          'queue — this deletes only this flagged copy, permanently, including its captured pages. If you '
+          'haven\'t re-captured a replacement yet, cancel and fix this entry instead.',
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(dialogContext).pop(false), child: const Text('Cancel')),
+          FilledButton(onPressed: () => Navigator.of(dialogContext).pop(true), child: const Text('Delete')),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+    await _repository.remove(script);
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Deleted the flagged entry for ${script.fullName}.')),
+    );
+    await _load();
+  }
+
   Future<void> _shareList() async {
     setState(() => _sharing = true);
     try {
@@ -202,8 +238,9 @@ class _CohortCompletionScreenState extends State<CohortCompletionScreen> {
           ),
           const SizedBox(height: 4),
           const Text(
-            'Highlighted in red — an error, an AI-graded script not yet reviewed, or an incomplete '
-            'set of answers. Tap one to open and fix it.',
+            'Highlighted in red — an error, an AI-graded script not yet reviewed, or an incomplete set of '
+            'answers. Tap one to open and fix it — or, if you\'ve already re-captured a clearer entry for the '
+            'same learner elsewhere, use the delete icon to remove this flagged copy instead.',
           ),
           const SizedBox(height: 12),
           for (final script in problems) _buildProblemTile(context, script),
@@ -230,7 +267,17 @@ class _CohortCompletionScreenState extends State<CohortCompletionScreen> {
         leading: Icon(Icons.error_outline, color: Theme.of(context).colorScheme.error),
         title: Text(script.fullName, style: const TextStyle(fontWeight: FontWeight.bold)),
         subtitle: Text(reason),
-        trailing: const Icon(Icons.chevron_right),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IconButton(
+              icon: const Icon(Icons.delete_outline),
+              tooltip: 'Delete — already corrected with a fresh entry',
+              onPressed: () => _deleteFlaggedScript(script),
+            ),
+            const Icon(Icons.chevron_right),
+          ],
+        ),
         onTap: () => _openForFix(script),
       ),
     );
