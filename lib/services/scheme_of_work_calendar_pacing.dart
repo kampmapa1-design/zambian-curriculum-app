@@ -17,18 +17,46 @@ import '../models/zambian_term_calendar.dart';
 /// minority of subjects, e.g. civic_education_form2), that real data is
 /// left completely alone; this is a fallback for the common case of no
 /// real week data at all, not an override of real sourced data.
+///
+/// Real bug fixed here (2026-08-31, second pass): several subjects rebuilt
+/// this same day (Geography, Civic Education) genuinely have REAL week
+/// data for MOST of their topics but not all — a handful of topics were
+/// deliberately left without a real week because the second real source
+/// simply didn't cover them (e.g. Geography Grade 12's Power/Energy
+/// topics; Civic Education's cross-grade Human Rights topics). The
+/// original all-or-nothing check below (`hasRealWeekData` → skip pacing
+/// entirely) treated ANY real week data as "fully sourced," so those
+/// leftover topics kept only [SchemeOfWorkEntry.weekNumber]'s raw
+/// sequential fallback — a single counter incrementing across the WHOLE
+/// syllabus (every term concatenated, see generateSchemeOfWork), not
+/// reset per term. A Term 3 topic with no real week could easily end up
+/// labelled "Week 47" — read by a teacher as the schedule being broken or
+/// badly short, exactly the "shortened to 11 or 9 weeks" symptom
+/// reported. Now: entries that DO have a real week are left completely
+/// alone; entries that don't are paced into whichever of the term's real
+/// 1-13 slots (minus week 7) aren't already claimed by a real-week entry,
+/// using the same stretch/pack apportionment as the no-real-data case —
+/// so a partially-sourced subject still fills out its real term instead
+/// of falling back to a syllabus-wide counter that means nothing calendar-
+/// wise.
 List<SchemeOfWorkEntry> applyCalendarPacing(List<SchemeOfWorkEntry> entries) {
   if (entries.isEmpty) return entries;
-  final hasRealWeekData = entries.any((e) => e.realWeekNumber != null);
-  if (hasRealWeekData) return entries;
 
-  const teachingWeeks = TermDates.teachingWeekCount; // 12
-
-  // Real week slots a teaching week can land on: 1-6, then 8-13 — week 7
-  // is reserved for the mid-term break and is never assigned a topic here
-  // (see applyCalendarPacingWithMidtermRow, which inserts that row
-  // explicitly at the document-building layer).
   final realSlots = [for (var w = 1; w <= TermDates.totalWeeks; w++) if (w != TermDates.midtermBreakWeek) w];
+  final withoutReal = entries.where((e) => e.realWeekNumber == null).toList();
+
+  if (withoutReal.isEmpty) {
+    // Every entry already has real week data — nothing to pace.
+    return entries;
+  }
+
+  if (withoutReal.length < entries.length) {
+    return _paceMixedRealAndMissing(entries, withoutReal, realSlots);
+  }
+
+  // No real week data at all — pure algorithmic pacing across the whole
+  // term, exactly as before.
+  const teachingWeeks = TermDates.teachingWeekCount; // 12
 
   // Real bug fixed here (2026-08-31): a subject can genuinely have MORE
   // topics/sub-topics than there are real teaching weeks (e.g. Geography
@@ -79,6 +107,67 @@ List<SchemeOfWorkEntry> applyCalendarPacing(List<SchemeOfWorkEntry> entries) {
     }
   }
   return paced;
+}
+
+/// Handles the case where some entries have real week data and some
+/// don't — see this file's own doc comment for why this exists. Every
+/// real-week entry is kept exactly as it was; every entry without one is
+/// assigned a real week from whatever slots the real-week entries don't
+/// already occupy, using the same largest-remainder apportionment as the
+/// no-real-data path. The result is sorted by resolved real week —
+/// downstream consumers (CBC's per-week "Lesson N" numbering, OBC's
+/// group-by-week rows) both assume ascending week order.
+List<SchemeOfWorkEntry> _paceMixedRealAndMissing(
+  List<SchemeOfWorkEntry> entries,
+  List<SchemeOfWorkEntry> withoutReal,
+  List<int> realSlots,
+) {
+  final usedRealWeeks = entries.map((e) => e.realWeekNumber).whereType<int>().toSet();
+  final openSlots = realSlots.where((w) => !usedRealWeeks.contains(w)).toList();
+
+  final List<SchemeOfWorkEntry> pacedMissing;
+  if (openSlots.isEmpty) {
+    // Every real slot is already claimed by a real-week entry — pile the
+    // rest onto the term's last real slot rather than leaving them on the
+    // syllabus-wide sequential counter.
+    pacedMissing = [for (final e in withoutReal) _withWeekNumber(e, realSlots.last)];
+  } else if (withoutReal.length > openSlots.length) {
+    final perSlot = _allocateWeeks(List.filled(openSlots.length, 1), withoutReal.length);
+    final paced = <SchemeOfWorkEntry>[];
+    var idx = 0;
+    for (var w = 0; w < openSlots.length; w++) {
+      final count = perSlot[w].clamp(0, withoutReal.length - idx);
+      for (var c = 0; c < count; c++) {
+        paced.add(_withWeekNumber(withoutReal[idx], openSlots[w]));
+        idx++;
+      }
+    }
+    while (idx < withoutReal.length) {
+      paced.add(_withWeekNumber(withoutReal[idx], openSlots.last));
+      idx++;
+    }
+    pacedMissing = paced;
+  } else {
+    final weeksPerEntry = _allocateWeeks(withoutReal.map(_pacingWeight).toList(), openSlots.length);
+    final paced = <SchemeOfWorkEntry>[];
+    var slotIndex = 0;
+    for (var i = 0; i < withoutReal.length; i++) {
+      final span = weeksPerEntry[i].clamp(1, openSlots.length - slotIndex);
+      for (var s = 0; s < span; s++) {
+        paced.add(_withWeekNumber(withoutReal[i], openSlots[slotIndex.clamp(0, openSlots.length - 1)]));
+        slotIndex++;
+      }
+    }
+    pacedMissing = paced;
+  }
+
+  final result = [
+    for (final e in entries)
+      if (e.realWeekNumber != null) e,
+    ...pacedMissing,
+  ];
+  result.sort((a, b) => (a.realWeekNumber ?? a.weekNumber).compareTo(b.realWeekNumber ?? b.weekNumber));
+  return result;
 }
 
 /// A topic's "how much time does this deserve" proxy — more competencies/

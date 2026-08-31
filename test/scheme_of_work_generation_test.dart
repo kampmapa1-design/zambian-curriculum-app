@@ -114,6 +114,17 @@ void main() {
         for (final curriculumCode in ['CBC_2023', 'OBC_2013']) {
           final draft = SchemeOfWorkDocumentDraft.fromEntries(termEntries, curriculumCode: curriculumCode, subjectName: label);
           for (final row in draft.rows) {
+            // A real crash (2026-08-31): scheme_of_work_document_screen.dart
+            // computed each row's week via `row.primaryEntry...` without
+            // checking `overrideWeekNumber` first — for the synthetic
+            // Mid-Term Break row (entries deliberately empty), primaryEntry
+            // is `entries.first`, throwing "Bad state: No element". This
+            // exercises the exact same expression the real screen uses, on
+            // every row, so this class of bug can't ship undetected again —
+            // `row.value(...)` alone (below) doesn't catch it, since it
+            // already special-cases specialRowLabel and never reaches
+            // primaryEntry for a synthetic row.
+            row.overrideWeekNumber ?? row.primaryEntry.realWeekNumber ?? row.primaryEntry.weekNumber;
             for (final columnId in [
               'week',
               'stage',

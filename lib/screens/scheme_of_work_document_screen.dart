@@ -324,23 +324,35 @@ class _SchemeOfWorkDocumentScreenState extends State<SchemeOfWorkDocumentScreen>
   Widget _buildRowCard(int index) {
     final row = _draft.rows[index];
     final entries = row.entries;
-    final taught = entries.every((e) => _markedTaughtTopicIds.contains(e.topic.id));
-    final week = row.primaryEntry.realWeekNumber ?? row.primaryEntry.weekNumber;
+    // A synthetic row (the Mid-Term Break the calendar-pacing engine
+    // always inserts — see SchemeOfWorkDocumentDraft._insertMidtermBreakRow)
+    // has no real topic behind it: `entries` is deliberately empty, so
+    // `row.primaryEntry` (`entries.first`) would throw ("Bad state: No
+    // element") — this was a real crash, confirmed 2026-08-31, on any
+    // term whose real week data left week 7 unclaimed. Every value the
+    // rest of this method needs is read from `row`/`entries` directly
+    // rather than through `primaryEntry` for that reason.
+    final isSpecialRow = row.specialRowLabel != null;
+    final taught = !isSpecialRow && entries.every((e) => _markedTaughtTopicIds.contains(e.topic.id));
+    final week = row.overrideWeekNumber ?? row.primaryEntry.realWeekNumber ?? row.primaryEntry.weekNumber;
     final competencies = entries.expand((e) => e.competencies).map((c) => c.description).toList();
     final objectives = entries.expand((e) => e.objectives).map((o) => o.description).toList();
+    final title = isSpecialRow ? row.specialRowLabel! : entries.map((e) => e.title).join('; ');
     return Card(
       margin: const EdgeInsets.only(bottom: 10),
       child: ExpansionTile(
-        title: Text('Week $week — ${entries.map((e) => e.title).join('; ')}'),
+        title: Text('Week $week — $title'),
         subtitle: _activeTemplate.columns.any((c) => c.id == 'stage') ? Text('Lesson ${row.lessonNumber}') : null,
-        trailing: IconButton(
-          icon: Icon(
-            taught ? Icons.check_circle : Icons.check_circle_outline,
-            color: taught ? Colors.green : null,
-          ),
-          tooltip: taught ? 'Marked as taught' : 'Mark as taught',
-          onPressed: taught ? null : () => _markTaught(entries),
-        ),
+        trailing: isSpecialRow
+            ? null
+            : IconButton(
+                icon: Icon(
+                  taught ? Icons.check_circle : Icons.check_circle_outline,
+                  color: taught ? Colors.green : null,
+                ),
+                tooltip: taught ? 'Marked as taught' : 'Mark as taught',
+                onPressed: taught ? null : () => _markTaught(entries),
+              ),
         childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
         children: [
           if (competencies.isNotEmpty) ...[
