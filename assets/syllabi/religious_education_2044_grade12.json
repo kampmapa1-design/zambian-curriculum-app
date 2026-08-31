@@ -1,0 +1,86 @@
+{
+  "_source": "Zambian OBC 2013 Religious Education (2044), Grade 12 — subject code 'RE2044', distinct from the already-bundled 2046 edition (code 'RE'). Built 2026-08-31 from real content in 'GRADE 11 2044 RELIGIOUS EDUCATION SCHEME OF WORK TERM 3.docx' — unusual but real provenance: that document's own Term 3 includes a 'Grade 12 Preview' section (weeks 4-12) in which the teacher previews real Grade 12 topic 12.1/12.2 content, in full sub-topic detail with real specific outcomes, real content, and real page references, ahead of the students actually reaching Grade 12. Every sub-topic and reference below is copied verbatim from that real preview content, not invented. Real PII stripped: the source document's header carried a real teacher's name and a real named boarding secondary school in every row — both removed, appear nowhere in this file. Topic-level names ('Man's Evasion from God', 'The Search for God') are independently cross-confirmed by a second real document, 'GRADE 12 2044 RELIGIOUS EDUCATION SCHEME OF WORK TERM 3.pdf' (its own Term 3 is a comprehensive final-exam-preparation review of all three grades' themes, listing Grade 12's own themes as '• Man's evasion from God • The search for God' — matching exactly), also PII-stripped (same teacher/school). Deliberately NOT term/week-placed: the preview happened during Grade 11's Term 3 (weeks 4-12), but that reflects when it was previewed early to Grade 11 students, not Grade 12's own real teaching week for this content, which neither source document states — carrying over those week numbers here would be a fabrication, so this file has topics/sub-topics/references but no week_number anywhere, same honest 'not yet term-placed' state as most of this app's other OBC files.",
+  "curriculum": {
+    "code": "OBC_2013",
+    "name": "2013 Outcome-Based Curriculum",
+    "description": "Zambia's 2013 outcome-based curriculum for Grades 10-12 (Senior Secondary)."
+  },
+  "subject": {
+    "name": "Religious Education (2044)",
+    "code": "RE2044",
+    "description": "Senior Secondary Religious Education (2044) syllabus, Grade 10-12 (Curriculum Development Centre, 2013) — a distinct edition from the 2046 syllabus already bundled under subject code 'RE'."
+  },
+  "grade": {
+    "name": "Grade 12",
+    "code": "G12_OBC",
+    "level": 12,
+    "phase": "Senior Secondary"
+  },
+  "terms": [
+    {
+      "name": "Year (not term-divided in the source syllabus)",
+      "topics": [
+        {
+          "name": "12.1 Man's Evasion from God",
+          "sequence_number": 1,
+          "sub_topics": [
+            {
+              "name": "12.1.1 Evasion in Modern Zambian Society",
+              "sequence_number": 1,
+              "description": "Discuss man's evasion from God in modern Zambian society, e.g. materialism, evasion in Islam.",
+              "references": "Syllabus pg 32-33"
+            },
+            {
+              "name": "12.1.2 Evasion in African Society",
+              "sequence_number": 2,
+              "description": "Explain evasion in African traditional society, e.g. magic, divination, charms, witchcraft.",
+              "references": "Syllabus pg 33"
+            },
+            {
+              "name": "12.1.3 Evasion in the Church",
+              "sequence_number": 3,
+              "description": "State evasion in the church, e.g. divisions, immorality, idolatry.",
+              "references": "Syllabus pg 33"
+            },
+            {
+              "name": "12.1.4 Evasion in the Old Testament",
+              "sequence_number": 4,
+              "description": "Describe evasion in the Old Testament (Isaiah 40:21-26; Isaiah 1:10-17; Psalm 53:1-6).",
+              "references": "Syllabus pg 33-34"
+            },
+            {
+              "name": "12.1.5 Evasion in the New Testament",
+              "sequence_number": 5,
+              "description": "State teachings on evasion in the New Testament (Luke 12:13-21; Luke 16:19-31; Matthew 4:1-11).",
+              "references": "Syllabus pg 34"
+            }
+          ]
+        },
+        {
+          "name": "12.2 The Search for God",
+          "sequence_number": 2,
+          "sub_topics": [
+            {
+              "name": "12.2.1 The Search for God in the Present Situation",
+              "sequence_number": 1,
+              "description": "Describe the search for God in Zambian society today, e.g. prayer, scriptures, Hinduism and Islam.",
+              "references": "Syllabus pg 34"
+            },
+            {
+              "name": "12.2.2 The Search for God in African Tradition",
+              "sequence_number": 2,
+              "description": "Identify teachings on God in African tradition, e.g. attributes of God, traditional rituals, ancestors.",
+              "references": "Syllabus pg 35"
+            },
+            {
+              "name": "12.2.3 The Search for God in the Church",
+              "sequence_number": 3,
+              "description": "Explain the search for God in the early church, e.g. moral reformers, philosophers, sects, the role of the church.",
+              "references": "Syllabus pg 35"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

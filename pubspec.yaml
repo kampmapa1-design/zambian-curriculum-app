@@ -56,6 +56,8 @@ flutter:
     - assets/syllabi/religious_education_grade10.json
     - assets/syllabi/religious_education_grade11.json
     - assets/syllabi/religious_education_grade12.json
+    - assets/syllabi/religious_education_2044_grade11.json
+    - assets/syllabi/religious_education_2044_grade12.json
     - assets/syllabi/history_grade10.json
     - assets/syllabi/history_grade11.json
     - assets/syllabi/history_grade12.json
