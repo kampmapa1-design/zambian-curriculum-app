@@ -1,5 +1,5 @@
 {
-  "_source": "Ministry of Education / Curriculum Development Centre, Zambia. 'O-Level Mathematics Syllabus, Grade 10-12' (2013, published by CDC) — Grade 11, Topics 11.1-11.10, 11.12, 11.13, 11.14. Topic, sub-topic and Specific Outcome statements only; the 'Content' column is omitted for the reasons documented in the Grade 10 file. This document's outcome numbering mostly matches its sub-topic structure reliably (unlike several other OBC syllabi processed for this app), with two exceptions: Topic 11.11 does not exist anywhere in the source — the topic numbering genuinely jumps from 11.10 (Trigonometry) straight to 11.12 (Mensuration), confirmed by a full-document search, not an extraction artifact; and Topic 11.14 (Statistics)'s outcome codes are misprinted with a '12.14.x' prefix (grade digit leaked in) despite the topic itself being clearly Grade 11 content, positioned before Grade 12 begins. The syllabus organizes content by Grade only, not by Term, so all of Grade 11 is modeled as a single term here.",
+  "_source": "Ministry of Education / Curriculum Development Centre, Zambia. 'O-Level Mathematics Syllabus, Grade 10-12' (2013, published by CDC) — Grade 11, Topics 11.1-11.10, 11.12, 11.13, 11.14. Topic, sub-topic and Specific Outcome statements only; the 'Content' column is omitted for the reasons documented in the Grade 10 file. This document's outcome numbering mostly matches its sub-topic structure reliably (unlike several other OBC syllabi processed for this app), with two exceptions: Topic 11.11 does not exist anywhere in the source — the topic numbering genuinely jumps from 11.10 (Trigonometry) straight to 11.12 (Mensuration), confirmed by a full-document search, not an extraction artifact; and Topic 11.14 (Statistics)'s outcome codes are misprinted with a '12.14.x' prefix (grade digit leaked in) despite the topic itself being clearly Grade 11 content, positioned before Grade 12 begins. The syllabus organizes content by Grade only, not by Term, so all of Grade 11 is modeled as a single term here. STRUCTURAL TERM SPLIT (2026-08-31, not sourced): this file's topics were previously modeled as a single undivided 'Year' block (no real per-topic term/week data exists for this subject/grade). At the user's own explicit request and choice among alternatives offered, the SAME real topics above have now been divided into three roughly-equal-by-content-volume groups, in their original curriculum order, labelled 'Term 1'/'Term 2'/'Term 3' purely so the app can generate and share one term at a time. This division of which topic falls in which term is NOT sourced from any real scheme of work - it is an organizational split only. No topic, sub-topic, competency, or objective was added, removed, or altered; only the grouping changed. Each term's own topics still have no real week_number of their own, so within a term the app's existing calendar-pacing engine spreads them algorithmically across that term's real teaching weeks, exactly as it already did for the whole undivided Year block before this split.",
   "curriculum": {
     "code": "OBC_2013",
     "name": "2013 Outcome-Based Curriculum",
@@ -18,219 +18,627 @@
   },
   "terms": [
     {
-      "name": "Year (not term-divided in the source syllabus)",
+      "name": "Term 1",
       "sequence_number": 1,
       "topics": [
         {
           "name": "11.1 Approximations",
           "sequence_number": 1,
           "sub_topics": [
-            { "name": "11.1.1 Relative and Absolute Error", "sequence_number": 1, "competencies": [
-              { "sequence_number": 1, "description": "Work with relative and absolute errors", "category": "Specific Outcome" }
-            ]}
+            {
+              "name": "11.1.1 Relative and Absolute Error",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Work with relative and absolute errors",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
           ]
         },
         {
           "name": "11.2 Sequences and Series",
           "sequence_number": 2,
           "sub_topics": [
-            { "name": "11.2.1 Arithmetic Progression", "sequence_number": 1, "competencies": [
-              { "sequence_number": 1, "description": "Identify an arithmetic progression (AP)", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Find the nth term of the AP", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Find the sum of an AP", "category": "Specific Outcome" },
-              { "sequence_number": 4, "description": "Find the arithmetic mean", "category": "Specific Outcome" }
-            ]},
-            { "name": "11.2.2 Geometric Progression", "sequence_number": 2, "competencies": [
-              { "sequence_number": 1, "description": "Identify a geometric progression (GP)", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Find the nth term of a GP", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Find the geometric mean", "category": "Specific Outcome" },
-              { "sequence_number": 4, "description": "Find the sum of a geometric progression", "category": "Specific Outcome" },
-              { "sequence_number": 5, "description": "Find the sum to infinity of a geometric progression", "category": "Specific Outcome" }
-            ]}
+            {
+              "name": "11.2.1 Arithmetic Progression",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Identify an arithmetic progression (AP)",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Find the nth term of the AP",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Find the sum of an AP",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Find the arithmetic mean",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "11.2.2 Geometric Progression",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Identify a geometric progression (GP)",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Find the nth term of a GP",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Find the geometric mean",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Find the sum of a geometric progression",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 5,
+                  "description": "Find the sum to infinity of a geometric progression",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
           ]
         },
         {
           "name": "11.3 Coordinate Geometry",
           "sequence_number": 3,
           "sub_topics": [
-            { "name": "11.3.1 Length of a Straight Line Between Two Points", "sequence_number": 1, "competencies": [
-              { "sequence_number": 1, "description": "Calculate the length of a straight line", "category": "Specific Outcome" }
-            ]},
-            { "name": "11.3.2 The Mid Point", "sequence_number": 2, "competencies": [
-              { "sequence_number": 1, "description": "Calculate the mid-point of two points", "category": "Specific Outcome" }
-            ]},
-            { "name": "11.3.3 Gradient", "sequence_number": 3, "competencies": [
-              { "sequence_number": 1, "description": "Calculate the gradient of a line segment", "category": "Specific Outcome" }
-            ]},
-            { "name": "11.3.4 Equation of a Straight Line", "sequence_number": 4, "competencies": [
-              { "sequence_number": 1, "description": "Find the equation of a straight line", "category": "Specific Outcome" }
-            ]},
-            { "name": "11.3.5 Parallel and Perpendicular Lines", "sequence_number": 5, "competencies": [
-              { "sequence_number": 1, "description": "Find the gradients of parallel and perpendicular lines", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Use gradients of parallel and perpendicular lines to find equations", "category": "Specific Outcome" }
-            ]}
+            {
+              "name": "11.3.1 Length of a Straight Line Between Two Points",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Calculate the length of a straight line",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "11.3.2 The Mid Point",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Calculate the mid-point of two points",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "11.3.3 Gradient",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Calculate the gradient of a line segment",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "11.3.4 Equation of a Straight Line",
+              "sequence_number": 4,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Find the equation of a straight line",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "11.3.5 Parallel and Perpendicular Lines",
+              "sequence_number": 5,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Find the gradients of parallel and perpendicular lines",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Use gradients of parallel and perpendicular lines to find equations",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
           ]
         },
         {
           "name": "11.4 Relations and Functions",
           "sequence_number": 4,
           "sub_topics": [
-            { "name": "11.4.1 Inverse Functions", "sequence_number": 1, "competencies": [
-              { "sequence_number": 1, "description": "Find inverses of one-to-one functions", "category": "Specific Outcome" }
-            ]},
-            { "name": "11.4.2 Composite Functions", "sequence_number": 2, "competencies": [
-              { "sequence_number": 1, "description": "Simplify composite functions", "category": "Specific Outcome" }
-            ]},
-            { "name": "11.4.3 Application", "sequence_number": 3, "competencies": [
-              { "sequence_number": 1, "description": "Solve problems involving linear functions", "category": "Specific Outcome" }
-            ]}
+            {
+              "name": "11.4.1 Inverse Functions",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Find inverses of one-to-one functions",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "11.4.2 Composite Functions",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Simplify composite functions",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "11.4.3 Application",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Solve problems involving linear functions",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
           ]
         },
         {
           "name": "11.5 Quadratic Functions",
           "sequence_number": 5,
           "sub_topics": [
-            { "name": "11.5.1 Introduction to Quadratic Functions", "sequence_number": 1, "competencies": [
-              { "sequence_number": 1, "description": "Explain the quadratic function and its graph", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Sketch the graph of a quadratic function", "category": "Specific Outcome" }
-            ]}
+            {
+              "name": "11.5.1 Introduction to Quadratic Functions",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Explain the quadratic function and its graph",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Sketch the graph of a quadratic function",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
           ]
-        },
+        }
+      ]
+    },
+    {
+      "name": "Term 2",
+      "sequence_number": 2,
+      "topics": [
         {
           "name": "11.6 Quadratic Equations",
-          "sequence_number": 6,
+          "sequence_number": 1,
           "sub_topics": [
-            { "name": "11.6.1 Introduction to Quadratic Equations", "sequence_number": 1, "competencies": [
-              { "sequence_number": 1, "description": "Explain the meaning of the quadratic equation", "category": "Specific Outcome" }
-            ]},
-            { "name": "11.6.2 Solutions of Quadratic Equations", "sequence_number": 2, "competencies": [
-              { "sequence_number": 1, "description": "Solve quadratic equations by graphical method", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Solve quadratic equations using factorisation method", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Solve quadratic equations using completing the square method", "category": "Specific Outcome" },
-              { "sequence_number": 4, "description": "Solve quadratic equations using quadratic formula method", "category": "Specific Outcome" },
-              { "sequence_number": 5, "description": "Apply quadratic equations to solve real life problems", "category": "Specific Outcome" }
-            ]}
+            {
+              "name": "11.6.1 Introduction to Quadratic Equations",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Explain the meaning of the quadratic equation",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "11.6.2 Solutions of Quadratic Equations",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Solve quadratic equations by graphical method",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Solve quadratic equations using factorisation method",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Solve quadratic equations using completing the square method",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Solve quadratic equations using quadratic formula method",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 5,
+                  "description": "Apply quadratic equations to solve real life problems",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
           ]
         },
         {
           "name": "11.7 Variation",
-          "sequence_number": 7,
+          "sequence_number": 2,
           "sub_topics": [
-            { "name": "11.7.1 Introduction to Variation", "sequence_number": 1, "competencies": [
-              { "sequence_number": 1, "description": "Describe variation", "category": "Specific Outcome" }
-            ]},
-            { "name": "11.7.2 Direct and Inverse Variation", "sequence_number": 2, "competencies": [
-              { "sequence_number": 1, "description": "Distinguish between direct and inverse variation", "category": "Specific Outcome" }
-            ]},
-            { "name": "11.7.3 Joint and Partial Variation", "sequence_number": 3, "competencies": [
-              { "sequence_number": 1, "description": "Distinguish between joint and partial variation", "category": "Specific Outcome" }
-            ]},
-            { "name": "11.7.4 Graphs", "sequence_number": 4, "competencies": [
-              { "sequence_number": 1, "description": "Draw and interpret graphs of variation", "category": "Specific Outcome" }
-            ]},
-            { "name": "11.7.5 Applications", "sequence_number": 5, "competencies": [
-              { "sequence_number": 1, "description": "Solve problems involving variations", "category": "Specific Outcome" }
-            ]}
+            {
+              "name": "11.7.1 Introduction to Variation",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe variation",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "11.7.2 Direct and Inverse Variation",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Distinguish between direct and inverse variation",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "11.7.3 Joint and Partial Variation",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Distinguish between joint and partial variation",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "11.7.4 Graphs",
+              "sequence_number": 4,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Draw and interpret graphs of variation",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "11.7.5 Applications",
+              "sequence_number": 5,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Solve problems involving variations",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
           ]
         },
         {
           "name": "11.8 Circle Theorems",
-          "sequence_number": 8,
+          "sequence_number": 3,
           "sub_topics": [
-            { "name": "11.8.1 Properties of a Circle", "sequence_number": 1, "competencies": [
-              { "sequence_number": 1, "description": "Analyse the parts of a circle", "category": "Specific Outcome" }
-            ]},
-            { "name": "11.8.2 Angle Properties", "sequence_number": 2, "competencies": [
-              { "sequence_number": 1, "description": "Solve problems using angle properties of a circle", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Solve problems involving tangent properties", "category": "Specific Outcome" }
-            ]}
+            {
+              "name": "11.8.1 Properties of a Circle",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Analyse the parts of a circle",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "11.8.2 Angle Properties",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Solve problems using angle properties of a circle",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Solve problems involving tangent properties",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
           ]
         },
         {
           "name": "11.9 Construction and Loci",
-          "sequence_number": 9,
+          "sequence_number": 4,
           "sub_topics": [
-            { "name": "11.9.1 Construction", "sequence_number": 1, "competencies": [
-              { "sequence_number": 1, "description": "Construct line and angle bisectors", "category": "Specific Outcome" }
-            ]},
-            { "name": "11.9.2 Locus", "sequence_number": 2, "competencies": [
-              { "sequence_number": 1, "description": "Explain the meaning of locus", "category": "Specific Outcome" }
-            ]},
-            { "name": "11.9.3 Loci in Two Dimensions", "sequence_number": 3, "competencies": [
-              { "sequence_number": 1, "description": "Describe locus of a point in two and three dimensions", "category": "Specific Outcome" }
-            ]},
-            { "name": "11.9.4 Loci in Three Dimensions", "sequence_number": 4, "competencies": [
-              { "sequence_number": 1, "description": "Construct locus of a point in two dimensions", "category": "Specific Outcome" }
-            ]}
+            {
+              "name": "11.9.1 Construction",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Construct line and angle bisectors",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "11.9.2 Locus",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Explain the meaning of locus",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "11.9.3 Loci in Two Dimensions",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe locus of a point in two and three dimensions",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "11.9.4 Loci in Three Dimensions",
+              "sequence_number": 4,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Construct locus of a point in two dimensions",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
           ]
         },
         {
           "name": "11.10 Trigonometry",
-          "sequence_number": 10,
+          "sequence_number": 5,
           "sub_topics": [
-            { "name": "11.10.1 Introduction to Trigonometry", "sequence_number": 1, "competencies": [
-              { "sequence_number": 1, "description": "Relate right angled triangle to the three trigonometric ratios", "category": "Specific Outcome" }
-            ]},
-            { "name": "11.10.2 Trigonometric Ratios", "sequence_number": 2, "competencies": [
-              { "sequence_number": 1, "description": "Describe the three trigonometric ratios on a right angled triangle", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Calculate sides and angles of a right angled triangle", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Work with special angles (60°, 45° and 30°)", "category": "Specific Outcome" }
-            ]},
-            { "name": "11.10.3 Sine and Cosine Rules", "sequence_number": 3, "competencies": [
-              { "sequence_number": 1, "description": "Find sides and angles of non-right angled triangles", "category": "Specific Outcome" }
-            ]},
-            { "name": "11.10.4 Area of a Triangle", "sequence_number": 4, "competencies": [
-              { "sequence_number": 1, "description": "Calculate areas of a non-right angled triangle", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Determine the signs of the three trigonometric ratios in the quadrants", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Draw graphs for sine, cosine and tangent curves", "category": "Specific Outcome" },
-              { "sequence_number": 4, "description": "Solve trigonometric equations", "category": "Specific Outcome" },
-              { "sequence_number": 5, "description": "Use trigonometry to solve practical problems", "category": "Specific Outcome" }
-            ]}
+            {
+              "name": "11.10.1 Introduction to Trigonometry",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Relate right angled triangle to the three trigonometric ratios",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "11.10.2 Trigonometric Ratios",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe the three trigonometric ratios on a right angled triangle",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Calculate sides and angles of a right angled triangle",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Work with special angles (60°, 45° and 30°)",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "11.10.3 Sine and Cosine Rules",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Find sides and angles of non-right angled triangles",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "11.10.4 Area of a Triangle",
+              "sequence_number": 4,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Calculate areas of a non-right angled triangle",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Determine the signs of the three trigonometric ratios in the quadrants",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Draw graphs for sine, cosine and tangent curves",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Solve trigonometric equations",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 5,
+                  "description": "Use trigonometry to solve practical problems",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
           ]
-        },
+        }
+      ]
+    },
+    {
+      "name": "Term 3",
+      "sequence_number": 3,
+      "topics": [
         {
           "name": "11.12 Mensuration",
-          "sequence_number": 11,
+          "sequence_number": 1,
           "sub_topics": [
-            { "name": "11.12.1 Area", "sequence_number": 1, "competencies": [
-              { "sequence_number": 1, "description": "Calculate the area of a sector", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Calculate surface area of three dimensional figures", "category": "Specific Outcome" }
-            ]},
-            { "name": "11.12.2 Volume", "sequence_number": 2, "competencies": [
-              { "sequence_number": 1, "description": "Calculate volume of prisms", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Solve problems involving area and volume", "category": "Specific Outcome" }
-            ]}
+            {
+              "name": "11.12.1 Area",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Calculate the area of a sector",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Calculate surface area of three dimensional figures",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "11.12.2 Volume",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Calculate volume of prisms",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Solve problems involving area and volume",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
           ]
         },
         {
           "name": "11.13 Probability",
-          "sequence_number": 12,
+          "sequence_number": 2,
           "sub_topics": [
-            { "name": "11.13.1 Laws of Probability", "sequence_number": 1, "competencies": [
-              { "sequence_number": 1, "description": "Compute probabilities using the laws of probability", "category": "Specific Outcome" }
-            ]},
-            { "name": "11.13.2 Tree Diagrams and Grid", "sequence_number": 2, "competencies": [
-              { "sequence_number": 1, "description": "Calculate probabilities using tree diagrams and grids", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Calculate probabilities of mutually exclusive events and compound events", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Find probabilities of independent events", "category": "Specific Outcome" },
-              { "sequence_number": 4, "description": "Apply probability to real life problems", "category": "Specific Outcome" }
-            ]}
+            {
+              "name": "11.13.1 Laws of Probability",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Compute probabilities using the laws of probability",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "11.13.2 Tree Diagrams and Grid",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Calculate probabilities using tree diagrams and grids",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Calculate probabilities of mutually exclusive events and compound events",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Find probabilities of independent events",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Apply probability to real life problems",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
           ]
         },
         {
           "name": "11.14 Statistics",
-          "sequence_number": 13,
+          "sequence_number": 3,
           "sub_topics": [
-            { "name": "11.14.1 Cumulative Frequency Tables", "sequence_number": 1, "competencies": [
-              { "sequence_number": 1, "description": "Construct cumulative frequency tables using grouped and ungrouped data", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Draw cumulative frequency curves", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Draw relative cumulative curves", "category": "Specific Outcome" }
-            ]},
-            { "name": "11.14.2 Measures of Dispersion", "sequence_number": 2, "competencies": [
-              { "sequence_number": 1, "description": "Calculate the range, inter quartile range, and semi inter quartile range", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Calculate the percentiles", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Calculate variance and standard deviation for ungrouped and grouped data", "category": "Specific Outcome" }
-            ]}
+            {
+              "name": "11.14.1 Cumulative Frequency Tables",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Construct cumulative frequency tables using grouped and ungrouped data",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Draw cumulative frequency curves",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Draw relative cumulative curves",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "11.14.2 Measures of Dispersion",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Calculate the range, inter quartile range, and semi inter quartile range",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Calculate the percentiles",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Calculate variance and standard deviation for ungrouped and grouped data",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
           ]
         }
       ]

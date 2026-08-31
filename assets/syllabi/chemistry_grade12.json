@@ -1,5 +1,5 @@
 {
-  "_source": "Ministry of Education / Curriculum Development Centre, Zambia. 'Chemistry Syllabus (5070), Grade 10-12' (2013, published by CDC) — Grade 12, Topics 12.9-12.12. Topic, sub-topic and Specific Outcome statements only; the 'Content' column is omitted for the reasons documented in the Grade 10 file. This matches the Grade's own general-outcomes statement, which names exactly four areas: electricity and chemistry, metals, non-metals, and organic chemistry. Unusually, Grade 12's topic numbering jumps straight from Grade 11's 11.4 to 12.9 (skipping 12.1-12.8 entirely) — a genuine oddity in the source's own numbering scheme, not a transcription error; Grade 12's own topics from 12.9 onward are internally consistent and reliably numbered. A few outcome codes within Grade 12 sub-topics skip individual digits (e.g. under 12.11.2 Hydrogen and 12.11.3 Oxygen); outcomes are numbered sequentially here in the source's own reading order rather than reproducing those gaps. The syllabus organizes content by Grade only, not by Term, so all of Grade 12 is modeled as a single term here. Pages following the Grade 12 content (from the syllabus's own page 83 onward) are the 'Chemistry Practical Syllabus' appendix — practical techniques, apparatus and reagent lists, and qualitative analysis test notes — not further curriculum content, confirming this is the complete topic set.",
+  "_source": "Ministry of Education / Curriculum Development Centre, Zambia. 'Chemistry Syllabus (5070), Grade 10-12' (2013, published by CDC) — Grade 12, Topics 12.9-12.12. Topic, sub-topic and Specific Outcome statements only; the 'Content' column is omitted for the reasons documented in the Grade 10 file. This matches the Grade's own general-outcomes statement, which names exactly four areas: electricity and chemistry, metals, non-metals, and organic chemistry. Unusually, Grade 12's topic numbering jumps straight from Grade 11's 11.4 to 12.9 (skipping 12.1-12.8 entirely) — a genuine oddity in the source's own numbering scheme, not a transcription error; Grade 12's own topics from 12.9 onward are internally consistent and reliably numbered. A few outcome codes within Grade 12 sub-topics skip individual digits (e.g. under 12.11.2 Hydrogen and 12.11.3 Oxygen); outcomes are numbered sequentially here in the source's own reading order rather than reproducing those gaps. The syllabus organizes content by Grade only, not by Term, so all of Grade 12 is modeled as a single term here. Pages following the Grade 12 content (from the syllabus's own page 83 onward) are the 'Chemistry Practical Syllabus' appendix — practical techniques, apparatus and reagent lists, and qualitative analysis test notes — not further curriculum content, confirming this is the complete topic set. STRUCTURAL TERM SPLIT (2026-08-31, not sourced): this file's topics were previously modeled as a single undivided 'Year' block (no real per-topic term/week data exists for this subject/grade). At the user's own explicit request and choice among alternatives offered, the SAME real topics above have now been divided into three roughly-equal-by-content-volume groups, in their original curriculum order, labelled 'Term 1'/'Term 2'/'Term 3' purely so the app can generate and share one term at a time. This division of which topic falls in which term is NOT sourced from any real scheme of work - it is an organizational split only. No topic, sub-topic, competency, or objective was added, removed, or altered; only the grouping changed. Each term's own topics still have no real week_number of their own, so within a term the app's existing calendar-pacing engine spreads them algorithmically across that term's real teaching weeks, exactly as it already did for the whole undivided Year block before this split.",
   "curriculum": {
     "code": "OBC_2013",
     "name": "2013 Outcome-Based Curriculum",
@@ -18,193 +18,769 @@
   },
   "terms": [
     {
-      "name": "Year (not term-divided in the source syllabus)",
+      "name": "Term 1",
       "sequence_number": 1,
       "topics": [
         {
           "name": "12.9 Chemistry and Electricity",
           "sequence_number": 1,
           "sub_topics": [
-            { "name": "12.9.1 Conductors", "sequence_number": 1, "competencies": [
-              { "sequence_number": 1, "description": "Classify conductors and non-conductors", "category": "Specific Outcome" }
-            ]},
-            { "name": "12.9.2 Electrolysis", "sequence_number": 2, "competencies": [
-              { "sequence_number": 1, "description": "Classify electrolytes and non-electrolytes", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Describe what electrolysis is", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Describe the products at the electrodes during electrolysis of molten binary ionic compounds", "category": "Specific Outcome" },
-              { "sequence_number": 4, "description": "Describe the products at the electrodes during electrolysis of aqueous ionic solutions", "category": "Specific Outcome" },
-              { "sequence_number": 5, "description": "Describe the industrial applications of electrolysis", "category": "Specific Outcome" },
-              { "sequence_number": 6, "description": "Calculate the quantity of electrolytic products", "category": "Specific Outcome" }
-            ]},
-            { "name": "12.9.3 Simple Cells (Chemical Cell)", "sequence_number": 3, "competencies": [
-              { "sequence_number": 1, "description": "Describe what a chemical cell is", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Compare electrolytic cells and simple cells", "category": "Specific Outcome" }
-            ]}
+            {
+              "name": "12.9.1 Conductors",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Classify conductors and non-conductors",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "12.9.2 Electrolysis",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Classify electrolytes and non-electrolytes",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Describe what electrolysis is",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Describe the products at the electrodes during electrolysis of molten binary ionic compounds",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Describe the products at the electrodes during electrolysis of aqueous ionic solutions",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 5,
+                  "description": "Describe the industrial applications of electrolysis",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 6,
+                  "description": "Calculate the quantity of electrolytic products",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "12.9.3 Simple Cells (Chemical Cell)",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe what a chemical cell is",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Compare electrolytic cells and simple cells",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
           ]
         },
         {
           "name": "12.10 Metals",
           "sequence_number": 2,
           "sub_topics": [
-            { "name": "12.10.1 General Properties of Metals", "sequence_number": 1, "competencies": [
-              { "sequence_number": 1, "description": "Describe diagrammatic representations of pure metals", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Describe the physical properties of metals", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Describe the chemical properties of metals", "category": "Specific Outcome" }
-            ]},
-            { "name": "12.10.2 Reactivity and Electrochemical Series", "sequence_number": 2, "competencies": [
-              { "sequence_number": 1, "description": "Describe the reactivity series of metals", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Explain the apparent non-reactivity of aluminium", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Demonstrate an order of reactivity", "category": "Specific Outcome" },
-              { "sequence_number": 4, "description": "Describe the effects of heat on hydroxides, carbonates, nitrates of metals and ammonium compounds", "category": "Specific Outcome" },
-              { "sequence_number": 5, "description": "Describe the extraction of copper, iron, aluminium and zinc from their ores", "category": "Specific Outcome" },
-              { "sequence_number": 6, "description": "Describe the uses of copper, iron, zinc and aluminium", "category": "Specific Outcome" },
-              { "sequence_number": 7, "description": "Explain the harmful effects of some metals", "category": "Specific Outcome" }
-            ]},
-            { "name": "12.10.3 Alloys", "sequence_number": 3, "competencies": [
-              { "sequence_number": 1, "description": "Describe what an alloy is", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Describe diagrammatic representations of alloys", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Explain the advantages of using alloys over pure metals", "category": "Specific Outcome" },
-              { "sequence_number": 4, "description": "Identify common uses of alloys", "category": "Specific Outcome" }
-            ]},
-            { "name": "12.10.4 Corrosion", "sequence_number": 4, "competencies": [
-              { "sequence_number": 1, "description": "Describe what corrosion is", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Relate corrosion to the reactivity of metals", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Describe the different methods of preventing corrosion", "category": "Specific Outcome" }
-            ]}
+            {
+              "name": "12.10.1 General Properties of Metals",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe diagrammatic representations of pure metals",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Describe the physical properties of metals",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Describe the chemical properties of metals",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "12.10.2 Reactivity and Electrochemical Series",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe the reactivity series of metals",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Explain the apparent non-reactivity of aluminium",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Demonstrate an order of reactivity",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Describe the effects of heat on hydroxides, carbonates, nitrates of metals and ammonium compounds",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 5,
+                  "description": "Describe the extraction of copper, iron, aluminium and zinc from their ores",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 6,
+                  "description": "Describe the uses of copper, iron, zinc and aluminium",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 7,
+                  "description": "Explain the harmful effects of some metals",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "12.10.3 Alloys",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe what an alloy is",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Describe diagrammatic representations of alloys",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Explain the advantages of using alloys over pure metals",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Identify common uses of alloys",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "12.10.4 Corrosion",
+              "sequence_number": 4,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe what corrosion is",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Relate corrosion to the reactivity of metals",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Describe the different methods of preventing corrosion",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
           ]
-        },
-        {
-          "name": "12.11 Non Metals",
-          "sequence_number": 3,
-          "sub_topics": [
-            { "name": "12.11.1 General Properties of Non-Metals", "sequence_number": 1, "competencies": [
-              { "sequence_number": 1, "description": "Describe the physical and chemical properties of non-metals", "category": "Specific Outcome" }
-            ]},
-            { "name": "12.11.2 Hydrogen", "sequence_number": 2, "competencies": [
-              { "sequence_number": 1, "description": "Demonstrate the laboratory preparation, collection and test for hydrogen", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Describe the physical and chemical properties of hydrogen", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Describe the industrial manufacture of hydrogen", "category": "Specific Outcome" },
-              { "sequence_number": 4, "description": "Describe the uses of hydrogen", "category": "Specific Outcome" }
-            ]},
-            { "name": "12.11.3 Oxygen", "sequence_number": 3, "competencies": [
-              { "sequence_number": 1, "description": "Demonstrate the laboratory preparation, collection and test for oxygen", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Describe the physical and chemical properties of oxygen", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Describe the industrial manufacture of oxygen", "category": "Specific Outcome" },
-              { "sequence_number": 4, "description": "Describe the uses of oxygen in industry and in natural processes", "category": "Specific Outcome" },
-              { "sequence_number": 5, "description": "Explain the importance of the ozone layer and dangers of its depletion", "category": "Specific Outcome" },
-              { "sequence_number": 6, "description": "Demonstrate the chemical test for water", "category": "Specific Outcome" }
-            ]},
-            { "name": "12.11.4 Nitrogen", "sequence_number": 4, "competencies": [
-              { "sequence_number": 1, "description": "Describe the industrial manufacture of nitrogen", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Explain the characteristics and importance of nitrogen as a gas", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Demonstrate the preparation, collection and test for ammonia in the laboratory", "category": "Specific Outcome" },
-              { "sequence_number": 4, "description": "Describe the manufacture of ammonia", "category": "Specific Outcome" },
-              { "sequence_number": 5, "description": "Describe the physical and chemical properties of ammonia", "category": "Specific Outcome" },
-              { "sequence_number": 6, "description": "Describe the thermal dissociation of ammonium salts", "category": "Specific Outcome" },
-              { "sequence_number": 7, "description": "Describe the uses of ammonia", "category": "Specific Outcome" },
-              { "sequence_number": 8, "description": "Describe the manufacture of nitric acid", "category": "Specific Outcome" },
-              { "sequence_number": 9, "description": "Explain the importance of nitrogenous fertilizers", "category": "Specific Outcome" },
-              { "sequence_number": 10, "description": "Describe the effects of nitrogenous fertilizers on the environment", "category": "Specific Outcome" }
-            ]},
-            { "name": "12.11.5 Chlorine", "sequence_number": 5, "competencies": [
-              { "sequence_number": 1, "description": "Demonstrate the laboratory preparation, collection and test for chlorine gas", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Describe the physical and chemical properties of chlorine gas", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Describe the uses of chlorine", "category": "Specific Outcome" },
-              { "sequence_number": 4, "description": "Describe the industrial manufacture of chlorine", "category": "Specific Outcome" },
-              { "sequence_number": 5, "description": "Demonstrate the method for preparation, collection and test for hydrogen chloride gas", "category": "Specific Outcome" },
-              { "sequence_number": 6, "description": "Describe the physical and chemical properties of hydrogen chloride gas", "category": "Specific Outcome" },
-              { "sequence_number": 7, "description": "Demonstrate the method for preparation of hydrochloric acid", "category": "Specific Outcome" },
-              { "sequence_number": 8, "description": "Describe the reactions of dilute hydrochloric acid", "category": "Specific Outcome" }
-            ]},
-            { "name": "12.11.6 Sulphur", "sequence_number": 6, "competencies": [
-              { "sequence_number": 1, "description": "Describe the formation of sulphur dioxide", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Demonstrate the laboratory preparation, collection and test for sulphur dioxide", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Describe the physical and chemical properties of sulphur dioxide", "category": "Specific Outcome" },
-              { "sequence_number": 4, "description": "Describe the uses of sulphur dioxide", "category": "Specific Outcome" },
-              { "sequence_number": 5, "description": "Describe the industrial manufacture of sulphuric acid", "category": "Specific Outcome" },
-              { "sequence_number": 6, "description": "Describe the uses of sulphuric acid", "category": "Specific Outcome" }
-            ]},
-            { "name": "12.11.7 Carbon and Carbonates", "sequence_number": 7, "competencies": [
-              { "sequence_number": 1, "description": "Describe what allotropes are", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Describe the physical properties of the allotropes of carbon", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Describe the formation and properties of carbon monoxide", "category": "Specific Outcome" },
-              { "sequence_number": 4, "description": "Demonstrate the laboratory preparation, collection and test for carbon dioxide", "category": "Specific Outcome" },
-              { "sequence_number": 5, "description": "Describe the physical and chemical properties of carbon dioxide", "category": "Specific Outcome" },
-              { "sequence_number": 6, "description": "Describe the uses of carbon dioxide", "category": "Specific Outcome" },
-              { "sequence_number": 7, "description": "Describe the manufacture of lime from limestone", "category": "Specific Outcome" },
-              { "sequence_number": 8, "description": "Describe the uses of lime and slaked lime", "category": "Specific Outcome" },
-              { "sequence_number": 9, "description": "Describe the uses of limestone", "category": "Specific Outcome" },
-              { "sequence_number": 10, "description": "Describe the greenhouse effect", "category": "Specific Outcome" }
-            ]},
-            { "name": "12.11.8 Silicon", "sequence_number": 8, "competencies": [
-              { "sequence_number": 1, "description": "Describe the properties of silicon", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Describe the use of silicon", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Describe what silicones are", "category": "Specific Outcome" },
-              { "sequence_number": 4, "description": "Compare the fire resistance of silicone plastics to carbon-based macromolecules", "category": "Specific Outcome" },
-              { "sequence_number": 5, "description": "Describe the uses of silicon dioxide (sand)", "category": "Specific Outcome" }
-            ]}
-          ]
-        },
+        }
+      ]
+    },
+    {
+      "name": "Term 2",
+      "sequence_number": 2,
+      "topics": [
         {
           "name": "12.12 Organic Chemistry",
-          "sequence_number": 4,
+          "sequence_number": 1,
           "sub_topics": [
-            { "name": "12.12.1 Saturated and Unsaturated Hydrocarbons", "sequence_number": 1, "competencies": [
-              { "sequence_number": 1, "description": "Describe what an organic compound is", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Describe what a hydrocarbon is", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Name the structures of the aliphatic alkanes up to five carbon atoms", "category": "Specific Outcome" },
-              { "sequence_number": 4, "description": "Demonstrate the structures of isomers and their names", "category": "Specific Outcome" },
-              { "sequence_number": 5, "description": "Describe what fractional distillation of petroleum (crude oil) is", "category": "Specific Outcome" },
-              { "sequence_number": 6, "description": "Describe the uses of the fractions of crude oil", "category": "Specific Outcome" },
-              { "sequence_number": 7, "description": "Describe the chemical properties of alkanes", "category": "Specific Outcome" },
-              { "sequence_number": 8, "description": "Account for the apparent non-reactivity of alkanes as compared to other organic compounds", "category": "Specific Outcome" },
-              { "sequence_number": 9, "description": "Illustrate unsaturation in alkenes", "category": "Specific Outcome" },
-              { "sequence_number": 10, "description": "Name the structures of the alkenes up to five carbon atoms", "category": "Specific Outcome" },
-              { "sequence_number": 11, "description": "Demonstrate the structures of isomers of alkenes", "category": "Specific Outcome" },
-              { "sequence_number": 12, "description": "Describe the chemical properties of alkenes", "category": "Specific Outcome" },
-              { "sequence_number": 13, "description": "Illustrate the differences and similarities between saturated and unsaturated hydrocarbons", "category": "Specific Outcome" },
-              { "sequence_number": 14, "description": "Describe the chemical tests for unsaturated hydrocarbons (alkenes)", "category": "Specific Outcome" },
-              { "sequence_number": 15, "description": "Describe the uses of alkenes", "category": "Specific Outcome" }
-            ]},
-            { "name": "12.12.2 Alcohols (Alkanols)", "sequence_number": 2, "competencies": [
-              { "sequence_number": 1, "description": "Describe the chemical composition of an alcohol", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Name structures of primary alcohols up to five carbon atoms", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Demonstrate isomerism in alcohols", "category": "Specific Outcome" },
-              { "sequence_number": 4, "description": "Describe the formation of alcohols", "category": "Specific Outcome" },
-              { "sequence_number": 5, "description": "Describe the chemical properties of alcohols", "category": "Specific Outcome" },
-              { "sequence_number": 6, "description": "Describe the uses of alcohols", "category": "Specific Outcome" }
-            ]},
-            { "name": "12.12.3 Carboxylic Acids (Alkanoic Acids)", "sequence_number": 3, "competencies": [
-              { "sequence_number": 1, "description": "Name structures of carboxylic acids up to five carbon atoms", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Describe the formation of carboxylic acids", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Demonstrate the chemical properties of carboxylic acids", "category": "Specific Outcome" },
-              { "sequence_number": 4, "description": "Describe the uses of carboxylic acids", "category": "Specific Outcome" }
-            ]},
-            { "name": "12.12.4 Esters (Alkanoates)", "sequence_number": 4, "competencies": [
-              { "sequence_number": 1, "description": "Name the structures of esters up to five carbon atoms", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Describe the chemical properties of esters", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Describe the uses of esters", "category": "Specific Outcome" }
-            ]},
-            { "name": "12.12.5 Homologous Series", "sequence_number": 5, "competencies": [
-              { "sequence_number": 1, "description": "Describe what a homologous series is", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Describe the general characteristics of homologues (members)", "category": "Specific Outcome" }
-            ]},
-            { "name": "12.12.6 Macromolecules (Polymers)", "sequence_number": 6, "competencies": [
-              { "sequence_number": 1, "description": "Describe what macromolecules (polymers) are", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Describe what synthetic macromolecules are", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Describe the formation of polyalkenes", "category": "Specific Outcome" },
-              { "sequence_number": 4, "description": "Classify the types of plastics", "category": "Specific Outcome" },
-              { "sequence_number": 5, "description": "Describe the formation of nylon and Terylene", "category": "Specific Outcome" },
-              { "sequence_number": 6, "description": "Differentiate between the structures of Nylon and Terylene", "category": "Specific Outcome" },
-              { "sequence_number": 7, "description": "Describe typical uses of plastics and synthetic fibres", "category": "Specific Outcome" },
-              { "sequence_number": 8, "description": "Describe the biodegradability of synthetic fibres", "category": "Specific Outcome" },
-              { "sequence_number": 9, "description": "Describe what natural macromolecules are", "category": "Specific Outcome" },
-              { "sequence_number": 10, "description": "Describe the composition of carbohydrates", "category": "Specific Outcome" },
-              { "sequence_number": 11, "description": "Identify linkages in starch, proteins and fats", "category": "Specific Outcome" },
-              { "sequence_number": 12, "description": "Relate linkages in synthetic and natural polymers", "category": "Specific Outcome" },
-              { "sequence_number": 13, "description": "Describe hydrolysis of fats (saponification)", "category": "Specific Outcome" },
-              { "sequence_number": 14, "description": "Identify the products of the hydrolysis of starch and proteins", "category": "Specific Outcome" }
-            ]}
+            {
+              "name": "12.12.1 Saturated and Unsaturated Hydrocarbons",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe what an organic compound is",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Describe what a hydrocarbon is",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Name the structures of the aliphatic alkanes up to five carbon atoms",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Demonstrate the structures of isomers and their names",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 5,
+                  "description": "Describe what fractional distillation of petroleum (crude oil) is",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 6,
+                  "description": "Describe the uses of the fractions of crude oil",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 7,
+                  "description": "Describe the chemical properties of alkanes",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 8,
+                  "description": "Account for the apparent non-reactivity of alkanes as compared to other organic compounds",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 9,
+                  "description": "Illustrate unsaturation in alkenes",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 10,
+                  "description": "Name the structures of the alkenes up to five carbon atoms",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 11,
+                  "description": "Demonstrate the structures of isomers of alkenes",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 12,
+                  "description": "Describe the chemical properties of alkenes",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 13,
+                  "description": "Illustrate the differences and similarities between saturated and unsaturated hydrocarbons",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 14,
+                  "description": "Describe the chemical tests for unsaturated hydrocarbons (alkenes)",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 15,
+                  "description": "Describe the uses of alkenes",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "12.12.2 Alcohols (Alkanols)",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe the chemical composition of an alcohol",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Name structures of primary alcohols up to five carbon atoms",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Demonstrate isomerism in alcohols",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Describe the formation of alcohols",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 5,
+                  "description": "Describe the chemical properties of alcohols",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 6,
+                  "description": "Describe the uses of alcohols",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "12.12.3 Carboxylic Acids (Alkanoic Acids)",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Name structures of carboxylic acids up to five carbon atoms",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Describe the formation of carboxylic acids",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Demonstrate the chemical properties of carboxylic acids",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Describe the uses of carboxylic acids",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "12.12.4 Esters (Alkanoates)",
+              "sequence_number": 4,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Name the structures of esters up to five carbon atoms",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Describe the chemical properties of esters",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Describe the uses of esters",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "12.12.5 Homologous Series",
+              "sequence_number": 5,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe what a homologous series is",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Describe the general characteristics of homologues (members)",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "12.12.6 Macromolecules (Polymers)",
+              "sequence_number": 6,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe what macromolecules (polymers) are",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Describe what synthetic macromolecules are",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Describe the formation of polyalkenes",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Classify the types of plastics",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 5,
+                  "description": "Describe the formation of nylon and Terylene",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 6,
+                  "description": "Differentiate between the structures of Nylon and Terylene",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 7,
+                  "description": "Describe typical uses of plastics and synthetic fibres",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 8,
+                  "description": "Describe the biodegradability of synthetic fibres",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 9,
+                  "description": "Describe what natural macromolecules are",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 10,
+                  "description": "Describe the composition of carbohydrates",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 11,
+                  "description": "Identify linkages in starch, proteins and fats",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 12,
+                  "description": "Relate linkages in synthetic and natural polymers",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 13,
+                  "description": "Describe hydrolysis of fats (saponification)",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 14,
+                  "description": "Identify the products of the hydrolysis of starch and proteins",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 3",
+      "sequence_number": 3,
+      "topics": [
+        {
+          "name": "12.11 Non Metals",
+          "sequence_number": 1,
+          "sub_topics": [
+            {
+              "name": "12.11.1 General Properties of Non-Metals",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe the physical and chemical properties of non-metals",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "12.11.2 Hydrogen",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Demonstrate the laboratory preparation, collection and test for hydrogen",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Describe the physical and chemical properties of hydrogen",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Describe the industrial manufacture of hydrogen",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Describe the uses of hydrogen",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "12.11.3 Oxygen",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Demonstrate the laboratory preparation, collection and test for oxygen",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Describe the physical and chemical properties of oxygen",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Describe the industrial manufacture of oxygen",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Describe the uses of oxygen in industry and in natural processes",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 5,
+                  "description": "Explain the importance of the ozone layer and dangers of its depletion",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 6,
+                  "description": "Demonstrate the chemical test for water",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "12.11.4 Nitrogen",
+              "sequence_number": 4,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe the industrial manufacture of nitrogen",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Explain the characteristics and importance of nitrogen as a gas",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Demonstrate the preparation, collection and test for ammonia in the laboratory",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Describe the manufacture of ammonia",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 5,
+                  "description": "Describe the physical and chemical properties of ammonia",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 6,
+                  "description": "Describe the thermal dissociation of ammonium salts",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 7,
+                  "description": "Describe the uses of ammonia",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 8,
+                  "description": "Describe the manufacture of nitric acid",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 9,
+                  "description": "Explain the importance of nitrogenous fertilizers",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 10,
+                  "description": "Describe the effects of nitrogenous fertilizers on the environment",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "12.11.5 Chlorine",
+              "sequence_number": 5,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Demonstrate the laboratory preparation, collection and test for chlorine gas",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Describe the physical and chemical properties of chlorine gas",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Describe the uses of chlorine",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Describe the industrial manufacture of chlorine",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 5,
+                  "description": "Demonstrate the method for preparation, collection and test for hydrogen chloride gas",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 6,
+                  "description": "Describe the physical and chemical properties of hydrogen chloride gas",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 7,
+                  "description": "Demonstrate the method for preparation of hydrochloric acid",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 8,
+                  "description": "Describe the reactions of dilute hydrochloric acid",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "12.11.6 Sulphur",
+              "sequence_number": 6,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe the formation of sulphur dioxide",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Demonstrate the laboratory preparation, collection and test for sulphur dioxide",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Describe the physical and chemical properties of sulphur dioxide",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Describe the uses of sulphur dioxide",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 5,
+                  "description": "Describe the industrial manufacture of sulphuric acid",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 6,
+                  "description": "Describe the uses of sulphuric acid",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "12.11.7 Carbon and Carbonates",
+              "sequence_number": 7,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe what allotropes are",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Describe the physical properties of the allotropes of carbon",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Describe the formation and properties of carbon monoxide",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Demonstrate the laboratory preparation, collection and test for carbon dioxide",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 5,
+                  "description": "Describe the physical and chemical properties of carbon dioxide",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 6,
+                  "description": "Describe the uses of carbon dioxide",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 7,
+                  "description": "Describe the manufacture of lime from limestone",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 8,
+                  "description": "Describe the uses of lime and slaked lime",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 9,
+                  "description": "Describe the uses of limestone",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 10,
+                  "description": "Describe the greenhouse effect",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "12.11.8 Silicon",
+              "sequence_number": 8,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe the properties of silicon",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Describe the use of silicon",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Describe what silicones are",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Compare the fire resistance of silicone plastics to carbon-based macromolecules",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 5,
+                  "description": "Describe the uses of silicon dioxide (sand)",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
           ]
         }
       ]

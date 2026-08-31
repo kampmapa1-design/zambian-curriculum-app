@@ -1,5 +1,5 @@
 {
-  "_source": "Ministry of Education / Curriculum Development Centre, Zambia. 'Chemistry Syllabus (5070), Grade 10-12' (2013, published by CDC) — Grade 11, Topics 11.1-11.4. Topic, sub-topic and Specific Outcome statements only; the 'Content' column is omitted for the reasons documented in the Grade 10 file. This matches the Grade's own general-outcomes statement, which names exactly four areas: acids/bases/salts, the mole concept, chemical reactions and energy changes, and the Periodic Table. The syllabus organizes content by Grade only, not by Term, so all of Grade 11 is modeled as a single term here.",
+  "_source": "Ministry of Education / Curriculum Development Centre, Zambia. 'Chemistry Syllabus (5070), Grade 10-12' (2013, published by CDC) — Grade 11, Topics 11.1-11.4. Topic, sub-topic and Specific Outcome statements only; the 'Content' column is omitted for the reasons documented in the Grade 10 file. This matches the Grade's own general-outcomes statement, which names exactly four areas: acids/bases/salts, the mole concept, chemical reactions and energy changes, and the Periodic Table. The syllabus organizes content by Grade only, not by Term, so all of Grade 11 is modeled as a single term here. STRUCTURAL TERM SPLIT (2026-08-31, not sourced): this file's topics were previously modeled as a single undivided 'Year' block (no real per-topic term/week data exists for this subject/grade). At the user's own explicit request and choice among alternatives offered, the SAME real topics above have now been divided into three roughly-equal-by-content-volume groups, in their original curriculum order, labelled 'Term 1'/'Term 2'/'Term 3' purely so the app can generate and share one term at a time. This division of which topic falls in which term is NOT sourced from any real scheme of work - it is an organizational split only. No topic, sub-topic, competency, or objective was added, removed, or altered; only the grouping changed. Each term's own topics still have no real week_number of their own, so within a term the app's existing calendar-pacing engine spreads them algorithmically across that term's real teaching weeks, exactly as it already did for the whole undivided Year block before this split.",
   "curriculum": {
     "code": "OBC_2013",
     "name": "2013 Outcome-Based Curriculum",
@@ -18,122 +18,442 @@
   },
   "terms": [
     {
-      "name": "Year (not term-divided in the source syllabus)",
+      "name": "Term 1",
       "sequence_number": 1,
       "topics": [
         {
           "name": "11.1 Acids, Bases and Salts",
           "sequence_number": 1,
           "sub_topics": [
-            { "name": "11.1.1 Characteristic Properties of Acids and Bases", "sequence_number": 1, "competencies": [
-              { "sequence_number": 1, "description": "Describe acids, bases or alkalis in terms of ions they contain or produce in aqueous solution", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Describe the meaning of weak, strong, dilute and concentrated acids and alkalis", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Describe the pH scale", "category": "Specific Outcome" },
-              { "sequence_number": 4, "description": "Describe neutrality, acidity and alkalinity in terms of pH value", "category": "Specific Outcome" },
-              { "sequence_number": 5, "description": "Determine the pH value of a solution", "category": "Specific Outcome" },
-              { "sequence_number": 6, "description": "Demonstrate the characteristic properties of acids", "category": "Specific Outcome" },
-              { "sequence_number": 7, "description": "Demonstrate the characteristic properties of bases", "category": "Specific Outcome" },
-              { "sequence_number": 8, "description": "Illustrate the importance of acid-base reactions", "category": "Specific Outcome" },
-              { "sequence_number": 9, "description": "State the uses of acids and bases", "category": "Specific Outcome" }
-            ]},
-            { "name": "11.1.2 Preparation of Salts", "sequence_number": 2, "competencies": [
-              { "sequence_number": 1, "description": "Describe what a salt is", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Classify salts", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Demonstrate the preparation of an insoluble salt", "category": "Specific Outcome" },
-              { "sequence_number": 4, "description": "Demonstrate the preparation of soluble salts", "category": "Specific Outcome" }
-            ]},
-            { "name": "11.1.3 Types of Oxides", "sequence_number": 3, "competencies": [
-              { "sequence_number": 1, "description": "Describe the various types of oxides", "category": "Specific Outcome" }
-            ]},
-            { "name": "11.1.4 Identification of Ions and Gases (Qualitative Analysis)", "sequence_number": 4, "competencies": [
-              { "sequence_number": 1, "description": "Demonstrate the identity of aqueous cations and anions", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Demonstrate the identity of gases", "category": "Specific Outcome" }
-            ]}
+            {
+              "name": "11.1.1 Characteristic Properties of Acids and Bases",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe acids, bases or alkalis in terms of ions they contain or produce in aqueous solution",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Describe the meaning of weak, strong, dilute and concentrated acids and alkalis",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Describe the pH scale",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Describe neutrality, acidity and alkalinity in terms of pH value",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 5,
+                  "description": "Determine the pH value of a solution",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 6,
+                  "description": "Demonstrate the characteristic properties of acids",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 7,
+                  "description": "Demonstrate the characteristic properties of bases",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 8,
+                  "description": "Illustrate the importance of acid-base reactions",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 9,
+                  "description": "State the uses of acids and bases",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "11.1.2 Preparation of Salts",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe what a salt is",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Classify salts",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Demonstrate the preparation of an insoluble salt",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Demonstrate the preparation of soluble salts",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "11.1.3 Types of Oxides",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe the various types of oxides",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "11.1.4 Identification of Ions and Gases (Qualitative Analysis)",
+              "sequence_number": 4,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Demonstrate the identity of aqueous cations and anions",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Demonstrate the identity of gases",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
           ]
         },
         {
           "name": "11.2 The Mole Concept",
           "sequence_number": 2,
           "sub_topics": [
-            { "name": "11.2.1 Relative Masses", "sequence_number": 1, "competencies": [
-              { "sequence_number": 1, "description": "Describe what Relative Atomic Mass and relative molecular mass are", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Calculate the relative formula mass of a compound", "category": "Specific Outcome" }
-            ]},
-            { "name": "11.2.2 The Mole", "sequence_number": 2, "competencies": [
-              { "sequence_number": 1, "description": "Describe what a mole is", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Determine the physical mass of any substance using molar mass and the physical volume of any gas at r.t.p, and vice versa", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Describe the relationship of Avogadro's law to reacting moles and volumes of gases at r.t.p and s.t.p", "category": "Specific Outcome" },
-              { "sequence_number": 4, "description": "Determine the concentration of a solution applying the dilution law", "category": "Specific Outcome" },
-              { "sequence_number": 5, "description": "Illustrate calculations involving stoichiometric reacting moles and volumes of gases and solutions", "category": "Specific Outcome" },
-              { "sequence_number": 6, "description": "Calculate the percentage yield in a reaction and the percentage purity of a substance", "category": "Specific Outcome" },
-              { "sequence_number": 7, "description": "Determine the limiting reagent in a given reaction", "category": "Specific Outcome" },
-              { "sequence_number": 8, "description": "Demonstrate calculations involving different types of acid-base titration reactions", "category": "Specific Outcome" }
-            ]},
-            { "name": "11.2.3 Empirical and Molecular Formulae", "sequence_number": 3, "competencies": [
-              { "sequence_number": 1, "description": "Calculate the percentage composition of elements in a compound", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Determine the empirical formula of a compound given the molecular formula", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Determine the empirical and molecular formulae using percentage composition or masses", "category": "Specific Outcome" }
-            ]}
+            {
+              "name": "11.2.1 Relative Masses",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe what Relative Atomic Mass and relative molecular mass are",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Calculate the relative formula mass of a compound",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "11.2.2 The Mole",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe what a mole is",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Determine the physical mass of any substance using molar mass and the physical volume of any gas at r.t.p, and vice versa",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Describe the relationship of Avogadro's law to reacting moles and volumes of gases at r.t.p and s.t.p",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Determine the concentration of a solution applying the dilution law",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 5,
+                  "description": "Illustrate calculations involving stoichiometric reacting moles and volumes of gases and solutions",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 6,
+                  "description": "Calculate the percentage yield in a reaction and the percentage purity of a substance",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 7,
+                  "description": "Determine the limiting reagent in a given reaction",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 8,
+                  "description": "Demonstrate calculations involving different types of acid-base titration reactions",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "11.2.3 Empirical and Molecular Formulae",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Calculate the percentage composition of elements in a compound",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Determine the empirical formula of a compound given the molecular formula",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Determine the empirical and molecular formulae using percentage composition or masses",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
           ]
-        },
+        }
+      ]
+    },
+    {
+      "name": "Term 2",
+      "sequence_number": 2,
+      "topics": [
         {
           "name": "11.3 Chemical Reactions and Energy Changes",
-          "sequence_number": 3,
+          "sequence_number": 1,
           "sub_topics": [
-            { "name": "11.3.1 Rates of Chemical Reactions", "sequence_number": 1, "competencies": [
-              { "sequence_number": 1, "description": "Describe the rate of a chemical reaction", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Demonstrate the factors that affect the rates of chemical reactions", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Describe methods of controlling the rate of chemical reactions", "category": "Specific Outcome" },
-              { "sequence_number": 4, "description": "Describe the effect of a catalyst on the activation energy", "category": "Specific Outcome" }
-            ]},
-            { "name": "11.3.2 Chemical Equilibrium", "sequence_number": 2, "competencies": [
-              { "sequence_number": 1, "description": "Describe what chemical equilibrium is", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Describe the effect on the position of equilibrium of a reaction upon changing conditions", "category": "Specific Outcome" }
-            ]},
-            { "name": "11.3.3 Redox Reactions", "sequence_number": 3, "competencies": [
-              { "sequence_number": 1, "description": "Describe what oxidation and reduction is", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Describe what a redox reaction is", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Identify oxidizing and reducing agents in a reaction", "category": "Specific Outcome" },
-              { "sequence_number": 4, "description": "Demonstrate how to determine the oxidation number of an element with variable valency in a compound/ion", "category": "Specific Outcome" },
-              { "sequence_number": 5, "description": "Deduce a redox reaction using oxidation numbers", "category": "Specific Outcome" },
-              { "sequence_number": 6, "description": "Describe what a non-redox reaction is", "category": "Specific Outcome" },
-              { "sequence_number": 7, "description": "Identify the characteristics of oxidizing and reducing agents", "category": "Specific Outcome" }
-            ]},
-            { "name": "11.3.4 Energetics of Reactions", "sequence_number": 4, "competencies": [
-              { "sequence_number": 1, "description": "Describe what endothermic and exothermic reactions are", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Determine whether a reaction is endothermic or exothermic", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Describe endothermic and exothermic reactions in relation to bonds", "category": "Specific Outcome" },
-              { "sequence_number": 4, "description": "Identify activation energy for a catalysed and uncatalysed reaction on an energy level diagram", "category": "Specific Outcome" },
-              { "sequence_number": 5, "description": "Explain the advantages and disadvantages of energy sources (fuels)", "category": "Specific Outcome" },
-              { "sequence_number": 6, "description": "Describe the effects of the use of fuels on the environment", "category": "Specific Outcome" },
-              { "sequence_number": 7, "description": "Describe the use of silver halide in photography", "category": "Specific Outcome" },
-              { "sequence_number": 8, "description": "Describe respiration and photosynthesis in terms of energy changes", "category": "Specific Outcome" },
-              { "sequence_number": 9, "description": "Describe the use of radioactive isotopes in relation to energy changes", "category": "Specific Outcome" },
-              { "sequence_number": 10, "description": "Explain batteries as a convenient source of electrical energy", "category": "Specific Outcome" }
-            ]}
+            {
+              "name": "11.3.1 Rates of Chemical Reactions",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe the rate of a chemical reaction",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Demonstrate the factors that affect the rates of chemical reactions",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Describe methods of controlling the rate of chemical reactions",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Describe the effect of a catalyst on the activation energy",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "11.3.2 Chemical Equilibrium",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe what chemical equilibrium is",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Describe the effect on the position of equilibrium of a reaction upon changing conditions",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "11.3.3 Redox Reactions",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe what oxidation and reduction is",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Describe what a redox reaction is",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Identify oxidizing and reducing agents in a reaction",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Demonstrate how to determine the oxidation number of an element with variable valency in a compound/ion",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 5,
+                  "description": "Deduce a redox reaction using oxidation numbers",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 6,
+                  "description": "Describe what a non-redox reaction is",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 7,
+                  "description": "Identify the characteristics of oxidizing and reducing agents",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "11.3.4 Energetics of Reactions",
+              "sequence_number": 4,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe what endothermic and exothermic reactions are",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Determine whether a reaction is endothermic or exothermic",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Describe endothermic and exothermic reactions in relation to bonds",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Identify activation energy for a catalysed and uncatalysed reaction on an energy level diagram",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 5,
+                  "description": "Explain the advantages and disadvantages of energy sources (fuels)",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 6,
+                  "description": "Describe the effects of the use of fuels on the environment",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 7,
+                  "description": "Describe the use of silver halide in photography",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 8,
+                  "description": "Describe respiration and photosynthesis in terms of energy changes",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 9,
+                  "description": "Describe the use of radioactive isotopes in relation to energy changes",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 10,
+                  "description": "Explain batteries as a convenient source of electrical energy",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
           ]
-        },
+        }
+      ]
+    },
+    {
+      "name": "Term 3",
+      "sequence_number": 3,
+      "topics": [
         {
           "name": "11.4 The Periodic Table",
-          "sequence_number": 4,
+          "sequence_number": 1,
           "sub_topics": [
-            { "name": "11.4.1 Groups and Periods", "sequence_number": 1, "competencies": [
-              { "sequence_number": 1, "description": "Describe what the Periodic Table is", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Identify vertical columns and horizontal rows", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Use the Periodic Table to classify elements", "category": "Specific Outcome" }
-            ]},
-            { "name": "11.4.2 Groups and Periodic Trends", "sequence_number": 2, "competencies": [
-              { "sequence_number": 1, "description": "Describe trends in various Groups given information about the elements", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Describe the physical and chemical properties of elements in Group I, II, VII and VIII", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Describe the importance of halogens", "category": "Specific Outcome" },
-              { "sequence_number": 4, "description": "Describe the harmful effects of halides", "category": "Specific Outcome" },
-              { "sequence_number": 5, "description": "Use the noble gases in providing an inert atmosphere", "category": "Specific Outcome" }
-            ]},
-            { "name": "11.4.3 Transition Metals", "sequence_number": 3, "competencies": [
-              { "sequence_number": 1, "description": "Describe what transition metals are", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Describe general properties of transition metals", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Describe the uses of transition metals", "category": "Specific Outcome" }
-            ]}
+            {
+              "name": "11.4.1 Groups and Periods",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe what the Periodic Table is",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Identify vertical columns and horizontal rows",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Use the Periodic Table to classify elements",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "11.4.2 Groups and Periodic Trends",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe trends in various Groups given information about the elements",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Describe the physical and chemical properties of elements in Group I, II, VII and VIII",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Describe the importance of halogens",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Describe the harmful effects of halides",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 5,
+                  "description": "Use the noble gases in providing an inert atmosphere",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "11.4.3 Transition Metals",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe what transition metals are",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Describe general properties of transition metals",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Describe the uses of transition metals",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
           ]
         }
       ]

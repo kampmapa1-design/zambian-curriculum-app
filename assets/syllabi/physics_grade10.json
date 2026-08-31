@@ -1,5 +1,5 @@
 {
-  "_source": "Ministry of Education / Curriculum Development Centre, Zambia. 'Physics Syllabus, Grade 10-12' (2013, published by CDC) — Grade 10, Topics 10.1-10.2. Topic, sub-topic and Specific Outcome statements only; the 'Content' (Knowledge/Skills/Values) columns are omitted, consistent with the approach used for the other 2013 OBC subjects in this app. This document's outcome numbering is reliable and matches its sub-topic structure. Grade 10 genuinely covers only two Topics — Measurements and Mechanics — confirmed by the Grade's own general-outcomes statement at the start of the syllabus, which names only these two areas; Mechanics (10.2) is simply very large, with seven sub-topics covering vectors, linear motion, forces, moments, work/energy/power, simple machines and pressure. Physics topic numbers continue sequentially across grades in this syllabus (Grade 10 ends at Topic 10.2, Grade 11 begins at Topic 11.3) rather than each grade restarting its own topic count — this is a distinctive, deliberate numbering choice by this syllabus, not an error. The syllabus organizes content by Grade only, not by Term, so all of Grade 10 is modeled as a single term here.",
+  "_source": "Ministry of Education / Curriculum Development Centre, Zambia. 'Physics Syllabus, Grade 10-12' (2013, published by CDC) — Grade 10, Topics 10.1-10.2. Topic, sub-topic and Specific Outcome statements only; the 'Content' (Knowledge/Skills/Values) columns are omitted, consistent with the approach used for the other 2013 OBC subjects in this app. This document's outcome numbering is reliable and matches its sub-topic structure. Grade 10 genuinely covers only two Topics — Measurements and Mechanics — confirmed by the Grade's own general-outcomes statement at the start of the syllabus, which names only these two areas; Mechanics (10.2) is simply very large, with seven sub-topics covering vectors, linear motion, forces, moments, work/energy/power, simple machines and pressure. Physics topic numbers continue sequentially across grades in this syllabus (Grade 10 ends at Topic 10.2, Grade 11 begins at Topic 11.3) rather than each grade restarting its own topic count — this is a distinctive, deliberate numbering choice by this syllabus, not an error. The syllabus organizes content by Grade only, not by Term, so all of Grade 10 is modeled as a single term here. STRUCTURAL TERM SPLIT (2026-08-31, not sourced): this file's topics were previously modeled as a single undivided 'Year' block (no real per-topic term/week data exists for this subject/grade). At the user's own explicit request and choice among alternatives offered, the SAME real topics/sub-topics above have now been divided into three roughly-equal-by-content-volume groups, in their original curriculum order, labelled 'Term 1'/'Term 2'/'Term 3' purely so the app can generate and share one term at a time. This division is NOT sourced from any real scheme of work - it is an organizational split only. No topic, sub-topic, competency, or objective was added, removed, or altered; only the grouping changed. With only 2 real top-level topics here, the split was done at sub-topic granularity instead of topic granularity (otherwise a 3-way split isn't possible) - Topic '10.1 Measurements' and '10.2 Mechanics' each legitimately reappear across more than one term as a result, carrying only the sub-topics assigned to that term, the same way this app already represents a real topic whose teaching genuinely spans a term boundary. Each sub-topic still has no real week_number of its own, so within a term the app's existing calendar-pacing engine spreads them algorithmically across that term's real teaching weeks, exactly as it already did for the whole undivided Year block.",
   "curriculum": {
     "code": "OBC_2013",
     "name": "2013 Outcome-Based Curriculum",
@@ -18,103 +18,419 @@
   },
   "terms": [
     {
-      "name": "Year (not term-divided in the source syllabus)",
+      "name": "Term 1",
       "sequence_number": 1,
       "topics": [
         {
           "name": "10.1 Measurements",
           "sequence_number": 1,
           "sub_topics": [
-            { "name": "10.1.1 International System of Units (SI)", "sequence_number": 1, "competencies": [
-              { "sequence_number": 1, "description": "Distinguish between basic and derived quantities", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Identify basic units and derived units", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Recognise prefixes, multiples and submultiples of fundamental and derived units", "category": "Specific Outcome" },
-              { "sequence_number": 4, "description": "Use scientific notation and significant figures in numerical problems", "category": "Specific Outcome" }
-            ]},
-            { "name": "10.1.2 Length and Time", "sequence_number": 2, "competencies": [
-              { "sequence_number": 1, "description": "Demonstrate the use of various measuring instruments to determine length", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Demonstrate the use of clocks and devices for measuring an interval of time", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Identify factors that affect the period of a simple pendulum", "category": "Specific Outcome" }
-            ]},
-            { "name": "10.1.3 Mass and Weight", "sequence_number": 3, "competencies": [
-              { "sequence_number": 1, "description": "Distinguish between mass and weight", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Demonstrate how to measure mass and weight", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Demonstrate how to locate the centre of mass of an object", "category": "Specific Outcome" },
-              { "sequence_number": 4, "description": "Describe qualitatively the effect of the position of the centre of mass on the stability of an object", "category": "Specific Outcome" }
-            ]},
-            { "name": "10.1.4 Density", "sequence_number": 4, "competencies": [
-              { "sequence_number": 1, "description": "Determine the density of floating objects", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Determine the density of a mixture of liquids", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Describe what relative density is", "category": "Specific Outcome" },
-              { "sequence_number": 4, "description": "Calculate relative density of air", "category": "Specific Outcome" }
-            ]}
+            {
+              "name": "10.1.1 International System of Units (SI)",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Distinguish between basic and derived quantities",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Identify basic units and derived units",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Recognise prefixes, multiples and submultiples of fundamental and derived units",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Use scientific notation and significant figures in numerical problems",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "10.1.2 Length and Time",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Demonstrate the use of various measuring instruments to determine length",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Demonstrate the use of clocks and devices for measuring an interval of time",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Identify factors that affect the period of a simple pendulum",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "10.1.3 Mass and Weight",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Distinguish between mass and weight",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Demonstrate how to measure mass and weight",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Demonstrate how to locate the centre of mass of an object",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Describe qualitatively the effect of the position of the centre of mass on the stability of an object",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "10.1.4 Density",
+              "sequence_number": 4,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Determine the density of floating objects",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Determine the density of a mixture of liquids",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Describe what relative density is",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Calculate relative density of air",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
           ]
         },
         {
           "name": "10.2 Mechanics",
           "sequence_number": 2,
           "sub_topics": [
-            { "name": "10.2.1 Scalars and Vectors", "sequence_number": 1, "competencies": [
-              { "sequence_number": 1, "description": "Describe what scalar and vector quantities are", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Distinguish between scalars and vectors", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Demonstrate adding of vectors to determine a resultant", "category": "Specific Outcome" },
-              { "sequence_number": 4, "description": "Demonstrate how to determine the resultant of two vectors graphically", "category": "Specific Outcome" }
-            ]},
-            { "name": "10.2.2 Linear Motion", "sequence_number": 2, "competencies": [
-              { "sequence_number": 1, "description": "Describe the terms used in mechanics", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Demonstrate the use of equations of uniformly accelerated motion to solve problems", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Interpret graphical representation of distance-time, displacement-time, speed-time, velocity-time and acceleration-time", "category": "Specific Outcome" },
-              { "sequence_number": 4, "description": "Investigate the consequences of over speeding", "category": "Specific Outcome" },
-              { "sequence_number": 5, "description": "Describe the acceleration of free fall for a body near the earth", "category": "Specific Outcome" },
-              { "sequence_number": 6, "description": "Describe qualitatively the motion of bodies falling in a uniform gravitational field with and without air resistance", "category": "Specific Outcome" }
-            ]},
-            { "name": "10.2.3 Forces", "sequence_number": 3, "competencies": [
-              { "sequence_number": 1, "description": "Explain what force is", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Explain the effect of forces on bodies", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Describe the inertia law", "category": "Specific Outcome" },
-              { "sequence_number": 4, "description": "Demonstrate the relationship between force and acceleration", "category": "Specific Outcome" },
-              { "sequence_number": 5, "description": "Demonstrate the relationship between mass and acceleration", "category": "Specific Outcome" },
-              { "sequence_number": 6, "description": "Perform calculations on force", "category": "Specific Outcome" },
-              { "sequence_number": 7, "description": "Investigate the effect of force on a spring", "category": "Specific Outcome" },
-              { "sequence_number": 8, "description": "Demonstrate the effects of friction on the motion of a body", "category": "Specific Outcome" },
-              { "sequence_number": 9, "description": "Describe the motion in a circular path due to a perpendicular force", "category": "Specific Outcome" }
-            ]},
-            { "name": "10.2.4 Moment of Forces", "sequence_number": 4, "competencies": [
-              { "sequence_number": 1, "description": "Perform calculations based on the principle of moments", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Investigate the everyday application of moments", "category": "Specific Outcome" }
-            ]},
-            { "name": "10.2.5 Work, Energy and Power", "sequence_number": 5, "competencies": [
-              { "sequence_number": 1, "description": "Explain the meaning of the terms work, energy and power", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Identify the units of measurement for work, energy and power", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Calculate work using the appropriate formula", "category": "Specific Outcome" },
-              { "sequence_number": 4, "description": "Identify the different forms of energy", "category": "Specific Outcome" },
-              { "sequence_number": 5, "description": "Explain qualitatively and quantitatively the terms gravitational potential energy and kinetic energy", "category": "Specific Outcome" },
-              { "sequence_number": 6, "description": "Describe sources of renewable and non-renewable energy", "category": "Specific Outcome" },
-              { "sequence_number": 7, "description": "Explain the effects of the use of energy sources on the environment", "category": "Specific Outcome" },
-              { "sequence_number": 8, "description": "Demonstrate energy transformation from one form to another", "category": "Specific Outcome" },
-              { "sequence_number": 9, "description": "Describe the conservation of energy", "category": "Specific Outcome" },
-              { "sequence_number": 10, "description": "Calculate energy using mass and velocity", "category": "Specific Outcome" },
-              { "sequence_number": 11, "description": "Demonstrate the calculation of efficiency of energy conversion using the appropriate formula", "category": "Specific Outcome" },
-              { "sequence_number": 12, "description": "Demonstrate calculation of power using the appropriate formula", "category": "Specific Outcome" }
-            ]},
-            { "name": "10.2.6 Simple Machines", "sequence_number": 6, "competencies": [
-              { "sequence_number": 1, "description": "Describe what a simple machine is", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Identify the different types of simple machines", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Describe the distances moved by the effort and the load in a simple machine", "category": "Specific Outcome" },
-              { "sequence_number": 4, "description": "Explain the terms Mechanical Advantage (MA), Velocity Ratio (VR) and Efficiency", "category": "Specific Outcome" },
-              { "sequence_number": 5, "description": "Perform calculations involving simple machines", "category": "Specific Outcome" }
-            ]},
-            { "name": "10.2.7 Pressure", "sequence_number": 7, "competencies": [
-              { "sequence_number": 1, "description": "Explain what pressure is", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Describe how pressure relates to force and area using appropriate examples and formula", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Identify factors affecting pressure in liquids", "category": "Specific Outcome" },
-              { "sequence_number": 4, "description": "Describe the transmission of pressure in hydraulic systems", "category": "Specific Outcome" },
-              { "sequence_number": 5, "description": "Calculate pressure in liquids", "category": "Specific Outcome" },
-              { "sequence_number": 6, "description": "Explain the mechanism of a mercury barometer", "category": "Specific Outcome" },
-              { "sequence_number": 7, "description": "Explain the mechanism of a manometer", "category": "Specific Outcome" },
-              { "sequence_number": 8, "description": "Explain principles of upthrust and floatation", "category": "Specific Outcome" },
-              { "sequence_number": 9, "description": "Describe how upthrust relates to floatation in fluids", "category": "Specific Outcome" }
-            ]}
+            {
+              "name": "10.2.1 Scalars and Vectors",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe what scalar and vector quantities are",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Distinguish between scalars and vectors",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Demonstrate adding of vectors to determine a resultant",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Demonstrate how to determine the resultant of two vectors graphically",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "10.2.2 Linear Motion",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe the terms used in mechanics",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Demonstrate the use of equations of uniformly accelerated motion to solve problems",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Interpret graphical representation of distance-time, displacement-time, speed-time, velocity-time and acceleration-time",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Investigate the consequences of over speeding",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 5,
+                  "description": "Describe the acceleration of free fall for a body near the earth",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 6,
+                  "description": "Describe qualitatively the motion of bodies falling in a uniform gravitational field with and without air resistance",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 2",
+      "sequence_number": 2,
+      "topics": [
+        {
+          "name": "10.2 Mechanics",
+          "sequence_number": 1,
+          "sub_topics": [
+            {
+              "name": "10.2.3 Forces",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Explain what force is",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Explain the effect of forces on bodies",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Describe the inertia law",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Demonstrate the relationship between force and acceleration",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 5,
+                  "description": "Demonstrate the relationship between mass and acceleration",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 6,
+                  "description": "Perform calculations on force",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 7,
+                  "description": "Investigate the effect of force on a spring",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 8,
+                  "description": "Demonstrate the effects of friction on the motion of a body",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 9,
+                  "description": "Describe the motion in a circular path due to a perpendicular force",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "10.2.4 Moment of Forces",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Perform calculations based on the principle of moments",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Investigate the everyday application of moments",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "10.2.5 Work, Energy and Power",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Explain the meaning of the terms work, energy and power",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Identify the units of measurement for work, energy and power",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Calculate work using the appropriate formula",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Identify the different forms of energy",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 5,
+                  "description": "Explain qualitatively and quantitatively the terms gravitational potential energy and kinetic energy",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 6,
+                  "description": "Describe sources of renewable and non-renewable energy",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 7,
+                  "description": "Explain the effects of the use of energy sources on the environment",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 8,
+                  "description": "Demonstrate energy transformation from one form to another",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 9,
+                  "description": "Describe the conservation of energy",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 10,
+                  "description": "Calculate energy using mass and velocity",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 11,
+                  "description": "Demonstrate the calculation of efficiency of energy conversion using the appropriate formula",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 12,
+                  "description": "Demonstrate calculation of power using the appropriate formula",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 3",
+      "sequence_number": 3,
+      "topics": [
+        {
+          "name": "10.2 Mechanics",
+          "sequence_number": 1,
+          "sub_topics": [
+            {
+              "name": "10.2.6 Simple Machines",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe what a simple machine is",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Identify the different types of simple machines",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Describe the distances moved by the effort and the load in a simple machine",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Explain the terms Mechanical Advantage (MA), Velocity Ratio (VR) and Efficiency",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 5,
+                  "description": "Perform calculations involving simple machines",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "10.2.7 Pressure",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Explain what pressure is",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Describe how pressure relates to force and area using appropriate examples and formula",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Identify factors affecting pressure in liquids",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Describe the transmission of pressure in hydraulic systems",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 5,
+                  "description": "Calculate pressure in liquids",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 6,
+                  "description": "Explain the mechanism of a mercury barometer",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 7,
+                  "description": "Explain the mechanism of a manometer",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 8,
+                  "description": "Explain principles of upthrust and floatation",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 9,
+                  "description": "Describe how upthrust relates to floatation in fluids",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
           ]
         }
       ]

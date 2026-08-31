@@ -1,5 +1,5 @@
 {
-  "_source": "Ministry of Education / Curriculum Development Centre, Zambia. 'Physics Syllabus, Grade 10-12' (2013, published by CDC) — Grade 12, Topics 12.8-12.12. Topic, sub-topic and Specific Outcome statements only; the 'Content' column is omitted for the reasons documented in the Grade 10 file. This matches the Grade's own general-outcomes statement, which names exactly five areas: static electricity, current electricity, electromagnetic induction, basic electronics and atomic physics. Physics topic numbers continue sequentially across all three grades in this syllabus (Grade 10: 10.1-10.2, Grade 11: 11.3-11.7, Grade 12: 12.8-12.12) rather than each grade restarting its own topic count. The syllabus organizes content by Grade only, not by Term, so all of Grade 12 is modeled as a single term here. Pages following the Grade 12 content (from the syllabus's own page 60 onward) are appendix material — practical-work guidance and suggested apparatus lists — not further curriculum content, confirming this is the complete topic set.",
+  "_source": "Ministry of Education / Curriculum Development Centre, Zambia. 'Physics Syllabus, Grade 10-12' (2013, published by CDC) — Grade 12, Topics 12.8-12.12. Topic, sub-topic and Specific Outcome statements only; the 'Content' column is omitted for the reasons documented in the Grade 10 file. This matches the Grade's own general-outcomes statement, which names exactly five areas: static electricity, current electricity, electromagnetic induction, basic electronics and atomic physics. Physics topic numbers continue sequentially across all three grades in this syllabus (Grade 10: 10.1-10.2, Grade 11: 11.3-11.7, Grade 12: 12.8-12.12) rather than each grade restarting its own topic count. The syllabus organizes content by Grade only, not by Term, so all of Grade 12 is modeled as a single term here. Pages following the Grade 12 content (from the syllabus's own page 60 onward) are appendix material — practical-work guidance and suggested apparatus lists — not further curriculum content, confirming this is the complete topic set. STRUCTURAL TERM SPLIT (2026-08-31, not sourced): this file's topics were previously modeled as a single undivided 'Year' block (no real per-topic term/week data exists for this subject/grade). At the user's own explicit request and choice among alternatives offered, the SAME real topics above have now been divided into three roughly-equal-by-content-volume groups, in their original curriculum order, labelled 'Term 1'/'Term 2'/'Term 3' purely so the app can generate and share one term at a time. This division of which topic falls in which term is NOT sourced from any real scheme of work - it is an organizational split only. No topic, sub-topic, competency, or objective was added, removed, or altered; only the grouping changed. Each term's own topics still have no real week_number of their own, so within a term the app's existing calendar-pacing engine spreads them algorithmically across that term's real teaching weeks, exactly as it already did for the whole undivided Year block before this split.",
   "curriculum": {
     "code": "OBC_2013",
     "name": "2013 Outcome-Based Curriculum",
@@ -18,150 +18,558 @@
   },
   "terms": [
     {
-      "name": "Year (not term-divided in the source syllabus)",
+      "name": "Term 1",
       "sequence_number": 1,
       "topics": [
         {
           "name": "12.8 Static Electricity",
           "sequence_number": 1,
           "sub_topics": [
-            { "name": "12.8.1 Static Electricity", "sequence_number": 1, "competencies": [
-              { "sequence_number": 1, "description": "Demonstrate the existence of static charges", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Explain how to detect electric charges", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Describe the properties and uses of static charges", "category": "Specific Outcome" },
-              { "sequence_number": 4, "description": "Describe the electric charging and discharging of objects", "category": "Specific Outcome" },
-              { "sequence_number": 5, "description": "Explain the relationship between current and static electricity", "category": "Specific Outcome" },
-              { "sequence_number": 6, "description": "Investigate effects of static charges on the environment", "category": "Specific Outcome" }
-            ]}
+            {
+              "name": "12.8.1 Static Electricity",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Demonstrate the existence of static charges",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Explain how to detect electric charges",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Describe the properties and uses of static charges",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Describe the electric charging and discharging of objects",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 5,
+                  "description": "Explain the relationship between current and static electricity",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 6,
+                  "description": "Investigate effects of static charges on the environment",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
           ]
         },
         {
           "name": "12.9 Current Electricity",
           "sequence_number": 2,
           "sub_topics": [
-            { "name": "12.9.1 Electric Charge, Current, and Potential Difference", "sequence_number": 1, "competencies": [
-              { "sequence_number": 1, "description": "Describe the terms associated with electricity", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Identify the units of electric charge and current", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Demonstrate how to measure an electric current", "category": "Specific Outcome" },
-              { "sequence_number": 4, "description": "Describe what potential difference is", "category": "Specific Outcome" },
-              { "sequence_number": 5, "description": "Describe what the volt is", "category": "Specific Outcome" },
-              { "sequence_number": 6, "description": "Differentiate between potential difference (PD) and electromotive force (EMF)", "category": "Specific Outcome" },
-              { "sequence_number": 7, "description": "Describe the basic concept of EMF", "category": "Specific Outcome" },
-              { "sequence_number": 8, "description": "Demonstrate the measuring of potential difference (PD) and electromotive force (EMF)", "category": "Specific Outcome" }
-            ]},
-            { "name": "12.9.2 Electric Cells", "sequence_number": 2, "competencies": [
-              { "sequence_number": 1, "description": "Describe the structure of primary and secondary cells", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Demonstrate charging and discharging of the accumulator", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Identify methods of disposal of used cells", "category": "Specific Outcome" }
-            ]},
-            { "name": "12.9.3 Electrical Resistance", "sequence_number": 3, "competencies": [
-              { "sequence_number": 1, "description": "Explain the meaning of resistance", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Demonstrate how to determine resistance in a simple circuit", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Describe the relationship between current and potential difference in Ohmic and non-Ohmic conductors", "category": "Specific Outcome" },
-              { "sequence_number": 4, "description": "Describe what the internal resistance of a cell is", "category": "Specific Outcome" },
-              { "sequence_number": 5, "description": "Calculate the resistance in series and parallel circuits with Ohm's law", "category": "Specific Outcome" }
-            ]},
-            { "name": "12.9.4 Heating Effect of an Electric Current", "sequence_number": 4, "competencies": [
-              { "sequence_number": 1, "description": "Demonstrate energy transformations in an electric circuit", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Investigate the heating effect of an electric current", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Demonstrate how to calculate electrical energy", "category": "Specific Outcome" },
-              { "sequence_number": 4, "description": "Describe the relationship of voltage, current and power", "category": "Specific Outcome" },
-              { "sequence_number": 5, "description": "Demonstrate how to calculate the cost of using electrical energy", "category": "Specific Outcome" },
-              { "sequence_number": 6, "description": "Describe the use of switches, fuses, earthing and the three pin-plugs", "category": "Specific Outcome" },
-              { "sequence_number": 7, "description": "Explain the need for earthing metal cases and for double insulation", "category": "Specific Outcome" },
-              { "sequence_number": 8, "description": "Describe the meaning of the three wires found in the cable", "category": "Specific Outcome" },
-              { "sequence_number": 9, "description": "Describe the domestic electrical wiring system", "category": "Specific Outcome" },
-              { "sequence_number": 10, "description": "Describe ways of conserving electrical energy in homes and industry", "category": "Specific Outcome" }
-            ]},
-            { "name": "12.9.5 Magnetic Effects of Electric Currents", "sequence_number": 5, "competencies": [
-              { "sequence_number": 1, "description": "Explain magnetic field patterns of electric currents", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Describe the applications of the magnetic effect of an electric current", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Explain the behaviour of an electric current in a magnetic field", "category": "Specific Outcome" },
-              { "sequence_number": 4, "description": "Describe the application of a current placed in a magnetic field", "category": "Specific Outcome" },
-              { "sequence_number": 5, "description": "Describe the nature of forces between parallel currents", "category": "Specific Outcome" },
-              { "sequence_number": 6, "description": "Describe the effect of magnetic fields on human health and environment", "category": "Specific Outcome" }
-            ]}
+            {
+              "name": "12.9.1 Electric Charge, Current, and Potential Difference",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe the terms associated with electricity",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Identify the units of electric charge and current",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Demonstrate how to measure an electric current",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Describe what potential difference is",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 5,
+                  "description": "Describe what the volt is",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 6,
+                  "description": "Differentiate between potential difference (PD) and electromotive force (EMF)",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 7,
+                  "description": "Describe the basic concept of EMF",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 8,
+                  "description": "Demonstrate the measuring of potential difference (PD) and electromotive force (EMF)",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "12.9.2 Electric Cells",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe the structure of primary and secondary cells",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Demonstrate charging and discharging of the accumulator",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Identify methods of disposal of used cells",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "12.9.3 Electrical Resistance",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Explain the meaning of resistance",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Demonstrate how to determine resistance in a simple circuit",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Describe the relationship between current and potential difference in Ohmic and non-Ohmic conductors",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Describe what the internal resistance of a cell is",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 5,
+                  "description": "Calculate the resistance in series and parallel circuits with Ohm's law",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "12.9.4 Heating Effect of an Electric Current",
+              "sequence_number": 4,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Demonstrate energy transformations in an electric circuit",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Investigate the heating effect of an electric current",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Demonstrate how to calculate electrical energy",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Describe the relationship of voltage, current and power",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 5,
+                  "description": "Demonstrate how to calculate the cost of using electrical energy",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 6,
+                  "description": "Describe the use of switches, fuses, earthing and the three pin-plugs",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 7,
+                  "description": "Explain the need for earthing metal cases and for double insulation",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 8,
+                  "description": "Describe the meaning of the three wires found in the cable",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 9,
+                  "description": "Describe the domestic electrical wiring system",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 10,
+                  "description": "Describe ways of conserving electrical energy in homes and industry",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "12.9.5 Magnetic Effects of Electric Currents",
+              "sequence_number": 5,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Explain magnetic field patterns of electric currents",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Describe the applications of the magnetic effect of an electric current",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Explain the behaviour of an electric current in a magnetic field",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Describe the application of a current placed in a magnetic field",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 5,
+                  "description": "Describe the nature of forces between parallel currents",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 6,
+                  "description": "Describe the effect of magnetic fields on human health and environment",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
           ]
-        },
+        }
+      ]
+    },
+    {
+      "name": "Term 2",
+      "sequence_number": 2,
+      "topics": [
         {
           "name": "12.10 Electromagnetic Induction",
-          "sequence_number": 3,
+          "sequence_number": 1,
           "sub_topics": [
-            { "name": "12.10.1 The Phenomenon of Electromagnetic Induction", "sequence_number": 1, "competencies": [
-              { "sequence_number": 1, "description": "Investigate the phenomenon of electromagnetic induction", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Describe the factors affecting magnitude and direction of induced EMF", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "State the direction of current produced by an induced EMF", "category": "Specific Outcome" }
-            ]},
-            { "name": "12.10.2 The Simple A.C. and D.C. Generators", "sequence_number": 2, "competencies": [
-              { "sequence_number": 1, "description": "Describe simple A.C. and D.C. generators", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Compare the simple A.C. generator with a simple D.C. generator in terms of structure and its nature", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Describe the action of a diode in rectification", "category": "Specific Outcome" },
-              { "sequence_number": 4, "description": "Explain conversion of an A.C. generator to a D.C. generator", "category": "Specific Outcome" },
-              { "sequence_number": 5, "description": "Contrast the current produced by the D.C. generator with that produced from batteries", "category": "Specific Outcome" }
-            ]},
-            { "name": "12.10.3 Transformers", "sequence_number": 3, "competencies": [
-              { "sequence_number": 1, "description": "Demonstrate the principles of mutual induction", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Describe the structure and operation of iron core transformers", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Apply the transformer and power equations to solve numerical problems involving ideal transformers", "category": "Specific Outcome" },
-              { "sequence_number": 4, "description": "Calculate the efficiency of a transformer given data", "category": "Specific Outcome" },
-              { "sequence_number": 5, "description": "Explain advantages of high alternating potential difference power transmission", "category": "Specific Outcome" },
-              { "sequence_number": 6, "description": "Describe the implications of underground power transmission compared to overhead lines", "category": "Specific Outcome" },
-              { "sequence_number": 7, "description": "Describe the effects of improper management of transformers", "category": "Specific Outcome" }
-            ]}
+            {
+              "name": "12.10.1 The Phenomenon of Electromagnetic Induction",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Investigate the phenomenon of electromagnetic induction",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Describe the factors affecting magnitude and direction of induced EMF",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "State the direction of current produced by an induced EMF",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "12.10.2 The Simple A.C. and D.C. Generators",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe simple A.C. and D.C. generators",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Compare the simple A.C. generator with a simple D.C. generator in terms of structure and its nature",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Describe the action of a diode in rectification",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Explain conversion of an A.C. generator to a D.C. generator",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 5,
+                  "description": "Contrast the current produced by the D.C. generator with that produced from batteries",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "12.10.3 Transformers",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Demonstrate the principles of mutual induction",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Describe the structure and operation of iron core transformers",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Apply the transformer and power equations to solve numerical problems involving ideal transformers",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Calculate the efficiency of a transformer given data",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 5,
+                  "description": "Explain advantages of high alternating potential difference power transmission",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 6,
+                  "description": "Describe the implications of underground power transmission compared to overhead lines",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 7,
+                  "description": "Describe the effects of improper management of transformers",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
           ]
         },
         {
           "name": "12.11 Basic Electronics",
-          "sequence_number": 4,
+          "sequence_number": 2,
           "sub_topics": [
-            { "name": "12.11.1 Thermionic Emission and Electrons", "sequence_number": 1, "competencies": [
-              { "sequence_number": 1, "description": "Describe what thermionic emission is", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Investigate properties of cathode rays", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Distinguish between direction of flow of electrons and flow of conventional current", "category": "Specific Outcome" },
-              { "sequence_number": 4, "description": "Describe applications of electron beams", "category": "Specific Outcome" },
-              { "sequence_number": 5, "description": "Describe basic structure and action of a cathode-ray oscilloscope", "category": "Specific Outcome" },
-              { "sequence_number": 6, "description": "Describe the uses of a cathode-ray oscilloscope", "category": "Specific Outcome" }
-            ]},
-            { "name": "12.11.2 Circuit Components", "sequence_number": 2, "competencies": [
-              { "sequence_number": 1, "description": "Identify symbols of basic circuit components", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Determine resistor values using standard colour codes", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Describe action of a variable potential divider", "category": "Specific Outcome" },
-              { "sequence_number": 4, "description": "Explain the action and application of thermistors and light dependent resistors", "category": "Specific Outcome" },
-              { "sequence_number": 5, "description": "Investigate the charging and discharging of capacitors", "category": "Specific Outcome" },
-              { "sequence_number": 6, "description": "Describe the role of capacitors in electronic equipment", "category": "Specific Outcome" },
-              { "sequence_number": 7, "description": "Explain how reed and relay switches work", "category": "Specific Outcome" },
-              { "sequence_number": 8, "description": "Describe the application of reed switches and reed relays", "category": "Specific Outcome" }
-            ]},
-            { "name": "12.11.3 Simple Electronic Systems", "sequence_number": 3, "competencies": [
-              { "sequence_number": 1, "description": "Describe the action of a bipolar transistor", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "State the different types of logic gates", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Demonstrate how to derive the truth tables of logic gates", "category": "Specific Outcome" },
-              { "sequence_number": 4, "description": "Describe the use of bistable and astable circuits", "category": "Specific Outcome" }
-            ]}
+            {
+              "name": "12.11.1 Thermionic Emission and Electrons",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe what thermionic emission is",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Investigate properties of cathode rays",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Distinguish between direction of flow of electrons and flow of conventional current",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Describe applications of electron beams",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 5,
+                  "description": "Describe basic structure and action of a cathode-ray oscilloscope",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 6,
+                  "description": "Describe the uses of a cathode-ray oscilloscope",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "12.11.2 Circuit Components",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Identify symbols of basic circuit components",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Determine resistor values using standard colour codes",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Describe action of a variable potential divider",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Explain the action and application of thermistors and light dependent resistors",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 5,
+                  "description": "Investigate the charging and discharging of capacitors",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 6,
+                  "description": "Describe the role of capacitors in electronic equipment",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 7,
+                  "description": "Explain how reed and relay switches work",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 8,
+                  "description": "Describe the application of reed switches and reed relays",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "12.11.3 Simple Electronic Systems",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe the action of a bipolar transistor",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "State the different types of logic gates",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Demonstrate how to derive the truth tables of logic gates",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Describe the use of bistable and astable circuits",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
           ]
-        },
+        }
+      ]
+    },
+    {
+      "name": "Term 3",
+      "sequence_number": 3,
+      "topics": [
         {
           "name": "12.12 Atomic Physics",
-          "sequence_number": 5,
+          "sequence_number": 1,
           "sub_topics": [
-            { "name": "12.12.1 Nuclear Atom", "sequence_number": 1, "competencies": [
-              { "sequence_number": 1, "description": "Describe the structure of the atom", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Describe the composition of the nucleus in terms of protons and neutrons", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Explain mass number and atomic number", "category": "Specific Outcome" }
-            ]},
-            { "name": "12.12.2 Radioactivity", "sequence_number": 2, "competencies": [
-              { "sequence_number": 1, "description": "Describe the nature of radioactivity", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Describe the characteristics of the three kinds of radioactive radiations: alpha, beta and gamma", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Describe methods of detecting radioactive emissions", "category": "Specific Outcome" },
-              { "sequence_number": 4, "description": "Explain the origin and effects of background radiation", "category": "Specific Outcome" },
-              { "sequence_number": 5, "description": "Describe what radioactive decay is", "category": "Specific Outcome" },
-              { "sequence_number": 6, "description": "Describe what nuclear fusion and fission is", "category": "Specific Outcome" },
-              { "sequence_number": 7, "description": "Demonstrate how to determine the half life of a radioactive material", "category": "Specific Outcome" },
-              { "sequence_number": 8, "description": "Explain uses of radioactive substances", "category": "Specific Outcome" },
-              { "sequence_number": 9, "description": "Describe the safety precautions necessary when handling or storing radioactive substances", "category": "Specific Outcome" },
-              { "sequence_number": 10, "description": "Explain the effects of radioactive substances on the environment and health", "category": "Specific Outcome" },
-              { "sequence_number": 11, "description": "Investigate management practices which safeguard the environment from radioactive contamination", "category": "Specific Outcome" }
-            ]}
+            {
+              "name": "12.12.1 Nuclear Atom",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe the structure of the atom",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Describe the composition of the nucleus in terms of protons and neutrons",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Explain mass number and atomic number",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "12.12.2 Radioactivity",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe the nature of radioactivity",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Describe the characteristics of the three kinds of radioactive radiations: alpha, beta and gamma",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Describe methods of detecting radioactive emissions",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Explain the origin and effects of background radiation",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 5,
+                  "description": "Describe what radioactive decay is",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 6,
+                  "description": "Describe what nuclear fusion and fission is",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 7,
+                  "description": "Demonstrate how to determine the half life of a radioactive material",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 8,
+                  "description": "Explain uses of radioactive substances",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 9,
+                  "description": "Describe the safety precautions necessary when handling or storing radioactive substances",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 10,
+                  "description": "Explain the effects of radioactive substances on the environment and health",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 11,
+                  "description": "Investigate management practices which safeguard the environment from radioactive contamination",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
           ]
         }
       ]

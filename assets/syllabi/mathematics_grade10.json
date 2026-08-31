@@ -1,5 +1,5 @@
 {
-  "_source": "Ministry of Education / Curriculum Development Centre, Zambia. 'O-Level Mathematics Syllabus, Grade 10-12' (2013, published by CDC) — Grade 10, Topics 10.1-10.10. Topic, sub-topic and Specific Outcome statements only; the 'Content' (Knowledge/Skills/Values) columns are omitted, consistent with the approach used for the other 2013 OBC subjects in this app. This document's outcome numbering is reliable and matches its sub-topic structure throughout Grade 10 (unlike several of the other OBC syllabi processed for this app), so outcomes are reproduced as printed rather than positionally reconstructed. The syllabus organizes content by Grade only, not by Term, so all of Grade 10 is modeled as a single term here.",
+  "_source": "Ministry of Education / Curriculum Development Centre, Zambia. 'O-Level Mathematics Syllabus, Grade 10-12' (2013, published by CDC) — Grade 10, Topics 10.1-10.10. Topic, sub-topic and Specific Outcome statements only; the 'Content' (Knowledge/Skills/Values) columns are omitted, consistent with the approach used for the other 2013 OBC subjects in this app. This document's outcome numbering is reliable and matches its sub-topic structure throughout Grade 10 (unlike several of the other OBC syllabi processed for this app), so outcomes are reproduced as printed rather than positionally reconstructed. The syllabus organizes content by Grade only, not by Term, so all of Grade 10 is modeled as a single term here. STRUCTURAL TERM SPLIT (2026-08-31, not sourced): this file's topics were previously modeled as a single undivided 'Year' block (no real per-topic term/week data exists for this subject/grade). At the user's own explicit request and choice among alternatives offered, the SAME real topics above have now been divided into three roughly-equal-by-content-volume groups, in their original curriculum order, labelled 'Term 1'/'Term 2'/'Term 3' purely so the app can generate and share one term at a time. This division of which topic falls in which term is NOT sourced from any real scheme of work - it is an organizational split only. No topic, sub-topic, competency, or objective was added, removed, or altered; only the grouping changed. Each term's own topics still have no real week_number of their own, so within a term the app's existing calendar-pacing engine spreads them algorithmically across that term's real teaching weeks, exactly as it already did for the whole undivided Year block before this split.",
   "curriculum": {
     "code": "OBC_2013",
     "name": "2013 Outcome-Based Curriculum",
@@ -18,135 +18,351 @@
   },
   "terms": [
     {
-      "name": "Year (not term-divided in the source syllabus)",
+      "name": "Term 1",
       "sequence_number": 1,
       "topics": [
         {
           "name": "10.1 Sets",
           "sequence_number": 1,
           "sub_topics": [
-            { "name": "10.1.1 Set Operations", "sequence_number": 1, "competencies": [
-              { "sequence_number": 1, "description": "Carry out operations on sets", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Apply higher operations on sets", "category": "Specific Outcome" }
-            ]}
+            {
+              "name": "10.1.1 Set Operations",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Carry out operations on sets",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Apply higher operations on sets",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
           ]
         },
         {
           "name": "10.2 Index Notation",
           "sequence_number": 2,
           "sub_topics": [
-            { "name": "10.2.1 Indices", "sequence_number": 1, "competencies": [
-              { "sequence_number": 1, "description": "Apply laws of indices", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Simplify positive, negative and zero indices", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Simplify fractional indices", "category": "Specific Outcome" },
-              { "sequence_number": 4, "description": "Solve equations involving indices", "category": "Specific Outcome" }
-            ]}
+            {
+              "name": "10.2.1 Indices",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Apply laws of indices",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Simplify positive, negative and zero indices",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Simplify fractional indices",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Solve equations involving indices",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
           ]
         },
         {
           "name": "10.3 Algebra",
           "sequence_number": 3,
           "sub_topics": [
-            { "name": "10.3.1 Basic Processes", "sequence_number": 1, "competencies": [
-              { "sequence_number": 1, "description": "Expand and simplify expressions", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Factorise algebraic expressions", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Simplify algebraic fractions", "category": "Specific Outcome" }
-            ]}
+            {
+              "name": "10.3.1 Basic Processes",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Expand and simplify expressions",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Factorise algebraic expressions",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Simplify algebraic fractions",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
           ]
         },
         {
           "name": "10.4 Matrices",
           "sequence_number": 4,
           "sub_topics": [
-            { "name": "10.4.1 Transpose of a Matrix", "sequence_number": 1, "competencies": [
-              { "sequence_number": 1, "description": "Find a transpose of a matrix", "category": "Specific Outcome" }
-            ]},
-            { "name": "10.4.2 Multiplication of Matrices", "sequence_number": 2, "competencies": [
-              { "sequence_number": 1, "description": "Multiply matrices (up to 3x3 matrices)", "category": "Specific Outcome" }
-            ]},
-            { "name": "10.4.3 Inverse of a Matrix", "sequence_number": 3, "competencies": [
-              { "sequence_number": 1, "description": "Calculate the determinant of a 2 by 2 matrix", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Find the inverse of a 2 by 2 matrix", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Solve systems of linear equations in two variables", "category": "Specific Outcome" },
-              { "sequence_number": 4, "description": "Apply matrices to solve real life problems", "category": "Specific Outcome" }
-            ]}
+            {
+              "name": "10.4.1 Transpose of a Matrix",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Find a transpose of a matrix",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "10.4.2 Multiplication of Matrices",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Multiply matrices (up to 3x3 matrices)",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "10.4.3 Inverse of a Matrix",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Calculate the determinant of a 2 by 2 matrix",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Find the inverse of a 2 by 2 matrix",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Solve systems of linear equations in two variables",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Apply matrices to solve real life problems",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
           ]
-        },
+        }
+      ]
+    },
+    {
+      "name": "Term 2",
+      "sequence_number": 2,
+      "topics": [
         {
           "name": "10.5 Similarity and Congruency",
-          "sequence_number": 5,
+          "sequence_number": 1,
           "sub_topics": [
-            { "name": "10.5.1 Application of Ratio and Proportion", "sequence_number": 1, "competencies": [
-              { "sequence_number": 1, "description": "Calculate the scale on a map", "category": "Specific Outcome" }
-            ]},
-            { "name": "10.5.2 Areas and Volumes of Similar Figures", "sequence_number": 2, "competencies": [
-              { "sequence_number": 1, "description": "Calculate length and area using a given scale and vice versa", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Calculate areas and volumes of similar figures", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Apply ratio and proportion to solve problems on similarity and congruence", "category": "Specific Outcome" }
-            ]}
+            {
+              "name": "10.5.1 Application of Ratio and Proportion",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Calculate the scale on a map",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "10.5.2 Areas and Volumes of Similar Figures",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Calculate length and area using a given scale and vice versa",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Calculate areas and volumes of similar figures",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Apply ratio and proportion to solve problems on similarity and congruence",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
           ]
         },
         {
           "name": "10.6 Travel Graphs",
-          "sequence_number": 6,
+          "sequence_number": 2,
           "sub_topics": [
-            { "name": "10.6.1 Distance Time Graphs", "sequence_number": 1, "competencies": [
-              { "sequence_number": 1, "description": "Compute average speed, distance and time", "category": "Specific Outcome" }
-            ]},
-            { "name": "10.6.2 Velocity Time Graphs", "sequence_number": 2, "competencies": [
-              { "sequence_number": 1, "description": "Determine acceleration and retardation/deceleration", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Draw travel graphs", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Calculate the distance under a velocity time graph", "category": "Specific Outcome" },
-              { "sequence_number": 4, "description": "Relate area under the graph to distance travelled", "category": "Specific Outcome" }
-            ]}
+            {
+              "name": "10.6.1 Distance Time Graphs",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Compute average speed, distance and time",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "10.6.2 Velocity Time Graphs",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Determine acceleration and retardation/deceleration",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Draw travel graphs",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Calculate the distance under a velocity time graph",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Relate area under the graph to distance travelled",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
           ]
         },
         {
           "name": "10.7 Social and Commercial Arithmetic",
-          "sequence_number": 7,
+          "sequence_number": 3,
           "sub_topics": [
-            { "name": "10.7.1 Investments", "sequence_number": 1, "competencies": [
-              { "sequence_number": 1, "description": "Carry out calculations that involve shares, dividends and investment bonds", "category": "Specific Outcome" }
-            ]}
+            {
+              "name": "10.7.1 Investments",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Carry out calculations that involve shares, dividends and investment bonds",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
           ]
         },
         {
           "name": "10.8 Bearings",
-          "sequence_number": 8,
+          "sequence_number": 4,
           "sub_topics": [
-            { "name": "10.8.1 Bearings and Scale Drawing", "sequence_number": 1, "competencies": [
-              { "sequence_number": 1, "description": "Draw/sketch diagrams to represent position and direction", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Use bearing and scale drawing in real life", "category": "Specific Outcome" }
-            ]}
+            {
+              "name": "10.8.1 Bearings and Scale Drawing",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Draw/sketch diagrams to represent position and direction",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Use bearing and scale drawing in real life",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
           ]
-        },
+        }
+      ]
+    },
+    {
+      "name": "Term 3",
+      "sequence_number": 3,
+      "topics": [
         {
           "name": "10.9 Symmetry",
-          "sequence_number": 9,
+          "sequence_number": 1,
           "sub_topics": [
-            { "name": "10.9.1 Symmetry of Solids", "sequence_number": 1, "competencies": [
-              { "sequence_number": 1, "description": "Determine order of rotational symmetry", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Determine symmetry of solids", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Determine plane symmetry", "category": "Specific Outcome" }
-            ]}
+            {
+              "name": "10.9.1 Symmetry of Solids",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Determine order of rotational symmetry",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Determine symmetry of solids",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Determine plane symmetry",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
           ]
         },
         {
           "name": "10.10 Computer and Calculator",
-          "sequence_number": 10,
+          "sequence_number": 2,
           "sub_topics": [
-            { "name": "10.10.1 Functions on a Calculator", "sequence_number": 1, "competencies": [
-              { "sequence_number": 1, "description": "Demonstrate the use of different functions on a calculator", "category": "Specific Outcome" }
-            ]},
-            { "name": "10.10.2 Basic Components of a Computer", "sequence_number": 2, "competencies": [
-              { "sequence_number": 1, "description": "Describe components of a computer", "category": "Specific Outcome" }
-            ]},
-            { "name": "10.10.3 Algorithms", "sequence_number": 3, "competencies": [
-              { "sequence_number": 1, "description": "Describe various methods of implementing an algorithm", "category": "Specific Outcome" }
-            ]},
-            { "name": "10.10.4 Methods of Implementing an Algorithm", "sequence_number": 4, "competencies": [
-              { "sequence_number": 1, "description": "Outline problem solving stages", "category": "Specific Outcome" }
-            ]}
+            {
+              "name": "10.10.1 Functions on a Calculator",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Demonstrate the use of different functions on a calculator",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "10.10.2 Basic Components of a Computer",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe components of a computer",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "10.10.3 Algorithms",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe various methods of implementing an algorithm",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "10.10.4 Methods of Implementing an Algorithm",
+              "sequence_number": 4,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Outline problem solving stages",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
           ]
         }
       ]
