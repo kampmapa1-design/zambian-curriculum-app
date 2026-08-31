@@ -21,6 +21,11 @@ import 'marking_script_repository.dart';
 /// [onProgress] fires after each script (processed count, total, current
 /// script) so a caller can update its own UI; [onOutOfFreeGradings] fires
 /// at most once, only if the batch stops early for that reason.
+/// [onScriptGraded] fires once per script immediately after AI grading
+/// finishes (success or a final failure after the one retry above) — the
+/// hook for a "score just came in" UI moment (e.g. MarkingQueueScreen's
+/// pop-and-fade score animation), distinct from [onProgress] which only
+/// carries counts, not which script or how it went.
 Future<void> runBatchGrading({
   required List<MarkingScript> scripts,
   required MarkingScheme scheme,
@@ -28,6 +33,7 @@ Future<void> runBatchGrading({
   required MarkingGradingService gradingService,
   void Function(int done, int total)? onProgress,
   void Function()? onOutOfFreeGradings,
+  void Function(MarkingScript graded)? onScriptGraded,
 }) async {
   var done = 0;
   for (final script in scripts) {
@@ -67,6 +73,7 @@ Future<void> runBatchGrading({
 
     await repository.update(result);
     done++;
+    onScriptGraded?.call(result);
     onProgress?.call(done, scripts.length);
   }
 }

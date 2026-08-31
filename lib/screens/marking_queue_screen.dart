@@ -19,6 +19,7 @@ import '../services/marking_script_repository.dart';
 import 'burst_capture_screen.dart';
 import 'capture_manual_scores_screen.dart';
 import 'captured_list_analysis_intake_screen.dart';
+import 'cohort_completion_screen.dart';
 import 'marking_analysis_screen.dart';
 import 'marking_key_upload_flow.dart';
 import 'marking_review_screen.dart';
@@ -81,6 +82,14 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
 
   int? _remainingFreeGradings;
   bool _generatingKey = false;
+
+  // The "score just came in" pop-and-fade — see [_ScorePopBadge]. Keyed so
+  // a fresh score restarts the animation even if it fires again before the
+  // previous one finished fading (a fast batch can grade several scripts
+  // within the animation's own ~3.5s lifetime).
+  MarkingScript? _justGradedScript;
+  double? _justGradedPercent;
+  int _scorePopKey = 0;
 
   @override
   void initState() {
@@ -418,6 +427,15 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
         if (mounted) setState(() => _processedCount = done);
       },
       onOutOfFreeGradings: () => ranOutOfFreeGradings = true,
+      onScriptGraded: (graded) {
+        if (!mounted || graded.status != MarkingScriptStatus.graded) return;
+        final total = scheme.totalMarks;
+        setState(() {
+          _justGradedScript = graded;
+          _justGradedPercent = total <= 0 ? 0 : ((graded.totalAwarded ?? 0) / total) * 100;
+          _scorePopKey++;
+        });
+      },
     );
 
     if (ranOutOfFreeGradings && mounted) {
@@ -606,6 +624,55 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
     }
   }
 
+  /// "Completed Marking Cohort" — the final action for one class'
+  /// scripts (one marking scheme). Scopes to whichever scheme(s) actually
+  /// have scripts that have entered the marking pipeline (queued or
+  /// later) — a script still sitting at [MarkingScriptStatus.captured],
+  /// not yet linked to any scheme, isn't part of any cohort yet.
+  Future<void> _completeMarkingCohort() async {
+    final schemeIds = <String>{
+      for (final s in _catalog.scripts)
+        if (s.schemeId != null && s.status != MarkingScriptStatus.captured) s.schemeId!,
+    };
+    if (schemeIds.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No scripts have been queued or marked yet for any class.')),
+      );
+      return;
+    }
+
+    final candidates = _schemes.schemes.where((s) => schemeIds.contains(s.id)).toList();
+    final scheme = candidates.length == 1
+        ? candidates.single
+        : await showDialog<MarkingScheme>(
+            context: context,
+            builder: (dialogContext) => SimpleDialog(
+              title: const Text('Complete marking for which class?'),
+              children: [
+                for (final s in candidates)
+                  SimpleDialogOption(
+                    onPressed: () => Navigator.of(dialogContext).pop(s),
+                    child: Text(s.title),
+                  ),
+              ],
+            ),
+          );
+    if (scheme == null || !mounted) return;
+
+    final action = await Navigator.of(context).push<CohortCompletionAction>(
+      MaterialPageRoute(
+        builder: (_) => CohortCompletionScreen(scheme: scheme, repository: _repository),
+      ),
+    );
+    await _load();
+    if (!mounted) return;
+    if (action == CohortCompletionAction.nextCohort) {
+      _changeRememberedSubjectScheme();
+    } else if (action == CohortCompletionAction.closeAutoGrade) {
+      Navigator.of(context).popUntil((route) => route.isFirst);
+    }
+  }
+
   Map<MarkingScriptStatus, List<MarkingScript>> get _byStatus {
     final grouped = <MarkingScriptStatus, List<MarkingScript>>{};
     for (final s in _catalog.scripts) {
@@ -709,14 +776,51 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
       ),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
-          : Column(
+          : Stack(
               children: [
-                if (!_selecting) _buildActionButtons(context),
-                Expanded(
-                  child: _catalog.scripts.isEmpty
-                      ? _buildEmptyState(context)
-                      : _buildQueueList(context, queuedByScheme),
+                Column(
+                  children: [
+                    if (!_selecting) _buildActionButtons(context),
+                    Expanded(
+                      child: _catalog.scripts.isEmpty
+                          ? _buildEmptyState(context)
+                          : _buildQueueList(context, queuedByScheme),
+                    ),
+                  ],
                 ),
+                // "Completed Marking Cohort" — the final action for one
+                // class' scripts, anchored right side, vertically centered.
+                if (!_selecting)
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 12),
+                      child: FloatingActionButton.extended(
+                        heroTag: 'completeCohort',
+                        onPressed: _completeMarkingCohort,
+                        icon: const Icon(Icons.flag_outlined),
+                        label: const Text('Completed Marking Cohort'),
+                      ),
+                    ),
+                  ),
+                // The "score just came in" pop-and-fade — see
+                // [_ScorePopBadge]. Sits above everything else, ignores
+                // touches, and clears itself once its own animation ends.
+                if (_justGradedScript case final graded?)
+                  Align(
+                    alignment: Alignment.topCenter,
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 24),
+                      child: _ScorePopBadge(
+                        key: ValueKey(_scorePopKey),
+                        studentName: graded.fullName,
+                        percent: _justGradedPercent ?? 0,
+                        onDone: () {
+                          if (mounted) setState(() => _justGradedScript = null);
+                        },
+                      ),
+                    ),
+                  ),
               ],
             ),
       bottomNavigationBar: _selecting && _selectedIds.isNotEmpty
@@ -1067,3 +1171,74 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
 }
 
 enum _AnalyzeSource { captureOnPaper, previousScripts }
+
+/// A student's score, popping in then fading away over roughly 3.5
+/// seconds — fired once per script the moment AI grading finishes for it
+/// (see [_processBatch]'s `onScriptGraded`), so a teacher watching a
+/// batch process sees each result land in real time without opening
+/// anything. Purely a momentary notice — it never blocks input
+/// ([IgnorePointer]) and carries no state of its own once [onDone] fires.
+class _ScorePopBadge extends StatefulWidget {
+  const _ScorePopBadge({super.key, required this.studentName, required this.percent, required this.onDone});
+
+  final String studentName;
+  final double percent;
+  final VoidCallback onDone;
+
+  @override
+  State<_ScorePopBadge> createState() => _ScorePopBadgeState();
+}
+
+class _ScorePopBadgeState extends State<_ScorePopBadge> {
+  bool _visible = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Pop in on the next frame (so the initial build starts from
+    // invisible/small, giving the scale-in something to animate from),
+    // hold briefly at full visibility, then fade — ~3.5s total.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) setState(() => _visible = true);
+    });
+    Future.delayed(const Duration(milliseconds: 900), () {
+      if (mounted) setState(() => _visible = false);
+    });
+    Future.delayed(const Duration(milliseconds: 3500), widget.onDone);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return IgnorePointer(
+      child: AnimatedOpacity(
+        opacity: _visible ? 1 : 0,
+        duration: Duration(milliseconds: _visible ? 250 : 2400),
+        curve: _visible ? Curves.easeOut : Curves.easeIn,
+        child: AnimatedScale(
+          scale: _visible ? 1.0 : 0.85,
+          duration: const Duration(milliseconds: 250),
+          curve: Curves.elasticOut,
+          child: Material(
+            elevation: 6,
+            borderRadius: BorderRadius.circular(12),
+            color: Theme.of(context).colorScheme.primaryContainer,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 14),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(widget.studentName, style: Theme.of(context).textTheme.titleSmall),
+                  const SizedBox(height: 4),
+                  Text(
+                    '${widget.percent.toStringAsFixed(0)}%',
+                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
