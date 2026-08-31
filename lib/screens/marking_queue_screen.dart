@@ -758,7 +758,7 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('AutoGrade'),
+        title: const Text('Chief Marker'),
         actions: [
           IconButton(
             icon: const Icon(Icons.fact_check_outlined),

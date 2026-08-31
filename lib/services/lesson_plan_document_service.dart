@@ -138,15 +138,33 @@ class LessonPlanDocumentService {
         ),
       );
     }
+    final lines = value.split('\n');
+    // Single plain line: keep the original inline "Label: value" look.
+    // Anything multi-line, or a single line that's itself a bullet, gets
+    // the label on its own line followed by real per-line rendering — see
+    // _pdfCell's own doc for why a bullet can't just be embedded in the
+    // text (real bug, fixed 2026-08-31).
+    if (lines.length == 1 && !_isBullet(lines.first)) {
+      return pw.Padding(
+        padding: const pw.EdgeInsets.only(bottom: 6),
+        child: pw.RichText(
+          text: pw.TextSpan(
+            children: [
+              pw.TextSpan(text: '${field.label}: ', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10.5)),
+              pw.TextSpan(text: value, style: const pw.TextStyle(fontSize: 10.5)),
+            ],
+          ),
+        ),
+      );
+    }
     return pw.Padding(
       padding: const pw.EdgeInsets.only(bottom: 6),
-      child: pw.RichText(
-        text: pw.TextSpan(
-          children: [
-            pw.TextSpan(text: '${field.label}: ', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10.5)),
-            pw.TextSpan(text: value, style: const pw.TextStyle(fontSize: 10.5)),
-          ],
-        ),
+      child: pw.Column(
+        crossAxisAlignment: pw.CrossAxisAlignment.start,
+        children: [
+          pw.Text('${field.label}:', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10.5)),
+          for (final line in lines) _pdfBulletAwareLine(line, fontSize: 10.5),
+        ],
       ),
     );
   }
@@ -156,13 +174,45 @@ class LessonPlanDocumentService {
         child: pw.Text(text, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 9.5)),
       );
 
+  // Real bug fixed here (2026-08-31): this used to render `text` straight
+  // through a single pw.Text(), so a literal '•' character embedded in
+  // AI- or offline-generated progression text (see
+  // lesson_progression_generator.dart's _bulletList, and the AI-enhanced
+  // path's own output) rendered as a missing-glyph "tofu" box — reported
+  // as an hourglass symbol — exactly the bug already fixed for Minutes
+  // Maker/Student Reports/Syllabus prints, just not here. Same fix: split
+  // into lines and hand each bulleted one to pw.Bullet, which draws a
+  // real vector marker with zero font/glyph dependency.
   pw.Widget _pdfCell(String text, {bool bold = false}) => pw.Padding(
         padding: const pw.EdgeInsets.all(4),
-        child: pw.Text(
-          text,
-          style: pw.TextStyle(fontSize: 9, fontWeight: bold ? pw.FontWeight.bold : pw.FontWeight.normal),
+        child: pw.Column(
+          crossAxisAlignment: pw.CrossAxisAlignment.start,
+          children: [
+            for (final line in text.split('\n'))
+              _pdfBulletAwareLine(line, fontSize: 9, bold: bold),
+          ],
         ),
       );
+
+  bool _isBullet(String line) => RegExp(r'^[•\-\*]\s+').hasMatch(line.trim());
+  String _stripBulletMarker(String line) => line.trim().replaceFirst(RegExp(r'^[•\-\*]\s+'), '');
+
+  pw.Widget _pdfBulletAwareLine(String line, {required double fontSize, bool bold = false}) {
+    if (line.trim().isEmpty) return pw.SizedBox(height: fontSize * 0.4);
+    if (_isBullet(line)) {
+      return pw.Padding(
+        padding: const pw.EdgeInsets.only(left: 8, bottom: 2),
+        child: pw.Bullet(
+          text: _stripBulletMarker(line),
+          style: pw.TextStyle(fontSize: fontSize, fontWeight: bold ? pw.FontWeight.bold : pw.FontWeight.normal),
+        ),
+      );
+    }
+    return pw.Text(
+      line,
+      style: pw.TextStyle(fontSize: fontSize, fontWeight: bold ? pw.FontWeight.bold : pw.FontWeight.normal),
+    );
+  }
 
   // ---------------------------------------------------------------------
   // DOCX — hand-built minimal OOXML package (no template .docx to fill, and
