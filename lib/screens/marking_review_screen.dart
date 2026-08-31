@@ -170,32 +170,46 @@ class _MarkingReviewScreenState extends State<MarkingReviewScreen> {
     if (confirmed != true) return;
 
     setState(() => _saving = true);
-    final originalAnswers = widget.script.gradedAnswers ?? const <GradedAnswer>[];
-    final updatedAnswers = [
-      for (var i = 0; i < _rows.length; i++)
-        GradedAnswer(
-          questionLabel: _rows[i].questionLabel,
-          maxMarks: _rows[i].maxMarks,
-          transcribedAnswer: _rows[i].answer.text.trim(),
-          marksAwarded: _awardedFor(_rows[i]),
-          confidence: _rows[i].confidence,
-          teacherEdited: i < originalAnswers.length ? _rows[i].changedFrom(originalAnswers[i]) : true,
-        ),
-    ];
+    try {
+      final originalAnswers = widget.script.gradedAnswers ?? const <GradedAnswer>[];
+      final updatedAnswers = [
+        for (var i = 0; i < _rows.length; i++)
+          GradedAnswer(
+            questionLabel: _rows[i].questionLabel,
+            maxMarks: _rows[i].maxMarks,
+            transcribedAnswer: _rows[i].answer.text.trim(),
+            marksAwarded: _awardedFor(_rows[i]),
+            confidence: _rows[i].confidence,
+            teacherEdited: i < originalAnswers.length ? _rows[i].changedFrom(originalAnswers[i]) : true,
+          ),
+      ];
 
-    final updated = widget.script.copyWith(
-      status: MarkingScriptStatus.reviewed,
-      gradedAnswers: updatedAnswers,
-      gender: _gender,
-      genderConfirmed: true,
-    );
-    await _repository.update(updated);
-    if (!mounted) return;
-    // Pops with the next script to review (or null) — see [nextInQueue]'s
-    // doc. MarkingQueueScreen._openScript's loop reads this result and
-    // pushes straight into it when non-null, chaining review of a whole
-    // batch without returning to the queue in between.
-    Navigator.of(context).pop(widget.nextInQueue);
+      final updated = widget.script.copyWith(
+        status: MarkingScriptStatus.reviewed,
+        gradedAnswers: updatedAnswers,
+        gender: _gender,
+        genderConfirmed: true,
+      );
+      await _repository.update(updated);
+      if (!mounted) return;
+      // Pops with the next script to review (or null) — see
+      // [nextInQueue]'s doc. MarkingQueueScreen._openScript's loop reads
+      // this result and pushes straight into it when non-null, chaining
+      // review of a whole batch without returning to the queue in
+      // between.
+      Navigator.of(context).pop(widget.nextInQueue);
+    } catch (error) {
+      // Previously unhandled: any failure here (e.g. a disk write issue)
+      // left the screen sitting on its spinner forever with no
+      // indication anything went wrong — indistinguishable from a real
+      // freeze. Now it surfaces, and Confirm & Finish is re-enabled so
+      // the teacher can just try again.
+      if (!mounted) return;
+      setState(() => _saving = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Could not save this script: $error')),
+      );
+    }
   }
 
   @override
