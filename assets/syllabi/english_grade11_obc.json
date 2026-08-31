@@ -1,5 +1,5 @@
 {
-  "_source": "Ministry of Education / Curriculum Development Centre, Zambia. 'English Syllabus, Grade 10-12' (2013, published by CDC) — Grade 11, Topics 11.1-11.5. Topic, sub-topic and Specific Outcome statements only; the 'Content' column is omitted for the reasons documented in the Grade 10 file. Two sub-topics under 11.3 (Composition) — 'Writing Minutes' and 'Writing Speeches' — have no directly visible numbered outcome sentence in the source extraction (the printed table cell appears to have lost the outcome text while keeping its Skills/Values columns); their outcomes were reconstructed from the clearly attributable skill statements ('Application of knowledge on writing minutes' and 'Application of knowledge on making a vote of thanks'), matching the equivalent Grade 10 sub-topics. Under 11.5.1 (Relative Clauses), the source prints the exact same outcome sentence and example twice (as outcomes 1 and 6); the duplicate is not reproduced. The syllabus organizes content by Grade only, not by Term, so all of Grade 11 is modeled as a single term here.",
+  "_source": "Ministry of Education / Curriculum Development Centre, Zambia. 'English Syllabus, Grade 10-12' (2013, published by CDC) — Grade 11, Topics 11.1-11.5 (structure) / continuing SSEL unit numbering into the low-to-mid teens. Original topic/sub-topic names and Specific Outcome statements as documented in this file's prior version's own notes. Rebuilt 2026-08-31 to add real term/week/content data from a second real source, a complete 'SCHEME OF WORK' covering all 3 grades × all 3 terms, organized week-by-week and lesson-by-lesson (not by skill-strand block like the CDC syllabus's own structure) — the user explicitly chose a full rebuild around this source's real teaching units rather than a lighter overlay onto the old skill-strand topics, given how differently the two are organized. Real PII stripped, per standing sourcing policy: every term header in the source repeated a real individual's full name; removed and does not appear anywhere in this file. The source's own publisher/repackager branding (a materials-vendor name, not an individual's real school) was also removed from every header, out of caution. Topics here are the real 'Unit' themes this source actually teaches (e.g. 'Unit 1: Teachers and Teaching'), each containing the real individual lessons (Reading, Composition, Structure, Oral, Summary — genuinely interleaved within a unit in the real record, not grouped by strand); weeks with no named unit (mostly term-opening orientation weeks) are grouped under 'General Language Skills'. Each sub-topic's week_number is the real week it was first taught; where the source's own table cell for a lesson was just 'As above' (repeating the prior lesson's content across a second/third period in the same week), only the first occurrence is kept rather than duplicated. Content was extracted programmatically from the source's raw table (thousands of individual cells across 9 grade/term blocks) rather than transcribed by hand, then spot-checked for parsing errors before being written here; a handful of rows whose table formatting was too garbled to confidently attribute were left out rather than guessed. Real irregularity found and documented, not silently fixed or deduplicated: this source's Grade 11 Term 1 and Term 2 sections are a near-verbatim duplicate of each other — direct comparison found 24 of 28 real lesson entries identical, including matching real week numbers, with only trivial wording differences in the remainder (e.g. 'Composition' vs 'Comprehension' in one label). This is almost certainly a template copy-paste error in the source document itself. Both terms are reproduced faithfully as found in the source, exactly as extracted, rather than fabricating distinct content for one of them or silently removing the apparent duplicate.",
   "curriculum": {
     "code": "OBC_2013",
     "name": "2013 Outcome-Based Curriculum",
@@ -18,112 +18,1209 @@
   },
   "terms": [
     {
-      "name": "Year (not term-divided in the source syllabus)",
-      "sequence_number": 1,
+      "name": "Term 1",
       "topics": [
         {
-          "name": "11.1 Listening and Speaking",
+          "name": "General Language Skills",
           "sequence_number": 1,
           "sub_topics": [
-            { "name": "11.1.1 Oral Communication", "sequence_number": 1, "competencies": [
-              { "sequence_number": 1, "description": "Impart and seek factual information in giving verbal reports and oral messages", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Express and find out intellectual attitudes when making inquiries", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Express and find out emotional attitudes when addressing people of different classes, age groups and sexes", "category": "Specific Outcome" },
-              { "sequence_number": 4, "description": "Interpret, express and find out moral attitudes when expressing beliefs and strongly held opinions without giving offence", "category": "Specific Outcome" },
-              { "sequence_number": 5, "description": "Get things done", "category": "Specific Outcome" },
-              { "sequence_number": 6, "description": "Use socially appropriate language in different situations", "category": "Specific Outcome" }
-            ]}
+            {
+              "name": "(a) Summary (b) Composition (c) Structure",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Valuing clear communication.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 1
+            }
           ]
         },
         {
-          "name": "11.2 Reading and Comprehension",
+          "name": "Unit 6: Love",
           "sequence_number": 2,
           "sub_topics": [
-            { "name": "11.2.1 Efficient Reading", "sequence_number": 1, "competencies": [
-              { "sequence_number": 1, "description": "Read passages with understanding and recall the details", "category": "Specific Outcome" }
-            ]},
-            { "name": "11.2.2 Intensive Reading", "sequence_number": 2, "competencies": [
-              { "sequence_number": 1, "description": "Locate details and answer factual questions", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Show understanding of the underlying meaning of texts", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Describe the feelings, qualities and motives of characters in stories", "category": "Specific Outcome" }
-            ]},
-            { "name": "11.2.3 Extensive Reading", "sequence_number": 3, "competencies": [
-              { "sequence_number": 1, "description": "Read appropriate unabridged books", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Read a wide variety of texts: newspapers, magazines, journals etc", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Read critically and make discriminating judgements", "category": "Specific Outcome" },
-              { "sequence_number": 4, "description": "Practise reading for purpose (e.g. newscast)", "category": "Specific Outcome" }
-            ]}
+            {
+              "name": "ENGLISH 11 TEXT BOOK (SSEL)",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of the value of love and relationships.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 2,
+              "references": "-English 11 T/ hand book -English 11 Pps. Bk"
+            },
+            {
+              "name": "[Structure]: Vocabulary",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of lexical precision.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 3,
+              "references": "-Work cards -M.K. Eng 11 text bks Pps -MK Eng text bk -Chalk board"
+            },
+            {
+              "name": "[Structure]: Cloze",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of textual cohesion.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 3,
+              "references": "-Work cards -M.K. Eng 11 text bks Pps -MK Eng text bk -Chalk board"
+            },
+            {
+              "name": "HOMEWORK: Composition -Profile (Biography).",
+              "sequence_number": 4,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of the lives and stories of others.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 3,
+              "references": "-Work cards -M.K. Eng 11 text bks Pps -MK Eng text bk -Chalk board"
+            },
+            {
+              "name": "Listening and Speaking: (Drill 1) Giving verbal reports",
+              "sequence_number": 5,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Value of accurate and honest reporting.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 3,
+              "references": "-Work cards -M.K. Eng 11 text bks Pps -MK Eng text bk -Chalk board"
+            },
+            {
+              "name": "Structure: Condition -Reading Comprehension: Topic 1: 'Mwikate The Defiler'",
+              "sequence_number": 6,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of hypothetical and causal thinking.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 3,
+              "references": "-Work cards -M.K. Eng 11 text bks Pps -MK Eng text bk -Chalk board"
+            },
+            {
+              "name": "Direct Speech",
+              "sequence_number": 7,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of accurate representation of spoken words.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 4,
+              "references": "-Eng. 8 bk 2 (ZBEC) -Conteprorary Eng. Grammar -Eng 8 bk 2 -Exam Past paper"
+            },
+            {
+              "name": "Word formation :(Forming nouns from verbs)",
+              "sequence_number": 8,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of morphological relationships between word classes.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 4,
+              "references": "-Eng. 8 bk 2 (ZBEC) -Conteprorary Eng. Grammar -Eng 8 bk 2 -Exam Past paper"
+            },
+            {
+              "name": "Reported Speech (Indirect Speech) HOME WORK: Writing a Police Report",
+              "sequence_number": 9,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Value of objective reporting and factual accuracy.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 4,
+              "references": "-Eng. 8 bk 2 (ZBEC) -Conteprorary Eng. Grammar -Eng 8 bk 2 -Exam Past paper"
+            },
+            {
+              "name": "[GRADE 11 TEXT BOOK (SSEL)] [UNIT: CONSERVATION.] - Structure: cloze",
+              "sequence_number": 10,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of environmental conservation.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 5,
+              "references": "-Eng 11 text book -Chalk board -Eng. Text bks. -charts"
+            },
+            {
+              "name": "Reading Comprehension",
+              "sequence_number": 11,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Awareness of conservation issues.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 5,
+              "references": "-Eng 11 text book -Chalk board -Eng. Text bks. -charts"
+            },
+            {
+              "name": "Structure a) Word Formation (Affixation)",
+              "sequence_number": 12,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of how affixes change word meaning.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 6,
+              "references": "English 11 (SSEL) English 11 (SSEL) -College notes"
+            },
+            {
+              "name": "b) Rewrites (Text-based)",
+              "sequence_number": 13,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of grammatical flexibility.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 6,
+              "references": "English 11 (SSEL) English 11 (SSEL) -College notes"
+            },
+            {
+              "name": "ENGLISH 11 (M.K.) TEXT BOOK Listening and Speaking: Inquiring about agreements and disagreements",
+              "sequence_number": 14,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Value of respectful and curious inquiry.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 7,
+              "references": "-English 11 MK text bks. -English 11 MK text bk -College notes -English 11 MK"
+            },
+            {
+              "name": "Extensive Reading: (Topic 6: Attitudes)",
+              "sequence_number": 15,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of self-reflection through reading.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 7,
+              "references": "-English 11 MK text bks. -English 11 MK text bk -College notes -English 11 MK"
+            },
+            {
+              "name": "Formal Letter: Reference/Recommendation Letter",
+              "sequence_number": 16,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Value of supporting and endorsing others' abilities.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 7,
+              "references": "-English 11 MK text bks. -English 11 MK text bk -College notes -English 11 MK"
+            }
           ]
         },
         {
-          "name": "11.3 Composition",
+          "name": "Unit 8: Literacy",
           "sequence_number": 3,
           "sub_topics": [
-            { "name": "11.3.1 Descriptive Writing", "sequence_number": 1, "competencies": [
-              { "sequence_number": 1, "description": "Write advanced descriptive compositions", "category": "Specific Outcome" }
-            ]},
-            { "name": "11.3.2 Narrative Writing", "sequence_number": 2, "competencies": [
-              { "sequence_number": 1, "description": "Write advanced narrative compositions", "category": "Specific Outcome" }
-            ]},
-            { "name": "11.3.3 Essay Writing", "sequence_number": 3, "competencies": [
-              { "sequence_number": 1, "description": "Write advanced essays in other subjects", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Write essays on given topics from other subjects", "category": "Specific Outcome" }
-            ]},
-            { "name": "11.3.4 Article Writing", "sequence_number": 4, "competencies": [
-              { "sequence_number": 1, "description": "Write newspaper and magazine articles", "category": "Specific Outcome" }
-            ]},
-            { "name": "11.3.5 Book Report", "sequence_number": 5, "competencies": [
-              { "sequence_number": 1, "description": "Write book reports", "category": "Specific Outcome" }
-            ]},
-            { "name": "11.3.6 Writing Minutes", "sequence_number": 6, "competencies": [
-              { "sequence_number": 1, "description": "Write minutes of a meeting", "category": "Specific Outcome" }
-            ]},
-            { "name": "11.3.7 Writing Speeches", "sequence_number": 7, "competencies": [
-              { "sequence_number": 1, "description": "Write a vote of thanks", "category": "Specific Outcome" }
-            ]}
+            {
+              "name": "Vocabulary",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of vocabulary building for effective communication.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 8,
+              "references": "-Eng. 11 SSEL -Chalkboard -Tr.'s hand book G 11"
+            },
+            {
+              "name": "Structure: (a) Cloze",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of textual cohesion.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 8,
+              "references": "-Eng. 11 SSEL -Chalkboard -Tr.'s hand book G 11"
+            },
+            {
+              "name": "(b) Transformation (text based) -Extensive Reading HOME WORK: (Structure: Homonyms)",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of wordplay and nuanced meaning.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 8,
+              "references": "-Eng. 11 SSEL -Chalkboard -Tr.'s hand book G 11"
+            },
+            {
+              "name": "Subject-Verb Agreement",
+              "sequence_number": 4,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of grammatical number harmony.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 9,
+              "references": "-Teacher's research notes -English 9 bk 1 -Tr's researched lesson notes"
+            },
+            {
+              "name": "Phrasal verbs/ Idioms",
+              "sequence_number": 5,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of natural, colloquial language.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 9,
+              "references": "-Teacher's research notes -English 9 bk 1 -Tr's researched lesson notes"
+            },
+            {
+              "name": "Listening and Speaking: Drill 4 Addressing People",
+              "sequence_number": 6,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Respect for social hierarchies and appropriate address.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 10,
+              "references": "English 11 MK English 11 M.K -Tr's resource material -Eng 11 M.K. text bk"
+            },
+            {
+              "name": "[Structure] -- Inversion",
+              "sequence_number": 7,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of formal and emphatic sentence structures.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 10,
+              "references": "English 11 MK English 11 M.K -Tr's resource material -Eng 11 M.K. text bk"
+            },
+            {
+              "name": "Reading Comprehension (Topic 12: If Only I had said \"No\" to uncle)",
+              "sequence_number": 8,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Learning from past regrets and making wise decisions.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 10,
+              "references": "English 11 MK English 11 M.K -Tr's resource material -Eng 11 M.K. text bk"
+            }
           ]
         },
         {
-          "name": "11.4 Summary",
+          "name": "Unit 9: Food, Drink And Diarrhoea.",
           "sequence_number": 4,
           "sub_topics": [
-            { "name": "11.4.1 Verbal Summaries", "sequence_number": 1, "competencies": [
-              { "sequence_number": 1, "description": "Report a message summarizing main points", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Give a speech summarizing main points (e.g. making announcements)", "category": "Specific Outcome" }
-            ]},
-            { "name": "11.4.2 Tabulation Skills", "sequence_number": 2, "competencies": [
-              { "sequence_number": 1, "description": "Tabulate specific information in the text or other print materials such as maps, graphs, tables and charts", "category": "Specific Outcome" }
-            ]},
-            { "name": "11.4.3 Prose Summaries", "sequence_number": 3, "competencies": [
-              { "sequence_number": 1, "description": "Summarise given texts", "category": "Specific Outcome" }
-            ]}
+            {
+              "name": "Structure: Cloze",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Awareness of health and nutrition issues.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 11,
+              "references": "English 11 English 11 -Eng. 11 Pp's bk"
+            },
+            {
+              "name": "Reading Comprehension",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Understanding of health-related texts.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 11,
+              "references": "English 11 English 11 -Eng. 11 Pp's bk"
+            },
+            {
+              "name": "Structure: Word Formation -Nouns and Adjectives HOME WORK: Structure Rewrites (Text based --Grade 11 text bk. page 84)",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of morphological relationships.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 11,
+              "references": "English 11 English 11 -Eng. 11 Pp's bk"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 2",
+      "topics": [
+        {
+          "name": "General Language Skills",
+          "sequence_number": 1,
+          "sub_topics": [
+            {
+              "name": "(a) Summary (b) Comprehension (c) Structure",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Valuing clear communication and grammatical accuracy.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 1
+            }
           ]
         },
         {
-          "name": "11.5 Structure",
+          "name": "Unit 6: Love",
+          "sequence_number": 2,
+          "sub_topics": [
+            {
+              "name": "ENGLISH 11 TEXT BOOK (SSEL)",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of love as a universal value.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 2,
+              "references": "-English 11 T/ hand book -English 11 Pps. Bk"
+            },
+            {
+              "name": "[Structure]: Vocabulary",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of lexical precision.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 2,
+              "references": "-English 11 T/ hand book -English 11 Pps. Bk"
+            },
+            {
+              "name": "[Structure]: Cloze",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of textual cohesion.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 2,
+              "references": "-English 11 T/ hand book -English 11 Pps. Bk"
+            },
+            {
+              "name": "HOMEWORK: Composition -Profile (Biography).",
+              "sequence_number": 4,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of the lives and stories of others.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 2,
+              "references": "-English 11 T/ hand book -English 11 Pps. Bk"
+            },
+            {
+              "name": "Listening and Speaking: (Drill 1) Giving verbal reports",
+              "sequence_number": 5,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Value of accurate and honest reporting.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 3,
+              "references": "-Work cards -M.K. Eng 11 text bks Pps -MK Eng text bk -Chalk board"
+            },
+            {
+              "name": "Structure: Condition -Reading Comprehension: Topic 1: 'Mwikate The Defiler'",
+              "sequence_number": 6,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of hypothetical and causal thinking.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 3,
+              "references": "-Work cards -M.K. Eng 11 text bks Pps -MK Eng text bk -Chalk board"
+            },
+            {
+              "name": "Direct Speech",
+              "sequence_number": 7,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of accurate representation of spoken words.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 4,
+              "references": "-Eng. 8 bk 2 (ZBEC) -Conteprorary Eng. Grammar -Eng 8 bk 2 -Exam Past paper"
+            },
+            {
+              "name": "Word formation :(Forming nouns from verbs)",
+              "sequence_number": 8,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of morphological relationships.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 4,
+              "references": "-Eng. 8 bk 2 (ZBEC) -Conteprorary Eng. Grammar -Eng 8 bk 2 -Exam Past paper"
+            },
+            {
+              "name": "Reported Speech (Indirect Speech) HOME WORK: Writing a Police Report",
+              "sequence_number": 9,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Value of objective reporting and factual accuracy.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 4,
+              "references": "-Eng. 8 bk 2 (ZBEC) -Conteprorary Eng. Grammar -Eng 8 bk 2 -Exam Past paper"
+            },
+            {
+              "name": "[GRADE 11 TEXT BOOK (SSEL)] [UNIT: CONSERVATION.] - Structure: cloze",
+              "sequence_number": 10,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of environmental conservation.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 5,
+              "references": "-Eng 11 text book -Chalk board -Eng. Text bks. -charts"
+            },
+            {
+              "name": "Reading Comprehension",
+              "sequence_number": 11,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Awareness of conservation issues.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 5,
+              "references": "-Eng 11 text book -Chalk board -Eng. Text bks. -charts"
+            },
+            {
+              "name": "Structure a) Word Formation (Affixation)",
+              "sequence_number": 12,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of how affixes change word meaning.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 6,
+              "references": "English 11 (SSEL) English 11 (SSEL) -College notes"
+            },
+            {
+              "name": "b) Rewrites (Text-based)",
+              "sequence_number": 13,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of grammatical flexibility.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 6,
+              "references": "English 11 (SSEL) English 11 (SSEL) -College notes"
+            },
+            {
+              "name": "ENGLISH 11 (M.K.) TEXT BOOK Listening and Speaking: Inquiring about agreements and disagreements",
+              "sequence_number": 14,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Value of respectful and curious inquiry.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 7,
+              "references": "-English 11 MK text bks. -English 11 MK text bk -College notes -English 11 MK"
+            },
+            {
+              "name": "Extensive Reading: (Topic 6: Attitudes)",
+              "sequence_number": 15,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of self-reflection through reading.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 7,
+              "references": "-English 11 MK text bks. -English 11 MK text bk -College notes -English 11 MK"
+            },
+            {
+              "name": "Formal Letter: Reference/Recommendation Letter",
+              "sequence_number": 16,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Value of supporting and endorsing others.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 7,
+              "references": "-English 11 MK text bks. -English 11 MK text bk -College notes -English 11 MK"
+            }
+          ]
+        },
+        {
+          "name": "Unit 8: Literacy",
+          "sequence_number": 3,
+          "sub_topics": [
+            {
+              "name": "Vocabulary",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of vocabulary building.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 8,
+              "references": "-Eng. 11 SSEL -Chalkboard -Tr.'s hand book G 11"
+            },
+            {
+              "name": "Structure: (a) Cloze",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of textual cohesion.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 8,
+              "references": "-Eng. 11 SSEL -Chalkboard -Tr.'s hand book G 11"
+            },
+            {
+              "name": "(b) Transformation (text based) -Extensive Reading HOME WORK: (Structure: Homonyms)",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of wordplay and nuanced meaning.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 8,
+              "references": "-Eng. 11 SSEL -Chalkboard -Tr.'s hand book G 11"
+            },
+            {
+              "name": "Subject-Verb Agreement",
+              "sequence_number": 4,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of grammatical number harmony.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 9,
+              "references": "-Teacher's research notes -English 9 bk 1 -Tr's researched lesson notes"
+            },
+            {
+              "name": "Phrasal verbs/ Idioms",
+              "sequence_number": 5,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of natural, colloquial language.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 9,
+              "references": "-Teacher's research notes -English 9 bk 1 -Tr's researched lesson notes"
+            },
+            {
+              "name": "Listening and Speaking: Drill 4 Addressing People",
+              "sequence_number": 6,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Respect for social hierarchies and appropriate address.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 10,
+              "references": "English 11 MK English 11 M.K -Tr's resource material -Eng 11 M.K. text bk"
+            },
+            {
+              "name": "[Structure] -- Inversion",
+              "sequence_number": 7,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of formal and emphatic sentence structures.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 10,
+              "references": "English 11 MK English 11 M.K -Tr's resource material -Eng 11 M.K. text bk"
+            },
+            {
+              "name": "Reading Comprehension (Topic 12: If Only I had said \"No\" to uncle)",
+              "sequence_number": 8,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Learning from past regrets and making wise decisions.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 10,
+              "references": "English 11 MK English 11 M.K -Tr's resource material -Eng 11 M.K. text bk"
+            }
+          ]
+        },
+        {
+          "name": "Unit 9: Food, Drink And Diarrhoea.",
+          "sequence_number": 4,
+          "sub_topics": [
+            {
+              "name": "Structure: Cloze",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Awareness of health and nutrition issues.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 11,
+              "references": "English 11 English 11 -Eng. 11 Pp's bk"
+            },
+            {
+              "name": "Reading Comprehension",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Understanding of health-related texts.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 11,
+              "references": "English 11 English 11 -Eng. 11 Pp's bk"
+            },
+            {
+              "name": "Structure: Word Formation -Nouns and Adjectives HOME WORK: Structure Rewrites (Text based --Grade 11 text bk. page 84)",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of morphological relationships.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 11,
+              "references": "English 11 English 11 -Eng. 11 Pp's bk"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 3",
+      "topics": [
+        {
+          "name": "General Language Skills",
+          "sequence_number": 1,
+          "sub_topics": [
+            {
+              "name": "(a) Summary (b) Comprehension (c) Structure",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Valuing clear communication and grammatical accuracy.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 1
+            }
+          ]
+        },
+        {
+          "name": "Unit 9: (Grade 11) Food, Drink And Diarrhoea.",
+          "sequence_number": 2,
+          "sub_topics": [
+            {
+              "name": "Structure: Cloze",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Awareness of health and nutrition issues.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 2,
+              "references": "-English 11 T/ hand book -English 11 Pps. Bk -Chalkboard -Work cards"
+            },
+            {
+              "name": "Reading Comprehension",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Understanding of health-related texts.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 2,
+              "references": "-English 11 T/ hand book -English 11 Pps. Bk -Chalkboard -Work cards"
+            },
+            {
+              "name": "Structure: Word Formation -Nouns and Adjectives",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of morphological relationships.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 2,
+              "references": "-English 11 T/ hand book -English 11 Pps. Bk -Chalkboard -Work cards"
+            },
+            {
+              "name": "[HOME WORK]: Structure Rewrites (Text based --Grade 11 text bk. page 84)",
+              "sequence_number": 4,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of grammatical flexibility.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 2,
+              "references": "-English 11 T/ hand book -English 11 Pps. Bk -Chalkboard -Work cards"
+            },
+            {
+              "name": "Listening and Speaking: (Drill 5) Expressing beliefs and opinions",
+              "sequence_number": 5,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Value of respectful disagreement and tolerance.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 3,
+              "references": "-Work cards -M.K. Eng 11 text bks Pps -MK Eng text bk -Chalk board"
+            },
+            {
+              "name": "Structure: Conditional sentences with \"'but for',.... 'Unless',......'.inversion',....Provided (that)...\"",
+              "sequence_number": 6,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of hypothetical and causal thinking.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 3,
+              "references": "-Work cards -M.K. Eng 11 text bks Pps -MK Eng text bk -Chalk board"
+            },
+            {
+              "name": "Structure: Reported Speech - Questions, Commands and Requests (Consult Grade 9 bk 1 ZBEC for details)",
+              "sequence_number": 7,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Value of objective reporting.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 3,
+              "references": "-Work cards -M.K. Eng 11 text bks Pps -MK Eng text bk -Chalk board"
+            },
+            {
+              "name": "Homonyms ( Identical words in sound and pronunciation)",
+              "sequence_number": 8,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of word nuance and avoiding ambiguity.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 4,
+              "references": "-Conteprorary Eng. Grammar -Chalk board -Charts -Exam Past paper"
+            },
+            {
+              "name": "Affixation (Prefixes that denote negativity i.e.'im-possible, in-aility..un-happy...)",
+              "sequence_number": 9,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of how prefixes reverse meaning.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 4,
+              "references": "-Conteprorary Eng. Grammar -Chalk board -Charts -Exam Past paper"
+            },
+            {
+              "name": "Common Prepositions [HOME WORK:] Exam Practice: Writing a Prose Summary ( 2018 GCE English paper2)",
+              "sequence_number": 10,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Value of accurate word partnerships and objective reporting.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 4,
+              "references": "-Conteprorary Eng. Grammar -Chalk board -Charts -Exam Past paper"
+            }
+          ]
+        },
+        {
+          "name": "Unit 10: Acceptable Behaviour",
+          "sequence_number": 3,
+          "sub_topics": [
+            {
+              "name": "Structure: Vocabulary/Pronunciation",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of correct pronunciation for clarity.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 5,
+              "references": "-Eng 11 text book -Chalk board -Eng. Text bks. -charts"
+            },
+            {
+              "name": "Summary: prose.",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Value of conciseness.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 5,
+              "references": "-Eng 11 text book -Chalk board -Eng. Text bks. -charts"
+            },
+            {
+              "name": "Reading comprehension",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Understanding of human behaviour and social norms.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 6,
+              "references": "English 11 (SSEL) English 11 (SSEL) -College notes"
+            },
+            {
+              "name": "Structure: Rewrites (Text based)",
+              "sequence_number": 4,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of grammatical flexibility.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 6,
+              "references": "English 11 (SSEL) English 11 (SSEL) -College notes"
+            },
+            {
+              "name": "Structure: Cloze HOME WORK - Narrative Composition ( 2017 Paper 1)",
+              "sequence_number": 5,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of textual cohesion and storytelling.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 6,
+              "references": "English 11 (SSEL) English 11 (SSEL) -College notes"
+            },
+            {
+              "name": "ENGLISH 11 (M.K.) TEXT BOOK Listening and Speaking: Drill 6: Getting Things Done",
+              "sequence_number": 6,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Value of polite and effective persuasion.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 7,
+              "references": "-English 11 MK text bks. -English 11 MK text bk -College notes -English 11 MK"
+            },
+            {
+              "name": "Extensive Reading: (Topic 12: If Only I had said No to Uncle))",
+              "sequence_number": 7,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Learning from past regrets and making wise decisions.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 7,
+              "references": "-English 11 MK text bks. -English 11 MK text bk -College notes -English 11 MK"
+            },
+            {
+              "name": "Formal Letter: Application for a job",
+              "sequence_number": 8,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Value of professional self-presentation.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 7,
+              "references": "-English 11 MK text bks. -English 11 MK text bk -College notes -English 11 MK"
+            }
+          ]
+        },
+        {
+          "name": "Unit 11: Careers",
+          "sequence_number": 4,
+          "sub_topics": [
+            {
+              "name": "Structure: vocabulary",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of career planning and vocabulary.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 8,
+              "references": "-Eng. 11 SSEL -Chalkboard -Tr.'s hand book G 11"
+            },
+            {
+              "name": "Extensive reading: Aircraft pilots",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of different careers.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 8,
+              "references": "-Eng. 11 SSEL -Chalkboard -Tr.'s hand book G 11"
+            },
+            {
+              "name": "Structure: Cloze [HOME WORK]: Formal Letter: Responding to Job/ training adverts)",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of textual cohesion and professional communication.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 8,
+              "references": "-Eng. 11 SSEL -Chalkboard -Tr.'s hand book G 11"
+            },
+            {
+              "name": "Subject-Verb Agreement ( with intervening phrases i.e. 'as well as', .... 'together with' .... 'accompanied by' ,",
+              "sequence_number": 4,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of grammatical number harmony despite interrupting elements.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 9,
+              "references": "-Teacher's research notes -English 9 bk 1 -Tr's researched lesson notes"
+            },
+            {
+              "name": "Voice - Active/ Passive Voices ( Pay attention to tenses, subject and object)",
+              "sequence_number": 5,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of focus and emphasis.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 9,
+              "references": "-Teacher's research notes -English 9 bk 1 -Tr's researched lesson notes"
+            },
+            {
+              "name": "Listening and Speaking: Drill 7: Using Socially Appropriate Language in different situations.",
+              "sequence_number": 6,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Respect for social norms and appropriateness.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 10,
+              "references": "English 11 MK English 11 M.K -Tr's resource material -Eng 11 M.K. text bk"
+            },
+            {
+              "name": "[Structure] -- Noun Phrases/Clauses and Noun Clauses (See Grade 9 bk 2 ZBEC page 137 & Grade 11 Eng SSEL page 139)",
+              "sequence_number": 7,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of complex sentence structures for sophisticated writing.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 10,
+              "references": "English 11 MK English 11 M.K -Tr's resource material -Eng 11 M.K. text bk"
+            },
+            {
+              "name": "Reading Comprehension (Topic 11: Crime)",
+              "sequence_number": 8,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Understanding of crime and its social impact.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 10,
+              "references": "English 11 MK English 11 M.K -Tr's resource material -Eng 11 M.K. text bk"
+            }
+          ]
+        },
+        {
+          "name": "Unit 15: Hobbies",
           "sequence_number": 5,
           "sub_topics": [
-            { "name": "11.5.1 Relative Clauses", "sequence_number": 1, "competencies": [
-              { "sequence_number": 1, "description": "Use 'which' or 'that' with subjects that are people", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Use 'which' or 'that' with subjects that are things", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Use 'whom', 'who' or nothing with objects that are things", "category": "Specific Outcome" },
-              { "sequence_number": 4, "description": "Use preposition + relative pronoun with objects that are people", "category": "Specific Outcome" },
-              { "sequence_number": 5, "description": "Use 'which', 'that' or nothing with objects that are things", "category": "Specific Outcome" }
-            ]},
-            { "name": "11.5.2 Condition", "sequence_number": 2, "competencies": [
-              { "sequence_number": 1, "description": "Use likely/probable conditional sentences", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Use unlikely/improbable conditional sentences", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Use impossible conditional sentences", "category": "Specific Outcome" },
-              { "sequence_number": 4, "description": "Use common variations of conditional sentences", "category": "Specific Outcome" },
-              { "sequence_number": 5, "description": "Use 'unless' in conditional sentences", "category": "Specific Outcome" },
-              { "sequence_number": 6, "description": "Use 'even if' to indicate condition and implied contrast", "category": "Specific Outcome" }
-            ]},
-            { "name": "11.5.3 Direct Speech", "sequence_number": 3, "competencies": [
-              { "sequence_number": 1, "description": "Use direct speech", "category": "Specific Outcome" }
-            ]},
-            { "name": "11.5.4 Reported Speech", "sequence_number": 4, "competencies": [
-              { "sequence_number": 1, "description": "Change direct speech into reported speech", "category": "Specific Outcome" }
-            ]}
+            {
+              "name": "[ENGLISH GRADE 11 TEXT BOOK (SSEL)] Structures: - Irregular Plurals",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of linguistic exceptions and variety.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 11,
+              "references": "English 11 English 11 -Eng. 11 Pp's bk"
+            },
+            {
+              "name": "Reference Signals (former, Latter and Respectively)",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of concise and clear referencing.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 11,
+              "references": "English 11 English 11 -Eng. 11 Pp's bk"
+            },
+            {
+              "name": "Reading Comprehension: Coin Collection",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of hobbies and their value.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 11,
+              "references": "English 11 English 11 -Eng. 11 Pp's bk"
+            }
           ]
         }
       ]

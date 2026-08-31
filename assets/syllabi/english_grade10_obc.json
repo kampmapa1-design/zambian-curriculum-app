@@ -1,5 +1,5 @@
 {
-  "_source": "Ministry of Education / Curriculum Development Centre, Zambia. 'English Syllabus, Grade 10-12' (2013, published by CDC) — Grade 10, Topics 10.1-10.5. Topic, sub-topic and Specific Outcome statements only; the 'Content' (Knowledge/Skills/Values) columns are omitted, consistent with the approach used for the other 2013 OBC subjects in this app — though for this syllabus the Content column is itself often the worked example illustrating the grammar/writing point (e.g. a sample sentence), not a separate elaboration, since Structure outcomes are very fine-grained already. Two reconstructions were needed: under 10.3 (Composition), the sub-topic 'Writing Speeches' (10.3.8) has its Content column text interleaved with the adjacent 'Writing Minutes' (10.3.7) sub-topic in the source PDF's extraction (a column-scrambling issue matching the same pattern seen in other CDC OBC syllabi); its outcome was reconstructed from the one clearly attributable skill statement ('making speech introduction') as 'Write a speech of introduction'. Sub-topic 10.5.5 does not exist in the source — Structure jumps from 10.5.4 (Noun Phrases and Clauses) to 10.5.6 (Relative Clauses), a genuine gap in the original numbering, not an extraction artifact. This file's subject code is 'ENG', matching the CBC_2023 English entries already in this app for Grade 8 and the earlier OBC_2013 Form 3 placeholder — differentiated by curriculum_code and grade_level exactly like every other subject with entries in both curricula. The syllabus organizes content by Grade only, not by Term, so all of Grade 10 is modeled as a single term here.",
+  "_source": "Ministry of Education / Curriculum Development Centre, Zambia. 'English Syllabus, Grade 10-12' (2013, published by CDC) — Grade 10, Topics 10.1-10.5. Original topic/sub-topic names and Specific Outcome statements as documented in this file's prior version's own notes. Rebuilt 2026-08-31 to add real term/week/content data from a second real source, a complete 'SCHEME OF WORK' covering all 3 grades × all 3 terms, organized week-by-week and lesson-by-lesson (not by skill-strand block like the CDC syllabus's own structure) — the user explicitly chose a full rebuild around this source's real teaching units rather than a lighter overlay onto the old skill-strand topics, given how differently the two are organized. Real PII stripped, per standing sourcing policy: every term header in the source repeated a real individual's full name; removed and does not appear anywhere in this file. The source's own publisher/repackager branding (a materials-vendor name, not an individual's real school) was also removed from every header, out of caution. Topics here are the real 'Unit' themes this source actually teaches (e.g. 'Unit 1: Teachers and Teaching'), each containing the real individual lessons (Reading, Composition, Structure, Oral, Summary — genuinely interleaved within a unit in the real record, not grouped by strand); weeks with no named unit (mostly term-opening orientation weeks) are grouped under 'General Language Skills'. Each sub-topic's week_number is the real week it was first taught; where the source's own table cell for a lesson was just 'As above' (repeating the prior lesson's content across a second/third period in the same week), only the first occurrence is kept rather than duplicated. Content was extracted programmatically from the source's raw table (thousands of individual cells across 9 grade/term blocks) rather than transcribed by hand, then spot-checked for parsing errors before being written here; a handful of rows whose table formatting was too garbled to confidently attribute were left out rather than guessed. ",
   "curriculum": {
     "code": "OBC_2013",
     "name": "2013 Outcome-Based Curriculum",
@@ -18,151 +18,1216 @@
   },
   "terms": [
     {
-      "name": "Year (not term-divided in the source syllabus)",
-      "sequence_number": 1,
+      "name": "Term 1",
       "topics": [
         {
-          "name": "10.1 Listening and Speaking",
+          "name": "General Language Skills",
           "sequence_number": 1,
           "sub_topics": [
-            { "name": "10.1.1 Oral Communication", "sequence_number": 1, "competencies": [
-              { "sequence_number": 1, "description": "Impart and seek factual information in giving directions and instructions", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Express and find out emotional attitudes in different situations", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Express and find out intellectual attitudes in making agreements and disagreements", "category": "Specific Outcome" },
-              { "sequence_number": 4, "description": "Get things done", "category": "Specific Outcome" },
-              { "sequence_number": 5, "description": "Use socially acceptable language in different situations", "category": "Specific Outcome" }
-            ]}
+            {
+              "name": "Listening & Speaking - Detailed individual Introductions",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use socially appropriate language in different situations",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 1,
+              "references": "-Teacher's resource work"
+            },
+            {
+              "name": "orientation of new learners on the subject (English Language) and its expectations. -The Sentence: Types of Sentences",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Identify and explain types of English sentences",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 1
+            }
           ]
         },
         {
-          "name": "10.2 Reading and Comprehension",
+          "name": "Unit 1: Teachers And Teaching.",
           "sequence_number": 2,
           "sub_topics": [
-            { "name": "10.2.1 Intensive Reading", "sequence_number": 1, "competencies": [
-              { "sequence_number": 1, "description": "Read passages efficiently and do follow-up activities", "category": "Specific Outcome" }
-            ]},
-            { "name": "10.2.2 Extensive Reading", "sequence_number": 2, "competencies": [
-              { "sequence_number": 1, "description": "Read efficiently unabridged reading materials of different types", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Read critically and make discriminating judgements", "category": "Specific Outcome" }
-            ]}
+            {
+              "name": "Dictation (Listening & Writing)",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Write given passage to teacher's dictation.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 2,
+              "references": "-Eng 10 bk 1(Zbec) T/G pg 16 -SSEL Syllabus pg 15 -Eng 10 Pp's bk pg 3"
+            },
+            {
+              "name": "Reading Comprehension: (The type of knowledge Teachers Need)",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Locate details and answer factual questions.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 2
+            },
+            {
+              "name": "Oral Communication (Who is the Best Teacher?)",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Express agreement and disagreement",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 2
+            },
+            {
+              "name": "Punctuation",
+              "sequence_number": 4,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Supply correct punctuation marks to given passage",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 3,
+              "references": "-Eng 10 Pp's bk 1 pg 4 -pg 4-5 -pg 6-8 -Eng 10 bk 1(Zbec) T/G pg 18-24 -SSE Syllabus pg 35"
+            },
+            {
+              "name": "Composition: Making a reply to Informal Letter.",
+              "sequence_number": 5,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Creatively write an informal letter.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 3
+            },
+            {
+              "name": "Extensive Reading: Crabby and Kofi's Teacher",
+              "sequence_number": 6,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Read critically and make discriminating judgments",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 3
+            },
+            {
+              "name": "Tenses: The Future (the emphatic form of 'Shall')",
+              "sequence_number": 7,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use the future tense to express future actions and intentions correctly.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 4,
+              "references": "-SSE Syllabus page 18-19 -Eng 10 Pp's bk 1 pge 140 -Eng 10 bk1 TG pg 97 -Syllabus pg 19"
+            },
+            {
+              "name": "Verbs and Expressions followed by either the ---'ing' form or the infinitive",
+              "sequence_number": 8,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use the -ing form and infinitive after given verbs.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 4
+            },
+            {
+              "name": "Noun Phrases and Clauses",
+              "sequence_number": 9,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use the infinitive phrases as objects correctly",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 4
+            },
+            {
+              "name": "Topic 3: Reading Comprehension - 'A hug from Uncle Peter'",
+              "sequence_number": 10,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Locate details and answer factual questions",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 5,
+              "references": "-Eng 10 MK Pp's bk pg 66 -\" pg 33 -SSE Syllabus pg 19 -Eng 10 MK Pps bk pg 6"
+            },
+            {
+              "name": "Structure: Determiners (Adjectives of Quantity)",
+              "sequence_number": 11,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use determiners correctly",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 5
+            },
+            {
+              "name": "Composition: Descriptive Writing",
+              "sequence_number": 12,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe given process correctly",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 5
+            }
           ]
         },
         {
-          "name": "10.3 Composition",
+          "name": "Unit 2: Animals As Builders",
           "sequence_number": 3,
           "sub_topics": [
-            { "name": "10.3.1 Descriptive Writing", "sequence_number": 1, "competencies": [
-              { "sequence_number": 1, "description": "Write advanced descriptives", "category": "Specific Outcome" }
-            ]},
-            { "name": "10.3.2 Narrative Writing", "sequence_number": 2, "competencies": [
-              { "sequence_number": 1, "description": "Write advanced narrative compositions", "category": "Specific Outcome" }
-            ]},
-            { "name": "10.3.3 Essay Writing", "sequence_number": 3, "competencies": [
-              { "sequence_number": 1, "description": "Write advanced essays in other subjects", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Write profiles, i.e. autobiographies and biographies", "category": "Specific Outcome" }
-            ]},
-            { "name": "10.3.4 Article Writing", "sequence_number": 4, "competencies": [
-              { "sequence_number": 1, "description": "Write newspaper and magazine articles", "category": "Specific Outcome" }
-            ]},
-            { "name": "10.3.5 Report Writing", "sequence_number": 5, "competencies": [
-              { "sequence_number": 1, "description": "Write simple reports on given topics", "category": "Specific Outcome" }
-            ]},
-            { "name": "10.3.6 Book Reviews", "sequence_number": 6, "competencies": [
-              { "sequence_number": 1, "description": "Write book reviews", "category": "Specific Outcome" }
-            ]},
-            { "name": "10.3.7 Writing Minutes", "sequence_number": 7, "competencies": [
-              { "sequence_number": 1, "description": "Write minutes of a meeting", "category": "Specific Outcome" }
-            ]},
-            { "name": "10.3.8 Writing Speeches", "sequence_number": 8, "competencies": [
-              { "sequence_number": 1, "description": "Write a speech of introduction", "category": "Specific Outcome" }
-            ]}
+            {
+              "name": "Extensive Reading (Man & Animal Builders)",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Read critically and make discriminating judgments",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 6,
+              "references": "-Eng 10 Pp's bk 1 pge 9 -24 -Eng 10 bk 1 TG pg 25-34"
+            },
+            {
+              "name": "Composition: Profile (Auto-biography)",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Write their detailed life history with less difficulty",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 6
+            },
+            {
+              "name": "NOTE-TAKING",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Write down note from a spoken discourse",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 6
+            },
+            {
+              "name": "Reading Comprehension: Pigeons",
+              "sequence_number": 4,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Locate details and answer factual questions.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 7,
+              "references": "\" pg13 -Pp's bk 1 pg 16 -SSE Syllabus pg 14"
+            },
+            {
+              "name": "Punctuation",
+              "sequence_number": 5,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Supply correct punctuation marks to given passage",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 7
+            },
+            {
+              "name": "Oral Communication- Describing Processes",
+              "sequence_number": 6,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Express intellectual attitudes in describing given process",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 7
+            },
+            {
+              "name": "Comparison ( the + comparative... the + comparative, comparatives, superlatives, as.....as)",
+              "sequence_number": 7,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use given structural patterns to express contrast correctly",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 8,
+              "references": "SSE Syllabus pg 21 -Eng 10 Pp's bk 1 pg 143-150"
+            },
+            {
+              "name": "Reason ( Now that, Seeing that, Participial phrases)",
+              "sequence_number": 8,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Express Reason using given structural pattern correctly",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 8
+            },
+            {
+              "name": "Time ( before, while, after, etc)",
+              "sequence_number": 9,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use time conjunctions correctly",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 8
+            },
+            {
+              "name": "Reading Comprehension : Topic 8 ( His Beautiful Eyes)",
+              "sequence_number": 10,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Locate details and answer factual questions.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 9,
+              "references": "-Eng 10 MK Pp's bk pg 93-97 -\"Pg 129 -SSE Syllabus pg 41"
+            },
+            {
+              "name": "Composition : Profile: Biography",
+              "sequence_number": 11,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Write biographical material acceptably",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 9
+            },
+            {
+              "name": "Summary: Note Summary",
+              "sequence_number": 12,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Write note summaries containing specific information obtained from given passage",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 9
+            }
           ]
         },
         {
-          "name": "10.4 Summary",
+          "name": "Unit 3: Living Dangerously",
           "sequence_number": 4,
           "sub_topics": [
-            { "name": "10.4.1 Titles", "sequence_number": 1, "competencies": [
-              { "sequence_number": 1, "description": "Choose the best titles and justify the choice", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Compose titles which are adequate and concise", "category": "Specific Outcome" }
-            ]},
-            { "name": "10.4.2 Sentence Summaries", "sequence_number": 2, "competencies": [
-              { "sequence_number": 1, "description": "Identify sentences which provide concise information in texts", "category": "Specific Outcome" }
-            ]},
-            { "name": "10.4.3 Paragraph Summaries", "sequence_number": 3, "competencies": [
-              { "sequence_number": 1, "description": "Choose the best paragraph summaries and justify the choice", "category": "Specific Outcome" }
-            ]},
-            { "name": "10.4.4 Tabulation Skills", "sequence_number": 4, "competencies": [
-              { "sequence_number": 1, "description": "Tabulate information in texts into other print materials such as maps, graphs, tables and charts", "category": "Specific Outcome" }
-            ]},
-            { "name": "10.4.5 Abbreviations", "sequence_number": 5, "competencies": [
-              { "sequence_number": 1, "description": "Use abbreviations when taking notes", "category": "Specific Outcome" }
-            ]}
+            {
+              "name": "Oral Communication: People in Dangerous Occupation",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Express intellectual attitudes in making agreements and disagreements.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 10,
+              "references": "-Eng 10 Pp's bk 1pages 25-41 -Eng 10 TG 1 pg 35-44"
+            },
+            {
+              "name": "Extensive Reading : Mine Boy",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Read critically and make discriminating judgments",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 10
+            },
+            {
+              "name": "Reading Comprehension (page 30)",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Locate details and answer factual questions.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 10
+            },
+            {
+              "name": "Structure: Prepositions",
+              "sequence_number": 4,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use given preposition correctly",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 11
+            },
+            {
+              "name": "Summary: Prose",
+              "sequence_number": 5,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Write given points in prose",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 11
+            },
+            {
+              "name": "Composition: Formal Letter",
+              "sequence_number": 6,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Identify main features of a formal letter",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 11
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 2",
+      "topics": [
+        {
+          "name": "General Language Skills",
+          "sequence_number": 1,
+          "sub_topics": [
+            {
+              "name": "Structure",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use the infinitive phrases as objects",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 1
+            },
+            {
+              "name": "Comprehension -Structure: Noun Phrases -HOME WORK: (Prepositions)",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Provide prepositions that come after certain words.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 1
+            },
+            {
+              "name": "ENGLISH 10 BOOK 1 (SSEL) UNIT 5: FAMILY LIFE -Extensive Reading",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Read given texts for pleasure",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 2,
+              "references": "-Eng 10 bk 1(Zbec) T/G pg 56 -SSEL Syllabus pg 45 -Eng 10 Pp's bk 1 pg 45"
+            },
+            {
+              "name": "Composition: Formal Letter (Letter of Complaint.)",
+              "sequence_number": 4,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Respond to advanced formal letters",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 2
+            },
+            {
+              "name": "Discussion and Reading",
+              "sequence_number": 5,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Express and find out intellectual attitude in making agreements and disagreements.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 2
+            },
+            {
+              "name": "Reading Comprehension (Topic 3: \"Child Abuse\")",
+              "sequence_number": 6,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Locate details and answer factual questions",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 3,
+              "references": "Eng 10 MK pg 71 - 74 -Eng. 10 (MK) pg 14-17 -MK text bk pg 97 -SSE Syllabus pg 11, 34"
+            },
+            {
+              "name": "Listening and Speaking (Expressing Agreements and Disagreements)",
+              "sequence_number": 7,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Express and find out intellectual attitude in making agreements and disagreements.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 3
+            },
+            {
+              "name": "Extensive Reading: (Topic 9--- \"Climate Change in Zambia\") HOME WORK (Structure: Homophones)",
+              "sequence_number": 8,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Read given texts for pleasure and retell it in own words - Identify and use correctly words that have similar sound",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 3
+            },
+            {
+              "name": "Contrast",
+              "sequence_number": 9,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Contrast ideas correctly using given patterns",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 4,
+              "references": "-Eng 10 bk 2 pg 108 -Eng 10 Pp's bk 1 pge 150 -SSE Syllabus page 19, 22 - 24)"
+            },
+            {
+              "name": "Conditional Sentences",
+              "sequence_number": 10,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Construct conditional sentences using given patterns",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 4
+            },
+            {
+              "name": "Noun Phrases and Clauses -GROUP WEEKEND ASSIGNMENT: (Narrative Composition)",
+              "sequence_number": 11,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use the infinitive phrases as objects correctly - Write an advanced description of an event/ place/person",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 4
+            }
           ]
         },
         {
-          "name": "10.5 Structure",
-          "sequence_number": 5,
+          "name": "Unit 2: Crime And Punishment",
+          "sequence_number": 2,
           "sub_topics": [
-            { "name": "10.5.1 Tenses: The Future", "sequence_number": 1, "competencies": [
-              { "sequence_number": 1, "description": "Recognise the emphatic form of 'shall'", "category": "Specific Outcome" }
-            ]},
-            { "name": "10.5.2 Parts of Speech: Verbs and Expressions Followed by -ing", "sequence_number": 2, "competencies": [
-              { "sequence_number": 1, "description": "Use the -ing form after expressions such as can't help, can't stand, it's no good, it's no use, be worth", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Recognise the difference in meaning of similar constructions using verbs followed by either the infinitive or -ing: allow, permit, remember, forget, try, regret, mean (signify), stop, need, go on", "category": "Specific Outcome" }
-            ]},
-            { "name": "10.5.3 Determiners (Adjectives of Quantity)", "sequence_number": 3, "competencies": [
-              { "sequence_number": 1, "description": "Use 'some' meaning one or another", "category": "Specific Outcome" }
-            ]},
-            { "name": "10.5.4 Noun Phrases and Clauses", "sequence_number": 4, "competencies": [
-              { "sequence_number": 1, "description": "Use infinitive phrases as objects", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Recognise the meaning of 'that' clauses and infinitive phrases when used as subjects", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Recognise the meaning of the possessive adjectives used with -ing phrases", "category": "Specific Outcome" },
-              { "sequence_number": 4, "description": "Use noun phrases in apposition to other nouns", "category": "Specific Outcome" }
-            ]},
-            { "name": "10.5.6 Relative Clauses", "sequence_number": 5, "competencies": [
-              { "sequence_number": 1, "description": "Use relative pronouns in defining relative clauses such as 'who' with subjects that are people", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Use relative pronouns in non-defining relative clauses such as 'who' with subjects that are people", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Use 'which' with subjects that are things", "category": "Specific Outcome" },
-              { "sequence_number": 4, "description": "Use 'whom' or 'who' with objects that are people", "category": "Specific Outcome" },
-              { "sequence_number": 5, "description": "Use 'which' with objects that are things", "category": "Specific Outcome" },
-              { "sequence_number": 6, "description": "Use preposition + 'whom' with objects that are people", "category": "Specific Outcome" },
-              { "sequence_number": 7, "description": "Use preposition + 'which' with objects that are things", "category": "Specific Outcome" },
-              { "sequence_number": 8, "description": "Use 'whose' to show possession (especially for people)", "category": "Specific Outcome" }
-            ]},
-            { "name": "10.5.7 Comparison", "sequence_number": 6, "competencies": [
-              { "sequence_number": 1, "description": "Use \"the + comparative...the + comparative\" to express parallel increase", "category": "Specific Outcome" }
-            ]},
-            { "name": "10.5.8 Reason", "sequence_number": 7, "competencies": [
-              { "sequence_number": 1, "description": "Use 'now that' to express reason", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Use 'seeing that' to express reason", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Use participial phrases to express reason", "category": "Specific Outcome" }
-            ]},
-            { "name": "10.5.9 Time", "sequence_number": 8, "competencies": [
-              { "sequence_number": 1, "description": "Use conjunction + participial phrases to express time", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Use 'no sooner...than' with inversion as an alternative to 'as soon as'", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Use phrases containing the perfect participle when one action precedes another", "category": "Specific Outcome" }
-            ]},
-            { "name": "10.5.10 Contrast", "sequence_number": 9, "competencies": [
-              { "sequence_number": 1, "description": "Use structures to express contrast (apart from, besides, although, while, despite, in spite of, instead of + present participle)", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Use \"(the) one...the other\" to express contrast", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Use 'if' (for recognition only) to express contrast", "category": "Specific Outcome" },
-              { "sequence_number": 4, "description": "Use adjective + as/though (for recognition only) to express contrast", "category": "Specific Outcome" },
-              { "sequence_number": 5, "description": "Use 'no matter' to express contrast", "category": "Specific Outcome" }
-            ]},
-            { "name": "10.5.11 Condition", "sequence_number": 10, "competencies": [
-              { "sequence_number": 1, "description": "Construct conditional sentences with 'but for' to express negative condition", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Construct conditional sentences with 'provided/providing that'", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Construct conditional sentences with '(that) suppose/supposing'", "category": "Specific Outcome" },
-              { "sequence_number": 4, "description": "Construct conditional sentences with 'if only' to indicate hope or regret", "category": "Specific Outcome" },
-              { "sequence_number": 5, "description": "Recognise the inverted forms of conditional sentences", "category": "Specific Outcome" }
-            ]},
-            { "name": "10.5.12 Question Tags", "sequence_number": 11, "competencies": [
-              { "sequence_number": 1, "description": "Use and apply question tags appropriately", "category": "Specific Outcome" }
-            ]},
-            { "name": "10.5.13 Active and Passive Voice", "sequence_number": 12, "competencies": [
-              { "sequence_number": 1, "description": "Use the active and passive voice", "category": "Specific Outcome" }
-            ]}
+            {
+              "name": "[ENGLISH 10: BOOK 2 (SSEL) -- - Dictation",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Write paragraphs to teacher's Dictation.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 5,
+              "references": "-Eng 10 Pp's bk 2 pg14-23 -\" pg 33 -SSE Syllabus pg 19"
+            },
+            {
+              "name": "Reading Comprehension",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Locate details and answer factual questions",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 5
+            }
+          ]
+        },
+        {
+          "name": "Unit 5: Family Life",
+          "sequence_number": 3,
+          "sub_topics": [
+            {
+              "name": "Reading Comprehension (Fertility Revolution in China)",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Locate details in a given passage and answer factual questions.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 6,
+              "references": "-Eng 10 Pp's bk 1 pg 67 -'' pg 61 - 67-73 -Eng 10 bk 1 TG pg 53-60"
+            },
+            {
+              "name": "Structure: Cloze",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Complete given passage by filling in blank spaces",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 6
+            },
+            {
+              "name": "Summary: Note-Making HOME WORK: (Descriptive Composition)",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Make note from the passage to complete given table - Write an advanced description",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 6
+            },
+            {
+              "name": "Noun Phrases and Clauses",
+              "sequence_number": 4,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use infinitive phrases as objects",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 7,
+              "references": "-English Senior Syllabus pg 19 _Tr.'s Resource work"
+            },
+            {
+              "name": "The Voice",
+              "sequence_number": 5,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use subjects and objects of sentences correctly.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 7
+            },
+            {
+              "name": "Intensifiers (Adverbs of degree)",
+              "sequence_number": 6,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use adverbs of degree correctly.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 7
+            },
+            {
+              "name": "Result('enough' and 'too...to')",
+              "sequence_number": 7,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use given structural patterns to express contrast correctly",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 8,
+              "references": "-Eng 9 bk 1 (Zbec) pg 225 -Tr's resource notes -Eng 9 bk 1 pg 201 -Tr's resource work"
+            },
+            {
+              "name": "Idioms/Phrasal verbs",
+              "sequence_number": 8,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Identify and correctly use common idiomatic expressions",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 8
+            },
+            {
+              "name": "Parts Of Speech: Adverbs HOME WORK (Homographs)",
+              "sequence_number": 9,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use adverbs correctly - Identify and use homographs correctly.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 8
+            },
+            {
+              "name": "Listening and Speaking",
+              "sequence_number": 10,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use appropriate language to express sympathy in different situation",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 9,
+              "references": "-Eng 10 MK Pp's bk pg 17- 28 -SSE Syllabus pg 45 -Tr.'s lesson notes"
+            },
+            {
+              "name": "Composition: Formal Letter (Letter of Inquiry)",
+              "sequence_number": 11,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Write an advanced letter of inquiry.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 9
+            }
+          ]
+        },
+        {
+          "name": "Unit 8: Outsiders",
+          "sequence_number": 4,
+          "sub_topics": [
+            {
+              "name": "Reading Comprehension",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Locate details from the passage and answer factual questions.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 10,
+              "references": "-Eng 10 Pp's bk 1pages 117 -Eng 10 Pp's bk 1 pg 125 -\" page 125-129"
+            },
+            {
+              "name": "Structure: Cloze",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Fill in blank spaces to complete given passage sensibly",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 10
+            },
+            {
+              "name": "Summary and Note Making",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Fill in the details using information obtained from the passage",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 10
+            },
+            {
+              "name": "Structures: -Subject-Verb Agreement",
+              "sequence_number": 4,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use given grammatical structures correctly",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 11,
+              "references": "-Tr.'s Resource paterial SSEL page 45"
+            },
+            {
+              "name": "Gerunds (Participles)",
+              "sequence_number": 5,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use present participle as subjects of the sentences correctly",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 11
+            },
+            {
+              "name": "Composition: Argumentative",
+              "sequence_number": 6,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Express their opinions in favour or against given motions or topics",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 11
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 3",
+      "topics": [
+        {
+          "name": "General Language Skills",
+          "sequence_number": 1,
+          "sub_topics": [
+            {
+              "name": "Structure: Lexis -Comprehension",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use the infinitive phrases as objects",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 1
+            },
+            {
+              "name": "Structure: Transformations -HOME WORK: COMPOSITION: PROFILE",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Write a biography correctly",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 1
+            },
+            {
+              "name": "ENGLISH 10 BOOK 2 (SSEL) UNIT 3: THE MEDIA -Extensive Reading",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Read given texts for pleasure",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 2,
+              "references": "-Eng 10 bk 2(Zbec) T/G pg 29 -SSEL Syllabus pg 38 -Eng 10 Pp's bk 2 pg 27"
+            },
+            {
+              "name": "Summary: Note Taking- Journalism",
+              "sequence_number": 4,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Intelligently make notes from a read text",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 2
+            },
+            {
+              "name": "Punctuation",
+              "sequence_number": 5,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Provide necessary punctuation marks in a given text",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 2
+            },
+            {
+              "name": "Reading Comprehension:: 'Who Saw The Murder Didn't Call The Police'",
+              "sequence_number": 6,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Locate details and answer factual questions",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 3,
+              "references": "Eng 10 bk 2 pg 32-39 -Eng 10 bk 2 T/G page28-36 -SSE Syllabus pg , 34 , 44 -Consult Junior syllabus/ books on tenses"
+            },
+            {
+              "name": "Composition: Writing Newspaper Article",
+              "sequence_number": 7,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Write creatively a newspaper feature article",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 3
+            },
+            {
+              "name": "Structure: Tenses: The Present Tense [HOME WORK] (Writing an Article for a School Magazine))",
+              "sequence_number": 8,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Identify and use correctly various aspects of the Present Tense - Write in correct format, tone and register articles for school magazines",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 3
+            },
+            {
+              "name": "Reason",
+              "sequence_number": 9,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Express reason correctly",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 4,
+              "references": "-Eng 10 MK bk pg 46 -Eng 10 MK Pp's bk pge 33 -SSE Syllabus page 19, 21"
+            },
+            {
+              "name": "Adjectives of Quantity( Determiners)",
+              "sequence_number": 10,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use adjectives of quantity correctly",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 4
+            },
+            {
+              "name": "Noun Phrases and Clauses -GROUP WEEKEND ASSIGNMENT: (Narrative/Description Composition)",
+              "sequence_number": 11,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use the infinitive phrases as objects correctly - Write an advanced description of an event/ place/person",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 4
+            }
+          ]
+        },
+        {
+          "name": "Unit 4: Old Age",
+          "sequence_number": 2,
+          "sub_topics": [
+            {
+              "name": "[ENGLISH 10: BOOK 2 (SSEL) -- - Extensive Reading (The Old Man and The Sea)",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Read given passages for pleasure",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 5,
+              "references": "-Eng 10 Pp's bk 2 pg14-46 -\" pg 41-46 -SSE Syllabus pg 19 -page 51-54"
+            },
+            {
+              "name": "Reading Comprehension/Note Making",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Locate details in a given text and answer factual questions",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 5
+            },
+            {
+              "name": "Listening and Speaking: Describing Processes",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Express and find out intellectual attitudes when giving factual information",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 6,
+              "references": "-Eng 10 Pp's MK bk pg 6-12 SSE Syllabus page 14 -Page 79 -page 49, SSE Syllabus page 49 (lesson 18)"
+            },
+            {
+              "name": "Reading Comprehension & Summary (Topic 5: Moral Rights and Children)",
+              "sequence_number": 4,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Locate details in a given passage and answer factual questions. - Make note from the passage to complete given table.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 6
+            },
+            {
+              "name": "Structure: Time [HOME WORK]: (Descriptive Composition)",
+              "sequence_number": 5,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Express time correctly - Describe a given process acceptably",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 6
+            },
+            {
+              "name": "Unreal Past",
+              "sequence_number": 6,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Express present situation using the past tense",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 7,
+              "references": "-English Senior Syllabus _Tr.'s Resource work"
+            },
+            {
+              "name": "The Voice: Passive & Active",
+              "sequence_number": 7,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use subjects and objects of sentences correctly.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 7
+            },
+            {
+              "name": "Intensifiers (Adverbs of degree)",
+              "sequence_number": 8,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use adverbs of degree correctly.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 7
+            },
+            {
+              "name": "Expressing Result",
+              "sequence_number": 9,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use given structural patterns to express contrast correctly",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 8,
+              "references": "-Eng 9 bk 1 (Zbec) pg 225 -Tr's resource notes -Eng 9 bk 1 pg 201 -Tr's resource work"
+            },
+            {
+              "name": "Parts Of Speech: Prepositions",
+              "sequence_number": 10,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Identify and use correctly common prepositions used after given words",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 8
+            },
+            {
+              "name": "Parts Of Speech: Adjectives and adverbs [HOME WORK] (Homophones)",
+              "sequence_number": 11,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use adjectives and adverbs correctly - Identify and use homophones correctly.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 8
+            },
+            {
+              "name": "Listening and Speaking",
+              "sequence_number": 12,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use appropriate language to express sympathy in different situation",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 9,
+              "references": "-Eng 10 MK Pp's bk pg 17- 28 -SSE Syllabus pg 45 -Tr.'s lesson notes"
+            },
+            {
+              "name": "Composition: Formal Letter (References/Recommendation)",
+              "sequence_number": 13,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Write a detailed letter of recommendation",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 9
+            }
+          ]
+        },
+        {
+          "name": "Unit 5: Food And Drink",
+          "sequence_number": 3,
+          "sub_topics": [
+            {
+              "name": "Dictation",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Write out a given passage to teacher's dictation",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 10,
+              "references": "-Eng 10 Pp's bk 2 pages 55 -Eng 10 Pp's bk 2 pg 55-60 -\" page 125-129"
+            },
+            {
+              "name": "Reading Comprehension: \"One Day in The Life of Ivan Denisovich\"",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Locate details from the passage and answer factual questions.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 10
+            },
+            {
+              "name": "Summary and Note Making: The food Value of Milk. [HOMEWORK]: Expository Writing",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Locate given information from the passage and write it in note form - Write about what they think life will be like fifty years from now",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 10
+            },
+            {
+              "name": "Structures: -Voice: Passive and Active",
+              "sequence_number": 4,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Express correctly the active and passive voices in their sentence structure",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 11,
+              "references": "-Tr.'s Resource paterial SSEL page 45"
+            },
+            {
+              "name": "Gerunds (Participles) --Passive and Active gerunds",
+              "sequence_number": 5,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use present participle as subjects of the sentences correctly",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 11
+            },
+            {
+              "name": "Composition: Argumentative",
+              "sequence_number": 6,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Express their opinions in favour or against given motions or topics",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 11
+            }
           ]
         }
       ]

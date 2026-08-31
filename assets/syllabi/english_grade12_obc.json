@@ -1,5 +1,5 @@
 {
-  "_source": "Ministry of Education / Curriculum Development Centre, Zambia. 'English Syllabus, Grade 10-12' (2013, published by CDC) — Grade 12, Topics 12.1-12.5. Topic, sub-topic and Specific Outcome statements only; the 'Content' column is omitted for the reasons documented in the Grade 10 file. Topics 12.5.3 ('Verbs Followed by Object + Infinitive') and 12.5.4 ('Verbs Followed by Object + Infinitive', covering verbs of sensation) are printed in the source with the same sub-topic heading despite being distinct entries with distinct example verbs; both are reproduced here as separate sub-topics per the source's own numbering (12.5.3 and 12.5.4). The document ends after 12.5.6 (Intensifiers/Adverbs of Degree) — the remaining pages of the source PDF (73-75) are blank, confirming this is the final topic of the entire Grade 10-12 English syllabus, with no practical/appendix section (unlike some other subjects in this curriculum). The syllabus organizes content by Grade only, not by Term, so all of Grade 12 is modeled as a single term here.",
+  "_source": "Ministry of Education / Curriculum Development Centre, Zambia. 'English Syllabus, Grade 10-12' (2013, published by CDC) — Grade 12, Topics 12.1-12.5 (structure) / continuing SSEL unit numbering. Original topic/sub-topic names and Specific Outcome statements as documented in this file's prior version's own notes. Rebuilt 2026-08-31 to add real term/week/content data from a second real source, a complete 'SCHEME OF WORK' covering all 3 grades × all 3 terms, organized week-by-week and lesson-by-lesson (not by skill-strand block like the CDC syllabus's own structure) — the user explicitly chose a full rebuild around this source's real teaching units rather than a lighter overlay onto the old skill-strand topics, given how differently the two are organized. Real PII stripped, per standing sourcing policy: every term header in the source repeated a real individual's full name; removed and does not appear anywhere in this file. The source's own publisher/repackager branding (a materials-vendor name, not an individual's real school) was also removed from every header, out of caution. Topics here are the real 'Unit' themes this source actually teaches (e.g. 'Unit 1: Teachers and Teaching'), each containing the real individual lessons (Reading, Composition, Structure, Oral, Summary — genuinely interleaved within a unit in the real record, not grouped by strand); weeks with no named unit (mostly term-opening orientation weeks) are grouped under 'General Language Skills'. Each sub-topic's week_number is the real week it was first taught; where the source's own table cell for a lesson was just 'As above' (repeating the prior lesson's content across a second/third period in the same week), only the first occurrence is kept rather than duplicated. Content was extracted programmatically from the source's raw table (thousands of individual cells across 9 grade/term blocks) rather than transcribed by hand, then spot-checked for parsing errors before being written here; a handful of rows whose table formatting was too garbled to confidently attribute were left out rather than guessed. Grade 12's source table bundles multiple strand activities into a single cell per real teaching week (rather than one row per lesson period, as Grade 10/11 do), so this grade's sub-topics are correspondingly coarser — one per real week rather than one per lesson — reflecting the source's own real structure, not a parsing shortfall.",
   "curriculum": {
     "code": "OBC_2013",
     "name": "2013 Outcome-Based Curriculum",
@@ -18,102 +18,453 @@
   },
   "terms": [
     {
-      "name": "Year (not term-divided in the source syllabus)",
-      "sequence_number": 1,
+      "name": "Term 1",
       "topics": [
         {
-          "name": "12.1 Listening and Speaking",
+          "name": "Unit 1: Entreprenuership",
           "sequence_number": 1,
           "sub_topics": [
-            { "name": "12.1.1 Oral Communication", "sequence_number": 1, "competencies": [
-              { "sequence_number": 1, "description": "Impart and seek factual information when paraphrasing and exposing points", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Express and find out intellectual attitudes in arguing and presenting facts", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Use socially appropriate language in different situations", "category": "Specific Outcome" },
-              { "sequence_number": 4, "description": "Give talks on different topics", "category": "Specific Outcome" }
-            ]}
+            {
+              "name": "[GRADE 12: -Vocabulary - Extensive reading -Reading Comprehension -Structure: Cloze",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Explain entrepreneurship having read and analyzed the text -Answer the questions correctly. -Supply correct missing words",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 2,
+              "references": "-English 12 Pp's bk. pge 1-6 -Eng. Language SS syllabus pg 6"
+            },
+            {
+              "name": "Structure: Transformations - Composition: Speech",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of grammatical flexibility and effective public speaking.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 3,
+              "references": "English 12 Pp's bks"
+            }
           ]
         },
         {
-          "name": "12.2 Reading and Comprehension",
+          "name": "Unit 2: Health And Nutrition",
           "sequence_number": 2,
           "sub_topics": [
-            { "name": "12.2.1 Efficient Reading", "sequence_number": 1, "competencies": [
-              { "sequence_number": 1, "description": "Read passages with understanding and recall the details", "category": "Specific Outcome" }
-            ]},
-            { "name": "12.2.2 Extensive Reading", "sequence_number": 2, "competencies": [
-              { "sequence_number": 1, "description": "Read efficiently unabridged different reading materials", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Read critically and make discriminating judgements", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Practise reading for purpose (e.g. newscast)", "category": "Specific Outcome" }
-            ]}
+            {
+              "name": "Structure: Close -Word formation: Affixation (Prefix & Suffix) - Reading comprehension",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Awareness of health and nutrition issues; appreciation of word building.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 4,
+              "references": "- Eng 12 Pps bks. -chalkboard -Eng.12 T/bk pg 4-6"
+            },
+            {
+              "name": "Structure: Rewrites - Prepositions -Summary: Prose",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of grammatical accuracy, precise word partnerships, and conciseness.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 5,
+              "references": "-Eng 12 Pp's bk -Basic Eng. grammar for schools -Eng. grammar"
+            },
+            {
+              "name": "Structure: Close -Vocabulary - Idioms - Synonyms - Homonyms",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of vocabulary richness, figurative language, and precise word choice.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 7,
+              "references": "-Eng. 12 pp's bks -Chart -Chalkboard -Contemporary English Grammar"
+            }
           ]
         },
         {
-          "name": "12.3 Composition",
+          "name": "Unit 4: A Play",
           "sequence_number": 3,
           "sub_topics": [
-            { "name": "12.3.1 Advanced Descriptive Writing", "sequence_number": 1, "competencies": [
-              { "sequence_number": 1, "description": "Write advanced descriptive compositions", "category": "Specific Outcome" }
-            ]},
-            { "name": "12.3.2 Advanced Narrative Writing", "sequence_number": 2, "competencies": [
-              { "sequence_number": 1, "description": "Write advanced narrative compositions", "category": "Specific Outcome" }
-            ]},
-            { "name": "12.3.3 Advanced Essay Writing", "sequence_number": 3, "competencies": [
-              { "sequence_number": 1, "description": "Write advanced essays in other subjects", "category": "Specific Outcome" }
-            ]},
-            { "name": "12.3.4 Writing Curriculum Vitae", "sequence_number": 4, "competencies": [
-              { "sequence_number": 1, "description": "Write a Curriculum Vitae", "category": "Specific Outcome" }
-            ]},
-            { "name": "12.3.5 Letter Writing", "sequence_number": 5, "competencies": [
-              { "sequence_number": 1, "description": "Write advanced application letters", "category": "Specific Outcome" }
-            ]},
-            { "name": "12.3.6 Writing Advanced Minutes", "sequence_number": 6, "competencies": [
-              { "sequence_number": 1, "description": "Write minutes of a meeting", "category": "Specific Outcome" }
-            ]},
-            { "name": "12.3.7 Writing Speeches", "sequence_number": 7, "competencies": [
-              { "sequence_number": 1, "description": "Write speeches on given topics", "category": "Specific Outcome" }
-            ]}
+            {
+              "name": "Structures: -Lexis - Rewrites - Cloze -Composition: - Newspaper Article -Antonyms",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of journalistic integrity, balanced reporting, and lexical relationships.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 8,
+              "references": "Grade 12 English text bks -Charts - Newspapers"
+            }
           ]
         },
         {
-          "name": "12.4 Summary",
+          "name": "Unit 5: Poetry",
           "sequence_number": 4,
           "sub_topics": [
-            { "name": "12.4.1 Note Summaries", "sequence_number": 1, "competencies": [
-              { "sequence_number": 1, "description": "Make note summaries from given texts", "category": "Specific Outcome" }
-            ]},
-            { "name": "12.4.2 Prose Summaries", "sequence_number": 2, "competencies": [
-              { "sequence_number": 1, "description": "Write prose summaries", "category": "Specific Outcome" }
-            ]},
-            { "name": "12.4.3 Tabulation Skills", "sequence_number": 3, "competencies": [
-              { "sequence_number": 1, "description": "Tabulate given information into graphic representations such as tables, charts, graphs and maps", "category": "Specific Outcome" }
-            ]}
+            {
+              "name": "Reading Comprehension: (A Play) -Extensive reading -Vocabulary - Cloze",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of literature, performance, and poetic expression.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 9,
+              "references": "-Eng. 12 Pp's text bks. -Chalkboard"
+            },
+            {
+              "name": "Composition: Speech - Structure: Rewrites -Structure: Phrasal Verbs",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of public speaking, grammatical flexibility, and natural English expression.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 10,
+              "references": "- Eng 12 text bks - Chart"
+            }
           ]
         },
         {
-          "name": "12.5 Structure",
+          "name": "Unit 6: Crime And Punishment",
           "sequence_number": 5,
           "sub_topics": [
-            { "name": "12.5.1 Phrasal Verbs", "sequence_number": 1, "competencies": [
-              { "sequence_number": 1, "description": "Use phrasal verbs", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Use phrasal verbs formed with adverb particles before or after the object", "category": "Specific Outcome" },
-              { "sequence_number": 3, "description": "Use phrasal verbs formed by verb + preposition + adverb", "category": "Specific Outcome" }
-            ]},
-            { "name": "12.5.2 Verbs and Expressions Followed by -ing", "sequence_number": 2, "competencies": [
-              { "sequence_number": 1, "description": "Use the VERB + -ING construction", "category": "Specific Outcome" }
-            ]},
-            { "name": "12.5.3 Verbs Followed by Object + Infinitive", "sequence_number": 3, "competencies": [
-              { "sequence_number": 1, "description": "Use the VERB + OBJECT + INFINITIVE construction", "category": "Specific Outcome" }
-            ]},
-            { "name": "12.5.4 Verbs Followed by Object + Infinitive (Verbs of Sensation)", "sequence_number": 4, "competencies": [
-              { "sequence_number": 1, "description": "Use the VERB + OBJECT + INFINITIVE construction with verbs of sensation", "category": "Specific Outcome" }
-            ]},
-            { "name": "12.5.5 Verbs Followed by the Infinitive", "sequence_number": 5, "competencies": [
-              { "sequence_number": 1, "description": "Use the VERB + INFINITIVE construction", "category": "Specific Outcome" },
-              { "sequence_number": 2, "description": "Use the 'VERB + HOW TO' construction", "category": "Specific Outcome" }
-            ]},
-            { "name": "12.5.6 Intensifiers (Adverbs of Degree)", "sequence_number": 6, "competencies": [
-              { "sequence_number": 1, "description": "Use adverbs of degree (very, much, too, fairly, rather, quite, hardly, barely, scarcely, almost, nearly, just)", "category": "Specific Outcome" }
-            ]}
+            {
+              "name": "Reading Comprehension -Vocabulary -Summary: Note/Prose -Structure: Rewrites",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Understanding of justice, accountability, and the rule of law.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 11,
+              "references": "-Eng. 12 text bks - Prose summary model chat -Chalkboard"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 2",
+      "topics": [
+        {
+          "name": "Unit 6: Crime And Punishment",
+          "sequence_number": 1,
+          "sub_topics": [
+            {
+              "name": "Reading Comprehension -Vocabulary -Summary: Note/Prose",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Understanding of justice, accountability, and the rule of law.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 2,
+              "references": "-Grade 12 English Pp's bks. -English 12 T/guide -Chalkboard -Eng 12 text bks."
+            },
+            {
+              "name": "HOME WORK: Structure: Rewrites Text based (51-52)",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of grammatical flexibility.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 2,
+              "references": "-Grade 12 English Pp's bks. -English 12 T/guide -Chalkboard -Eng 12 text bks."
+            },
+            {
+              "name": "Summary: Prose - Composition: Vote of Thanks -Structure: Word Building: Compound Adjectives",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Value of gratitude, concise summarisation, and precise description.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 3,
+              "references": "English 12 Pp's bks -Chart model sample -Eng. 12 Pp's bk -Eng 12 text bk."
+            },
+            {
+              "name": "HOME WORK: Narrative Composition (page 53)",
+              "sequence_number": 4,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of storytelling and creative expression.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 3,
+              "references": "English 12 Pp's bks -Chart model sample -Eng. 12 Pp's bk -Eng 12 text bk."
+            },
+            {
+              "name": "Phrasal verbs/idioms -Verbs followed by the object + infinitive and Verbs followed by the -ing form -Intensifiers (Adver",
+              "sequence_number": 5,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of natural English, complex sentence patterns, and precise intensity.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 4,
+              "references": "- Eng 12 Pps bks. -chalkboard"
+            },
+            {
+              "name": "HOME WORK: Recommendation Letter",
+              "sequence_number": 6,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Value of supporting and endorsing others.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 5,
+              "references": "-Eng. 12 Pp's bks - Chalkboard -Work cards -Exam past paper GCE 2015"
+            },
+            {
+              "name": "Summary: Prose -Composition: Disposition and Process writing - Idioms HOME WORK: Composition: Speech Presentation (In Gr",
+              "sequence_number": 7,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of concise summarisation, clear explanation, colorful language, and public speaking skills.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 7,
+              "references": "-Eng. 12 pp's (SSEL)bks -Chart -Chalkboard -Chart"
+            },
+            {
+              "name": "HEALTH EDUCATION - Close -Extensive reading- Rabies -Summary- Prose (based on passage read) HOME WORK: Structure:Word St",
+              "sequence_number": 8,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Awareness of public health, disease prevention, and vocabulary building.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 8,
+              "references": "Grade 12 English text bks -Charts Grade 12 English text bks -Charts"
+            },
+            {
+              "name": "Structures: a. Lexis b. Rewrites -Composition- Formal letter - Responding to requests. Structure: Voice",
+              "sequence_number": 9,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of grammatical accuracy, professional correspondence, and sentence focus.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 9,
+              "references": "-Eng. 12 Pp's text bks. -Chalkboard -Tr's personal notes"
+            },
+            {
+              "name": "Structure: Reported Speech -Structure: Homographs -Composition: Writing a formal Report",
+              "sequence_number": 10,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of objective reporting, word nuance, and professional documentation.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 10,
+              "references": "- Eng 12 text bks - Chart"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 3",
+      "topics": [
+        {
+          "name": "General Language Skills",
+          "sequence_number": 1,
+          "sub_topics": [
+            {
+              "name": "[-Exam Practice] Composition: Factual & Analytical Report: 2018 GCE English Language Paper 1",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of data interpretation and objective reporting.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 1,
+              "references": "-Past papers -Chalk board -Charts -question papers"
+            },
+            {
+              "name": "STRUCTURE [Exam Practice]: Direct Speech & Reported Speech (Review of Transformation questions from past papers) HOME WO",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of objective reporting and reflective writing.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 1,
+              "references": "-Past papers -Chalk board -Charts -question papers"
+            }
+          ]
+        },
+        {
+          "name": "Unit 7: Human Rights;",
+          "sequence_number": 2,
+          "sub_topics": [
+            {
+              "name": "SSEL: -Cloze: -Reading Comprehension: Living Proof that Injustice can be Overcome -Structure: Text-based transformations",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of human dignity, resilience, and grammatical accuracy.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 2,
+              "references": "-Eng 12 SSEL text books -Chalk board"
+            },
+            {
+              "name": "[Exam Practice]: Reading Comprehension: ( 2018 GCE English Language Paper 2 Review) -[Exam Practice] Composition: -- Spe",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of public speaking and effective communication.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 3,
+              "references": "English Past paper 2 -Charts -Chalk board -chart"
+            },
+            {
+              "name": "[-Exam Practice]: Structure: Conditional Sentences (Transformations from Past papers)",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of hypothetical and causal thinking.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 3,
+              "references": "English Past paper 2 -Charts -Chalk board -chart"
+            }
+          ]
+        },
+        {
+          "name": "Unit 8: Health Education;",
+          "sequence_number": 3,
+          "sub_topics": [
+            {
+              "name": "SSEL: -Cloze -Reading Comprehension: Rabies. -Structure: Text-based Transformations/ Lexis",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Awareness of public health and disease prevention.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 4,
+              "references": "-Eng bks. 12-SSEL -Chalk board -Charts -Tr's bk"
+            },
+            {
+              "name": "[-HOME WORK] Composition: Descriptive Writing (Unguided- Unit 9 page 72)",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of vivid and accurate description.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 4,
+              "references": "-Eng bks. 12-SSEL -Chalk board -Charts -Tr's bk"
+            },
+            {
+              "name": "[-Exam Practice:] Structure: Inversion sentence construction (Transformations from Grade 12 Past Papers) -[Exam Practice",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of formal sentence variety, lexical precision, and journalistic writing.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 5,
+              "references": "-Past papers -Chalk board -Charts -Past exam paper"
+            }
+          ]
+        },
+        {
+          "name": "Unit 9: The House",
+          "sequence_number": 4,
+          "sub_topics": [
+            {
+              "name": "SSEL: -Cloze -Reading Comprehension: History of the House Structure: Phrasal Verbs [HOME WORK]: Responding to the letter",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of housing history, natural English expression, and professional correspondence.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 6,
+              "references": "Eng bks. 12-SSEL -Chalk board -Charts -Tr's bk"
+            },
+            {
+              "name": "[-Exam Practice:] Formal Letter: Letter to the Editor [-Exam Practice]: Structure: Common Idioms: Past paper review Exam",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciation of civic engagement, colorful language, and documenting lives.",
+                  "category": "Specific Outcome"
+                }
+              ],
+              "week_number": 7,
+              "references": "-Charts -Chalkboard"
+            }
           ]
         }
       ]
