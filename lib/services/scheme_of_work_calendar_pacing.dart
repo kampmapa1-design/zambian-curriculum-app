@@ -23,16 +23,50 @@ List<SchemeOfWorkEntry> applyCalendarPacing(List<SchemeOfWorkEntry> entries) {
   if (hasRealWeekData) return entries;
 
   const teachingWeeks = TermDates.teachingWeekCount; // 12
-  final weeksPerEntry = _allocateWeeks(
-    entries.map(_pacingWeight).toList(),
-    teachingWeeks,
-  );
 
   // Real week slots a teaching week can land on: 1-6, then 8-13 — week 7
   // is reserved for the mid-term break and is never assigned a topic here
   // (see applyCalendarPacingWithMidtermRow, which inserts that row
   // explicitly at the document-building layer).
   final realSlots = [for (var w = 1; w <= TermDates.totalWeeks; w++) if (w != TermDates.midtermBreakWeek) w];
+
+  // Real bug fixed here (2026-08-31): a subject can genuinely have MORE
+  // topics/sub-topics than there are real teaching weeks (e.g. Geography
+  // Grade 12: 25 entries against 12 real weeks) — the "stretch a few
+  // entries across many weeks" logic below assumed the opposite direction
+  // always held, and would try to hand out more weeks than physically
+  // exist, throwing on the very next real device that hit it (confirmed:
+  // `int.clamp` with a negative upper bound). When there's more content
+  // than weeks, this now does the inverse — pack multiple entries into
+  // the same real week — rather than assuming stretching is always the
+  // right direction.
+  if (entries.length > realSlots.length) {
+    final entriesPerWeek = _allocateWeeks(List.filled(realSlots.length, 1), entries.length);
+    final paced = <SchemeOfWorkEntry>[];
+    var entryIndex = 0;
+    for (var w = 0; w < realSlots.length; w++) {
+      final count = entriesPerWeek[w].clamp(0, entries.length - entryIndex);
+      for (var c = 0; c < count; c++) {
+        paced.add(_withWeekNumber(entries[entryIndex], realSlots[w]));
+        entryIndex++;
+      }
+    }
+    // Apportionment always sums to entries.length when entries.length >=
+    // realSlots.length (every week's floor is at least 1), so entryIndex
+    // reaching the end here is guaranteed, not just hoped for — but if
+    // that ever stops holding, the remainder still gets real week numbers
+    // (piled onto the last week) rather than silently dropped.
+    while (entryIndex < entries.length) {
+      paced.add(_withWeekNumber(entries[entryIndex], realSlots.last));
+      entryIndex++;
+    }
+    return paced;
+  }
+
+  final weeksPerEntry = _allocateWeeks(
+    entries.map(_pacingWeight).toList(),
+    teachingWeeks,
+  );
 
   final paced = <SchemeOfWorkEntry>[];
   var slotIndex = 0;
