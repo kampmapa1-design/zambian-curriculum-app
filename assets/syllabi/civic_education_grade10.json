@@ -1,5 +1,5 @@
 {
-  "_source": "Ministry of Education / Curriculum Development Centre, Zambia. 'Civic Education Syllabus Grade 10-12' (2013, published by CDC) — Grade 10, Topics 10.1-10.7. Topic and Specific Outcome statements only; the 'Content' (Knowledge/Skills/Values) columns are omitted, consistent with the approach used for the other 2013 OBC subjects in this app, since they text-extract unreliably from the source's multi-column table. Unlike Geography, Grade 10's table has no separate 'Sub-topic' column populated — outcomes are numbered directly under each Topic — so each topic here is modeled with a single sub-topic bearing the same name as the topic, purely to satisfy this app's data schema, not because the source names a distinct sub-topic. Two genuine duplicate-numbering slips were found in the source document itself and corrected by renumbering sequentially from the point of duplication: under 10.6 Cultural Studies, outcome code 10.6.4 is printed twice for two different outcomes ('Discuss the importance of culture' and 'Explain types of culture'); under 10.7 Substance Abuse, outcome code 10.7.2 is printed twice ('Discuss substances and their effects' and 'Explain reasons for substance abuse'). The syllabus organizes content by Grade only, not by Term, so all of Grade 10 is modeled as a single term here.",
+  "_source": "Ministry of Education / Curriculum Development Centre, Zambia. 'Civic Education Syllabus Grade 10-12' (2013, published by CDC) — Grade 10, Topics 10.1-10.7. Topic and Specific Outcome statements only; Grade 10's table has no separate 'Sub-topic' column populated, so each topic is modeled with a single sub-topic bearing the same name as the topic, purely to satisfy this app's schema. Two genuine duplicate-numbering slips in the source corrected as before (10.6.4 printed twice; 10.7.2 printed twice). Rebuilt 2026-08-31 to add real term/week/reference data from a second real source, 'MINISTRY OF GENERAL EDUCATION, GRADE TEN CIVIC EDUCATION SCHEMES OF WORK' — a real, complete scheme of work covering all 3 grades × all 3 terms, with blank 'SCHOOL:'/'NAME OF TEACHER:' template fields throughout (never filled in), so there is nothing to sanitize. This source's topic order matches this file's existing 7 topics almost exactly, so content/competencies are unchanged — only real term/week placement and references were added. '10.4 Introduction to Human Rights' is genuinely revisited a second time in this source, in Term 3 (weeks 10-11, as 'the Zambian Bill of Rights' — a more advanced pass building on the Term 2 introduction); this file places it once, at its first real introduction (Term 2), consistent with the app-wide convention of dating a sub-topic to when it was first taught rather than every week it was reviewed. This was previously deliberately left unfixed (an earlier available source was Term-3-only and missing 2 of Grade 10's 7 topics) — this new source is genuinely complete, resolving that gap.",
   "curriculum": {
     "code": "OBC_2013",
     "name": "2013 Outcome-Based Curriculum",
@@ -18,8 +18,7 @@
   },
   "terms": [
     {
-      "name": "Year (not term-divided in the source syllabus)",
-      "sequence_number": 1,
+      "name": "Term 1",
       "topics": [
         {
           "name": "10.1 Constitution",
@@ -28,6 +27,8 @@
             {
               "name": "10.1 Constitution",
               "sequence_number": 1,
+              "week_number": 1,
+              "references": "Teacher's Guide 10; Learner's Book 10; Civic Education Syllabus Grade 10-12",
               "competencies": [
                 { "sequence_number": 1, "description": "Describe types of constitution", "category": "Specific Outcome" },
                 { "sequence_number": 2, "description": "Explain the main parts of the Zambian constitution", "category": "Specific Outcome" },
@@ -45,6 +46,8 @@
             {
               "name": "10.2 Governance System in Zambia",
               "sequence_number": 1,
+              "week_number": 5,
+              "references": "Teacher's Guide 10; Learner's Book 10; Civic Education Syllabus Grade 10-12",
               "competencies": [
                 { "sequence_number": 1, "description": "Explain governance", "category": "Specific Outcome" },
                 { "sequence_number": 2, "description": "Discuss the characteristics of good and bad governance", "category": "Specific Outcome" },
@@ -55,14 +58,21 @@
               ]
             }
           ]
-        },
+        }
+      ]
+    },
+    {
+      "name": "Term 2",
+      "topics": [
         {
           "name": "10.3 Citizenship",
-          "sequence_number": 3,
+          "sequence_number": 1,
           "sub_topics": [
             {
               "name": "10.3 Citizenship",
               "sequence_number": 1,
+              "week_number": 1,
+              "references": "Teacher's Guide 10; Learner's Book 10; Civic Education Syllabus Grade 10-12",
               "competencies": [
                 { "sequence_number": 1, "description": "Explain citizenship", "category": "Specific Outcome" },
                 { "sequence_number": 2, "description": "State qualifications of a Zambian citizen", "category": "Specific Outcome" },
@@ -77,28 +87,34 @@
         },
         {
           "name": "10.4 Introduction to Human Rights",
-          "sequence_number": 4,
+          "sequence_number": 2,
           "sub_topics": [
             {
               "name": "10.4 Introduction to Human Rights",
               "sequence_number": 1,
+              "week_number": 5,
+              "references": "Teacher's Guide 10-11; Learner's Book 10-11; Civic Education Syllabus Grade 10-12",
               "competencies": [
                 { "sequence_number": 1, "description": "Describe Human Rights", "category": "Specific Outcome" },
                 { "sequence_number": 2, "description": "Discuss characteristics of Human Rights", "category": "Specific Outcome" },
                 { "sequence_number": 3, "description": "Explain categories of Human Rights", "category": "Specific Outcome" },
                 { "sequence_number": 4, "description": "Identify ways in which human rights are violated", "category": "Specific Outcome" },
-                { "sequence_number": 5, "description": "Discuss the significance of human rights", "category": "Specific Outcome" }
+                { "sequence_number": 5, "description": "Discuss the significance of human rights", "category": "Specific Outcome" },
+                { "sequence_number": 6, "description": "Describe the Bill of Rights and identify its elements in the Zambian constitution", "category": "Specific Outcome" },
+                { "sequence_number": 7, "description": "Describe ways of enforcing the Zambian Bill of Rights and the role of institutions that promote Human Rights in Zambia", "category": "Specific Outcome" }
               ]
             }
           ]
         },
         {
           "name": "10.5 Corruption",
-          "sequence_number": 5,
+          "sequence_number": 3,
           "sub_topics": [
             {
               "name": "10.5 Corruption",
               "sequence_number": 1,
+              "week_number": 9,
+              "references": "Teacher's Guide 10; Learner's Book 10; Civic Education Syllabus Grade 10-12",
               "competencies": [
                 { "sequence_number": 1, "description": "Describe corruption", "category": "Specific Outcome" },
                 { "sequence_number": 2, "description": "Discuss types of corruption", "category": "Specific Outcome" },
@@ -109,14 +125,21 @@
               ]
             }
           ]
-        },
+        }
+      ]
+    },
+    {
+      "name": "Term 3",
+      "topics": [
         {
           "name": "10.6 Cultural Studies",
-          "sequence_number": 6,
+          "sequence_number": 1,
           "sub_topics": [
             {
               "name": "10.6 Cultural Studies",
               "sequence_number": 1,
+              "week_number": 1,
+              "references": "Teacher's Guide 10; Learner's Book 10; Civic Education Syllabus Grade 10-12",
               "competencies": [
                 { "sequence_number": 1, "description": "Describe Culture", "category": "Specific Outcome" },
                 { "sequence_number": 2, "description": "Outline components of culture", "category": "Specific Outcome" },
@@ -134,11 +157,13 @@
         },
         {
           "name": "10.7 Substance Abuse",
-          "sequence_number": 7,
+          "sequence_number": 2,
           "sub_topics": [
             {
               "name": "10.7 Substance Abuse",
               "sequence_number": 1,
+              "week_number": 6,
+              "references": "Teacher's Guide 10; Learner's Book 10; Civic Education Syllabus Grade 10-12",
               "competencies": [
                 { "sequence_number": 1, "description": "Describe types of substances often abused by people", "category": "Specific Outcome" },
                 { "sequence_number": 2, "description": "Discuss substances and their effects", "category": "Specific Outcome" },

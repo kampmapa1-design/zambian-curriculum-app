@@ -1,5 +1,5 @@
 {
-  "_source": "Ministry of Education / Curriculum Development Centre, Zambia. 'Civic Education Syllabus Grade 10-12' (2013, published by CDC) — Grade 11, Topics 11.1-11.7. Topic/sub-topic names and Specific Outcome statements only; the 'Content' (Knowledge/Skills/Values) columns are omitted for the same reason documented in the Grade 10 file. This grade has a systemic numbering-prefix problem in the source document: entire blocks of outcomes are printed under the wrong topic code, consistently shifted from their true topic. Every outcome below has been renumbered to match its true topic (identified from the printed Topic heading itself, and cross-checked against the syllabus's own Appendix One 'Scope and Sequence Chart', which independently confirms each topic's real theme and grade placement); the printed source code is noted per case. Topic 11.1 (The Zambian Bill of Rights): outcomes printed as 12.1.1-12.1.4, renumbered 11.1.1-11.1.4. Topic 11.2 (Civil Society and Media in Governance): outcomes printed as 11.1.1-11.1.7 (with 11.1.7 itself printed twice for two different outcomes), renumbered 11.2.1-11.2.8; this topic does have two real named sub-topics in the source table ('Civil Society and governance' and 'Media and Governance'), reproduced here. Topic 11.3 (Economic and Social Development): outcomes printed as 11.2.1-11.2.8, renumbered 11.3.1-11.3.8. Topic 11.4 (Zambia's Legal System): outcomes printed with several internal duplicates/out-of-order codes (11.4.1 x2, 11.4.3 x2, then 11.4.6, 11.4.7, 11.4.5 printed in that order at the end), renumbered 11.4.1-11.4.9 in the document's own printed reading order, which content-cross-checks cleanly against the adjacent Content column. Topic 11.7 (Child Abuse): outcomes printed as 11.6.1-11.6.9, renumbered 11.7.1-11.7.9; this topic has three real named sub-topics in the source table ('Child abuse', 'Sexual harassment', 'Teenage pregnancies'), reproduced here. Topics 11.5 (Gender Equity and Equality) and 11.6 (Culture of Peace) were printed correctly with no numbering issues. The syllabus organizes content by Grade only, not by Term, so all of Grade 11 is modeled as a single term here.",
+  "_source": "Ministry of Education / Curriculum Development Centre, Zambia. 'Civic Education Syllabus Grade 10-12' (2013, published by CDC) — Grade 11, Topics 11.1-11.7. Numbering-slip corrections as documented previously (11.1 renumbered from printed 12.1.x; 11.2 from 11.1.x; 11.3 from 11.2.x; 11.4 reordered from internal duplicates; 11.7 renumbered from printed 11.6.x), cross-checked against the syllabus's own Scope and Sequence Chart. Rebuilt 2026-08-31 to add real term/week/reference data from a second real source, 'MINISTRY OF GENERAL EDUCATION, GRADE ELEVEN CIVIC EDUCATION SCHEMES OF WORK' — real, complete, blank 'SCHOOL:'/'NAME OF TEACHER:' template fields throughout, nothing to sanitize. Real irregularity documented, not silently resolved: this source does NOT show '11.1 The Zambian Bill of Rights' being taught as Grade 11 content at all — instead, this exact content (Zambian Bill of Rights, elements in the Zambian constitution) appears in this school's real Grade 10 Term 3 (weeks 10-11), citing Grade 11 textbooks ('Teacher's Guide 11'/'Learner's Book 11') as if taught there as an early preview — a real, sourced cross-grade quirk. 11.1 is left without added week/reference data here rather than guessed; see civic_education_grade10.json's Human Rights topic, which already covers this same Bill-of-Rights content at its real Grade 10 introduction. A genuinely new topic this file didn't have, 11.8 Human Rights: International Instruments (International Bill of Rights, UDHR, treaty-based and specialized instruments, the African Charter on Human and People's Rights), is real Grade 11 Term 3 content, added here rather than conflated with 11.1. Each sub-topic's week_number is the real week it was first introduced.",
   "curriculum": {
     "code": "OBC_2013",
     "name": "2013 Outcome-Based Curriculum",
@@ -18,12 +18,12 @@
   },
   "terms": [
     {
-      "name": "Year (not term-divided in the source syllabus)",
-      "sequence_number": 1,
+      "name": "Term 1",
       "topics": [
         {
           "name": "11.1 The Zambian Bill of Rights",
           "sequence_number": 1,
+          "description": "Official CDC Grade 11 topic 1. This second source doesn't show it taught as Grade 11 content — see this file's _source note — so no new week/reference data was added; positioned first by original topic order.",
           "sub_topics": [
             {
               "name": "11.1 The Zambian Bill of Rights",
@@ -44,6 +44,8 @@
             {
               "name": "Civil Society and Governance",
               "sequence_number": 1,
+              "week_number": 1,
+              "references": "Teacher's Guide 11; Learner's Book 11; Civic Education Syllabus Grade 10-12",
               "competencies": [
                 { "sequence_number": 1, "description": "Describe Civil Society Organisations", "category": "Specific Outcome" },
                 { "sequence_number": 2, "description": "Classify Civil Society Organisations in Zambia", "category": "Specific Outcome" },
@@ -54,6 +56,8 @@
             {
               "name": "Media and Governance",
               "sequence_number": 2,
+              "week_number": 3,
+              "references": "Teacher's Guide 11; Learner's Book 11; Civic Education Syllabus Grade 10-12",
               "competencies": [
                 { "sequence_number": 1, "description": "Identify different types of media", "category": "Specific Outcome" },
                 { "sequence_number": 2, "description": "Explain the role of the media in governance", "category": "Specific Outcome" },
@@ -70,6 +74,8 @@
             {
               "name": "11.3 Economic and Social Development",
               "sequence_number": 1,
+              "week_number": 5,
+              "references": "Teacher's Guide 11; Learner's Book 11; Civic Education Syllabus Grade 10-12",
               "competencies": [
                 { "sequence_number": 1, "description": "Explain economic and social development", "category": "Specific Outcome" },
                 { "sequence_number": 2, "description": "Discuss basic human needs", "category": "Specific Outcome" },
@@ -82,14 +88,21 @@
               ]
             }
           ]
-        },
+        }
+      ]
+    },
+    {
+      "name": "Term 2",
+      "topics": [
         {
           "name": "11.4 Zambia's Legal System",
-          "sequence_number": 4,
+          "sequence_number": 1,
           "sub_topics": [
             {
               "name": "11.4 Zambia's Legal System",
               "sequence_number": 1,
+              "week_number": 1,
+              "references": "Teacher's Guide 11; Learner's Book 11; Civic Education Syllabus Grade 10-12",
               "competencies": [
                 { "sequence_number": 1, "description": "Describe Law", "category": "Specific Outcome" },
                 { "sequence_number": 2, "description": "Explain Legal system", "category": "Specific Outcome" },
@@ -106,11 +119,13 @@
         },
         {
           "name": "11.5 Gender Equity and Equality",
-          "sequence_number": 5,
+          "sequence_number": 2,
           "sub_topics": [
             {
               "name": "11.5 Gender Equity and Equality",
               "sequence_number": 1,
+              "week_number": 6,
+              "references": "Teacher's Guide 11; Learner's Book 11; Civic Education Syllabus Grade 10-12",
               "competencies": [
                 { "sequence_number": 1, "description": "Explain gender equity and gender equality", "category": "Specific Outcome" },
                 { "sequence_number": 2, "description": "Outline the historical background to gender equity and equality", "category": "Specific Outcome" },
@@ -123,14 +138,21 @@
               ]
             }
           ]
-        },
+        }
+      ]
+    },
+    {
+      "name": "Term 3",
+      "topics": [
         {
           "name": "11.6 Culture of Peace",
-          "sequence_number": 6,
+          "sequence_number": 1,
           "sub_topics": [
             {
               "name": "11.6 Culture of Peace",
               "sequence_number": 1,
+              "week_number": 1,
+              "references": "Teacher's Guide 11; Learner's Book 11; Civic Education Syllabus Grade 10-12",
               "competencies": [
                 { "sequence_number": 1, "description": "Explain culture of peace", "category": "Specific Outcome" },
                 { "sequence_number": 2, "description": "Describe methods of promoting peace", "category": "Specific Outcome" },
@@ -145,11 +167,13 @@
         },
         {
           "name": "11.7 Child Abuse",
-          "sequence_number": 7,
+          "sequence_number": 2,
           "sub_topics": [
             {
               "name": "Child Abuse",
               "sequence_number": 1,
+              "week_number": 5,
+              "references": "Teacher's Guide 11; Learner's Book 11; Civic Education Syllabus Grade 10-12",
               "competencies": [
                 { "sequence_number": 1, "description": "Describe child abuse", "category": "Specific Outcome" },
                 { "sequence_number": 2, "description": "Explain different forms of child abuse", "category": "Specific Outcome" },
@@ -159,6 +183,8 @@
             {
               "name": "Sexual Harassment",
               "sequence_number": 2,
+              "week_number": 6,
+              "references": "Teacher's Guide 11; Learner's Book 11; Civic Education Syllabus Grade 10-12",
               "competencies": [
                 { "sequence_number": 1, "description": "Describe sexual harassment", "category": "Specific Outcome" },
                 { "sequence_number": 2, "description": "Discuss ways of protection against sexual harassment and rape", "category": "Specific Outcome" }
@@ -167,11 +193,33 @@
             {
               "name": "Teenage Pregnancies",
               "sequence_number": 3,
+              "week_number": 6,
+              "references": "Teacher's Guide 11; Learner's Book 11; Civic Education Syllabus Grade 10-12",
               "competencies": [
                 { "sequence_number": 1, "description": "Explain causes of teenage pregnancies", "category": "Specific Outcome" },
                 { "sequence_number": 2, "description": "Explain the effects of teenage pregnancies", "category": "Specific Outcome" },
                 { "sequence_number": 3, "description": "Identify ways of preventing teenage pregnancies", "category": "Specific Outcome" },
                 { "sequence_number": 4, "description": "Discuss institutions that address social challenges", "category": "Specific Outcome" }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "11.8 Human Rights: International Instruments",
+          "sequence_number": 3,
+          "description": "New topic — not present in this file's earlier version.",
+          "sub_topics": [
+            {
+              "name": "International Human Rights Instruments",
+              "sequence_number": 1,
+              "week_number": 9,
+              "references": "Teacher's Guide 12; Learner's Book 12; Civic Education Syllabus Grade 10-12",
+              "competencies": [
+                { "sequence_number": 1, "description": "Describe the International Bill of Rights (IBR)", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Explain the Universal Declaration of Human Rights (UDHR)", "category": "Specific Outcome" },
+                { "sequence_number": 3, "description": "Describe Treaty Based Human Rights Instruments", "category": "Specific Outcome" },
+                { "sequence_number": 4, "description": "Describe the Specialized Human Rights Instruments", "category": "Specific Outcome" },
+                { "sequence_number": 5, "description": "Explain provisions of the African Charter on Human and People's Rights (ACHPR)", "category": "Specific Outcome" }
               ]
             }
           ]
