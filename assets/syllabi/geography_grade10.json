@@ -1,5 +1,5 @@
 {
-  "_source": "Ministry of Education / Curriculum Development Centre, Zambia. 'Grade 10-12 Geography Syllabus' (2013, published by CDC), Section A (Map Work) and Section B (Elements of Physical Geography), covering Topics 10.1-10.8 (all of Grade 10 Sections A and B). Topic/sub-topic names and Specific Outcome statements only — the 'Content' (Knowledge/Skills/Values) columns are omitted throughout because the source PDF's table has 6 columns and text-extracts with columns interleaved out of order, risking misattribution of content between sub-topics if reconstructed automatically; the numbered Specific Outcomes, by contrast, were manually traced against each sub-topic heading in the raw extraction (verifying block order and outcome count per sub-topic) and are reproduced reliably, not guessed or sourced externally. Two numbering slips were found in the source document itself (not extraction artifacts) and corrected here based on the outcome's actual position under its sub-topic heading rather than its printed code: (1) sub-topics 10.2.6 and 10.2.7 both carry the printed code prefix '10.2.7.x' — their outcome statements are included without that ambiguous code; (2) the six Specific Outcomes belonging under sub-topics 10.5.1 (River Systems and Drainage Patterns) and 10.5.2 (River Erosion, Transportation and Deposition) are printed with the code prefix '10.8.1.x', which is also the prefix used for the five outcomes actually under Topic 10.8 (Natural Environmental Hazards) — the river outcomes have been renumbered here as 10.5.1.x/10.5.2.x to match their true topic, and the 10.8.1.x outcomes retained are the five that are actually about natural hazards. Grade 11 and 12 (Sections C and D, and beyond) are not yet included. The syllabus organizes content by Grade only, not by Term, so all of Grade 10 is modeled as a single term here.",
+  "_source": "Ministry of Education / Curriculum Development Centre, Zambia. 'Grade 10-12 Geography Syllabus' (2013, published by CDC), Section A (Map Work) and Section B (Elements of Physical Geography), covering Topics 10.1-10.8 (all of Grade 10 Sections A and B). Topic/sub-topic names and Specific Outcome statements traced against each sub-topic heading in the raw extraction; two source numbering slips corrected here as before (10.2.6/10.2.7 sharing a printed '10.2.7.x' code; the six river outcomes printed under '10.8.1.x' renumbered to 10.5.1.x/10.5.2.x, the true 10.8.1.x outcomes being the five natural-hazard ones). Rebuilt 2026-08-31 to add real term/week/reference data from a second real source, 'MINISTRY OF GENERAL EDUCATION SOCIAL SCIENCES PROVINCIAL SCHEMES OF WORK — SOUTHERN PROVINCE, GEOGRAPHY' — a province-level document (no individual teacher/school named, nothing to sanitize), covering all 3 grades × all 3 terms with real weekly topic/reference data. Real irregularities documented, not silently resolved: (1) this source teaches 'The Solar System' before 'Map Work' (Term 1 weeks 2-6 then 8-9), the reverse of the CDC syllabus's own 10.1/10.2 numbering used for topic naming here — a real difference between official syllabus numbering and this school's actual teaching order, both are real; (2) the source's Term 1 opens with a real introductory topic, 'Definition of geography and its importance', not present in the original CDC-numbered topic list at all — added here as a new unnumbered topic since it is real, sourced content, not fabricated; (3) the source reveals real content this file was missing entirely under 10.6 Weather and Climate — 'Elements of Weather' (temperature, rainfall, air pressure, humidity, winds, sunshine, clouds) and 'Elements of Climate' — added as new sub-topics 10.6.4/10.6.5; (4) the source's Term 3 breaks 'climatic types/characteristics' (10.6.2/10.6.3) into four specific real regions (Savannah, Equatorial, Hot Deserts, Mediterranean) taught weeks 4-8, each with its own real page references — rather than fabricate four new granular sub-topics without full confidence in exact boundaries, their combined real references were folded into 10.6.2/10.6.3's own references field, and both are dated to week 4 (first of that cluster); vegetation content is bundled into this same regional-climate cluster in the source rather than taught separately, so 10.7.1 (Natural Vegetation) is also dated to Term 3 week 4. (5) A few individual weeks in the source table (Term 1 weeks 3, 5, 6) had OCR column-order jumbling in the raw extraction; week assignments there were reconstructed by row position, cross-checked against the source's own clean end-of-document 'GEOGRAPHY TOPICS' summary list per grade, not guessed from scratch. Each sub-topic's week_number is the real week it was first introduced (not every week it was reviewed).",
   "curriculum": {
     "code": "OBC_2013",
     "name": "2013 Outcome-Based Curriculum",
@@ -18,17 +18,111 @@
   },
   "terms": [
     {
-      "name": "Year (not term-divided in the source syllabus)",
-      "sequence_number": 1,
+      "name": "Term 1",
       "topics": [
         {
-          "name": "10.1 Map Work: Basic Techniques and Skills",
+          "name": "Definition of Geography and Its Importance",
           "sequence_number": 1,
-          "description": "Section A: Map Work.",
+          "description": "Real introductory topic from the provincial scheme, not present in the CDC syllabus's own numbered topic list.",
+          "sub_topics": [
+            {
+              "name": "Definition and Importance",
+              "sequence_number": 1,
+              "week_number": 1,
+              "references": "Geography 10 (MK) pp IV; Geography golden tips by Wambungu et al pg 1",
+              "competencies": [
+                { "sequence_number": 1, "description": "Define geography", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "State the importance of geography", "category": "Specific Outcome" }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "10.2 The Solar System",
+          "sequence_number": 2,
+          "description": "Section B: Elements of Physical Geography.",
+          "sub_topics": [
+            {
+              "name": "10.2.1 The Solar System",
+              "sequence_number": 1,
+              "week_number": 2,
+              "references": "Geography 10 (MK) pp 39-48; Leong — cert. physical and human geo pgs 2-7; Geography golden tips by Wambungu et al pgs 36-42",
+              "competencies": [
+                { "sequence_number": 1, "description": "Describe the solar system", "category": "Specific Outcome" }
+              ]
+            },
+            {
+              "name": "10.2.2 The Earth as a Planet",
+              "sequence_number": 2,
+              "week_number": 3,
+              "references": "Geography 10 (MK) pp 39-48; Leong — cert. physical and human geo pgs 2-7",
+              "competencies": [
+                { "sequence_number": 1, "description": "Describe the shape of the Earth", "category": "Specific Outcome" }
+              ]
+            },
+            {
+              "name": "10.2.3 Latitude and Longitude",
+              "sequence_number": 3,
+              "week_number": 4,
+              "references": "Geography 10 (MK) pp 49-55; Leong — cert. physical and human geo pgs 10-15; Geography golden tips pgs 8-9",
+              "competencies": [
+                { "sequence_number": 1, "description": "Explain latitude and longitude", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Locate places on the Earth's surface using latitudes and longitudes", "category": "Specific Outcome" },
+                { "sequence_number": 3, "description": "Calculate distances using latitudes", "category": "Specific Outcome" }
+              ]
+            },
+            {
+              "name": "10.2.4 Local and Standard Time",
+              "sequence_number": 4,
+              "week_number": 5,
+              "references": "Geography 10 (MK) pp 49-55; Leong — cert. physical and human geo pgs 10-15",
+              "competencies": [
+                { "sequence_number": 1, "description": "Calculate local time using longitudes", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Calculate longitude from local time", "category": "Specific Outcome" }
+              ]
+            },
+            {
+              "name": "10.2.5 International Date Line",
+              "sequence_number": 5,
+              "week_number": 5,
+              "references": "Geography 10 (MK) pp 49-55; Leong — cert. physical and human geo pgs 10-15",
+              "competencies": [
+                { "sequence_number": 1, "description": "Explain the International Date Line", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Calculate time and date east or west of the International Date Line", "category": "Specific Outcome" }
+              ]
+            },
+            {
+              "name": "10.2.6 Apparent Movement of the Sun (Angle of Elevation)",
+              "sequence_number": 6,
+              "week_number": 6,
+              "references": "Geography 10 (MK) pgs 1-38; Social studies grade 8 & 9 syllabus geo component pgs 68-97; Geography golden tips pgs 5-11",
+              "competencies": [
+                { "sequence_number": 1, "description": "Calculate the position of the midday sun (angle of elevation) at a given latitude at different times of the year", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Calculate the latitude of a place using the position of the midday sun (angle of elevation)", "category": "Specific Outcome" }
+              ]
+            },
+            {
+              "name": "10.2.7 Rotation and Revolution of the Earth",
+              "sequence_number": 7,
+              "week_number": 6,
+              "references": "Geography 10 (MK) pgs 1-38; Social studies grade 8 & 9 syllabus geo component pgs 68-97; Geography golden tips pgs 5-11",
+              "competencies": [
+                { "sequence_number": 1, "description": "Explain the effects of rotation of the earth", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Explain the effects of the earth's revolution", "category": "Specific Outcome" }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "10.1 Map Work: Basic Techniques and Skills",
+          "sequence_number": 3,
+          "description": "Section A: Map Work. Taught after the Solar System in this real source, though numbered 10.1 in the CDC syllabus.",
           "sub_topics": [
             {
               "name": "10.1.1 Map Reading and Interpretation",
               "sequence_number": 1,
+              "week_number": 8,
+              "references": "Geography 10 (MK) pgs 1-38; Social studies grade 8 & 9 syllabus geo component pgs 68-97; Geography golden tips pgs 5-11",
               "competencies": [
                 { "sequence_number": 1, "description": "Match conventional signs with ground features", "category": "Specific Outcome" },
                 { "sequence_number": 2, "description": "Measure real distances between objects in the field", "category": "Specific Outcome" },
@@ -44,6 +138,8 @@
             {
               "name": "10.1.2 Sketch Maps and Diagrams",
               "sequence_number": 2,
+              "week_number": 9,
+              "references": "Geography 10 (MK) pgs 1-38; Social studies grade 8 & 9 syllabus geo component pgs 68-97",
               "competencies": [
                 { "sequence_number": 1, "description": "Draw a sketch map from topographic maps", "category": "Specific Outcome" },
                 { "sequence_number": 2, "description": "Draw a cross-section between two points on a map", "category": "Specific Outcome" }
@@ -52,75 +148,15 @@
           ]
         },
         {
-          "name": "10.2 The Solar System",
-          "sequence_number": 2,
-          "description": "Section B: Elements of Physical Geography.",
-          "sub_topics": [
-            {
-              "name": "10.2.1 The Solar System",
-              "sequence_number": 1,
-              "competencies": [
-                { "sequence_number": 1, "description": "Describe the solar system", "category": "Specific Outcome" }
-              ]
-            },
-            {
-              "name": "10.2.2 The Earth as a Planet",
-              "sequence_number": 2,
-              "competencies": [
-                { "sequence_number": 1, "description": "Describe the shape of the Earth", "category": "Specific Outcome" }
-              ]
-            },
-            {
-              "name": "10.2.3 Latitude and Longitude",
-              "sequence_number": 3,
-              "competencies": [
-                { "sequence_number": 1, "description": "Explain latitude and longitude", "category": "Specific Outcome" },
-                { "sequence_number": 2, "description": "Locate places on the Earth's surface using latitudes and longitudes", "category": "Specific Outcome" },
-                { "sequence_number": 3, "description": "Calculate distances using latitudes", "category": "Specific Outcome" }
-              ]
-            },
-            {
-              "name": "10.2.4 Local and Standard Time",
-              "sequence_number": 4,
-              "competencies": [
-                { "sequence_number": 1, "description": "Calculate local time using longitudes", "category": "Specific Outcome" },
-                { "sequence_number": 2, "description": "Calculate longitude from local time", "category": "Specific Outcome" }
-              ]
-            },
-            {
-              "name": "10.2.5 International Date Line",
-              "sequence_number": 5,
-              "competencies": [
-                { "sequence_number": 1, "description": "Explain the International Date Line", "category": "Specific Outcome" },
-                { "sequence_number": 2, "description": "Calculate time and date east or west of the International Date Line", "category": "Specific Outcome" }
-              ]
-            },
-            {
-              "name": "10.2.6 Apparent Movement of the Sun (Angle of Elevation)",
-              "sequence_number": 6,
-              "competencies": [
-                { "sequence_number": 1, "description": "Calculate the position of the midday sun (angle of elevation) at a given latitude at different times of the year", "category": "Specific Outcome" },
-                { "sequence_number": 2, "description": "Calculate the latitude of a place using the position of the midday sun (angle of elevation)", "category": "Specific Outcome" }
-              ]
-            },
-            {
-              "name": "10.2.7 Rotation and Revolution of the Earth",
-              "sequence_number": 7,
-              "competencies": [
-                { "sequence_number": 1, "description": "Explain the effects of rotation of the earth", "category": "Specific Outcome" },
-                { "sequence_number": 2, "description": "Explain the effects of the earth's revolution", "category": "Specific Outcome" }
-              ]
-            }
-          ]
-        },
-        {
           "name": "10.3 Earth Movements",
-          "sequence_number": 3,
+          "sequence_number": 4,
           "description": "Section B: Elements of Physical Geography.",
           "sub_topics": [
             {
               "name": "10.3.1 Faulting and Folding",
               "sequence_number": 1,
+              "week_number": 10,
+              "references": "Geography 10 (MK) pgs 67-77; Leong — cert. physical and human geo pgs 17-26; Geography golden tips pgs 58-63",
               "competencies": [
                 { "sequence_number": 1, "description": "Distinguish forces leading to faulting and folding", "category": "Specific Outcome" },
                 { "sequence_number": 2, "description": "Explain the landforms resulting from faulting and folding", "category": "Specific Outcome" },
@@ -130,6 +166,8 @@
             {
               "name": "10.3.2 Earthquakes and Volcanic Activities",
               "sequence_number": 2,
+              "week_number": 11,
+              "references": "Geography 10 (MK) pgs 78-91; Leong — cert. physical and human geo pgs 27-35; Geography golden tips pgs 66-71",
               "competencies": [
                 { "sequence_number": 1, "description": "Explain the origins of earthquakes and volcanoes", "category": "Specific Outcome" },
                 { "sequence_number": 2, "description": "Describe the types of volcanoes", "category": "Specific Outcome" },
@@ -139,15 +177,22 @@
               ]
             }
           ]
-        },
+        }
+      ]
+    },
+    {
+      "name": "Term 2",
+      "topics": [
         {
           "name": "10.4 Weathering and Mass Wasting",
-          "sequence_number": 4,
+          "sequence_number": 1,
           "description": "Section B: Elements of Physical Geography.",
           "sub_topics": [
             {
               "name": "10.4.1 Weathering in the Tropics and Temperate Regions",
               "sequence_number": 1,
+              "week_number": 2,
+              "references": "Geography 10 (MK) pgs 92-107; Leong — cert. physical and human geo pgs 36-46; Geography golden tips pgs 74-80",
               "competencies": [
                 { "sequence_number": 1, "description": "Explain the processes of weathering", "category": "Specific Outcome" }
               ]
@@ -155,6 +200,8 @@
             {
               "name": "10.4.2 Mass Movement",
               "sequence_number": 2,
+              "week_number": 4,
+              "references": "Geography 10 (MK) pgs 92-107; Leong — cert. physical and human geo pgs 36-46",
               "competencies": [
                 { "sequence_number": 1, "description": "Describe the agents of weathering", "category": "Specific Outcome" },
                 { "sequence_number": 2, "description": "Discuss the processes of mass movement or mass wasting", "category": "Specific Outcome" }
@@ -164,12 +211,14 @@
         },
         {
           "name": "10.5 River Processes",
-          "sequence_number": 5,
+          "sequence_number": 2,
           "description": "Section B: Elements of Physical Geography.",
           "sub_topics": [
             {
               "name": "10.5.1 River Systems and Drainage Patterns",
               "sequence_number": 1,
+              "week_number": 5,
+              "references": "Geography 10 (MK) pgs 108-132; Leong — cert. physical and human geo pgs 47-57; Geography golden tips pgs 88-100",
               "competencies": [
                 { "sequence_number": 1, "description": "Describe river systems", "category": "Specific Outcome" },
                 { "sequence_number": 2, "description": "Identify river drainage patterns", "category": "Specific Outcome" }
@@ -178,6 +227,8 @@
             {
               "name": "10.5.2 River Erosion, Transportation and Deposition",
               "sequence_number": 2,
+              "week_number": 6,
+              "references": "Geography 10 (MK) pgs 108-132; Leong — cert. physical and human geo pgs 47-57; Geography golden tips pgs 88-100",
               "competencies": [
                 { "sequence_number": 1, "description": "Explain the stages in the formation of a river", "category": "Specific Outcome" },
                 { "sequence_number": 2, "description": "Describe the features associated with each stage of a river", "category": "Specific Outcome" },
@@ -190,40 +241,80 @@
         },
         {
           "name": "10.6 Weather and Climate",
-          "sequence_number": 6,
+          "sequence_number": 3,
           "description": "Section B: Elements of Physical Geography.",
           "sub_topics": [
             {
+              "name": "10.6.4 Elements of Weather",
+              "sequence_number": 4,
+              "week_number": 9,
+              "references": "Geography 10 (MK) pgs 133-153; Leong — cert. physical and human geo pgs 114-143; Geography golden tips pgs 43-47",
+              "competencies": [
+                { "sequence_number": 1, "description": "Explain the elements of weather in relation to temperature and rainfall", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Describe the elements of weather in relation to air pressure, humidity and winds", "category": "Specific Outcome" },
+                { "sequence_number": 3, "description": "Describe the elements of weather in relation to sunshine and clouds", "category": "Specific Outcome" }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 3",
+      "topics": [
+        {
+          "name": "10.6 Weather and Climate",
+          "sequence_number": 1,
+          "description": "Section B: Elements of Physical Geography.",
+          "sub_topics": [
+            {
+              "name": "10.6.5 Elements of Climate",
+              "sequence_number": 5,
+              "week_number": 1,
+              "references": "Geography 10 (MK) pgs 133-153; Leong — cert. physical and human geo pgs 114-143; Geography golden tips pgs 43-47",
+              "competencies": [
+                { "sequence_number": 1, "description": "Explain the elements of climate in relation to temperature, rainfall and air pressure", "category": "Specific Outcome" }
+              ]
+            },
+            {
               "name": "10.6.1 Tropical and Temperate Storms",
               "sequence_number": 1,
+              "week_number": 2,
+              "references": "Geography 10 (MK) pgs 133-153; Leong — cert. physical and human geo pgs 114-143; Geography golden tips pgs 43-47",
               "competencies": [
-                { "sequence_number": 1, "description": "Describe formation, structure and effects of Tropical and Temperate storms", "category": "Specific Outcome" }
+                { "sequence_number": 1, "description": "Describe formation, structure and effects of Tropical and Temperate storms (cyclones and anti-cyclones)", "category": "Specific Outcome" }
               ]
             },
             {
               "name": "10.6.2 Climatic Types",
               "sequence_number": 2,
+              "week_number": 4,
+              "references": "Geography 10 (MK) pg 154 (Savannah), pgs 153-154 (Equatorial), pgs 154-155 (Hot Deserts), pgs 155-156 (Mediterranean); Leong — cert. physical and human geo pgs 143-188; Geography golden tips pgs 48-56",
               "competencies": [
-                { "sequence_number": 1, "description": "Locate on a world map major climatic types", "category": "Specific Outcome" }
+                { "sequence_number": 1, "description": "Locate on a world map major climatic types (Savannah, Equatorial, Hot Deserts, Mediterranean)", "category": "Specific Outcome" }
               ]
             },
             {
               "name": "10.6.3 Climatic Characteristics",
               "sequence_number": 3,
+              "week_number": 4,
+              "references": "Geography 10 (MK) pg 154 (Savannah), pgs 153-154 (Equatorial), pgs 154-155 (Hot Deserts), pgs 155-156 (Mediterranean); Leong — cert. physical and human geo pgs 143-188; Geography golden tips pgs 48-56",
               "competencies": [
-                { "sequence_number": 1, "description": "Describe the characteristics of climatic types", "category": "Specific Outcome" }
+                { "sequence_number": 1, "description": "Describe the climatic characteristics, vegetation and economic activities of the Savannah, Equatorial, Hot Desert and Mediterranean regions", "category": "Specific Outcome" }
               ]
             }
           ]
         },
         {
           "name": "10.7 Vegetation",
-          "sequence_number": 7,
-          "description": "Section B: Elements of Physical Geography.",
+          "sequence_number": 2,
+          "description": "Section B: Elements of Physical Geography. Taught bundled into the climatic-regions cluster above in this real source, rather than as a separate week block.",
           "sub_topics": [
             {
               "name": "10.7.1 Natural Vegetation",
               "sequence_number": 1,
+              "week_number": 4,
+              "references": "Geography 10 (MK) pg 154 (Savannah), pgs 153-154 (Equatorial), pgs 154-155 (Hot Deserts), pgs 155-156 (Mediterranean); Geography golden tips pgs 48-56",
               "competencies": [
                 { "sequence_number": 1, "description": "Explain the characteristics of natural vegetation (adaptation)", "category": "Specific Outcome" }
               ]
@@ -232,12 +323,14 @@
         },
         {
           "name": "10.8 Natural Environmental Hazards",
-          "sequence_number": 8,
+          "sequence_number": 3,
           "description": "Section B: Elements of Physical Geography.",
           "sub_topics": [
             {
               "name": "10.8.1 Natural Hazards",
               "sequence_number": 1,
+              "week_number": 9,
+              "references": "Geography 10 (MK) pgs 174-191; High sch geo for Zambia and the Sub region by Ntalasha et al pgs 195-218; Geography golden tips pg 259",
               "competencies": [
                 { "sequence_number": 1, "description": "Describe the natural environmental hazards", "category": "Specific Outcome" },
                 { "sequence_number": 2, "description": "Explain the impact of human activities on the physical environment", "category": "Specific Outcome" },

@@ -1,5 +1,5 @@
 {
-  "_source": "Ministry of Education / Curriculum Development Centre, Zambia. 'Grade 10-12 Geography Syllabus' (2013, published by CDC), Section D (Zambia) — all of Grade 12. Topic/sub-topic names and Specific Outcome statements only; the 'Content' (Knowledge/Skills/Values) columns are omitted for the same column-extraction-reliability reason documented in the Grade 10 file. Outcome text and order were manually traced against each sub-topic heading, cross-checked against the syllabus's own end-of-document 'Scope and Sequence Chart' summary table, which confirmed every topic name and the full topic list used here. Two numbering slips found in the source document itself were corrected based on the outcome's position under its true sub-topic rather than its printed code: the outcome about invasive plant species is printed as '12.2.1.3' but is renumbered 12.2.2.1 here (it is clearly about sub-topic 12.2.2 'Invasive Plant Species', not 12.2.1 'Exploitation of Timber'); the outcome about interpreting mining production/marketing data tables is printed as '12.4.2.2' but is renumbered 12.5.2.1 here (it is clearly about sub-topic 12.5.2 'Mineral Production', not Topic 12.4 'Wildlife and Tourism'). Two further outcomes were printed with a truncated code ('.10.1.1') in the source, most likely a garbled '12.10.1.1' / '12.12.2.1' — renumbered here to 12.10.1.1 and 12.12.2.1 respectively based on their sub-topic position. Topic 12.3 does not exist in the source document — its numbering jumps directly from 12.2 (Forestry) to 12.4 (Wildlife and Tourism), confirmed by the Scope and Sequence Chart, which also skips straight from Forestry to Wildlife; this is a genuine gap in the original syllabus, not an extraction artifact. The syllabus organizes content by Grade only, not by Term, so all of Grade 12 is modeled as a single term here.",
+  "_source": "Ministry of Education / Curriculum Development Centre, Zambia. 'Grade 10-12 Geography Syllabus' (2013, published by CDC), Section D (Zambia) — all of Grade 12. Outcome text and order manually traced against each sub-topic heading, cross-checked against the syllabus's own end-of-document Scope and Sequence Chart. Two source numbering slips corrected as before (invasive-species outcome renumbered 12.2.2.1; mining-data outcome renumbered 12.5.2.1; two truncated codes renumbered 12.10.1.1/12.12.2.1 by sub-topic position). Topic 12.3 genuinely does not exist in the source (numbering jumps 12.2→12.4), confirmed by the Scope and Sequence Chart. Rebuilt 2026-08-31 to add real term/week/reference data from a second real source, 'MINISTRY OF GENERAL EDUCATION SOCIAL SCIENCES PROVINCIAL SCHEMES OF WORK — SOUTHERN PROVINCE, GEOGRAPHY' — a province-level document (no individual teacher/school named, nothing to sanitize), covering all 3 grades × all 3 terms, cross-checked against its own clean end-of-document 'GEOGRAPHY TOPICS' Grade 12 summary (Forestry → Field Project → Wildlife/Tourism → Mining → Transport/Communication → Processing/Manufacturing → Revision). Real irregularities documented, not silently resolved: (1) this source's Grade 12 list has NO 'Agriculture in Zambia' topic at all — instead, this file's existing 12.1 (Land Tenure/Irrigation/Bad Practices/Soil Conservation) is, in this school's real practice, taught a grade earlier, under Grade 11 Term 2-3's '11.4 Agriculture in Zambia, Sub-Region and the World' (see geography_grade11.json) — both are kept, a real cross-grade discrepancy between the official CDC numbering (Grade 12) and this school's real teaching order (Grade 11), not an error to resolve; (2) 'Power and Energy in Zambia/Sub-Region' (12.7/12.8) and 'Transport and Communication in the Sub-Region' beyond landlocked-country content (part of 12.10) are not distinctly covered in this second source's Grade 12 week table either — left without added week/reference data rather than guessed; (3) genuinely new real content this file didn't have is added: Forestry's 'Types of Natural Vegetation'/'Importance of Forestry'/'Forestry Department' (12.2.0-series), Wildlife's real Kenya sub-region content (12.4.3), a new 'Geography Field Project' topic (12.3, filling the real gap where the source shows 12.3 is genuinely used at THIS school even though the original CDC syllabus skips it), and Manufacturing's real Sugar Production content (12.11.2). Each sub-topic's week_number is the real week it was first introduced.",
   "curriculum": {
     "code": "OBC_2013",
     "name": "2013 Outcome-Based Curriculum",
@@ -18,45 +18,28 @@
   },
   "terms": [
     {
-      "name": "Year (not term-divided in the source syllabus)",
-      "sequence_number": 1,
+      "name": "Term 1",
       "topics": [
         {
           "name": "12.1 Agriculture in Zambia",
           "sequence_number": 1,
-          "description": "Section D: Zambia.",
+          "description": "Section D: Zambia. Per the CDC syllabus's own official numbering. This school's real practice teaches this content in Grade 11 instead — see this file's _source note.",
           "sub_topics": [
-            {
-              "name": "12.1.1 Land Tenure Systems",
-              "sequence_number": 1,
-              "competencies": [
-                { "sequence_number": 1, "description": "Describe land tenure", "category": "Specific Outcome" },
-                { "sequence_number": 2, "description": "State types of land tenure in Zambia", "category": "Specific Outcome" }
-              ]
-            },
-            {
-              "name": "12.1.2 Irrigation Farming",
-              "sequence_number": 2,
-              "competencies": [
-                { "sequence_number": 1, "description": "State factors that favour irrigation farming", "category": "Specific Outcome" }
-              ]
-            },
-            {
-              "name": "12.1.3 Bad Agricultural Practices",
-              "sequence_number": 3,
-              "competencies": [
-                { "sequence_number": 1, "description": "Describe effects of irrigation farming on the environment", "category": "Specific Outcome" },
-                { "sequence_number": 2, "description": "Explain bad agricultural practices and their effects", "category": "Specific Outcome" }
-              ]
-            },
-            {
-              "name": "12.1.4 Soil Conservation",
-              "sequence_number": 4,
-              "competencies": [
-                { "sequence_number": 1, "description": "Discuss soil conservation measures and sustainable agriculture", "category": "Specific Outcome" },
-                { "sequence_number": 2, "description": "Explain Zambia's agricultural potential in the SADC region", "category": "Specific Outcome" }
-              ]
-            }
+            { "name": "12.1.1 Land Tenure Systems", "sequence_number": 1, "competencies": [
+              { "sequence_number": 1, "description": "Describe land tenure", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "State types of land tenure in Zambia", "category": "Specific Outcome" }
+            ]},
+            { "name": "12.1.2 Irrigation Farming", "sequence_number": 2, "competencies": [
+              { "sequence_number": 1, "description": "State factors that favour irrigation farming", "category": "Specific Outcome" }
+            ]},
+            { "name": "12.1.3 Bad Agricultural Practices", "sequence_number": 3, "competencies": [
+              { "sequence_number": 1, "description": "Describe effects of irrigation farming on the environment", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Explain bad agricultural practices and their effects", "category": "Specific Outcome" }
+            ]},
+            { "name": "12.1.4 Soil Conservation", "sequence_number": 4, "competencies": [
+              { "sequence_number": 1, "description": "Discuss soil conservation measures and sustainable agriculture", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Explain Zambia's agricultural potential in the SADC region", "category": "Specific Outcome" }
+            ]}
           ]
         },
         {
@@ -65,52 +48,126 @@
           "description": "Section D: Zambia.",
           "sub_topics": [
             {
-              "name": "12.2.1 Exploitation of Timber",
+              "name": "12.2.0a Types of Natural Vegetation",
               "sequence_number": 1,
+              "week_number": 1,
+              "references": "High sch geo for Zambia and the Sub region by Ntalasha et al pgs 1-18; Social studies grade 8 & 9 geo component pgs 49-50; Geography golden tips pg 125",
+              "competencies": [
+                { "sequence_number": 1, "description": "Outline the natural vegetation in Zambia", "category": "Specific Outcome" }
+              ]
+            },
+            {
+              "name": "12.2.0b Importance of Forestry",
+              "sequence_number": 2,
+              "week_number": 2,
+              "references": "High sch geo for Zambia and the Sub region by Ntalasha et al pgs 1-18",
+              "competencies": [
+                { "sequence_number": 1, "description": "Discuss the importance of forests", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Classify indigenous and exotic species and their uses", "category": "Specific Outcome" }
+              ]
+            },
+            {
+              "name": "12.2.1 Exploitation of Timber",
+              "sequence_number": 3,
+              "week_number": 3,
+              "references": "High sch geo for Zambia and the Sub region by Ntalasha et al pgs 1-18",
               "competencies": [
                 { "sequence_number": 1, "description": "Describe factors limiting the commercial exploitation of indigenous trees", "category": "Specific Outcome" },
-                { "sequence_number": 2, "description": "Describe the problems affecting forests", "category": "Specific Outcome" }
+                { "sequence_number": 2, "description": "Describe the problems affecting forests, including current issues around diminishing forests", "category": "Specific Outcome" }
               ]
             },
             {
               "name": "12.2.2 Invasive Plant Species",
-              "sequence_number": 2,
+              "sequence_number": 4,
+              "week_number": 4,
+              "references": "High sch geo for Zambia and the Sub region by Ntalasha et al pgs 1-18",
               "competencies": [
                 { "sequence_number": 1, "description": "Explain effects of invasive plant species (Lantana camara, Kafue weed)", "category": "Specific Outcome" }
+              ]
+            },
+            {
+              "name": "12.2.0c Forestry Department",
+              "sequence_number": 5,
+              "week_number": 4,
+              "references": "High sch geo for Zambia and the Sub region by Ntalasha et al pgs 1-18",
+              "competencies": [
+                { "sequence_number": 1, "description": "Outline the aims and work of the forestry department", "category": "Specific Outcome" }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "12.3 Geography Field Project",
+          "sequence_number": 3,
+          "description": "Section D: Zambia. Genuinely used at this school even though the original CDC syllabus's own numbering skips from 12.2 to 12.4 — see this file's _source note.",
+          "sub_topics": [
+            {
+              "name": "12.3.1 Research and Field Work",
+              "sequence_number": 1,
+              "week_number": 5,
+              "references": "High sch geo for Zambia and the Sub region by Ntalasha et al pgs 134-154",
+              "competencies": [
+                { "sequence_number": 1, "description": "Carry out a field project on a chosen research area", "category": "Specific Outcome" }
               ]
             }
           ]
         },
         {
           "name": "12.4 Wildlife in Zambia",
-          "sequence_number": 3,
-          "description": "Section D: Zambia. Note: Topic 12.3 does not exist in the source syllabus, which numbers its topics 12.1, 12.2, 12.4, 12.5... — confirmed by the syllabus's own Scope and Sequence Chart.",
+          "sequence_number": 4,
+          "description": "Section D: Zambia. Note: Topic 12.3 does not exist in the original CDC syllabus's own numbering — 12.3 is used here for the real Field Project topic, see above.",
           "sub_topics": [
             {
               "name": "12.4.1 Wildlife",
               "sequence_number": 1,
+              "week_number": 6,
+              "references": "High sch geo for Zambia and the Sub region by Ntalasha et al pgs 134-154; Geography golden tips pgs 173-183",
               "competencies": [
-                { "sequence_number": 1, "description": "Explain the importance of wildlife", "category": "Specific Outcome" },
-                { "sequence_number": 2, "description": "Identify factors that hinder the growth of the wildlife and tourism industry", "category": "Specific Outcome" }
+                { "sequence_number": 1, "description": "Explain the importance of wildlife and tourism", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Locate on a map of Zambia tourist attractions and describe recreational activities", "category": "Specific Outcome" },
+                { "sequence_number": 3, "description": "Analyse the impact of tourism on the social and economic development of Zambia", "category": "Specific Outcome" },
+                { "sequence_number": 4, "description": "Identify factors that hinder the growth of the wildlife and tourism industry", "category": "Specific Outcome" }
               ]
             },
             {
               "name": "12.4.2 Tourism",
               "sequence_number": 2,
+              "week_number": 8,
+              "references": "High sch geo for Zambia and the Sub region by Ntalasha et al pgs 134-154",
               "competencies": [
                 { "sequence_number": 1, "description": "Identify government measures put in place to promote wildlife conservation and the tourism industry", "category": "Specific Outcome" }
               ]
+            },
+            {
+              "name": "12.4.3 Wildlife and Tourism in the Sub-Region (Kenya)",
+              "sequence_number": 3,
+              "week_number": 9,
+              "references": "Geography golden tips by Wambungu et al (sub-region tourism section)",
+              "competencies": [
+                { "sequence_number": 1, "description": "Name and locate on a map of Kenya its tourist attractions", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Name the sources of tourists in Kenya", "category": "Specific Outcome" },
+                { "sequence_number": 3, "description": "Discuss the advantages and disadvantages of the wildlife and tourism industry", "category": "Specific Outcome" },
+                { "sequence_number": 4, "description": "Outline the future development of the tourism industry", "category": "Specific Outcome" },
+                { "sequence_number": 5, "description": "Explain why tourism is so highly developed in Kenya", "category": "Specific Outcome" }
+              ]
             }
           ]
-        },
+        }
+      ]
+    },
+    {
+      "name": "Term 2",
+      "topics": [
         {
           "name": "12.5 Mining in Zambia",
-          "sequence_number": 4,
+          "sequence_number": 1,
           "description": "Section D: Zambia.",
           "sub_topics": [
             {
               "name": "12.5.1 Mineral Exploitation",
               "sequence_number": 1,
+              "week_number": 1,
+              "references": "High sch geo for Zambia and the Sub region by Ntalasha et al pgs 66-88; Geography golden tips pgs 186-196",
               "competencies": [
                 { "sequence_number": 1, "description": "State factors influencing exploitation of minerals", "category": "Specific Outcome" }
               ]
@@ -118,6 +175,8 @@
             {
               "name": "12.5.2 Mineral Production",
               "sequence_number": 2,
+              "week_number": 3,
+              "references": "High sch geo for Zambia and the Sub region by Ntalasha et al pgs 66-88",
               "competencies": [
                 { "sequence_number": 1, "description": "Interpret simple tables of data showing production and marketing figures of mining companies", "category": "Specific Outcome" }
               ]
@@ -125,6 +184,8 @@
             {
               "name": "12.5.3 Uses of Major Minerals and Marketing",
               "sequence_number": 3,
+              "week_number": 3,
+              "references": "High sch geo for Zambia and the Sub region by Ntalasha et al pgs 66-88",
               "competencies": [
                 { "sequence_number": 1, "description": "State some of the uses of major minerals", "category": "Specific Outcome" }
               ]
@@ -132,96 +193,90 @@
             {
               "name": "12.5.4 Mineral Processing",
               "sequence_number": 4,
+              "week_number": 4,
+              "references": "High sch geo for Zambia and the Sub region by Ntalasha et al pgs 66-88",
               "competencies": [
                 { "sequence_number": 1, "description": "Describe stages of mineral processing", "category": "Specific Outcome" },
-                { "sequence_number": 2, "description": "Locate on a world map markets for major minerals produced in Zambia", "category": "Specific Outcome" },
-                { "sequence_number": 3, "description": "State major export routes of Zambia's major minerals", "category": "Specific Outcome" }
+                { "sequence_number": 2, "description": "Locate on a world map markets for major minerals produced in Zambia and their major export routes", "category": "Specific Outcome" },
+                { "sequence_number": 3, "description": "Evaluate the impact of mining on social-economic development and the physical environment", "category": "Specific Outcome" }
               ]
             }
           ]
         },
         {
           "name": "12.6 Mining in the Sub-Region (Zimbabwe, Angola and South Africa)",
-          "sequence_number": 5,
+          "sequence_number": 2,
           "description": "Section D: Zambia.",
           "sub_topics": [
             {
               "name": "12.6.1 Mineral Distribution",
               "sequence_number": 1,
+              "week_number": 7,
+              "references": "High sch geo for Zambia and the Sub region by Ntalasha et al (Zimbabwe: iron ore; Angola: petroleum and natural gas; South Africa: gold and diamond)",
               "competencies": [
-                { "sequence_number": 1, "description": "Locate on a map of Zimbabwe, Angola and South Africa mining areas for gold, diamonds, coal, petroleum and natural gas and iron ore", "category": "Specific Outcome" }
+                { "sequence_number": 1, "description": "Locate on a map of Zimbabwe, Angola and South Africa mining areas for iron ore, petroleum/natural gas, and gold/diamond respectively", "category": "Specific Outcome" }
               ]
             },
             {
               "name": "12.6.2 Mineral Processing",
               "sequence_number": 2,
+              "week_number": 7,
+              "references": "High sch geo for Zambia and the Sub region by Ntalasha et al (Zimbabwe iron ore processing; Angola petroleum transportation)",
               "competencies": [
-                { "sequence_number": 1, "description": "Describe factors influencing location of mineral processing plants", "category": "Specific Outcome" }
+                { "sequence_number": 1, "description": "Describe factors influencing location of mineral processing plants, and the stages of processing iron ore in Zimbabwe", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Discuss methods of transportation of petroleum in Angola", "category": "Specific Outcome" }
               ]
             },
             {
               "name": "12.6.3 Importance of Mining and its Effects",
               "sequence_number": 3,
+              "week_number": 9,
+              "references": "High sch geo for Zambia and the Sub region by Ntalasha et al (South Africa gold and diamond mining)",
               "competencies": [
-                { "sequence_number": 1, "description": "State the importance of mining on the economies of countries in the sub-region", "category": "Specific Outcome" },
+                { "sequence_number": 1, "description": "State the importance of mining on the economies of countries in the sub-region, including gold and diamond mining to South Africa's economy", "category": "Specific Outcome" },
                 { "sequence_number": 2, "description": "Describe constraints associated with production and sale of minerals", "category": "Specific Outcome" },
-                { "sequence_number": 3, "description": "Explain measures adopted to overcome some of the problems related to mining", "category": "Specific Outcome" },
-                { "sequence_number": 4, "description": "Evaluate impact of mining on the environment", "category": "Specific Outcome" }
+                { "sequence_number": 3, "description": "Explain measures adopted to overcome some of the problems related to mining", "category": "Specific Outcome" }
               ]
             }
           ]
         },
         {
           "name": "12.7 Power and Energy in Zambia",
-          "sequence_number": 6,
-          "description": "Section D: Zambia.",
+          "sequence_number": 3,
+          "description": "Section D: Zambia. This second, practical-schedule source doesn't distinctly cover this topic (see this file's _source note), so no new week/reference data was added here — positioned by the original CDC topic order, between Mining and Transport.",
           "sub_topics": [
-            {
-              "name": "12.7.1 Location of Hydro-Electric Power Stations",
-              "sequence_number": 1,
-              "competencies": [
-                { "sequence_number": 1, "description": "Explain factors affecting location and development of hydro power stations", "category": "Specific Outcome" }
-              ]
-            },
-            {
-              "name": "12.7.2 Uses of Hydro-Electric Power and its Effects in Zambia",
-              "sequence_number": 2,
-              "competencies": [
-                { "sequence_number": 1, "description": "Explain the various uses of energy in Zambia", "category": "Specific Outcome" },
-                { "sequence_number": 2, "description": "Evaluate the negative impact of hydro-electric power development on the environment", "category": "Specific Outcome" }
-              ]
-            }
+            { "name": "12.7.1 Location of Hydro-Electric Power Stations", "sequence_number": 1, "competencies": [
+              { "sequence_number": 1, "description": "Explain factors affecting location and development of hydro power stations", "category": "Specific Outcome" }
+            ]},
+            { "name": "12.7.2 Uses of Hydro-Electric Power and its Effects in Zambia", "sequence_number": 2, "competencies": [
+              { "sequence_number": 1, "description": "Explain the various uses of energy in Zambia", "category": "Specific Outcome" },
+              { "sequence_number": 2, "description": "Evaluate the negative impact of hydro-electric power development on the environment", "category": "Specific Outcome" }
+            ]}
           ]
         },
         {
           "name": "12.8 Power and Energy in the Sub-Region",
-          "sequence_number": 7,
-          "description": "Section D: Zambia.",
+          "sequence_number": 4,
+          "description": "Section D: Zambia. Same note as 12.7 — no new week/reference data from the second source.",
           "sub_topics": [
-            {
-              "name": "12.8.1 Major Hydro-Electric Power Stations",
-              "sequence_number": 1,
-              "competencies": [
-                { "sequence_number": 1, "description": "Locate on a map of Africa major power stations in the sub-region", "category": "Specific Outcome" }
-              ]
-            },
-            {
-              "name": "12.8.2 Power Demand in the Sub-Region",
-              "sequence_number": 2,
-              "competencies": [
-                { "sequence_number": 1, "description": "Describe energy and power needs in the sub-region", "category": "Specific Outcome" }
-              ]
-            }
+            { "name": "12.8.1 Major Hydro-Electric Power Stations", "sequence_number": 1, "competencies": [
+              { "sequence_number": 1, "description": "Locate on a map of Africa major power stations in the sub-region", "category": "Specific Outcome" }
+            ]},
+            { "name": "12.8.2 Power Demand in the Sub-Region", "sequence_number": 2, "competencies": [
+              { "sequence_number": 1, "description": "Describe energy and power needs in the sub-region", "category": "Specific Outcome" }
+            ]}
           ]
         },
         {
           "name": "12.9 Transport and Communication in Zambia",
-          "sequence_number": 8,
+          "sequence_number": 5,
           "description": "Section D: Zambia.",
           "sub_topics": [
             {
               "name": "12.9.1 Types and Importance of Transport and Communication",
               "sequence_number": 1,
+              "week_number": 10,
+              "references": "Leong — cert. physical and human geo pgs 302-310; Geography golden tips pgs 231-236",
               "competencies": [
                 { "sequence_number": 1, "description": "State major means of transport and communication", "category": "Specific Outcome" },
                 { "sequence_number": 2, "description": "Explain the importance of transport and communication", "category": "Specific Outcome" }
@@ -230,6 +285,8 @@
             {
               "name": "12.9.2 Problems and Possible Solutions",
               "sequence_number": 2,
+              "week_number": 10,
+              "references": "Leong — cert. physical and human geo pgs 302-310; Geography golden tips pgs 231-236",
               "competencies": [
                 { "sequence_number": 1, "description": "Describe problems associated with poor transport and communication", "category": "Specific Outcome" },
                 { "sequence_number": 2, "description": "Suggest possible solutions to poor transport and communication", "category": "Specific Outcome" }
@@ -239,49 +296,73 @@
         },
         {
           "name": "12.10 Transport and Communication in the Sub-Region",
-          "sequence_number": 9,
+          "sequence_number": 6,
           "description": "Section D: Zambia.",
           "sub_topics": [
             {
               "name": "12.10.1 Transport and Communication in Landlocked Countries",
               "sequence_number": 1,
+              "week_number": 11,
+              "references": "Leong — cert. physical and human geo pgs 302-310",
               "competencies": [
-                { "sequence_number": 1, "description": "State prospects for landlocked countries", "category": "Specific Outcome" }
+                { "sequence_number": 1, "description": "State prospects for landlocked countries, including construction of new railways and roads and regional integration", "category": "Specific Outcome" }
               ]
             }
           ]
-        },
+        }
+      ]
+    },
+    {
+      "name": "Term 3",
+      "topics": [
         {
           "name": "12.11 Processing and Manufacturing Industries in Zambia",
-          "sequence_number": 10,
+          "sequence_number": 1,
           "description": "Section D: Zambia.",
           "sub_topics": [
             {
               "name": "12.11.1 Importance of Manufacturing and Processing",
               "sequence_number": 1,
+              "week_number": 1,
+              "references": "High sch geo for Zambia and the Sub region by Ntalasha et al pgs 107-133; Geography golden tips pgs 201-209",
               "competencies": [
-                { "sequence_number": 1, "description": "State the importance of manufacturing and processing industries", "category": "Specific Outcome" }
+                { "sequence_number": 1, "description": "Define the concepts of processing and manufacturing industries and classify the types of industries", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "State the importance of manufacturing and processing industries", "category": "Specific Outcome" },
+                { "sequence_number": 3, "description": "Analyse some of the problems associated with processing and manufacturing industries", "category": "Specific Outcome" }
+              ]
+            },
+            {
+              "name": "12.11.2 Sugar Production in Zambia",
+              "sequence_number": 2,
+              "week_number": 3,
+              "references": "High sch geo for Zambia and the Sub region by Ntalasha et al pgs 107-133",
+              "competencies": [
+                { "sequence_number": 1, "description": "Describe the processing of sugar in Zambia", "category": "Specific Outcome" }
               ]
             }
           ]
         },
         {
           "name": "12.12 Processing and Manufacturing Industries in the Sub-Region (Zimbabwe and South Africa)",
-          "sequence_number": 11,
+          "sequence_number": 2,
           "description": "Section D: Zambia.",
           "sub_topics": [
             {
               "name": "12.12.1 Types and Location of Major Manufacturing and Processing Industries in Zimbabwe and South Africa",
               "sequence_number": 1,
+              "week_number": 4,
+              "references": "High sch geo for Zambia and the Sub region by Ntalasha et al pgs 107-133 (Zimbabwe: iron and steel/ginning industry; South Africa: iron and steel/motor vehicle manufacturing)",
               "competencies": [
                 { "sequence_number": 1, "description": "Name and locate on a map of Zimbabwe and South Africa major processing and manufacturing industries", "category": "Specific Outcome" },
-                { "sequence_number": 2, "description": "Analyze constraints associated with the development of processing and manufacturing industries in the sub-region", "category": "Specific Outcome" },
-                { "sequence_number": 3, "description": "Describe one processing or manufacturing industry in any two countries in the sub-region", "category": "Specific Outcome" }
+                { "sequence_number": 2, "description": "Describe the iron and steel/ginning industry in Zimbabwe", "category": "Specific Outcome" },
+                { "sequence_number": 3, "description": "Describe the iron and steel/motor vehicle manufacturing industry in South Africa", "category": "Specific Outcome" }
               ]
             },
             {
               "name": "12.12.2 Intra-Regional Trade in Manufactured Goods",
               "sequence_number": 2,
+              "week_number": 6,
+              "references": "High sch geo for Zambia and the Sub region by Ntalasha et al pgs 107-133",
               "competencies": [
                 { "sequence_number": 1, "description": "Describe trade in manufactured goods in the sub-region", "category": "Specific Outcome" }
               ]

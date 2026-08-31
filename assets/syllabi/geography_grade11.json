@@ -1,5 +1,5 @@
 {
-  "_source": "Ministry of Education / Curriculum Development Centre, Zambia. 'Grade 10-12 Geography Syllabus' (2013, published by CDC), Section C (Elements of Human Geography) — all of Grade 11. Topic/sub-topic names and Specific Outcome statements only; the 'Content' (Knowledge/Skills/Values) columns are omitted for the same column-extraction-reliability reason documented in the Grade 10 file. Outcome text and order were manually traced against each sub-topic heading rather than trusted from the printed codes alone. The syllabus organizes content by Grade only, not by Term, so all of Grade 11 is modeled as a single term here.",
+  "_source": "Ministry of Education / Curriculum Development Centre, Zambia. 'Grade 10-12 Geography Syllabus' (2013, published by CDC), Section C (Elements of Human Geography) — all of Grade 11. Outcome text and order manually traced against each sub-topic heading rather than trusted from printed codes alone. Rebuilt 2026-08-31 to add real term/week/reference data and substantial real content from a second real source, 'MINISTRY OF GENERAL EDUCATION SOCIAL SCIENCES PROVINCIAL SCHEMES OF WORK — SOUTHERN PROVINCE, GEOGRAPHY' — a province-level document (no individual teacher/school named, nothing to sanitize), covering all 3 grades × all 3 terms. Topics renumbered 11.1-11.5 to match this source's real teaching order (confirmed against its own clean end-of-document 'GEOGRAPHY TOPICS' Grade 11 summary list: Population → Settlement → Fuel/Energy/Power → Agriculture → Field Project), which differs from this file's earlier arbitrary ordering. Two topics are genuinely new, not fabricated — 'Settlement Studies in Zambia' and 'Geography Field Project' — the earlier version of this file simply never had a source covering them. The old 'World Population' topic (11.3.1/11.3.2) is folded into the new, richer 11.1 (real Zambia-specific population content the old sub-topics didn't have); old 'Farming' (11.1) and 'Fuel and Energy' (11.2) content is preserved and enriched under their new real numbers/positions (11.4, 11.3) with real week/reference data added. Each sub-topic's week_number is the real week it was first introduced (not every week it was reviewed).",
   "curriculum": {
     "code": "OBC_2013",
     "name": "2013 Outcome-Based Curriculum",
@@ -18,64 +18,253 @@
   },
   "terms": [
     {
-      "name": "Year (not term-divided in the source syllabus)",
-      "sequence_number": 1,
+      "name": "Term 1",
       "topics": [
         {
-          "name": "11.1 Farming",
+          "name": "11.1 Population in Zambia and the World",
           "sequence_number": 1,
           "description": "Section C: Elements of Human Geography.",
           "sub_topics": [
             {
-              "name": "11.1.1 Types of Farming",
+              "name": "11.1.1 Population Studies in Zambia",
               "sequence_number": 1,
+              "week_number": 1,
+              "references": "Geography 11 (MK) pgs 52-65; High sch geo for Zambia and the Sub region by Ntalasha et al pgs 167-183; Leong — cert. physical and human geo pgs 294-300; CSO latest statistics",
               "competencies": [
-                { "sequence_number": 1, "description": "Locate major farming types on the map of the world", "category": "Specific Outcome" },
-                { "sequence_number": 2, "description": "Describe factors that influence farming", "category": "Specific Outcome" },
-                { "sequence_number": 3, "description": "Describe major farming types", "category": "Specific Outcome" }
+                { "sequence_number": 1, "description": "Define and discuss population concepts (birth rate, death rate, fertility rates, census, structure of the population)", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "State the size and growth of Zambia's population between 1963 and 2000 and beyond", "category": "Specific Outcome" },
+                { "sequence_number": 3, "description": "Identify factors responsible for the rapid population growth", "category": "Specific Outcome" },
+                { "sequence_number": 4, "description": "Describe the factors influencing population distribution", "category": "Specific Outcome" },
+                { "sequence_number": 5, "description": "Discuss the national population structure and its implications", "category": "Specific Outcome" },
+                { "sequence_number": 6, "description": "Discuss measures to address population problems and analyse government population policy", "category": "Specific Outcome" }
+              ]
+            },
+            {
+              "name": "11.1.2 World Population Distribution",
+              "sequence_number": 2,
+              "week_number": 4,
+              "references": "Geography 11 (MK) pgs 52-65; High sch geo for Zambia and the Sub region by Ntalasha et al pgs 167-183; Leong — cert. physical and human geo pgs 294-300",
+              "competencies": [
+                { "sequence_number": 1, "description": "Locate on a world map areas of high, medium and low population densities", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Discuss the major factors influencing world population distribution and density", "category": "Specific Outcome" }
+              ]
+            },
+            {
+              "name": "11.1.3 Population Change",
+              "sequence_number": 3,
+              "week_number": 5,
+              "references": "Geography 11 (MK) pgs 52-65; High sch geo for Zambia and the Sub region by Ntalasha et al pgs 167-183; Leong — cert. physical and human geo pgs 294-300",
+              "competencies": [
+                { "sequence_number": 1, "description": "Explain the factors which have contributed to rapid population growth and the consequences", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Explain factors influencing population change and structure", "category": "Specific Outcome" },
+                { "sequence_number": 3, "description": "Describe possible solutions to over-population", "category": "Specific Outcome" }
               ]
             }
           ]
         },
         {
-          "name": "11.2 Fuel and Energy",
+          "name": "11.2 Settlement Studies in Zambia",
           "sequence_number": 2,
           "description": "Section C: Elements of Human Geography.",
           "sub_topics": [
             {
-              "name": "11.2.1 Sources of Fuel and Energy",
+              "name": "11.2.1 Types of Settlement",
               "sequence_number": 1,
+              "week_number": 6,
+              "references": "Geography 11 (MK) pgs 65-84; High sch geo for Zambia and the Sub region by Ntalasha et al pgs 184-193; Leong — cert. physical and human geo pgs 312-323; Geography golden tips pgs 219-221",
+              "competencies": [
+                { "sequence_number": 1, "description": "Define settlement", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "State types of settlement and describe factors influencing their location", "category": "Specific Outcome" }
+              ]
+            },
+            {
+              "name": "11.2.2 Rural and Urban Settlements",
+              "sequence_number": 2,
+              "week_number": 8,
+              "references": "Geography 11 (MK) pgs 65-84; High sch geo for Zambia and the Sub region by Ntalasha et al pgs 184-193",
+              "competencies": [
+                { "sequence_number": 1, "description": "Define rural and urban settlements and distinguish between them", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Classify urban settlements according to size and functions", "category": "Specific Outcome" }
+              ]
+            },
+            {
+              "name": "11.2.3 Urbanization and Internal Structure of a Town",
+              "sequence_number": 3,
+              "week_number": 9,
+              "references": "Geography 11 (MK) pgs 65-84; High sch geo for Zambia and the Sub region by Ntalasha et al pgs 184-193",
+              "competencies": [
+                { "sequence_number": 1, "description": "Identify factors responsible for rapid urbanization", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Analyse problems and possible solutions to urbanization", "category": "Specific Outcome" },
+                { "sequence_number": 3, "description": "Describe the internal structure of towns", "category": "Specific Outcome" },
+                { "sequence_number": 4, "description": "Explain the factors influencing urban spread (sprawl) and its effects", "category": "Specific Outcome" }
+              ]
+            },
+            {
+              "name": "11.2.4 Migration",
+              "sequence_number": 4,
+              "week_number": 10,
+              "references": "Geography 11 (MK) pgs 65-84; High sch geo for Zambia and the Sub region by Ntalasha et al pgs 184-193",
+              "competencies": [
+                { "sequence_number": 1, "description": "Discuss the causes, problems and possible solutions of rural-urban migration", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Discuss the reasons and implications for migration", "category": "Specific Outcome" },
+                { "sequence_number": 3, "description": "Discuss human survival in relation to resource availability and utilization", "category": "Specific Outcome" }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 2",
+      "topics": [
+        {
+          "name": "11.3 Fuel, Energy and Power in Zambia, Sub-Region and the World",
+          "sequence_number": 1,
+          "description": "Section C: Elements of Human Geography.",
+          "sub_topics": [
+            {
+              "name": "11.3.1 Sources of Fuel and Energy",
+              "sequence_number": 1,
+              "week_number": 1,
+              "references": "Geography 11 (MK) pgs 37-51; High sch geo for Zambia and the Sub region by Ntalasha et al pgs 89-106; Leong — cert. physical and human geo pgs 264-277; Geography golden tips pgs 248-257",
               "competencies": [
                 { "sequence_number": 1, "description": "Explain different sources of fuel and energy", "category": "Specific Outcome" },
                 { "sequence_number": 2, "description": "Distinguish methods of transportation of fuel and energy", "category": "Specific Outcome" },
                 { "sequence_number": 3, "description": "Describe uses of different forms of fuel and energy", "category": "Specific Outcome" }
               ]
+            },
+            {
+              "name": "11.3.2 Power and Energy in Zambia",
+              "sequence_number": 2,
+              "week_number": 3,
+              "references": "Geography 11 (MK) pgs 37-51; High sch geo for Zambia and the Sub region by Ntalasha et al pgs 89-106",
+              "competencies": [
+                { "sequence_number": 1, "description": "Explain factors affecting location and development of hydro power stations", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Evaluate the negative impact of hydro-electric power development on the environment", "category": "Specific Outcome" }
+              ]
+            },
+            {
+              "name": "11.3.3 Power and Energy in the Sub-Region",
+              "sequence_number": 3,
+              "week_number": 4,
+              "references": "Geography 11 (MK) pgs 37-51; High sch geo for Zambia and the Sub region by Ntalasha et al pgs 89-106",
+              "competencies": [
+                { "sequence_number": 1, "description": "Locate on a map of Africa major power stations in the sub-region", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Describe energy and power needs in the sub-region", "category": "Specific Outcome" }
+              ]
             }
           ]
         },
         {
-          "name": "11.3 World Population",
-          "sequence_number": 3,
+          "name": "11.4 Agriculture in Zambia, Sub-Region and the World",
+          "sequence_number": 2,
           "description": "Section C: Elements of Human Geography.",
           "sub_topics": [
             {
-              "name": "11.3.1 World Population Distribution",
+              "name": "11.4.1 Types of Farming",
               "sequence_number": 1,
+              "week_number": 6,
+              "references": "Geography 11 (MK) pgs 1-36; High sch geo for Zambia and the Sub region by Ntalasha et al pgs 19-46; Leong — cert. physical and human geo pgs 239-263; Geography golden tips pgs 137-151",
               "competencies": [
-                { "sequence_number": 1, "description": "Locate on a world map areas of high, medium and low population densities", "category": "Specific Outcome" },
-                { "sequence_number": 2, "description": "Describe major factors influencing world population distribution and density", "category": "Specific Outcome" }
+                { "sequence_number": 1, "description": "Locate major farming types on the map of the world", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Describe factors that influence farming", "category": "Specific Outcome" },
+                { "sequence_number": 3, "description": "Describe major farming types (shifting cultivation, mixed farming, intensive and extensive farming)", "category": "Specific Outcome" },
+                { "sequence_number": 4, "description": "Describe major farming types (livestock farming and plantation agriculture)", "category": "Specific Outcome" }
               ]
             },
             {
-              "name": "11.3.2 Population Change",
+              "name": "11.4.2 Land Tenure in Zambia",
               "sequence_number": 2,
+              "week_number": 10,
+              "references": "Geography 11 (MK) pgs 1-36; High sch geo for Zambia and the Sub region by Ntalasha et al pgs 19-46",
               "competencies": [
-                { "sequence_number": 1, "description": "Explain factors influencing population change and structure", "category": "Specific Outcome" },
-                { "sequence_number": 2, "description": "Explain factors which have contributed to rapid population growth", "category": "Specific Outcome" },
-                { "sequence_number": 3, "description": "Describe the consequences of increased world population", "category": "Specific Outcome" },
-                { "sequence_number": 4, "description": "Describe possible solutions to over-population", "category": "Specific Outcome" },
-                { "sequence_number": 5, "description": "Explain reasons and implications for migrations", "category": "Specific Outcome" },
-                { "sequence_number": 6, "description": "Describe human survival strategies in relation to resource availability and utilization", "category": "Specific Outcome" }
+                { "sequence_number": 1, "description": "Describe land tenure", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "State types of land tenure in Zambia", "category": "Specific Outcome" }
+              ]
+            },
+            {
+              "name": "11.4.3 Irrigation Farming",
+              "sequence_number": 3,
+              "week_number": 11,
+              "references": "Geography 11 (MK) pgs 1-36; High sch geo for Zambia and the Sub region by Ntalasha et al pgs 19-46",
+              "competencies": [
+                { "sequence_number": 1, "description": "State factors that favour irrigation farming", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Describe effects of irrigation farming on the environment", "category": "Specific Outcome" }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 3",
+      "topics": [
+        {
+          "name": "11.4 Agriculture in Zambia, Sub-Region and the World",
+          "sequence_number": 1,
+          "description": "Section C: Elements of Human Geography. Continues from Term 2.",
+          "sub_topics": [
+            {
+              "name": "11.4.4 Bad Agricultural Practices",
+              "sequence_number": 4,
+              "week_number": 1,
+              "references": "Geography 11 (MK) pgs 1-36; High sch geo for Zambia and the Sub region by Ntalasha et al pgs 19-46; Leong — cert. physical and human geo pgs 239-263",
+              "competencies": [
+                { "sequence_number": 1, "description": "Explain bad agricultural practices and their effects (overstocking, lack of fallowing, mono-cropping, poor land tillage methods)", "category": "Specific Outcome" }
+              ]
+            },
+            {
+              "name": "11.4.5 Soil Conservation",
+              "sequence_number": 5,
+              "week_number": 2,
+              "references": "Geography 11 (MK) pgs 1-36; High sch geo for Zambia and the Sub region by Ntalasha et al pgs 19-46; Leong — cert. physical and human geo pgs 239-263",
+              "competencies": [
+                { "sequence_number": 1, "description": "Discuss soil conservation measures and sustainable agriculture (crop rotation, contour ploughing, mulching, terracing)", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Discuss soil conservation measures and sustainable agriculture (fallowing, strip cultivation, organic farming, agro-forestry)", "category": "Specific Outcome" }
+              ]
+            },
+            {
+              "name": "11.4.6 Agriculture in Malawi: Tea Production",
+              "sequence_number": 6,
+              "week_number": 4,
+              "references": "High sch geo for Zambia and the Sub region by Ntalasha et al pgs 219-230; Geography golden tips pgs 21-29",
+              "competencies": [
+                { "sequence_number": 1, "description": "Outline the conditions required for tea growing", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Describe the stages of tea processing", "category": "Specific Outcome" }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "11.5 Geography Field Project",
+          "sequence_number": 2,
+          "description": "Section C: Elements of Human Geography. New topic — not present in this file's earlier version.",
+          "sub_topics": [
+            {
+              "name": "11.5.1 Introduction to Field Project",
+              "sequence_number": 1,
+              "week_number": 6,
+              "references": "High sch geo for Zambia and the Sub region by Ntalasha et al pgs 219-230; Geography golden tips pgs 21-29",
+              "competencies": [
+                { "sequence_number": 1, "description": "Describe the importance of field project in geography", "category": "Specific Outcome" }
+              ]
+            },
+            {
+              "name": "11.5.2 Process of Conducting Field Work",
+              "sequence_number": 2,
+              "week_number": 8,
+              "references": "High sch geo for Zambia and the Sub region by Ntalasha et al pgs 219-230",
+              "competencies": [
+                { "sequence_number": 1, "description": "Outline the stages involved in conducting field work", "category": "Specific Outcome" }
+              ]
+            },
+            {
+              "name": "11.5.3 Report Writing",
+              "sequence_number": 3,
+              "week_number": 9,
+              "references": "High sch geo for Zambia and the Sub region by Ntalasha et al pgs 219-230",
+              "competencies": [
+                { "sequence_number": 1, "description": "Discuss the main parts of a field work report", "category": "Specific Outcome" }
               ]
             }
           ]
