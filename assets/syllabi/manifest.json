@@ -203,6 +203,15 @@
       "curriculum_name": "2013 Outcome-Based Curriculum",
       "subject_code": "RE2044",
       "subject_name": "Religious Education (2044)",
+      "grade_level": 10,
+      "grade_name": "Grade 10",
+      "file": "religious_education_2044_grade10.json"
+    },
+    {
+      "curriculum_code": "OBC_2013",
+      "curriculum_name": "2013 Outcome-Based Curriculum",
+      "subject_code": "RE2044",
+      "subject_name": "Religious Education (2044)",
       "grade_level": 11,
       "grade_name": "Grade 11",
       "file": "religious_education_2044_grade11.json"

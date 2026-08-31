@@ -1,5 +1,5 @@
 {
-  "_source": "Zambian OBC 2013 Religious Education (2044), Grade 12 — subject code 'RE2044', distinct from the already-bundled 2046 edition (code 'RE'). Built 2026-08-31 from real content in 'GRADE 11 2044 RELIGIOUS EDUCATION SCHEME OF WORK TERM 3.docx' — unusual but real provenance: that document's own Term 3 includes a 'Grade 12 Preview' section (weeks 4-12) in which the teacher previews real Grade 12 topic 12.1/12.2 content, in full sub-topic detail with real specific outcomes, real content, and real page references, ahead of the students actually reaching Grade 12. Every sub-topic and reference below is copied verbatim from that real preview content, not invented. Real PII stripped: the source document's header carried a real teacher's name and a real named boarding secondary school in every row — both removed, appear nowhere in this file. Topic-level names ('Man's Evasion from God', 'The Search for God') are independently cross-confirmed by a second real document, 'GRADE 12 2044 RELIGIOUS EDUCATION SCHEME OF WORK TERM 3.pdf' (its own Term 3 is a comprehensive final-exam-preparation review of all three grades' themes, listing Grade 12's own themes as '• Man's evasion from God • The search for God' — matching exactly), also PII-stripped (same teacher/school). Deliberately NOT term/week-placed: the preview happened during Grade 11's Term 3 (weeks 4-12), but that reflects when it was previewed early to Grade 11 students, not Grade 12's own real teaching week for this content, which neither source document states — carrying over those week numbers here would be a fabrication, so this file has topics/sub-topics/references but no week_number anywhere, same honest 'not yet term-placed' state as most of this app's other OBC files.",
+  "_source": "Zambian OBC 2013 Religious Education (2044), Grade 12 — subject code 'RE2044'. Rebuilt 2026-08-31 (superseding this file's earlier same-day version, which had real topic/sub-topic detail but no real week/term placement) using a real, complete Google Drive document, 'RE 2044 SCHEMES OF WORK 10-12.docx', from a real Zambian secondary school — a genuine week-by-week Scheme of Work covering all three grades and terms. Real PII stripped, per standing sourcing policy: the document's final line credited a real named individual and named the source school/town/province; none of that appears anywhere in this file — the school's identity is deliberately not recorded. Topic-level names ('Man's Evasion from God', 'The Search for God') and their real Term 1/Term 2 placement now come from this document, cross-confirming and dating the sub-topic-level detail this file already had (built earlier the same day from a different real document, a Grade 11 Term 3 'preview' of this same content, whose own sub-topic breakdown split slightly differently — this file keeps the earlier, more granular 5+3 sub-topic breakdown and layers real week numbers from this newer, more authoritative source onto it, rather than replacing it). 'Family Life' (Grade 11's own topic) genuinely continues into this grade's Term 1 in the source before 'Man's Evasion from God' begins — a real cross-grade continuation, not duplicated here (see religious_education_2044_grade11.json). Term 3 in the source is entirely CAT/revision of every prior topic (Grade 10 through Grade 12) ahead of the School Certificate Examination — introduces no new content of its own, so it is not represented as a term entry here, consistent with how Grade 11's own Term 3 revision content was handled.",
   "curriculum": {
     "code": "OBC_2013",
     "name": "2013 Outcome-Based Curriculum",
@@ -18,65 +18,78 @@
   },
   "terms": [
     {
-      "name": "Year (not term-divided in the source syllabus)",
+      "name": "Term 1",
       "topics": [
         {
-          "name": "12.1 Man's Evasion from God",
+          "name": "Man's Evasion from God",
           "sequence_number": 1,
           "sub_topics": [
             {
-              "name": "12.1.1 Evasion in Modern Zambian Society",
+              "name": "Evasion in Modern Zambian Society",
               "sequence_number": 1,
+              "week_number": 2,
               "description": "Discuss man's evasion from God in modern Zambian society, e.g. materialism, evasion in Islam.",
-              "references": "Syllabus pg 32-33"
+              "references": "Grade 12 book pg 51-53; R.E Grade 10-12 book pg 122-123; Senior Secondary Religious Studies (2044) pg 1-3"
             },
             {
-              "name": "12.1.2 Evasion in African Society",
+              "name": "Evasion in African Society",
               "sequence_number": 2,
+              "week_number": 4,
               "description": "Explain evasion in African traditional society, e.g. magic, divination, charms, witchcraft.",
-              "references": "Syllabus pg 33"
+              "references": "Grades 10-12 book pg 125-127; Senior Secondary Religious Studies (2044) pg 7-10; Grade 12 book pg 56-59"
             },
             {
-              "name": "12.1.3 Evasion in the Church",
+              "name": "Evasion in the Church",
               "sequence_number": 3,
-              "description": "State evasion in the church, e.g. divisions, immorality, idolatry.",
-              "references": "Syllabus pg 33"
+              "week_number": 7,
+              "description": "State evasion of God in the church, e.g. divisions, immorality, idolatry.",
+              "references": "R.E. Grades 10-12 book pg 130-131; Senior Secondary Religious Studies (2044) pg 11-16; Grade 12 book pg 60-61"
             },
             {
-              "name": "12.1.4 Evasion in the Old Testament",
+              "name": "Evasion in the Old Testament",
               "sequence_number": 4,
-              "description": "Describe evasion in the Old Testament (Isaiah 40:21-26; Isaiah 1:10-17; Psalm 53:1-6).",
-              "references": "Syllabus pg 33-34"
+              "week_number": 9,
+              "description": "Describe evasion in the Old Testament (Isaiah 40:21-26; Isaiah 1:10-17; Ezekiel 28:1-10; Psalm 53:1-6).",
+              "references": "Grades 10-12 bk pg 131-132; Senior Secondary Religious Studies (2044) pg 17-18; Good News Bible; Grade 12 bk pg 62"
             },
             {
-              "name": "12.1.5 Evasion in the New Testament",
+              "name": "Evasion in the New Testament",
               "sequence_number": 5,
-              "description": "State teachings on evasion in the New Testament (Luke 12:13-21; Luke 16:19-31; Matthew 4:1-11).",
-              "references": "Syllabus pg 34"
+              "week_number": 10,
+              "description": "State teachings on evasion in the New Testament (Luke 12:13-21; Luke 16:19-31; Matthew 4:1-11; Matthew 7:7-11).",
+              "references": "Grade 10-12 bk pg 133-134; Good News Bible; Senior Secondary Religious Studies (2044) pg 19-21; Grade 12 bk pg 63"
             }
           ]
-        },
+        }
+      ]
+    },
+    {
+      "name": "Term 2",
+      "topics": [
         {
-          "name": "12.2 The Search for God",
-          "sequence_number": 2,
+          "name": "The Search for God",
+          "sequence_number": 1,
           "sub_topics": [
             {
-              "name": "12.2.1 The Search for God in the Present Situation",
+              "name": "The Search for God in the Present Situation",
               "sequence_number": 1,
+              "week_number": 1,
               "description": "Describe the search for God in Zambian society today, e.g. prayer, scriptures, Hinduism and Islam.",
-              "references": "Syllabus pg 34"
+              "references": "Grade 12 book pg 27-29; R.E Grade 10-12 book pg 136-137; Senior Secondary Religious Studies (2044) pg 22-26"
             },
             {
-              "name": "12.2.2 The Search for God in African Tradition",
+              "name": "The Search for God in African Tradition",
               "sequence_number": 2,
-              "description": "Identify teachings on God in African tradition, e.g. attributes of God, traditional rituals, ancestors.",
-              "references": "Syllabus pg 35"
+              "week_number": 3,
+              "description": "Identify teachings on God in African tradition, e.g. attributes of God, traditional religious rituals, spirits of the ancestors.",
+              "references": "Grades 10-12 book pg 137-140; Senior Secondary Religious Studies (2044) pg 30-36; Grade 12 book pg 34-38"
             },
             {
-              "name": "12.2.3 The Search for God in the Church",
+              "name": "The Search for God in the Church",
               "sequence_number": 3,
-              "description": "Explain the search for God in the early church, e.g. moral reformers, philosophers, sects, the role of the church.",
-              "references": "Syllabus pg 35"
+              "week_number": 5,
+              "description": "Explain the search for God in the early church, e.g. moral reformers, philosophers, those attracted to sects, the role of the church.",
+              "references": "R.E. Grades 10-12 book pg 143-146; Senior Secondary Religious Studies (2044) pg 37-41; Grade 12 book pg 39-43"
             }
           ]
         }

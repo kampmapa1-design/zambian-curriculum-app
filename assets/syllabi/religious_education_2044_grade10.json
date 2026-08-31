@@ -1,0 +1,180 @@
+{
+  "_source": "Zambian OBC 2013 Religious Education (2044), Grade 10 — subject code 'RE2044', distinct from the already-bundled 2046 edition (code 'RE'). Rebuilt 2026-08-31 (superseding this file's earlier same-day version, whose sub-topics were too coarse to match the app's 30 pre-existing real embedded lesson plans) from a real, complete Google Drive document, 'RE 2044 SCHEMES OF WORK 10-12.docx' — a genuine week-by-week Scheme of Work covering all three grades and all three terms, from a real Zambian secondary school (a different real school from every other RE 2044 source used so far). Real PII stripped, per standing sourcing policy: the document's final line credited a real named individual and named the source school/town/province; none of that appears anywhere in this file. Sub-topics are now broken down at the same fine grain the lesson plans use ('X in Present Situation' / 'X in African Tradition' / 'X in the Church' / 'X in the Old/New Testament'), with names matching those lesson plans exactly (minus their numeric code prefix, e.g. lesson plan '10.1.1 Work in Present Situation' -> this file's sub-topic 'Work in Present Situation'), so the app's topic/sub-topic matching engine reconnects them. Each sub-topic's week_number is the real week it was FIRST introduced in the source term (not every week it was reviewed/continued); where a sub-topic's content spans two consecutive source weeks (e.g. Work in Present Situation, weeks 1-2), only the first week is recorded. Irregularity documented transparently, not silently corrected: the lesson plans' own numbering assigns 'Service and Authority in the Old/New Testament' (10.4.4/10.4.5) to Grade 10, but this school's real scheme of work shows Grade 10's own Term 3 running out of weeks after 'Service in the Church' (week 10-11) — those two sub-topics were, in the real record, actually taught in the first weeks of Grade 11 Term 1 (as a review/carryover before that grade's own 'Life' theme begins at week 5) rather than within a Grade 10 term. They are placed here (matching the lesson plans' own Grade-10 labeling, since the app's matching engine keys off the lesson plan's declared grade level) at week 12-13 of Grade 10 Term 3 as the most honest available placement, with their real content/reference data drawn from where they actually appear in the source (Grade 11 Term 1, weeks 2-4) — see religious_education_2044_grade11.json's own _source note for the matching cross-reference. Term-2 Justice weeks 7-11 continue directly into Term-3 weeks 1-4 (Old/New Testament) in the source; that reflects the source's own topic pacing, not an error.",
+  "curriculum": {
+    "code": "OBC_2013",
+    "name": "2013 Outcome-Based Curriculum",
+    "description": "Zambia's 2013 outcome-based curriculum for Grades 10-12 (Senior Secondary)."
+  },
+  "subject": {
+    "name": "Religious Education (2044)",
+    "code": "RE2044",
+    "description": "Senior Secondary Religious Education (2044) syllabus, Grade 10-12 (Curriculum Development Centre, 2013) — a distinct edition from the 2046 syllabus already bundled under subject code 'RE'."
+  },
+  "grade": {
+    "name": "Grade 10",
+    "code": "G10_OBC",
+    "level": 10,
+    "phase": "Senior Secondary"
+  },
+  "terms": [
+    {
+      "name": "Term 1",
+      "topics": [
+        {
+          "name": "Living in a Changing Society",
+          "sequence_number": 1,
+          "sub_topics": [
+            {
+              "name": "Work in Present Situation",
+              "sequence_number": 1,
+              "week_number": 1,
+              "references": "Grade 10 Pupils Book pg 41-46, 47, 49-50; Grade 10-12 pupils' book pg 1-2, 6-7"
+            },
+            {
+              "name": "Work in African Tradition",
+              "sequence_number": 2,
+              "week_number": 3,
+              "references": "Grade 10 Pupils Book pg 53-55; Grade 10-12 pupils' book pg 3-5"
+            },
+            {
+              "name": "Work in the Church",
+              "sequence_number": 3,
+              "week_number": 4,
+              "references": "Grade 10 Pupils Book pg 57-61; Grade 10-12 pupils' book pg 7-10"
+            },
+            {
+              "name": "Work in the Old Testament",
+              "sequence_number": 4,
+              "week_number": 7,
+              "references": "Grade 10-12 pupils' book pg 62-64, 10; Grade 10 Pupils Book pg 64-66; Good News Bible"
+            },
+            {
+              "name": "Work in the New Testament",
+              "sequence_number": 5,
+              "week_number": 9,
+              "references": "Grade 10 Pupils Book pg 41-96 (unit); Grade 10-12 pupils' book (unit); Good News Bible"
+            },
+            {
+              "name": "Leisure in Present Situation",
+              "sequence_number": 6,
+              "week_number": 10,
+              "references": "Grade 10 Pupils Book pg 73-79; Grade 10-12 pupils' book pg 15-22"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 2",
+      "topics": [
+        {
+          "name": "Living in a Changing Society",
+          "sequence_number": 1,
+          "sub_topics": [
+            {
+              "name": "Leisure in African Tradition",
+              "sequence_number": 1,
+              "week_number": 2,
+              "references": "Grade 10 Pupils Book pg 80-82; Grade 10-12 pupils' book pg 20"
+            },
+            {
+              "name": "Leisure in the Church",
+              "sequence_number": 2,
+              "week_number": 3,
+              "references": "Grade 10 Pupils Book pg 83-87; Grade 10-12 pupils' book pg 22-25"
+            },
+            {
+              "name": "Leisure in the Old Testament",
+              "sequence_number": 3,
+              "week_number": 4,
+              "references": "Grade 10 bk pg 90-91; Grade 10-12 bk pg 25-27; Good News Bible"
+            },
+            {
+              "name": "Leisure in the New Testament",
+              "sequence_number": 4,
+              "week_number": 5,
+              "references": "Grade 10 bk pg 92-96; Grade 10-12 bk pg 27-28; Good News Bible"
+            }
+          ]
+        },
+        {
+          "name": "Order and Freedom in Society",
+          "sequence_number": 2,
+          "sub_topics": [
+            {
+              "name": "Justice in Present Situation",
+              "sequence_number": 1,
+              "week_number": 7,
+              "references": "Grade 10 pupil's book Pg 99-102, 103-106, 110-111; Grade 10-12 book pg 29-33, 36-39"
+            },
+            {
+              "name": "Justice in Traditional Society",
+              "sequence_number": 2,
+              "week_number": 10,
+              "references": "Grade 10 bk Pg 112-116; Grade 10-12 book pg 34-35"
+            },
+            {
+              "name": "Justice in the Church",
+              "sequence_number": 3,
+              "week_number": 11,
+              "references": "Grade 10 bk Pg 117-118; Grade 10-12 book pg 37-40"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 3",
+      "topics": [
+        {
+          "name": "Order and Freedom in Society",
+          "sequence_number": 1,
+          "sub_topics": [
+            {
+              "name": "Justice in the Old Testament",
+              "sequence_number": 1,
+              "week_number": 2,
+              "references": "Grade 10 bk Pg 119-122; Grade 10-12 book pg 40-41; Good News Bible"
+            },
+            {
+              "name": "Justice in the New Testament",
+              "sequence_number": 2,
+              "week_number": 4,
+              "references": "Grade 10 bk 123-126; Grade 10-12 bk pg 41-42; Good News Bible"
+            },
+            {
+              "name": "Service in Present Situation",
+              "sequence_number": 3,
+              "week_number": 7,
+              "references": "Grade 10 book Pg 128-134; Grade 10-12 book pg 45-52"
+            },
+            {
+              "name": "Service in African Tradition",
+              "sequence_number": 4,
+              "week_number": 9,
+              "references": "Grade 10 book pg 135-136; Grade 10-12 book Pg 46-48"
+            },
+            {
+              "name": "Service in the Church",
+              "sequence_number": 5,
+              "week_number": 10,
+              "references": "Grade 10 book pg 137-139; Grade 10-12 book Pg 52-55"
+            },
+            {
+              "name": "Service and Authority in the Old Testament",
+              "sequence_number": 6,
+              "week_number": 12,
+              "references": "Grade 10 book pg 140-142; Good News Bible; Grade 10-12 book pg 55-56"
+            },
+            {
+              "name": "Service and Authority in the New Testament",
+              "sequence_number": 7,
+              "week_number": 13,
+              "references": "Grades 10-12 pg 57-60; Grade 10 book pg 143-146; Good News Bible"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

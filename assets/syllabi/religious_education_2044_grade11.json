@@ -1,5 +1,5 @@
 {
-  "_source": "Zambian OBC 2013 Religious Education (2044) — distinct syllabus edition from the 2046 edition already bundled (subject code 'RE'); given its own code 'RE2044' and its own subject name so the two never collide in the Subject & Grade picker. Built 2026-08-31 from a real Google Drive document, 'GRADE 11 2044 RELIGIOUS EDUCATION SCHEME OF WORK TERM 3.docx' (a real Term 3 scheme of work) — the same real document used to reconnect this app's pre-existing 30 real RE 2044 embedded lesson plans (assets/lesson_plans/religious_education_grade10-11.json), which had been entirely inert since being built because no RE 2044 syllabus existed for them to match against. Real PII stripped: the source document's header carried a real teacher's name and a real named boarding secondary school in every row — both removed, appear nowhere in this file. Term 1 'Life' is a direct, exact match to the embedded lesson plans' own topic_name field (matching is topic-name-only, no sub-topic granularity in that file, so no sub-topics are invented here either). Term 1 placement is an inference, not directly stated: the source Term 3 document explicitly reviews 'Courtship and Marriage'/'Family Life' as '(Review of) Term 2' content, and previews Grade 12 content in the remaining weeks — introducing no new Grade 11 content of its own — so 'Life', the only other real Grade 11 topic on record, is placed in Term 1 by elimination, not directly confirmed by a Term 1 document. Term 2's two sub-topics and their references ('Syllabus pg 27-30' / 'pg 30-32') are copied verbatim from the source's real 'Review of Term 2' row content. Real content from this same source document that belongs to Grade 12's own curriculum (a detailed 'Grade 12 Preview' covering real topic 12.1/12.2 sub-topics) was extracted into religious_education_2044_grade12.json instead, not duplicated here, since it's Grade 12's own content being previewed early, not Grade 11's. Term 3 (revision-of-Term-2 + Grade 12 preview + tests) is deliberately not represented as its own term entry here: it introduces no new Grade 11 content beyond what Term 2 already covers, and the Grade 12 preview content lives in the Grade 12 file instead — omitted transparently, not silently. No Grade 10 RE 2044 term/week source document exists yet; that syllabus (already bundled, matching the lesson plans' 'Living in a Changing Society'/'Order and Freedom in Society' topics) remains untouched, still without real term/week data.",
+  "_source": "Zambian OBC 2013 Religious Education (2044), Grade 11 — subject code 'RE2044'. Rebuilt 2026-08-31 (superseding this file's earlier same-day version, whose sub-topics were too coarse to match the app's 30 pre-existing real embedded lesson plans) from a real, complete Google Drive document, 'RE 2044 SCHEMES OF WORK 10-12.docx' — a genuine week-by-week Scheme of Work covering all three grades and terms, from a real Zambian secondary school (a different real school from the other RE 2044 lesson-plan source). Real PII stripped, per standing sourcing policy: the document's final line credited a real named individual and named the source school/town/province; none of that appears anywhere in this file. Topic name 'Life' is kept exactly as this app's pre-existing 30 real embedded lesson plans already use it, with sub-topics now broken down at the same fine grain those lesson plans use ('Happiness in Present Situation', etc — two of the ten 'Life' lesson plans use slightly different real wording than the pattern, 'Ideas about life after death in the Church' and 'Teachings about death in the Old Testament', both reproduced here verbatim to match), so all 10 of that topic's real lesson plans reconnect directly. Term 1 opens in the source with a real review/carryover of Grade 10's own 'Service' sub-topics (Old/New Testament, weeks 2-4) before this grade's own 'Life' theme begins at week 5 — that real content and its week data is recorded under religious_education_2044_grade10.json instead (matching the lesson plans' own Grade-10 labeling for those two lessons), not duplicated here; see that file's _source note for the full explanation. 'Man and Woman' (Term 2-3) is new real content the lesson plans don't cover, kept at the source document's own coarser granularity since no lesson-plan match depends on it. Each sub-topic's week_number is the real week it was first introduced (not every week it was reviewed); 'Family Life' genuinely continues into Grade 12 Term 1 in the source — a real cross-grade continuation, not duplicated here (see religious_education_2044_grade12.json). References are copied verbatim from the source's own REFERENCES column for each sub-topic's introducing week.",
   "curriculum": {
     "code": "OBC_2013",
     "name": "2013 Outcome-Based Curriculum",
@@ -23,7 +23,38 @@
         {
           "name": "Life",
           "sequence_number": 1,
-          "sub_topics": []
+          "sub_topics": [
+            {
+              "name": "Happiness in Present Situation",
+              "sequence_number": 1,
+              "week_number": 5,
+              "references": "Grade 10-12 book pg 61-63, 68-70; Grade 11 book pg 24-28"
+            },
+            {
+              "name": "Happiness in African Tradition",
+              "sequence_number": 2,
+              "week_number": 8,
+              "references": "Grade 10-12 book pg 65-67; Grade 11 book pg 29-32"
+            },
+            {
+              "name": "Happiness in the Church",
+              "sequence_number": 3,
+              "week_number": 9,
+              "references": "Grade 10-12 book pg 70-71; Grade 11 book pg 33-35"
+            },
+            {
+              "name": "Happiness in the Old Testament",
+              "sequence_number": 4,
+              "week_number": 10,
+              "references": "Grades 10-12 book pg 71-72; Grade 11 book pg 36-37; Good News Bible"
+            },
+            {
+              "name": "Happiness in the New Testament",
+              "sequence_number": 5,
+              "week_number": 11,
+              "references": "Grades 10-12 book pg 73-75; Grade 11 book pg 38-41; Good News Bible"
+            }
+          ]
         }
       ]
     },
@@ -31,18 +62,67 @@
       "name": "Term 2",
       "topics": [
         {
-          "name": "Man and Woman",
+          "name": "Life",
           "sequence_number": 1,
+          "sub_topics": [
+            {
+              "name": "Unending Life in Present Situation",
+              "sequence_number": 1,
+              "week_number": 1,
+              "references": "Grade 10-12 book pg 76-80, 83-85; Grade 11 book pg 43-48"
+            },
+            {
+              "name": "Unending Life in African Tradition",
+              "sequence_number": 2,
+              "week_number": 3,
+              "references": "Grades 10-12 book pg 80-83; Grade 11 book pg 49-56"
+            },
+            {
+              "name": "Ideas about life after death in the Church",
+              "sequence_number": 3,
+              "week_number": 4,
+              "references": "Grades 10-12 book pg 85-88; Grade 11 book pg 56, 58-59"
+            },
+            {
+              "name": "Teachings about death in the Old Testament",
+              "sequence_number": 4,
+              "week_number": 7,
+              "references": "Grades 10-12 book pg 88-89; Grade 11 book pg 60; Good News Bible"
+            },
+            {
+              "name": "Unending life in the New Testament",
+              "sequence_number": 5,
+              "week_number": 8,
+              "references": "Grade 10-12 book pg 89-90; Grade 11 book pg 61-63; Good News Bible"
+            }
+          ]
+        },
+        {
+          "name": "Man and Woman",
+          "sequence_number": 2,
           "sub_topics": [
             {
               "name": "Courtship and Marriage",
               "sequence_number": 1,
-              "references": "Syllabus pg 27-30"
-            },
+              "week_number": 9,
+              "references": "Grades 10-12 book pg 92-97, 100-102; Grade 12 book pg 5-14"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 3",
+      "topics": [
+        {
+          "name": "Man and Woman",
+          "sequence_number": 1,
+          "sub_topics": [
             {
               "name": "Family Life",
-              "sequence_number": 2,
-              "references": "Syllabus pg 30-32"
+              "sequence_number": 1,
+              "week_number": 7,
+              "references": "Grades 10-12 book pg 108-111; Grade 11 book pg 87-89"
             }
           ]
         }
