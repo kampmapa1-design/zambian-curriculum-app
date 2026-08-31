@@ -14,6 +14,7 @@ import '../services/custom_template_repository.dart';
 import '../services/embedded_lesson_plan_repository.dart';
 import '../services/lesson_checkpoint_repository.dart';
 import '../services/lesson_history_repository.dart';
+import '../services/lesson_plan_ai_service.dart';
 import '../services/lesson_plan_document_service.dart';
 import '../services/lesson_progression_generator.dart';
 import '../services/subject_content_index.dart';
@@ -44,6 +45,7 @@ class LessonPlanScreen extends StatefulWidget {
     this.customTemplateRepository,
     this.checkpointRepository,
     this.embeddedLessonPlanRepository,
+    this.lessonPlanAiService,
     this.guidedActivitiesText,
     this.guidedNoteText,
     this.focusStage,
@@ -59,6 +61,7 @@ class LessonPlanScreen extends StatefulWidget {
   final CustomTemplateRepository? customTemplateRepository;
   final LessonCheckpointRepository? checkpointRepository;
   final EmbeddedLessonPlanRepository? embeddedLessonPlanRepository;
+  final LessonPlanAiService? lessonPlanAiService;
 
   /// Pre-fills the "Lesson Development" progression stage's Learners' Role
   /// (or the first stage, if none is named "Development") — set when
@@ -97,12 +100,14 @@ class _LessonPlanScreenState extends State<LessonPlanScreen> {
   late final SubjectContentIndex _contentIndex =
       SubjectContentIndex(embeddedLessonPlanRepository: widget.embeddedLessonPlanRepository);
   final LessonHistoryRepository _lessonHistoryRepository = LessonHistoryRepository();
+  late final LessonPlanAiService _aiService = widget.lessonPlanAiService ?? LessonPlanAiService();
 
   List<LessonPlanTemplate> _availableTemplates = const [];
   late LessonPlanTemplate _activeTemplate;
   late LessonPlanDraft _draft;
   final Map<String, TextEditingController> _controllers = {};
   bool _exporting = false;
+  bool _generatingAi = false;
   int? _reachedStageIndex;
   List<EmbeddedLessonPlan> _embeddedMatches = const [];
   bool _usingEmbedded = false;
@@ -221,6 +226,60 @@ class _LessonPlanScreenState extends State<LessonPlanScreen> {
       _reachedStageIndex = null;
       _rebuildForActiveTemplate(seedDraft: LessonPlanDraft(values: values, progression: progression));
     });
+  }
+
+  /// Optional, request-time AI upgrade — calls `generateLessonPlan` and
+  /// merges the result onto the current draft. Grounded strictly in this
+  /// entry's real syllabus competencies/objectives/references (see
+  /// `buildLessonPlanPrompt` server-side); never invents content beyond
+  /// them. Existing edits to fields the AI wasn't asked about (header
+  /// details, evaluation) are untouched — same "enrich, don't discard"
+  /// principle as [_applyEmbedded] and [_mergeExcerptIntoDevelopmentRow].
+  Future<void> _generateWithAi() async {
+    _syncDraftFromControllers();
+    setState(() => _generatingAi = true);
+    try {
+      final competencies = widget.entry.competencies.map((c) => c.description).toList();
+      final objectives = widget.entry.objectives.map((o) => o.description).toList();
+      final result = await _aiService.generate(
+        topic: widget.entry.topic.name,
+        subtopic: widget.entry.subTopic?.name,
+        competencies: competencies,
+        objectives: objectives,
+        references: widget.entry.references,
+        progressionStages: _activeTemplate.progressionStages,
+      );
+      if (!mounted) return;
+
+      var values = Map<String, String>.from(_draft.values);
+      void set(String id, String value) {
+        if (value.trim().isNotEmpty && _activeTemplate.allFields.any((f) => f.id == id)) values[id] = value;
+      }
+
+      set('rationale', result.rationale);
+      set('priorKnowledge', result.priorKnowledge);
+      set('tlm', result.tlm);
+      set('expectedStandard', result.expectedStandard);
+
+      setState(() {
+        _rebuildForActiveTemplate(
+          seedDraft: LessonPlanDraft(
+            values: values,
+            progression: result.mergedProgression(_draft.progression),
+          ),
+        );
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('AI-enhanced lesson plan applied — review and edit as needed.')),
+      );
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Could not generate an AI-enhanced lesson plan: $error')),
+      );
+    } finally {
+      if (mounted) setState(() => _generatingAi = false);
+    }
   }
 
   Future<void> _loadCustomTemplates() async {
@@ -479,7 +538,22 @@ class _LessonPlanScreenState extends State<LessonPlanScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Lesson Plan — ${widget.entry.title}')),
+      appBar: AppBar(
+        title: Text('Lesson Plan — ${widget.entry.title}'),
+        actions: [
+          IconButton(
+            tooltip: 'AI-enhanced lesson plan',
+            onPressed: _generatingAi ? null : _generateWithAi,
+            icon: _generatingAi
+                ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                  )
+                : const Icon(Icons.auto_awesome),
+          ),
+        ],
+      ),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
         children: [

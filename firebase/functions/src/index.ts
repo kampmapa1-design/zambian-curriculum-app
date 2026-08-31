@@ -153,6 +153,199 @@ export const generateTeachingNotes = onCall<GenerateTeachingNotesRequest>(
 );
 
 // ---------------------------------------------------------------------
+// generateLessonPlan — AI-enhanced upgrade for "Generate Lesson Plan",
+// which is otherwise entirely offline (see lesson_progression_generator.dart
+// — fixed boilerplate sentences with real syllabus competencies bulleted
+// in). This fills the same fields with lesson-specific content instead,
+// grounded strictly in the real syllabus context passed in (competencies,
+// objectives, references) — never introducing outside content. Optional,
+// same pattern as Teaching Notes' "Try AI-enhanced version": the offline
+// generator remains the default, this is a request-time upgrade.
+// ---------------------------------------------------------------------
+
+interface GenerateLessonPlanRequest {
+  topic: string;
+  subtopic?: string;
+  competencies: string[];
+  objectives: string[];
+  references?: string;
+  progressionStages: string[];
+}
+
+interface LessonPlanProgressionRow {
+  stage: string;
+  teacherRole: string;
+  learnersRole: string;
+  assessmentCriteria: string;
+}
+
+interface GenerateLessonPlanResponse {
+  rationale: string;
+  priorKnowledge: string;
+  tlm: string;
+  expectedStandard: string;
+  progression: LessonPlanProgressionRow[];
+}
+
+const generateLessonPlanSchema = {
+  type: "object",
+  properties: {
+    rationale: {
+      type: "string",
+      description:
+        "2-3 sentences: why this lesson matters and how it connects to prior learning. No Markdown.",
+    },
+    priorKnowledge: {
+      type: "string",
+      description: "1-2 sentences: what learners already know coming into this lesson. No Markdown.",
+    },
+    tlm: {
+      type: "string",
+      description:
+        "A short, real, obtainable list of Teaching and Learning Materials (chalkboard, charts, " +
+        "textbook pages from the references provided) — never equipment a typical Zambian classroom " +
+        "would not plausibly have. Plain text, comma or newline separated, no Markdown.",
+    },
+    expectedStandard: {
+      type: "string",
+      description: "1-2 sentences: what a learner who met the outcomes below can now do. No Markdown.",
+    },
+    progression: {
+      type: "array",
+      description: "Exactly one entry per stage name given, in the same order.",
+      items: {
+        type: "object",
+        properties: {
+          stage: { type: "string", description: "Must exactly match one of the given stage names." },
+          teacherRole: {
+            type: "string",
+            description:
+              "Specific to this lesson's real content — never generic filler with no subject content in it.",
+          },
+          learnersRole: { type: "string" },
+          assessmentCriteria: { type: "string" },
+        },
+        required: ["stage", "teacherRole", "learnersRole", "assessmentCriteria"],
+        additionalProperties: false,
+      },
+    },
+  },
+  required: ["rationale", "priorKnowledge", "tlm", "expectedStandard", "progression"],
+  additionalProperties: false,
+};
+
+function buildLessonPlanPrompt(req: GenerateLessonPlanRequest): string {
+  return [
+    "Write a lesson plan for a Zambian secondary-school teacher, for exactly one lesson period, " +
+      "covering only the syllabus content below — do not introduce content outside its scope, and do " +
+      "not pad any field to fill space.",
+    "",
+    `Topic: ${req.topic}`,
+    req.subtopic ? `Sub-topic: ${req.subtopic}` : null,
+    "",
+    "Syllabus context — the lesson MUST cover every one of these and nothing else:",
+    ...req.competencies.map((c) => `- ${c}`),
+    ...req.objectives.map((o) => `- ${o}`),
+    "",
+    req.references
+      ? "References available for this lesson (cite naturally where relevant, never invent a " +
+        `citation not listed here):\n${req.references}`
+      : null,
+    "",
+    `Lesson stages, in order: ${req.progressionStages.join(", ")}. Produce exactly one progression ` +
+      "entry per stage, in that order, with Teacher's Role, Learners' Role, and Assessment Criteria " +
+      "specific to this lesson's actual content.",
+    "Keep every field concise — a working document a teacher reads in the classroom, not an essay.",
+    "Write in plain text only — no Markdown formatting of any kind (no #, ##, ###, **, *, __, ---, or " +
+      "backticks). This is a professional document a teacher will export and print, not a chat reply.",
+    "If the syllabus context above is too thin to responsibly plan a full lesson, say so explicitly " +
+      "in the rationale field rather than inventing content to fill the gaps.",
+  ]
+    .filter((line): line is string => line !== null)
+    .join("\n");
+}
+
+export const generateLessonPlan = onCall<GenerateLessonPlanRequest>(
+  { secrets: [geminiApiKey], region: "us-central1", maxInstances: 5 },
+  async (request): Promise<GenerateLessonPlanResponse> => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "Sign in is required to generate a lesson plan.");
+    }
+
+    const { topic, subtopic, competencies, objectives, references, progressionStages } = request.data ?? {};
+
+    if (typeof topic !== "string" || topic.trim().length === 0) {
+      throw new HttpsError("invalid-argument", "'topic' is required.");
+    }
+    if (!Array.isArray(competencies) || !competencies.every((c) => typeof c === "string")) {
+      throw new HttpsError("invalid-argument", "'competencies' must be a string array.");
+    }
+    if (!Array.isArray(objectives) || !objectives.every((o) => typeof o === "string")) {
+      throw new HttpsError("invalid-argument", "'objectives' must be a string array.");
+    }
+    if (
+      !Array.isArray(progressionStages) ||
+      progressionStages.length === 0 ||
+      !progressionStages.every((s) => typeof s === "string")
+    ) {
+      throw new HttpsError("invalid-argument", "'progressionStages' must be a non-empty string array.");
+    }
+    if (subtopic !== undefined && typeof subtopic !== "string") {
+      throw new HttpsError("invalid-argument", "'subtopic' must be a string if provided.");
+    }
+    if (references !== undefined && typeof references !== "string") {
+      throw new HttpsError("invalid-argument", "'references' must be a string if provided.");
+    }
+    if (competencies.length === 0 && objectives.length === 0) {
+      throw new HttpsError(
+        "invalid-argument",
+        "At least one competency or objective is required — a lesson plan cannot be grounded in nothing."
+      );
+    }
+
+    const ai = new GoogleGenAI({ apiKey: geminiApiKey.value() });
+    const req: GenerateLessonPlanRequest = {
+      topic,
+      subtopic,
+      competencies,
+      objectives,
+      references,
+      progressionStages,
+    };
+
+    let text: string | undefined;
+    try {
+      const response = await ai.models.generateContent({
+        model: GEMINI_MODEL,
+        contents: buildLessonPlanPrompt(req),
+        config: {
+          responseMimeType: "application/json",
+          responseJsonSchema: generateLessonPlanSchema,
+        },
+      });
+      text = response.text;
+    } catch (err) {
+      console.error("generateLessonPlan: Gemini call failed", err);
+      throw new HttpsError("internal", "Failed to generate a lesson plan. Please try again.");
+    }
+
+    if (!text) {
+      throw new HttpsError("internal", "The AI did not return a lesson plan.");
+    }
+
+    let parsed: GenerateLessonPlanResponse;
+    try {
+      parsed = JSON.parse(text);
+    } catch (err) {
+      console.error("generateLessonPlan: response was not valid JSON", text);
+      throw new HttpsError("internal", "The lesson plan response could not be parsed.");
+    }
+
+    return parsed;
+  }
+);
+
+// ---------------------------------------------------------------------
 // listCdcResources — catalogs teaching modules published on the Curriculum
 // Development Centre's digital library (library.cdcrepository.info), so the
 // app can show teachers what's available without bundling every PDF (the
