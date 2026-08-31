@@ -103,11 +103,11 @@ class SyllabusDocumentService {
           crossAxisAlignment: pw.CrossAxisAlignment.start,
           children: [
             pw.Text(title, style: pw.TextStyle(fontSize: 9.5, fontWeight: pw.FontWeight.bold)),
-            for (final item in items)
-              pw.Padding(
-                padding: const pw.EdgeInsets.only(top: 2),
-                child: pw.Text('•  $item', style: const pw.TextStyle(fontSize: 9.5)),
-              ),
+            // pw.Bullet, not a literal '•' character — see
+            // MinutesDocumentService's identical fix (2026-08-31) for why:
+            // it draws its marker as a real shape, not a font glyph, so it
+            // can't render as a "missing glyph" box on any device.
+            for (final item in items) pw.Bullet(text: item, style: const pw.TextStyle(fontSize: 9.5)),
           ],
         ),
       );

@@ -67,17 +67,11 @@ class StudentPerformanceReportService {
           if (script.observations case final obs? when obs.isNotEmpty) ...[
             pw.Text('AI observations', style: pw.TextStyle(fontSize: 13, fontWeight: pw.FontWeight.bold)),
             pw.SizedBox(height: 6),
-            for (final o in obs)
-              pw.Padding(
-                padding: const pw.EdgeInsets.only(bottom: 3),
-                child: pw.Row(
-                  crossAxisAlignment: pw.CrossAxisAlignment.start,
-                  children: [
-                    pw.Text('•  ', style: const pw.TextStyle(fontSize: 10)),
-                    pw.Expanded(child: pw.Text(o, style: const pw.TextStyle(fontSize: 10))),
-                  ],
-                ),
-              ),
+            // pw.Bullet, not a literal '•' character — see
+            // MinutesDocumentService's identical fix (2026-08-31) for why:
+            // it draws its marker as a real shape, not a font glyph, so it
+            // can't render as a "missing glyph" box on any device.
+            for (final o in obs) pw.Bullet(text: o, style: const pw.TextStyle(fontSize: 10)),
           ],
         ],
       ),

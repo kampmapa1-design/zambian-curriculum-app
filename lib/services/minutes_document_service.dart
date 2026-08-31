@@ -49,17 +49,15 @@ class MinutesDocumentService {
           for (final section in minutes.sections) ...[
             pw.Text(section.heading, style: pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold)),
             pw.SizedBox(height: 6),
+            // pw.Bullet (2026-08-31), not a literal '•' character in
+            // pw.Text — the Unicode bullet glyph isn't reliably present in
+            // the plain Helvetica this document uses, and rendered as a
+            // visible "missing glyph" box on real devices (a real,
+            // confirmed report, not a hypothetical). pw.Bullet draws its
+            // marker as an actual small circle shape, not a font glyph, so
+            // it can't ever tofu regardless of what font is in play.
             for (final line in section.lines)
-              pw.Padding(
-                padding: const pw.EdgeInsets.only(bottom: 4, left: 8),
-                child: pw.Row(
-                  crossAxisAlignment: pw.CrossAxisAlignment.start,
-                  children: [
-                    pw.Text('•  ', style: const pw.TextStyle(fontSize: 11)),
-                    pw.Expanded(child: pw.Text(line, style: const pw.TextStyle(fontSize: 11))),
-                  ],
-                ),
-              ),
+              pw.Bullet(text: line, style: const pw.TextStyle(fontSize: 11)),
             pw.SizedBox(height: 14),
           ],
         ],
