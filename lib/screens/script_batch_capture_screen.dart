@@ -10,6 +10,7 @@ import '../services/batch_grading_runner.dart';
 import '../services/marking_grading_service.dart';
 import '../services/marking_scheme_repository.dart';
 import '../services/marking_script_repository.dart';
+import 'marked_scripts_screen.dart';
 import 'subject_grade_topic_picker_screen.dart';
 
 /// AI-Assisted Marking — "Upload Script" → "Upload through camera". One
@@ -23,20 +24,21 @@ import 'subject_grade_topic_picker_screen.dart';
 /// and review/correct a script (via the hub, or MarkingReviewScreen once
 /// it's graded) before ever starting the next one.
 ///
-/// Subject/grade and the marking scheme to grade against are picked once
-/// at the start, then the candidate's name/gender/ID/class are typed via
-/// [_askScriptDetails] before any page is captured — this screen used to
-/// auto-detect the name from the first captured page (a Gemini call, see
-/// CandidateNameDetectionService), but that turned out to be a
-/// significant, avoidable share of this app's AI cost at real scale
-/// (2026-08-30) for something a teacher can type in a few seconds while
-/// the script is already in hand. CandidateNameDetectionService/
+/// The camera opens immediately (2026-08-31) — no picker screens gate
+/// it. Subject/grade, the marking scheme, and the candidate's
+/// name/gender/ID/class are all asked in [_completeSetup] right after
+/// the *first* page is captured, not before — see [_captureNextPage].
+/// This screen used to auto-detect the name from the first captured page
+/// (a Gemini call, see CandidateNameDetectionService), but that turned
+/// out to be a significant, avoidable share of this app's AI cost at
+/// real scale (2026-08-30) for something a teacher can type in a few
+/// seconds while the script is already in hand. CandidateNameDetectionService/
 /// detectCandidateName are suspended, not deleted, in case a faster/
 /// cheaper detection path is worth revisiting later. Gender is required
-/// right after the name fields (2026-08-31) — every script this screen
-/// creates now has a real, teacher-given MarkingScript.genderConfirmed:
-/// true from the start, not a placeholder MarkingReviewScreen has to
-/// stop and ask about later.
+/// right alongside the name fields — every script this screen creates
+/// has a real, teacher-given MarkingScript.genderConfirmed: true from
+/// the start, not a placeholder MarkingReviewScreen has to stop and ask
+/// about later.
 ///
 /// Nothing is sent anywhere until "Complete Session" → an explicit "Mark
 /// this script now?" Yes — capture itself is entirely offline.
@@ -80,6 +82,12 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
   late final MarkingGradingService _gradingService = widget.gradingService ?? MarkingGradingService();
 
   bool _settingUp = true;
+
+  /// True once subject/grade + scheme + student details have all been
+  /// collected (see [_completeSetup]) — before that, [_captureNextPage]
+  /// treats a newly captured page as "the first page, still need setup"
+  /// rather than just adding it to an already-configured script.
+  bool _setupComplete = false;
   SyllabusTemplate? _subjectGrade;
   MarkingScheme? _scheme;
   int _scriptNumber = 1;
@@ -102,10 +110,16 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _setUp());
+    WidgetsBinding.instance.addPostFrameCallback((_) => _captureNextPage());
   }
 
-  Future<void> _setUp() async {
+  /// Runs right after the first page is captured (see [_captureNextPage])
+  /// rather than before — subject/grade, the marking scheme, and the
+  /// candidate's details no longer gate opening the camera at all.
+  /// Returns false if the teacher backs out at any point, in which case
+  /// the caller discards this attempt and returns to the hub.
+  Future<bool> _completeSetup() async {
+    setState(() => _settingUp = true);
     SyllabusTemplate template;
     MarkingScheme scheme;
 
@@ -121,14 +135,11 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
           builder: (_) => const SubjectGradeTopicPickerScreen(title: 'Subject & Grade', pickTopic: false),
         ),
       );
-      if (!mounted) return;
-      if (pickedTemplate == null) {
-        Navigator.of(context).pop();
-        return;
-      }
+      if (!mounted) return false;
+      if (pickedTemplate == null) return false;
 
       final schemes = await _schemeRepository.loadCatalog();
-      if (!mounted) return;
+      if (!mounted) return false;
       if (schemes.schemes.isEmpty) {
         await showDialog<void>(
           context: context,
@@ -140,9 +151,7 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
             actions: [FilledButton(onPressed: () => Navigator.of(dialogContext).pop(), child: const Text('OK'))],
           ),
         );
-        if (!mounted) return;
-        Navigator.of(context).pop();
-        return;
+        return false;
       }
 
       final pickedScheme = await showDialog<MarkingScheme>(
@@ -158,11 +167,8 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
           ],
         ),
       );
-      if (!mounted) return;
-      if (pickedScheme == null) {
-        Navigator.of(context).pop();
-        return;
-      }
+      if (!mounted) return false;
+      if (pickedScheme == null) return false;
       template = pickedTemplate;
       scheme = pickedScheme;
     }
@@ -170,14 +176,11 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
     widget.onSetupComplete?.call(template, scheme);
 
     final details = await _askScriptDetails();
-    if (!mounted) return;
-    if (details == null) {
-      Navigator.of(context).pop();
-      return;
-    }
+    if (!mounted) return false;
+    if (details == null) return false;
 
     final nextNumber = await _repository.nextScriptNumber();
-    if (!mounted) return;
+    if (!mounted) return false;
     setState(() {
       _subjectGrade = template;
       _scheme = scheme;
@@ -188,8 +191,9 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
       _studentId = details.studentId;
       _classLevel = details.classLevel;
       _settingUp = false;
+      _setupComplete = true;
     });
-    _captureNextPage();
+    return true;
   }
 
   /// Asked once, before any page is captured — replaces the AI name
@@ -216,12 +220,22 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
       builder: (dialogContext) => StatefulBuilder(
         builder: (dialogContext, setDialogState) => AlertDialog(
           title: const Text('Whose script is this?'),
-          content: Form(
-            key: formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+          // Wrapped in a scroll view (2026-08-31) — an AlertDialog's
+          // content doesn't scroll on its own, so on a real device with
+          // the on-screen keyboard open, this many fields could overflow
+          // and visually collide with the Cancel/Continue actions below
+          // instead of leaving room for them. Scrolling internally means
+          // the actions always stay clear of the fields, regardless of
+          // screen size or keyboard state.
+          content: SizedBox(
+            width: double.maxFinite,
+            child: SingleChildScrollView(
+              child: Form(
+                key: formKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
                 TextFormField(
                   controller: firstNameController,
                   decoration: const InputDecoration(labelText: 'First name', border: OutlineInputBorder()),
@@ -268,7 +282,9 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
                   ),
                   textCapitalization: TextCapitalization.words,
                 ),
-              ],
+                  ],
+                ),
+              ),
             ),
           ),
           actions: [
@@ -327,6 +343,22 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
     }
 
     setState(() => _pages.add(File(result.frontImagePath!)));
+
+    if (!_setupComplete) {
+      // The camera opened before any of this was known (see this class's
+      // doc comment) — now that there's a first page in hand, collect
+      // subject/grade, the marking scheme, and the candidate's details.
+      final ok = await _completeSetup();
+      if (!mounted) return;
+      if (!ok) {
+        // Backed out of setup entirely — nothing was ever saved (setup
+        // completing is a precondition for _saveOrUpdateScript), so
+        // there's nothing to clean up beyond just leaving.
+        Navigator.of(context).pop();
+        return;
+      }
+      return;
+    }
 
     // If the script was already saved (a page added after "Script
     // Completed" — the resume-capture path) keep it in sync immediately.
@@ -428,6 +460,18 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
       appBar: AppBar(
         title: const Text('Capture Script'),
         actions: [
+          // Available throughout — not just once this script is done —
+          // so a teacher can jump to a script that needs a closer look
+          // without losing their place mid-capture (2026-08-31).
+          IconButton(
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => MarkedScriptsScreen(repository: _repository, schemeRepository: _schemeRepository),
+              ),
+            ),
+            icon: const Icon(Icons.fact_check_outlined),
+            tooltip: 'View Marked Scripts',
+          ),
           if (!_settingUp && !_finishing)
             TextButton(
               onPressed: _pages.isEmpty ? null : _onCompleteSession,

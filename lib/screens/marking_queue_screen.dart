@@ -186,7 +186,9 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
     }
 
     final result = await Navigator.of(context).push<MarkingScript>(
-      MaterialPageRoute(builder: (_) => BurstCaptureScreen(repository: _repository, initialPageFiles: files)),
+      MaterialPageRoute(
+        builder: (_) => BurstCaptureScreen(repository: _repository, initialPageFiles: files, initialTemplate: _lastTemplate),
+      ),
     );
     if (result != null) _load();
   }

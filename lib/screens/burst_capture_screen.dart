@@ -31,7 +31,7 @@ import 'subject_grade_topic_picker_screen.dart';
 /// than a custom motion-detection pipeline, at the cost of a tap per page
 /// instead of true hands-free capture.
 class BurstCaptureScreen extends StatefulWidget {
-  const BurstCaptureScreen({super.key, this.repository, this.initialPageFiles});
+  const BurstCaptureScreen({super.key, this.repository, this.initialPageFiles, this.initialTemplate});
 
   final MarkingScriptRepository? repository;
 
@@ -40,6 +40,14 @@ class BurstCaptureScreen extends StatefulWidget {
   /// details form (name/gender/subject-grade) and everything after it
   /// works identically either way; only how the pages arrive differs.
   final List<File>? initialPageFiles;
+
+  /// Pre-fills Subject & grade from whatever the previous script in this
+  /// marking session used (2026-08-31, see
+  /// ScriptBatchCaptureScreen.initialTemplate for the same idea there) —
+  /// still shown and still changeable via the same field, just not
+  /// starting blank and forcing another trip through the full subject
+  /// list when it's almost always the same as last time.
+  final SyllabusTemplate? initialTemplate;
 
   @override
   State<BurstCaptureScreen> createState() => _BurstCaptureScreenState();
@@ -66,6 +74,7 @@ class _BurstCaptureScreenState extends State<BurstCaptureScreen> {
   @override
   void initState() {
     super.initState();
+    _subjectGrade = widget.initialTemplate;
     _prefillScriptNumber();
   }
 
