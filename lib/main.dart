@@ -7,6 +7,33 @@ import 'theme/app_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // A widget that throws while building shows Flutter's default
+  // ErrorWidget — which in a release build (like every one distributed
+  // for testing) is a bare, unlabeled grey box, easily read as "just a
+  // blank page" with zero indication anything actually broke. Overriding
+  // it (2026-08-31, in response to a real "blank white page" report with
+  // no way to reproduce it directly) means the *next* time any screen's
+  // build() throws, for any reason, it's immediately visible on-device
+  // instead of invisible — turns a silent failure into a diagnosable one.
+  ErrorWidget.builder = (FlutterErrorDetails details) => Material(
+        color: Colors.white,
+        child: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('Something went wrong showing this screen',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.red)),
+                const SizedBox(height: 8),
+                Text(details.exceptionAsString(), style: const TextStyle(fontSize: 12)),
+              ],
+            ),
+          ),
+        ),
+      );
+
   try {
     await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   } catch (error) {
