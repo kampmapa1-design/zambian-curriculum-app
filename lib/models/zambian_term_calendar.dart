@@ -53,8 +53,18 @@ class TermDates {
   /// Which week (1-13) the mid-term break falls on (always week 7).
   static const int midtermBreakWeek = 7;
 
-  /// Real teaching weeks — every week except the mid-term break week.
-  static const int teachingWeekCount = totalWeeks - 1;
+  /// Which week (1-13) end-of-term examinations fall on — the last week
+  /// of the term. Not part of the formally published Ministry calendar
+  /// rule (see this file's class doc), but a real, overwhelmingly
+  /// consistent pattern across every real sourced scheme of work checked
+  /// this project has ingested — teachers reserve the term's final week
+  /// for exams, never new content (added 2026-08-31, after a real report
+  /// of generated schemes scheduling teaching content into week 13).
+  static const int endOfTermWeek = totalWeeks;
+
+  /// Real teaching weeks — every week except the mid-term break and the
+  /// end-of-term examination week.
+  static const int teachingWeekCount = totalWeeks - 2;
 
   /// The Monday that starts week [weekNumber] (1-13) of this term.
   DateTime weekStart(int weekNumber) => open.add(Duration(days: (weekNumber - 1) * 7));

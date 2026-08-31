@@ -42,7 +42,10 @@ import '../models/zambian_term_calendar.dart';
 List<SchemeOfWorkEntry> applyCalendarPacing(List<SchemeOfWorkEntry> entries) {
   if (entries.isEmpty) return entries;
 
-  final realSlots = [for (var w = 1; w <= TermDates.totalWeeks; w++) if (w != TermDates.midtermBreakWeek) w];
+  final realSlots = [
+    for (var w = 1; w <= TermDates.totalWeeks; w++)
+      if (w != TermDates.midtermBreakWeek && w != TermDates.endOfTermWeek) w,
+  ];
   final withoutReal = entries.where((e) => e.realWeekNumber == null).toList();
 
   if (withoutReal.isEmpty) {

@@ -25,6 +25,7 @@ import 'marking_key_upload_flow.dart';
 import 'marking_review_screen.dart';
 import 'marking_scheme_list_screen.dart';
 import 'script_batch_capture_screen.dart';
+import '../widgets/score_pop_badge.dart';
 
 /// AI-Assisted Marking, Stage 2 hub — every captured script sits here,
 /// grouped by status, until the teacher chooses to queue and process a
@@ -804,14 +805,14 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
                     ),
                   ),
                 // The "score just came in" pop-and-fade — see
-                // [_ScorePopBadge]. Sits above everything else, ignores
+                // [ScorePopBadge]. Sits above everything else, ignores
                 // touches, and clears itself once its own animation ends.
                 if (_justGradedScript case final graded?)
                   Align(
                     alignment: Alignment.topCenter,
                     child: Padding(
                       padding: const EdgeInsets.only(top: 24),
-                      child: _ScorePopBadge(
+                      child: ScorePopBadge(
                         key: ValueKey(_scorePopKey),
                         studentName: graded.fullName,
                         percent: _justGradedPercent ?? 0,
@@ -1172,73 +1173,3 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
 
 enum _AnalyzeSource { captureOnPaper, previousScripts }
 
-/// A student's score, popping in then fading away over roughly 3.5
-/// seconds — fired once per script the moment AI grading finishes for it
-/// (see [_processBatch]'s `onScriptGraded`), so a teacher watching a
-/// batch process sees each result land in real time without opening
-/// anything. Purely a momentary notice — it never blocks input
-/// ([IgnorePointer]) and carries no state of its own once [onDone] fires.
-class _ScorePopBadge extends StatefulWidget {
-  const _ScorePopBadge({super.key, required this.studentName, required this.percent, required this.onDone});
-
-  final String studentName;
-  final double percent;
-  final VoidCallback onDone;
-
-  @override
-  State<_ScorePopBadge> createState() => _ScorePopBadgeState();
-}
-
-class _ScorePopBadgeState extends State<_ScorePopBadge> {
-  bool _visible = false;
-
-  @override
-  void initState() {
-    super.initState();
-    // Pop in on the next frame (so the initial build starts from
-    // invisible/small, giving the scale-in something to animate from),
-    // hold briefly at full visibility, then fade — ~3.5s total.
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) setState(() => _visible = true);
-    });
-    Future.delayed(const Duration(milliseconds: 900), () {
-      if (mounted) setState(() => _visible = false);
-    });
-    Future.delayed(const Duration(milliseconds: 3500), widget.onDone);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return IgnorePointer(
-      child: AnimatedOpacity(
-        opacity: _visible ? 1 : 0,
-        duration: Duration(milliseconds: _visible ? 250 : 2400),
-        curve: _visible ? Curves.easeOut : Curves.easeIn,
-        child: AnimatedScale(
-          scale: _visible ? 1.0 : 0.85,
-          duration: const Duration(milliseconds: 250),
-          curve: Curves.elasticOut,
-          child: Material(
-            elevation: 6,
-            borderRadius: BorderRadius.circular(12),
-            color: Theme.of(context).colorScheme.primaryContainer,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 14),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(widget.studentName, style: Theme.of(context).textTheme.titleSmall),
-                  const SizedBox(height: 4),
-                  Text(
-                    '${widget.percent.toStringAsFixed(0)}%',
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}

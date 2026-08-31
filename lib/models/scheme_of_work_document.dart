@@ -155,11 +155,25 @@ class SchemeOfWorkRowDraft {
     return SchemeOfWorkRowDraft(entries: entries, lessonNumber: lessonNumber, spellWeek: spellWeek, values: values);
   }
 
+  // Real crash fixed here (2026-08-31): this used to omit specialRowLabel/
+  // overrideWeekNumber entirely, so calling this on the synthetic Mid-Term
+  // Break/End-of-Term row (see SchemeOfWorkDocumentDraft — entries is
+  // deliberately empty for those) silently turned it into what LOOKED
+  // like a regular row with zero entries. scheme_of_work_document_screen
+  // .dart calls this on every row (including special ones) whenever a
+  // teacher edits a manual column OR shares the document
+  // (_syncDraftFromControllers runs before every export) — the very next
+  // rebuild then tried `primaryEntry` (`entries.first`) on that now-
+  // unmarked empty row and threw "Bad state: No element". Every field
+  // must be carried forward here, not just the ones this method means to
+  // change.
   SchemeOfWorkRowDraft withValue(String columnId, String value) => SchemeOfWorkRowDraft(
         entries: entries,
         lessonNumber: lessonNumber,
         spellWeek: spellWeek,
         values: {...values, columnId: value},
+        specialRowLabel: specialRowLabel,
+        overrideWeekNumber: overrideWeekNumber,
       );
 
   /// Topic name(s) followed by any sub-topic names, deduped and in order —
@@ -270,6 +284,7 @@ class SchemeOfWorkDocumentDraft {
         ));
       }
       _insertMidtermBreakRow(rows, spellWeek: false);
+      _insertEndOfTermRow(rows, spellWeek: false);
     } else {
       // One row per week — every topic/sub-topic taught that week merges
       // into shared cells, matching the real OBC template.
@@ -290,6 +305,7 @@ class SchemeOfWorkDocumentDraft {
         ));
       }
       _insertMidtermBreakRow(rows, spellWeek: true);
+      _insertEndOfTermRow(rows, spellWeek: true);
     }
 
     return SchemeOfWorkDocumentDraft(header: const SchemeOfWorkHeader(), rows: rows);
@@ -299,12 +315,34 @@ class SchemeOfWorkDocumentDraft {
   /// [rows] (already in week order), unless a row for week 7 genuinely
   /// already exists (a subject whose real sourced data puts something
   /// else there — trust the real data over this assumption).
-  static void _insertMidtermBreakRow(List<SchemeOfWorkRowDraft> rows, {required bool spellWeek}) {
-    const midtermWeek = TermDates.midtermBreakWeek;
+  static void _insertMidtermBreakRow(List<SchemeOfWorkRowDraft> rows, {required bool spellWeek}) =>
+      _insertSpecialWeekRow(rows, week: TermDates.midtermBreakWeek, label: 'MID-TERM BREAK', spellWeek: spellWeek);
+
+  /// Inserts a synthetic "End of Term Examinations" row at the term's
+  /// final week (13), unless real sourced data already occupies that week
+  /// — same trust-real-data-first rule as the mid-term row. Added
+  /// 2026-08-31 after a real report of generated schemes scheduling new
+  /// teaching content into week 13 instead of the exam week every real
+  /// sourced scheme checked this project has ingested actually reserves
+  /// there — see [TermDates.endOfTermWeek]'s own doc for why this isn't
+  /// guesswork.
+  static void _insertEndOfTermRow(List<SchemeOfWorkRowDraft> rows, {required bool spellWeek}) => _insertSpecialWeekRow(
+        rows,
+        week: TermDates.endOfTermWeek,
+        label: 'END OF TERM EXAMINATIONS',
+        spellWeek: spellWeek,
+      );
+
+  static void _insertSpecialWeekRow(
+    List<SchemeOfWorkRowDraft> rows, {
+    required int week,
+    required String label,
+    required bool spellWeek,
+  }) {
     int weekOf(SchemeOfWorkRowDraft r) => r.overrideWeekNumber ?? r.primaryEntry.realWeekNumber ?? r.primaryEntry.weekNumber;
-    if (rows.any((r) => weekOf(r) == midtermWeek)) return;
-    final insertAt = rows.indexWhere((r) => weekOf(r) > midtermWeek);
-    final row = SchemeOfWorkRowDraft.special(label: 'MID-TERM BREAK', weekNumber: midtermWeek, spellWeek: spellWeek);
+    if (rows.any((r) => weekOf(r) == week)) return;
+    final insertAt = rows.indexWhere((r) => weekOf(r) > week);
+    final row = SchemeOfWorkRowDraft.special(label: label, weekNumber: week, spellWeek: spellWeek);
     if (insertAt == -1) {
       rows.add(row);
     } else {

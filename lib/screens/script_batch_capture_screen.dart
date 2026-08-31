@@ -12,6 +12,7 @@ import '../services/marking_scheme_repository.dart';
 import '../services/marking_script_repository.dart';
 import 'marked_scripts_screen.dart';
 import 'subject_grade_topic_picker_screen.dart';
+import '../widgets/score_pop_badge.dart';
 
 /// AI-Assisted Marking — "Upload Script" → "Upload through camera". One
 /// script (its whole batch of pages — typically around 6) per screen,
@@ -106,6 +107,16 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
   bool _scriptSaved = false;
   MarkingScript? _savedScript;
   bool _finishing = false;
+
+  // The "score just came in" pop-and-fade — see [ScorePopBadge]. This
+  // screen is the real, primary path a script gets AI-graded through (one
+  // script per "Complete Session"), unlike MarkingQueueScreen's batch
+  // "Process" button — the pop-up wasn't wired here at all before
+  // 2026-08-31, which is why it never appeared on a real device despite
+  // being wired into the queue screen.
+  MarkingScript? _justGradedScript;
+  double? _justGradedPercent;
+  int _scorePopKey = 0;
 
   @override
   void initState() {
@@ -429,12 +440,22 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
 
     setState(() => _finishing = true);
     var ranOutOfFreeGradings = false;
+    final scheme = _scheme!;
     await runBatchGrading(
       scripts: [_savedScript!],
-      scheme: _scheme!,
+      scheme: scheme,
       repository: _repository,
       gradingService: _gradingService,
       onOutOfFreeGradings: () => ranOutOfFreeGradings = true,
+      onScriptGraded: (graded) {
+        if (!mounted || graded.status != MarkingScriptStatus.graded) return;
+        final total = scheme.totalMarks;
+        setState(() {
+          _justGradedScript = graded;
+          _justGradedPercent = total <= 0 ? 0 : ((graded.totalAwarded ?? 0) / total) * 100;
+          _scorePopKey++;
+        });
+      },
     );
     if (!mounted) return;
 
@@ -449,10 +470,38 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
         ),
       );
     }
+
+    // Give the score pop-up its full ~3.5s before leaving this screen —
+    // popping immediately (the old behavior) meant the badge never had a
+    // chance to actually be seen, even once it was wired up.
+    if (_justGradedScript != null) {
+      await Future.delayed(const Duration(milliseconds: 3500));
+      if (!mounted) return;
+    }
     Navigator.of(context).pop();
   }
 
   void _removePage(int index) => setState(() => _pages.removeAt(index));
+
+  Widget _buildScorePopOverlay() {
+    if (_justGradedScript case final graded?) {
+      return Align(
+        alignment: Alignment.topCenter,
+        child: Padding(
+          padding: const EdgeInsets.only(top: 24),
+          child: ScorePopBadge(
+            key: ValueKey(_scorePopKey),
+            studentName: graded.fullName,
+            percent: _justGradedPercent ?? 0,
+            onDone: () {
+              if (mounted) setState(() => _justGradedScript = null);
+            },
+          ),
+        ),
+      );
+    }
+    return const SizedBox.shrink();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -479,20 +528,22 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
             ),
         ],
       ),
-      body: _settingUp || _finishing
-          ? Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const CircularProgressIndicator(),
-                  if (_finishing) ...[
-                    const SizedBox(height: 12),
-                    const Text('Grading this script…'),
-                  ],
-                ],
-              ),
-            )
-          : Column(
+      body: Stack(
+        children: [
+          _settingUp || _finishing
+              ? Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const CircularProgressIndicator(),
+                      if (_finishing) ...[
+                        const SizedBox(height: 12),
+                        const Text('Grading this script…'),
+                      ],
+                    ],
+                  ),
+                )
+              : Column(
               children: [
                 Padding(
                   padding: const EdgeInsets.all(16),
@@ -577,6 +628,9 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
                 ),
               ],
             ),
+          _buildScorePopOverlay(),
+        ],
+      ),
     );
   }
 }

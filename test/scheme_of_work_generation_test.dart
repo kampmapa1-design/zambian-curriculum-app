@@ -139,6 +139,21 @@ void main() {
               row.value(SchemeOfWorkColumnDef(id: columnId, label: columnId));
             }
           }
+
+          // A second real crash (2026-08-31): scheme_of_work_document_screen
+          // .dart's _syncDraftFromControllers calls row.withValue(...) on
+          // EVERY row (including synthetic ones) whenever a teacher edits a
+          // manual field OR shares the document — withValue used to drop
+          // specialRowLabel/overrideWeekNumber entirely, silently turning a
+          // synthetic row into what looked like a real, empty-entries row.
+          // The very next rebuild then threw the same "Bad state: No
+          // element" this suite already guards against above, but only
+          // when sharing specifically (since only the share/edit path ever
+          // calls withValue). Simulates that exact sequence for every row.
+          for (final row in draft.rows) {
+            final edited = row.withValue('_test', 'x');
+            edited.overrideWeekNumber ?? edited.primaryEntry.realWeekNumber ?? edited.primaryEntry.weekNumber;
+          }
         }
       }
 
