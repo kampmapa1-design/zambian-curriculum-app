@@ -25,7 +25,7 @@ import 'subject_grade_topic_picker_screen.dart';
 /// different times.
 const bool kTestSubmissionAdGateEnabled = false;
 
-enum _Step { info, capture, review, transmit, receipt }
+enum _Step { capture, info, review, transmit, receipt }
 
 /// Test Submission — a student photographs up to 5 pages of a handwritten
 /// test, the app detects and tags each answer segment by its handwritten
@@ -66,7 +66,7 @@ class _TestSubmissionScreenState extends State<TestSubmissionScreen> {
       widget.markingScriptRepository ?? MarkingScriptRepository();
 
   TestSubmission? _submission;
-  _Step _step = _Step.info;
+  _Step _step = _Step.capture;
   bool _busy = false;
   String? _busyMessage;
 
@@ -90,6 +90,16 @@ class _TestSubmissionScreenState extends State<TestSubmissionScreen> {
     final submission = await _repository.createDraft();
     if (!mounted) return;
     setState(() => _submission = submission);
+
+    // The camera opens immediately, with nothing gating it (2026-09-02) —
+    // matches Chief Marker's own capture screen (ScriptBatchCaptureScreen:
+    // "the camera opens immediately... no picker screens gate it"). Who
+    // this test is for is asked right after the first real capture, not
+    // before — same reasoning: a real capture already in hand is a better
+    // moment to ask than an empty form before the student has done
+    // anything. Backing out empty-handed still leaves the ordinary manual
+    // "Capture Pages" button as a retry path — this call doesn't loop.
+    await _capturePages();
   }
 
   @override
@@ -120,7 +130,8 @@ class _TestSubmissionScreenState extends State<TestSubmissionScreen> {
   }
 
   // -------------------------------------------------------------------
-  // Stage 1 — Who is this for
+  // Stage 1 — Who is this for. Asked AFTER the first capture (2026-09-02),
+  // not before — see _init()'s doc comment for why.
   // -------------------------------------------------------------------
 
   Future<void> _chooseSubjectGrade() async {
@@ -148,12 +159,14 @@ class _TestSubmissionScreenState extends State<TestSubmissionScreen> {
     _repository.update(updated);
     setState(() {
       _submission = updated;
-      _step = _Step.capture;
+      _step = _Step.review;
     });
   }
 
   // -------------------------------------------------------------------
-  // Stage 2-3 — Capture (capped at 5 pages) + question-tagged transcription
+  // Stage 2-3 — Capture (capped at 5 pages) + question-tagged transcription.
+  // Runs FIRST, launched automatically by _init() — the camera opens with
+  // nothing gating it, same as Chief Marker's own capture flow.
   // -------------------------------------------------------------------
 
   Future<void> _capturePages() async {
@@ -209,7 +222,7 @@ class _TestSubmissionScreenState extends State<TestSubmissionScreen> {
     setState(() {
       _segments = edited;
       _submission = _submission!.copyWith(segments: edited);
-      _step = _Step.review;
+      _step = _Step.info;
     });
     _repository.update(_submission!);
   }
@@ -463,7 +476,7 @@ class _TestSubmissionScreenState extends State<TestSubmissionScreen> {
               : '${_subjectGrade!.subject.name} — ${_subjectGrade!.grade.name}'),
         ),
         const SizedBox(height: 16),
-        FilledButton(onPressed: _confirmInfo, child: const Text('Continue to Capture')),
+        FilledButton(onPressed: _confirmInfo, child: const Text('Continue to Review')),
       ],
     );
   }
@@ -472,11 +485,13 @@ class _TestSubmissionScreenState extends State<TestSubmissionScreen> {
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
-        Text('Stage 2 — Capture Pages', style: Theme.of(context).textTheme.titleLarge),
+        Text('Capture Pages', style: Theme.of(context).textTheme.titleLarge),
         const SizedBox(height: 8),
-        const Text(
-          'Photograph up to 5 pages of your test answers. We detect each handwritten question number and '
-          'tag the matching answer — segments with no clear marker are tagged "Unlabeled" rather than guessed.',
+        Text(
+          _segments.isEmpty
+              ? 'Opening the camera — photograph up to 5 pages of the test answers, in order, then tap Done.'
+              : 'We detect each handwritten question number and tag the matching answer — segments with no '
+                  'clear marker are tagged "Unlabeled" rather than guessed. Check and correct anything below.',
         ),
         const SizedBox(height: 16),
         OutlinedButton.icon(
@@ -507,7 +522,7 @@ class _TestSubmissionScreenState extends State<TestSubmissionScreen> {
               ],
             ),
           ),
-        if (_segments.isNotEmpty) FilledButton(onPressed: _confirmSegments, child: const Text('Continue to Review')),
+        if (_segments.isNotEmpty) FilledButton(onPressed: _confirmSegments, child: const Text('Continue')),
       ],
     );
   }

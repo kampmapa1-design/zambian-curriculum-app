@@ -98,6 +98,15 @@ class _AssignmentSubmissionScreenState extends State<AssignmentSubmissionScreen>
     final submission = await _repository.createDraft();
     if (!mounted) return;
     setState(() => _submission = submission);
+
+    // The camera opens immediately, with nothing gating it (2026-09-02) —
+    // matches Chief Marker's own capture screen, and fixes a real
+    // complaint: entering this screen used to require an extra manual tap
+    // on "Capture Cover Page" before the camera ever appeared, which read
+    // as the home-screen button "not working". Backing out empty-handed
+    // still leaves the ordinary manual "Capture Cover Page" button on
+    // Stage 1 as a retry path — this call doesn't loop or force anything.
+    await _captureCoverPage();
   }
 
   @override

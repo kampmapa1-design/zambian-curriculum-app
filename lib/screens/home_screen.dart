@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import '../models/record_of_work.dart';
 import '../models/scheme_of_work.dart';
 import '../models/syllabus_models.dart';
-import 'assignment_submission_screen.dart';
-import 'cdc_resources_screen.dart';
+import '../widgets/function_button.dart';
+import 'assignments_tests_menu_screen.dart';
 import 'generate_lesson_plan_flow.dart';
 import 'handwriting_to_word_screen.dart';
 import 'marking_queue_screen.dart';
@@ -14,7 +14,7 @@ import 'scheme_of_work_document_screen.dart';
 import 'settings_screen.dart';
 import 'subject_grade_topic_picker_screen.dart';
 import 'teaching_notes_sheet.dart';
-import 'test_submission_screen.dart';
+import 'teaching_resources_menu_screen.dart';
 import 'word_pdf_converter_screen.dart';
 
 /// The app's home screen: a branded header (not a bare list dropped
@@ -204,25 +204,25 @@ class HomeScreen extends StatelessWidget {
             padding: const EdgeInsets.all(16),
             sliver: SliverList.list(
               children: [
-                _FunctionButton(
+                FunctionButton(
                   icon: Icons.assignment_outlined,
                   label: 'Generate Lesson Plan',
                   subtitle: 'New lesson, or resume one that was paused',
                   onTap: () => _openLessonPlan(context),
                 ),
-                _FunctionButton(
+                FunctionButton(
                   icon: Icons.event_note_outlined,
                   label: 'Generate Scheme of Work',
                   subtitle: 'Pick a subject, grade/form, and term',
                   onTap: () => _openSchemeOfWork(context),
                 ),
-                _FunctionButton(
+                FunctionButton(
                   icon: Icons.auto_awesome_outlined,
                   label: 'Generate Teaching Notes & Slides',
                   subtitle: 'Bulletin, essay, or PowerPoint slides, for one topic',
                   onTap: () => _openTeachingNotes(context),
                 ),
-                _FunctionButton(
+                FunctionButton(
                   icon: Icons.fact_check_outlined,
                   label: 'Generate Record of Work',
                   subtitle: 'Weekly or fortnightly, pulled from what you\'ve already generated',
@@ -238,34 +238,22 @@ class HomeScreen extends StatelessWidget {
                         ?.copyWith(color: colorScheme.onSurfaceVariant, letterSpacing: 0.8),
                   ),
                 ),
-                _FunctionButton(
-                  icon: Icons.collections_bookmark_outlined,
-                  label: 'CDC Teaching Modules',
-                  subtitle: 'Browse and download official Teaching Modules',
+                // Combined (2026-09-02) — CDC Teaching Modules, CDC Syllabi,
+                // and ECZ Past Papers used to be two separate home-screen
+                // buttons (one of which already internally combined syllabi
+                // + past papers into sectioned lists); now all three are
+                // separate, equal buttons living one level down, behind a
+                // single home-screen entry point, to reduce home-screen
+                // clutter without hiding any of the three real functions.
+                FunctionButton(
+                  icon: Icons.menu_book_outlined,
+                  label: 'Teaching Modules, Syllabi & Past Papers',
+                  subtitle: 'CDC Teaching Modules, CDC Syllabi, and ECZ Past Papers',
                   onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) =>
-                          const CdcResourcesScreen(resourceType: 'module', title: 'CDC Teaching Modules'),
-                    ),
+                    MaterialPageRoute(builder: (_) => const TeachingResourcesMenuScreen()),
                   ),
                 ),
-                _FunctionButton(
-                  icon: Icons.description_outlined,
-                  label: 'ECZ Past Papers & CDC Syllabi',
-                  subtitle: 'Official syllabus documents, plus past exam papers',
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => const CdcResourcesScreen(
-                        title: 'ECZ Past Papers & CDC Syllabi',
-                        sections: [
-                          CdcResourceSection(resourceType: 'syllabus', heading: null),
-                          CdcResourceSection(resourceType: 'past_paper', heading: 'ECZ Past Papers'),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                _FunctionButton(
+                FunctionButton(
                   icon: Icons.document_scanner_outlined,
                   label: 'Chief Marker',
                   subtitle: 'Marking assistant — capture and queue student scripts for AI-assisted grading (early build)',
@@ -273,7 +261,7 @@ class HomeScreen extends StatelessWidget {
                     MaterialPageRoute(builder: (_) => const MarkingQueueScreen()),
                   ),
                 ),
-                _FunctionButton(
+                FunctionButton(
                   icon: Icons.edit_document,
                   label: 'Handwriting to Word Document Conversion',
                   subtitle: 'Photograph or upload a handwritten page, get back an editable Word document',
@@ -294,7 +282,7 @@ class HomeScreen extends StatelessWidget {
                         ?.copyWith(color: colorScheme.onSurfaceVariant, letterSpacing: 0.8),
                   ),
                 ),
-                _FunctionButton(
+                FunctionButton(
                   icon: Icons.picture_as_pdf_outlined,
                   label: 'Word ↔ PDF Converter',
                   subtitle: 'Convert a .docx file to PDF, entirely on-device',
@@ -302,7 +290,7 @@ class HomeScreen extends StatelessWidget {
                     MaterialPageRoute(builder: (_) => const WordPdfConverterScreen()),
                   ),
                 ),
-                _FunctionButton(
+                FunctionButton(
                   icon: Icons.groups_outlined,
                   label: 'Minutes Maker',
                   subtitle: 'Photograph handwritten meeting notes, get back formatted minutes',
@@ -310,131 +298,26 @@ class HomeScreen extends StatelessWidget {
                     MaterialPageRoute(builder: (_) => const MinutesMakerScreen()),
                   ),
                 ),
-                // Side by side (2026-09-02) — both send a photographed,
-                // handwritten submission to a teacher with proof of
-                // submission; keeping them visually paired makes that
-                // shared purpose obvious rather than burying the newer one
-                // further down the list.
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 10),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Expanded(
-                        child: _CompactFunctionButton(
-                          icon: Icons.assignment_turned_in_outlined,
-                          label: 'Assignment Submission',
-                          subtitle: 'Send a handwritten assignment to your teacher',
-                          onTap: () => Navigator.of(context).push(
-                            MaterialPageRoute(builder: (_) => const AssignmentSubmissionScreen()),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: _CompactFunctionButton(
-                          icon: Icons.quiz_outlined,
-                          label: 'Test Submission',
-                          subtitle: 'Send a handwritten test to your teacher',
-                          onTap: () => Navigator.of(context).push(
-                            MaterialPageRoute(builder: (_) => const TestSubmissionScreen()),
-                          ),
-                        ),
-                      ),
-                    ],
+                // Combined (2026-09-02) — Assignment Submission and Test
+                // Submission used to be two side-by-side home-screen
+                // buttons; now both live one level down, behind a single
+                // home-screen entry point, same declutter rationale as the
+                // Teaching Modules/Syllabi/Past Papers combination above.
+                // Both keep their exact prior functions — nothing about
+                // either feature changed here, only where they're reached
+                // from.
+                FunctionButton(
+                  icon: Icons.assignment_turned_in_outlined,
+                  label: 'Assignments, Exams & Test Submissions',
+                  subtitle: 'Send a handwritten assignment or test to your teacher',
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const AssignmentsTestsMenuScreen()),
                   ),
                 ),
               ],
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _FunctionButton extends StatelessWidget {
-  const _FunctionButton({
-    required this.icon,
-    required this.label,
-    required this.subtitle,
-    required this.onTap,
-  });
-
-  final IconData icon;
-  final String label;
-  final String subtitle;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 10),
-      elevation: 2,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(12),
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-          child: ListTile(
-            leading: CircleAvatar(
-              radius: 22,
-              backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-              child: Icon(icon, color: Theme.of(context).colorScheme.onPrimaryContainer),
-            ),
-            title: Text(label, style: const TextStyle(fontWeight: FontWeight.w600)),
-            subtitle: Text(subtitle),
-            trailing: const Icon(Icons.chevron_right),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/// A half-width variant of [_FunctionButton] for two buttons sitting side
-/// by side (added 2026-09-02, for Assignment/Test Submission) — same
-/// Card/InkWell/elevation/radius/color styling, just a compact vertical
-/// icon-over-text layout instead of a full-width ListTile, since a
-/// ListTile's leading+title+subtitle+trailing row doesn't fit half the
-/// screen width.
-class _CompactFunctionButton extends StatelessWidget {
-  const _CompactFunctionButton({
-    required this.icon,
-    required this.label,
-    required this.subtitle,
-    required this.onTap,
-  });
-
-  final IconData icon;
-  final String label;
-  final String subtitle;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      elevation: 2,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(12),
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CircleAvatar(
-                radius: 20,
-                backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-                child: Icon(icon, color: Theme.of(context).colorScheme.onPrimaryContainer, size: 20),
-              ),
-              const SizedBox(height: 8),
-              Text(label, style: const TextStyle(fontWeight: FontWeight.w600)),
-              const SizedBox(height: 2),
-              Text(subtitle, style: Theme.of(context).textTheme.bodySmall, maxLines: 3, overflow: TextOverflow.ellipsis),
-            ],
-          ),
-        ),
       ),
     );
   }
