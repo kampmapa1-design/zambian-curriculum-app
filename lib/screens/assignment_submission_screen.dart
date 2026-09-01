@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../models/assignment_submission.dart';
 import '../services/assignment_submission_document_service.dart';
+import '../services/assignment_submission_email_service.dart';
 import '../services/assignment_submission_repository.dart';
 import '../services/cover_page_extraction_service.dart';
 import '../services/handwriting_document_transcription_service.dart';
@@ -27,8 +28,10 @@ enum _Step { cover, body, referenceSystem, references, review, transmit, receipt
 /// transcribes each faithfully (never correcting or completing content
 /// that's the student's own academic work to get right), consolidates
 /// everything into one PDF plus a compressed backup of every original
-/// photo, records a SHA-256 + timestamp as proof, and helps send both to
-/// a teacher by email and/or WhatsApp. Entirely offline through
+/// photo, records a SHA-256 + timestamp as proof, and sends the result
+/// to a teacher by email (fully automatic, via a real transactional
+/// email backend) and/or WhatsApp (opens the chat pre-filled, one
+/// manual tap to attach and send). Entirely offline through
 /// consolidation (Stage 7) — only the AI transcription calls and the
 /// final send need a connection.
 class AssignmentSubmissionScreen extends StatefulWidget {
@@ -39,6 +42,7 @@ class AssignmentSubmissionScreen extends StatefulWidget {
     this.bodyTranscriptionService,
     this.referenceTranscriptionService,
     this.documentService,
+    this.emailService,
   });
 
   final AssignmentSubmissionRepository? repository;
@@ -46,6 +50,7 @@ class AssignmentSubmissionScreen extends StatefulWidget {
   final HandwritingDocumentTranscriptionService? bodyTranscriptionService;
   final ReferencePageTranscriptionService? referenceTranscriptionService;
   final AssignmentSubmissionDocumentService? documentService;
+  final AssignmentSubmissionEmailService? emailService;
 
   @override
   State<AssignmentSubmissionScreen> createState() => _AssignmentSubmissionScreenState();
@@ -59,6 +64,7 @@ class _AssignmentSubmissionScreenState extends State<AssignmentSubmissionScreen>
   late final ReferencePageTranscriptionService _referenceService =
       widget.referenceTranscriptionService ?? ReferencePageTranscriptionService();
   late final AssignmentSubmissionDocumentService _documentService = widget.documentService ?? AssignmentSubmissionDocumentService();
+  late final AssignmentSubmissionEmailService _emailService = widget.emailService ?? AssignmentSubmissionEmailService();
 
   AssignmentSubmission? _submission;
   _Step _step = _Step.cover;
@@ -373,17 +379,18 @@ class _AssignmentSubmissionScreenState extends State<AssignmentSubmissionScreen>
   // Stage 8 — Transmission
   // -------------------------------------------------------------------
 
-  /// Real platform constraint, not a shortcut: neither channel can send a
-  /// file with zero further taps from the student. Email has no backend
-  /// mailer configured in this app (nothing to call automatically without
-  /// a new third-party email-sending service and account), and `mailto:`
-  /// links never support attachments on any platform — so email goes
-  /// through the OS share sheet, same as WhatsApp, letting the student
-  /// pick their mail app with the file already attached. WhatsApp gets
-  /// one real advantage over plain sharing: opening the chat with the
-  /// entered number pre-filled via `wa.me` before the share sheet, so the
-  /// student lands on the right conversation rather than picking a
-  /// contact from scratch.
+  /// Email is genuinely automatic (added 2026-09-01): the PDF and image
+  /// bundle go straight to the teacher's inbox via a real transactional
+  /// email backend (Resend, called through `sendAssignmentSubmissionEmail`)
+  /// with no further tap from the student. WhatsApp is the one channel
+  /// that still needs a manual tap — there's no WhatsApp *sending* API
+  /// wired into this app (Meta's official one requires business approval
+  /// and a paid setup far beyond this project's scope), so it goes
+  /// through the OS share sheet instead. It still gets a real advantage
+  /// over plain sharing: opening the chat with the entered number
+  /// pre-filled via `wa.me` before the share sheet, so the student lands
+  /// on the right conversation rather than picking a contact from
+  /// scratch.
   Future<void> _send() async {
     final email = _emailController.text.trim();
     final whatsApp = _whatsAppController.text.trim();
@@ -394,37 +401,72 @@ class _AssignmentSubmissionScreenState extends State<AssignmentSubmissionScreen>
       return;
     }
 
-    await _runBusy('Preparing to send…', () async {
+    await _runBusy('Sending…', () async {
       final submission = _submission!;
       final dir = await _repository.submissionDir(submission);
       final pdfFile = _repository.fileFor(submission, dir, submission.pdfFileName!);
       final bundleFile = _repository.fileFor(submission, dir, submission.imageBundleFileName!);
-      final files = [XFile(pdfFile.path), XFile(bundleFile.path)];
       final subject = 'Assignment Submission — ${submission.assignmentTitle.isEmpty ? submission.studentName : submission.assignmentTitle}';
 
-      var whatsAppOpened = false;
-      if (whatsApp.isNotEmpty) {
-        final digits = whatsApp.replaceAll(RegExp(r'[^0-9+]'), '');
-        final waUri = Uri.parse('https://wa.me/$digits?text=${Uri.encodeComponent('$subject — attaching the file(s) next.')}');
-        whatsAppOpened = await launchUrl(waUri, mode: LaunchMode.externalApplication);
-        if (whatsAppOpened && mounted) {
-          await SharePlus.instance.share(ShareParams(files: files, subject: subject, text: 'Attach to the WhatsApp chat that just opened.'));
+      var emailSent = false;
+      String? emailMessageId;
+      if (email.isNotEmpty) {
+        try {
+          emailMessageId = await _emailService.send(
+            recipientEmail: email,
+            studentName: submission.studentName,
+            assignmentTitle: submission.assignmentTitle,
+            submissionHash: submission.sha256Hash ?? '',
+            submittedAt: submission.submittedAt ?? DateTime.now(),
+            pdfFile: pdfFile,
+            pdfFileName: submission.pdfFileName!,
+            imageBundleFile: bundleFile,
+            imageBundleFileName: submission.imageBundleFileName,
+          );
+          emailSent = true;
+        } on AssignmentSubmissionEmailUnavailable catch (e) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Email not sent: $e')));
+          }
         }
       }
 
-      var emailShared = false;
-      if (email.isNotEmpty) {
-        emailShared = true;
-        await SharePlus.instance.share(
-          ShareParams(files: files, subject: subject, text: 'Send this to your teacher at: $email'),
-        );
+      var whatsAppOpened = false;
+      if (whatsApp.isNotEmpty) {
+        final digits = whatsApp.replaceAll(RegExp(r'[^0-9+]'), '').replaceAll('+', '');
+        if (digits.length < 7) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("That WhatsApp number doesn't look valid — include the country code.")),
+            );
+          }
+        } else {
+          final waUri =
+              Uri.parse('https://wa.me/$digits?text=${Uri.encodeComponent('$subject — attaching the file(s) next.')}');
+          whatsAppOpened = await launchUrl(waUri, mode: LaunchMode.externalApplication);
+        }
+        if (whatsAppOpened && mounted) {
+          await SharePlus.instance.share(
+            ShareParams(
+              files: [XFile(pdfFile.path), XFile(bundleFile.path)],
+              subject: subject,
+              text: 'Attach to the WhatsApp chat that just opened.',
+            ),
+          );
+        }
       }
+
+      // If the only channel(s) the student entered all failed (email
+      // rejected, WhatsApp didn't open), stay on this step so they can
+      // retry rather than showing a false "Submission Complete" receipt.
+      if (!emailSent && !whatsAppOpened) return;
 
       final updated = submission.copyWith(
         teacherEmail: email.isEmpty ? null : email,
         teacherWhatsApp: whatsApp.isEmpty ? null : whatsApp,
-        emailSent: emailShared,
+        emailSent: emailSent,
         whatsAppShared: whatsAppOpened,
+        emailMessageId: emailMessageId,
         status: AssignmentSubmissionStatus.sent,
       );
       await _repository.update(updated);
@@ -617,10 +659,13 @@ class _AssignmentSubmissionScreenState extends State<AssignmentSubmissionScreen>
       children: [
         Text('Stage 8 — Send', style: Theme.of(context).textTheme.titleLarge),
         const SizedBox(height: 8),
-        const Text('Enter your teacher\'s email and/or WhatsApp number — at least one is required.'),
+        const Text(
+          'Send by email, WhatsApp, or both — each is optional, but you need at least one. Email sends '
+          'automatically; WhatsApp opens the chat with your file ready to attach, one tap to send.',
+        ),
         const SizedBox(height: 16),
-        _textField('Lecturer / Teacher Email', _emailController, keyboardType: TextInputType.emailAddress),
-        _textField('Lecturer / Teacher WhatsApp Number', _whatsAppController, keyboardType: TextInputType.phone),
+        _textField('Lecturer / Teacher Email (optional)', _emailController, keyboardType: TextInputType.emailAddress),
+        _textField('Lecturer / Teacher WhatsApp Number (optional)', _whatsAppController, keyboardType: TextInputType.phone),
         const SizedBox(height: 16),
         FilledButton.icon(onPressed: _send, icon: const Icon(Icons.send_outlined), label: const Text('Send Submission')),
       ],
@@ -648,8 +693,12 @@ class _AssignmentSubmissionScreenState extends State<AssignmentSubmissionScreen>
                 _receiptRow('Assignment', submission.assignmentTitle),
                 _receiptRow('Submitted', submission.submittedAt?.toLocal().toString() ?? ''),
                 _receiptRow('SHA-256', submission.sha256Hash ?? ''),
-                if (submission.teacherEmail != null) _receiptRow('Sent to (email)', submission.teacherEmail!),
-                if (submission.teacherWhatsApp != null) _receiptRow('Sent to (WhatsApp)', submission.teacherWhatsApp!),
+                if (submission.teacherEmail != null && submission.emailSent)
+                  _receiptRow('Emailed to', submission.teacherEmail!),
+                if (submission.emailMessageId != null && submission.emailMessageId!.isNotEmpty)
+                  _receiptRow('Email message ID', submission.emailMessageId!),
+                if (submission.teacherWhatsApp != null && submission.whatsAppShared)
+                  _receiptRow('Shared to (WhatsApp)', submission.teacherWhatsApp!),
               ],
             ),
           ),

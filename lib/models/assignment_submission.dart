@@ -123,6 +123,11 @@ class AssignmentSubmission {
   final bool emailSent;
   final bool whatsAppShared;
 
+  /// The email provider's own id for the sent message (Resend), when
+  /// [emailSent] is true via the real automatic-send path. Empty/null for
+  /// submissions sent before this existed, or when only WhatsApp was used.
+  final String? emailMessageId;
+
   const AssignmentSubmission({
     required this.id,
     required this.createdAt,
@@ -149,6 +154,7 @@ class AssignmentSubmission {
     this.teacherWhatsApp,
     this.emailSent = false,
     this.whatsAppShared = false,
+    this.emailMessageId,
   });
 
   AssignmentSubmission copyWith({
@@ -175,6 +181,7 @@ class AssignmentSubmission {
     String? teacherWhatsApp,
     bool? emailSent,
     bool? whatsAppShared,
+    String? emailMessageId,
   }) =>
       AssignmentSubmission(
         id: id,
@@ -202,6 +209,7 @@ class AssignmentSubmission {
         teacherWhatsApp: teacherWhatsApp ?? this.teacherWhatsApp,
         emailSent: emailSent ?? this.emailSent,
         whatsAppShared: whatsAppShared ?? this.whatsAppShared,
+        emailMessageId: emailMessageId ?? this.emailMessageId,
       );
 
   Map<String, dynamic> toJson() => {
@@ -230,6 +238,7 @@ class AssignmentSubmission {
         'teacherWhatsApp': teacherWhatsApp,
         'emailSent': emailSent,
         'whatsAppShared': whatsAppShared,
+        'emailMessageId': emailMessageId,
       };
 
   factory AssignmentSubmission.fromJson(Map<String, dynamic> json) => AssignmentSubmission(
@@ -262,6 +271,7 @@ class AssignmentSubmission {
         teacherWhatsApp: json['teacherWhatsApp'] as String?,
         emailSent: json['emailSent'] as bool? ?? false,
         whatsAppShared: json['whatsAppShared'] as bool? ?? false,
+        emailMessageId: json['emailMessageId'] as String?,
       );
 }
 

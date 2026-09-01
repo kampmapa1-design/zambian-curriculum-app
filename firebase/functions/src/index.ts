@@ -1700,6 +1700,151 @@ export const transcribeReferencePage = onCall<TranscribeReferencePageRequest>(
 );
 
 // ---------------------------------------------------------------------
+// sendAssignmentSubmissionEmail — Assignment Submission, Stage 8 (real
+// automatic sending, added 2026-09-01; briefly on Brevo the same day,
+// settled on Resend). Sends the consolidated PDF (and the compressed
+// backup image bundle, if it fits) to the teacher's email via Resend
+// (resend.com) - a third-party transactional email API, completely
+// unrelated to Gemini/Anthropic/Firebase. This is genuinely automatic:
+// unlike the WhatsApp path in the app (which still needs one manual tap
+// to send via the OS share sheet, since no WhatsApp sending API is wired
+// in), the student taps "Send" once and this function does the rest with
+// no further interaction required.
+//
+// Deliberately sends from Resend's own shared `onboarding@resend.dev`
+// address rather than a custom domain: it's pre-verified by Resend
+// themselves, so no sender-verification step is needed on this app's
+// side at all - only the recipient's address matters, at the cost of a
+// somewhat higher chance of landing in spam than a properly verified
+// custom sender would (Brevo, the alternative considered, requires that
+// verification but has no zero-setup shared address of its own).
+// ---------------------------------------------------------------------
+
+const resendApiKey = defineSecret("RESEND_API_KEY");
+
+// Resend's own limit is generous, but Cloud Functions v2 (Cloud Run
+// underneath) caps request bodies well below that, and base64 inflates
+// the real file size by ~33%. Stay well under both: cap the decoded
+// (real) combined attachment size at 20MB.
+const MAX_EMAIL_ATTACHMENT_BYTES = 20 * 1024 * 1024;
+
+function base64DecodedByteLength(b64: string): number {
+  const cleaned = b64.replace(/=+$/, "");
+  return Math.floor((cleaned.length * 3) / 4);
+}
+
+interface SendAssignmentSubmissionEmailRequest {
+  recipientEmail: string;
+  studentName: string;
+  assignmentTitle: string;
+  submissionHash: string;
+  submittedAt: string;
+  pdfBase64: string;
+  pdfFileName: string;
+  imageBundleBase64?: string;
+  imageBundleFileName?: string;
+}
+
+interface SendAssignmentSubmissionEmailResponse {
+  success: boolean;
+  messageId: string;
+}
+
+export const sendAssignmentSubmissionEmail = onCall<SendAssignmentSubmissionEmailRequest>(
+  { secrets: [resendApiKey], region: "us-central1", timeoutSeconds: 180, memory: "512MiB", maxInstances: 5 },
+  async (request): Promise<SendAssignmentSubmissionEmailResponse> => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "Sign in is required to send a submission by email.");
+    }
+    const {
+      recipientEmail, studentName, assignmentTitle, submissionHash, submittedAt,
+      pdfBase64, pdfFileName, imageBundleBase64, imageBundleFileName,
+    } = request.data ?? {};
+
+    if (typeof recipientEmail !== "string" || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(recipientEmail.trim())) {
+      throw new HttpsError("invalid-argument", "A valid recipient email address is required.");
+    }
+    if (typeof pdfBase64 !== "string" || pdfBase64.length === 0) {
+      throw new HttpsError("invalid-argument", "'pdfBase64' is required.");
+    }
+    if (typeof pdfFileName !== "string" || pdfFileName.trim().length === 0) {
+      throw new HttpsError("invalid-argument", "'pdfFileName' is required.");
+    }
+
+    let totalBytes = base64DecodedByteLength(pdfBase64);
+    const hasBundle = typeof imageBundleBase64 === "string" && imageBundleBase64.length > 0 &&
+      typeof imageBundleFileName === "string" && imageBundleFileName.trim().length > 0;
+    if (hasBundle) {
+      totalBytes += base64DecodedByteLength(imageBundleBase64 as string);
+    }
+    if (totalBytes > MAX_EMAIL_ATTACHMENT_BYTES) {
+      throw new HttpsError(
+        "invalid-argument",
+        "The submission is too large to email (over 20MB combined). Use the WhatsApp share option instead, " +
+          "or reduce the number of captured pages."
+      );
+    }
+
+    const attachments: { filename: string; content: string }[] = [{ filename: pdfFileName, content: pdfBase64 }];
+    if (hasBundle) {
+      attachments.push({ filename: imageBundleFileName as string, content: imageBundleBase64 as string });
+    }
+
+    const safeStudentName = typeof studentName === "string" && studentName.trim() ? studentName.trim() : "A student";
+    const safeTitle = typeof assignmentTitle === "string" && assignmentTitle.trim()
+      ? assignmentTitle.trim() : "Untitled assignment";
+    const safeHash = typeof submissionHash === "string" ? submissionHash : "";
+    const safeSubmittedAt = typeof submittedAt === "string" ? submittedAt : new Date().toISOString();
+
+    const html = [
+      `<p>${safeStudentName} has submitted an assignment via Smart Teacher.</p>`,
+      `<p><strong>Assignment:</strong> ${safeTitle}</p>`,
+      `<p><strong>Submitted at:</strong> ${safeSubmittedAt}</p>`,
+      safeHash ? `<p><strong>Proof-of-submission hash (SHA-256):</strong> ${safeHash}</p>` : "",
+      `<p>The consolidated PDF is attached` +
+        `${attachments.length > 1 ? ", along with a backup bundle of the original captured pages." : "."}</p>`,
+    ].join("\n");
+
+    let response: Response;
+    try {
+      response = await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${resendApiKey.value()}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          from: "Smart Teacher <onboarding@resend.dev>",
+          to: [recipientEmail.trim()],
+          subject: `Assignment submission: ${safeTitle} - ${safeStudentName}`,
+          html,
+          attachments,
+        }),
+      });
+    } catch (err) {
+      console.error("sendAssignmentSubmissionEmail: network error calling Resend", err);
+      throw new HttpsError("unavailable", "Could not reach the email service. Please try again.");
+    }
+
+    if (!response.ok) {
+      const bodyText = await response.text().catch(() => "");
+      console.error("sendAssignmentSubmissionEmail: Resend returned an error", response.status, bodyText);
+      throw new HttpsError("internal", "The email service rejected the submission. Please try again.");
+    }
+
+    let messageId = "";
+    try {
+      const json = (await response.json()) as { id?: string };
+      messageId = json.id ?? "";
+    } catch {
+      // Resend responded 2xx but the body wasn't parseable JSON - not fatal, the email still sent.
+    }
+
+    return { success: true, messageId };
+  }
+);
+
+// ---------------------------------------------------------------------
 // detectCandidateName — SUSPENDED (2026-08-30). The Flutter app no longer
 // calls this function: it sent one full-resolution page image to Gemini
 // per script purely to pre-fill a name field a teacher can type in a few
