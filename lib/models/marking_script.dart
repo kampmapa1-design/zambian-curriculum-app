@@ -128,6 +128,26 @@ class GradedAnswer {
       };
 }
 
+/// One question-number-tagged answer segment, carried over from Test
+/// Submission's Stage 3 transcription when a script is created via that
+/// feature's "Send to Marking" bridge (Stage 10, added 2026-09-02) —
+/// null for every ordinary captured script. Passed to `gradeMarkingScript`
+/// as a hint (never ground truth — see that function's prompt) so
+/// grading doesn't have to re-detect question boundaries from scratch.
+class PreSegmentedAnswer {
+  final String questionNumber;
+  final String text;
+
+  const PreSegmentedAnswer({required this.questionNumber, required this.text});
+
+  Map<String, dynamic> toJson() => {'questionNumber': questionNumber, 'text': text};
+
+  factory PreSegmentedAnswer.fromJson(Map<String, dynamic> json) => PreSegmentedAnswer(
+        questionNumber: json['questionNumber'] as String? ?? 'Unlabeled',
+        text: json['text'] as String? ?? '',
+      );
+}
+
 /// One student's answer script — a set of page images captured in one
 /// burst-capture session (Stage 1), later graded as a unit (Stage 4
 /// onward). Stored fully offline; see [MarkingScriptRepository].
@@ -208,6 +228,10 @@ class MarkingScript {
   /// shown to the teacher so a retry isn't a mystery.
   final String? lastError;
 
+  /// See [PreSegmentedAnswer]'s doc — set once, at creation, by the Test
+  /// Submission bridge; never edited afterward (not in [copyWith]).
+  final List<PreSegmentedAnswer>? preSegmentedAnswers;
+
   const MarkingScript({
     required this.id,
     required this.firstName,
@@ -227,6 +251,7 @@ class MarkingScript {
     this.gradedAnswers,
     this.observations,
     this.lastError,
+    this.preSegmentedAnswers,
   });
 
   int get pageCount => pageFileNames.length;
@@ -285,6 +310,7 @@ class MarkingScript {
         observations: observations ?? this.observations,
         gradedAnswers: gradedAnswers ?? this.gradedAnswers,
         lastError: clearLastError ? null : (lastError ?? this.lastError),
+        preSegmentedAnswers: preSegmentedAnswers,
       );
 
   factory MarkingScript.fromJson(Map<String, dynamic> json) {
@@ -336,6 +362,10 @@ class MarkingScript {
           .toList(),
       observations: (json['observations'] as List?)?.cast<String>(),
       lastError: json['lastError'] as String?,
+      preSegmentedAnswers: (json['preSegmentedAnswers'] as List?)
+          ?.cast<Map<String, dynamic>>()
+          .map(PreSegmentedAnswer.fromJson)
+          .toList(),
     );
   }
 
@@ -358,6 +388,7 @@ class MarkingScript {
         'gradedAnswers': gradedAnswers?.map((a) => a.toJson()).toList(),
         'observations': observations,
         'lastError': lastError,
+        'preSegmentedAnswers': preSegmentedAnswers?.map((s) => s.toJson()).toList(),
       };
 }
 

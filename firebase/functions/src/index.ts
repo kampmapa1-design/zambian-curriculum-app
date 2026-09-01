@@ -917,9 +917,19 @@ interface GradeMarkingScriptQuestion {
   maxMarks: number;
 }
 
+// A hint, not ground truth - see buildGradingPrompt's use of it. Comes
+// from Test Submission's Stage 3 question-number detection (added
+// 2026-09-02) when a script was created via that feature's "Send to
+// Marking" bridge (Stage 10); absent for every ordinary captured script.
+interface PreSegmentedAnswerHint {
+  questionNumber: string;
+  text: string;
+}
+
 interface GradeMarkingScriptRequest {
   pageImagesBase64: string[];
   questions: GradeMarkingScriptQuestion[];
+  preSegmentedAnswers?: PreSegmentedAnswerHint[];
 }
 
 interface GradedAnswerResult {
@@ -966,10 +976,27 @@ const gradeMarkingScriptSchema = {
   additionalProperties: false,
 };
 
-function buildGradingPrompt(questions: GradeMarkingScriptQuestion[]): string {
+function buildGradingPrompt(
+  questions: GradeMarkingScriptQuestion[],
+  preSegmentedAnswers?: PreSegmentedAnswerHint[]
+): string {
   const schemeText = questions
     .map((q) => `${q.label} (max ${q.maxMarks} marks): expected answer/keywords — ${q.expectedAnswerOrKeywords}`)
     .join("\n");
+
+  const hintSection =
+    preSegmentedAnswers && preSegmentedAnswers.length > 0
+      ? [
+          "",
+          "A separate transcription pass already attempted to split this script's answers by detected " +
+            "question-number marker, in page order. Treat this ONLY as a helpful prior, never as ground " +
+            "truth: it may mislabel a segment 'Unlabeled', match the wrong question number, or split/merge " +
+            "answers incorrectly. Verify every segment against the actual images and use your own judgment " +
+            "- correct any mismatch silently rather than propagating it.",
+          "Pre-segmented answers (questionNumber: text):",
+          preSegmentedAnswers.map((s) => `${s.questionNumber}: ${s.text}`).join("\n"),
+        ].join("\n")
+      : "";
 
   return [
     "The attached images are photos of one student's answer script, in page order. Some scripts are " +
@@ -1004,6 +1031,7 @@ function buildGradingPrompt(questions: GradeMarkingScriptQuestion[]): string {
     "",
     "Marking scheme:",
     schemeText,
+    hintSection,
     "",
     "Return exactly one answer per question in the marking scheme, using the same question label, plus " +
       "the 3-5 observations. Every mark you award must be a first-pass suggestion for a teacher to review, " +
@@ -1018,7 +1046,7 @@ export const gradeMarkingScript = onCall<GradeMarkingScriptRequest>(
       throw new HttpsError("unauthenticated", "Sign in is required to grade a script.");
     }
 
-    const { pageImagesBase64, questions } = request.data ?? {};
+    const { pageImagesBase64, questions, preSegmentedAnswers } = request.data ?? {};
     if (!Array.isArray(pageImagesBase64) || pageImagesBase64.length === 0) {
       throw new HttpsError("invalid-argument", "'pageImagesBase64' must be a non-empty array.");
     }
@@ -1036,7 +1064,9 @@ export const gradeMarkingScript = onCall<GradeMarkingScriptRequest>(
     try {
       const response = await ai.models.generateContent({
         model: GEMINI_MODEL,
-        contents: [{ role: "user", parts: [{ text: buildGradingPrompt(questions) }, ...imageParts] }],
+        contents: [
+          { role: "user", parts: [{ text: buildGradingPrompt(questions, preSegmentedAnswers) }, ...imageParts] },
+        ],
         config: {
           responseMimeType: "application/json",
           responseJsonSchema: gradeMarkingScriptSchema,
@@ -1702,7 +1732,12 @@ export const transcribeReferencePage = onCall<TranscribeReferencePageRequest>(
 // ---------------------------------------------------------------------
 // sendAssignmentSubmissionEmail — Assignment Submission, Stage 8 (real
 // automatic sending, added 2026-09-01; briefly on Brevo the same day,
-// settled on Resend). Sends the consolidated PDF (and the compressed
+// settled on Resend). Shared verbatim with Test Submission (2026-09-02,
+// see that feature's Stage 7 spec: "reuse Assignment Submission's
+// transmission logic exactly") via the optional `submissionKind` field —
+// still named for Assignment Submission since that's what it was built
+// for first, but genuinely generic now. Sends the consolidated PDF (and
+// the compressed
 // backup image bundle, if it fits) to the teacher's email via Resend
 // (resend.com) - a third-party transactional email API, completely
 // unrelated to Gemini/Anthropic/Firebase. This is genuinely automatic:
@@ -1743,6 +1778,12 @@ interface SendAssignmentSubmissionEmailRequest {
   pdfFileName: string;
   imageBundleBase64?: string;
   imageBundleFileName?: string;
+  // Added 2026-09-02 for Test Submission, which reuses this same function
+  // rather than duplicating it (Stage 7's "reuse Assignment Submission's
+  // transmission logic exactly"). Optional and defaults to "assignment"
+  // so the already-deployed Assignment Submission caller (which never
+  // sends this field) keeps working unchanged.
+  submissionKind?: string;
 }
 
 interface SendAssignmentSubmissionEmailResponse {
@@ -1758,8 +1799,9 @@ export const sendAssignmentSubmissionEmail = onCall<SendAssignmentSubmissionEmai
     }
     const {
       recipientEmail, studentName, assignmentTitle, submissionHash, submittedAt,
-      pdfBase64, pdfFileName, imageBundleBase64, imageBundleFileName,
+      pdfBase64, pdfFileName, imageBundleBase64, imageBundleFileName, submissionKind,
     } = request.data ?? {};
+    const kind = typeof submissionKind === "string" && submissionKind.trim() ? submissionKind.trim() : "assignment";
 
     if (typeof recipientEmail !== "string" || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(recipientEmail.trim())) {
       throw new HttpsError("invalid-argument", "A valid recipient email address is required.");
@@ -1797,8 +1839,8 @@ export const sendAssignmentSubmissionEmail = onCall<SendAssignmentSubmissionEmai
     const safeSubmittedAt = typeof submittedAt === "string" ? submittedAt : new Date().toISOString();
 
     const html = [
-      `<p>${safeStudentName} has submitted an assignment via Smart Teacher.</p>`,
-      `<p><strong>Assignment:</strong> ${safeTitle}</p>`,
+      `<p>${safeStudentName} has submitted a${kind === "assignment" ? "n" : ""} ${kind} via Smart Teacher.</p>`,
+      `<p><strong>${kind === "test" ? "Test" : "Assignment"}:</strong> ${safeTitle}</p>`,
       `<p><strong>Submitted at:</strong> ${safeSubmittedAt}</p>`,
       safeHash ? `<p><strong>Proof-of-submission hash (SHA-256):</strong> ${safeHash}</p>` : "",
       `<p>The consolidated PDF is attached` +
@@ -1816,7 +1858,7 @@ export const sendAssignmentSubmissionEmail = onCall<SendAssignmentSubmissionEmai
         body: JSON.stringify({
           from: "Smart Teacher <onboarding@resend.dev>",
           to: [recipientEmail.trim()],
-          subject: `Assignment submission: ${safeTitle} - ${safeStudentName}`,
+          subject: `${kind === "test" ? "Test" : "Assignment"} submission: ${safeTitle} - ${safeStudentName}`,
           html,
           attachments,
         }),
@@ -1841,6 +1883,119 @@ export const sendAssignmentSubmissionEmail = onCall<SendAssignmentSubmissionEmai
     }
 
     return { success: true, messageId };
+  }
+);
+
+// ---------------------------------------------------------------------
+// transcribeTestSubmission — Test Submission, Stage 3 (added 2026-09-02).
+// Reads 1-5 photographed pages of a handwritten test and structures the
+// transcription by detected question number - looking for markers like
+// "Question 1", "Q1", "1." at the start of each answer block. Same
+// "never correct or invent" discipline as every other transcription
+// function in this app: a segment with no clear marker is tagged
+// "Unlabeled" rather than guessed, and content itself is transcribed
+// verbatim, never corrected or completed.
+// ---------------------------------------------------------------------
+
+interface TranscribeTestSubmissionRequest {
+  pageImagesBase64: string[];
+}
+
+interface TestAnswerSegmentResult {
+  questionNumber: string;
+  text: string;
+}
+
+interface TranscribeTestSubmissionResponse {
+  segments: TestAnswerSegmentResult[];
+  notes: string;
+}
+
+const transcribeTestSubmissionSchema = {
+  type: "object",
+  properties: {
+    segments: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          questionNumber: {
+            type: "string",
+            description:
+              "The detected question-number marker exactly as written (e.g. 'Question 1', 'Q1', '1.'), " +
+              "normalized only to strip surrounding whitespace/punctuation - or the literal string " +
+              "'Unlabeled' if no clear marker starts this answer block.",
+          },
+          text: { type: "string", description: "The answer text for this segment, transcribed verbatim." },
+        },
+        required: ["questionNumber", "text"],
+        additionalProperties: false,
+      },
+    },
+    notes: {
+      type: "string",
+      description: "Anything a student should double-check - illegible text, an ambiguous marker. Empty if none.",
+    },
+  },
+  required: ["segments", "notes"],
+  additionalProperties: false,
+};
+
+export const transcribeTestSubmission = onCall<TranscribeTestSubmissionRequest>(
+  { secrets: [geminiApiKey], region: "us-central1", timeoutSeconds: 120, memory: "512MiB", maxInstances: 5 },
+  async (request): Promise<TranscribeTestSubmissionResponse> => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "Sign in is required to transcribe a test submission.");
+    }
+    const { pageImagesBase64 } = request.data ?? {};
+    if (!Array.isArray(pageImagesBase64) || pageImagesBase64.length === 0) {
+      throw new HttpsError("invalid-argument", "'pageImagesBase64' must be a non-empty array.");
+    }
+    if (pageImagesBase64.length > 5) {
+      throw new HttpsError("invalid-argument", "A test submission is capped at 5 pages.");
+    }
+
+    const ai = new GoogleGenAI({ apiKey: geminiApiKey.value() });
+    const prompt = [
+      "The attached images are photos of a student's handwritten test answers, in page order. Split the " +
+        "content into segments, one per detected answer block, in the order they appear across the pages.",
+      "For each segment: look at its very start for a handwritten question-number marker - things like " +
+        "'Question 1', 'Q1', '1.', '1)', or similar. If you find one, use it (verbatim, just trimmed of " +
+        "surrounding whitespace/punctuation) as questionNumber. If a segment genuinely has no clear marker " +
+        "at its start, set questionNumber to exactly 'Unlabeled' - do not guess which question it might " +
+        "belong to from context.",
+      "Transcribe each segment's answer text exactly as written - preserve the student's own wording, " +
+        "structure, and any in-text working/calculations. Never correct, complete, or improve what the " +
+        "student wrote. If a passage is illegible, include your best reading but say so in notes.",
+      "Do not merge separate answer blocks into one segment just because they share the same question " +
+        "number, and do not split one continuous answer into multiple segments - one segment per answer " +
+        "block, in the order it was physically written.",
+    ].join("\n");
+
+    const imageParts = pageImagesBase64.map((b64: string) => ({ inlineData: { mimeType: "image/jpeg", data: b64 } }));
+
+    let text: string | undefined;
+    try {
+      const response = await ai.models.generateContent({
+        model: GEMINI_MODEL,
+        contents: [{ role: "user", parts: [{ text: prompt }, ...imageParts] }],
+        config: { responseMimeType: "application/json", responseJsonSchema: transcribeTestSubmissionSchema },
+      });
+      text = response.text;
+    } catch (err) {
+      console.error("transcribeTestSubmission: Gemini call failed", err);
+      throw new HttpsError("internal", "Failed to transcribe this test submission. Please try again.");
+    }
+
+    if (!text) {
+      throw new HttpsError("internal", "The AI did not return any transcribed content.");
+    }
+    try {
+      return JSON.parse(text) as TranscribeTestSubmissionResponse;
+    } catch (err) {
+      console.error("transcribeTestSubmission: response was not valid JSON", text);
+      throw new HttpsError("internal", "The transcription response could not be parsed.");
+    }
   }
 );
 

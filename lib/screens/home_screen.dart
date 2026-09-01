@@ -14,6 +14,7 @@ import 'scheme_of_work_document_screen.dart';
 import 'settings_screen.dart';
 import 'subject_grade_topic_picker_screen.dart';
 import 'teaching_notes_sheet.dart';
+import 'test_submission_screen.dart';
 import 'word_pdf_converter_screen.dart';
 
 /// The app's home screen: a branded header (not a bare list dropped
@@ -309,12 +310,38 @@ class HomeScreen extends StatelessWidget {
                     MaterialPageRoute(builder: (_) => const MinutesMakerScreen()),
                   ),
                 ),
-                _FunctionButton(
-                  icon: Icons.assignment_turned_in_outlined,
-                  label: 'Assignment Submission',
-                  subtitle: 'Photograph a handwritten assignment and send it to your teacher, with proof of submission',
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const AssignmentSubmissionScreen()),
+                // Side by side (2026-09-02) — both send a photographed,
+                // handwritten submission to a teacher with proof of
+                // submission; keeping them visually paired makes that
+                // shared purpose obvious rather than burying the newer one
+                // further down the list.
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Expanded(
+                        child: _CompactFunctionButton(
+                          icon: Icons.assignment_turned_in_outlined,
+                          label: 'Assignment Submission',
+                          subtitle: 'Send a handwritten assignment to your teacher',
+                          onTap: () => Navigator.of(context).push(
+                            MaterialPageRoute(builder: (_) => const AssignmentSubmissionScreen()),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: _CompactFunctionButton(
+                          icon: Icons.quiz_outlined,
+                          label: 'Test Submission',
+                          subtitle: 'Send a handwritten test to your teacher',
+                          onTap: () => Navigator.of(context).push(
+                            MaterialPageRoute(builder: (_) => const TestSubmissionScreen()),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
@@ -358,6 +385,54 @@ class _FunctionButton extends StatelessWidget {
             title: Text(label, style: const TextStyle(fontWeight: FontWeight.w600)),
             subtitle: Text(subtitle),
             trailing: const Icon(Icons.chevron_right),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// A half-width variant of [_FunctionButton] for two buttons sitting side
+/// by side (added 2026-09-02, for Assignment/Test Submission) — same
+/// Card/InkWell/elevation/radius/color styling, just a compact vertical
+/// icon-over-text layout instead of a full-width ListTile, since a
+/// ListTile's leading+title+subtitle+trailing row doesn't fit half the
+/// screen width.
+class _CompactFunctionButton extends StatelessWidget {
+  const _CompactFunctionButton({
+    required this.icon,
+    required this.label,
+    required this.subtitle,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String label;
+  final String subtitle;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 2,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CircleAvatar(
+                radius: 20,
+                backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+                child: Icon(icon, color: Theme.of(context).colorScheme.onPrimaryContainer, size: 20),
+              ),
+              const SizedBox(height: 8),
+              Text(label, style: const TextStyle(fontWeight: FontWeight.w600)),
+              const SizedBox(height: 2),
+              Text(subtitle, style: Theme.of(context).textTheme.bodySmall, maxLines: 3, overflow: TextOverflow.ellipsis),
+            ],
           ),
         ),
       ),

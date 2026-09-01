@@ -48,13 +48,14 @@ class MarkingGradingService {
   Future<MarkingGradingResult> grade({
     required List<File> pageFiles,
     required MarkingScheme scheme,
+    List<PreSegmentedAnswer>? preSegmentedAnswers,
   }) async {
     // Hard backstop covering EVERYTHING, including the connectivity check
     // itself — see HandwrittenListTranscriptionService.transcribe for the
     // full reasoning: a connectivity-plugin call that stalls ahead of the
     // timeout wrapper defeats it entirely, so nothing runs outside this.
     try {
-      return await _doGrade(pageFiles, scheme).timeout(
+      return await _doGrade(pageFiles, scheme, preSegmentedAnswers).timeout(
         const Duration(seconds: 200),
         onTimeout: () => throw const MarkingGradingUnavailable(
           'Grading this script is taking too long and may be stuck. Check your connection and try again.',
@@ -67,7 +68,11 @@ class MarkingGradingService {
     }
   }
 
-  Future<MarkingGradingResult> _doGrade(List<File> pageFiles, MarkingScheme scheme) async {
+  Future<MarkingGradingResult> _doGrade(
+    List<File> pageFiles,
+    MarkingScheme scheme,
+    List<PreSegmentedAnswer>? preSegmentedAnswers,
+  ) async {
     if (!await isOnline) {
       throw const MarkingGradingUnavailable("You're offline. Connect to the internet to grade this script.");
     }
@@ -94,6 +99,8 @@ class MarkingGradingService {
               'maxMarks': q.maxMarks,
             },
         ],
+        if (preSegmentedAnswers != null && preSegmentedAnswers.isNotEmpty)
+          'preSegmentedAnswers': [for (final s in preSegmentedAnswers) s.toJson()],
       });
       rawData = result.data;
     } on FirebaseFunctionsException catch (e) {

@@ -22,6 +22,11 @@ class AssignmentSubmissionEmailUnavailable implements Exception {
 /// third-party transactional email API. Unlike the WhatsApp path
 /// elsewhere in this feature, this genuinely needs no further tap once
 /// called: the student's teacher receives the email directly.
+///
+/// Shared verbatim with Test Submission (2026-09-02, see that feature's
+/// Stage 7: "reuse Assignment Submission's transmission logic exactly")
+/// via the [submissionKind] parameter on [send] — still named for
+/// Assignment Submission since that's what it was built for first.
 class AssignmentSubmissionEmailService {
   AssignmentSubmissionEmailService({FirebaseFunctions? functions}) : _functions = functions ?? FirebaseFunctions.instance;
 
@@ -33,7 +38,10 @@ class AssignmentSubmissionEmailService {
   }
 
   /// Sends [pdfFile] (and [imageBundleFile], if given) to [recipientEmail].
-  /// Returns the provider's message id on success (may be empty).
+  /// [assignmentTitle] is just the title line shown in the email body —
+  /// for a non-'assignment' [submissionKind] (e.g. Test Submission passes
+  /// 'test'), pass whatever title fits that context (e.g. the subject
+  /// name). Returns the provider's message id on success (may be empty).
   Future<String> send({
     required String recipientEmail,
     required String studentName,
@@ -44,6 +52,7 @@ class AssignmentSubmissionEmailService {
     required String pdfFileName,
     File? imageBundleFile,
     String? imageBundleFileName,
+    String submissionKind = 'assignment',
   }) async {
     var lastStatus = 'starting';
     void track(String status) => lastStatus = status;
@@ -59,6 +68,7 @@ class AssignmentSubmissionEmailService {
         pdfFileName: pdfFileName,
         imageBundleFile: imageBundleFile,
         imageBundleFileName: imageBundleFileName,
+        submissionKind: submissionKind,
         onProgress: track,
       ).timeout(
         const Duration(seconds: 175),
@@ -84,6 +94,7 @@ class AssignmentSubmissionEmailService {
     required String pdfFileName,
     required File? imageBundleFile,
     required String? imageBundleFileName,
+    required String submissionKind,
     required void Function(String status) onProgress,
   }) async {
     onProgress('Checking connection…');
@@ -115,6 +126,7 @@ class AssignmentSubmissionEmailService {
         'pdfFileName': pdfFileName,
         if (imageBundleBase64 != null) 'imageBundleBase64': imageBundleBase64,
         if (imageBundleFileName != null) 'imageBundleFileName': imageBundleFileName,
+        'submissionKind': submissionKind,
       });
       final messageId = result.data['messageId'];
       return messageId is String ? messageId : '';

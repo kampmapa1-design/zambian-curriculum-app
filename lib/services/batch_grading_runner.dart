@@ -47,7 +47,11 @@ Future<void> runBatchGrading({
     MarkingScript result;
     try {
       final pageFiles = await repository.pageFilesFor(script);
-      final graded = await gradingService.grade(pageFiles: pageFiles, scheme: scheme);
+      final graded = await gradingService.grade(
+        pageFiles: pageFiles,
+        scheme: scheme,
+        preSegmentedAnswers: script.preSegmentedAnswers,
+      );
       result = script.copyWith(
         status: MarkingScriptStatus.graded,
         gradedAnswers: graded.answers,
@@ -58,7 +62,11 @@ Future<void> runBatchGrading({
     } catch (firstError) {
       try {
         final pageFiles = await repository.pageFilesFor(script);
-        final graded = await gradingService.grade(pageFiles: pageFiles, scheme: scheme);
+        final graded = await gradingService.grade(
+          pageFiles: pageFiles,
+          scheme: scheme,
+          preSegmentedAnswers: script.preSegmentedAnswers,
+        );
         result = script.copyWith(
           status: MarkingScriptStatus.graded,
           gradedAnswers: graded.answers,

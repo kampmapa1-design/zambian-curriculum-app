@@ -64,6 +64,7 @@ class MarkingScriptRepository {
     required String gradeName,
     String classLevel = '',
     required List<File> capturedPageFiles,
+    List<PreSegmentedAnswer>? preSegmentedAnswers,
   }) async {
     final id = '${DateTime.now().millisecondsSinceEpoch}_${_slug('$firstName $surname')}';
     final scriptDir = Directory(p.join((await _rootDir()).path, id));
@@ -88,6 +89,7 @@ class MarkingScriptRepository {
       classLevel: classLevel,
       pageFileNames: pageFileNames,
       capturedAt: DateTime.now(),
+      preSegmentedAnswers: preSegmentedAnswers,
     );
 
     final catalog = await loadCatalog();

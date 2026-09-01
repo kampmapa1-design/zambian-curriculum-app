@@ -10,10 +10,17 @@ import 'package:flutter/material.dart';
 /// a handwritten class list). Returns the captured page files in order,
 /// or null if the teacher backs out before capturing anything.
 class DocumentPagesCaptureScreen extends StatefulWidget {
-  const DocumentPagesCaptureScreen({super.key, required this.title, this.instructions});
+  const DocumentPagesCaptureScreen({super.key, required this.title, this.instructions, this.maxPages});
 
   final String title;
   final String? instructions;
+
+  /// Optional cap on how many pages can be captured — added 2026-09-02
+  /// for Test Submission (1-5 pages). Null (the default) keeps every
+  /// existing caller's unlimited behavior unchanged. Once reached,
+  /// "Capture Next Page" is disabled rather than the camera silently
+  /// refusing another photo.
+  final int? maxPages;
 
   @override
   State<DocumentPagesCaptureScreen> createState() => _DocumentPagesCaptureScreenState();
@@ -30,6 +37,7 @@ class _DocumentPagesCaptureScreenState extends State<DocumentPagesCaptureScreen>
   }
 
   Future<void> _captureNextPage() async {
+    if (widget.maxPages != null && _capturedPages.length >= widget.maxPages!) return;
     setState(() => _started = true);
     final result = await Navigator.of(context).push<DocumentCaptureData>(
       MaterialPageRoute(
@@ -84,7 +92,13 @@ class _DocumentPagesCaptureScreenState extends State<DocumentPagesCaptureScreen>
                   padding: const EdgeInsets.all(16),
                   child: Row(
                     children: [
-                      Expanded(child: Text('${_capturedPages.length} page(s) captured')),
+                      Expanded(
+                        child: Text(
+                          widget.maxPages != null
+                              ? '${_capturedPages.length} of ${widget.maxPages} page(s) captured'
+                              : '${_capturedPages.length} page(s) captured',
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -136,7 +150,8 @@ class _DocumentPagesCaptureScreenState extends State<DocumentPagesCaptureScreen>
                       children: [
                         Expanded(
                           child: OutlinedButton.icon(
-                            onPressed: _captureNextPage,
+                            onPressed:
+                                widget.maxPages != null && _capturedPages.length >= widget.maxPages! ? null : _captureNextPage,
                             icon: const Icon(Icons.add_a_photo_outlined),
                             label: const Text('Capture Next Page'),
                           ),
