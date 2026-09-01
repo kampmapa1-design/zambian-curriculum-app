@@ -1506,6 +1506,200 @@ export const transcribeHandwrittenDocument = onCall<TranscribeHandwrittenDocumen
 );
 
 // ---------------------------------------------------------------------
+// extractCoverPageFields — Assignment Submission, Stage 1. Reads a photo
+// of a student's handwritten cover page and pulls out the standard
+// fields (student name, ID, course, subject, title, teacher, date,
+// institution) into a structured, editable form — pure convenience, the
+// same "never authoritative, always editable" principle as the now-
+// suspended detectCandidateName below. Never invents a value: a field
+// genuinely not visible on the page comes back as an empty string, not a
+// guess.
+// ---------------------------------------------------------------------
+
+interface ExtractCoverPageFieldsRequest {
+  imageBase64: string;
+}
+
+interface ExtractCoverPageFieldsResponse {
+  studentName: string;
+  idNumber: string;
+  course: string;
+  subject: string;
+  assignmentTitle: string;
+  teacherName: string;
+  date: string;
+  institution: string;
+  notes: string;
+}
+
+const extractCoverPageFieldsSchema = {
+  type: "object",
+  properties: {
+    studentName: { type: "string", description: "The student's name as written. Empty string if not present." },
+    idNumber: { type: "string", description: "Student ID / registration number, as written. Empty if absent." },
+    course: { type: "string", description: "Course name, as written. Empty if absent." },
+    subject: { type: "string", description: "Subject name, as written. Empty if absent." },
+    assignmentTitle: { type: "string", description: "The assignment's title, as written. Empty if absent." },
+    teacherName: { type: "string", description: "Lecturer/teacher name, as written. Empty if absent." },
+    date: { type: "string", description: "The date exactly as written on the page. Empty if absent." },
+    institution: { type: "string", description: "Institution/school name, as written. Empty if absent." },
+    notes: {
+      type: "string",
+      description:
+        "Anything a student should double-check - a field that was hard to read or ambiguous. Empty string " +
+        "if nothing stood out.",
+    },
+  },
+  required: [
+    "studentName", "idNumber", "course", "subject", "assignmentTitle", "teacherName", "date", "institution", "notes",
+  ],
+  additionalProperties: false,
+};
+
+export const extractCoverPageFields = onCall<ExtractCoverPageFieldsRequest>(
+  { secrets: [geminiApiKey], region: "us-central1", timeoutSeconds: 60, memory: "512MiB", maxInstances: 5 },
+  async (request): Promise<ExtractCoverPageFieldsResponse> => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "Sign in is required to read a cover page.");
+    }
+    const { imageBase64 } = request.data ?? {};
+    if (typeof imageBase64 !== "string" || imageBase64.trim().length === 0) {
+      throw new HttpsError("invalid-argument", "'imageBase64' is required.");
+    }
+
+    const ai = new GoogleGenAI({ apiKey: geminiApiKey.value() });
+    const prompt = [
+      "The attached image is a photo of a student's handwritten assignment cover page. Read exactly what is " +
+        "written and extract these standard fields: Student Name, ID/Registration Number, Course, Subject, " +
+        "Assignment Title, Lecturer/Teacher Name, Date, Institution.",
+      "For each field: if it is genuinely written on the page, transcribe it exactly (do not correct spelling, " +
+        "do not reformat). If a field is not present on the page at all, return an empty string for it - never " +
+        "invent or guess a value.",
+      "If any field's handwriting was hard to read, still give your best reading but say so in notes.",
+    ].join("\n");
+
+    let text: string | undefined;
+    try {
+      const response = await ai.models.generateContent({
+        model: GEMINI_MODEL,
+        contents: [{ role: "user", parts: [{ text: prompt }, { inlineData: { mimeType: "image/jpeg", data: imageBase64 } }] }],
+        config: { responseMimeType: "application/json", responseJsonSchema: extractCoverPageFieldsSchema },
+      });
+      text = response.text;
+    } catch (err) {
+      console.error("extractCoverPageFields: Gemini call failed", err);
+      throw new HttpsError("internal", "Failed to read the cover page. Please try again.");
+    }
+
+    if (!text) {
+      throw new HttpsError("internal", "The AI did not return any content.");
+    }
+    try {
+      return JSON.parse(text) as ExtractCoverPageFieldsResponse;
+    } catch (err) {
+      console.error("extractCoverPageFields: response was not valid JSON", text);
+      throw new HttpsError("internal", "The cover page response could not be parsed.");
+    }
+  }
+);
+
+// ---------------------------------------------------------------------
+// transcribeReferencePage — Assignment Submission, Stage 4. Like
+// transcribeHandwrittenDocument, but for a reference/bibliography page
+// specifically: one entry per reference, with particular care for the
+// exact formatting a real reference list carries (hanging indentation,
+// italics, punctuation) — never correcting or completing a citation the
+// student wrote incorrectly or incompletely, since that's the student's
+// own academic work to get right, not this app's to fix for them.
+// ---------------------------------------------------------------------
+
+interface TranscribeReferencePageRequest {
+  pageImagesBase64: string[];
+  referenceSystem: string;
+}
+
+interface TranscribeReferencePageResponse {
+  entries: string[];
+  notes: string;
+}
+
+const transcribeReferencePageSchema = {
+  type: "object",
+  properties: {
+    entries: {
+      type: "array",
+      items: { type: "string" },
+      description:
+        "One string per reference/bibliography entry, in the order written, formatting (indentation as " +
+        "leading spaces, italics marked with *asterisks*, punctuation) preserved exactly as written.",
+    },
+    notes: {
+      type: "string",
+      description:
+        "Anything a student should double-check - an entry that was hard to read, or one whose formatting " +
+        "doesn't match the stated reference system (described, not corrected). Empty string if nothing stood out.",
+    },
+  },
+  required: ["entries", "notes"],
+  additionalProperties: false,
+};
+
+export const transcribeReferencePage = onCall<TranscribeReferencePageRequest>(
+  { secrets: [geminiApiKey], region: "us-central1", timeoutSeconds: 120, memory: "512MiB", maxInstances: 5 },
+  async (request): Promise<TranscribeReferencePageResponse> => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "Sign in is required to transcribe a reference page.");
+    }
+    const { pageImagesBase64, referenceSystem } = request.data ?? {};
+    if (!Array.isArray(pageImagesBase64) || pageImagesBase64.length === 0) {
+      throw new HttpsError("invalid-argument", "'pageImagesBase64' must be a non-empty array.");
+    }
+    if (typeof referenceSystem !== "string" || referenceSystem.trim().length === 0) {
+      throw new HttpsError("invalid-argument", "'referenceSystem' is required.");
+    }
+
+    const ai = new GoogleGenAI({ apiKey: geminiApiKey.value() });
+    const prompt = [
+      `The attached image(s) are photo(s) of a student's handwritten (or printed) reference/bibliography page, ` +
+        `in page order. The student says they are using the ${referenceSystem} reference system.`,
+      "Read every reference entry exactly as written and return one string per entry, in the order they " +
+        "appear. Preserve the entry's own formatting as written: leading spaces for hanging indentation, wrap " +
+        "italicized text (e.g. a book/journal title) in *asterisks*, keep punctuation exactly as written.",
+      "Do NOT correct, complete, or reformat an entry to match the stated reference system's official rules - " +
+        "reproduce faithfully what the student actually wrote, even if it deviates from the system's real " +
+        "formatting rules. If an entry's formatting doesn't match what you'd expect for the stated system, " +
+        "describe that in notes rather than silently fixing it.",
+      "If a word or passage is illegible, still include your best reading but say so plainly in notes.",
+    ].join("\n");
+
+    const imageParts = pageImagesBase64.map((b64: string) => ({ inlineData: { mimeType: "image/jpeg", data: b64 } }));
+
+    let text: string | undefined;
+    try {
+      const response = await ai.models.generateContent({
+        model: GEMINI_MODEL,
+        contents: [{ role: "user", parts: [{ text: prompt }, ...imageParts] }],
+        config: { responseMimeType: "application/json", responseJsonSchema: transcribeReferencePageSchema },
+      });
+      text = response.text;
+    } catch (err) {
+      console.error("transcribeReferencePage: Gemini call failed", err);
+      throw new HttpsError("internal", "Failed to transcribe the reference page. Please try again.");
+    }
+
+    if (!text) {
+      throw new HttpsError("internal", "The AI did not return any transcribed content.");
+    }
+    try {
+      return JSON.parse(text) as TranscribeReferencePageResponse;
+    } catch (err) {
+      console.error("transcribeReferencePage: response was not valid JSON", text);
+      throw new HttpsError("internal", "The reference page response could not be parsed.");
+    }
+  }
+);
+
+// ---------------------------------------------------------------------
 // detectCandidateName — SUSPENDED (2026-08-30). The Flutter app no longer
 // calls this function: it sent one full-resolution page image to Gemini
 // per script purely to pre-fill a name field a teacher can type in a few

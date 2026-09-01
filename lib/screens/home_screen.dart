@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/record_of_work.dart';
 import '../models/scheme_of_work.dart';
 import '../models/syllabus_models.dart';
+import 'assignment_submission_screen.dart';
 import 'cdc_resources_screen.dart';
 import 'generate_lesson_plan_flow.dart';
 import 'handwriting_to_word_screen.dart';
@@ -306,6 +307,14 @@ class HomeScreen extends StatelessWidget {
                   subtitle: 'Photograph handwritten meeting notes, get back formatted minutes',
                   onTap: () => Navigator.of(context).push(
                     MaterialPageRoute(builder: (_) => const MinutesMakerScreen()),
+                  ),
+                ),
+                _FunctionButton(
+                  icon: Icons.assignment_turned_in_outlined,
+                  label: 'Assignment Submission',
+                  subtitle: 'Photograph a handwritten assignment and send it to your teacher, with proof of submission',
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const AssignmentSubmissionScreen()),
                   ),
                 ),
               ],
