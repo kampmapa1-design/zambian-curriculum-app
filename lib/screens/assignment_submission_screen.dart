@@ -27,8 +27,10 @@ enum _Step { cover, body, referenceSystem, references, review, transmit, receipt
 /// page, main body, and (if used) reference/bibliography page; the app
 /// transcribes each faithfully (never correcting or completing content
 /// that's the student's own academic work to get right), consolidates
-/// everything into one PDF plus a compressed backup of every original
-/// photo, records a SHA-256 + timestamp as proof, and sends the result
+/// everything into one Word document plus a viewable PDF backup of every
+/// original photo (2026-09-02: was a PDF + a .zip; now a Word doc + a
+/// PDF, per explicit request — see AssignmentSubmissionDocumentService),
+/// records a SHA-256 + timestamp as proof, and sends the result
 /// to a teacher by email (fully automatic, via a real transactional
 /// email backend) and/or WhatsApp (opens the chat pre-filled, one
 /// manual tap to attach and send). Entirely offline through
@@ -351,18 +353,18 @@ class _AssignmentSubmissionScreenState extends State<AssignmentSubmissionScreen>
       final submission = _submission!;
       final dir = await _repository.submissionDir(submission);
       final submittedAt = DateTime.now();
-      final pdf = await _documentService.generateConsolidatedPdf(
+      final doc = await _documentService.generateConsolidatedDocx(
         submission: submission,
         submissionDir: dir,
         submittedAt: submittedAt,
       );
       await _documentService.generateImageBundle(submission: submission, submissionDir: dir);
-      final hash = await _documentService.computeSha256(pdf);
+      final hash = await _documentService.computeSha256(doc);
 
       final updated = submission.copyWith(
         status: AssignmentSubmissionStatus.consolidated,
-        pdfFileName: 'submission.pdf',
-        imageBundleFileName: 'original_pages.zip',
+        docFileName: 'submission.docx',
+        imageBundleFileName: 'original_pages.pdf',
         sha256Hash: hash,
         submittedAt: submittedAt,
       );
@@ -388,8 +390,8 @@ class _AssignmentSubmissionScreenState extends State<AssignmentSubmissionScreen>
   // Stage 8 — Transmission
   // -------------------------------------------------------------------
 
-  /// Email is genuinely automatic (added 2026-09-01): the PDF and image
-  /// bundle go straight to the teacher's inbox via a real transactional
+  /// Email is genuinely automatic (added 2026-09-01): the Word doc and
+  /// image-PDF go straight to the teacher's inbox via a real transactional
   /// email backend (Resend, called through `sendAssignmentSubmissionEmail`)
   /// with no further tap from the student. WhatsApp is the one channel
   /// that still needs a manual tap — there's no WhatsApp *sending* API
@@ -413,7 +415,7 @@ class _AssignmentSubmissionScreenState extends State<AssignmentSubmissionScreen>
     await _runBusy('Sending…', () async {
       final submission = _submission!;
       final dir = await _repository.submissionDir(submission);
-      final pdfFile = _repository.fileFor(submission, dir, submission.pdfFileName!);
+      final docFile = _repository.fileFor(submission, dir, submission.docFileName!);
       final bundleFile = _repository.fileFor(submission, dir, submission.imageBundleFileName!);
       final subject = 'Assignment Submission — ${submission.assignmentTitle.isEmpty ? submission.studentName : submission.assignmentTitle}';
 
@@ -428,7 +430,7 @@ class _AssignmentSubmissionScreenState extends State<AssignmentSubmissionScreen>
             submissionHash: submission.sha256Hash ?? '',
             submittedAt: submission.submittedAt ?? DateTime.now(),
             attachments: [
-              EmailAttachmentFile(file: pdfFile, filename: submission.pdfFileName!),
+              EmailAttachmentFile(file: docFile, filename: submission.docFileName!),
               EmailAttachmentFile(file: bundleFile, filename: submission.imageBundleFileName!),
             ],
           );
@@ -457,7 +459,7 @@ class _AssignmentSubmissionScreenState extends State<AssignmentSubmissionScreen>
         if (whatsAppOpened && mounted) {
           await SharePlus.instance.share(
             ShareParams(
-              files: [XFile(pdfFile.path), XFile(bundleFile.path)],
+              files: [XFile(docFile.path), XFile(bundleFile.path)],
               subject: subject,
               text: 'Attach to the WhatsApp chat that just opened.',
             ),
@@ -546,8 +548,8 @@ class _AssignmentSubmissionScreenState extends State<AssignmentSubmissionScreen>
       case _Step.review:
         return FilledButton.icon(
           onPressed: _consolidate,
-          icon: const Icon(Icons.picture_as_pdf_outlined, size: 18),
-          label: const Text('Generate Submission PDF'),
+          icon: const Icon(Icons.description_outlined, size: 18),
+          label: const Text('Generate Submission'),
         );
       case _Step.transmit:
         return FilledButton.icon(
@@ -754,8 +756,33 @@ class _AssignmentSubmissionScreenState extends State<AssignmentSubmissionScreen>
           ),
         ),
         const SizedBox(height: 16),
+        // "Make the same sent copy after sending available to the sender/
+        // student" (2026-09-02) — only offered here, after a real send,
+        // never earlier: there's no share/download action anywhere before
+        // this receipt step, so nothing lets a student grab the processed
+        // work before it's actually been submitted to the teacher.
+        OutlinedButton.icon(
+          onPressed: _saveOwnCopy,
+          icon: const Icon(Icons.download_outlined),
+          label: const Text('Save / Share Your Copy'),
+        ),
+        const SizedBox(height: 12),
         OutlinedButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Done')),
       ],
+    );
+  }
+
+  Future<void> _saveOwnCopy() async {
+    final submission = _submission!;
+    final dir = await _repository.submissionDir(submission);
+    final docFile = _repository.fileFor(submission, dir, submission.docFileName!);
+    final bundleFile = _repository.fileFor(submission, dir, submission.imageBundleFileName!);
+    await SharePlus.instance.share(
+      ShareParams(
+        files: [XFile(docFile.path), XFile(bundleFile.path)],
+        subject: 'Your copy — ${submission.assignmentTitle.isEmpty ? submission.studentName : submission.assignmentTitle}',
+        text: 'This is the same copy that was sent to your teacher — save it to your files or another app.',
+      ),
     );
   }
 

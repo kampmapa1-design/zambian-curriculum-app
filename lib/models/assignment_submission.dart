@@ -112,7 +112,7 @@ class AssignmentSubmission {
 
   // Stage 5-6 — consolidation + integrity, set once the student reviews
   // and confirms.
-  final String? pdfFileName;
+  final String? docFileName;
   final String? imageBundleFileName;
   final String? sha256Hash;
   final DateTime? submittedAt;
@@ -146,7 +146,7 @@ class AssignmentSubmission {
     this.referenceSystem = ReferenceSystem.none,
     this.referencePageFileNames = const [],
     this.transcribedReferences = const [],
-    this.pdfFileName,
+    this.docFileName,
     this.imageBundleFileName,
     this.sha256Hash,
     this.submittedAt,
@@ -173,7 +173,7 @@ class AssignmentSubmission {
     ReferenceSystem? referenceSystem,
     List<String>? referencePageFileNames,
     List<String>? transcribedReferences,
-    String? pdfFileName,
+    String? docFileName,
     String? imageBundleFileName,
     String? sha256Hash,
     DateTime? submittedAt,
@@ -201,7 +201,7 @@ class AssignmentSubmission {
         referenceSystem: referenceSystem ?? this.referenceSystem,
         referencePageFileNames: referencePageFileNames ?? this.referencePageFileNames,
         transcribedReferences: transcribedReferences ?? this.transcribedReferences,
-        pdfFileName: pdfFileName ?? this.pdfFileName,
+        docFileName: docFileName ?? this.docFileName,
         imageBundleFileName: imageBundleFileName ?? this.imageBundleFileName,
         sha256Hash: sha256Hash ?? this.sha256Hash,
         submittedAt: submittedAt ?? this.submittedAt,
@@ -230,7 +230,7 @@ class AssignmentSubmission {
         'referenceSystem': referenceSystem.dbValue,
         'referencePageFileNames': referencePageFileNames,
         'transcribedReferences': transcribedReferences,
-        'pdfFileName': pdfFileName,
+        'docFileName': docFileName,
         'imageBundleFileName': imageBundleFileName,
         'sha256Hash': sha256Hash,
         'submittedAt': submittedAt?.toIso8601String(),
@@ -263,7 +263,7 @@ class AssignmentSubmission {
         referenceSystem: ReferenceSystem.fromDb(json['referenceSystem'] as String? ?? 'none'),
         referencePageFileNames: (json['referencePageFileNames'] as List?)?.cast<String>() ?? const [],
         transcribedReferences: (json['transcribedReferences'] as List?)?.cast<String>() ?? const [],
-        pdfFileName: json['pdfFileName'] as String?,
+        docFileName: json['docFileName'] as String?,
         imageBundleFileName: json['imageBundleFileName'] as String?,
         sha256Hash: json['sha256Hash'] as String?,
         submittedAt: json['submittedAt'] != null ? DateTime.parse(json['submittedAt'] as String) : null,

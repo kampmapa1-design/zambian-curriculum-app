@@ -56,7 +56,7 @@ class TestSubmission {
   final List<String> pageFileNames;
   final List<TestAnswerSegment> segments;
 
-  final String? pdfFileName;
+  final String? docFileName;
   final String? imageBundleFileName;
   final String? sha256Hash;
   final DateTime? submittedAt;
@@ -83,7 +83,7 @@ class TestSubmission {
     this.institution = '',
     this.pageFileNames = const [],
     this.segments = const [],
-    this.pdfFileName,
+    this.docFileName,
     this.imageBundleFileName,
     this.sha256Hash,
     this.submittedAt,
@@ -103,7 +103,7 @@ class TestSubmission {
     String? institution,
     List<String>? pageFileNames,
     List<TestAnswerSegment>? segments,
-    String? pdfFileName,
+    String? docFileName,
     String? imageBundleFileName,
     String? sha256Hash,
     DateTime? submittedAt,
@@ -124,7 +124,7 @@ class TestSubmission {
         institution: institution ?? this.institution,
         pageFileNames: pageFileNames ?? this.pageFileNames,
         segments: segments ?? this.segments,
-        pdfFileName: pdfFileName ?? this.pdfFileName,
+        docFileName: docFileName ?? this.docFileName,
         imageBundleFileName: imageBundleFileName ?? this.imageBundleFileName,
         sha256Hash: sha256Hash ?? this.sha256Hash,
         submittedAt: submittedAt ?? this.submittedAt,
@@ -146,7 +146,7 @@ class TestSubmission {
         'institution': institution,
         'pageFileNames': pageFileNames,
         'segments': segments.map((s) => s.toJson()).toList(),
-        'pdfFileName': pdfFileName,
+        'docFileName': docFileName,
         'imageBundleFileName': imageBundleFileName,
         'sha256Hash': sha256Hash,
         'submittedAt': submittedAt?.toIso8601String(),
@@ -170,7 +170,7 @@ class TestSubmission {
         segments:
             (json['segments'] as List?)?.cast<Map<String, dynamic>>().map(TestAnswerSegment.fromJson).toList() ??
                 const [],
-        pdfFileName: json['pdfFileName'] as String?,
+        docFileName: json['docFileName'] as String?,
         imageBundleFileName: json['imageBundleFileName'] as String?,
         sha256Hash: json['sha256Hash'] as String?,
         submittedAt: json['submittedAt'] != null ? DateTime.parse(json['submittedAt'] as String) : null,

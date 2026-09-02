@@ -28,8 +28,10 @@ enum _Step { capture, info, review, transmit, receipt }
 /// Test Submission — a student photographs up to 5 pages of a handwritten
 /// test, the app detects and tags each answer segment by its handwritten
 /// question-number marker (never guessing when no marker is found),
-/// consolidates everything into one PDF plus a compressed backup of every
-/// original photo, records a SHA-256 + timestamp as proof, and sends the
+/// consolidates everything into one Word document plus a viewable PDF
+/// backup of every original photo (2026-09-02: was a PDF + a .zip; now a
+/// Word doc + a PDF, per explicit request), records a SHA-256 + timestamp
+/// as proof, and sends the
 /// result to a teacher by email (automatic) and/or WhatsApp (one tap) —
 /// reusing Assignment Submission's transmission logic exactly. A finished
 /// submission can also be sent straight into the AI Marking queue
@@ -241,18 +243,18 @@ class _TestSubmissionScreenState extends State<TestSubmissionScreen> {
       final submission = _submission!;
       final dir = await _repository.submissionDir(submission);
       final submittedAt = DateTime.now();
-      final pdf = await _documentService.generateConsolidatedPdf(
+      final doc = await _documentService.generateConsolidatedDocx(
         submission: submission,
         submissionDir: dir,
         submittedAt: submittedAt,
       );
       await _documentService.generateImageBundle(submission: submission, submissionDir: dir);
-      final hash = await _documentService.computeSha256(pdf);
+      final hash = await _documentService.computeSha256(doc);
 
       final updated = submission.copyWith(
         status: TestSubmissionStatus.consolidated,
-        pdfFileName: 'submission.pdf',
-        imageBundleFileName: 'original_pages.zip',
+        docFileName: 'submission.docx',
+        imageBundleFileName: 'original_pages.pdf',
         sha256Hash: hash,
         submittedAt: submittedAt,
       );
@@ -288,7 +290,7 @@ class _TestSubmissionScreenState extends State<TestSubmissionScreen> {
     await _runBusy('Sending…', () async {
       final submission = _submission!;
       final dir = await _repository.submissionDir(submission);
-      final pdfFile = _repository.fileFor(submission, dir, submission.pdfFileName!);
+      final docFile = _repository.fileFor(submission, dir, submission.docFileName!);
       final bundleFile = _repository.fileFor(submission, dir, submission.imageBundleFileName!);
       final subject = 'Test Submission — ${submission.subjectName.isEmpty ? submission.studentName : submission.subjectName}';
 
@@ -303,7 +305,7 @@ class _TestSubmissionScreenState extends State<TestSubmissionScreen> {
             submissionHash: submission.sha256Hash ?? '',
             submittedAt: submission.submittedAt ?? DateTime.now(),
             attachments: [
-              EmailAttachmentFile(file: pdfFile, filename: submission.pdfFileName!),
+              EmailAttachmentFile(file: docFile, filename: submission.docFileName!),
               EmailAttachmentFile(file: bundleFile, filename: submission.imageBundleFileName!),
             ],
             submissionKind: 'test',
@@ -333,7 +335,7 @@ class _TestSubmissionScreenState extends State<TestSubmissionScreen> {
         if (whatsAppOpened && mounted) {
           await SharePlus.instance.share(
             ShareParams(
-              files: [XFile(pdfFile.path), XFile(bundleFile.path)],
+              files: [XFile(docFile.path), XFile(bundleFile.path)],
               subject: subject,
               text: 'Attach to the WhatsApp chat that just opened.',
             ),
@@ -477,8 +479,8 @@ class _TestSubmissionScreenState extends State<TestSubmissionScreen> {
       case _Step.review:
         return FilledButton.icon(
           onPressed: _consolidate,
-          icon: const Icon(Icons.picture_as_pdf_outlined, size: 18),
-          label: const Text('Generate Submission PDF'),
+          icon: const Icon(Icons.description_outlined, size: 18),
+          label: const Text('Generate Submission'),
         );
       case _Step.transmit:
         return FilledButton.icon(
@@ -657,8 +659,32 @@ class _TestSubmissionScreenState extends State<TestSubmissionScreen> {
             label: const Text('Already in Marking Queue — Open Queue'),
           ),
         const SizedBox(height: 12),
+        // "Make the same sent copy after sending available to the sender/
+        // student" (2026-09-02) — only offered here, after a real send,
+        // never earlier: there's no share/download action anywhere before
+        // this receipt step.
+        OutlinedButton.icon(
+          onPressed: _saveOwnCopy,
+          icon: const Icon(Icons.download_outlined),
+          label: const Text('Save / Share Your Copy'),
+        ),
+        const SizedBox(height: 12),
         OutlinedButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Done')),
       ],
+    );
+  }
+
+  Future<void> _saveOwnCopy() async {
+    final submission = _submission!;
+    final dir = await _repository.submissionDir(submission);
+    final docFile = _repository.fileFor(submission, dir, submission.docFileName!);
+    final bundleFile = _repository.fileFor(submission, dir, submission.imageBundleFileName!);
+    await SharePlus.instance.share(
+      ShareParams(
+        files: [XFile(docFile.path), XFile(bundleFile.path)],
+        subject: 'Your copy — ${submission.subjectName.isEmpty ? submission.studentName : submission.subjectName}',
+        text: 'This is the same copy that was sent to your teacher — save it to your files or another app.',
+      ),
     );
   }
 
