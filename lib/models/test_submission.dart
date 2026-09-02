@@ -48,6 +48,11 @@ class TestSubmission {
   final String subjectName;
   final String gradeName;
 
+  /// The student's school/institution, plain free text — added 2026-09-02
+  /// alongside dropping the curriculum subject/grade picker screen in
+  /// favor of plain text fields on the same page as the student's name.
+  final String institution;
+
   final List<String> pageFileNames;
   final List<TestAnswerSegment> segments;
 
@@ -75,6 +80,7 @@ class TestSubmission {
     this.studentName = '',
     this.subjectName = '',
     this.gradeName = '',
+    this.institution = '',
     this.pageFileNames = const [],
     this.segments = const [],
     this.pdfFileName,
@@ -94,6 +100,7 @@ class TestSubmission {
     String? studentName,
     String? subjectName,
     String? gradeName,
+    String? institution,
     List<String>? pageFileNames,
     List<TestAnswerSegment>? segments,
     String? pdfFileName,
@@ -114,6 +121,7 @@ class TestSubmission {
         studentName: studentName ?? this.studentName,
         subjectName: subjectName ?? this.subjectName,
         gradeName: gradeName ?? this.gradeName,
+        institution: institution ?? this.institution,
         pageFileNames: pageFileNames ?? this.pageFileNames,
         segments: segments ?? this.segments,
         pdfFileName: pdfFileName ?? this.pdfFileName,
@@ -135,6 +143,7 @@ class TestSubmission {
         'studentName': studentName,
         'subjectName': subjectName,
         'gradeName': gradeName,
+        'institution': institution,
         'pageFileNames': pageFileNames,
         'segments': segments.map((s) => s.toJson()).toList(),
         'pdfFileName': pdfFileName,
@@ -156,6 +165,7 @@ class TestSubmission {
         studentName: json['studentName'] as String? ?? '',
         subjectName: json['subjectName'] as String? ?? '',
         gradeName: json['gradeName'] as String? ?? '',
+        institution: json['institution'] as String? ?? '',
         pageFileNames: (json['pageFileNames'] as List?)?.cast<String>() ?? const [],
         segments:
             (json['segments'] as List?)?.cast<Map<String, dynamic>>().map(TestAnswerSegment.fromJson).toList() ??

@@ -16,17 +16,30 @@ class AssignmentSubmissionEmailUnavailable implements Exception {
   String toString() => message;
 }
 
+/// One file to attach — a local [file] and the name it should have in the
+/// email.
+class EmailAttachmentFile {
+  final File file;
+  final String filename;
+  const EmailAttachmentFile({required this.file, required this.filename});
+}
+
 /// Real, automatic email sending for Assignment Submission's Stage 8 —
 /// calls the `sendAssignmentSubmissionEmail` Cloud Function, which hands
-/// the PDF (and image bundle, if it fits) to Resend (resend.com), a
-/// third-party transactional email API. Unlike the WhatsApp path
-/// elsewhere in this feature, this genuinely needs no further tap once
-/// called: the student's teacher receives the email directly.
+/// the attachments to Brevo (brevo.com), a third-party transactional
+/// email API. Unlike the WhatsApp path elsewhere in this feature, this
+/// genuinely needs no further tap once called: the student's teacher
+/// receives the email directly.
 ///
-/// Shared verbatim with Test Submission (2026-09-02, see that feature's
-/// Stage 7: "reuse Assignment Submission's transmission logic exactly")
-/// via the [submissionKind] parameter on [send] — still named for
-/// Assignment Submission since that's what it was built for first.
+/// Shared verbatim with Test Submission (see that feature's Stage 7:
+/// "reuse Assignment Submission's transmission logic exactly") via the
+/// [submissionKind] parameter on [send] — still named for Assignment
+/// Submission since that's what it was built for first. [attachments]
+/// is a generic list (not "a PDF plus a bundle" specifically) so either
+/// feature can send however many files it needs — see the Cloud
+/// Function's own header comment for why Brevo, not Resend: Resend's
+/// zero-setup shared sender can only email the account owner, confirmed
+/// via a real 403 in production.
 class AssignmentSubmissionEmailService {
   AssignmentSubmissionEmailService({FirebaseFunctions? functions}) : _functions = functions ?? FirebaseFunctions.instance;
 
@@ -37,21 +50,18 @@ class AssignmentSubmissionEmailService {
     return !result.contains(ConnectivityResult.none);
   }
 
-  /// Sends [pdfFile] (and [imageBundleFile], if given) to [recipientEmail].
-  /// [assignmentTitle] is just the title line shown in the email body —
-  /// for a non-'assignment' [submissionKind] (e.g. Test Submission passes
-  /// 'test'), pass whatever title fits that context (e.g. the subject
-  /// name). Returns the provider's message id on success (may be empty).
+  /// Sends [attachments] to [recipientEmail]. [assignmentTitle] is just
+  /// the title line shown in the email body — for a non-'assignment'
+  /// [submissionKind] (e.g. Test Submission passes 'test'), pass
+  /// whatever title fits that context (e.g. the subject name). Returns
+  /// the provider's message id on success (may be empty).
   Future<String> send({
     required String recipientEmail,
     required String studentName,
     required String assignmentTitle,
     required String submissionHash,
     required DateTime submittedAt,
-    required File pdfFile,
-    required String pdfFileName,
-    File? imageBundleFile,
-    String? imageBundleFileName,
+    required List<EmailAttachmentFile> attachments,
     String submissionKind = 'assignment',
   }) async {
     var lastStatus = 'starting';
@@ -64,10 +74,7 @@ class AssignmentSubmissionEmailService {
         assignmentTitle: assignmentTitle,
         submissionHash: submissionHash,
         submittedAt: submittedAt,
-        pdfFile: pdfFile,
-        pdfFileName: pdfFileName,
-        imageBundleFile: imageBundleFile,
-        imageBundleFileName: imageBundleFileName,
+        attachments: attachments,
         submissionKind: submissionKind,
         onProgress: track,
       ).timeout(
@@ -90,10 +97,7 @@ class AssignmentSubmissionEmailService {
     required String assignmentTitle,
     required String submissionHash,
     required DateTime submittedAt,
-    required File pdfFile,
-    required String pdfFileName,
-    required File? imageBundleFile,
-    required String? imageBundleFileName,
+    required List<EmailAttachmentFile> attachments,
     required String submissionKind,
     required void Function(String status) onProgress,
   }) async {
@@ -106,8 +110,10 @@ class AssignmentSubmissionEmailService {
     await AuthService.instance.ensureSignedIn();
 
     onProgress('Preparing the submission…');
-    final pdfBase64 = base64Encode(await pdfFile.readAsBytes());
-    final imageBundleBase64 = imageBundleFile != null ? base64Encode(await imageBundleFile.readAsBytes()) : null;
+    final encodedAttachments = [
+      for (final a in attachments)
+        {'filename': a.filename, 'base64': base64Encode(await a.file.readAsBytes())},
+    ];
 
     final callable = _functions.httpsCallable(
       'sendAssignmentSubmissionEmail',
@@ -122,10 +128,7 @@ class AssignmentSubmissionEmailService {
         'assignmentTitle': assignmentTitle,
         'submissionHash': submissionHash,
         'submittedAt': submittedAt.toIso8601String(),
-        'pdfBase64': pdfBase64,
-        'pdfFileName': pdfFileName,
-        if (imageBundleBase64 != null) 'imageBundleBase64': imageBundleBase64,
-        if (imageBundleFileName != null) 'imageBundleFileName': imageBundleFileName,
+        'attachments': encodedAttachments,
         'submissionKind': submissionKind,
       });
       final messageId = result.data['messageId'];

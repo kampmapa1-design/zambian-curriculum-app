@@ -427,10 +427,10 @@ class _AssignmentSubmissionScreenState extends State<AssignmentSubmissionScreen>
             assignmentTitle: submission.assignmentTitle,
             submissionHash: submission.sha256Hash ?? '',
             submittedAt: submission.submittedAt ?? DateTime.now(),
-            pdfFile: pdfFile,
-            pdfFileName: submission.pdfFileName!,
-            imageBundleFile: bundleFile,
-            imageBundleFileName: submission.imageBundleFileName,
+            attachments: [
+              EmailAttachmentFile(file: pdfFile, filename: submission.pdfFileName!),
+              EmailAttachmentFile(file: bundleFile, filename: submission.imageBundleFileName!),
+            ],
           );
           emailSent = true;
         } on AssignmentSubmissionEmailUnavailable catch (e) {
@@ -516,6 +516,61 @@ class _AssignmentSubmissionScreenState extends State<AssignmentSubmissionScreen>
                   _Step.transmit => _buildTransmitStep(),
                   _Step.receipt => _buildReceiptStep(),
                 },
+      // The primary "Continue"-style button lives in a small fixed bar
+      // pinned above the keyboard/bottom edge (2026-09-02), not as the
+      // last item in each step's scrolling list — a real complaint on a
+      // long list of segment fields: the button could end up scrolled out
+      // of view or hidden behind the keyboard. `resizeToAvoidBottomInset`
+      // (Scaffold's default) keeps this bar above the keyboard
+      // automatically. Compact (36px) and padded off the physical bottom
+      // edge, rather than the previous full-size button glued to it.
+      bottomNavigationBar: _submission == null || _busy ? null : _bottomBar(_primaryActionFor(_step)),
+    );
+  }
+
+  /// The current step's one primary action, or null on steps that don't
+  /// have one yet (e.g. "Cover Page"/"Main Body" before anything's been
+  /// captured — those keep an inline capture button only).
+  Widget? _primaryActionFor(_Step step) {
+    switch (step) {
+      case _Step.cover:
+        return _submission!.coverPhotoFileName == null
+            ? null
+            : FilledButton(onPressed: _confirmCoverFields, child: const Text('Continue to Main Body'));
+      case _Step.body:
+        return _bodyBlocks.isEmpty ? null : FilledButton(onPressed: _confirmBody, child: const Text('Continue to References'));
+      case _Step.referenceSystem:
+        return FilledButton(onPressed: () => _chooseReferenceSystem(_referenceSystem), child: const Text('Continue'));
+      case _Step.references:
+        return _referenceEntries.isEmpty ? null : FilledButton(onPressed: _confirmReferences, child: const Text('Continue'));
+      case _Step.review:
+        return FilledButton.icon(
+          onPressed: _consolidate,
+          icon: const Icon(Icons.picture_as_pdf_outlined, size: 18),
+          label: const Text('Generate Submission PDF'),
+        );
+      case _Step.transmit:
+        return FilledButton.icon(
+          onPressed: _send,
+          icon: const Icon(Icons.send_outlined, size: 18),
+          label: const Text('Send Submission'),
+        );
+      case _Step.receipt:
+        return null;
+    }
+  }
+
+  Widget? _bottomBar(Widget? action) {
+    if (action == null) return null;
+    return SafeArea(
+      top: false,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 14),
+        child: SizedBox(
+          height: 36,
+          child: DefaultTextStyle.merge(style: const TextStyle(fontSize: 13), child: action),
+        ),
+      ),
     );
   }
 
@@ -543,8 +598,6 @@ class _AssignmentSubmissionScreenState extends State<AssignmentSubmissionScreen>
           _textField('Lecturer / Teacher Name', _teacherNameController),
           _textField('Date', _dateController),
           _textField('Institution', _institutionController),
-          const SizedBox(height: 16),
-          FilledButton(onPressed: _confirmCoverFields, child: const Text('Continue to Main Body')),
         ],
       ],
     );
@@ -573,7 +626,6 @@ class _AssignmentSubmissionScreenState extends State<AssignmentSubmissionScreen>
               decoration: InputDecoration(labelText: _bodyBlocks[i].type.name, border: const OutlineInputBorder()),
             ),
           ),
-        if (_bodyBlocks.isNotEmpty) FilledButton(onPressed: _confirmBody, child: const Text('Continue to References')),
       ],
     );
   }
@@ -593,8 +645,6 @@ class _AssignmentSubmissionScreenState extends State<AssignmentSubmissionScreen>
             title: Text(system.label),
             onChanged: (value) => setState(() => _referenceSystem = value!),
           ),
-        const SizedBox(height: 12),
-        FilledButton(onPressed: () => _chooseReferenceSystem(_referenceSystem), child: const Text('Continue')),
       ],
     );
   }
@@ -622,7 +672,6 @@ class _AssignmentSubmissionScreenState extends State<AssignmentSubmissionScreen>
               decoration: InputDecoration(labelText: 'Entry ${i + 1}', border: const OutlineInputBorder()),
             ),
           ),
-        if (_referenceEntries.isNotEmpty) FilledButton(onPressed: _confirmReferences, child: const Text('Continue')),
       ],
     );
   }
@@ -652,12 +701,6 @@ class _AssignmentSubmissionScreenState extends State<AssignmentSubmissionScreen>
             ),
           ),
         ),
-        const SizedBox(height: 16),
-        FilledButton.icon(
-          onPressed: _consolidate,
-          icon: const Icon(Icons.picture_as_pdf_outlined),
-          label: const Text('Generate Submission PDF'),
-        ),
       ],
     );
   }
@@ -675,8 +718,6 @@ class _AssignmentSubmissionScreenState extends State<AssignmentSubmissionScreen>
         const SizedBox(height: 16),
         _textField('Lecturer / Teacher Email (optional)', _emailController, keyboardType: TextInputType.emailAddress),
         _textField('Lecturer / Teacher WhatsApp Number (optional)', _whatsAppController, keyboardType: TextInputType.phone),
-        const SizedBox(height: 16),
-        FilledButton.icon(onPressed: _send, icon: const Icon(Icons.send_outlined), label: const Text('Send Submission')),
       ],
     );
   }

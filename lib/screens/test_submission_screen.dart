@@ -5,7 +5,6 @@ import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../models/marking_script.dart';
-import '../models/syllabus_models.dart';
 import '../models/test_submission.dart';
 import '../services/assignment_submission_email_service.dart';
 import '../services/marking_script_repository.dart';
@@ -15,7 +14,6 @@ import '../services/test_submission_repository.dart';
 import '../services/test_submission_transcription_service.dart';
 import 'document_pages_capture_screen.dart';
 import 'marking_queue_screen.dart';
-import 'subject_grade_topic_picker_screen.dart';
 
 /// Whether Test Submission's rewarded-ad gate is active — Stage 9's
 /// dormant scaffold, off by default so the feature is fully free during
@@ -71,7 +69,9 @@ class _TestSubmissionScreenState extends State<TestSubmissionScreen> {
   String? _busyMessage;
 
   final _studentNameController = TextEditingController();
-  SyllabusTemplate? _subjectGrade;
+  final _subjectController = TextEditingController();
+  final _gradeController = TextEditingController();
+  final _institutionController = TextEditingController();
 
   final _emailController = TextEditingController();
   final _whatsAppController = TextEditingController();
@@ -105,6 +105,9 @@ class _TestSubmissionScreenState extends State<TestSubmissionScreen> {
   @override
   void dispose() {
     _studentNameController.dispose();
+    _subjectController.dispose();
+    _gradeController.dispose();
+    _institutionController.dispose();
     _emailController.dispose();
     _whatsAppController.dispose();
     for (final c in [..._questionControllers, ..._textControllers]) {
@@ -131,30 +134,31 @@ class _TestSubmissionScreenState extends State<TestSubmissionScreen> {
 
   // -------------------------------------------------------------------
   // Stage 1 — Who is this for. Asked AFTER the first capture (2026-09-02),
-  // not before — see _init()'s doc comment for why.
+  // not before — see _init()'s doc comment for why. Plain typed fields
+  // only (2026-09-02) — this used to push a full curriculum subject/
+  // grade picker screen; removed per explicit request ("remove the page
+  // about the list of subjects"), replaced with Subject/Course and
+  // School/Institution as free text right on this same page, alongside
+  // Student Name. Grade/Class is kept as a third free-text field (not
+  // explicitly requested, but needed: MarkingScript.gradeName, used by
+  // the Stage 10 "Send to Marking" bridge, has nowhere else to come from
+  // once the picker is gone).
   // -------------------------------------------------------------------
-
-  Future<void> _chooseSubjectGrade() async {
-    final picked = await Navigator.of(context).push<SyllabusTemplate>(
-      MaterialPageRoute(builder: (_) => const SubjectGradeTopicPickerScreen(title: 'Subject & Grade', pickTopic: false)),
-    );
-    if (picked == null || !mounted) return;
-    setState(() => _subjectGrade = picked);
-  }
 
   void _confirmInfo() {
     final name = _studentNameController.text.trim();
-    final subjectGrade = _subjectGrade;
-    if (name.isEmpty || subjectGrade == null) {
+    final subject = _subjectController.text.trim();
+    if (name.isEmpty || subject.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Enter the student\'s name and choose a subject & grade to continue.')),
+        const SnackBar(content: Text('Enter the student\'s name and subject/course to continue.')),
       );
       return;
     }
     final updated = _submission!.copyWith(
       studentName: name,
-      subjectName: subjectGrade.subject.name,
-      gradeName: subjectGrade.grade.name,
+      subjectName: subject,
+      gradeName: _gradeController.text.trim(),
+      institution: _institutionController.text.trim(),
     );
     _repository.update(updated);
     setState(() {
@@ -298,10 +302,10 @@ class _TestSubmissionScreenState extends State<TestSubmissionScreen> {
             assignmentTitle: submission.subjectName,
             submissionHash: submission.sha256Hash ?? '',
             submittedAt: submission.submittedAt ?? DateTime.now(),
-            pdfFile: pdfFile,
-            pdfFileName: submission.pdfFileName!,
-            imageBundleFile: bundleFile,
-            imageBundleFileName: submission.imageBundleFileName,
+            attachments: [
+              EmailAttachmentFile(file: pdfFile, filename: submission.pdfFileName!),
+              EmailAttachmentFile(file: bundleFile, filename: submission.imageBundleFileName!),
+            ],
             submissionKind: 'test',
           );
           emailSent = true;
@@ -455,6 +459,49 @@ class _TestSubmissionScreenState extends State<TestSubmissionScreen> {
                   _Step.transmit => _buildTransmitStep(),
                   _Step.receipt => _buildReceiptStep(),
                 },
+      // Primary action pinned in a small fixed bar above the keyboard/
+      // bottom edge (2026-09-02), not as the last item in a scrolling
+      // list — was getting scrolled out of view or hidden behind the
+      // keyboard on a long segment list. See AssignmentSubmissionScreen's
+      // identical fix for the full reasoning.
+      bottomNavigationBar: _submission == null || _busy ? null : _bottomBar(_primaryActionFor(_step)),
+    );
+  }
+
+  Widget? _primaryActionFor(_Step step) {
+    switch (step) {
+      case _Step.info:
+        return FilledButton(onPressed: _confirmInfo, child: const Text('Continue to Review'));
+      case _Step.capture:
+        return _segments.isEmpty ? null : FilledButton(onPressed: _confirmSegments, child: const Text('Continue'));
+      case _Step.review:
+        return FilledButton.icon(
+          onPressed: _consolidate,
+          icon: const Icon(Icons.picture_as_pdf_outlined, size: 18),
+          label: const Text('Generate Submission PDF'),
+        );
+      case _Step.transmit:
+        return FilledButton.icon(
+          onPressed: _send,
+          icon: const Icon(Icons.send_outlined, size: 18),
+          label: const Text('Send Submission'),
+        );
+      case _Step.receipt:
+        return null;
+    }
+  }
+
+  Widget? _bottomBar(Widget? action) {
+    if (action == null) return null;
+    return SafeArea(
+      top: false,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 14),
+        child: SizedBox(
+          height: 36,
+          child: DefaultTextStyle.merge(style: const TextStyle(fontSize: 13), child: action),
+        ),
+      ),
     );
   }
 
@@ -464,19 +511,12 @@ class _TestSubmissionScreenState extends State<TestSubmissionScreen> {
       children: [
         Text('Who is this for?', style: Theme.of(context).textTheme.titleLarge),
         const SizedBox(height: 8),
-        const Text('Enter the student\'s name and choose the subject & grade this test is for.'),
+        const Text('Enter the student\'s name, subject/course, and school.'),
         const SizedBox(height: 16),
         _textField('Student Name', _studentNameController),
-        const SizedBox(height: 8),
-        OutlinedButton.icon(
-          onPressed: _chooseSubjectGrade,
-          icon: const Icon(Icons.menu_book_outlined),
-          label: Text(_subjectGrade == null
-              ? 'Choose Subject & Grade'
-              : '${_subjectGrade!.subject.name} — ${_subjectGrade!.grade.name}'),
-        ),
-        const SizedBox(height: 16),
-        FilledButton(onPressed: _confirmInfo, child: const Text('Continue to Review')),
+        _textField('Subject / Course', _subjectController),
+        _textField('Grade / Class (optional)', _gradeController),
+        _textField('School / Institution (optional)', _institutionController),
       ],
     );
   }
@@ -522,7 +562,6 @@ class _TestSubmissionScreenState extends State<TestSubmissionScreen> {
               ],
             ),
           ),
-        if (_segments.isNotEmpty) FilledButton(onPressed: _confirmSegments, child: const Text('Continue')),
       ],
     );
   }
@@ -540,20 +579,16 @@ class _TestSubmissionScreenState extends State<TestSubmissionScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(submission.subjectName.isEmpty ? '(no subject chosen)' : submission.subjectName,
+                Text(submission.subjectName.isEmpty ? '(no subject entered)' : submission.subjectName,
                     style: Theme.of(context).textTheme.titleMedium),
-                Text('${submission.studentName} · ${submission.gradeName}'),
+                Text([submission.studentName, submission.gradeName, submission.institution]
+                    .where((s) => s.isNotEmpty)
+                    .join(' · ')),
                 const SizedBox(height: 8),
                 Text('${submission.segments.length} answer segment(s) transcribed'),
               ],
             ),
           ),
-        ),
-        const SizedBox(height: 16),
-        FilledButton.icon(
-          onPressed: _consolidate,
-          icon: const Icon(Icons.picture_as_pdf_outlined),
-          label: const Text('Generate Submission PDF'),
         ),
       ],
     );
@@ -572,8 +607,6 @@ class _TestSubmissionScreenState extends State<TestSubmissionScreen> {
         const SizedBox(height: 16),
         _textField('Lecturer / Teacher Email (optional)', _emailController, keyboardType: TextInputType.emailAddress),
         _textField('Lecturer / Teacher WhatsApp Number (optional)', _whatsAppController, keyboardType: TextInputType.phone),
-        const SizedBox(height: 16),
-        FilledButton.icon(onPressed: _send, icon: const Icon(Icons.send_outlined), label: const Text('Send Submission')),
       ],
     );
   }
@@ -596,6 +629,7 @@ class _TestSubmissionScreenState extends State<TestSubmissionScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _receiptRow('Student', submission.studentName),
+                if (submission.institution.isNotEmpty) _receiptRow('School / Institution', submission.institution),
                 _receiptRow('Subject', submission.subjectName),
                 _receiptRow('Submitted', submission.submittedAt?.toLocal().toString() ?? ''),
                 _receiptRow('SHA-256', submission.sha256Hash ?? ''),

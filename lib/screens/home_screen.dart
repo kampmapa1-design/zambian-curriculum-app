@@ -231,7 +231,7 @@ class HomeScreen extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(4, 20, 4, 8),
                   child: Text(
-                    'CDC DIGITAL LIBRARY',
+                    'PUBLIC ACCESS LIBRARIES',
                     style: Theme.of(context)
                         .textTheme
                         .labelMedium

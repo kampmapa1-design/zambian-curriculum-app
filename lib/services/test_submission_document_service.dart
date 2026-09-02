@@ -55,6 +55,7 @@ class TestSubmissionDocumentService {
           _coverField('Student Name', submission.studentName),
           _coverField('Subject', submission.subjectName),
           _coverField('Grade', submission.gradeName),
+          _coverField('School / Institution', submission.institution),
           _coverField('Submitted', submittedAt.toLocal().toString()),
           pw.SizedBox(height: 20),
           pw.Text('ANSWERS', style: pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold)),

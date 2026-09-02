@@ -1731,33 +1731,37 @@ export const transcribeReferencePage = onCall<TranscribeReferencePageRequest>(
 
 // ---------------------------------------------------------------------
 // sendAssignmentSubmissionEmail — Assignment Submission, Stage 8 (real
-// automatic sending, added 2026-09-01; briefly on Brevo the same day,
-// settled on Resend). Shared verbatim with Test Submission (2026-09-02,
-// see that feature's Stage 7 spec: "reuse Assignment Submission's
-// transmission logic exactly") via the optional `submissionKind` field —
-// still named for Assignment Submission since that's what it was built
-// for first, but genuinely generic now. Sends the consolidated PDF (and
-// the compressed
-// backup image bundle, if it fits) to the teacher's email via Resend
-// (resend.com) - a third-party transactional email API, completely
-// unrelated to Gemini/Anthropic/Firebase. This is genuinely automatic:
-// unlike the WhatsApp path in the app (which still needs one manual tap
-// to send via the OS share sheet, since no WhatsApp sending API is wired
-// in), the student taps "Send" once and this function does the rest with
-// no further interaction required.
+// automatic sending, added 2026-09-01; Resend -> Brevo the same day ->
+// briefly back to Resend 2026-09-01 -> settled on Brevo for good
+// 2026-09-02). Shared verbatim with Test Submission (see that feature's
+// Stage 7 spec: "reuse Assignment Submission's transmission logic
+// exactly") via the optional `submissionKind` field — still named for
+// Assignment Submission since that's what it was built for first, but
+// genuinely generic now, including a generic `attachments` array (not
+// pdf+bundle specifically) so either feature can send however many
+// files it needs. Sends via Brevo (brevo.com) - a third-party
+// transactional email API, completely unrelated to Gemini/Anthropic/
+// Firebase. This is genuinely automatic: unlike the WhatsApp path in
+// the app (which still needs one manual tap to send via the OS share
+// sheet, since no WhatsApp sending API is wired in), the student taps
+// "Send" once and this function does the rest with no further
+// interaction required.
 //
-// Deliberately sends from Resend's own shared `onboarding@resend.dev`
-// address rather than a custom domain: it's pre-verified by Resend
-// themselves, so no sender-verification step is needed on this app's
-// side at all - only the recipient's address matters, at the cost of a
-// somewhat higher chance of landing in spam than a properly verified
-// custom sender would (Brevo, the alternative considered, requires that
-// verification but has no zero-setup shared address of its own).
+// Settled on Brevo, not Resend, for a real, log-confirmed reason: with
+// no verified custom domain, Resend's shared `onboarding@resend.dev`
+// address can ONLY send to the Resend account owner's own email address
+// - it 403s on any other recipient ("You can only send testing emails
+// to your own email address... verify a domain... to send to other
+// recipients" - the exact error a real teacher's address hit in
+// production, 2026-09-01). Brevo's single-sender verification (one
+// click-to-confirm email, no DNS) has no such "only yourself" ceiling
+// once verified - BREVO_SENDER_EMAIL must be that verified address.
 // ---------------------------------------------------------------------
 
-const resendApiKey = defineSecret("RESEND_API_KEY");
+const brevoApiKey = defineSecret("BREVO_API_KEY");
+const brevoSenderEmail = defineSecret("BREVO_SENDER_EMAIL");
 
-// Resend's own limit is generous, but Cloud Functions v2 (Cloud Run
+// Brevo's own limit is higher, but Cloud Functions v2 (Cloud Run
 // underneath) caps request bodies well below that, and base64 inflates
 // the real file size by ~33%. Stay well under both: cap the decoded
 // (real) combined attachment size at 20MB.
@@ -1768,21 +1772,18 @@ function base64DecodedByteLength(b64: string): number {
   return Math.floor((cleaned.length * 3) / 4);
 }
 
+interface EmailAttachment {
+  filename: string;
+  base64: string;
+}
+
 interface SendAssignmentSubmissionEmailRequest {
   recipientEmail: string;
   studentName: string;
   assignmentTitle: string;
   submissionHash: string;
   submittedAt: string;
-  pdfBase64: string;
-  pdfFileName: string;
-  imageBundleBase64?: string;
-  imageBundleFileName?: string;
-  // Added 2026-09-02 for Test Submission, which reuses this same function
-  // rather than duplicating it (Stage 7's "reuse Assignment Submission's
-  // transmission logic exactly"). Optional and defaults to "assignment"
-  // so the already-deployed Assignment Submission caller (which never
-  // sends this field) keeps working unchanged.
+  attachments: EmailAttachment[];
   submissionKind?: string;
 }
 
@@ -1792,32 +1793,38 @@ interface SendAssignmentSubmissionEmailResponse {
 }
 
 export const sendAssignmentSubmissionEmail = onCall<SendAssignmentSubmissionEmailRequest>(
-  { secrets: [resendApiKey], region: "us-central1", timeoutSeconds: 180, memory: "512MiB", maxInstances: 5 },
+  {
+    secrets: [brevoApiKey, brevoSenderEmail],
+    region: "us-central1",
+    timeoutSeconds: 180,
+    memory: "512MiB",
+    maxInstances: 5,
+  },
   async (request): Promise<SendAssignmentSubmissionEmailResponse> => {
     if (!request.auth) {
       throw new HttpsError("unauthenticated", "Sign in is required to send a submission by email.");
     }
     const {
-      recipientEmail, studentName, assignmentTitle, submissionHash, submittedAt,
-      pdfBase64, pdfFileName, imageBundleBase64, imageBundleFileName, submissionKind,
+      recipientEmail, studentName, assignmentTitle, submissionHash, submittedAt, attachments: rawAttachments,
+      submissionKind,
     } = request.data ?? {};
     const kind = typeof submissionKind === "string" && submissionKind.trim() ? submissionKind.trim() : "assignment";
 
     if (typeof recipientEmail !== "string" || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(recipientEmail.trim())) {
       throw new HttpsError("invalid-argument", "A valid recipient email address is required.");
     }
-    if (typeof pdfBase64 !== "string" || pdfBase64.length === 0) {
-      throw new HttpsError("invalid-argument", "'pdfBase64' is required.");
-    }
-    if (typeof pdfFileName !== "string" || pdfFileName.trim().length === 0) {
-      throw new HttpsError("invalid-argument", "'pdfFileName' is required.");
+    if (!Array.isArray(rawAttachments) || rawAttachments.length === 0) {
+      throw new HttpsError("invalid-argument", "At least one attachment is required.");
     }
 
-    let totalBytes = base64DecodedByteLength(pdfBase64);
-    const hasBundle = typeof imageBundleBase64 === "string" && imageBundleBase64.length > 0 &&
-      typeof imageBundleFileName === "string" && imageBundleFileName.trim().length > 0;
-    if (hasBundle) {
-      totalBytes += base64DecodedByteLength(imageBundleBase64 as string);
+    let totalBytes = 0;
+    const attachments: { name: string; content: string }[] = [];
+    for (const a of rawAttachments) {
+      if (!a || typeof a.filename !== "string" || typeof a.base64 !== "string" || a.base64.length === 0) {
+        throw new HttpsError("invalid-argument", "Each attachment needs a 'filename' and 'base64'.");
+      }
+      totalBytes += base64DecodedByteLength(a.base64);
+      attachments.push({ name: a.filename, content: a.base64 });
     }
     if (totalBytes > MAX_EMAIL_ATTACHMENT_BYTES) {
       throw new HttpsError(
@@ -1825,11 +1832,6 @@ export const sendAssignmentSubmissionEmail = onCall<SendAssignmentSubmissionEmai
         "The submission is too large to email (over 20MB combined). Use the WhatsApp share option instead, " +
           "or reduce the number of captured pages."
       );
-    }
-
-    const attachments: { filename: string; content: string }[] = [{ filename: pdfFileName, content: pdfBase64 }];
-    if (hasBundle) {
-      attachments.push({ filename: imageBundleFileName as string, content: imageBundleBase64 as string });
     }
 
     const safeStudentName = typeof studentName === "string" && studentName.trim() ? studentName.trim() : "A student";
@@ -1843,43 +1845,44 @@ export const sendAssignmentSubmissionEmail = onCall<SendAssignmentSubmissionEmai
       `<p><strong>${kind === "test" ? "Test" : "Assignment"}:</strong> ${safeTitle}</p>`,
       `<p><strong>Submitted at:</strong> ${safeSubmittedAt}</p>`,
       safeHash ? `<p><strong>Proof-of-submission hash (SHA-256):</strong> ${safeHash}</p>` : "",
-      `<p>The consolidated PDF is attached` +
-        `${attachments.length > 1 ? ", along with a backup bundle of the original captured pages." : "."}</p>`,
+      `<p>${attachments.length > 1 ? "Attached: the consolidated document, plus the original captured " +
+        "pages as a viewable backup." : "The consolidated document is attached."}</p>`,
     ].join("\n");
 
     let response: Response;
     try {
-      response = await fetch("https://api.resend.com/emails", {
+      response = await fetch("https://api.brevo.com/v3/smtp/email", {
         method: "POST",
         headers: {
-          "Authorization": `Bearer ${resendApiKey.value()}`,
+          "api-key": brevoApiKey.value(),
           "Content-Type": "application/json",
+          "Accept": "application/json",
         },
         body: JSON.stringify({
-          from: "Smart Teacher <onboarding@resend.dev>",
-          to: [recipientEmail.trim()],
+          sender: { name: "Smart Teacher", email: brevoSenderEmail.value() },
+          to: [{ email: recipientEmail.trim() }],
           subject: `${kind === "test" ? "Test" : "Assignment"} submission: ${safeTitle} - ${safeStudentName}`,
-          html,
-          attachments,
+          htmlContent: html,
+          attachment: attachments,
         }),
       });
     } catch (err) {
-      console.error("sendAssignmentSubmissionEmail: network error calling Resend", err);
+      console.error("sendAssignmentSubmissionEmail: network error calling Brevo", err);
       throw new HttpsError("unavailable", "Could not reach the email service. Please try again.");
     }
 
     if (!response.ok) {
       const bodyText = await response.text().catch(() => "");
-      console.error("sendAssignmentSubmissionEmail: Resend returned an error", response.status, bodyText);
+      console.error("sendAssignmentSubmissionEmail: Brevo returned an error", response.status, bodyText);
       throw new HttpsError("internal", "The email service rejected the submission. Please try again.");
     }
 
     let messageId = "";
     try {
-      const json = (await response.json()) as { id?: string };
-      messageId = json.id ?? "";
+      const json = (await response.json()) as { messageId?: string };
+      messageId = json.messageId ?? "";
     } catch {
-      // Resend responded 2xx but the body wasn't parseable JSON - not fatal, the email still sent.
+      // Brevo responded 2xx but the body wasn't parseable JSON - not fatal, the email still sent.
     }
 
     return { success: true, messageId };
