@@ -248,6 +248,28 @@ class DatabaseHelper {
   /// creating duplicate rows. Expects a top-level "curriculum" object
   /// ({code, name, description}) in addition to the existing subject/grade/
   /// terms shape.
+  ///
+  /// Topics are matched (and so kept stable across re-imports) by
+  /// `(subject_id, grade_id, term_id, name)` — see the `_getOrCreate` call
+  /// below. That means a topic that MOVES to a different term (e.g. a
+  /// structural term-split, like History Grade 11's single "Year" block
+  /// being reorganized into real Term 1/2/3) doesn't match its old row at
+  /// all: it gets a genuinely new topic row/id, and the OLD row — still
+  /// sitting under whatever term it used to belong to — would otherwise
+  /// never be touched again. Found and fixed 2026-09-02 (via the
+  /// getSyllabus query below, which joins every topic row for a
+  /// subject+grade regardless of term): without this cleanup, a device
+  /// that had already opened a subject before such a restructuring would
+  /// end up seeing BOTH the stale old term (with duplicate topics) AND the
+  /// new ones — real, visible "scattering" in every topic picker. [_prune]
+  /// deletes exactly that leftover, and only that: any topic row for this
+  /// same subject+grade not touched by THIS import call. `ON DELETE
+  /// CASCADE` on sub_topics/objectives/competencies/lesson_history/
+  /// checkpoints handles everything hanging off a pruned topic
+  /// automatically — the one real, disclosed cost is that a teacher's
+  /// "resume where I left off" checkpoint against a topic that got
+  /// pruned this way is lost, same as it would be if that topic were
+  /// simply deleted from the syllabus outright.
   Future<void> importTemplate(Map<String, dynamic> json) async {
     final db = await database;
     await db.transaction((txn) async {
@@ -279,6 +301,8 @@ class DatabaseHelper {
         },
       );
 
+      final touchedTopicIds = <int>{};
+
       for (final termJson in (json['terms'] as List).cast<Map<String, dynamic>>()) {
         final termId = await _getOrCreate(
           txn,
@@ -299,6 +323,7 @@ class DatabaseHelper {
               'references_text': topicJson['references'],
             },
           );
+          touchedTopicIds.add(topicId);
 
           final topicObjectivesRaw = topicJson['learning_objectives'] as List? ?? [];
           for (var i = 0; i < topicObjectivesRaw.length; i++) {
@@ -374,6 +399,21 @@ class DatabaseHelper {
             }
           }
         }
+      }
+
+      // See this method's own doc comment — deletes any topic row for
+      // this subject+grade that this import call didn't touch (i.e. its
+      // old term/name combination no longer appears in the current
+      // source JSON at all), cascading to its sub-topics/objectives/
+      // competencies/checkpoints. A no-op on every ordinary re-import,
+      // where every topic is touched every time.
+      if (touchedTopicIds.isNotEmpty) {
+        final placeholders = List.filled(touchedTopicIds.length, '?').join(',');
+        await txn.delete(
+          'topics',
+          where: 'subject_id = ? AND grade_id = ? AND id NOT IN ($placeholders)',
+          whereArgs: [subjectId, gradeId, ...touchedTopicIds],
+        );
       }
     });
   }
