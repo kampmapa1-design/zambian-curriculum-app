@@ -361,7 +361,7 @@ class _SchemeOfWorkDocumentScreenState extends State<SchemeOfWorkDocumentScreen>
     // rather than through `primaryEntry` for that reason.
     final isSpecialRow = row.specialRowLabel != null;
     final taught = !isSpecialRow && entries.every((e) => _markedTaughtTopicIds.contains(e.topic.id));
-    final week = row.overrideWeekNumber ?? row.primaryEntry.realWeekNumber ?? row.primaryEntry.weekNumber;
+    final week = row.displayWeekNumber;
     final competencies = entries.expand((e) => e.competencies).map((c) => c.description).toList();
     final objectives = entries.expand((e) => e.objectives).map((o) => o.description).toList();
     final title = isSpecialRow ? row.specialRowLabel! : entries.map((e) => e.title).join('; ');

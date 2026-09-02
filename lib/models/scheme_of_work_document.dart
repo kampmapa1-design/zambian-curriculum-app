@@ -36,12 +36,6 @@ class SchemeOfWorkHeader {
       );
 }
 
-const _weekWords = [
-  '', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten',
-  'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen',
-  'Nineteen', 'Twenty',
-];
-
 /// One row of the scheme-of-work table. Values for [SchemeOfWorkTemplate]'s
 /// columns are keyed by column id rather than named fields, so the same row
 /// type works for both the CBC and OBC templates (genuinely different
@@ -60,10 +54,6 @@ class SchemeOfWorkRowDraft {
   /// template's "Stage" column ("Lesson 3"). Unused for OBC.
   final int lessonNumber;
 
-  /// True for OBC's "Week" column, which spells the number out ("One",
-  /// "Two", ...) in the real template rather than using a numeral like CBC.
-  final bool spellWeek;
-
   final Map<String, String> values;
 
   /// Set only for a synthetic row with no real topic behind it — the
@@ -74,23 +64,39 @@ class SchemeOfWorkRowDraft {
   final String? specialRowLabel;
   final int? overrideWeekNumber;
 
+  /// The week number actually shown to the reader in the "Week" column —
+  /// always a clean, incrementing count (1, 2, 3, ...) matching this row's
+  /// own position in the final document, set once by
+  /// [SchemeOfWorkDocumentDraft.fromEntries] after every row (including the
+  /// synthetic Mid-Term Break/End-of-Term rows) is in its final order.
+  /// Deliberately NOT the same as any entry's own sourced `realWeekNumber`
+  /// or [overrideWeekNumber]/[SchemeOfWorkEntry.weekNumber] — those still
+  /// drive row ORDER (see `weekOf` in `_insertSpecialWeekRow`) and which
+  /// entries share a row, but a generated scheme can legitimately continue
+  /// past where a previous term's own scheme left off (see
+  /// ClassResumePickerScreen), and a topic carried over from a different
+  /// original term has a real week number that means nothing on THIS
+  /// document's own calendar — showing it verbatim produced a real, reported
+  /// "week 7...13, then week 1...3" disordered document. A generated scheme
+  /// is always read top-to-bottom as this term's own Week 1 through its
+  /// last week, never as a patchwork of other terms' original numbering.
+  final int displayWeekNumber;
+
   const SchemeOfWorkRowDraft({
     required this.entries,
     this.lessonNumber = 1,
-    this.spellWeek = false,
     this.values = const {},
     this.specialRowLabel,
     this.overrideWeekNumber,
+    this.displayWeekNumber = 1,
   });
 
   factory SchemeOfWorkRowDraft.special({
     required String label,
     required int weekNumber,
-    bool spellWeek = false,
   }) =>
       SchemeOfWorkRowDraft(
         entries: const [],
-        spellWeek: spellWeek,
         specialRowLabel: label,
         overrideWeekNumber: weekNumber,
       );
@@ -100,7 +106,6 @@ class SchemeOfWorkRowDraft {
   factory SchemeOfWorkRowDraft.build(
     List<SchemeOfWorkEntry> entries, {
     required int lessonNumber,
-    required bool spellWeek,
     String? curriculumCode,
     String? subjectName,
   }) {
@@ -152,7 +157,7 @@ class SchemeOfWorkRowDraft {
     values['methods'] = suggestStrategiesMethodologies(combinedText);
     values['resources'] = suggestTlAidsMaterials(combinedText);
 
-    return SchemeOfWorkRowDraft(entries: entries, lessonNumber: lessonNumber, spellWeek: spellWeek, values: values);
+    return SchemeOfWorkRowDraft(entries: entries, lessonNumber: lessonNumber, values: values);
   }
 
   // Real crash fixed here (2026-08-31): this used to omit specialRowLabel/
@@ -170,10 +175,21 @@ class SchemeOfWorkRowDraft {
   SchemeOfWorkRowDraft withValue(String columnId, String value) => SchemeOfWorkRowDraft(
         entries: entries,
         lessonNumber: lessonNumber,
-        spellWeek: spellWeek,
         values: {...values, columnId: value},
         specialRowLabel: specialRowLabel,
         overrideWeekNumber: overrideWeekNumber,
+        displayWeekNumber: displayWeekNumber,
+      );
+
+  /// Set once by [SchemeOfWorkDocumentDraft.fromEntries] after every row is
+  /// in its final order — see [displayWeekNumber]'s own doc comment.
+  SchemeOfWorkRowDraft withDisplayWeekNumber(int weekNumber) => SchemeOfWorkRowDraft(
+        entries: entries,
+        lessonNumber: lessonNumber,
+        values: values,
+        specialRowLabel: specialRowLabel,
+        overrideWeekNumber: overrideWeekNumber,
+        displayWeekNumber: weekNumber,
       );
 
   /// Topic name(s) followed by any sub-topic names, deduped and in order —
@@ -193,17 +209,13 @@ class SchemeOfWorkRowDraft {
   /// auto-filled columns, otherwise whatever's in [values].
   String value(SchemeOfWorkColumnDef column) {
     if (specialRowLabel case final label?) {
-      if (column.id == 'week') {
-        final week = overrideWeekNumber ?? 0;
-        return spellWeek && week < _weekWords.length ? _weekWords[week] : '$week';
-      }
+      if (column.id == 'week') return '$displayWeekNumber';
       const labelColumns = {'topic', 'topicContent', 'subTopic', 'topicSubTopic', 'specificCompetence', 'specificOutcomes'};
       return labelColumns.contains(column.id) ? label : '';
     }
     switch (column.id) {
       case 'week':
-        final week = overrideWeekNumber ?? primaryEntry.realWeekNumber ?? primaryEntry.weekNumber;
-        return spellWeek && week < _weekWords.length ? _weekWords[week] : '$week';
+        return '$displayWeekNumber';
       case 'stage':
         return 'Lesson $lessonNumber';
       case 'topic':
@@ -246,17 +258,29 @@ class SchemeOfWorkDocumentDraft {
   /// Builds rows from [entries] (assumed already ordered by week), grouped
   /// to match each curriculum's real template structure.
   ///
-  /// Two real fixes applied here, both grounded in verified Zambian
-  /// Ministry of Education calendar data (2026-08-29 — see
-  /// zambian_term_calendar.dart): [applyCalendarPacing] stretches real
-  /// topics across the term's real 12 teaching weeks when the syllabus
-  /// data has no real per-topic week numbers of its own (previously
-  /// produced schemes covering only as many weeks as there were topics —
-  /// e.g. 6 of 13, a real reported bug), and an explicit "Mid-Term Break"
-  /// row is always inserted at week 7 — confirmed by both the formula AND
-  /// real sourced data (civic_education_form2's own real week numbers
-  /// skip week 7 in every term) to be a stable structural fact of the
-  /// real calendar, not something to silently omit.
+  /// Real fixes applied here, all grounded in verified Zambian Ministry of
+  /// Education calendar data (2026-08-29 — see zambian_term_calendar.dart):
+  /// [applyCalendarPacing] stretches real topics across the term's real 12
+  /// teaching weeks when the syllabus data has no real per-topic week
+  /// numbers of its own (previously produced schemes covering only as many
+  /// weeks as there were topics — e.g. 6 of 13, a real reported bug), and
+  /// an explicit "Mid-Term Break" row is always inserted at week 7 —
+  /// confirmed by both the formula AND real sourced data
+  /// (civic_education_form2's own real week numbers skip week 7 in every
+  /// term) to be a stable structural fact of the real calendar, not
+  /// something to silently omit.
+  ///
+  /// [applyCalendarPacing]'s real/paced week numbers still decide row
+  /// ORDER and where the synthetic rows land, but every row's own
+  /// DISPLAYED week number (see [SchemeOfWorkRowDraft.displayWeekNumber])
+  /// is reassigned as a final pass, purely by each row's position in the
+  /// finished list — a real, reported bug (2026-09-02): a scheme that
+  /// continues past where a previous term's own scheme left off (see
+  /// ClassResumePickerScreen) mixes topics originally filed under
+  /// different terms, each still carrying ITS OWN original term's real
+  /// week number — showing those verbatim produced a genuinely disordered
+  /// document ("week 7...13, then week 1...3"). This document is always
+  /// read as its own clean Week 1 through its last week.
   factory SchemeOfWorkDocumentDraft.fromEntries(
     List<SchemeOfWorkEntry> entries, {
     required String curriculumCode,
@@ -278,13 +302,12 @@ class SchemeOfWorkDocumentDraft {
         rows.add(SchemeOfWorkRowDraft.build(
           [entry],
           lessonNumber: lessonInWeek,
-          spellWeek: false,
           curriculumCode: curriculumCode,
           subjectName: subjectName,
         ));
       }
-      _insertMidtermBreakRow(rows, spellWeek: false);
-      _insertEndOfTermRow(rows, spellWeek: false);
+      _insertMidtermBreakRow(rows);
+      _insertEndOfTermRow(rows);
     } else {
       // One row per week — every topic/sub-topic taught that week merges
       // into shared cells, matching the real OBC template.
@@ -299,24 +322,24 @@ class SchemeOfWorkDocumentDraft {
         rows.add(SchemeOfWorkRowDraft.build(
           byWeek[week]!,
           lessonNumber: 1,
-          spellWeek: true,
           curriculumCode: curriculumCode,
           subjectName: subjectName,
         ));
       }
-      _insertMidtermBreakRow(rows, spellWeek: true);
-      _insertEndOfTermRow(rows, spellWeek: true);
+      _insertMidtermBreakRow(rows);
+      _insertEndOfTermRow(rows);
     }
 
-    return SchemeOfWorkDocumentDraft(header: const SchemeOfWorkHeader(), rows: rows);
+    final renumbered = [for (var i = 0; i < rows.length; i++) rows[i].withDisplayWeekNumber(i + 1)];
+    return SchemeOfWorkDocumentDraft(header: const SchemeOfWorkHeader(), rows: renumbered);
   }
 
   /// Inserts a synthetic "Mid-Term Break" row at week 7's position in
   /// [rows] (already in week order), unless a row for week 7 genuinely
   /// already exists (a subject whose real sourced data puts something
   /// else there — trust the real data over this assumption).
-  static void _insertMidtermBreakRow(List<SchemeOfWorkRowDraft> rows, {required bool spellWeek}) =>
-      _insertSpecialWeekRow(rows, week: TermDates.midtermBreakWeek, label: 'MID-TERM BREAK', spellWeek: spellWeek);
+  static void _insertMidtermBreakRow(List<SchemeOfWorkRowDraft> rows) =>
+      _insertSpecialWeekRow(rows, week: TermDates.midtermBreakWeek, label: 'MID-TERM BREAK');
 
   /// Inserts a synthetic "End of Term Examinations" row at the term's
   /// final week (13), unless real sourced data already occupies that week
@@ -326,23 +349,21 @@ class SchemeOfWorkDocumentDraft {
   /// sourced scheme checked this project has ingested actually reserves
   /// there — see [TermDates.endOfTermWeek]'s own doc for why this isn't
   /// guesswork.
-  static void _insertEndOfTermRow(List<SchemeOfWorkRowDraft> rows, {required bool spellWeek}) => _insertSpecialWeekRow(
+  static void _insertEndOfTermRow(List<SchemeOfWorkRowDraft> rows) => _insertSpecialWeekRow(
         rows,
         week: TermDates.endOfTermWeek,
         label: 'END OF TERM EXAMINATIONS',
-        spellWeek: spellWeek,
       );
 
   static void _insertSpecialWeekRow(
     List<SchemeOfWorkRowDraft> rows, {
     required int week,
     required String label,
-    required bool spellWeek,
   }) {
     int weekOf(SchemeOfWorkRowDraft r) => r.overrideWeekNumber ?? r.primaryEntry.realWeekNumber ?? r.primaryEntry.weekNumber;
     if (rows.any((r) => weekOf(r) == week)) return;
     final insertAt = rows.indexWhere((r) => weekOf(r) > week);
-    final row = SchemeOfWorkRowDraft.special(label: label, weekNumber: week, spellWeek: spellWeek);
+    final row = SchemeOfWorkRowDraft.special(label: label, weekNumber: week);
     if (insertAt == -1) {
       rows.add(row);
     } else {

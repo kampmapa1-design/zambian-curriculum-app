@@ -71,19 +71,42 @@ class SchemeOfWorkDocumentService {
     SchemeOfWorkDocumentDraft draft, {
     List<MarkingScheme> relatedMarkingKeys = const [],
   }) async {
-    final doc = pw.Document();
+    // Times — one of the PDF standard "Base 14" fonts, so this is a real
+    // font upgrade over the previous bare default (Helvetica) with zero
+    // added asset/dependency weight: no font file to bundle, guaranteed to
+    // render identically in every PDF viewer.
+    final doc = pw.Document(
+      theme: pw.ThemeData.withFont(
+        base: pw.Font.times(),
+        bold: pw.Font.timesBold(),
+        italic: pw.Font.timesItalic(),
+        boldItalic: pw.Font.timesBoldItalic(),
+      ),
+    );
     final header = draft.header;
     final columns = context.template.columns;
+    final weekColumnIndex = columns.indexWhere((c) => c.id == 'week');
 
     doc.addPage(
       pw.MultiPage(
         pageFormat: PdfPageFormat.a4.landscape,
         margin: const pw.EdgeInsets.all(20),
         build: (pdfContext) => [
-          pw.Center(
-            child: pw.Text('SCHEME OF WORK', style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold)),
+          // A bare pw.Center does not reliably center inside MultiPage's
+          // implicit Column (it collapses to the text's own width rather
+          // than the page's) — a real reported bug ("headings... tilted to
+          // the left"). A full-width Container with a centered textAlign
+          // is what actually centers here.
+          pw.Container(
+            width: double.infinity,
+            alignment: pw.Alignment.center,
+            child: pw.Text(
+              'SCHEME OF WORK',
+              textAlign: pw.TextAlign.center,
+              style: pw.TextStyle(fontSize: 20, fontWeight: pw.FontWeight.bold),
+            ),
           ),
-          pw.SizedBox(height: 10),
+          pw.SizedBox(height: 12),
           _pdfLabeledLine('Name of School', header.schoolName),
           _pdfLabeledLine('Name of Teacher', header.teacherName),
           _pdfLabeledLine('Level', context.gradeName),
@@ -93,30 +116,40 @@ class SchemeOfWorkDocumentService {
           _pdfLabeledLine('Year', header.year),
           if (context.realCalendarNote case final note?) ...[
             pw.SizedBox(height: 4),
-            pw.Text(note, style: pw.TextStyle(fontSize: 9, fontStyle: pw.FontStyle.italic)),
+            pw.Text(note, style: pw.TextStyle(fontSize: 10, fontStyle: pw.FontStyle.italic)),
           ],
           if (header.curriculumPhilosophyAndGoals.trim().isNotEmpty) ...[
-            pw.SizedBox(height: 6),
+            pw.SizedBox(height: 8),
             pw.Text('Curriculum Philosophy and Goals',
-                style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
-            pw.Text(header.curriculumPhilosophyAndGoals, style: const pw.TextStyle(fontSize: 9.5)),
+                style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 12)),
+            pw.Text(header.curriculumPhilosophyAndGoals, style: const pw.TextStyle(fontSize: 11)),
           ],
-          pw.SizedBox(height: 12),
+          pw.SizedBox(height: 14),
           pw.Table(
-            border: pw.TableBorder.all(width: 0.5),
+            border: pw.TableBorder.all(width: 0.5, color: PdfColors.grey600),
             columnWidths: {
               for (var i = 0; i < columns.length; i++)
                 i: pw.FlexColumnWidth(
-                  columns[i].id == 'learningActivities' || columns[i].id == 'topicSubTopic' ? 1.8 : 1.2,
+                  i == weekColumnIndex
+                      ? 0.5
+                      : columns[i].id == 'learningActivities' || columns[i].id == 'topicSubTopic'
+                          ? 1.8
+                          : 1.2,
                 ),
             },
             children: [
               pw.TableRow(
-                decoration: const pw.BoxDecoration(color: PdfColors.grey300),
+                decoration: const pw.BoxDecoration(color: PdfColors.blueGrey700),
                 children: [for (final c in columns) _pdfHeaderCell(c.label)],
               ),
-              for (final row in draft.rows)
-                pw.TableRow(children: [for (final c in columns) _pdfCell(row.value(c))]),
+              for (var i = 0; i < draft.rows.length; i++)
+                pw.TableRow(
+                  decoration: pw.BoxDecoration(color: i.isOdd ? PdfColors.grey100 : null),
+                  children: [
+                    for (var ci = 0; ci < columns.length; ci++)
+                      _pdfCell(draft.rows[i].value(columns[ci]), center: ci == weekColumnIndex),
+                  ],
+                ),
             ],
           ),
           ...buildRelatedMarkingKeyPdfSection(relatedMarkingKeys),
@@ -129,25 +162,33 @@ class SchemeOfWorkDocumentService {
   }
 
   pw.Widget _pdfLabeledLine(String label, String value) => pw.Padding(
-        padding: const pw.EdgeInsets.only(bottom: 2),
+        padding: const pw.EdgeInsets.only(bottom: 3),
         child: pw.RichText(
           text: pw.TextSpan(
             children: [
-              pw.TextSpan(text: '$label: ', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
-              pw.TextSpan(text: value, style: const pw.TextStyle(fontSize: 10)),
+              pw.TextSpan(text: '$label: ', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 12)),
+              pw.TextSpan(text: value, style: const pw.TextStyle(fontSize: 12)),
             ],
           ),
         ),
       );
 
   pw.Widget _pdfHeaderCell(String text) => pw.Padding(
-        padding: const pw.EdgeInsets.all(3),
-        child: pw.Text(text, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 7.5)),
+        padding: const pw.EdgeInsets.all(4),
+        child: pw.Text(
+          text,
+          textAlign: pw.TextAlign.center,
+          style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 9, color: PdfColors.white),
+        ),
       );
 
-  pw.Widget _pdfCell(String text) => pw.Padding(
-        padding: const pw.EdgeInsets.all(3),
-        child: pw.Text(text, style: const pw.TextStyle(fontSize: 7.5)),
+  pw.Widget _pdfCell(String text, {bool center = false}) => pw.Padding(
+        padding: const pw.EdgeInsets.all(4),
+        child: pw.Text(
+          text,
+          textAlign: center ? pw.TextAlign.center : pw.TextAlign.left,
+          style: const pw.TextStyle(fontSize: 9),
+        ),
       );
 
   // ---------------------------------------------------------------------
@@ -203,7 +244,7 @@ class SchemeOfWorkDocumentService {
     if (context.realCalendarNote case final note?) {
       buffer.write(
         '<w:p><w:pPr><w:spacing w:after="80"/></w:pPr>'
-        '<w:r><w:rPr><w:i/><w:sz w:val="18"/></w:rPr>'
+        '<w:r><w:rPr>$_bodyFont<w:i/><w:sz w:val="22"/></w:rPr>'
         '<w:t xml:space="preserve">${_xmlEscape(note)}</w:t></w:r></w:p>',
       );
     }
@@ -218,48 +259,70 @@ class SchemeOfWorkDocumentService {
     return buffer.toString();
   }
 
+  /// Cambria — Microsoft Office's own default heading font, a real font
+  /// upgrade over the previous plain Word default with zero added asset
+  /// weight (DOCX only ever references a font by NAME; the viewing app
+  /// resolves it, same as any Word document made in Word itself, and
+  /// Cambria/Calibri below ship with every real Word install).
+  static const _headingFont = '<w:rFonts w:ascii="Cambria" w:hAnsi="Cambria" w:cs="Cambria"/>';
+
+  /// Calibri — pairs with Cambria above as Office's own classic heading/
+  /// body theme. Font size 12pt (`w:sz` is in half-points) for prose text,
+  /// per the suggested size; the dense table uses 11pt (see
+  /// `_docxTableRow`) to keep an 11-column table usable rather than
+  /// cramped, while still a real, deliberate size upgrade over the
+  /// previous unset (Word-default, effectively 10-11pt) size.
+  static const _bodyFont = '<w:rFonts w:ascii="Calibri" w:hAnsi="Calibri" w:cs="Calibri"/>';
+  static const _bodySize = '<w:sz w:val="24"/>';
+
   String _docxHeading(String text, {int size = 24, bool center = false}) {
     final jc = center ? '<w:jc w:val="center"/>' : '';
     return '<w:p><w:pPr>$jc<w:spacing w:before="200" w:after="120"/></w:pPr>'
-        '<w:r><w:rPr><w:b/><w:sz w:val="$size"/></w:rPr>'
+        '<w:r><w:rPr>$_headingFont<w:b/><w:sz w:val="$size"/></w:rPr>'
         '<w:t xml:space="preserve">${_xmlEscape(text)}</w:t></w:r></w:p>';
   }
 
   String _docxLabeledParagraph(String label, String value) {
     return '<w:p><w:pPr><w:spacing w:after="40"/></w:pPr>'
-        '<w:r><w:rPr><w:b/></w:rPr><w:t xml:space="preserve">${_xmlEscape(label)}: </w:t></w:r>'
-        '<w:r><w:t xml:space="preserve">${_xmlEscape(value)}</w:t></w:r></w:p>';
+        '<w:r><w:rPr>$_bodyFont<w:b/>$_bodySize</w:rPr><w:t xml:space="preserve">${_xmlEscape(label)}: </w:t></w:r>'
+        '<w:r><w:rPr>$_bodyFont$_bodySize</w:rPr><w:t xml:space="preserve">${_xmlEscape(value)}</w:t></w:r></w:p>';
   }
 
   String _docxTable(SchemeOfWorkDocumentContext context, SchemeOfWorkDocumentDraft draft) {
     final buffer = StringBuffer();
     buffer.write(
       '<w:tbl><w:tblPr><w:tblW w:w="0" w:type="auto"/><w:tblBorders>'
-      '<w:top w:val="single" w:sz="4" w:space="0" w:color="auto"/>'
-      '<w:left w:val="single" w:sz="4" w:space="0" w:color="auto"/>'
-      '<w:bottom w:val="single" w:sz="4" w:space="0" w:color="auto"/>'
-      '<w:right w:val="single" w:sz="4" w:space="0" w:color="auto"/>'
-      '<w:insideH w:val="single" w:sz="4" w:space="0" w:color="auto"/>'
-      '<w:insideV w:val="single" w:sz="4" w:space="0" w:color="auto"/>'
+      '<w:top w:val="single" w:sz="4" w:space="0" w:color="808080"/>'
+      '<w:left w:val="single" w:sz="4" w:space="0" w:color="808080"/>'
+      '<w:bottom w:val="single" w:sz="4" w:space="0" w:color="808080"/>'
+      '<w:right w:val="single" w:sz="4" w:space="0" w:color="808080"/>'
+      '<w:insideH w:val="single" w:sz="4" w:space="0" w:color="808080"/>'
+      '<w:insideV w:val="single" w:sz="4" w:space="0" w:color="808080"/>'
       '</w:tblBorders></w:tblPr>',
     );
     final columns = context.template.columns;
-    buffer.write(_docxTableRow([for (final c in columns) c.label], bold: true));
+    final weekColumnIndex = columns.indexWhere((c) => c.id == 'week');
+    buffer.write(_docxTableRow([for (final c in columns) c.label], bold: true, weekColumnIndex: weekColumnIndex));
     for (final row in draft.rows) {
-      buffer.write(_docxTableRow([for (final c in columns) row.value(c)]));
+      buffer.write(_docxTableRow([for (final c in columns) row.value(c)], weekColumnIndex: weekColumnIndex));
     }
     buffer.write('</w:tbl>');
     return buffer.toString();
   }
 
-  String _docxTableRow(List<String> cells, {bool bold = false}) {
+  String _docxTableRow(List<String> cells, {bool bold = false, int weekColumnIndex = -1}) {
     final buffer = StringBuffer('<w:tr>');
-    for (final cell in cells) {
-      final rPr = bold ? '<w:rPr><w:b/></w:rPr>' : '';
+    for (var i = 0; i < cells.length; i++) {
+      final cell = cells[i];
+      final centered = bold || i == weekColumnIndex;
+      final pPr = centered ? '<w:pPr><w:jc w:val="center"/></w:pPr>' : '';
+      final rPr = '<w:rPr>$_bodyFont<w:sz w:val="22"/>'
+          '${bold ? '<w:b/><w:color w:val="FFFFFF"/>' : ''}</w:rPr>';
       final lines = cell.isEmpty ? [''] : cell.split('\n');
-      buffer.write('<w:tc><w:tcPr><w:tcW w:w="1300" w:type="dxa"/></w:tcPr>');
+      buffer.write('<w:tc><w:tcPr><w:tcW w:w="1300" w:type="dxa"/>'
+          '${bold ? '<w:shd w:val="clear" w:color="auto" w:fill="2F5496"/>' : ''}</w:tcPr>');
       for (final line in lines) {
-        buffer.write('<w:p><w:r>$rPr<w:t xml:space="preserve">${_xmlEscape(line)}</w:t></w:r></w:p>');
+        buffer.write('<w:p>$pPr<w:r>$rPr<w:t xml:space="preserve">${_xmlEscape(line)}</w:t></w:r></w:p>');
       }
       buffer.write('</w:tc>');
     }

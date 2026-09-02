@@ -8,6 +8,8 @@
 // teaching-week cap.
 import 'package:flutter_test/flutter_test.dart';
 import 'package:zambian_curriculum_app/models/scheme_of_work.dart';
+import 'package:zambian_curriculum_app/models/scheme_of_work_document.dart';
+import 'package:zambian_curriculum_app/models/scheme_of_work_template.dart';
 import 'package:zambian_curriculum_app/models/syllabus_models.dart';
 import 'package:zambian_curriculum_app/models/zambian_term_calendar.dart';
 
@@ -114,5 +116,67 @@ void main() {
     );
     final capped = generateSchemeOfWorkForTerm(bigTemplate, null);
     expect(capped.length, TermDates.teachingWeekCount);
+  });
+
+  test('a generated document always shows a clean 1..N week count, even when the underlying '
+      'entries carry real week numbers from two different original terms', () {
+    // Reproduces the exact reported bug: a class resumes partway through
+    // Term A (its own real weeks 7-9) and the scheme spills into Term B's
+    // own topics (real weeks 1-3) - the DOCUMENT must read 1, 2, 3, 4, 5,
+    // 6, not "7, 8, 9, 1, 2, 3".
+    // SubTopic's weekNumber can't be set via the shared _subTopic helper
+    // (it always leaves weekNumber null) - build these directly instead,
+    // with real week numbers matching each one's ORIGINAL term.
+    final subA = SubTopic(id: 1, sequenceNumber: 1, name: 'A tail', weekNumber: 7, competencies: [_competency(1)]);
+    final subA2 = SubTopic(id: 2, sequenceNumber: 2, name: 'A tail 2', weekNumber: 8, competencies: [_competency(2)]);
+    final subA3 = SubTopic(id: 3, sequenceNumber: 3, name: 'A tail 3', weekNumber: 9, competencies: [_competency(3)]);
+    final headOfTermB1 = SubTopic(id: 4, sequenceNumber: 1, name: 'B head', weekNumber: 1, competencies: [_competency(4)]);
+    final headOfTermB2 = SubTopic(id: 5, sequenceNumber: 2, name: 'B head 2', weekNumber: 2, competencies: [_competency(5)]);
+    final headOfTermB3 = SubTopic(id: 6, sequenceNumber: 3, name: 'B head 3', weekNumber: 3, competencies: [_competency(6)]);
+
+    final topicA = _topicWithSubTopics(10, 'Tail Topic', [subA, subA2, subA3]);
+    final topicB = _topicWithSubTopics(20, 'Head Topic', [headOfTermB1, headOfTermB2, headOfTermB3]);
+
+    final spanningTemplate = SyllabusTemplate(
+      curriculum: const Curriculum(id: 1, code: 'X', name: 'X'),
+      subject: const Subject(id: 1, curriculumId: 1, code: 'SUBJ', name: 'Subject'),
+      grade: const Grade(id: 1, curriculumId: 1, code: 'G', name: 'Grade', level: 10),
+      terms: [
+        Term(id: 1, sequenceNumber: 1, name: 'Term A', topics: [topicA]),
+        Term(id: 2, sequenceNumber: 2, name: 'Term B', topics: [topicB]),
+      ],
+    );
+
+    final entries = generateSchemeOfWorkForTerm(spanningTemplate, null);
+    final draft = SchemeOfWorkDocumentDraft.fromEntries(entries, curriculumCode: 'OBC_2013', subjectName: 'Subject');
+
+    // Every real sourced week number in the underlying data (7,8,9,1,2,3)
+    // is completely irrelevant to what's shown - the document's own "week"
+    // column must be a clean, gapless 1..N count matching row position.
+    final weekColumn = [for (final row in draft.rows) row.value(SchemeOfWorkColumnDef(id: 'week', label: 'Week'))];
+    for (var i = 0; i < weekColumn.length; i++) {
+      expect(weekColumn[i], '${i + 1}');
+    }
+  });
+
+  test('week numbers are always plain numerals, never spelled out as words', () {
+    final template2 = SyllabusTemplate(
+      curriculum: const Curriculum(id: 1, code: 'X', name: 'X'),
+      subject: const Subject(id: 1, curriculumId: 1, code: 'SUBJ', name: 'Subject'),
+      grade: const Grade(id: 1, curriculumId: 1, code: 'G', name: 'Grade', level: 10),
+      terms: [
+        Term(id: 1, sequenceNumber: 1, name: 'Term 1', topics: [
+          _topicWithSubTopics(1, 'Topic', [_subTopic(1, 'Sub 1'), _subTopic(2, 'Sub 2')]),
+        ]),
+      ],
+    );
+    final entries = generateSchemeOfWork(template2, null);
+    for (final curriculumCode in ['CBC_2023', 'OBC_2013']) {
+      final draft = SchemeOfWorkDocumentDraft.fromEntries(entries, curriculumCode: curriculumCode, subjectName: 'Subject');
+      for (final row in draft.rows) {
+        final week = row.value(SchemeOfWorkColumnDef(id: 'week', label: 'Week'));
+        expect(int.tryParse(week), isNotNull, reason: 'Week value "$week" should be a plain numeral');
+      }
+    }
   });
 }
