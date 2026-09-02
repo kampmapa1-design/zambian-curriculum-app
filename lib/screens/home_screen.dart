@@ -15,6 +15,7 @@ import 'settings_screen.dart';
 import 'subject_grade_topic_picker_screen.dart';
 import 'teaching_notes_sheet.dart';
 import 'teaching_resources_menu_screen.dart';
+import 'topic_search_screen.dart';
 import 'word_pdf_converter_screen.dart';
 
 /// The app's home screen: a branded header (not a bare list dropped
@@ -29,7 +30,7 @@ class HomeScreen extends StatelessWidget {
   Future<void> _openLessonPlan(BuildContext context) async {
     final template = await Navigator.of(context).push<SyllabusTemplate>(
       MaterialPageRoute(
-        builder: (_) => const SubjectGradeTopicPickerScreen(title: 'Generate Lesson Plan', pickTopic: false),
+        builder: (_) => const SubjectGradeTopicPickerScreen(title: 'Generate Lesson Plan'),
       ),
     );
     if (template == null || !context.mounted) return;
@@ -43,7 +44,7 @@ class HomeScreen extends StatelessWidget {
   Future<void> _openSchemeOfWork(BuildContext context) async {
     final selection = await Navigator.of(context).push<TermSelection>(
       MaterialPageRoute(
-        builder: (_) => const SubjectGradeTopicPickerScreen(title: 'Generate Scheme of Work', pickTopic: false, pickTerm: true),
+        builder: (_) => const SubjectGradeTopicPickerScreen(title: 'Generate Scheme of Work', pickTerm: true),
       ),
     );
     if (selection == null || !context.mounted) return;
@@ -58,11 +59,12 @@ class HomeScreen extends StatelessWidget {
   }
 
   Future<void> _openTeachingNotes(BuildContext context) async {
+    // Search-first (2026-09-02, Method 2 layered on Method 1) — was a
+    // direct SubjectGradeTopicPickerScreen(pickTopic: true) push, a flatter
+    // path that never grouped by real week and hardcoded weekNumber: 1 on
+    // every result; see that screen's own doc comment for the fix.
     final entry = await Navigator.of(context).push<SchemeOfWorkEntry>(
-      MaterialPageRoute(
-        builder: (_) =>
-            const SubjectGradeTopicPickerScreen(title: 'Generate Teaching Notes & Slides', pickTopic: true),
-      ),
+      MaterialPageRoute(builder: (_) => const TopicSearchScreen(title: 'Generate Teaching Notes & Slides')),
     );
     if (entry == null || !context.mounted) return;
 
@@ -130,7 +132,7 @@ class HomeScreen extends StatelessWidget {
 
     final template = await Navigator.of(context).push<SyllabusTemplate>(
       MaterialPageRoute(
-        builder: (_) => const SubjectGradeTopicPickerScreen(title: 'Generate Record of Work', pickTopic: false),
+        builder: (_) => const SubjectGradeTopicPickerScreen(title: 'Generate Record of Work'),
       ),
     );
     if (template == null || !context.mounted) return;

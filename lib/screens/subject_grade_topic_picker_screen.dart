@@ -1,37 +1,37 @@
 import 'package:flutter/material.dart';
 
-import '../models/scheme_of_work.dart';
 import '../models/syllabus_models.dart';
 import '../services/template_repository.dart';
 
 /// Returned by [SubjectGradeTopicPickerScreen] when [SubjectGradeTopicPickerScreen.pickTerm] is true.
 typedef TermSelection = ({SyllabusTemplate template, Term term});
 
-/// Replaces the old dropdown-based subject/grade pickers with a single
-/// clickable two-column list — CBC subjects on the left, OBC subjects on
-/// the right — matching how teachers already think about the two curricula
-/// side by side. Tapping a subject expands its grades/forms; tapping a
-/// grade/form does one of three things depending on which mode is active
-/// (exactly one of [pickTopic]/[pickTerm] should be true, or neither for
-/// the plain subject+grade case):
-/// - Neither set: returns the loaded [SyllabusTemplate] directly.
-/// - [pickTerm]: expands into that grade's terms (Term 1/2/3) so one term
-///   can be picked — used by "Generate Scheme of Work", which generates
-///   for exactly one term at a time.
-/// - [pickTopic]: expands further into topics/sub-topics so a single one
-///   can be picked and returned as a [SchemeOfWorkEntry] — used by
-///   "Generate Teaching Notes & Slides" and "Generate Lesson Plan".
+/// A single clickable two-column list — CBC subjects on the left, OBC
+/// subjects on the right — matching how teachers already think about the
+/// two curricula side by side. Tapping a subject expands its grades/forms;
+/// tapping a grade/form either returns the loaded [SyllabusTemplate]
+/// directly, or (when [pickTerm] is true) expands further into that
+/// grade's terms so one term can be picked — used by "Generate Scheme of
+/// Work", which generates for exactly one term at a time.
+///
+/// Topic/sub-topic picking used to be a third mode here ([pickTopic]) —
+/// removed 2026-09-02: it listed topics flatly, per term, with no real-
+/// week grouping, and hardcoded `weekNumber: 1` on every result regardless
+/// of a topic's actual sourced teaching week — a real, silent bug. Every
+/// caller that needs a specific topic now goes through
+/// `pickTopicViaTermWeek` (see topic_picker_flow.dart), which chains this
+/// screen with `TermTopicPickerScreen` — the same two-step flow "Generate
+/// Lesson Plan" already used, now shared instead of duplicated
+/// inconsistently.
 class SubjectGradeTopicPickerScreen extends StatefulWidget {
   const SubjectGradeTopicPickerScreen({
     super.key,
     required this.title,
-    required this.pickTopic,
     this.pickTerm = false,
     this.repository,
   });
 
   final String title;
-  final bool pickTopic;
   final bool pickTerm;
   final TemplateRepository? repository;
 
@@ -93,10 +93,6 @@ class _SubjectGradeTopicPickerScreenState extends State<SubjectGradeTopicPickerS
     Navigator.of(context).pop(template);
   }
 
-  void _onTopicSelected(SchemeOfWorkEntry entry) {
-    Navigator.of(context).pop(entry);
-  }
-
   void _onTermSelected(SyllabusTemplate template, Term term) {
     Navigator.of(context).pop((template: template, term: term));
   }
@@ -130,11 +126,9 @@ class _SubjectGradeTopicPickerScreenState extends State<SubjectGradeTopicPickerS
             child: _CurriculumColumn(
               heading: 'CBC',
               bySubject: cbcBySubject,
-              pickTopic: widget.pickTopic,
               pickTerm: widget.pickTerm,
               repository: _repository,
               onTemplateReady: _onTemplateReady,
-              onTopicSelected: _onTopicSelected,
               onTermSelected: _onTermSelected,
             ),
           ),
@@ -143,11 +137,9 @@ class _SubjectGradeTopicPickerScreenState extends State<SubjectGradeTopicPickerS
             child: _CurriculumColumn(
               heading: 'OBC',
               bySubject: obcBySubject,
-              pickTopic: widget.pickTopic,
               pickTerm: widget.pickTerm,
               repository: _repository,
               onTemplateReady: _onTemplateReady,
-              onTopicSelected: _onTopicSelected,
               onTermSelected: _onTermSelected,
             ),
           ),
@@ -161,21 +153,17 @@ class _CurriculumColumn extends StatelessWidget {
   const _CurriculumColumn({
     required this.heading,
     required this.bySubject,
-    required this.pickTopic,
     required this.pickTerm,
     required this.repository,
     required this.onTemplateReady,
-    required this.onTopicSelected,
     required this.onTermSelected,
   });
 
   final String heading;
   final Map<String, List<TemplateManifestEntry>> bySubject;
-  final bool pickTopic;
   final bool pickTerm;
   final TemplateRepository repository;
   final ValueChanged<SyllabusTemplate> onTemplateReady;
-  final ValueChanged<SchemeOfWorkEntry> onTopicSelected;
   final void Function(SyllabusTemplate template, Term term) onTermSelected;
 
   @override
@@ -211,11 +199,9 @@ class _CurriculumColumn extends StatelessWidget {
                   for (final entry in bySubject[subjectName]!)
                     _GradeTile(
                       entry: entry,
-                      pickTopic: pickTopic,
                       pickTerm: pickTerm,
                       repository: repository,
                       onTemplateReady: onTemplateReady,
-                      onTopicSelected: onTopicSelected,
                       onTermSelected: onTermSelected,
                     ),
                 ],
@@ -230,20 +216,16 @@ class _CurriculumColumn extends StatelessWidget {
 class _GradeTile extends StatefulWidget {
   const _GradeTile({
     required this.entry,
-    required this.pickTopic,
     required this.pickTerm,
     required this.repository,
     required this.onTemplateReady,
-    required this.onTopicSelected,
     required this.onTermSelected,
   });
 
   final TemplateManifestEntry entry;
-  final bool pickTopic;
   final bool pickTerm;
   final TemplateRepository repository;
   final ValueChanged<SyllabusTemplate> onTemplateReady;
-  final ValueChanged<SchemeOfWorkEntry> onTopicSelected;
   final void Function(SyllabusTemplate template, Term term) onTermSelected;
 
   @override
@@ -278,7 +260,7 @@ class _GradeTileState extends State<_GradeTile> {
 
   @override
   Widget build(BuildContext context) {
-    if (!widget.pickTopic && !widget.pickTerm) {
+    if (!widget.pickTerm) {
       return ListTile(
         dense: true,
         contentPadding: const EdgeInsets.only(left: 24, right: 8),
@@ -307,7 +289,7 @@ class _GradeTileState extends State<_GradeTile> {
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: Text('No bundled syllabus for this grade yet.'),
               )
-            else if (widget.pickTerm)
+            else
               for (final term in _template!.terms)
                 Padding(
                   padding: const EdgeInsets.only(left: 16),
@@ -317,64 +299,7 @@ class _GradeTileState extends State<_GradeTile> {
                     title: Text(term.name, style: const TextStyle(fontSize: 12.5)),
                     onTap: () => widget.onTermSelected(_template!, term),
                   ),
-                )
-            else
-              for (final term in _template!.terms)
-                for (final topic in term.topics) _TopicTile(topic: topic, onSelected: widget.onTopicSelected),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _TopicTile extends StatelessWidget {
-  const _TopicTile({required this.topic, required this.onSelected});
-
-  final Topic topic;
-  final ValueChanged<SchemeOfWorkEntry> onSelected;
-
-  void _choose({SubTopic? subTopic}) {
-    onSelected(SchemeOfWorkEntry(
-      weekNumber: 1,
-      topic: topic,
-      subTopic: subTopic,
-      objectives: subTopic?.objectives ?? topic.objectives,
-      competencies: subTopic?.competencies ?? topic.competencies,
-    ));
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (topic.subTopics.isEmpty) {
-      return Padding(
-        padding: const EdgeInsets.only(left: 16),
-        child: ListTile(
-          dense: true,
-          contentPadding: EdgeInsets.zero,
-          title: Text(topic.name, style: const TextStyle(fontSize: 12.5)),
-          onTap: () => _choose(),
-        ),
-      );
-    }
-    return Padding(
-      padding: const EdgeInsets.only(left: 16),
-      child: Theme(
-        data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-        child: ExpansionTile(
-          tilePadding: EdgeInsets.zero,
-          title: Text(topic.name, style: const TextStyle(fontSize: 12.5)),
-          children: [
-            for (final subTopic in topic.subTopics)
-              Padding(
-                padding: const EdgeInsets.only(left: 16),
-                child: ListTile(
-                  dense: true,
-                  contentPadding: EdgeInsets.zero,
-                  title: Text(subTopic.name, style: const TextStyle(fontSize: 12)),
-                  onTap: () => _choose(subTopic: subTopic),
                 ),
-              ),
           ],
         ),
       ),

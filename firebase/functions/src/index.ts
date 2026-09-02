@@ -2284,6 +2284,109 @@ export const getSubmissionFileUrl = onCall<GetSubmissionFileUrlRequest>(
 );
 
 // ---------------------------------------------------------------------
+// matchTopicSearchQuery — Topic search, Method 2 of the three topic-
+// selection strategies (added 2026-09-02). The client already runs a
+// free local word-overlap search across every bundled subject/grade/
+// topic/sub-topic name first (see topic_search_service.dart) - this
+// function is ONLY called when that comes up empty, to help a teacher
+// whose wording doesn't share any words with the real syllabus text
+// (e.g. a genuine synonym or a differently-phrased description).
+//
+// Deliberately narrow and hard to hallucinate from: Gemini is given the
+// exact, real list of bundled subject/grade combinations (as plain
+// strings, indexed) and asked ONLY to pick the single best-matching
+// index, or none. The response is validated against that same list
+// before use - an out-of-range or missing index is treated as "no
+// match", never guessed at. This never asks the AI to name or invent a
+// topic; once a subject/grade is identified, the client falls back to
+// the same real, on-device Term→Week→Topic list every other path uses.
+// ---------------------------------------------------------------------
+
+interface MatchTopicSearchQueryRequest {
+  query: string;
+  subjects: string[];
+}
+
+interface MatchTopicSearchQueryResponse {
+  matchedIndex: number | null;
+}
+
+const matchTopicSearchQuerySchema = {
+  type: "object",
+  properties: {
+    matchedIndex: {
+      type: ["integer", "null"],
+      description: "The index (from the given list) of the single best-matching subject/grade, or null if none clearly match.",
+    },
+  },
+  required: ["matchedIndex"],
+  additionalProperties: false,
+};
+
+export const matchTopicSearchQuery = onCall<MatchTopicSearchQueryRequest>(
+  { secrets: [geminiApiKey], region: "us-central1", timeoutSeconds: 30, memory: "256MiB", maxInstances: 5 },
+  async (request): Promise<MatchTopicSearchQueryResponse> => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "Sign in is required to search.");
+    }
+    const { query, subjects } = request.data ?? {};
+    if (typeof query !== "string" || query.trim().length === 0) {
+      throw new HttpsError("invalid-argument", "'query' is required.");
+    }
+    if (!Array.isArray(subjects) || subjects.length === 0 || !subjects.every((s) => typeof s === "string")) {
+      throw new HttpsError("invalid-argument", "'subjects' must be a non-empty array of strings.");
+    }
+
+    const ai = new GoogleGenAI({ apiKey: geminiApiKey.value() });
+    const list = subjects.map((s, i) => `${i}: ${s}`).join("\n");
+    const prompt = [
+      "A teacher typed the following description of what they're teaching:",
+      `"${query.trim()}"`,
+      "",
+      "Here is the real, exact list of bundled subject/grade combinations available in this app, one per line " +
+        "as 'index: description':",
+      list,
+      "",
+      "Which single entry, if any, most likely matches what the teacher described? Consider subject name, " +
+        "curriculum, and grade/form level. Respond with that entry's index. If nothing on the list is a " +
+        "plausible match, respond with null - never guess at a loose or unrelated match.",
+    ].join("\n");
+
+    let text: string | undefined;
+    try {
+      const response = await ai.models.generateContent({
+        model: GEMINI_MODEL,
+        contents: [{ role: "user", parts: [{ text: prompt }] }],
+        config: { responseMimeType: "application/json", responseJsonSchema: matchTopicSearchQuerySchema },
+      });
+      text = response.text;
+    } catch (err) {
+      console.error("matchTopicSearchQuery: Gemini call failed", err);
+      throw new HttpsError("internal", "Could not search right now. Please try again.");
+    }
+
+    if (!text) {
+      throw new HttpsError("internal", "The AI did not return a result.");
+    }
+    let parsed: MatchTopicSearchQueryResponse;
+    try {
+      parsed = JSON.parse(text) as MatchTopicSearchQueryResponse;
+    } catch (err) {
+      console.error("matchTopicSearchQuery: response was not valid JSON", text);
+      throw new HttpsError("internal", "The search response could not be parsed.");
+    }
+
+    // Validated here, not just trusted - an index outside the real given
+    // list is treated as no match, same as if Gemini had returned null.
+    const index = parsed.matchedIndex;
+    if (typeof index !== "number" || !Number.isInteger(index) || index < 0 || index >= subjects.length) {
+      return { matchedIndex: null };
+    }
+    return { matchedIndex: index };
+  }
+);
+
+// ---------------------------------------------------------------------
 // detectCandidateName — SUSPENDED (2026-08-30). The Flutter app no longer
 // calls this function: it sent one full-resolution page image to Gemini
 // per script purely to pre-fill a name field a teacher can type in a few

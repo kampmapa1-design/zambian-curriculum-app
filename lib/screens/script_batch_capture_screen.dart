@@ -143,7 +143,7 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
     } else {
       final pickedTemplate = await Navigator.of(context).push<SyllabusTemplate>(
         MaterialPageRoute(
-          builder: (_) => const SubjectGradeTopicPickerScreen(title: 'Subject & Grade', pickTopic: false),
+          builder: (_) => const SubjectGradeTopicPickerScreen(title: 'Subject & Grade'),
         ),
       );
       if (!mounted) return false;

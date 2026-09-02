@@ -102,7 +102,6 @@ class _BurstCaptureScreenState extends State<BurstCaptureScreen> {
       MaterialPageRoute(
         builder: (_) => const SubjectGradeTopicPickerScreen(
           title: 'Subject & Grade',
-          pickTopic: false,
         ),
       ),
     );

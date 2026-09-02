@@ -110,7 +110,7 @@ class _MarkingSchemeListScreenState extends State<MarkingSchemeListScreen> {
     if (choice == _NewSchemeChoice.manual) {
       final template = await Navigator.of(context).push<SyllabusTemplate>(
         MaterialPageRoute(
-          builder: (_) => const SubjectGradeTopicPickerScreen(title: 'New Marking Scheme', pickTopic: false),
+          builder: (_) => const SubjectGradeTopicPickerScreen(title: 'New Marking Scheme'),
         ),
       );
       if (template == null || !mounted) return;

@@ -97,7 +97,7 @@ class _CapturedListAnalysisIntakeScreenState extends State<CapturedListAnalysisI
   Future<void> _pickSubjectGrade() async {
     final template = await Navigator.of(context).push<SyllabusTemplate>(
       MaterialPageRoute(
-        builder: (_) => const SubjectGradeTopicPickerScreen(title: 'Results List — Subject & Grade', pickTopic: false),
+        builder: (_) => const SubjectGradeTopicPickerScreen(title: 'Results List — Subject & Grade'),
       ),
     );
     if (!mounted) return;
