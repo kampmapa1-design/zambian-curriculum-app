@@ -11,6 +11,7 @@ import '../models/syllabus_models.dart';
 import '../models/zambian_term_calendar.dart';
 import '../services/class_progress_repository.dart';
 import '../services/lesson_history_repository.dart';
+import '../services/scheme_of_work_ai_content_service.dart';
 import '../services/scheme_of_work_document_service.dart';
 import '../services/subject_content_index.dart';
 import '../services/syllabus_document_service.dart';
@@ -62,12 +63,30 @@ class _SchemeOfWorkDocumentScreenState extends State<SchemeOfWorkDocumentScreen>
   final _syllabusDocumentService = SyllabusDocumentService();
   final _classProgressRepository = ClassProgressRepository();
   final SubjectContentIndex _contentIndex = SubjectContentIndex();
+  final _aiContentService = SchemeOfWorkAiContentService();
   bool _exporting = false;
   bool _sharingSyllabus = false;
+  bool _enrichingAi = false;
   final Set<int> _markedTaughtTopicIds = {};
   List<MarkingScheme> _relatedMarkingKeys = const [];
 
   Iterable<SchemeOfWorkColumnDef> get _manualColumns => _activeTemplate.columns.where((c) => c.manualEntry);
+
+  /// [_manualColumns] plus, for this specific row, whichever normally-
+  /// auto-filled columns AI enrichment (see [_enrichThinRows]) filled in —
+  /// AI-generated content is never treated as locked source-of-truth the
+  /// way real sourced syllabus data is, so it gets the same editable
+  /// treatment as any other suggested column.
+  Iterable<SchemeOfWorkColumnDef> _editableColumnsFor(SchemeOfWorkRowDraft row) {
+    final manualIds = _manualColumns.map((c) => c.id).toSet();
+    return [
+      ..._manualColumns,
+      for (final id in row.aiEnrichedColumnIds)
+        if (!manualIds.contains(id))
+          for (final c in _activeTemplate.columns)
+            if (c.id == id) c,
+    ];
+  }
 
   @override
   void initState() {
@@ -95,6 +114,67 @@ class _SchemeOfWorkDocumentScreenState extends State<SchemeOfWorkDocumentScreen>
       }
     }
     _loadRelatedMarkingKeys();
+    _enrichThinRows();
+  }
+
+  /// Fills real, common gaps left by [SchemeOfWorkDocumentDraft.fromEntries]
+  /// — a genuine bundled-syllabus topic with no real Specific Competence/
+  /// Outcome or Learning Activities content sourced for it yet — using AI
+  /// grounded in that topic's own real name/description, per this app's
+  /// standing rule: real sourced content always wins first, AI only ever
+  /// covers what's genuinely still empty after that. See
+  /// SchemeOfWorkAiContentService's own doc comment — this is silent and
+  /// best-effort (offline or any failure just leaves today's existing
+  /// fallback in place) and batched into one call for the whole document,
+  /// never one call per row.
+  Future<void> _enrichThinRows() async {
+    final thin = <int, ThinSchemeOfWorkRow>{};
+    for (var i = 0; i < _draft.rows.length; i++) {
+      final row = _draft.rows[i];
+      if (!row.needsSpecificCompetence && !row.needsLearningActivities) continue;
+      if (row.entries.isEmpty) continue;
+      final entry = row.primaryEntry;
+      thin[i] = ThinSchemeOfWorkRow(
+        id: '$i',
+        topicName: entry.topic.name,
+        subTopicName: entry.subTopic?.name,
+        existingDescription: entry.subTopic?.description ?? entry.topic.description,
+        needsSpecificCompetence: row.needsSpecificCompetence,
+        needsLearningActivities: row.needsLearningActivities,
+      );
+    }
+    if (thin.isEmpty) return;
+
+    if (mounted) setState(() => _enrichingAi = true);
+    final results = await _aiContentService.generate(
+      rows: thin.values.toList(),
+      subjectName: widget.template.subject.name,
+      gradeName: widget.template.grade.name,
+      curriculumName: widget.template.curriculum.name,
+    );
+    if (!mounted) return;
+    setState(() {
+      _enrichingAi = false;
+      for (final MapEntry(key: rowIndex, value: request) in thin.entries) {
+        final content = results[request.id];
+        if (content == null) continue;
+        final enriched = _draft.rows[rowIndex].withAiEnrichment(
+          specificCompetence: content.specificCompetence,
+          learningActivities: content.learningActivities,
+        );
+        _draft = _draft.withRow(rowIndex, enriched);
+        for (final columnId in enriched.aiEnrichedColumnIds) {
+          final key = 'row_${rowIndex}_$columnId';
+          if (_controllers.containsKey(key)) continue;
+          for (final column in _activeTemplate.columns) {
+            if (column.id == columnId) {
+              _controllers[key] = TextEditingController(text: enriched.value(column));
+              break;
+            }
+          }
+        }
+      }
+    });
   }
 
   /// Marking keys uploaded through AI-Assisted Marking, for this same
@@ -123,8 +203,10 @@ class _SchemeOfWorkDocumentScreenState extends State<SchemeOfWorkDocumentScreen>
     ));
     for (var i = 0; i < _draft.rows.length; i++) {
       var row = _draft.rows[i];
-      for (final column in _manualColumns) {
-        row = row.withValue(column.id, _controllers['row_${i}_${column.id}']!.text);
+      for (final column in _editableColumnsFor(row)) {
+        final controller = _controllers['row_${i}_${column.id}'];
+        if (controller == null) continue;
+        row = row.withValue(column.id, controller.text);
       }
       _draft = _draft.withRow(i, row);
     }
@@ -263,6 +345,21 @@ class _SchemeOfWorkDocumentScreenState extends State<SchemeOfWorkDocumentScreen>
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
         children: [
+          if (_enrichingAi) ...[
+            Row(
+              children: [
+                const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2)),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    'Filling in content for a few topics with no real syllabus content yet…',
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+          ],
           Text(
             '${_activeTemplate.name} layout. ${[for (final c in _activeTemplate.columns) if (c.autoFilled) c.label].join(', ')} '
             'are filled in from the syllabus already on your device. '
@@ -390,11 +487,31 @@ class _SchemeOfWorkDocumentScreenState extends State<SchemeOfWorkDocumentScreen>
             _readOnlyBlock('Learning Activities', objectives),
             const SizedBox(height: 8),
           ],
-          for (final column in _manualColumns)
+          if (row.aiEnrichedColumnIds.isNotEmpty) ...[
+            Row(
+              children: [
+                Icon(Icons.auto_awesome_outlined, size: 14, color: Theme.of(context).colorScheme.tertiary),
+                const SizedBox(width: 4),
+                Expanded(
+                  child: Text(
+                    'This app had no real content for this topic yet — AI filled the field(s) below, '
+                    'grounded in the real syllabus topic. Please review before relying on it.',
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodySmall
+                        ?.copyWith(color: Theme.of(context).colorScheme.tertiary, fontStyle: FontStyle.italic),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+          ],
+          for (final column in _editableColumnsFor(row))
             _textField(
               'row_${index}_${column.id}',
               column.label,
               maxLines: column.id == 'learningActivities' ? 3 : 2,
+              helper: row.aiEnrichedColumnIds.contains(column.id) ? 'AI-suggested — review before use' : null,
             ),
         ],
       ),

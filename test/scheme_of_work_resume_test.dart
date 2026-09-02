@@ -153,7 +153,7 @@ void main() {
     // Every real sourced week number in the underlying data (7,8,9,1,2,3)
     // is completely irrelevant to what's shown - the document's own "week"
     // column must be a clean, gapless 1..N count matching row position.
-    final weekColumn = [for (final row in draft.rows) row.value(SchemeOfWorkColumnDef(id: 'week', label: 'Week'))];
+    final weekColumn = [for (final row in draft.rows) row.value(const SchemeOfWorkColumnDef(id: 'week', label: 'Week'))];
     for (var i = 0; i < weekColumn.length; i++) {
       expect(weekColumn[i], '${i + 1}');
     }
@@ -174,7 +174,7 @@ void main() {
     for (final curriculumCode in ['CBC_2023', 'OBC_2013']) {
       final draft = SchemeOfWorkDocumentDraft.fromEntries(entries, curriculumCode: curriculumCode, subjectName: 'Subject');
       for (final row in draft.rows) {
-        final week = row.value(SchemeOfWorkColumnDef(id: 'week', label: 'Week'));
+        final week = row.value(const SchemeOfWorkColumnDef(id: 'week', label: 'Week'));
         expect(int.tryParse(week), isNotNull, reason: 'Week value "$week" should be a plain numeral');
       }
     }

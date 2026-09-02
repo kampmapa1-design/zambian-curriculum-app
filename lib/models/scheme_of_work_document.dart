@@ -82,6 +82,16 @@ class SchemeOfWorkRowDraft {
   /// last week, never as a patchwork of other terms' original numbering.
   final int displayWeekNumber;
 
+  /// Column ids whose value came from [SchemeOfWorkAiContentService] rather
+  /// than real sourced syllabus content — see [value]'s own check of this
+  /// set. Empty for every row until (and unless) AI enrichment runs; the
+  /// generated text itself lives in [values], same storage as any other
+  /// editable column, so a teacher can review and correct it exactly the
+  /// way they already can for any [SchemeOfWorkColumnDef.suggested] column
+  /// — AI-generated content is never treated as source-of-truth the way
+  /// real syllabus data is.
+  final Set<String> aiEnrichedColumnIds;
+
   const SchemeOfWorkRowDraft({
     required this.entries,
     this.lessonNumber = 1,
@@ -89,6 +99,7 @@ class SchemeOfWorkRowDraft {
     this.specialRowLabel,
     this.overrideWeekNumber,
     this.displayWeekNumber = 1,
+    this.aiEnrichedColumnIds = const {},
   });
 
   factory SchemeOfWorkRowDraft.special({
@@ -179,6 +190,7 @@ class SchemeOfWorkRowDraft {
         specialRowLabel: specialRowLabel,
         overrideWeekNumber: overrideWeekNumber,
         displayWeekNumber: displayWeekNumber,
+        aiEnrichedColumnIds: aiEnrichedColumnIds,
       );
 
   /// Set once by [SchemeOfWorkDocumentDraft.fromEntries] after every row is
@@ -190,7 +202,56 @@ class SchemeOfWorkRowDraft {
         specialRowLabel: specialRowLabel,
         overrideWeekNumber: overrideWeekNumber,
         displayWeekNumber: weekNumber,
+        aiEnrichedColumnIds: aiEnrichedColumnIds,
       );
+
+  /// Merges AI-generated content for whichever of 'specificCompetence'/
+  /// 'specificOutcomes' and 'learningActivities' this row genuinely needed
+  /// (see [SchemeOfWorkAiContentService]) — a no-op field (empty string,
+  /// wasn't needed) is simply not added to [aiEnrichedColumnIds], so
+  /// [value] falls through to its normal (still-empty) computation for it
+  /// rather than overwriting anything with a blank AI result.
+  SchemeOfWorkRowDraft withAiEnrichment({String? specificCompetence, String? learningActivities}) {
+    final newValues = {...values};
+    final newIds = {...aiEnrichedColumnIds};
+    // CBC and OBC name the same conceptual column differently
+    // ('specificCompetence' vs 'specificOutcomes') — set both, since only
+    // whichever one the active template actually uses will ever be read.
+    if (specificCompetence != null && specificCompetence.trim().isNotEmpty) {
+      newValues['specificCompetence'] = specificCompetence;
+      newValues['specificOutcomes'] = specificCompetence;
+      newIds.addAll({'specificCompetence', 'specificOutcomes'});
+    }
+    if (learningActivities != null && learningActivities.trim().isNotEmpty) {
+      newValues['learningActivities'] = learningActivities;
+      newIds.add('learningActivities');
+    }
+    return SchemeOfWorkRowDraft(
+      entries: entries,
+      lessonNumber: lessonNumber,
+      values: newValues,
+      specialRowLabel: specialRowLabel,
+      overrideWeekNumber: overrideWeekNumber,
+      displayWeekNumber: displayWeekNumber,
+      aiEnrichedColumnIds: newIds,
+    );
+  }
+
+  /// True when this row has no real sourced Specific Competence/Outcome
+  /// content at all — a genuine gap [SchemeOfWorkAiContentService] can
+  /// fill, never true for a synthetic (Mid-Term Break/End-of-Term) row.
+  bool get needsSpecificCompetence =>
+      specialRowLabel == null && entries.isNotEmpty && entries.expand((e) => e.competencies).isEmpty;
+
+  /// True when this row has no real sourced Learning Activities content —
+  /// neither real learning objectives NOR a topic/sub-topic description to
+  /// fall back to (see [value]'s own 'learningActivities' case). Never
+  /// true for a synthetic row.
+  bool get needsLearningActivities =>
+      specialRowLabel == null &&
+      entries.isNotEmpty &&
+      entries.expand((e) => e.objectives).isEmpty &&
+      entries.every((e) => (e.subTopic?.description ?? e.topic.description ?? '').trim().isEmpty);
 
   /// Topic name(s) followed by any sub-topic names, deduped and in order —
   /// the OBC "Topic/Content" column, which merges a whole week's coverage
@@ -228,8 +289,10 @@ class SchemeOfWorkRowDraft {
         return _topicContentBlock;
       case 'specificCompetence':
       case 'specificOutcomes':
+        if (aiEnrichedColumnIds.contains(column.id)) return values[column.id] ?? '';
         return entries.expand((e) => e.competencies).map((c) => c.description).join('\n');
       case 'learningActivities':
+        if (aiEnrichedColumnIds.contains(column.id)) return values[column.id] ?? '';
         final objectives = entries.expand((e) => e.objectives).map((o) => o.description).join('\n');
         if (objectives.isNotEmpty) return objectives;
         // Real syllabus content has learning_objectives populated for only

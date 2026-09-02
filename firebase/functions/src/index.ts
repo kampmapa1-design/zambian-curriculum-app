@@ -2835,3 +2835,186 @@ export const generateMinutes = onCall<GenerateMinutesRequest>(
     }
   }
 );
+
+// ---------------------------------------------------------------------
+// generateSchemeOfWorkContent — Scheme of Work generation's fallback for a
+// real, common gap: a topic exists in the bundled syllabus (a real,
+// sourced topic/sub-topic name, sometimes with a real description) but
+// this app has no real Specific Competence/Outcome or Learning Activities
+// content for it (verified 2026-08-29: true for a real share of bundled
+// sub-topics — see scheme_of_work_template.dart's own doc comment). A
+// genuinely richer real SCHEME of work (not just a syllabus) is always
+// preferred when this app has one — this only ever runs for a row that
+// still has nothing after that, and only for the specific column(s) that
+// are empty, never overwriting real sourced content.
+//
+// Grounded strictly in the real topic/sub-topic/description given — this
+// elaborates on real, already-sourced syllabus content, the same way
+// generateLessonPlan does, never invents a new topic or outcome unrelated
+// to what was given. Batched: one call covers every thin row in a whole
+// document (potentially all 11 real teaching weeks), not one call per
+// row, so generating one scheme never costs more than generating one
+// lesson plan already does.
+// ---------------------------------------------------------------------
+
+interface SchemeOfWorkContentItem {
+  id: string;
+  topicName: string;
+  subTopicName?: string;
+  existingDescription?: string;
+  needsSpecificCompetence: boolean;
+  needsLearningActivities: boolean;
+}
+
+interface GenerateSchemeOfWorkContentRequest {
+  subjectName: string;
+  gradeName: string;
+  curriculumName: string;
+  items: SchemeOfWorkContentItem[];
+}
+
+interface SchemeOfWorkContentResult {
+  id: string;
+  specificCompetence?: string;
+  learningActivities?: string;
+}
+
+interface GenerateSchemeOfWorkContentResponse {
+  items: SchemeOfWorkContentResult[];
+}
+
+const generateSchemeOfWorkContentSchema = {
+  type: "object",
+  properties: {
+    items: {
+      type: "array",
+      description: "Exactly one entry per item id given, in the same order.",
+      items: {
+        type: "object",
+        properties: {
+          id: { type: "string", description: "Must exactly match one of the given item ids." },
+          specificCompetence: {
+            type: "string",
+            description:
+              "1-2 realistic Specific Competence/Outcome statements for this exact topic, in the style " +
+              "of real Zambian CDC/Ministry syllabus outcome wording (e.g. 'Explain...', 'Describe...', " +
+              "'Analyse...', 'Demonstrate...'). Empty string if this item's needsSpecificCompetence was false.",
+          },
+          learningActivities: {
+            type: "string",
+            description:
+              "2-4 concise, concrete learning activities a teacher could actually run in one real " +
+              "lesson to teach this exact topic - plain text, newline-separated, no Markdown. Empty " +
+              "string if this item's needsLearningActivities was false.",
+          },
+        },
+        required: ["id", "specificCompetence", "learningActivities"],
+        additionalProperties: false,
+      },
+    },
+  },
+  required: ["items"],
+  additionalProperties: false,
+};
+
+function buildSchemeOfWorkContentPrompt(req: GenerateSchemeOfWorkContentRequest): string {
+  return [
+    `A Zambian ${req.curriculumName} Scheme of Work is being generated for ${req.subjectName}, ` +
+      `${req.gradeName}. Every topic below is a REAL topic/sub-topic from this app's own bundled ` +
+      "syllabus data - it genuinely has no real Specific Competence/Outcome and/or Learning Activities " +
+      "content sourced for it yet. For each one, using ONLY its own topic/sub-topic name and " +
+      "description below (never introducing an unrelated topic, and never contradicting what's given), " +
+      "generate just the field(s) it's missing:",
+    "",
+    ...req.items.map((item, i) => {
+      const lines = [
+        `Item ${i + 1} (id: ${item.id}):`,
+        `  Topic: ${item.topicName}`,
+        item.subTopicName ? `  Sub-topic: ${item.subTopicName}` : null,
+        item.existingDescription ? `  Description: ${item.existingDescription}` : null,
+        `  Needs Specific Competence/Outcome: ${item.needsSpecificCompetence ? "yes" : "no"}`,
+        `  Needs Learning Activities: ${item.needsLearningActivities ? "yes" : "no"}`,
+      ];
+      return lines.filter((l): l is string => l !== null).join("\n");
+    }),
+    "",
+    "Return exactly one result per item id, in the same order given. For any field an item does not " +
+      "need, return an empty string for it rather than generating something anyway. If a topic/sub-" +
+      "topic name alone is too vague to responsibly generate real content for, do your best with " +
+      "genuinely standard, well-established coverage for that subject/topic at this level rather than " +
+      "inventing specifics that don't belong to it.",
+  ].join("\n");
+}
+
+export const generateSchemeOfWorkContent = onCall<GenerateSchemeOfWorkContentRequest>(
+  { secrets: [geminiApiKey], region: "us-central1", timeoutSeconds: 120, maxInstances: 5 },
+  async (request): Promise<GenerateSchemeOfWorkContentResponse> => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "Sign in is required to generate scheme of work content.");
+    }
+
+    const { subjectName, gradeName, curriculumName, items } = request.data ?? {};
+    if (typeof subjectName !== "string" || subjectName.trim().length === 0) {
+      throw new HttpsError("invalid-argument", "'subjectName' is required.");
+    }
+    if (typeof gradeName !== "string" || gradeName.trim().length === 0) {
+      throw new HttpsError("invalid-argument", "'gradeName' is required.");
+    }
+    if (typeof curriculumName !== "string" || curriculumName.trim().length === 0) {
+      throw new HttpsError("invalid-argument", "'curriculumName' is required.");
+    }
+    if (!Array.isArray(items) || items.length === 0) {
+      throw new HttpsError("invalid-argument", "'items' must be a non-empty array.");
+    }
+    for (const item of items as unknown[]) {
+      if (
+        typeof item !== "object" ||
+        item === null ||
+        typeof (item as Record<string, unknown>).id !== "string" ||
+        typeof (item as Record<string, unknown>).topicName !== "string"
+      ) {
+        throw new HttpsError("invalid-argument", "Each item requires at least 'id' and 'topicName'.");
+      }
+    }
+    // Real per-request cost/latency guard - a full scheme has at most
+    // TermDates.teachingWeekCount (11) real content rows, so this leaves
+    // generous headroom without letting one malformed client request fan
+    // out into an unbounded Gemini call.
+    if (items.length > 20) {
+      throw new HttpsError("invalid-argument", "Too many items in one request (max 20).");
+    }
+
+    const ai = new GoogleGenAI({ apiKey: geminiApiKey.value() });
+    const req: GenerateSchemeOfWorkContentRequest = { subjectName, gradeName, curriculumName, items };
+
+    let text: string | undefined;
+    try {
+      const response = await ai.models.generateContent({
+        model: GEMINI_MODEL,
+        contents: buildSchemeOfWorkContentPrompt(req),
+        config: {
+          responseMimeType: "application/json",
+          responseJsonSchema: generateSchemeOfWorkContentSchema,
+        },
+      });
+      text = response.text;
+    } catch (err) {
+      console.error("generateSchemeOfWorkContent: Gemini call failed", err);
+      throw new HttpsError("internal", "Failed to generate scheme of work content. Please try again.");
+    }
+
+    if (!text) {
+      throw new HttpsError("internal", "The AI did not return any content.");
+    }
+
+    let parsed: GenerateSchemeOfWorkContentResponse;
+    try {
+      parsed = JSON.parse(text);
+    } catch (err) {
+      console.error("generateSchemeOfWorkContent: response was not valid JSON", text);
+      throw new HttpsError("internal", "The response could not be parsed.");
+    }
+
+    return parsed;
+  }
+);
