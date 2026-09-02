@@ -1,5 +1,5 @@
 {
-  "_source": "Ministry of Education / Curriculum Development Centre, Zambia. 'Chemistry Syllabus (5070), Grade 10-12' (2013, published by CDC) — Grade 10, Topics 10.1-10.4. Topic, sub-topic and Specific Outcome statements only; the 'Content' (Knowledge/Skills/Values) columns are omitted, consistent with the approach used for the other 2013 OBC subjects in this app. This document's outcome numbering is reliable and matches its sub-topic structure. One outcome (10.4.2.11) is split awkwardly across a page break in the source PDF's text extraction ('Identify the...' followed on the next page by 'differences in properties of ionic and covalent compounds'); it is reproduced here as the single joined sentence it clearly is. The syllabus organizes content by Grade only, not by Term, so all of Grade 10 is modeled as a single term here. STRUCTURAL TERM SPLIT (2026-08-31, not sourced): this file's topics were previously modeled as a single undivided 'Year' block (no real per-topic term/week data exists for this subject/grade). At the user's own explicit request and choice among alternatives offered, the SAME real topics above have now been divided into three roughly-equal-by-content-volume groups, in their original curriculum order, labelled 'Term 1'/'Term 2'/'Term 3' purely so the app can generate and share one term at a time. This division of which topic falls in which term is NOT sourced from any real scheme of work - it is an organizational split only. No topic, sub-topic, competency, or objective was added, removed, or altered; only the grouping changed. Each term's own topics still have no real week_number of their own, so within a term the app's existing calendar-pacing engine spreads them algorithmically across that term's real teaching weeks, exactly as it already did for the whole undivided Year block before this split.",
+  "_source": "Ministry of Education / Curriculum Development Centre, Zambia. 'Chemistry Syllabus (5070), Grade 10-12' (2013, published by CDC) — Grade 10, Topics 10.1-10.4. Topic, sub-topic and Specific Outcome statements only; the 'Content' (Knowledge/Skills/Values) columns are omitted, consistent with the approach used for the other 2013 OBC subjects in this app. This document's outcome numbering is reliable and matches its sub-topic structure. One outcome (10.4.2.11) is split awkwardly across a page break in the source PDF's text extraction ('Identify the...' followed on the next page by 'differences in properties of ionic and covalent compounds'); it is reproduced here as the single joined sentence it clearly is. The syllabus organizes content by Grade only, not by Term, so all of Grade 10 is modeled as a single term here. STRUCTURAL TERM SPLIT (2026-08-31, not sourced): this file's topics were previously modeled as a single undivided 'Year' block (no real per-topic term/week data exists for this subject/grade). At the user's own explicit request and choice among alternatives offered, the SAME real topics above have now been divided into three roughly-equal-by-content-volume groups, in their original curriculum order, labelled 'Term 1'/'Term 2'/'Term 3' purely so the app can generate and share one term at a time. This division of which topic falls in which term is NOT sourced from any real scheme of work - it is an organizational split only. No topic, sub-topic, competency, or objective was added, removed, or altered; only the grouping changed. Each term's own topics still have no real week_number of their own, so within a term the app's existing calendar-pacing engine spreads them algorithmically across that term's real teaching weeks, exactly as it already did for the whole undivided Year block before this split. UPDATE (2026-09-02): two real Ministry of General Education 'Grade 10 Pure Chemistry Common Scheme of Work' documents (Term 1 and Term 2, 2018 - shared with this app's Drive account; no individual name in either, nothing to sanitize) confirm the real term placement for three of this file's four topics, matched by content against this file's own reliable official sub-topic text: Term 1 covers Introduction to Chemistry and The Particulate Nature of Matter in full, plus only the 'Measuring of Quantities' sub-topic of Experimental Techniques; Term 2 covers the REST of Experimental Techniques - Criteria of Purity and Separating Mixtures - and nothing else. This is a genuine case where the real source splits a single topic's own sub-topics across two terms (Experimental Techniques' three sub-topics were previously kept together in one block by the earlier non-sourced split), so this update follows the real source rather than keeping them together. Atoms, Elements, Compounds and Molecules is not mentioned in either real document; by elimination (Term 1 and Term 2 are now fully accounted for by the other three topics) it is placed in Term 3 - that placement is this app's own inference from elimination, not itself directly sourced. No sub-topic, competency, or objective was added, removed, or altered anywhere in this update - only which term each topic (and, for Experimental Techniques, which term each of its sub-topics) belongs to.",
   "curriculum": {
     "code": "OBC_2013",
     "name": "2013 Outcome-Based Curriculum",
@@ -115,12 +115,93 @@
               ]
             }
           ]
+        },
+        {
+          "name": "10.3 Experimental Techniques",
+          "sequence_number": 3,
+          "sub_topics": [
+            {
+              "name": "10.3.1 Measuring of Quantities",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Demonstrate how different quantities are measured",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Identify different measuring apparatus used in chemistry",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Identify various measuring instruments and other apparatus used in chemistry",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
+          ]
         }
       ]
     },
     {
       "name": "Term 2",
       "sequence_number": 2,
+      "topics": [
+        {
+          "name": "10.3 Experimental Techniques",
+          "sequence_number": 1,
+          "sub_topics": [
+            {
+              "name": "10.3.2 Criteria of Purity",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe the differences between a pure substance and a mixture",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Demonstrate how to determine the purity of a substance",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Explain the importance of purity of a substance",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "10.3.3 Separating Mixtures",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Distinguish between physical and chemical changes",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Demonstrate different methods of separating mixtures",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Interpret simple paper chromatograms",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 3",
+      "sequence_number": 3,
       "topics": [
         {
           "name": "10.4 Atoms, Elements, Compounds and Molecules",
@@ -296,81 +377,6 @@
                 {
                   "sequence_number": 3,
                   "description": "Construct net ionic equations from balanced chemical equations",
-                  "category": "Specific Outcome"
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "name": "Term 3",
-      "sequence_number": 3,
-      "topics": [
-        {
-          "name": "10.3 Experimental Techniques",
-          "sequence_number": 1,
-          "sub_topics": [
-            {
-              "name": "10.3.1 Measuring of Quantities",
-              "sequence_number": 1,
-              "competencies": [
-                {
-                  "sequence_number": 1,
-                  "description": "Demonstrate how different quantities are measured",
-                  "category": "Specific Outcome"
-                },
-                {
-                  "sequence_number": 2,
-                  "description": "Identify different measuring apparatus used in chemistry",
-                  "category": "Specific Outcome"
-                },
-                {
-                  "sequence_number": 3,
-                  "description": "Identify various measuring instruments and other apparatus used in chemistry",
-                  "category": "Specific Outcome"
-                }
-              ]
-            },
-            {
-              "name": "10.3.2 Criteria of Purity",
-              "sequence_number": 2,
-              "competencies": [
-                {
-                  "sequence_number": 1,
-                  "description": "Describe the differences between a pure substance and a mixture",
-                  "category": "Specific Outcome"
-                },
-                {
-                  "sequence_number": 2,
-                  "description": "Demonstrate how to determine the purity of a substance",
-                  "category": "Specific Outcome"
-                },
-                {
-                  "sequence_number": 3,
-                  "description": "Explain the importance of purity of a substance",
-                  "category": "Specific Outcome"
-                }
-              ]
-            },
-            {
-              "name": "10.3.3 Separating Mixtures",
-              "sequence_number": 3,
-              "competencies": [
-                {
-                  "sequence_number": 1,
-                  "description": "Distinguish between physical and chemical changes",
-                  "category": "Specific Outcome"
-                },
-                {
-                  "sequence_number": 2,
-                  "description": "Demonstrate different methods of separating mixtures",
-                  "category": "Specific Outcome"
-                },
-                {
-                  "sequence_number": 3,
-                  "description": "Interpret simple paper chromatograms",
                   "category": "Specific Outcome"
                 }
               ]

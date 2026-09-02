@@ -1,5 +1,5 @@
 {
-  "_source": "Ministry of Education / Curriculum Development Centre, Zambia. 'O-Level Mathematics Syllabus, Grade 10-12' (2013, published by CDC) — Grade 11, Topics 11.1-11.10, 11.12, 11.13, 11.14. Topic, sub-topic and Specific Outcome statements only; the 'Content' column is omitted for the reasons documented in the Grade 10 file. This document's outcome numbering mostly matches its sub-topic structure reliably (unlike several other OBC syllabi processed for this app), with two exceptions: Topic 11.11 does not exist anywhere in the source — the topic numbering genuinely jumps from 11.10 (Trigonometry) straight to 11.12 (Mensuration), confirmed by a full-document search, not an extraction artifact; and Topic 11.14 (Statistics)'s outcome codes are misprinted with a '12.14.x' prefix (grade digit leaked in) despite the topic itself being clearly Grade 11 content, positioned before Grade 12 begins. The syllabus organizes content by Grade only, not by Term, so all of Grade 11 is modeled as a single term here. STRUCTURAL TERM SPLIT (2026-08-31, not sourced): this file's topics were previously modeled as a single undivided 'Year' block (no real per-topic term/week data exists for this subject/grade). At the user's own explicit request and choice among alternatives offered, the SAME real topics above have now been divided into three roughly-equal-by-content-volume groups, in their original curriculum order, labelled 'Term 1'/'Term 2'/'Term 3' purely so the app can generate and share one term at a time. This division of which topic falls in which term is NOT sourced from any real scheme of work - it is an organizational split only. No topic, sub-topic, competency, or objective was added, removed, or altered; only the grouping changed. Each term's own topics still have no real week_number of their own, so within a term the app's existing calendar-pacing engine spreads them algorithmically across that term's real teaching weeks, exactly as it already did for the whole undivided Year block before this split.",
+  "_source": "Ministry of Education / Curriculum Development Centre, Zambia. 'O-Level Mathematics Syllabus, Grade 10-12' (2013, published by CDC) — Grade 11, Topics 11.1-11.10, 11.12, 11.13, 11.14. Topic, sub-topic and Specific Outcome statements only; the 'Content' column is omitted for the reasons documented in the Grade 10 file. This document's outcome numbering mostly matches its sub-topic structure reliably (unlike several other OBC syllabi processed for this app), with two exceptions: Topic 11.11 does not exist anywhere in the source — the topic numbering genuinely jumps from 11.10 (Trigonometry) straight to 11.12 (Mensuration), confirmed by a full-document search, not an extraction artifact; and Topic 11.14 (Statistics)'s outcome codes are misprinted with a '12.14.x' prefix (grade digit leaked in) despite the topic itself being clearly Grade 11 content, positioned before Grade 12 begins. The syllabus organizes content by Grade only, not by Term, so all of Grade 11 is modeled as a single term here. STRUCTURAL TERM SPLIT (2026-08-31, not sourced): this file's topics were previously modeled as a single undivided 'Year' block (no real per-topic term/week data exists for this subject/grade). At the user's own explicit request and choice among alternatives offered, the SAME real topics above have now been divided into three roughly-equal-by-content-volume groups, in their original curriculum order, labelled 'Term 1'/'Term 2'/'Term 3' purely so the app can generate and share one term at a time. This division of which topic falls in which term is NOT sourced from any real scheme of work - it is an organizational split only. No topic, sub-topic, competency, or objective was added, removed, or altered; only the grouping changed. Each term's own topics still have no real week_number of their own, so within a term the app's existing calendar-pacing engine spreads them algorithmically across that term's real teaching weeks, exactly as it already did for the whole undivided Year block before this split. UPDATE (2026-09-02): a real, blank-template (no PII to strip) 'MATHEMATICS — GRADE 11... TERM: 3' scheme of work from Solwezi Trades Technical Secondary School (shared with this app's Drive account) confirms Term 3 actually covers Construction and Loci, Trigonometry, Mensuration and Probability, in that order - so those four topics (two of which - Construction and Loci, Trigonometry - had been organizationally placed in Term 2 by the earlier non-sourced split) are now moved into Term 3 to match this real document, and Term 3's own internal topic order now matches its real week-by-week sequence too. Statistics (11.14), which the real document's Term 3 never mentions (including in its own two weeks of cumulative revision, which lists every other Term 3 topic by name but not Statistics), moves to Term 2 instead - its specific placement within Term 1/Term 2 remains an organizational choice, not sourced, same as the rest of that non-sourced split. No topic, sub-topic, competency, or objective was added, removed, or altered anywhere in this update - only which term four of the topics belong to, and their order within Term 3.",
   "curriculum": {
     "code": "OBC_2013",
     "name": "2013 Outcome-Based Curriculum",
@@ -377,8 +377,62 @@
           ]
         },
         {
-          "name": "11.9 Construction and Loci",
+          "name": "11.14 Statistics",
           "sequence_number": 4,
+          "sub_topics": [
+            {
+              "name": "11.14.1 Cumulative Frequency Tables",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Construct cumulative frequency tables using grouped and ungrouped data",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Draw cumulative frequency curves",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Draw relative cumulative curves",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "11.14.2 Measures of Dispersion",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Calculate the range, inter quartile range, and semi inter quartile range",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Calculate the percentiles",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Calculate variance and standard deviation for ungrouped and grouped data",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 3",
+      "sequence_number": 3,
+      "topics": [
+        {
+          "name": "11.9 Construction and Loci",
+          "sequence_number": 1,
           "sub_topics": [
             {
               "name": "11.9.1 Construction",
@@ -428,7 +482,7 @@
         },
         {
           "name": "11.10 Trigonometry",
-          "sequence_number": 5,
+          "sequence_number": 2,
           "sub_topics": [
             {
               "name": "11.10.1 Introduction to Trigonometry",
@@ -505,16 +559,10 @@
               ]
             }
           ]
-        }
-      ]
-    },
-    {
-      "name": "Term 3",
-      "sequence_number": 3,
-      "topics": [
+        },
         {
           "name": "11.12 Mensuration",
-          "sequence_number": 1,
+          "sequence_number": 3,
           "sub_topics": [
             {
               "name": "11.12.1 Area",
@@ -552,7 +600,7 @@
         },
         {
           "name": "11.13 Probability",
-          "sequence_number": 2,
+          "sequence_number": 4,
           "sub_topics": [
             {
               "name": "11.13.1 Laws of Probability",
@@ -587,54 +635,6 @@
                 {
                   "sequence_number": 4,
                   "description": "Apply probability to real life problems",
-                  "category": "Specific Outcome"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "name": "11.14 Statistics",
-          "sequence_number": 3,
-          "sub_topics": [
-            {
-              "name": "11.14.1 Cumulative Frequency Tables",
-              "sequence_number": 1,
-              "competencies": [
-                {
-                  "sequence_number": 1,
-                  "description": "Construct cumulative frequency tables using grouped and ungrouped data",
-                  "category": "Specific Outcome"
-                },
-                {
-                  "sequence_number": 2,
-                  "description": "Draw cumulative frequency curves",
-                  "category": "Specific Outcome"
-                },
-                {
-                  "sequence_number": 3,
-                  "description": "Draw relative cumulative curves",
-                  "category": "Specific Outcome"
-                }
-              ]
-            },
-            {
-              "name": "11.14.2 Measures of Dispersion",
-              "sequence_number": 2,
-              "competencies": [
-                {
-                  "sequence_number": 1,
-                  "description": "Calculate the range, inter quartile range, and semi inter quartile range",
-                  "category": "Specific Outcome"
-                },
-                {
-                  "sequence_number": 2,
-                  "description": "Calculate the percentiles",
-                  "category": "Specific Outcome"
-                },
-                {
-                  "sequence_number": 3,
-                  "description": "Calculate variance and standard deviation for ungrouped and grouped data",
                   "category": "Specific Outcome"
                 }
               ]
