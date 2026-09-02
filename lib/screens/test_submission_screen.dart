@@ -5,10 +5,12 @@ import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../models/marking_script.dart';
+import '../models/teacher_submission.dart';
 import '../models/test_submission.dart';
 import '../services/assignment_submission_email_service.dart';
 import '../services/marking_script_repository.dart';
 import '../services/rewarded_ad_service.dart';
+import '../services/teacher_dashboard_service.dart';
 import '../services/test_submission_document_service.dart';
 import '../services/test_submission_repository.dart';
 import '../services/test_submission_transcription_service.dart';
@@ -44,6 +46,7 @@ class TestSubmissionScreen extends StatefulWidget {
     this.documentService,
     this.emailService,
     this.markingScriptRepository,
+    this.dashboardService,
   });
 
   final TestSubmissionRepository? repository;
@@ -51,6 +54,7 @@ class TestSubmissionScreen extends StatefulWidget {
   final TestSubmissionDocumentService? documentService;
   final AssignmentSubmissionEmailService? emailService;
   final MarkingScriptRepository? markingScriptRepository;
+  final TeacherDashboardService? dashboardService;
 
   @override
   State<TestSubmissionScreen> createState() => _TestSubmissionScreenState();
@@ -64,6 +68,7 @@ class _TestSubmissionScreenState extends State<TestSubmissionScreen> {
   late final AssignmentSubmissionEmailService _emailService = widget.emailService ?? AssignmentSubmissionEmailService();
   late final MarkingScriptRepository _markingScriptRepository =
       widget.markingScriptRepository ?? MarkingScriptRepository();
+  late final TeacherDashboardService _dashboardService = widget.dashboardService ?? TeacherDashboardService();
 
   TestSubmission? _submission;
   _Step _step = _Step.capture;
@@ -74,6 +79,7 @@ class _TestSubmissionScreenState extends State<TestSubmissionScreen> {
   final _subjectController = TextEditingController();
   final _gradeController = TextEditingController();
   final _institutionController = TextEditingController();
+  final _testNameController = TextEditingController();
 
   final _emailController = TextEditingController();
   final _whatsAppController = TextEditingController();
@@ -110,6 +116,7 @@ class _TestSubmissionScreenState extends State<TestSubmissionScreen> {
     _subjectController.dispose();
     _gradeController.dispose();
     _institutionController.dispose();
+    _testNameController.dispose();
     _emailController.dispose();
     _whatsAppController.dispose();
     for (final c in [..._questionControllers, ..._textControllers]) {
@@ -161,6 +168,7 @@ class _TestSubmissionScreenState extends State<TestSubmissionScreen> {
       subjectName: subject,
       gradeName: _gradeController.text.trim(),
       institution: _institutionController.text.trim(),
+      testName: _testNameController.text.trim(),
     );
     _repository.update(updated);
     setState(() {
@@ -315,6 +323,36 @@ class _TestSubmissionScreenState extends State<TestSubmissionScreen> {
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Email not sent: $e')));
           }
+        }
+
+        // Teacher Submissions Dashboard (Stage 11, 2026-09-02) — best
+        // effort, never blocks or surfaces an error on top of the actual
+        // send above: the teacher's email is the only thing that ties a
+        // submission to a Dashboard mailbox, so this only fires when one
+        // was entered, independent of whether the transactional email
+        // itself succeeded.
+        try {
+          await _dashboardService.submitToDashboard(
+            teacherEmail: email,
+            kind: SubmissionKind.test,
+            studentName: submission.studentName,
+            className: submission.gradeName,
+            subjectName: submission.subjectName,
+            title: submission.testName.isEmpty ? submission.subjectName : submission.testName,
+            submittedAt: submission.submittedAt ?? DateTime.now(),
+            sha256Hash: submission.sha256Hash ?? '',
+            referenceInfo: submission.segments.map((s) => s.questionNumber).join(', '),
+            attachments: [
+              DashboardUploadFile(
+                file: docFile,
+                filename: submission.docFileName!,
+                contentType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+              ),
+              DashboardUploadFile(file: bundleFile, filename: submission.imageBundleFileName!, contentType: 'application/pdf'),
+            ],
+          );
+        } catch (_) {
+          // Silently ignored by design — see the comment above.
         }
       }
 
@@ -519,6 +557,7 @@ class _TestSubmissionScreenState extends State<TestSubmissionScreen> {
         _textField('Subject / Course', _subjectController),
         _textField('Grade / Class (optional)', _gradeController),
         _textField('School / Institution (optional)', _institutionController),
+        _textField('Test Name (optional, e.g. "Mid-Term Test 1")', _testNameController),
       ],
     );
   }

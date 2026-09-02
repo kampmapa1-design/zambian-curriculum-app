@@ -53,6 +53,15 @@ class TestSubmission {
   /// favor of plain text fields on the same page as the student's name.
   final String institution;
 
+  /// A free-text name for this specific test (e.g. "Mid-Term Test 1") —
+  /// added 2026-09-02 for the Teacher Submissions Dashboard's "Assignment/
+  /// Test Name" filter, which needs something to filter by; nothing else
+  /// on this submission served that purpose (subjectName alone isn't
+  /// specific enough to tell two different tests in the same subject
+  /// apart). Optional — falls back to subjectName wherever a title is
+  /// needed if left blank.
+  final String testName;
+
   final List<String> pageFileNames;
   final List<TestAnswerSegment> segments;
 
@@ -81,6 +90,7 @@ class TestSubmission {
     this.subjectName = '',
     this.gradeName = '',
     this.institution = '',
+    this.testName = '',
     this.pageFileNames = const [],
     this.segments = const [],
     this.docFileName,
@@ -101,6 +111,7 @@ class TestSubmission {
     String? subjectName,
     String? gradeName,
     String? institution,
+    String? testName,
     List<String>? pageFileNames,
     List<TestAnswerSegment>? segments,
     String? docFileName,
@@ -122,6 +133,7 @@ class TestSubmission {
         subjectName: subjectName ?? this.subjectName,
         gradeName: gradeName ?? this.gradeName,
         institution: institution ?? this.institution,
+        testName: testName ?? this.testName,
         pageFileNames: pageFileNames ?? this.pageFileNames,
         segments: segments ?? this.segments,
         docFileName: docFileName ?? this.docFileName,
@@ -144,6 +156,7 @@ class TestSubmission {
         'subjectName': subjectName,
         'gradeName': gradeName,
         'institution': institution,
+        'testName': testName,
         'pageFileNames': pageFileNames,
         'segments': segments.map((s) => s.toJson()).toList(),
         'docFileName': docFileName,
@@ -166,6 +179,7 @@ class TestSubmission {
         subjectName: json['subjectName'] as String? ?? '',
         gradeName: json['gradeName'] as String? ?? '',
         institution: json['institution'] as String? ?? '',
+        testName: json['testName'] as String? ?? '',
         pageFileNames: (json['pageFileNames'] as List?)?.cast<String>() ?? const [],
         segments:
             (json['segments'] as List?)?.cast<Map<String, dynamic>>().map(TestAnswerSegment.fromJson).toList() ??

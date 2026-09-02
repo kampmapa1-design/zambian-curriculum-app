@@ -1,0 +1,32 @@
+rules_version = '2';
+
+// Teacher Submissions Dashboard (Stage 11, added 2026-09-02) — the
+// "lightweight cloud mailbox" model: a submission is filed under the
+// teacher's own email address (no accounts, no rosters), and only
+// readable by a client whose Firebase Auth ID token carries a
+// `teacherEmail` custom claim matching that same address. That claim is
+// set ONLY by the `verifyDashboardAccessCode` Cloud Function, after the
+// caller proves they can read a one-time code sent to that inbox — see
+// that function's own comment in functions/src/index.ts for the full
+// verification flow. Every write to both collections below goes through
+// the Admin SDK (Cloud Functions), which bypasses these rules entirely —
+// no client, including a legitimate teacher's own verified session, ever
+// writes here directly. That keeps a compromised or malicious client
+// from forging a submission or claiming someone else's mailbox.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /submissions/{submissionId} {
+      allow read: if request.auth != null
+        && request.auth.token.teacherEmail is string
+        && request.auth.token.teacherEmail == resource.data.teacherEmail;
+      allow write: if false;
+    }
+
+    // One-time verification codes — never client-readable (the whole
+    // point is the client can't just read its own code back out; it has
+    // to actually receive the email) and never client-writable.
+    match /dashboardAccessCodes/{codeId} {
+      allow read, write: if false;
+    }
+  }
+}

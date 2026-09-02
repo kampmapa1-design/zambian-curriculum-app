@@ -1,8 +1,18 @@
 import { onCall, onRequest, HttpsError } from "firebase-functions/v2/https";
 import { defineSecret } from "firebase-functions/params";
 import { GoogleGenAI } from "@google/genai";
+import * as admin from "firebase-admin";
 import { stripKnownWatermarks } from "./watermark";
 import { extractSubjectContentText } from "./subjectContent";
+
+// Initialized once at module scope, used by the Teacher Submissions
+// Dashboard functions (requestDashboardAccessCode, verifyDashboardAccessCode,
+// submitToTeacherDashboard, getSubmissionFileUrl - added 2026-09-02) for
+// Firestore + Cloud Storage + custom-claim access, all via the Admin SDK
+// (bypasses the security rules in firebase/firestore.rules and
+// firebase/storage.rules by design - those rules lock clients out
+// entirely so this is the only path in or out).
+admin.initializeApp();
 
 // Stopgap while the Anthropic account is blocked on identity verification
 // (started 2026-08-26). ALL THREE functions below now run on a free Gemini
@@ -1999,6 +2009,277 @@ export const transcribeTestSubmission = onCall<TranscribeTestSubmissionRequest>(
       console.error("transcribeTestSubmission: response was not valid JSON", text);
       throw new HttpsError("internal", "The transcription response could not be parsed.");
     }
+  }
+);
+
+// ---------------------------------------------------------------------
+// Teacher Submissions Dashboard (Stage 11, added 2026-09-02) — the
+// "lightweight cloud mailbox" model, chosen explicitly over a full
+// accounts+rosters system: a submission is filed under the teacher's own
+// email address (already collected at Stage 8 transmission), with no
+// new account system, no class rosters, and no pre-created "assignment"
+// entities. Four functions:
+//   1. requestDashboardAccessCode - emails a one-time 6-digit code.
+//   2. verifyDashboardAccessCode  - checks it, stamps a `teacherEmail`
+//      custom claim on the caller's own Firebase Auth token. This is the
+//      ONLY way that claim is ever set - proves inbox ownership once per
+//      device, not a real login (no password, no profile).
+//   3. submitToTeacherDashboard   - uploads a submission's files +
+//      metadata, called by the client right after Stage 8's email send
+//      (only when a teacher email was actually entered - that's the join
+//      key, so there's nothing to file it under otherwise).
+//   4. getSubmissionFileUrl       - hands back a short-lived signed
+//      download URL for one of a submission's files, re-checking the
+//      caller's claim against that submission's own teacherEmail every
+//      time (not just trusting whatever was true at upload time).
+// See firebase/firestore.rules and firebase/storage.rules: clients never
+// read or write `submissions`/`dashboardAccessCodes` documents or
+// `teacher_submissions/` files directly - every access goes through one
+// of these four functions.
+// ---------------------------------------------------------------------
+
+function slugifyEmail(email: string): string {
+  return email.trim().toLowerCase().replace(/[^a-z0-9]/g, "_");
+}
+
+function sanitizePathSegment(input: string): string {
+  const cleaned = (input || "").trim().replace(/[/\\#[\].$]+/g, "_").replace(/\s+/g, "_");
+  return cleaned.length === 0 ? "unspecified" : cleaned.slice(0, 80);
+}
+
+function isValidEmail(value: unknown): value is string {
+  return typeof value === "string" && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
+}
+
+interface RequestDashboardAccessCodeRequest {
+  email: string;
+}
+
+export const requestDashboardAccessCode = onCall<RequestDashboardAccessCodeRequest>(
+  { secrets: [brevoApiKey, brevoSenderEmail], region: "us-central1", timeoutSeconds: 30, memory: "256MiB", maxInstances: 5 },
+  async (request): Promise<{ success: boolean }> => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "Sign in is required to access the Submissions Dashboard.");
+    }
+    const { email } = request.data ?? {};
+    if (!isValidEmail(email)) {
+      throw new HttpsError("invalid-argument", "A valid email address is required.");
+    }
+    const normalizedEmail = email.trim().toLowerCase();
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+
+    await admin.firestore().collection("dashboardAccessCodes").doc(slugifyEmail(normalizedEmail)).set({
+      email: normalizedEmail,
+      code,
+      attempts: 0,
+      expiresAt: admin.firestore.Timestamp.fromMillis(Date.now() + 10 * 60 * 1000),
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    });
+
+    try {
+      const response = await fetch("https://api.brevo.com/v3/smtp/email", {
+        method: "POST",
+        headers: {
+          "api-key": brevoApiKey.value(),
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+        },
+        body: JSON.stringify({
+          sender: { name: "Smart Teacher", email: brevoSenderEmail.value() },
+          to: [{ email: normalizedEmail }],
+          subject: "Your Smart Teacher Dashboard access code",
+          htmlContent:
+            `<p>Your one-time code for the Submissions Dashboard is:</p>` +
+            `<p style="font-size:28px;font-weight:bold;letter-spacing:4px;">${code}</p>` +
+            `<p>This code expires in 10 minutes. If you didn't request this, you can ignore this email.</p>`,
+        }),
+      });
+      if (!response.ok) {
+        const bodyText = await response.text().catch(() => "");
+        console.error("requestDashboardAccessCode: Brevo returned an error", response.status, bodyText);
+        throw new HttpsError("internal", "Could not send the access code. Please try again.");
+      }
+    } catch (err) {
+      if (err instanceof HttpsError) throw err;
+      console.error("requestDashboardAccessCode: network error calling Brevo", err);
+      throw new HttpsError("unavailable", "Could not reach the email service. Please try again.");
+    }
+
+    return { success: true };
+  }
+);
+
+interface VerifyDashboardAccessCodeRequest {
+  email: string;
+  code: string;
+}
+
+export const verifyDashboardAccessCode = onCall<VerifyDashboardAccessCodeRequest>(
+  { region: "us-central1", timeoutSeconds: 30, memory: "256MiB", maxInstances: 5 },
+  async (request): Promise<{ success: boolean }> => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "Sign in is required to access the Submissions Dashboard.");
+    }
+    const { email, code } = request.data ?? {};
+    if (!isValidEmail(email) || typeof code !== "string" || code.trim().length === 0) {
+      throw new HttpsError("invalid-argument", "A valid email and code are required.");
+    }
+    const normalizedEmail = email.trim().toLowerCase();
+    const docRef = admin.firestore().collection("dashboardAccessCodes").doc(slugifyEmail(normalizedEmail));
+    const snap = await docRef.get();
+    if (!snap.exists) {
+      throw new HttpsError("failed-precondition", "No code was requested for this email, or it already expired. Request a new one.");
+    }
+    const data = snap.data() as { email: string; code: string; attempts: number; expiresAt: admin.firestore.Timestamp };
+    if (data.expiresAt.toMillis() < Date.now()) {
+      await docRef.delete();
+      throw new HttpsError("failed-precondition", "That code has expired. Request a new one.");
+    }
+    if (data.attempts >= 5) {
+      await docRef.delete();
+      throw new HttpsError("failed-precondition", "Too many incorrect attempts. Request a new code.");
+    }
+    if (data.code !== code.trim()) {
+      await docRef.update({ attempts: admin.firestore.FieldValue.increment(1) });
+      throw new HttpsError("permission-denied", "That code doesn't match. Check it and try again.");
+    }
+
+    await admin.auth().setCustomUserClaims(request.auth.uid, { teacherEmail: normalizedEmail });
+    await docRef.delete();
+    return { success: true };
+  }
+);
+
+interface SubmissionFileInput {
+  filename: string;
+  base64: string;
+  contentType: string;
+}
+
+interface SubmitToTeacherDashboardRequest {
+  teacherEmail: string;
+  kind: "assignment" | "test";
+  studentName: string;
+  className: string;
+  subjectName: string;
+  title: string;
+  submittedAt: string;
+  sha256Hash: string;
+  referenceInfo: string;
+  attachments: SubmissionFileInput[];
+}
+
+const MAX_DASHBOARD_UPLOAD_BYTES = 25 * 1024 * 1024;
+
+export const submitToTeacherDashboard = onCall<SubmitToTeacherDashboardRequest>(
+  { region: "us-central1", timeoutSeconds: 120, memory: "512MiB", maxInstances: 5 },
+  async (request): Promise<{ success: boolean; submissionId: string }> => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "Sign in is required to submit to the Dashboard.");
+    }
+    const data = request.data ?? {};
+    if (!isValidEmail(data.teacherEmail)) {
+      throw new HttpsError("invalid-argument", "A valid teacher email is required.");
+    }
+    if (data.kind !== "assignment" && data.kind !== "test") {
+      throw new HttpsError("invalid-argument", "'kind' must be 'assignment' or 'test'.");
+    }
+    if (!Array.isArray(data.attachments) || data.attachments.length === 0) {
+      throw new HttpsError("invalid-argument", "At least one attachment is required.");
+    }
+
+    let totalBytes = 0;
+    for (const a of data.attachments) {
+      if (!a || typeof a.filename !== "string" || typeof a.base64 !== "string" || a.base64.length === 0) {
+        throw new HttpsError("invalid-argument", "Each attachment needs a 'filename' and 'base64'.");
+      }
+      totalBytes += Math.floor((a.base64.replace(/=+$/, "").length * 3) / 4);
+    }
+    if (totalBytes > MAX_DASHBOARD_UPLOAD_BYTES) {
+      throw new HttpsError("invalid-argument", "This submission is too large to upload to the Dashboard.");
+    }
+
+    const normalizedEmail = data.teacherEmail.trim().toLowerCase();
+    // Stage 14 — Class > Subject > Assignment/Test Name > Student Name,
+    // so a teacher's own Storage browser (if they ever look) stays
+    // navigable without manual sorting, same convention the Dashboard's
+    // own filters (Stage 11) read back out of the Firestore fields below.
+    const basePath = [
+      "teacher_submissions",
+      slugifyEmail(normalizedEmail),
+      sanitizePathSegment(data.className),
+      sanitizePathSegment(data.subjectName),
+      sanitizePathSegment(data.title),
+      sanitizePathSegment(data.studentName),
+    ].join("/");
+
+    const bucket = admin.storage().bucket();
+    const uploadedFiles: { filename: string; storagePath: string }[] = [];
+    for (const a of data.attachments) {
+      const storagePath = `${basePath}/${sanitizePathSegment(a.filename)}`;
+      await bucket.file(storagePath).save(Buffer.from(a.base64, "base64"), {
+        contentType: a.contentType || "application/octet-stream",
+      });
+      uploadedFiles.push({ filename: a.filename, storagePath });
+    }
+
+    const docRef = admin.firestore().collection("submissions").doc();
+    await docRef.set({
+      teacherEmail: normalizedEmail,
+      kind: data.kind,
+      studentName: data.studentName ?? "",
+      className: data.className ?? "",
+      subjectName: data.subjectName ?? "",
+      title: data.title ?? "",
+      submittedAt: typeof data.submittedAt === "string" ? data.submittedAt : new Date().toISOString(),
+      sha256Hash: data.sha256Hash ?? "",
+      referenceInfo: data.referenceInfo ?? "",
+      files: uploadedFiles,
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    });
+
+    return { success: true, submissionId: docRef.id };
+  }
+);
+
+interface GetSubmissionFileUrlRequest {
+  submissionId: string;
+  storagePath: string;
+}
+
+export const getSubmissionFileUrl = onCall<GetSubmissionFileUrlRequest>(
+  { region: "us-central1", timeoutSeconds: 30, memory: "256MiB", maxInstances: 5 },
+  async (request): Promise<{ url: string }> => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "Sign in is required.");
+    }
+    const teacherEmail = request.auth.token?.teacherEmail as string | undefined;
+    if (!teacherEmail) {
+      throw new HttpsError("permission-denied", "Verify your teacher email first.");
+    }
+    const { submissionId, storagePath } = request.data ?? {};
+    if (typeof submissionId !== "string" || typeof storagePath !== "string") {
+      throw new HttpsError("invalid-argument", "'submissionId' and 'storagePath' are required.");
+    }
+
+    const snap = await admin.firestore().collection("submissions").doc(submissionId).get();
+    if (!snap.exists) {
+      throw new HttpsError("not-found", "Submission not found.");
+    }
+    const subData = snap.data() as { teacherEmail: string; files: { filename: string; storagePath: string }[] };
+    if (subData.teacherEmail !== teacherEmail) {
+      throw new HttpsError("permission-denied", "This submission isn't addressed to your verified email.");
+    }
+    const fileRecord = (subData.files ?? []).find((f) => f.storagePath === storagePath);
+    if (!fileRecord) {
+      throw new HttpsError("not-found", "File not found on this submission.");
+    }
+
+    const [url] = await admin.storage().bucket().file(storagePath).getSignedUrl({
+      action: "read",
+      expires: Date.now() + 15 * 60 * 1000,
+    });
+    return { url };
   }
 );
 

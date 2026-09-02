@@ -1,0 +1,18 @@
+rules_version = '2';
+
+// Teacher Submissions Dashboard (Stage 11, added 2026-09-02) — every file
+// under teacher_submissions/ is uploaded ONLY by the
+// `submitToTeacherDashboard` Cloud Function via the Admin SDK, which
+// bypasses these rules. No client reads or writes these files directly:
+// the Dashboard screen opens a signed, time-limited download URL that
+// same Cloud Function hands back at upload time (and can re-request one
+// later, since a plain gs:// path isn't independently readable by a
+// client with these rules in place) — see submitToTeacherDashboard's
+// comment for why a signed URL, not a public one.
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /teacher_submissions/{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

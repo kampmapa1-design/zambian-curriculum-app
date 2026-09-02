@@ -5,6 +5,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../models/assignment_submission.dart';
+import '../models/teacher_submission.dart';
 import '../services/assignment_submission_document_service.dart';
 import '../services/assignment_submission_email_service.dart';
 import '../services/assignment_submission_repository.dart';
@@ -12,6 +13,7 @@ import '../services/cover_page_extraction_service.dart';
 import '../services/handwriting_document_transcription_service.dart';
 import '../services/reference_page_transcription_service.dart';
 import '../services/rewarded_ad_service.dart';
+import '../services/teacher_dashboard_service.dart';
 import 'document_pages_capture_screen.dart';
 
 /// Whether Assignment Submission's rewarded-ad gate is active — Stage 10's
@@ -45,6 +47,7 @@ class AssignmentSubmissionScreen extends StatefulWidget {
     this.referenceTranscriptionService,
     this.documentService,
     this.emailService,
+    this.dashboardService,
   });
 
   final AssignmentSubmissionRepository? repository;
@@ -53,6 +56,7 @@ class AssignmentSubmissionScreen extends StatefulWidget {
   final ReferencePageTranscriptionService? referenceTranscriptionService;
   final AssignmentSubmissionDocumentService? documentService;
   final AssignmentSubmissionEmailService? emailService;
+  final TeacherDashboardService? dashboardService;
 
   @override
   State<AssignmentSubmissionScreen> createState() => _AssignmentSubmissionScreenState();
@@ -67,6 +71,7 @@ class _AssignmentSubmissionScreenState extends State<AssignmentSubmissionScreen>
       widget.referenceTranscriptionService ?? ReferencePageTranscriptionService();
   late final AssignmentSubmissionDocumentService _documentService = widget.documentService ?? AssignmentSubmissionDocumentService();
   late final AssignmentSubmissionEmailService _emailService = widget.emailService ?? AssignmentSubmissionEmailService();
+  late final TeacherDashboardService _dashboardService = widget.dashboardService ?? TeacherDashboardService();
 
   AssignmentSubmission? _submission;
   _Step _step = _Step.cover;
@@ -439,6 +444,36 @@ class _AssignmentSubmissionScreenState extends State<AssignmentSubmissionScreen>
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Email not sent: $e')));
           }
+        }
+
+        // Teacher Submissions Dashboard (Stage 11, 2026-09-02) — best
+        // effort, never blocks or surfaces an error on top of the actual
+        // send above. "Course" doubles as this submission's Class/Grade
+        // dimension for the Dashboard's filters — Assignment Submission's
+        // cover page never collected a separate grade/class field, and
+        // Course is the closest existing equivalent.
+        try {
+          await _dashboardService.submitToDashboard(
+            teacherEmail: email,
+            kind: SubmissionKind.assignment,
+            studentName: submission.studentName,
+            className: submission.course,
+            subjectName: submission.subject,
+            title: submission.assignmentTitle,
+            submittedAt: submission.submittedAt ?? DateTime.now(),
+            sha256Hash: submission.sha256Hash ?? '',
+            referenceInfo: submission.referenceSystem == ReferenceSystem.none ? '' : submission.referenceSystem.label,
+            attachments: [
+              DashboardUploadFile(
+                file: docFile,
+                filename: submission.docFileName!,
+                contentType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+              ),
+              DashboardUploadFile(file: bundleFile, filename: submission.imageBundleFileName!, contentType: 'application/pdf'),
+            ],
+          );
+        } catch (_) {
+          // Silently ignored by design — see the comment above.
         }
       }
 
