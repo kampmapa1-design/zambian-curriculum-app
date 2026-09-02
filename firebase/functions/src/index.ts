@@ -1169,10 +1169,17 @@ interface DerivedQuestion {
   label: string;
   expectedAnswerOrKeywords: string;
   maxMarks: number;
+  sectionName: string;
+}
+
+interface DerivedSection {
+  name: string;
+  answerInstructions: string;
 }
 
 interface DeriveMarkingKeyResponse {
   questions: DerivedQuestion[];
+  sections: DerivedSection[];
   notes: string;
   detectedTitle: string;
 }
@@ -1188,8 +1195,35 @@ const deriveMarkingKeySchema = {
           label: { type: "string" },
           expectedAnswerOrKeywords: { type: "string" },
           maxMarks: { type: "number" },
+          sectionName: {
+            type: "string",
+            description:
+              "The heading of the section this question belongs to, exactly as printed (e.g. 'Section A', " +
+              "'Part II'), or an empty string if the paper has no section headings at all.",
+          },
         },
-        required: ["label", "expectedAnswerOrKeywords", "maxMarks"],
+        required: ["label", "expectedAnswerOrKeywords", "maxMarks", "sectionName"],
+        additionalProperties: false,
+      },
+    },
+    sections: {
+      type: "array",
+      description:
+        "One entry per distinct section heading found on the document (same order they appear), each " +
+        "paired with that section's own answer instructions - empty array if the paper has no sections.",
+      items: {
+        type: "object",
+        properties: {
+          name: { type: "string" },
+          answerInstructions: {
+            type: "string",
+            description:
+              "That section's own instruction line to candidates, exactly as printed/written (e.g. " +
+              "'Answer ALL questions in this section', 'Answer any THREE of the following FIVE " +
+              "questions') - empty string if the section prints no such instruction of its own.",
+          },
+        },
+        required: ["name", "answerInstructions"],
         additionalProperties: false,
       },
     },
@@ -1210,7 +1244,7 @@ const deriveMarkingKeySchema = {
         "anywhere on the document - never invent one.",
     },
   },
-  required: ["questions", "notes", "detectedTitle"],
+  required: ["questions", "sections", "notes", "detectedTitle"],
   additionalProperties: false,
 };
 
@@ -1234,8 +1268,16 @@ function buildDeriveMarkingKeyPrompt(sourceType: MarkingKeySourceType, isImageSo
         "question, make a reasonable estimate and say in notes which questions got an assumed allocation.",
       "4. If any part of the key is illegible or ambiguous, say so plainly in that question's " +
         "expectedAnswerOrKeywords AND in notes, rather than guessing at what it might say.",
-      "5. Skip pure instructions/rubric headers - only real, answerable questions belong in the result.",
-      "6. Set detectedTitle to the document's own title/heading exactly as printed or written (e.g. 'Grade " +
+      "5. Skip pure page headers/footers/candidate-declaration boilerplate, but do NOT skip section " +
+        "headings or their own answer instructions ('Answer ALL questions in this section', 'Answer any " +
+        "THREE of the following FIVE questions') - capture those via sectionName and sections below rather " +
+        "than discarding them; only actual answerable questions go in the questions array itself.",
+      "6. Set each question's sectionName to the heading of the section it falls under, exactly as printed " +
+        "(e.g. 'Section A', 'Part II'), or an empty string if the document has no section headings at all.",
+      "7. Populate sections with one entry per distinct section heading found (in the order they appear), " +
+        "each paired with that section's own real answer-instruction line exactly as printed/written - " +
+        "empty array if there are no sections.",
+      "8. Set detectedTitle to the document's own title/heading exactly as printed or written (e.g. 'Grade " +
         "12 Mathematics Final Examination'), or an empty string if none is genuinely visible - never invent " +
         "one.",
       "",
@@ -1258,9 +1300,16 @@ function buildDeriveMarkingKeyPrompt(sourceType: MarkingKeySourceType, isImageSo
       "whenever it's shown. If no mark allocation is shown for a question, make a reasonable estimate " +
       "based on the question's apparent complexity/length relative to others on the paper, and say in " +
       "notes which questions got an assumed rather than stated allocation.",
-    "4. Skip pure instructions/rubric text ('Answer ALL questions in Section A', page headers, etc.) - " +
-      "only real, answerable questions belong in the result.",
-    "5. Set detectedTitle to the document's own title/heading exactly as printed or written (e.g. 'Grade " +
+    "4. Skip pure page headers/footers/candidate-declaration boilerplate, but do NOT skip section headings " +
+      "or their own answer instructions ('Answer ALL questions in Section A', 'Answer any THREE of the " +
+      "following FIVE questions in Section B') - capture those via sectionName and sections below rather " +
+      "than discarding them; only actual answerable questions go in the questions array itself.",
+    "5. Set each question's sectionName to the heading of the section it falls under, exactly as printed " +
+      "(e.g. 'Section A', 'Part II'), or an empty string if the paper has no section headings at all.",
+    "6. Populate sections with one entry per distinct section heading found (in the order they appear), " +
+      "each paired with that section's own real answer-instruction line exactly as printed/written - empty " +
+      "array if there are no sections.",
+    "7. Set detectedTitle to the document's own title/heading exactly as printed or written (e.g. 'Grade " +
       "12 Mathematics Final Examination'), or an empty string if none is genuinely visible - never invent " +
       "one.",
   ].join("\n");

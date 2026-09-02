@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../models/marking_scheme.dart';
+import '../services/marking_key_generation_service.dart';
 import '../services/marking_scheme_repository.dart';
+import 'marking_scheme_paper_structure_screen.dart';
 
 /// AI-Assisted Marking, Stage 3 — the marking scheme editor. A teacher
 /// defines each question, its expected answer/keywords, and its mark
@@ -26,6 +28,7 @@ class MarkingSchemeBuilderScreen extends StatefulWidget {
     this.existing,
     this.initialQuestions,
     this.aiNotes,
+    this.aiDetectedSections = const [],
     this.repository,
   });
 
@@ -44,6 +47,12 @@ class MarkingSchemeBuilderScreen extends StatefulWidget {
   final List<MarkingSchemeQuestion>? initialQuestions;
   final String? aiNotes;
 
+  /// The AI's own detected section headings + real answer-instructions
+  /// (see MarkingKeyGenerationService), carried through to
+  /// MarkingSchemePaperStructureScreen on save as a hint — empty for
+  /// manual entry or a scheme with no detected sections.
+  final List<DerivedMarkingKeySection> aiDetectedSections;
+
   final MarkingSchemeRepository? repository;
 
   @override
@@ -54,6 +63,7 @@ class _RowControllers {
   final label = TextEditingController();
   final answer = TextEditingController();
   final marks = TextEditingController();
+  final section = TextEditingController();
 
   _RowControllers();
 
@@ -61,12 +71,14 @@ class _RowControllers {
     label.text = q.label;
     answer.text = q.expectedAnswerOrKeywords;
     marks.text = q.maxMarks == q.maxMarks.roundToDouble() ? q.maxMarks.toInt().toString() : q.maxMarks.toString();
+    section.text = q.sectionName ?? '';
   }
 
   void dispose() {
     label.dispose();
     answer.dispose();
     marks.dispose();
+    section.dispose();
   }
 }
 
@@ -103,7 +115,11 @@ class _MarkingSchemeBuilderScreenState extends State<MarkingSchemeBuilderScreen>
   }
 
   void _addRow() {
-    setState(() => _rows.add(_RowControllers()..label.text = 'Q${_rows.length + 1}'));
+    setState(() => _rows.add(_RowControllers()
+      ..label.text = 'Q${_rows.length + 1}'
+      // Consecutive questions are usually in the same section as the one
+      // before them — a convenience default, not a guess about content.
+      ..section.text = _rows.isNotEmpty ? _rows.last.section.text : ''));
   }
 
   void _removeRow(int index) {
@@ -134,7 +150,7 @@ class _MarkingSchemeBuilderScreenState extends State<MarkingSchemeBuilderScreen>
       return;
     }
     setState(() => _saving = true);
-    final scheme = MarkingScheme(
+    final draft = MarkingScheme(
       id: widget.existing?.id ?? '${DateTime.now().millisecondsSinceEpoch}',
       title: _titleController.text.trim(),
       subjectName: widget.subjectName,
@@ -147,11 +163,31 @@ class _MarkingSchemeBuilderScreenState extends State<MarkingSchemeBuilderScreen>
             label: r.label.text.trim(),
             expectedAnswerOrKeywords: r.answer.text.trim(),
             maxMarks: double.parse(r.marks.text.trim()),
+            sectionName: r.section.text.trim().isEmpty ? null : r.section.text.trim(),
           ),
       ],
       createdAt: widget.existing?.createdAt ?? DateTime.now(),
+      preserveScriptOrder: widget.existing?.preserveScriptOrder ?? false,
     );
-    final saved = await _repository.save(scheme);
+
+    if (!mounted) return;
+    // Always routed through here before persisting — see that screen's own
+    // doc comment for why a flat sum of every listed question can be the
+    // wrong total for a paper with an "answer N of M" structure.
+    final confirmed = await Navigator.of(context).push<MarkingScheme>(
+      MaterialPageRoute(
+        builder: (_) => MarkingSchemePaperStructureScreen(draft: draft, derivedSections: widget.aiDetectedSections),
+      ),
+    );
+    if (confirmed == null) {
+      // Teacher backed out of the confirmation step entirely (not "Skip",
+      // which returns the draft unchanged) — stay on the builder rather
+      // than silently discarding their edits.
+      if (mounted) setState(() => _saving = false);
+      return;
+    }
+
+    final saved = await _repository.save(confirmed);
     if (!mounted) return;
     Navigator.of(context).pop<MarkingScheme>(saved);
   }
@@ -283,6 +319,16 @@ class _MarkingSchemeBuilderScreenState extends State<MarkingSchemeBuilderScreen>
                 border: OutlineInputBorder(),
               ),
               maxLines: 3,
+            ),
+            const SizedBox(height: 8),
+            TextField(
+              controller: row.section,
+              decoration: const InputDecoration(
+                labelText: 'Section (optional)',
+                hintText: 'e.g. Section A — leave blank if this paper has no sections',
+                border: OutlineInputBorder(),
+                isDense: true,
+              ),
             ),
           ],
         ),

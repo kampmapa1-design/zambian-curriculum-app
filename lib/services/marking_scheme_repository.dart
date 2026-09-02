@@ -10,6 +10,25 @@ import '../models/marking_scheme.dart';
 /// Stage 3) — a single small JSON catalog, fully offline, mirroring the
 /// pattern used elsewhere in the app (SubjectContentRepository,
 /// MarkingScriptRepository).
+///
+/// **Standing rule, permanent**: every [MarkingScheme] — AI-derived or
+/// manually typed, it makes no difference — passes through [save] as its
+/// one and only persistence path (MarkingSchemeBuilderScreen is the sole
+/// caller). A marking key is real, teacher-confirmed, structured exam
+/// content (questions, expected answers/keywords, marks, and — since the
+/// "confirm paper structure" step, see MarkingSchemePaperStructureScreen —
+/// section groupings and the paper's real total marks), which makes it
+/// exactly the kind of rich, already-compact content this app's other AI
+/// features (Lesson Plan/Scheme of Work generation, and any future
+/// generator) should be able to draw on for that subject/topic. Nothing
+/// calling [save] needs to remember to "index" or "register" it
+/// separately for that to happen: [RelatedMarkingKeyFinder] reads this
+/// exact catalog live, and [SubjectContentIndex.resolve] — the single
+/// canonical "what does this app already know about subject X" entry
+/// point every content-aware generator should go through — always
+/// includes it. Do not build a parallel/opt-in path for "marking key
+/// content some feature can see" elsewhere; extend the matching in
+/// [RelatedMarkingKeyFinder] instead, so every consumer benefits at once.
 class MarkingSchemeRepository {
   static const _catalogFileName = 'marking_schemes_catalog.json';
 

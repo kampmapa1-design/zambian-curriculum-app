@@ -23,23 +23,34 @@ import 'marking_key_generation_service.dart';
 /// yes/no check rather than a list to manage.
 class PendingMarkingKeyDraft {
   final List<MarkingSchemeQuestion> questions;
+  final List<DerivedMarkingKeySection> sections;
   final String notes;
   final String detectedTitle;
   final DateTime savedAt;
 
   const PendingMarkingKeyDraft({
     required this.questions,
+    this.sections = const [],
     required this.notes,
     required this.detectedTitle,
     required this.savedAt,
   });
 
   DerivedMarkingKey get asDerivedMarkingKey =>
-      DerivedMarkingKey(questions: questions, notes: notes, detectedTitle: detectedTitle);
+      DerivedMarkingKey(questions: questions, sections: sections, notes: notes, detectedTitle: detectedTitle);
 
   Map<String, dynamic> toJson() => {
         'questions': [
-          for (final q in questions) {'label': q.label, 'expectedAnswerOrKeywords': q.expectedAnswerOrKeywords, 'maxMarks': q.maxMarks},
+          for (final q in questions)
+            {
+              'label': q.label,
+              'expectedAnswerOrKeywords': q.expectedAnswerOrKeywords,
+              'maxMarks': q.maxMarks,
+              if (q.sectionName != null) 'sectionName': q.sectionName,
+            },
+        ],
+        'sections': [
+          for (final s in sections) {'name': s.name, 'answerInstructions': s.answerInstructions},
         ],
         'notes': notes,
         'detectedTitle': detectedTitle,
@@ -55,17 +66,33 @@ class PendingMarkingKeyDraft {
       final label = q['label'];
       final expected = q['expectedAnswerOrKeywords'];
       final maxMarks = q['maxMarks'];
+      final sectionNameRaw = q['sectionName'];
       questions.add(MarkingSchemeQuestion(
         label: label is String ? label : '',
         expectedAnswerOrKeywords: expected is String ? expected : '',
         maxMarks: maxMarks is num ? maxMarks.toDouble() : 0,
+        sectionName: sectionNameRaw is String && sectionNameRaw.trim().isNotEmpty ? sectionNameRaw : null,
       ));
     }
     if (questions.isEmpty) return null;
+
+    final sections = <DerivedMarkingKeySection>[];
+    final sectionsRaw = json['sections'];
+    if (sectionsRaw is List) {
+      for (final s in sectionsRaw) {
+        if (s is! Map) continue;
+        final name = s['name'];
+        if (name is! String || name.trim().isEmpty) continue;
+        final instructions = s['answerInstructions'];
+        sections.add(DerivedMarkingKeySection(name: name, answerInstructions: instructions is String ? instructions : ''));
+      }
+    }
+
     final savedAtRaw = json['savedAt'];
     final savedAt = savedAtRaw is String ? DateTime.tryParse(savedAtRaw) : null;
     return PendingMarkingKeyDraft(
       questions: questions,
+      sections: sections,
       notes: json['notes'] is String ? json['notes'] as String : '',
       detectedTitle: json['detectedTitle'] is String ? json['detectedTitle'] as String : '',
       savedAt: savedAt ?? DateTime.now(),
@@ -84,6 +111,7 @@ class PendingMarkingKeyDraftRepository {
   Future<void> save(DerivedMarkingKey derived) async {
     final draft = PendingMarkingKeyDraft(
       questions: derived.questions,
+      sections: derived.sections,
       notes: derived.notes,
       detectedTitle: derived.detectedTitle,
       savedAt: DateTime.now(),

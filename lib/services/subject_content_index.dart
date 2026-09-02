@@ -91,7 +91,7 @@ class SubjectContentIndex {
       topicName: topicName,
       subTopicName: subTopicName,
     );
-    final markingKeyFuture = _markingKeys.find(subjectName);
+    final markingKeyFuture = _markingKeys.find(subjectName, topicName: topicName, subTopicName: subTopicName);
 
     final embeddedMatches = await embeddedFuture;
     final catalog = await catalogFuture;

@@ -195,6 +195,7 @@ Future<MarkingScheme?> _finishMarkingKeyFlow({
         topicName: details.examType,
         initialQuestions: derived.questions,
         aiNotes: derived.notes,
+        aiDetectedSections: derived.sections,
         repository: schemeRepository,
       ),
     ),

@@ -31,11 +31,25 @@ enum MarkingKeySourceType {
       };
 }
 
+/// One section heading the AI found on the source document, paired with
+/// that section's own real answer-instruction line (e.g. "Answer any
+/// THREE of the following FIVE questions") — feeds
+/// MarkingSchemePaperStructureScreen's per-section prompts so a teacher
+/// sees exactly what the paper itself says before confirming marks-per-
+/// question and how many questions are really required.
+class DerivedMarkingKeySection {
+  final String name;
+  final String answerInstructions;
+
+  const DerivedMarkingKeySection({required this.name, required this.answerInstructions});
+}
+
 /// [MarkingKeyGenerationService.derive]'s result — AI-suggested questions
 /// plus any notes worth a teacher's attention before trusting them (an
 /// assumed mark allocation, an uncertain answer, etc).
 class DerivedMarkingKey {
   final List<MarkingSchemeQuestion> questions;
+  final List<DerivedMarkingKeySection> sections;
   final String notes;
 
   /// The document's own title/heading, exactly as the AI found it on the
@@ -45,7 +59,12 @@ class DerivedMarkingKey {
   /// intake form, not to auto-fill or override it.
   final String detectedTitle;
 
-  const DerivedMarkingKey({required this.questions, required this.notes, this.detectedTitle = ''});
+  const DerivedMarkingKey({
+    required this.questions,
+    this.sections = const [],
+    required this.notes,
+    this.detectedTitle = '',
+  });
 }
 
 /// AI-Assisted Marking, Stage B — calls `deriveMarkingKeyFromQuestionPaper`
@@ -162,20 +181,39 @@ class MarkingKeyGenerationService {
       final label = q['label'];
       final expected = q['expectedAnswerOrKeywords'];
       final maxMarks = q['maxMarks'];
+      final sectionNameRaw = q['sectionName'];
+      final sectionName = sectionNameRaw is String && sectionNameRaw.trim().isNotEmpty ? sectionNameRaw.trim() : null;
       questions.add(MarkingSchemeQuestion(
         label: label is String ? label : '',
         expectedAnswerOrKeywords: expected is String ? expected : '',
         maxMarks: maxMarks is num ? maxMarks.toDouble() : 0,
+        sectionName: sectionName,
       ));
     }
     if (questions.isEmpty) {
       throw const MarkingKeyGenerationUnavailable('No questions could be found on that document.');
     }
 
+    final sections = <DerivedMarkingKeySection>[];
+    final sectionsRaw = responseData['sections'];
+    if (sectionsRaw is List) {
+      for (final s in sectionsRaw) {
+        if (s is! Map) continue;
+        final name = s['name'];
+        if (name is! String || name.trim().isEmpty) continue;
+        final instructions = s['answerInstructions'];
+        sections.add(DerivedMarkingKeySection(
+          name: name.trim(),
+          answerInstructions: instructions is String ? instructions.trim() : '',
+        ));
+      }
+    }
+
     final notes = responseData['notes'];
     final detectedTitle = responseData['detectedTitle'];
     return DerivedMarkingKey(
       questions: questions,
+      sections: sections,
       notes: notes is String ? notes : '',
       detectedTitle: detectedTitle is String ? detectedTitle : '',
     );
