@@ -530,38 +530,45 @@ class _AssignmentSubmissionScreenState extends State<AssignmentSubmissionScreen>
 
   @override
   Widget build(BuildContext context) {
+    final primaryAction = _submission == null || _busy ? null : _primaryActionFor(_step);
     return Scaffold(
       appBar: AppBar(title: const Text('Assignment Submission')),
-      body: _submission == null
-          ? const Center(child: CircularProgressIndicator())
-          : _busy
-              ? Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const CircularProgressIndicator(),
-                      if (_busyMessage != null) ...[const SizedBox(height: 12), Text(_busyMessage!)],
-                    ],
-                  ),
-                )
-              : switch (_step) {
-                  _Step.cover => _buildCoverStep(),
-                  _Step.body => _buildBodyStep(),
-                  _Step.referenceSystem => _buildReferenceSystemStep(),
-                  _Step.references => _buildReferencesStep(),
-                  _Step.review => _buildReviewStep(),
-                  _Step.transmit => _buildTransmitStep(),
-                  _Step.receipt => _buildReceiptStep(),
-                },
-      // The primary "Continue"-style button lives in a small fixed bar
-      // pinned above the keyboard/bottom edge (2026-09-02), not as the
-      // last item in each step's scrolling list — a real complaint on a
-      // long list of segment fields: the button could end up scrolled out
-      // of view or hidden behind the keyboard. `resizeToAvoidBottomInset`
-      // (Scaffold's default) keeps this bar above the keyboard
-      // automatically. Compact (36px) and padded off the physical bottom
-      // edge, rather than the previous full-size button glued to it.
-      bottomNavigationBar: _submission == null || _busy ? null : _bottomBar(_primaryActionFor(_step)),
+      // The primary "Continue"-style button floats roughly mid-screen
+      // (2026-09-02, second pass on real-device feedback: even pinned in a
+      // fixed bar just above the keyboard/bottom edge, it still read as
+      // "too low and obscured" — raised to ~45% up from the bottom of the
+      // available height, above the keyboard when one's open, and
+      // narrowed to a short, centered pill instead of a near-full-width
+      // bar) rather than living at the bottom of the screen or as the
+      // last item in each step's scrolling list.
+      body: Stack(
+        children: [
+          Positioned.fill(
+            child: _submission == null
+                ? const Center(child: CircularProgressIndicator())
+                : _busy
+                    ? Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const CircularProgressIndicator(),
+                            if (_busyMessage != null) ...[const SizedBox(height: 12), Text(_busyMessage!)],
+                          ],
+                        ),
+                      )
+                    : switch (_step) {
+                        _Step.cover => _buildCoverStep(),
+                        _Step.body => _buildBodyStep(),
+                        _Step.referenceSystem => _buildReferenceSystemStep(),
+                        _Step.references => _buildReferencesStep(),
+                        _Step.review => _buildReviewStep(),
+                        _Step.transmit => _buildTransmitStep(),
+                        _Step.receipt => _buildReceiptStep(),
+                      },
+          ),
+          if (primaryAction != null) _floatingActionBar(context, primaryAction),
+        ],
+      ),
     );
   }
 
@@ -597,14 +604,22 @@ class _AssignmentSubmissionScreenState extends State<AssignmentSubmissionScreen>
     }
   }
 
-  Widget? _bottomBar(Widget? action) {
-    if (action == null) return null;
-    return SafeArea(
-      top: false,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 8, 16, 14),
+  /// Floats [action] at roughly 45% up from the bottom of whatever height
+  /// is actually available (screen height minus the keyboard, when one's
+  /// open) — well clear of both the physical bottom edge and the
+  /// keyboard, and short/centered rather than a near-full-width bar.
+  Widget _floatingActionBar(BuildContext context, Widget action) {
+    final mediaQuery = MediaQuery.of(context);
+    final keyboardInset = mediaQuery.viewInsets.bottom;
+    final availableHeight = mediaQuery.size.height - keyboardInset;
+    return Positioned(
+      left: 0,
+      right: 0,
+      bottom: keyboardInset + availableHeight * 0.45,
+      child: Center(
         child: SizedBox(
-          height: 36,
+          width: 220,
+          height: 40,
           child: DefaultTextStyle.merge(style: const TextStyle(fontSize: 13), child: action),
         ),
       ),

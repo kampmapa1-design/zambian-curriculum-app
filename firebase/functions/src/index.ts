@@ -52,6 +52,12 @@ interface GenerateTeachingNotesRequest {
   subtopic?: string;
   syllabusContext: string;
   format: NotesFormat;
+  // Added 2026-09-02 for Lesson Plan's companion "Lesson Notes" document -
+  // "'page'" caps bullet-format notes to roughly one typed page instead of
+  // the standalone Teaching Notes feature's normal "no target, be
+  // thorough" behavior (see buildPrompt's use of it). Ignored for
+  // 'paragraph' format, which already has its own 700-word cap.
+  maxLength?: "page";
 }
 
 interface GenerateTeachingNotesResponse {
@@ -70,9 +76,15 @@ function buildPrompt(req: GenerateTeachingNotesRequest): string {
   const lengthInstruction =
     req.format === "paragraph"
       ? "Write teaching notes for a teacher preparing a lesson, no more than 700 words in total."
-      : "Write teaching notes for a teacher preparing a lesson. Bullet points are already " +
-        "condensed, so there is no word-count target — cover the topic thoroughly rather than " +
-        "padding or trimming to hit a length.";
+      : req.maxLength === "page"
+        ? "Write bulletin-style notes summarizing this ENTIRE topic as a single-page reference " +
+          "document - use as many concise bullet points as it takes to cover the topic " +
+          "thoroughly, up to approximately one full typed page (roughly 450-600 words' worth of " +
+          "bullets). Prioritize the most important points if the topic is larger than a page can " +
+          "hold; do not pad with filler to reach the target, and do not run noticeably past it."
+        : "Write teaching notes for a teacher preparing a lesson. Bullet points are already " +
+          "condensed, so there is no word-count target — cover the topic thoroughly rather than " +
+          "padding or trimming to hit a length.";
 
   return [
     lengthInstruction,
@@ -114,7 +126,7 @@ export const generateTeachingNotes = onCall<GenerateTeachingNotesRequest>(
       );
     }
 
-    const { topic, subtopic, syllabusContext, format } = request.data ?? {};
+    const { topic, subtopic, syllabusContext, format, maxLength } = request.data ?? {};
 
     if (typeof topic !== "string" || topic.trim().length === 0) {
       throw new HttpsError("invalid-argument", "'topic' is required.");
@@ -128,9 +140,12 @@ export const generateTeachingNotes = onCall<GenerateTeachingNotesRequest>(
     if (subtopic !== undefined && typeof subtopic !== "string") {
       throw new HttpsError("invalid-argument", "'subtopic' must be a string if provided.");
     }
+    if (maxLength !== undefined && maxLength !== "page") {
+      throw new HttpsError("invalid-argument", "'maxLength' must be 'page' if provided.");
+    }
 
     const ai = new GoogleGenAI({ apiKey: geminiApiKey.value() });
-    const req: GenerateTeachingNotesRequest = { topic, subtopic, syllabusContext, format };
+    const req: GenerateTeachingNotesRequest = { topic, subtopic, syllabusContext, format, maxLength };
 
     let text: string | undefined;
     try {
@@ -180,6 +195,13 @@ interface GenerateLessonPlanRequest {
   objectives: string[];
   references?: string;
   progressionStages: string[];
+  // Added 2026-09-02: real material already saved on this device for this
+  // exact topic (an excerpt from the teacher's own downloaded/extracted
+  // CDC Subject Content Database materials, or a matching real embedded
+  // lesson plan) - see buildLessonPlanPrompt's use of it, and
+  // lesson_plan_screen.dart's _loadSubjectContentIndex for where it comes
+  // from client-side. Optional: most topics don't have anything saved yet.
+  subjectContentExcerpt?: string;
 }
 
 interface LessonPlanProgressionRow {
@@ -262,6 +284,13 @@ function buildLessonPlanPrompt(req: GenerateLessonPlanRequest): string {
         `citation not listed here):\n${req.references}`
       : null,
     "",
+    req.subjectContentExcerpt
+      ? "Real material already saved on this teacher's own device for this exact topic (from their " +
+        "downloaded CDC materials or a real embedded lesson plan) - ground the lesson in this FIRST, " +
+        "before anything else. Only bring in your own general knowledge to fill gaps this material " +
+        "doesn't cover, and never contradict what's given here:\n" +
+        `${req.subjectContentExcerpt}\n`
+      : null,
     `Lesson stages, in order: ${req.progressionStages.join(", ")}. Produce exactly one progression ` +
       "entry per stage, in that order, with Teacher's Role, Learners' Role, and Assessment Criteria " +
       "specific to this lesson's actual content.",
@@ -282,7 +311,8 @@ export const generateLessonPlan = onCall<GenerateLessonPlanRequest>(
       throw new HttpsError("unauthenticated", "Sign in is required to generate a lesson plan.");
     }
 
-    const { topic, subtopic, competencies, objectives, references, progressionStages } = request.data ?? {};
+    const { topic, subtopic, competencies, objectives, references, progressionStages, subjectContentExcerpt } =
+      request.data ?? {};
 
     if (typeof topic !== "string" || topic.trim().length === 0) {
       throw new HttpsError("invalid-argument", "'topic' is required.");
@@ -306,6 +336,9 @@ export const generateLessonPlan = onCall<GenerateLessonPlanRequest>(
     if (references !== undefined && typeof references !== "string") {
       throw new HttpsError("invalid-argument", "'references' must be a string if provided.");
     }
+    if (subjectContentExcerpt !== undefined && typeof subjectContentExcerpt !== "string") {
+      throw new HttpsError("invalid-argument", "'subjectContentExcerpt' must be a string if provided.");
+    }
     if (competencies.length === 0 && objectives.length === 0) {
       throw new HttpsError(
         "invalid-argument",
@@ -321,6 +354,7 @@ export const generateLessonPlan = onCall<GenerateLessonPlanRequest>(
       objectives,
       references,
       progressionStages,
+      subjectContentExcerpt,
     };
 
     let text: string | undefined;

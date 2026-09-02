@@ -31,14 +31,14 @@ class AssignmentsTestsMenuScreen extends StatelessWidget {
           FunctionButton(
             icon: Icons.quiz_outlined,
             label: 'Test Submission',
-            subtitle: 'Photograph a handwritten test and send it to your teacher, with proof of submission',
+            subtitle: 'Photograph a handwritten test and send it to your teacher/lecturer, with proof of submission',
             onTap: () => Navigator.of(context).push(
               MaterialPageRoute(builder: (_) => const TestSubmissionScreen()),
             ),
           ),
           FunctionButton(
             icon: Icons.inbox_outlined,
-            label: 'Submissions Dashboard (For Teachers)',
+            label: 'Submissions Dashboard (For Teachers/Lecturers)',
             subtitle: 'Review assignments and tests your students have sent you',
             onTap: () => Navigator.of(context).push(
               MaterialPageRoute(builder: (_) => const TeacherSubmissionsDashboardScreen()),

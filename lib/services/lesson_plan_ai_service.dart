@@ -105,6 +105,7 @@ class LessonPlanAiService {
     required List<String> objectives,
     String? references,
     required List<String> progressionStages,
+    String? subjectContentExcerpt,
   }) async {
     if (!await isOnline) {
       throw const LessonPlanAiUnavailable(
@@ -123,6 +124,8 @@ class LessonPlanAiService {
         'objectives': objectives,
         if (references != null) 'references': references,
         'progressionStages': progressionStages,
+        if (subjectContentExcerpt != null && subjectContentExcerpt.trim().isNotEmpty)
+          'subjectContentExcerpt': subjectContentExcerpt,
       });
       return LessonPlanAiResult.fromMap(result.data);
     } on FirebaseFunctionsException catch (e) {

@@ -478,33 +478,40 @@ class _TestSubmissionScreenState extends State<TestSubmissionScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final primaryAction = _submission == null || _busy ? null : _primaryActionFor(_step);
     return Scaffold(
       appBar: AppBar(title: const Text('Test Submission')),
-      body: _submission == null
-          ? const Center(child: CircularProgressIndicator())
-          : _busy
-              ? Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const CircularProgressIndicator(),
-                      if (_busyMessage != null) ...[const SizedBox(height: 12), Text(_busyMessage!)],
-                    ],
-                  ),
-                )
-              : switch (_step) {
-                  _Step.info => _buildInfoStep(),
-                  _Step.capture => _buildCaptureStep(),
-                  _Step.review => _buildReviewStep(),
-                  _Step.transmit => _buildTransmitStep(),
-                  _Step.receipt => _buildReceiptStep(),
-                },
-      // Primary action pinned in a small fixed bar above the keyboard/
-      // bottom edge (2026-09-02), not as the last item in a scrolling
-      // list — was getting scrolled out of view or hidden behind the
-      // keyboard on a long segment list. See AssignmentSubmissionScreen's
-      // identical fix for the full reasoning.
-      bottomNavigationBar: _submission == null || _busy ? null : _bottomBar(_primaryActionFor(_step)),
+      // Primary action floats roughly mid-screen (2026-09-02, second pass —
+      // see AssignmentSubmissionScreen's identical fix for the full
+      // reasoning: even pinned in a fixed bar just above the keyboard/
+      // bottom edge, it still read as "too low and obscured" on a real
+      // device).
+      body: Stack(
+        children: [
+          Positioned.fill(
+            child: _submission == null
+                ? const Center(child: CircularProgressIndicator())
+                : _busy
+                    ? Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const CircularProgressIndicator(),
+                            if (_busyMessage != null) ...[const SizedBox(height: 12), Text(_busyMessage!)],
+                          ],
+                        ),
+                      )
+                    : switch (_step) {
+                        _Step.info => _buildInfoStep(),
+                        _Step.capture => _buildCaptureStep(),
+                        _Step.review => _buildReviewStep(),
+                        _Step.transmit => _buildTransmitStep(),
+                        _Step.receipt => _buildReceiptStep(),
+                      },
+          ),
+          if (primaryAction != null) _floatingActionBar(context, primaryAction),
+        ],
+      ),
     );
   }
 
@@ -531,14 +538,19 @@ class _TestSubmissionScreenState extends State<TestSubmissionScreen> {
     }
   }
 
-  Widget? _bottomBar(Widget? action) {
-    if (action == null) return null;
-    return SafeArea(
-      top: false,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 8, 16, 14),
+  /// See AssignmentSubmissionScreen's identical method for the reasoning.
+  Widget _floatingActionBar(BuildContext context, Widget action) {
+    final mediaQuery = MediaQuery.of(context);
+    final keyboardInset = mediaQuery.viewInsets.bottom;
+    final availableHeight = mediaQuery.size.height - keyboardInset;
+    return Positioned(
+      left: 0,
+      right: 0,
+      bottom: keyboardInset + availableHeight * 0.45,
+      child: Center(
         child: SizedBox(
-          height: 36,
+          width: 220,
+          height: 40,
           child: DefaultTextStyle.merge(style: const TextStyle(fontSize: 13), child: action),
         ),
       ),

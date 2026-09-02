@@ -284,12 +284,22 @@ class HomeScreen extends StatelessWidget {
                         ?.copyWith(color: colorScheme.onSurfaceVariant, letterSpacing: 0.8),
                   ),
                 ),
+                // Combined (2026-09-02) — Assignment Submission and Test
+                // Submission used to be two side-by-side home-screen
+                // buttons; now both live one level down, behind a single
+                // home-screen entry point, same declutter rationale as the
+                // Teaching Modules/Syllabi/Past Papers combination above.
+                // Both keep their exact prior functions — nothing about
+                // either feature changed here, only where they're reached
+                // from. Moved to the top of Admin Tools (2026-09-02, per
+                // explicit request) — swapped with Word ↔ PDF Converter,
+                // which moved to the very bottom of the home screen.
                 FunctionButton(
-                  icon: Icons.picture_as_pdf_outlined,
-                  label: 'Word ↔ PDF Converter',
-                  subtitle: 'Convert a .docx file to PDF, entirely on-device',
+                  icon: Icons.assignment_turned_in_outlined,
+                  label: 'Assignments, Exams & Test Submissions',
+                  subtitle: 'Send a handwritten assignment or test to your teacher',
                   onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const WordPdfConverterScreen()),
+                    MaterialPageRoute(builder: (_) => const AssignmentsTestsMenuScreen()),
                   ),
                 ),
                 FunctionButton(
@@ -300,20 +310,12 @@ class HomeScreen extends StatelessWidget {
                     MaterialPageRoute(builder: (_) => const MinutesMakerScreen()),
                   ),
                 ),
-                // Combined (2026-09-02) — Assignment Submission and Test
-                // Submission used to be two side-by-side home-screen
-                // buttons; now both live one level down, behind a single
-                // home-screen entry point, same declutter rationale as the
-                // Teaching Modules/Syllabi/Past Papers combination above.
-                // Both keep their exact prior functions — nothing about
-                // either feature changed here, only where they're reached
-                // from.
                 FunctionButton(
-                  icon: Icons.assignment_turned_in_outlined,
-                  label: 'Assignments, Exams & Test Submissions',
-                  subtitle: 'Send a handwritten assignment or test to your teacher',
+                  icon: Icons.picture_as_pdf_outlined,
+                  label: 'Word ↔ PDF Converter',
+                  subtitle: 'Convert a .docx file to PDF, entirely on-device',
                   onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const AssignmentsTestsMenuScreen()),
+                    MaterialPageRoute(builder: (_) => const WordPdfConverterScreen()),
                   ),
                 ),
               ],

@@ -18,10 +18,18 @@ import '../services/lesson_plan_ai_service.dart';
 import '../services/lesson_plan_document_service.dart';
 import '../services/lesson_progression_generator.dart';
 import '../services/subject_content_index.dart';
+import '../services/teaching_notes_document_service.dart';
+import '../services/teaching_notes_service.dart';
 
 /// Lets a teacher fill in a lesson plan template for one scheme-of-work
 /// entry (topic/sub-topic already known from the syllabus), then export it
-/// as PDF or Word and share it — entirely on-device, no network required.
+/// as Word and share it — entirely on-device, no network required. When
+/// online, sharing also generates and attaches a companion "Lesson Notes"
+/// document (2026-09-02, per explicit request) — a one-page bulletin
+/// summary of the whole topic, reusing the same AI-enhanced Teaching
+/// Notes pipeline "Generate Teaching Notes & Slides" already has, capped
+/// to roughly a page (see `maxLength: 'page'` on `generateTeachingNotes`).
+/// Word-only (2026-09-02, per the same request) — PDF export was removed.
 ///
 /// Defaults to the bundled CDC template, but also offers any templates the
 /// teacher uploaded themselves (Stage 3: "Upload My Own Template",
@@ -46,6 +54,8 @@ class LessonPlanScreen extends StatefulWidget {
     this.checkpointRepository,
     this.embeddedLessonPlanRepository,
     this.lessonPlanAiService,
+    this.notesService,
+    this.notesDocumentService,
     this.guidedActivitiesText,
     this.guidedNoteText,
     this.focusStage,
@@ -62,6 +72,13 @@ class LessonPlanScreen extends StatefulWidget {
   final LessonCheckpointRepository? checkpointRepository;
   final EmbeddedLessonPlanRepository? embeddedLessonPlanRepository;
   final LessonPlanAiService? lessonPlanAiService;
+
+  /// The companion "Lesson Notes" document's AI generation (2026-09-02) —
+  /// reuses the same `generateTeachingNotes` pipeline "Generate Teaching
+  /// Notes & Slides" already has, just capped to one page (see
+  /// [TeachingNotesService.generate]'s `onePage` parameter).
+  final TeachingNotesService? notesService;
+  final TeachingNotesDocumentService? notesDocumentService;
 
   /// Pre-fills the "Lesson Development" progression stage's Learners' Role
   /// (or the first stage, if none is named "Development") — set when
@@ -101,6 +118,9 @@ class _LessonPlanScreenState extends State<LessonPlanScreen> {
       SubjectContentIndex(embeddedLessonPlanRepository: widget.embeddedLessonPlanRepository);
   final LessonHistoryRepository _lessonHistoryRepository = LessonHistoryRepository();
   late final LessonPlanAiService _aiService = widget.lessonPlanAiService ?? LessonPlanAiService();
+  late final TeachingNotesService _notesService = widget.notesService ?? TeachingNotesService();
+  late final TeachingNotesDocumentService _notesDocumentService =
+      widget.notesDocumentService ?? TeachingNotesDocumentService();
 
   List<LessonPlanTemplate> _availableTemplates = const [];
   late LessonPlanTemplate _activeTemplate;
@@ -229,12 +249,18 @@ class _LessonPlanScreenState extends State<LessonPlanScreen> {
   }
 
   /// Optional, request-time AI upgrade — calls `generateLessonPlan` and
-  /// merges the result onto the current draft. Grounded strictly in this
-  /// entry's real syllabus competencies/objectives/references (see
-  /// `buildLessonPlanPrompt` server-side); never invents content beyond
-  /// them. Existing edits to fields the AI wasn't asked about (header
-  /// details, evaluation) are untouched — same "enrich, don't discard"
-  /// principle as [_applyEmbedded] and [_mergeExcerptIntoDevelopmentRow].
+  /// merges the result onto the current draft. Grounded in this entry's
+  /// real syllabus competencies/objectives/references FIRST, and — when
+  /// available — real material already saved on this device for this
+  /// exact topic (`_subjectContentExcerpt`, from the Subject Content
+  /// Database or a matching embedded lesson plan, see
+  /// `_loadSubjectContentIndex`), passed through so the server-side
+  /// prompt grounds itself there before falling back to general knowledge
+  /// (2026-09-02, per explicit request: "consult device repositories...
+  /// and access online relevant ones where necessary"). Existing edits to
+  /// fields the AI wasn't asked about (header details, evaluation) are
+  /// untouched — same "enrich, don't discard" principle as
+  /// [_applyEmbedded] and [_mergeExcerptIntoDevelopmentRow].
   Future<void> _generateWithAi() async {
     _syncDraftFromControllers();
     setState(() => _generatingAi = true);
@@ -244,6 +270,7 @@ class _LessonPlanScreenState extends State<LessonPlanScreen> {
       final result = await _aiService.generate(
         topic: widget.entry.topic.name,
         subtopic: widget.entry.subTopic?.name,
+        subjectContentExcerpt: _subjectContentExcerpt,
         competencies: competencies,
         objectives: objectives,
         references: widget.entry.references,
@@ -503,21 +530,57 @@ class _LessonPlanScreenState extends State<LessonPlanScreen> {
     );
   }
 
-  Future<void> _export(bool asPdf) async {
+  /// Word-only (2026-09-02, per explicit request — PDF export removed).
+  /// When there's a connection, also generates and attaches a companion
+  /// "Lesson Notes" document — a one-page bulletin summary of the whole
+  /// topic, reusing the same AI pipeline "Generate Teaching Notes &
+  /// Slides" already has (see [TeachingNotesService.generate]'s
+  /// `onePage`). Best-effort: a failure generating notes (or being
+  /// offline) never blocks sharing the lesson plan itself — the teacher
+  /// just doesn't get the companion doc that time, and is told plainly why.
+  Future<void> _export() async {
     _syncDraftFromControllers();
     setState(() => _exporting = true);
     try {
-      final file = asPdf
-          ? await _documentService.generatePdf(_activeTemplate, _draft, relatedMarkingKeys: _relatedMarkingKeys)
-          : await _documentService.generateDocx(_activeTemplate, _draft, relatedMarkingKeys: _relatedMarkingKeys);
+      final planFile = await _documentService.generateDocx(_activeTemplate, _draft, relatedMarkingKeys: _relatedMarkingKeys);
+      final files = [XFile(planFile.path)];
+      var notesIncluded = false;
+
+      if (await _notesService.isOnline) {
+        try {
+          final notesResult = await _notesService.generate(
+            topic: widget.entry.topic.name,
+            subtopic: widget.entry.subTopic?.name,
+            syllabusContext: _lessonNotesSyllabusContext(),
+            format: 'bullet',
+            onePage: true,
+          );
+          final notesFile = await _notesDocumentService.generateDocx(
+            title: 'Lesson Notes — ${widget.entry.title}',
+            notes: notesResult.notes,
+          );
+          files.add(XFile(notesFile.path));
+          notesIncluded = true;
+        } catch (_) {
+          // Best-effort only — the lesson plan itself still shares below.
+        }
+      }
+
       if (!mounted) return;
       // The OS share sheet is what actually surfaces WhatsApp, email,
       // Bluetooth, and every other installed share target — one call here
       // covers all of them rather than integrating each one separately.
       await SharePlus.instance.share(ShareParams(
-        files: [XFile(file.path)],
+        files: files,
         subject: 'Lesson Plan — ${widget.entry.topic.name}',
       ));
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(notesIncluded
+              ? 'Shared the lesson plan with a companion Lesson Notes document.'
+              : "Shared the lesson plan — connect to the internet to also include Lesson Notes next time."),
+        ));
+      }
       unawaited(_lessonHistoryRepository.logLessonPlanGenerated(
         curriculumCode: widget.curriculumCode,
         subjectCode: widget.subjectCode,
@@ -533,6 +596,24 @@ class _LessonPlanScreenState extends State<LessonPlanScreen> {
     } finally {
       if (mounted) setState(() => _exporting = false);
     }
+  }
+
+  /// The same topic/objectives/competencies context every syllabus-
+  /// grounded generation call uses, plus — when available — real
+  /// material already saved on this device for this exact topic (see
+  /// `_generateWithAi`'s doc comment for the same principle applied
+  /// there).
+  String _lessonNotesSyllabusContext() {
+    final excerpt = _subjectContentExcerpt;
+    return [
+      'Topic: ${widget.entry.topic.name}',
+      if (widget.entry.subTopic != null) 'Sub-topic: ${widget.entry.subTopic!.name}',
+      for (final o in widget.entry.objectives) 'Learning objective: ${o.description}',
+      for (final c in widget.entry.competencies) 'Competency: ${c.description}',
+      if (excerpt != null && excerpt.trim().isNotEmpty)
+        'Real material already saved on this device for this exact topic — ground the notes in this '
+            'first:\n$excerpt',
+    ].join('\n');
   }
 
   @override
@@ -705,26 +786,12 @@ class _LessonPlanScreenState extends State<LessonPlanScreen> {
       bottomNavigationBar: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(12),
-          child: Row(
-            children: [
-              Expanded(
-                child: OutlinedButton.icon(
-                  onPressed: _exporting ? null : () => _export(false),
-                  icon: const Icon(Icons.description_outlined),
-                  label: const Text('Export Word'),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: FilledButton.icon(
-                  onPressed: _exporting ? null : () => _export(true),
-                  icon: _exporting
-                      ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
-                      : const Icon(Icons.picture_as_pdf_outlined),
-                  label: const Text('Export PDF'),
-                ),
-              ),
-            ],
+          child: FilledButton.icon(
+            onPressed: _exporting ? null : _export,
+            icon: _exporting
+                ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
+                : const Icon(Icons.description_outlined),
+            label: const Text('Export & Share (Word)'),
           ),
         ),
       ),

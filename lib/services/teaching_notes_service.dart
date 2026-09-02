@@ -53,6 +53,7 @@ class TeachingNotesService {
     String? subtopic,
     required String syllabusContext,
     required String format,
+    bool onePage = false,
   }) async {
     if (!await isOnline) {
       throw const TeachingNotesUnavailable(
@@ -69,6 +70,7 @@ class TeachingNotesService {
         if (subtopic != null) 'subtopic': subtopic,
         'syllabusContext': syllabusContext,
         'format': format,
+        if (onePage) 'maxLength': 'page',
       });
       return TeachingNotesResult.fromMap(result.data);
     } on FirebaseFunctionsException catch (e) {
