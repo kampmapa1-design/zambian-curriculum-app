@@ -35,7 +35,7 @@ class DatabaseHelper {
   DatabaseHelper._internal();
   static final DatabaseHelper instance = DatabaseHelper._internal();
 
-  static const _schemaVersion = 5;
+  static const _schemaVersion = 6;
 
   Database? _db;
 
@@ -70,6 +70,10 @@ class DatabaseHelper {
   // Drop order matters for foreign keys: children before parents.
   static const _tableNamesNewestFirst = [
     'lesson_history',
+    'class_progress',
+    // Superseded by class_progress (schema v6) — kept here so an upgrading
+    // device's old table actually gets dropped rather than left orphaned;
+    // DROP TABLE IF EXISTS is a no-op on a device that never had it.
     'topic_progress',
     'learning_objectives',
     'competencies',
@@ -169,14 +173,21 @@ class DatabaseHelper {
         category TEXT
       )
     ''');
+    // One progress cursor per NAMED CLASS, not just per subject+grade — a
+    // teacher can run two sections of the same subject+grade at different
+    // paces (or generate a one-off scheme for a colleague's class) without
+    // one overwriting the other's "where we reached" record. See
+    // ClassProgressRepository's own doc comment for the full reasoning.
     await db.execute('''
-      CREATE TABLE topic_progress (
+      CREATE TABLE class_progress (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         subject_id INTEGER NOT NULL REFERENCES subjects(id) ON DELETE CASCADE,
         grade_id INTEGER NOT NULL REFERENCES grades(id) ON DELETE CASCADE,
+        class_label TEXT NOT NULL,
         last_concluded_topic_id INTEGER NOT NULL REFERENCES topics(id) ON DELETE CASCADE,
+        last_concluded_sub_topic_id INTEGER REFERENCES sub_topics(id) ON DELETE CASCADE,
         updated_at TEXT NOT NULL,
-        UNIQUE (subject_id, grade_id)
+        UNIQUE (subject_id, grade_id, class_label)
       )
     ''');
     // Auto-captured lesson history — one row per topic/sub-topic a lesson
@@ -508,17 +519,23 @@ class DatabaseHelper {
     return SyllabusTemplate(curriculum: curriculum, subject: subject, grade: grade, terms: terms);
   }
 
-  /// Records the topic a teacher last concluded for one subject+grade within
-  /// one curriculum. Overwrites any previous mark for that exact
-  /// curriculum+subject+grade combination — a mark made under one curriculum
-  /// never collides with the same subject+grade under the other, since
+  /// Records the topic (and, optionally, the specific sub-topic within it)
+  /// a NAMED CLASS last concluded for one subject+grade within one
+  /// curriculum. Overwrites any previous mark for that exact curriculum+
+  /// subject+grade+class_label combination — a mark made for one class
+  /// label never touches another's, and a mark made under one curriculum
+  /// never collides with the same subject+grade under another, since
   /// subject_id/grade_id are themselves curriculum-scoped rows. Stored
-  /// purely on-device.
-  Future<void> setLastConcludedTopic({
+  /// purely on-device. [subTopicId] null means the whole topic (every one
+  /// of its sub-topics) was concluded, not just its first sub-topic — see
+  /// generateSchemeOfWork's own doc comment on how the two are told apart.
+  Future<void> setClassProgress({
     required String curriculumCode,
     required String subjectCode,
     required int gradeLevel,
+    required String classLabel,
     required int topicId,
+    int? subTopicId,
   }) async {
     final db = await database;
     final curriculumId = await _requireId(db, 'curricula', {'code': curriculumCode});
@@ -526,35 +543,65 @@ class DatabaseHelper {
     final gradeId =
         await _requireId(db, 'grades', {'curriculum_id': curriculumId, 'sequence_number': gradeLevel});
     await db.insert(
-      'topic_progress',
+      'class_progress',
       {
         'subject_id': subjectId,
         'grade_id': gradeId,
+        'class_label': classLabel,
         'last_concluded_topic_id': topicId,
+        'last_concluded_sub_topic_id': subTopicId,
         'updated_at': DateTime.now().toIso8601String(),
       },
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
 
-  /// Returns the id of the topic last marked concluded for a subject+grade
-  /// within one curriculum, or null if nothing has been marked yet.
-  Future<int?> getLastConcludedTopicId({
+  /// Returns `(topicId, subTopicId)` last marked concluded for one named
+  /// class under a subject+grade within one curriculum, or null if that
+  /// class label has no recorded progress yet.
+  Future<(int topicId, int? subTopicId)?> getClassProgress({
+    required String curriculumCode,
+    required String subjectCode,
+    required int gradeLevel,
+    required String classLabel,
+  }) async {
+    final db = await database;
+    final rows = await db.rawQuery('''
+      SELECT class_progress.last_concluded_topic_id AS topic_id,
+             class_progress.last_concluded_sub_topic_id AS sub_topic_id
+      FROM class_progress
+      JOIN subjects ON subjects.id = class_progress.subject_id
+      JOIN grades ON grades.id = class_progress.grade_id
+      JOIN curricula ON curricula.id = subjects.curriculum_id
+      WHERE curricula.code = ? AND subjects.code = ? AND grades.sequence_number = ? AND class_progress.class_label = ?
+      LIMIT 1
+    ''', [curriculumCode, subjectCode, gradeLevel, classLabel]);
+    if (rows.isEmpty) return null;
+    return (rows.first['topic_id'] as int, rows.first['sub_topic_id'] as int?);
+  }
+
+  /// Every class label a teacher has previously used for this subject+grade
+  /// (any curriculum-scoped combination), most recently updated first —
+  /// feeds an autocomplete list so a returning teacher doesn't have to
+  /// retype "Grade 10A" exactly the same way every time. Empty for a
+  /// subject+grade nothing has ever been recorded against.
+  Future<List<String>> listClassLabels({
     required String curriculumCode,
     required String subjectCode,
     required int gradeLevel,
   }) async {
     final db = await database;
     final rows = await db.rawQuery('''
-      SELECT topic_progress.last_concluded_topic_id AS topic_id
-      FROM topic_progress
-      JOIN subjects ON subjects.id = topic_progress.subject_id
-      JOIN grades ON grades.id = topic_progress.grade_id
+      SELECT class_progress.class_label AS class_label, MAX(class_progress.updated_at) AS latest
+      FROM class_progress
+      JOIN subjects ON subjects.id = class_progress.subject_id
+      JOIN grades ON grades.id = class_progress.grade_id
       JOIN curricula ON curricula.id = subjects.curriculum_id
       WHERE curricula.code = ? AND subjects.code = ? AND grades.sequence_number = ?
-      LIMIT 1
+      GROUP BY class_progress.class_label
+      ORDER BY latest DESC
     ''', [curriculumCode, subjectCode, gradeLevel]);
-    return rows.isEmpty ? null : rows.first['topic_id'] as int;
+    return [for (final row in rows) row['class_label'] as String];
   }
 
   /// Records that a lesson plan or scheme of work was generated for (or

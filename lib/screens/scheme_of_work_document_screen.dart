@@ -9,8 +9,8 @@ import '../models/scheme_of_work_document.dart';
 import '../models/scheme_of_work_template.dart';
 import '../models/syllabus_models.dart';
 import '../models/zambian_term_calendar.dart';
+import '../services/class_progress_repository.dart';
 import '../services/lesson_history_repository.dart';
-import '../services/progress_repository.dart';
 import '../services/scheme_of_work_document_service.dart';
 import '../services/subject_content_index.dart';
 import '../services/syllabus_document_service.dart';
@@ -25,11 +25,27 @@ class SchemeOfWorkDocumentScreen extends StatefulWidget {
     super.key,
     required this.template,
     required this.entries,
+    required this.classLabel,
+    this.targetTerm,
     this.documentService,
   });
 
   final SyllabusTemplate template;
   final List<SchemeOfWorkEntry> entries;
+
+  /// Which named class this generated scheme is for — see
+  /// ClassResumePickerScreen/ClassProgressRepository. Every "mark taught"
+  /// and the automatic post-export progress update (see [_export]) write
+  /// to this specific class's own cursor, never any other class's.
+  final String classLabel;
+
+  /// The term the teacher picked this scheme's real calendar dates for
+  /// (see [_realCalendarNote]) — distinct from which topics actually end
+  /// up in [entries], since coverage (not the picked term's own original
+  /// topic list) drives that. Null only for a caller with no term context
+  /// at all, in which case the calendar note is simply omitted.
+  final Term? targetTerm;
+
   final SchemeOfWorkDocumentService? documentService;
 
   @override
@@ -44,7 +60,7 @@ class _SchemeOfWorkDocumentScreenState extends State<SchemeOfWorkDocumentScreen>
   final Map<String, TextEditingController> _controllers = {};
   final LessonHistoryRepository _lessonHistoryRepository = LessonHistoryRepository();
   final _syllabusDocumentService = SyllabusDocumentService();
-  final _progressRepository = ProgressRepository();
+  final _classProgressRepository = ClassProgressRepository();
   final SubjectContentIndex _contentIndex = SubjectContentIndex();
   bool _exporting = false;
   bool _sharingSyllabus = false;
@@ -119,30 +135,22 @@ class _SchemeOfWorkDocumentScreenState extends State<SchemeOfWorkDocumentScreen>
         gradeName: widget.template.grade.name,
         curriculumName: widget.template.curriculum.name,
         curriculumCode: widget.template.curriculum.code,
-        termLabel: widget.entries.isEmpty ? '' : _termLabel(),
+        termLabel: widget.targetTerm?.name ?? '',
         realCalendarNote: _realCalendarNote(),
       );
-
-  String _termLabel() {
-    final termNames = <String>{};
-    for (final term in widget.template.terms) {
-      for (final topic in term.topics) {
-        if (widget.entries.any((e) => e.topic.id == topic.id)) termNames.add(term.name);
-      }
-    }
-    return termNames.join(', ');
-  }
 
   /// The real Ministry of Education term calendar for whatever year is
   /// entered in the header, shown alongside the generated scheme so a
   /// teacher can see exactly which real dates each week corresponds to —
   /// see zambian_term_calendar.dart for how this is computed and verified.
-  /// Only computed when both a single recognizable term number ("Term 2")
-  /// and a valid 4-digit year are available; returns null (silently
-  /// omitted from the document) otherwise rather than guessing.
+  /// Keyed to [widget.targetTerm] — the term the teacher explicitly picked
+  /// — rather than inferred from which topics [entries] happens to contain,
+  /// since coverage (not the picked term's own original topic list) now
+  /// drives that and could legitimately span more than one real term. Only
+  /// computed when a valid 4-digit year is also available; returns null
+  /// (silently omitted from the document) otherwise rather than guessing.
   String? _realCalendarNote() {
-    final termNumberMatch = RegExp(r'Term\s*(\d)').firstMatch(_termLabel());
-    final termNumber = termNumberMatch == null ? null : int.tryParse(termNumberMatch.group(1)!);
+    final termNumber = widget.targetTerm?.sequenceNumber;
     final year = int.tryParse(_controllers['year']?.text.trim() ?? '');
     if (termNumber == null || termNumber < 1 || termNumber > 3) return null;
     if (year == null || year < 2000 || year > 2100) return null;
@@ -180,6 +188,23 @@ class _SchemeOfWorkDocumentScreenState extends State<SchemeOfWorkDocumentScreen>
           gradeLevel: widget.template.grade.level,
           topicId: entry.topic.id,
           subTopicId: entry.subTopic?.id,
+        ));
+      }
+      // Auto-advances this class's own resume cursor to the end of what was
+      // just generated and shared — the default a future ClassResumePicker
+      // lookup suggests, not a silent decision: the teacher still confirms
+      // (or overrides) it next time, same as every other generation. A
+      // per-row "mark taught" below can later move this cursor BACK if the
+      // class didn't actually get through everything shared here.
+      if (widget.entries.isNotEmpty) {
+        final last = widget.entries.last;
+        unawaited(_classProgressRepository.markConcluded(
+          curriculumCode: widget.template.curriculum.code,
+          subjectCode: widget.template.subject.code,
+          gradeLevel: widget.template.grade.level,
+          classLabel: widget.classLabel,
+          topicId: last.topic.id,
+          subTopicId: last.subTopic?.id,
         ));
       }
     } catch (error) {
@@ -307,11 +332,13 @@ class _SchemeOfWorkDocumentScreenState extends State<SchemeOfWorkDocumentScreen>
   /// that can be more than one topic at once.
   Future<void> _markTaught(List<SchemeOfWorkEntry> entries) async {
     for (final entry in entries) {
-      await _progressRepository.markTopicConcluded(
+      await _classProgressRepository.markConcluded(
         curriculumCode: widget.template.curriculum.code,
         subjectCode: widget.template.subject.code,
         gradeLevel: widget.template.grade.level,
+        classLabel: widget.classLabel,
         topicId: entry.topic.id,
+        subTopicId: entry.subTopic?.id,
       );
     }
     if (!mounted) return;

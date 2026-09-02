@@ -5,6 +5,7 @@ import '../models/scheme_of_work.dart';
 import '../models/syllabus_models.dart';
 import '../widgets/function_button.dart';
 import 'assignments_tests_menu_screen.dart';
+import 'class_resume_picker_screen.dart';
 import 'generate_lesson_plan_flow.dart';
 import 'handwriting_to_word_screen.dart';
 import 'marking_queue_screen.dart';
@@ -37,10 +38,16 @@ class HomeScreen extends StatelessWidget {
     await startGenerateLessonPlanFlow(context, template);
   }
 
-  /// "Generate Scheme of Work" does exactly one thing: subject → grade/form
-  /// → term, then straight to the generated document for that term. No
-  /// lesson-plan, teaching-notes, or slide shortcuts live under this button
-  /// — those are their own separate "Generate ..." entry points.
+  /// "Generate Scheme of Work": subject → grade/form → term (for the real
+  /// calendar dates shown in the document header — see
+  /// SchemeOfWorkDocumentScreen._realCalendarNote), then always asks which
+  /// class this is for and where it reached (ClassResumePickerScreen —
+  /// never skipped, never silently trusted from a stored cursor alone) so
+  /// the generated content starts at exactly the right topic. Coverage,
+  /// not the picked term's own original topic list, drives what's
+  /// included: the scheme can legitimately spill into a later term's
+  /// topics (a class that's ahead) or fall short of them (a class that's
+  /// behind) — see generateSchemeOfWorkForTerm's own doc comment.
   Future<void> _openSchemeOfWork(BuildContext context) async {
     final selection = await Navigator.of(context).push<TermSelection>(
       MaterialPageRoute(
@@ -49,12 +56,24 @@ class HomeScreen extends StatelessWidget {
     );
     if (selection == null || !context.mounted) return;
 
-    final allEntries = generateSchemeOfWork(selection.template, null);
-    final topicIdsInTerm = selection.term.topics.map((t) => t.id).toSet();
-    final termEntries = allEntries.where((e) => topicIdsInTerm.contains(e.topic.id)).toList();
+    final resume = await Navigator.of(context).push<ClassResumeSelection>(
+      MaterialPageRoute(builder: (_) => ClassResumePickerScreen(template: selection.template)),
+    );
+    if (resume == null || !context.mounted) return;
+
+    final entries = generateSchemeOfWorkForTerm(
+      selection.template,
+      resume.topicId,
+      lastConcludedSubTopicId: resume.subTopicId,
+    );
 
     await Navigator.of(context).push(MaterialPageRoute(
-      builder: (_) => SchemeOfWorkDocumentScreen(template: selection.template, entries: termEntries),
+      builder: (_) => SchemeOfWorkDocumentScreen(
+        template: selection.template,
+        entries: entries,
+        classLabel: resume.classLabel,
+        targetTerm: selection.term,
+      ),
     ));
   }
 
