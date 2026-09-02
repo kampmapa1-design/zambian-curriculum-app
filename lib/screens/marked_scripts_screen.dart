@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 
 import '../models/marking_scheme.dart';
 import '../models/marking_script.dart';
+import '../services/marked_results_list_repository.dart';
 import '../services/marking_scheme_repository.dart';
 import '../services/marking_script_repository.dart';
+import 'marked_results_lists_screen.dart';
 import 'marking_review_screen.dart';
 
 /// AI-Assisted Marking — "View Marked Scripts" (2026-08-31), reachable
@@ -21,11 +23,23 @@ import 'marking_review_screen.dart';
 /// (open MarkingReviewScreen, editable either way), reprocess it (send
 /// back to AI grading), or mark it as reviewed directly without
 /// reopening the full review UI.
+///
+/// Manual results lists (added 2026-09-02): the AppBar's checkbox icon
+/// toggles select mode — ticking scripts and choosing "Create New List"
+/// moves them into a manually-curated, named list (see
+/// marked_results_list.dart). A script that belongs to any list stops
+/// appearing here, matching "gets moved to the new list" exactly; the
+/// folder icon opens [MarkedResultsListsScreen] to see every list
+/// created so far. Scores stay fully editable everywhere until a list
+/// is exported/shared for the first time — see
+/// MarkedResultsListDetailScreen._export and
+/// MarkingReviewScreen.locked.
 class MarkedScriptsScreen extends StatefulWidget {
-  const MarkedScriptsScreen({super.key, this.repository, this.schemeRepository});
+  const MarkedScriptsScreen({super.key, this.repository, this.schemeRepository, this.listRepository});
 
   final MarkingScriptRepository? repository;
   final MarkingSchemeRepository? schemeRepository;
+  final MarkedResultsListRepository? listRepository;
 
   @override
   State<MarkedScriptsScreen> createState() => _MarkedScriptsScreenState();
@@ -34,10 +48,14 @@ class MarkedScriptsScreen extends StatefulWidget {
 class _MarkedScriptsScreenState extends State<MarkedScriptsScreen> {
   late final MarkingScriptRepository _repository = widget.repository ?? MarkingScriptRepository();
   late final MarkingSchemeRepository _schemeRepository = widget.schemeRepository ?? MarkingSchemeRepository();
+  late final MarkedResultsListRepository _listRepository = widget.listRepository ?? MarkedResultsListRepository();
 
   bool _loading = true;
   List<MarkingScript> _scripts = [];
   MarkingSchemeCatalog _schemes = MarkingSchemeCatalog.empty();
+
+  bool _selectMode = false;
+  final Set<String> _selectedIds = {};
 
   @override
   void initState() {
@@ -48,8 +66,10 @@ class _MarkedScriptsScreenState extends State<MarkedScriptsScreen> {
   Future<void> _load() async {
     final catalog = await _repository.loadCatalog();
     final schemes = await _schemeRepository.loadCatalog();
+    final lists = await _listRepository.loadCatalog();
     final marked = catalog.scripts
         .where((s) => s.status == MarkingScriptStatus.graded || s.status == MarkingScriptStatus.reviewed)
+        .where((s) => !lists.allScriptIds.contains(s.id))
         .toList()
       ..sort((a, b) {
         final bySurname = a.surname.toLowerCase().compareTo(b.surname.toLowerCase());
@@ -76,6 +96,58 @@ class _MarkedScriptsScreenState extends State<MarkedScriptsScreen> {
     final possible = script.totalPossible;
     if (awarded == null || possible == null || possible == 0) return null;
     return (awarded / possible) * 100;
+  }
+
+  void _toggleSelectMode() {
+    setState(() {
+      _selectMode = !_selectMode;
+      _selectedIds.clear();
+    });
+  }
+
+  void _toggleSelected(String scriptId) {
+    setState(() {
+      if (_selectedIds.contains(scriptId)) {
+        _selectedIds.remove(scriptId);
+      } else {
+        _selectedIds.add(scriptId);
+      }
+    });
+  }
+
+  Future<void> _createNewList() async {
+    if (_selectedIds.isEmpty) return;
+    final nameController = TextEditingController();
+    final name = await showDialog<String>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('New results list'),
+        content: TextField(
+          controller: nameController,
+          autofocus: true,
+          decoration: const InputDecoration(labelText: 'List name', border: OutlineInputBorder(), hintText: 'e.g. "Term 1 Finals"'),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(dialogContext).pop(), child: const Text('Cancel')),
+          FilledButton(
+            onPressed: () => Navigator.of(dialogContext).pop(nameController.text.trim()),
+            child: const Text('Create'),
+          ),
+        ],
+      ),
+    );
+    if (name == null || name.isEmpty || !mounted) return;
+
+    await _listRepository.create(name: name, scriptIds: _selectedIds.toList());
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Created "$name" with ${_selectedIds.length} script(s) — moved off this list.')),
+    );
+    setState(() {
+      _selectMode = false;
+      _selectedIds.clear();
+    });
+    _load();
   }
 
   Future<void> _openActions(MarkingScript script) async {
@@ -144,7 +216,33 @@ class _MarkedScriptsScreenState extends State<MarkedScriptsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Marked Scripts')),
+      appBar: AppBar(
+        title: Text(_selectMode ? '${_selectedIds.length} selected' : 'Marked Scripts'),
+        actions: [
+          if (_selectMode)
+            TextButton(
+              onPressed: _selectedIds.isEmpty ? null : _createNewList,
+              child: const Text('New List'),
+            )
+          else ...[
+            IconButton(
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => MarkedResultsListsScreen(listRepository: _listRepository)),
+              ),
+              icon: const Icon(Icons.folder_outlined),
+              tooltip: 'My results lists',
+            ),
+            if (_scripts.isNotEmpty)
+              IconButton(
+                onPressed: _toggleSelectMode,
+                icon: const Icon(Icons.checklist_outlined),
+                tooltip: 'Select scripts to move into a list',
+              ),
+          ],
+          if (_selectMode)
+            IconButton(onPressed: _toggleSelectMode, icon: const Icon(Icons.close), tooltip: 'Cancel'),
+        ],
+      ),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : _scripts.isEmpty
@@ -168,12 +266,16 @@ class _MarkedScriptsScreenState extends State<MarkedScriptsScreen> {
                     final scheme = _schemeFor(script);
                     final percent = _percentFor(script);
                     final reviewed = script.status == MarkingScriptStatus.reviewed;
+                    final selected = _selectedIds.contains(script.id);
                     return ListTile(
-                      leading: CircleAvatar(
-                        backgroundColor:
-                            reviewed ? Theme.of(context).colorScheme.primaryContainer : Theme.of(context).colorScheme.surfaceContainerHighest,
-                        child: Icon(reviewed ? Icons.check : Icons.hourglass_top_outlined, size: 18),
-                      ),
+                      leading: _selectMode
+                          ? Checkbox(value: selected, onChanged: (_) => _toggleSelected(script.id))
+                          : CircleAvatar(
+                              backgroundColor: reviewed
+                                  ? Theme.of(context).colorScheme.primaryContainer
+                                  : Theme.of(context).colorScheme.surfaceContainerHighest,
+                              child: Icon(reviewed ? Icons.check : Icons.hourglass_top_outlined, size: 18),
+                            ),
                       title: Text(script.fullName),
                       subtitle: Text(
                         '${scheme?.title ?? script.subjectName} · ${script.gradeName}'
@@ -182,7 +284,7 @@ class _MarkedScriptsScreenState extends State<MarkedScriptsScreen> {
                       ),
                       isThreeLine: true,
                       trailing: percent == null ? null : Text('${percent.toStringAsFixed(1)}%', style: const TextStyle(fontWeight: FontWeight.bold)),
-                      onTap: () => _openActions(script),
+                      onTap: _selectMode ? () => _toggleSelected(script.id) : () => _openActions(script),
                     );
                   },
                 ),

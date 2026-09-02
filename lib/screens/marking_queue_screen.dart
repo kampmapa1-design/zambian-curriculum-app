@@ -12,6 +12,7 @@ import '../services/marking_entitlement_service.dart';
 import '../services/marking_gap_report_document_service.dart';
 import '../services/marking_gap_report_service.dart';
 import '../services/marking_grading_service.dart';
+import '../services/marked_results_list_repository.dart';
 import '../services/marking_key_generation_service.dart';
 import '../services/marking_scheme_repository.dart';
 import '../services/pending_marking_key_draft_repository.dart';
@@ -47,6 +48,15 @@ class MarkingQueueScreen extends StatefulWidget {
 class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
   late final MarkingScriptRepository _repository = widget.repository ?? MarkingScriptRepository();
   late final MarkingSchemeRepository _schemeRepository = widget.schemeRepository ?? MarkingSchemeRepository();
+  final MarkedResultsListRepository _listRepository = MarkedResultsListRepository();
+
+  /// Every script id belonging to an already-exported manual results list
+  /// (added 2026-09-02) — checked here too, not just on MarkedScriptsScreen/
+  /// MarkedResultsListDetailScreen, since a script can also be reopened for
+  /// review from this screen's own "Marked Students" browsing (see
+  /// [_openScript]). The lock has to hold regardless of which screen
+  /// reaches [MarkingReviewScreen].
+  Set<String> _lockedScriptIds = {};
   late final MarkingGradingService _gradingService = widget.gradingService ?? MarkingGradingService();
   late final MarkingGapReportService _gapReportService = MarkingGapReportService(schemeRepository: _schemeRepository);
   final MarkingGapReportDocumentService _gapReportDocumentService = MarkingGapReportDocumentService();
@@ -149,10 +159,12 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
   Future<void> _load() async {
     final catalog = await _repository.loadCatalog();
     final schemes = await _schemeRepository.loadCatalog();
+    final lists = await _listRepository.loadCatalog();
     if (!mounted) return;
     setState(() {
       _catalog = catalog;
       _schemes = schemes;
+      _lockedScriptIds = {for (final l in lists.lists) if (l.exported) ...l.scriptIds};
       _loading = false;
     });
   }
@@ -549,6 +561,7 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
             repository: _repository,
             nextInQueue: next,
             remainingAfterNext: rest.length,
+            locked: _lockedScriptIds.contains(current.id),
           ),
         ),
       );

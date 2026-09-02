@@ -24,9 +24,20 @@ class MarkingReviewScreen extends StatefulWidget {
     this.repository,
     this.nextInQueue,
     this.remainingAfterNext = 0,
+    this.locked = false,
   });
 
   final MarkingScript script;
+
+  /// True once [script] belongs to a manually-curated results list
+  /// that's already been exported/shared (added 2026-09-02, see
+  /// marked_results_list.dart) — every answer/marks field opens read-
+  /// only, and the confirm action is unavailable. Set by whoever opens
+  /// this screen (MarkedScriptsScreen/MarkedResultsListDetailScreen),
+  /// computed from `MarkedResultsListCatalog.isLocked`. Scores stay
+  /// fully editable right up until that first export — this is the
+  /// literal gate for that rule.
+  final bool locked;
 
   /// Null if the scheme was later deleted — review still works (editing
   /// against whatever [GradedAnswer.maxMarks] was captured at grading
@@ -267,7 +278,29 @@ class _MarkingReviewScreenState extends State<MarkingReviewScreen> {
                   child: ListView(
                     padding: const EdgeInsets.fromLTRB(16, 12, 16, 96),
                     children: [
-                      if (alreadyFinal)
+                      if (widget.locked)
+                        Container(
+                          margin: const EdgeInsets.only(bottom: 12),
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.errorContainer,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(Icons.lock_outline, size: 18, color: Theme.of(context).colorScheme.onErrorContainer),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  'Scores locked — this script is part of a results list that has already been '
+                                  'exported/shared.',
+                                  style: TextStyle(color: Theme.of(context).colorScheme.onErrorContainer),
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      else if (alreadyFinal)
                         Container(
                           margin: const EdgeInsets.only(bottom: 12),
                           padding: const EdgeInsets.all(10),
@@ -315,11 +348,11 @@ class _MarkingReviewScreenState extends State<MarkingReviewScreen> {
                 ),
               ),
               FilledButton.icon(
-                onPressed: _saving ? null : _confirmAndFinish,
+                onPressed: _saving || widget.locked ? null : _confirmAndFinish,
                 icon: _saving
                     ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
                     : const Icon(Icons.check),
-                label: Text(_saving ? 'Saving…' : 'Confirm & Finish'),
+                label: Text(_saving ? 'Saving…' : (widget.locked ? 'Locked' : 'Confirm & Finish')),
               ),
             ],
           ),
@@ -523,6 +556,7 @@ class _MarkingReviewScreenState extends State<MarkingReviewScreen> {
             const SizedBox(height: 8),
             TextField(
               controller: row.answer,
+              readOnly: widget.locked,
               decoration: const InputDecoration(labelText: 'Transcribed answer', border: OutlineInputBorder()),
               maxLines: 3,
               onChanged: (_) => setState(() {}),
@@ -535,6 +569,7 @@ class _MarkingReviewScreenState extends State<MarkingReviewScreen> {
                   width: 100,
                   child: TextField(
                     controller: row.marks,
+                    readOnly: widget.locked,
                     decoration: InputDecoration(
                       labelText: 'Marks (of ${row.maxMarks})',
                       border: const OutlineInputBorder(),
