@@ -6,8 +6,8 @@ import '../models/syllabus_models.dart';
 import '../widgets/function_button.dart';
 import 'assignments_tests_menu_screen.dart';
 import 'class_resume_picker_screen.dart';
+import 'data_manager_menu_screen.dart';
 import 'generate_lesson_plan_flow.dart';
-import 'grade_teacher_home_screen.dart';
 import 'handwriting_to_word_screen.dart';
 import 'marking_queue_screen.dart';
 import 'minutes_maker_screen.dart';
@@ -291,16 +291,21 @@ class HomeScreen extends StatelessWidget {
                     MaterialPageRoute(builder: (_) => const HandwritingToWordScreen()),
                   ),
                 ),
-                // Grade Teacher — Report Form Pipeline (2026-09-03): class
-                // roster, Broad Mark Sheet, and report form generation. Its
-                // own section, not folded into Public Access Libraries or
-                // Admin Tools, since it's a distinct role-based function
-                // (class/learner administration) rather than content
+                // Data Manager (2026-09-03, renamed from "Grade Teacher" per
+                // explicit request): a home-screen entry point for
+                // administrative/record-keeping functions, starting with
+                // Grade Teacher (Report Form Pipeline — class roster, Broad
+                // Mark Sheet, report forms) but structured to hold more than
+                // one such function over time, same "button leads to a sub-
+                // menu" pattern as Teaching Resources/Assignments & Tests
+                // below — see DataManagerMenuScreen. Its own section, not
+                // folded into Public Access Libraries or Admin Tools, since
+                // this is administrative record-keeping, not content
                 // browsing or office utilities.
                 Padding(
                   padding: const EdgeInsets.fromLTRB(4, 20, 4, 8),
                   child: Text(
-                    'GRADE TEACHER',
+                    'DATA MANAGER',
                     style: Theme.of(context)
                         .textTheme
                         .labelMedium
@@ -308,11 +313,11 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ),
                 FunctionButton(
-                  icon: Icons.groups_outlined,
-                  label: 'Grade Teacher',
-                  subtitle: 'Class roster, Broad Mark Sheet, and report forms',
+                  icon: Icons.folder_shared_outlined,
+                  label: 'Data Manager',
+                  subtitle: 'Grade Teacher — class roster, Broad Mark Sheet, and report forms',
                   onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const GradeTeacherHomeScreen()),
+                    MaterialPageRoute(builder: (_) => const DataManagerMenuScreen()),
                   ),
                 ),
                 // Admin Tools — deliberately separate from the
