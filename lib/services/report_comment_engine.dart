@@ -30,3 +30,16 @@ String reportGradeFor(double score) {
   if (score >= 40) return 'D';
   return 'F';
 }
+
+/// Parses a raw score exactly as a teacher (or the OCR engine) wrote it —
+/// real, reported bug: a plain `double.tryParse` rejects "85%" outright
+/// (the % makes it not a valid number), silently failing an otherwise
+/// perfectly good captured score. Strips one trailing '%' (with any
+/// surrounding whitespace) before parsing; everywhere in the Report Form
+/// Pipeline that turns a raw score string into a number should go through
+/// this, not a bare `double.tryParse`, so this fix applies everywhere at
+/// once rather than needing to be repeated per call site.
+double? parseReportScoreText(String raw) {
+  final cleaned = raw.trim().replaceAll(RegExp(r'%\s*$'), '').trim();
+  return double.tryParse(cleaned);
+}

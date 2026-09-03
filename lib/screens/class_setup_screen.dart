@@ -21,6 +21,8 @@ class _ClassSetupScreenState extends State<ClassSetupScreen> {
   final _schoolNameController = TextEditingController();
   final _classGradeController = TextEditingController();
   final _termController = TextEditingController();
+  final _backupEmailController = TextEditingController();
+  ReportAssessmentSystem _assessmentSystem = ReportAssessmentSystem.standaloneTest;
   bool _saving = false;
 
   @override
@@ -28,6 +30,7 @@ class _ClassSetupScreenState extends State<ClassSetupScreen> {
     _schoolNameController.dispose();
     _classGradeController.dispose();
     _termController.dispose();
+    _backupEmailController.dispose();
     super.dispose();
   }
 
@@ -39,10 +42,13 @@ class _ClassSetupScreenState extends State<ClassSetupScreen> {
   Future<void> _save() async {
     if (!_canSave) return;
     setState(() => _saving = true);
+    final backupEmail = _backupEmailController.text.trim();
     final created = await _repository.createClass(
       schoolName: _schoolNameController.text,
       classGrade: _classGradeController.text,
       term: _termController.text,
+      assessmentSystem: _assessmentSystem,
+      backupEmail: backupEmail.isEmpty ? null : backupEmail,
     );
     if (!mounted) return;
     Navigator.of(context).pop<ReportClass>(created);
@@ -84,6 +90,48 @@ class _ClassSetupScreenState extends State<ClassSetupScreen> {
               border: OutlineInputBorder(),
             ),
             onChanged: (_) => setState(() {}),
+          ),
+          const SizedBox(height: 24),
+          Text('Will the Continuous Assessment (C.A) system be used, or is it a standalone test?',
+              style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
+          const SizedBox(height: 4),
+          Text(
+            'This decides how score entry and the report form itself are laid out for this class — '
+            'C.A. splits every subject into a weighted Test + End-of-Term Exam; a standalone test is '
+            'one score per subject. You can confirm the C.A. weighting (e.g. 40/60 or 50/50) when score '
+            'entry actually starts.',
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+          ),
+          const SizedBox(height: 8),
+          SegmentedButton<ReportAssessmentSystem>(
+            segments: const [
+              ButtonSegment(
+                value: ReportAssessmentSystem.continuousAssessment,
+                label: Text('Continuous Assessment'),
+                icon: Icon(Icons.stacked_line_chart),
+              ),
+              ButtonSegment(
+                value: ReportAssessmentSystem.standaloneTest,
+                label: Text('Standalone Test'),
+                icon: Icon(Icons.edit_note),
+              ),
+            ],
+            selected: {_assessmentSystem},
+            onSelectionChanged: (selection) => setState(() => _assessmentSystem = selection.first),
+          ),
+          const SizedBox(height: 24),
+          TextField(
+            controller: _backupEmailController,
+            decoration: const InputDecoration(
+              labelText: 'Backup Email (optional)',
+              hintText: 'A school-records email to save this class\'s data to',
+              helperText: 'Recommended — every score-sheet upload and edit will also save a copy here, on '
+                  'top of the copy that always stays on this device. You can add this later if you skip it now.',
+              helperMaxLines: 3,
+              border: OutlineInputBorder(),
+              prefixIcon: Icon(Icons.email_outlined),
+            ),
+            keyboardType: TextInputType.emailAddress,
           ),
         ],
       ),

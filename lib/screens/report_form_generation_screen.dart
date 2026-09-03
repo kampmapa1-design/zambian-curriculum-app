@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../models/report_class.dart';
+import '../services/report_class_backup_service.dart';
 import '../services/report_class_repository.dart';
 import '../services/report_comment_engine.dart';
 import '../services/report_form_document_service.dart';
@@ -84,22 +87,45 @@ class _ReportFormGenerationScreenState extends State<ReportFormGenerationScreen>
 
       final scores = <int, double?>{};
       final comments = <int, String?>{};
+      final caTestScores = <int, double?>{};
+      final caExamScores = <int, double?>{};
       for (final subject in _subjects) {
         final score = await _repository.scoreFor(learner.id, subject, allSubjects: _subjects);
         scores[subject.id] = score;
+
+        ReportScore? existing;
+        if (!subject.isComposite) {
+          existing = await _repository.getScore(learner.id, subject.id);
+          caTestScores[subject.id] = existing?.caTestScore;
+          caExamScores[subject.id] = existing?.caExamScore;
+        }
+
         if (_autoFillSubjectIds.contains(subject.id) && score != null) {
           comments[subject.id] = reportCommentFor(score);
           if (!subject.isComposite) {
-            await _repository.setScore(
-              learnerId: learner.id,
-              subject: subject,
-              score: score,
-              comment: comments[subject.id],
-              commentSource: ReportCommentSource.auto,
-            );
+            // A C.A. subject's `score` is always the computed weighted sum
+            // (see setComponentScore) — writing through setComment instead
+            // of setScore here means auto-fill only ever touches the
+            // comment, never re-writes a score that isn't this screen's to
+            // set directly.
+            if (widget.reportClass.isContinuousAssessment) {
+              await _repository.setComment(
+                learnerId: learner.id,
+                subject: subject,
+                comment: comments[subject.id],
+                commentSource: ReportCommentSource.auto,
+              );
+            } else {
+              await _repository.setScore(
+                learnerId: learner.id,
+                subject: subject,
+                score: score,
+                comment: comments[subject.id],
+                commentSource: ReportCommentSource.auto,
+              );
+            }
           }
-        } else if (!subject.isComposite) {
-          final existing = await _repository.getScore(learner.id, subject.id);
+        } else {
           comments[subject.id] = existing?.comment;
         }
       }
@@ -110,6 +136,8 @@ class _ReportFormGenerationScreenState extends State<ReportFormGenerationScreen>
         subjects: _subjects,
         scores: scores,
         comments: comments,
+        caTestScores: caTestScores,
+        caExamScores: caExamScores,
         classPosition: positions[learner.id],
         classSize: classSize,
       );
@@ -122,6 +150,8 @@ class _ReportFormGenerationScreenState extends State<ReportFormGenerationScreen>
       );
       done++;
     }
+
+    unawaited(ReportClassBackupService().maybeBackup(widget.reportClass.id, repository: _repository));
 
     if (!mounted) return;
     Navigator.of(context).pushReplacement(

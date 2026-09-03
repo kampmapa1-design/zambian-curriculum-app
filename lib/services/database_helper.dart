@@ -35,7 +35,7 @@ class DatabaseHelper {
   DatabaseHelper._internal();
   static final DatabaseHelper instance = DatabaseHelper._internal();
 
-  static const _schemaVersion = 8;
+  static const _schemaVersion = 9;
 
   Database? _db;
 
@@ -229,12 +229,23 @@ class DatabaseHelper {
     // comment per (learner, subject). See ReportClassRepository for all
     // read/write access — nothing else should touch these tables directly.
     // ---------------------------------------------------------------------
+    // assessment_system/ca_test_weight_percent/ca_exam_weight_percent —
+    // Continuous Assessment vs a standalone test per subject, and (once
+    // confirmed, at the START of real score entry, not necessarily here at
+    // setup — see ReportClass's own doc comment) the real Test/Exam
+    // weighting. backup_email is optional and never blocks any real
+    // work — see ReportClassBackupService.
     await db.execute('''
       CREATE TABLE report_classes (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         school_name TEXT NOT NULL,
         class_grade TEXT NOT NULL,
         term TEXT NOT NULL,
+        assessment_system TEXT NOT NULL DEFAULT 'standaloneTest',
+        ca_test_weight_percent INTEGER,
+        ca_exam_weight_percent INTEGER,
+        report_forms_completed_at TEXT,
+        backup_email TEXT,
         created_at TEXT NOT NULL
       )
     ''');
@@ -277,6 +288,10 @@ class DatabaseHelper {
     // comment_source distinguishes an auto-filled comment (Stage 8's
     // deterministic band lookup, still editable) from one a teacher typed
     // themselves — never set for a composite subject (see above).
+    // ca_test_score/ca_exam_score are only ever populated for a Continuous
+    // Assessment class — score is then the COMPUTED weighted final (see
+    // ReportClassRepository.setComponentScore), never set directly for
+    // those two rows; on a standalone-test class only `score` is used.
     await db.execute('''
       CREATE TABLE report_scores (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -285,6 +300,9 @@ class DatabaseHelper {
         score REAL,
         comment TEXT,
         comment_source TEXT,
+        ca_test_score REAL,
+        ca_exam_score REAL,
+        edited_after_completion_at TEXT,
         updated_at TEXT NOT NULL,
         UNIQUE (learner_id, subject_id)
       )

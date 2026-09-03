@@ -14,7 +14,21 @@ class RosterNameMatch {
   final String? extractedScore;
   final ReportLearner? matchedLearner;
 
-  const RosterNameMatch({required this.extractedName, this.extractedScore, this.matchedLearner});
+  /// Only ever set when [matchedLearner] is null (no exact match) and the
+  /// roster is non-empty — the single closest real roster name by edit
+  /// distance, offered as a one-tap "Replace with closest match?"
+  /// suggestion (see UploadScoreSheetFlow) instead of requiring the
+  /// teacher to open the manual picker for every unclear OCR read. Never
+  /// applied automatically — see [ReportClassRepository.matchNamesAgainstRoster]'s
+  /// own doc comment on why an exact match is still required to auto-link.
+  final ReportLearner? closestMatch;
+
+  const RosterNameMatch({
+    required this.extractedName,
+    this.extractedScore,
+    this.matchedLearner,
+    this.closestMatch,
+  });
 
   bool get isMatched => matchedLearner != null;
 }
@@ -51,6 +65,8 @@ class ReportClassRepository {
     required String schoolName,
     required String classGrade,
     required String term,
+    ReportAssessmentSystem assessmentSystem = ReportAssessmentSystem.standaloneTest,
+    String? backupEmail,
   }) async {
     final db = await _db;
     final now = DateTime.now();
@@ -58,9 +74,49 @@ class ReportClassRepository {
       'school_name': schoolName.trim(),
       'class_grade': classGrade.trim(),
       'term': term.trim(),
+      'assessment_system': assessmentSystem.dbValue,
+      'backup_email': backupEmail == null || backupEmail.trim().isEmpty ? null : backupEmail.trim(),
       'created_at': now.toIso8601String(),
     });
-    return ReportClass(id: id, schoolName: schoolName.trim(), classGrade: classGrade.trim(), term: term.trim(), createdAt: now);
+    return ReportClass(
+      id: id,
+      schoolName: schoolName.trim(),
+      classGrade: classGrade.trim(),
+      term: term.trim(),
+      assessmentSystem: assessmentSystem,
+      backupEmail: backupEmail,
+      createdAt: now,
+    );
+  }
+
+  /// Confirmed once, the first time real score entry starts for a
+  /// Continuous Assessment class (see UploadScoreSheetFlow) — not at
+  /// Class Setup itself, per explicit request. [testWeightPercent] +
+  /// [examWeightPercent] must sum to 100.
+  Future<void> confirmCaWeights(int classId, {required int testWeightPercent, required int examWeightPercent}) async {
+    if (testWeightPercent + examWeightPercent != 100) {
+      throw ArgumentError('C.A. weights must sum to 100 (got $testWeightPercent + $examWeightPercent).');
+    }
+    final db = await _db;
+    await db.update(
+      'report_classes',
+      {'ca_test_weight_percent': testWeightPercent, 'ca_exam_weight_percent': examWeightPercent},
+      where: 'id = ?',
+      whereArgs: [classId],
+    );
+  }
+
+  /// Sets or clears where this class's backups are emailed — see
+  /// ReportClassBackupService. Never required for anything else in this
+  /// pipeline to keep working.
+  Future<void> updateBackupEmail(int classId, String? backupEmail) async {
+    final db = await _db;
+    await db.update(
+      'report_classes',
+      {'backup_email': backupEmail == null || backupEmail.trim().isEmpty ? null : backupEmail.trim()},
+      where: 'id = ?',
+      whereArgs: [classId],
+    );
   }
 
   Future<List<ReportClass>> listClasses() async {
@@ -80,8 +136,28 @@ class ReportClassRepository {
         schoolName: r['school_name'] as String,
         classGrade: r['class_grade'] as String,
         term: r['term'] as String,
+        assessmentSystem: ReportAssessmentSystem.fromDb(r['assessment_system'] as String?),
+        caTestWeightPercent: r['ca_test_weight_percent'] as int?,
+        caExamWeightPercent: r['ca_exam_weight_percent'] as int?,
+        backupEmail: r['backup_email'] as String?,
+        reportFormsCompletedAt:
+            r['report_forms_completed_at'] == null ? null : DateTime.parse(r['report_forms_completed_at'] as String),
         createdAt: DateTime.parse(r['created_at'] as String),
       );
+
+  /// Marks this class's report-form preparation as complete — unlocks the
+  /// consolidated Analysis table (see ReportFormAnalysisScreen). Scores
+  /// remain fully editable after this; see [setScore]/[setComponentScore]
+  /// for how a post-completion edit gets flagged.
+  Future<void> markReportFormsCompleted(int classId) async {
+    final db = await _db;
+    await db.update(
+      'report_classes',
+      {'report_forms_completed_at': DateTime.now().toIso8601String()},
+      where: 'id = ?',
+      whereArgs: [classId],
+    );
+  }
 
   Future<void> deleteClass(int classId) async {
     final db = await _db;
@@ -133,6 +209,16 @@ class ReportClassRepository {
     await db.update('report_learners', {'full_name': newFullName.trim()}, where: 'id = ?', whereArgs: [learnerId]);
   }
 
+  /// Removes one learner and every one of their real scores (cascades via
+  /// `ON DELETE CASCADE`) — never any other learner's data. Reached only
+  /// through BroadMarkSheetScreen's own two-step confirmation ("Delete?"
+  /// then "sure you want to delete") — this method itself performs no
+  /// confirmation of its own, that's the caller's job.
+  Future<void> deleteLearner(int learnerId) async {
+    final db = await _db;
+    await db.delete('report_learners', where: 'id = ?', whereArgs: [learnerId]);
+  }
+
   /// Stage 15's send-target fields — a guardian's email/phone, both
   /// optional, both editable from the same Stage 7 "Edit?" screen. Empty
   /// string is treated the same as null (clears the field) rather than
@@ -181,12 +267,58 @@ class ReportClassRepository {
 
     return [
       for (final e in extracted)
-        RosterNameMatch(
-          extractedName: e.name,
-          extractedScore: e.score,
-          matchedLearner: byNormalizedName[normalize(e.name)],
-        ),
+        () {
+          final matched = byNormalizedName[normalize(e.name)];
+          return RosterNameMatch(
+            extractedName: e.name,
+            extractedScore: e.score,
+            matchedLearner: matched,
+            closestMatch: matched == null ? _closestRosterMatch(e.name, roster) : null,
+          );
+        }(),
     ];
+  }
+
+  /// The single closest real roster name to [extractedName] by edit
+  /// distance, only offered when it's genuinely close (distance no more
+  /// than a fifth of the extracted name's own length, minimum 2 — a real,
+  /// plausible OCR misread, e.g. "Chnisha Banda" vs "Chanisha Banda", not
+  /// a wildly different name). Returns null when nothing is close enough
+  /// to suggest — the teacher still has the full manual-pick option for
+  /// those, this is only ever a shortcut, never the only path.
+  ReportLearner? _closestRosterMatch(String extractedName, List<ReportLearner> roster) {
+    final needle = extractedName.trim().toLowerCase();
+    if (needle.isEmpty || roster.isEmpty) return null;
+    ReportLearner? best;
+    var bestDistance = 1 << 30;
+    for (final learner in roster) {
+      final distance = _levenshteinDistance(needle, learner.fullName.trim().toLowerCase());
+      if (distance < bestDistance) {
+        bestDistance = distance;
+        best = learner;
+      }
+    }
+    final threshold = (needle.length / 5).ceil().clamp(2, 6);
+    return bestDistance <= threshold ? best : null;
+  }
+
+  int _levenshteinDistance(String a, String b) {
+    if (a == b) return 0;
+    if (a.isEmpty) return b.length;
+    if (b.isEmpty) return a.length;
+    var previousRow = List<int>.generate(b.length + 1, (i) => i);
+    for (var i = 0; i < a.length; i++) {
+      final currentRow = List<int>.filled(b.length + 1, 0);
+      currentRow[0] = i + 1;
+      for (var j = 0; j < b.length; j++) {
+        final deletionCost = previousRow[j + 1] + 1;
+        final insertionCost = currentRow[j] + 1;
+        final substitutionCost = previousRow[j] + (a[i] == b[j] ? 0 : 1);
+        currentRow[j + 1] = [deletionCost, insertionCost, substitutionCost].reduce((x, y) => x < y ? x : y);
+      }
+      previousRow = currentRow;
+    }
+    return previousRow[b.length];
   }
 
   // -------------------------------------------------------------------
@@ -297,12 +429,32 @@ class ReportClassRepository {
         score: (r['score'] as num?)?.toDouble(),
         comment: r['comment'] as String?,
         commentSource: ReportCommentSource.fromDb(r['comment_source'] as String?),
+        caTestScore: (r['ca_test_score'] as num?)?.toDouble(),
+        caExamScore: (r['ca_exam_score'] as num?)?.toDouble(),
+        editedAfterCompletionAt:
+            r['edited_after_completion_at'] == null ? null : DateTime.parse(r['edited_after_completion_at'] as String),
         updatedAt: DateTime.parse(r['updated_at'] as String),
       );
 
+  /// True the moment a write needs flagging as a post-completion edit —
+  /// see [ReportScore.editedAfterCompletionAt]'s own doc comment. Once a
+  /// score has ever been flagged, later writes keep re-stamping the
+  /// timestamp to the latest edit (never clears it back to null — there's
+  /// no "un-complete a class" action for this to need to undo).
+  Future<DateTime?> _editStampFor(int classId, DateTime? existingStamp) async {
+    if (existingStamp != null) return DateTime.now();
+    final reportClass = await getClass(classId);
+    return (reportClass?.isReportFormsCompleted ?? false) ? DateTime.now() : null;
+  }
+
   /// Upserts one learner's score (and, optionally, comment) for one
-  /// subject. Rejects setting a score directly on a composite subject —
-  /// its value is always computed, see [scoreFor].
+  /// STANDALONE-TEST subject. Rejects setting a score directly on a
+  /// composite subject — its value is always computed, see [scoreFor].
+  /// For a Continuous Assessment subject, use [setComponentScore] instead
+  /// — this defensively preserves any existing Test/Exam component values
+  /// already stored (rather than wiping them) if it's ever called on one
+  /// anyway, but the real entry point for C.A. score entry is
+  /// [setComponentScore].
   Future<void> setScore({
     required int learnerId,
     required ReportSubject subject,
@@ -313,6 +465,8 @@ class ReportClassRepository {
     if (subject.isComposite) {
       throw ArgumentError("Composite subject '${subject.name}' cannot have a score set directly.");
     }
+    final existing = await getScore(learnerId, subject.id);
+    final editStamp = await _editStampFor(subject.classId, existing?.editedAfterCompletionAt);
     final db = await _db;
     await db.insert(
       'report_scores',
@@ -322,6 +476,90 @@ class ReportClassRepository {
         'score': score,
         'comment': comment,
         'comment_source': commentSource?.dbValue,
+        'ca_test_score': existing?.caTestScore,
+        'ca_exam_score': existing?.caExamScore,
+        'edited_after_completion_at': editStamp?.toIso8601String(),
+        'updated_at': DateTime.now().toIso8601String(),
+      },
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  /// Upserts one real Continuous Assessment component (Test or Exam) for
+  /// one (learner, subject) — the real entry point for C.A. score entry
+  /// (see UploadScoreSheetFlow's component picker). Recomputes the
+  /// subject's own `score` as the weighted sum the moment BOTH components
+  /// are present and [reportClass]'s weights are confirmed; leaves `score`
+  /// null otherwise — never treats a missing component as zero, same
+  /// "don't guess a missing part" rule as a Composite Subject.
+  Future<void> setComponentScore({
+    required int learnerId,
+    required ReportSubject subject,
+    required ReportClass reportClass,
+    required ReportCaComponent component,
+    required double value,
+  }) async {
+    if (subject.isComposite) {
+      throw ArgumentError("Composite subject '${subject.name}' cannot have a score set directly.");
+    }
+    final existing = await getScore(learnerId, subject.id);
+    final testScore = component == ReportCaComponent.test ? value : existing?.caTestScore;
+    final examScore = component == ReportCaComponent.exam ? value : existing?.caExamScore;
+    double? finalScore;
+    if (testScore != null && examScore != null && reportClass.hasConfirmedCaWeights) {
+      finalScore = testScore * reportClass.caTestWeightPercent! / 100 + examScore * reportClass.caExamWeightPercent! / 100;
+    }
+    final editStamp = existing?.editedAfterCompletionAt != null
+        ? DateTime.now()
+        : (reportClass.isReportFormsCompleted ? DateTime.now() : null);
+    final db = await _db;
+    await db.insert(
+      'report_scores',
+      {
+        'learner_id': learnerId,
+        'subject_id': subject.id,
+        'score': finalScore,
+        'comment': existing?.comment,
+        'comment_source': existing?.commentSource?.dbValue,
+        'ca_test_score': testScore,
+        'ca_exam_score': examScore,
+        'edited_after_completion_at': editStamp?.toIso8601String(),
+        'updated_at': DateTime.now().toIso8601String(),
+      },
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  /// Upserts only a score row's comment, leaving score/ca_test_score/
+  /// ca_exam_score exactly as they already are — the Continuous Assessment
+  /// counterpart to [setScore]'s combined score+comment write, since
+  /// [setComponentScore] only ever touches one component at a time and
+  /// never touches the comment. Also the right call for a standalone-test
+  /// subject's comment-only edit, without re-writing a score that hasn't
+  /// actually changed.
+  Future<void> setComment({
+    required int learnerId,
+    required ReportSubject subject,
+    String? comment,
+    ReportCommentSource? commentSource,
+  }) async {
+    if (subject.isComposite) {
+      throw ArgumentError("Composite subject '${subject.name}' cannot have a comment set directly.");
+    }
+    final existing = await getScore(learnerId, subject.id);
+    final editStamp = await _editStampFor(subject.classId, existing?.editedAfterCompletionAt);
+    final db = await _db;
+    await db.insert(
+      'report_scores',
+      {
+        'learner_id': learnerId,
+        'subject_id': subject.id,
+        'score': existing?.score,
+        'comment': comment,
+        'comment_source': commentSource?.dbValue,
+        'ca_test_score': existing?.caTestScore,
+        'ca_exam_score': existing?.caExamScore,
+        'edited_after_completion_at': editStamp?.toIso8601String(),
         'updated_at': DateTime.now().toIso8601String(),
       },
       conflictAlgorithm: ConflictAlgorithm.replace,

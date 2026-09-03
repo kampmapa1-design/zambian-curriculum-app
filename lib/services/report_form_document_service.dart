@@ -24,6 +24,14 @@ class ReportFormMailMergeData {
   /// to leave it for later.
   final Map<int, String?> comments;
 
+  /// Only populated for a [ReportClass.isContinuousAssessment] class — the
+  /// real Continuous Assessment Test and End-of-Term Exam components each
+  /// (non-composite) subject's [scores] entry was computed from. Both maps
+  /// stay empty for a standalone-test class; [_subjectsTable] renders the
+  /// simple Subject/Score/Grade/Comment layout in that case.
+  final Map<int, double?> caTestScores;
+  final Map<int, double?> caExamScores;
+
   final int? classPosition;
   final int classSize;
   final String attendanceText;
@@ -34,6 +42,8 @@ class ReportFormMailMergeData {
     required this.subjects,
     required this.scores,
     required this.comments,
+    this.caTestScores = const {},
+    this.caExamScores = const {},
     this.classPosition,
     required this.classSize,
     this.attendanceText = '',
@@ -159,6 +169,12 @@ class ReportFormDocumentService {
       data.classPosition == null ? 'Not yet ranked' : '${data.classPosition} out of ${data.classSize}',
     ));
     buffer.write(_labeledLine('Attendance', data.attendanceText.isEmpty ? '—' : data.attendanceText));
+    if (data.reportClass.isContinuousAssessment && data.reportClass.hasConfirmedCaWeights) {
+      buffer.write(_labeledLine(
+        'C.A. Weighting',
+        '${data.reportClass.caTestWeightPercent}% Test / ${data.reportClass.caExamWeightPercent}% Exam',
+      ));
+    }
     buffer.write(_spacer());
 
     buffer.write(_subjectsTable(data));
@@ -199,15 +215,32 @@ class ReportFormDocumentService {
       '<w:insideV w:val="single" w:sz="4" w:space="0" w:color="auto"/>'
       '</w:tblBorders></w:tblPr>',
     );
-    buffer.write(_tableRow(['Subject', 'Score (%)', 'Grade', 'Comment'], bold: true));
+    final isCa = data.reportClass.isContinuousAssessment;
+    buffer.write(_tableRow(
+      isCa
+          ? ['Subject', 'C.A. Test', 'Exam', 'Final (%)', 'Grade', 'Comment']
+          : ['Subject', 'Score (%)', 'Grade', 'Comment'],
+      bold: true,
+    ));
     for (final subject in data.subjects) {
       final score = data.scores[subject.id];
-      buffer.write(_tableRow([
-        subject.name,
-        score?.toStringAsFixed(0) ?? '—',
-        score == null ? '—' : reportGradeFor(score),
-        data.comments[subject.id] ?? '',
-      ]));
+      if (isCa) {
+        buffer.write(_tableRow([
+          subject.name,
+          data.caTestScores[subject.id]?.toStringAsFixed(0) ?? '—',
+          data.caExamScores[subject.id]?.toStringAsFixed(0) ?? '—',
+          score?.toStringAsFixed(0) ?? '—',
+          score == null ? '—' : reportGradeFor(score),
+          data.comments[subject.id] ?? '',
+        ]));
+      } else {
+        buffer.write(_tableRow([
+          subject.name,
+          score?.toStringAsFixed(0) ?? '—',
+          score == null ? '—' : reportGradeFor(score),
+          data.comments[subject.id] ?? '',
+        ]));
+      }
     }
     buffer.write('</w:tbl>');
     return buffer.toString();

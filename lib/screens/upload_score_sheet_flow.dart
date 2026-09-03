@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
@@ -6,6 +7,7 @@ import 'package:flutter/services.dart';
 
 import '../models/report_class.dart';
 import '../services/handwritten_list_transcription_service.dart';
+import '../services/report_class_backup_service.dart';
 import '../services/report_class_repository.dart';
 import '../services/report_comment_engine.dart';
 import 'document_pages_capture_screen.dart';
@@ -52,13 +54,19 @@ class _ScoreRowState {
   final score = TextEditingController();
   ReportLearner? matchedLearner;
 
+  /// The single closest real roster name, when nothing matched exactly —
+  /// see RosterNameMatch.closestMatch. Powers the one-tap "Replace with
+  /// closest match?" suggestion; cleared the moment the row is resolved
+  /// any other way.
+  ReportLearner? closestMatch;
+
   /// For an unmatched row only: true once the teacher has confirmed this
   /// is genuinely a new learner missed from the roster, rather than a
   /// misspelling/variant of someone already on it. Never defaulted true —
   /// see this flow's own doc comment on Stage 4.
   bool confirmedAsNew = false;
 
-  _ScoreRowState({required String name, required String score, this.matchedLearner}) {
+  _ScoreRowState({required String name, required String score, this.matchedLearner, this.closestMatch}) {
     this.name.text = name;
     this.score.text = score;
   }
@@ -87,6 +95,18 @@ class _UploadScoreSheetFlowState extends State<UploadScoreSheetFlow> {
   List<ReportLearner> _roster = const [];
   bool _saving = false;
 
+  /// Set once, the first time this screen actually checks — true only when
+  /// the class's roster was genuinely empty before this upload, i.e. THIS
+  /// upload is the one establishing it (see ReportClassRepository
+  /// .matchNamesAgainstRoster). Drives the extra "get this right" emphasis
+  /// on the review screen.
+  bool? _isRosterEstablishingUpload;
+
+  /// Which real Continuous Assessment component this upload is for — only
+  /// ever asked (and used) for a [ReportAssessmentSystem.continuousAssessment]
+  /// class; null and unused for a standalone-test class.
+  ReportCaComponent? _caComponent;
+
   @override
   void dispose() {
     _subjectController.dispose();
@@ -103,6 +123,22 @@ class _UploadScoreSheetFlowState extends State<UploadScoreSheetFlow> {
       );
       return;
     }
+
+    if (widget.reportClass.isContinuousAssessment) {
+      // "At the beginning of data entry for report forms" per explicit
+      // request — asked here, the first real moment score entry actually
+      // starts for this class, not at Class Setup itself (see ReportClass's
+      // own doc comment on why). Only ever asked once per class; every
+      // later upload reuses the confirmed weights.
+      if (!widget.reportClass.hasConfirmedCaWeights) {
+        final confirmed = await _confirmCaWeights();
+        if (!confirmed || !mounted) return;
+      }
+      final component = await _pickCaComponent();
+      if (component == null || !mounted) return;
+      _caComponent = component;
+    }
+
     final method = await showModalBottomSheet<_CaptureMethod>(
       context: context,
       builder: (sheetContext) => SafeArea(
@@ -153,6 +189,83 @@ class _UploadScoreSheetFlowState extends State<UploadScoreSheetFlow> {
     }
   }
 
+  /// "The app at the beginning of data entry for report forms should ask
+  /// to confirm the mark allocations in the C.A. system" — asked once,
+  /// right here, the first time score entry actually starts for a
+  /// Continuous Assessment class. Returns true once confirmed and saved.
+  Future<bool> _confirmCaWeights() async {
+    var testWeight = 40;
+    var examWeight = 60;
+    final result = await showDialog<({int test, int exam})>(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (dialogContext, setDialogState) => AlertDialog(
+          title: const Text('Confirm Mark Allocation'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('This class uses Continuous Assessment. How are the final marks split between the '
+                  'C.A. Test and the End-of-Term Exam?'),
+              const SizedBox(height: 16),
+              Wrap(
+                spacing: 8,
+                children: [
+                  ChoiceChip(
+                    label: const Text('40% Test / 60% Exam'),
+                    selected: testWeight == 40,
+                    onSelected: (_) => setDialogState(() {
+                      testWeight = 40;
+                      examWeight = 60;
+                    }),
+                  ),
+                  ChoiceChip(
+                    label: const Text('50% Test / 50% Exam'),
+                    selected: testWeight == 50,
+                    onSelected: (_) => setDialogState(() {
+                      testWeight = 50;
+                      examWeight = 50;
+                    }),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Text('Currently set to $testWeight% Test / $examWeight% Exam.',
+                  style: Theme.of(dialogContext).textTheme.bodySmall),
+            ],
+          ),
+          actions: [
+            TextButton(onPressed: () => Navigator.of(dialogContext).pop(), child: const Text('Cancel')),
+            FilledButton(
+              onPressed: () => Navigator.of(dialogContext).pop((test: testWeight, exam: examWeight)),
+              child: const Text('Confirm'),
+            ),
+          ],
+        ),
+      ),
+    );
+    if (result == null) return false;
+    await _repository.confirmCaWeights(widget.reportClass.id, testWeightPercent: result.test, examWeightPercent: result.exam);
+    return true;
+  }
+
+  Future<ReportCaComponent?> _pickCaComponent() {
+    return showDialog<ReportCaComponent>(
+      context: context,
+      builder: (dialogContext) => SimpleDialog(
+        title: const Text('Which component is this score sheet for?'),
+        children: [
+          for (final component in ReportCaComponent.values)
+            SimpleDialogOption(
+              onPressed: () => Navigator.of(dialogContext).pop(component),
+              child: Text(component.label),
+            ),
+        ],
+      ),
+    );
+  }
+
   Future<void> _transcribe() async {
     setState(() {
       _transcribing = true;
@@ -171,12 +284,18 @@ class _UploadScoreSheetFlowState extends State<UploadScoreSheetFlow> {
       if (!mounted) return;
       setState(() {
         _roster = roster;
+        _isRosterEstablishingUpload ??= roster.isEmpty;
         _aiNotes = table.notes;
         _rows
           ..clear()
           ..addAll([
             for (final m in matches)
-              _ScoreRowState(name: m.extractedName, score: m.extractedScore ?? '', matchedLearner: m.matchedLearner),
+              _ScoreRowState(
+                name: m.extractedName,
+                score: m.extractedScore ?? '',
+                matchedLearner: m.matchedLearner,
+                closestMatch: m.closestMatch,
+              ),
           ]);
         _step = _Step.review;
       });
@@ -191,23 +310,84 @@ class _UploadScoreSheetFlowState extends State<UploadScoreSheetFlow> {
     }
   }
 
-  /// Best-effort column detection (name column: header contains "name";
-  /// score column: header contains "score"/"mark"/"total") — a starting
-  /// point only, every row is reviewed and correctable on the Stage 4
-  /// screen regardless of whether this guessed right.
+  /// Content-based column detection — a real, reported bug (2026-09-03):
+  /// the previous header-text-only heuristic ("does the header say
+  /// 'name'/'score'?") sometimes put names in the score column when a
+  /// sheet's headers were missing, misread, or had an extra column (a "No."
+  /// index, a gender column, etc.) the header guess didn't account for.
+  /// This instead looks at what's actually IN each column: the score
+  /// column is whichever one is mostly real numbers (a trailing '%' is
+  /// fine — see [parseReportScoreText]); the name column is whichever
+  /// remaining column is mostly real text. Header text is still used as a
+  /// tie-breaker when the content signal alone doesn't clearly pick a
+  /// column, but content always wins over a header that disagrees with
+  /// what's actually written there — every row is still reviewed and
+  /// correctable on the Stage 4 screen regardless.
   List<({String name, String? score})> _extractNameScorePairs(TranscribedTable table) {
-    int? nameCol;
-    int? scoreCol;
-    for (var i = 0; i < table.headers.length; i++) {
-      final h = table.headers[i].toLowerCase();
-      if (nameCol == null && h.contains('name')) nameCol = i;
-      if (scoreCol == null && (h.contains('score') || h.contains('mark') || h.contains('total'))) scoreCol = i;
+    final columnCount = table.rows.fold<int>(0, (max, row) => row.length > max ? row.length : max);
+    if (columnCount == 0) return const [];
+
+    double numericRatioFor(int col) {
+      var seen = 0;
+      var numeric = 0;
+      for (final row in table.rows) {
+        if (col >= row.length) continue;
+        final cell = row[col].trim();
+        if (cell.isEmpty) continue;
+        seen++;
+        if (parseReportScoreText(cell) != null) numeric++;
+      }
+      return seen == 0 ? 0 : numeric / seen;
     }
+
+    double textRatioFor(int col) {
+      var seen = 0;
+      var textLike = 0;
+      for (final row in table.rows) {
+        if (col >= row.length) continue;
+        final cell = row[col].trim();
+        if (cell.isEmpty) continue;
+        seen++;
+        if (parseReportScoreText(cell) == null && RegExp(r'[A-Za-z]').hasMatch(cell)) textLike++;
+      }
+      return seen == 0 ? 0 : textLike / seen;
+    }
+
+    // Score column: the column most consistently numeric, as long as it's
+    // genuinely mostly numbers (not just the single most-numeric of an
+    // all-text table).
+    var scoreCol = 0;
+    var bestNumericRatio = -1.0;
+    for (var c = 0; c < columnCount; c++) {
+      final ratio = numericRatioFor(c);
+      if (ratio > bestNumericRatio) {
+        bestNumericRatio = ratio;
+        scoreCol = c;
+      }
+    }
+    final hasRealScoreColumn = bestNumericRatio >= 0.5;
+
+    // Name column: among every OTHER column, the most text-like one — a
+    // header hint only breaks a genuine tie, never overrides content.
+    var nameCol = 0;
+    var bestTextRatio = -1.0;
+    for (var c = 0; c < columnCount; c++) {
+      if (hasRealScoreColumn && c == scoreCol) continue;
+      var ratio = textRatioFor(c);
+      if (c < table.headers.length && table.headers[c].toLowerCase().contains('name')) {
+        ratio += 0.001; // tie-breaker only
+      }
+      if (ratio > bestTextRatio) {
+        bestTextRatio = ratio;
+        nameCol = c;
+      }
+    }
+
     return [
       for (final row in table.rows)
         (
-          name: nameCol != null && nameCol < row.length ? row[nameCol] : (row.isNotEmpty ? row[0] : ''),
-          score: scoreCol != null && scoreCol < row.length ? row[scoreCol] : (row.length > 1 ? row[1] : null),
+          name: nameCol < row.length ? row[nameCol] : (row.isNotEmpty ? row[0] : ''),
+          score: hasRealScoreColumn && scoreCol < row.length ? row[scoreCol] : null,
         ),
     ];
   }
@@ -242,12 +422,23 @@ class _UploadScoreSheetFlowState extends State<UploadScoreSheetFlow> {
 
   void _confirmAsNewLearner(_ScoreRowState row) => setState(() => row.confirmedAsNew = true);
 
+  /// The one-tap suggestion (per explicit request): accepts the closest
+  /// real roster name found for an unclear OCR read, without opening the
+  /// manual picker — "so that if the user chooses yes over manual edit,
+  /// the uploading continues immediately".
+  void _acceptClosestMatch(_ScoreRowState row) => setState(() {
+        row.matchedLearner = row.closestMatch;
+        row.closestMatch = null;
+        row.confirmedAsNew = false;
+      });
+
   bool get _allResolved => _rows.every((r) => r.isResolved);
 
   Future<void> _confirmAndSave() async {
     if (_rows.isEmpty || !_allResolved) return;
     for (final row in _rows) {
-      if (double.tryParse(row.score.text.trim()) == null) {
+      // Real, reported bug: a bare double.tryParse rejects "85%" outright.
+      if (parseReportScoreText(row.score.text) == null) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('"${row.name.text}" needs a numeric score.')),
         );
@@ -258,21 +449,33 @@ class _UploadScoreSheetFlowState extends State<UploadScoreSheetFlow> {
     setState(() => _saving = true);
     try {
       final subject = await _repository.getOrCreateSubject(widget.reportClass.id, _subjectController.text);
+      final isCa = widget.reportClass.isContinuousAssessment;
       for (final row in _rows) {
         var learner = row.matchedLearner;
         if (learner == null && row.confirmedAsNew) {
           learner = await _repository.addLearner(widget.reportClass.id, row.name.text);
         }
         if (learner == null) continue; // shouldn't happen — guarded by _allResolved
-        final score = double.parse(row.score.text.trim());
-        await _repository.setScore(
-          learnerId: learner.id,
-          subject: subject,
-          score: score,
-          comment: reportCommentFor(score),
-          commentSource: ReportCommentSource.auto,
-        );
+        final score = parseReportScoreText(row.score.text)!;
+        if (isCa) {
+          await _repository.setComponentScore(
+            learnerId: learner.id,
+            subject: subject,
+            reportClass: widget.reportClass,
+            component: _caComponent!,
+            value: score,
+          );
+        } else {
+          await _repository.setScore(
+            learnerId: learner.id,
+            subject: subject,
+            score: score,
+            comment: reportCommentFor(score),
+            commentSource: ReportCommentSource.auto,
+          );
+        }
       }
+      unawaited(ReportClassBackupService().maybeBackup(widget.reportClass.id, repository: _repository));
       if (!mounted) return;
       Navigator.of(context).pop();
     } catch (error) {
@@ -373,6 +576,29 @@ class _UploadScoreSheetFlowState extends State<UploadScoreSheetFlow> {
               ],
             ),
           ),
+        if (_isRosterEstablishingUpload == true)
+          Container(
+            width: double.infinity,
+            color: Theme.of(context).colorScheme.errorContainer,
+            padding: const EdgeInsets.all(10),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(Icons.edit_note, size: 18, color: Theme.of(context).colorScheme.onErrorContainer),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    'This upload creates the whole class roster — every other subject will match against '
+                    'these exact names. Please edit any name below that isn\'t perfectly correct before saving.',
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodySmall
+                        ?.copyWith(color: Theme.of(context).colorScheme.onErrorContainer, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ],
+            ),
+          ),
         if (_aiNotes case final notes? when notes.trim().isNotEmpty)
           Container(
             width: double.infinity,
@@ -455,7 +681,11 @@ class _UploadScoreSheetFlowState extends State<UploadScoreSheetFlow> {
                     controller: row.score,
                     decoration: const InputDecoration(labelText: 'Score', isDense: true, border: OutlineInputBorder()),
                     keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                    inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*$'))],
+                    // Allows a trailing '%' — real, reported bug: the old
+                    // pattern rejected typing it at all, even though a
+                    // captured "85%" is a perfectly good score (see
+                    // parseReportScoreText, used to actually parse this).
+                    inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*%?$'))],
                   ),
                 ),
               ],
@@ -469,7 +699,7 @@ class _UploadScoreSheetFlowState extends State<UploadScoreSheetFlow> {
                   Expanded(child: Text('Matched to ${row.matchedLearner!.fullName}', style: Theme.of(context).textTheme.bodySmall)),
                 ],
               )
-            else
+            else ...[
               Wrap(
                 spacing: 8,
                 runSpacing: 4,
@@ -490,6 +720,32 @@ class _UploadScoreSheetFlowState extends State<UploadScoreSheetFlow> {
                     TextButton(onPressed: () => _confirmAsNewLearner(row), child: const Text('Add as new learner')),
                 ],
               ),
+              // "Replace with closest match?" — a fast one-tap alternative
+              // to opening the manual picker for every unclear OCR read,
+              // per explicit request. Only ever a suggestion (see
+              // ReportClassRepository._closestRosterMatch's own doc
+              // comment on how close it has to be to appear at all).
+              if (row.closestMatch case final suggestion?)
+                Container(
+                  margin: const EdgeInsets.only(top: 6),
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.secondaryContainer,
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          'Replace with closest match: "${suggestion.fullName}"?',
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                      ),
+                      TextButton(onPressed: () => _acceptClosestMatch(row), child: const Text('Yes')),
+                    ],
+                  ),
+                ),
+            ],
           ],
         ),
       ),
