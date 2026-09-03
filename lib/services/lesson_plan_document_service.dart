@@ -98,8 +98,11 @@ class LessonPlanDocumentService {
             ],
           ),
           for (final section in template.sections.where((s) => s.id == 'evaluation')) ...[
+            // No section heading here — per explicit request (2026-09-03),
+            // "After the lesson" (this section's title text) is removed
+            // entirely from the printed lesson plan; the Divider alone
+            // still visually separates it from the progression table above.
             pw.SizedBox(height: 12),
-            pw.Text(section.title, style: pw.TextStyle(fontSize: 13, fontWeight: pw.FontWeight.bold)),
             pw.Divider(thickness: 0.5),
             for (final field in section.fields) _pdfField(field, draft.value(field.id)),
           ],
@@ -267,8 +270,10 @@ class LessonPlanDocumentService {
     buffer.write(_docxHeading('LESSON PROGRESSION', size: 26));
     buffer.write(_docxProgressionTable(draft));
 
+    // No section heading here — per explicit request (2026-09-03), "After
+    // the lesson" (this section's title text) is removed entirely from
+    // the printed lesson plan.
     for (final section in template.sections.where((s) => s.id == 'evaluation')) {
-      buffer.write(_docxHeading(section.title, size: 26));
       for (final field in section.fields) {
         buffer.write(_docxField(field, draft.value(field.id)));
       }

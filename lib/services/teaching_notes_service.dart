@@ -33,10 +33,11 @@ class TeachingNotesUnavailable implements Exception {
   String toString() => message;
 }
 
-/// Calls the `generateTeachingNotes` Cloud Function. Unlike the rest of this
-/// app, this needs a live connection — it reaches a backend that calls the
-/// Anthropic API — so every call checks connectivity first and fails fast
-/// with a clear message instead of hanging.
+/// Calls the `generateTeachingNotes` Cloud Function (Gemini-backed — this
+/// app moved off Anthropic entirely 2026-08-26, see index.ts's own doc
+/// comment). Unlike most of this app, this needs a live connection, so
+/// every call checks connectivity first and fails fast with a clear
+/// message instead of hanging.
 class TeachingNotesService {
   TeachingNotesService({FirebaseFunctions? functions})
       : _functions = functions ?? FirebaseFunctions.instance;
@@ -48,9 +49,17 @@ class TeachingNotesService {
     return !result.contains(ConnectivityResult.none);
   }
 
+  /// [subject] (and, when known, [grade]) is required — real, reported bug
+  /// fixed 2026-09-03: without an explicit subject, a generic topic name
+  /// gave the model nothing to disambiguate against its own general
+  /// knowledge, and it could write about a different subject's version of
+  /// a similarly-named topic entirely. See `buildPrompt` in index.ts for
+  /// the actual grounding instruction this enables.
   Future<TeachingNotesResult> generate({
     required String topic,
     String? subtopic,
+    required String subject,
+    String? grade,
     required String syllabusContext,
     required String format,
     bool onePage = false,
@@ -68,6 +77,8 @@ class TeachingNotesService {
       final result = await callable.call<Map<Object?, Object?>>({
         'topic': topic,
         if (subtopic != null) 'subtopic': subtopic,
+        'subject': subject,
+        if (grade != null) 'grade': grade,
         'syllabusContext': syllabusContext,
         'format': format,
         if (onePage) 'maxLength': 'page',

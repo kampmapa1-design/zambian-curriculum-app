@@ -18,13 +18,34 @@ import 'term_topic_picker_screen.dart';
 /// Slides" used to call a different, buggier path (see
 /// subject_grade_topic_picker_screen.dart's doc comment) — both now go
 /// through here.
-Future<SchemeOfWorkEntry?> pickTopicViaTermWeek(BuildContext context, {required String title}) async {
+///
+/// Returns the [SyllabusTemplate] (subject/grade/curriculum) alongside the
+/// entry, not just the entry alone — real, reported bug fixed 2026-09-03:
+/// this function picked a subject/grade FIRST, then discarded it once the
+/// topic was chosen, leaving nothing but a bare topic name for any AI call
+/// downstream to ground itself on. A generic topic name with no subject
+/// attached is exactly what let an AI-enhanced generation drift into
+/// writing about a different subject's version of that same topic.
+Future<TopicPickResult?> pickTopicViaTermWeek(BuildContext context, {required String title}) async {
   final template = await Navigator.of(context).push<SyllabusTemplate>(
     MaterialPageRoute(builder: (_) => SubjectGradeTopicPickerScreen(title: title)),
   );
   if (template == null || !context.mounted) return null;
 
-  return Navigator.of(context).push<SchemeOfWorkEntry>(
+  final entry = await Navigator.of(context).push<SchemeOfWorkEntry>(
     MaterialPageRoute(builder: (_) => TermTopicPickerScreen(template: template)),
   );
+  if (entry == null) return null;
+
+  return TopicPickResult(template: template, entry: entry);
+}
+
+/// A picked topic together with the [SyllabusTemplate] (subject/grade/
+/// curriculum) it actually belongs to — see [pickTopicViaTermWeek]'s own
+/// doc comment on why the two travel together from here on, rather than
+/// the entry alone.
+class TopicPickResult {
+  final SyllabusTemplate template;
+  final SchemeOfWorkEntry entry;
+  const TopicPickResult({required this.template, required this.entry});
 }

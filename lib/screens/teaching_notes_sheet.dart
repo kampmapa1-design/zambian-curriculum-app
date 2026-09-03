@@ -3,6 +3,7 @@ import 'package:share_plus/share_plus.dart';
 
 import '../models/scheme_of_work.dart';
 import '../models/slide_outline.dart';
+import '../models/syllabus_models.dart';
 import '../services/offline_slide_outline_service.dart';
 import '../services/offline_teaching_notes_service.dart';
 import '../services/pptx_document_service.dart';
@@ -14,9 +15,16 @@ import '../utils/text_utils.dart';
 
 /// Opens the teaching-notes generator for one scheme-of-work entry. Shows
 /// notes composed offline from syllabus data immediately (free, no network),
-/// with an optional AI-enhanced version behind a button that calls the
-/// `generateTeachingNotes` Cloud Function — that path needs Firebase's paid
-/// Blaze plan, which isn't enabled yet, so it's offered but not relied on.
+/// with an optional "Research" step behind a button that calls the
+/// `generateTeachingNotes` Cloud Function (Gemini-backed) for a fuller,
+/// AI-composed version — needs a live connection, so it's offered but not
+/// relied on.
+///
+/// [template] (subject/grade/curriculum) travels alongside [entry] from
+/// here on — real, reported bug fixed 2026-09-03: the AI call used to be
+/// given only a topic/sub-topic name with no subject attached, which let it
+/// drift into writing about a different subject's version of a
+/// similarly-named topic. See [_syllabusContext] and [_TeachingNotesSheetState._tryAiVersion].
 ///
 /// [initialFormat] pre-selects 'bullet' (bulletin) or 'paragraph' (essay) —
 /// matching the bulletin/essay/slide choice offered right after a topic is
@@ -26,18 +34,26 @@ import '../utils/text_utils.dart';
 Future<void> showTeachingNotesSheet(
   BuildContext context, {
   required SchemeOfWorkEntry entry,
+  required SyllabusTemplate template,
   String initialFormat = 'bullet',
   bool autoGenerateSlides = false,
 }) {
   return showModalBottomSheet(
     context: context,
     isScrollControlled: true,
-    builder: (_) => _TeachingNotesSheet(entry: entry, initialFormat: initialFormat, autoGenerateSlides: autoGenerateSlides),
+    builder: (_) => _TeachingNotesSheet(
+      entry: entry,
+      template: template,
+      initialFormat: initialFormat,
+      autoGenerateSlides: autoGenerateSlides,
+    ),
   );
 }
 
-String _syllabusContext(SchemeOfWorkEntry entry) {
+String _syllabusContext(SchemeOfWorkEntry entry, SyllabusTemplate template) {
   final lines = <String>[
+    'Subject: ${template.subject.name}',
+    'Grade/Form: ${template.grade.name}',
     'Topic: ${entry.topic.name}',
     if (entry.topic.description != null) entry.topic.description!,
     if (entry.subTopic != null) 'Sub-topic: ${entry.subTopic!.name}',
@@ -49,9 +65,15 @@ String _syllabusContext(SchemeOfWorkEntry entry) {
 }
 
 class _TeachingNotesSheet extends StatefulWidget {
-  const _TeachingNotesSheet({required this.entry, this.initialFormat = 'bullet', this.autoGenerateSlides = false});
+  const _TeachingNotesSheet({
+    required this.entry,
+    required this.template,
+    this.initialFormat = 'bullet',
+    this.autoGenerateSlides = false,
+  });
 
   final SchemeOfWorkEntry entry;
+  final SyllabusTemplate template;
   final String initialFormat;
   final bool autoGenerateSlides;
 
@@ -130,7 +152,9 @@ class _TeachingNotesSheetState extends State<_TeachingNotesSheet> {
       final result = await _aiService.generate(
         topic: widget.entry.topic.name,
         subtopic: widget.entry.subTopic?.name,
-        syllabusContext: _syllabusContext(widget.entry),
+        subject: widget.template.subject.name,
+        grade: widget.template.grade.name,
+        syllabusContext: _syllabusContext(widget.entry, widget.template),
         format: _format,
       );
       if (!mounted) return;
@@ -169,6 +193,7 @@ class _TeachingNotesSheetState extends State<_TeachingNotesSheet> {
         outline = await _slideAiService.generate(
           topic: widget.entry.topic.name,
           subtopic: widget.entry.subTopic?.name,
+          subject: widget.template.subject.name,
           notesText: _notes,
           notesFormat: _format,
         );
@@ -254,7 +279,7 @@ class _TeachingNotesSheetState extends State<_TeachingNotesSheet> {
                 icon: _loadingAi
                     ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
                     : const Icon(Icons.auto_awesome),
-                label: Text(_loadingAi ? 'Trying AI-enhanced version…' : 'Try AI-enhanced version (needs internet)'),
+                label: Text(_loadingAi ? 'Researching…' : 'Research'),
               ),
               const SizedBox(height: 8),
               OutlinedButton.icon(

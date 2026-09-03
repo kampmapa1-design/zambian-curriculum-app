@@ -46,6 +46,13 @@ class _SubjectGradeTopicPickerScreenState extends State<SubjectGradeTopicPickerS
   String? _error;
   List<TemplateManifestEntry> _manifest = [];
 
+  /// Files without a real source disclosure — see
+  /// [TemplateRepository.hasRealSource]'s own doc comment. Drives the
+  /// "Not Ready" blocker on [_GradeTile]; computed once here rather than
+  /// per-tile so every tile can render its final state immediately
+  /// instead of flashing "ready" then "not ready" a moment later.
+  Set<String> _notReadyFiles = {};
+
   @override
   void initState() {
     super.initState();
@@ -56,9 +63,14 @@ class _SubjectGradeTopicPickerScreenState extends State<SubjectGradeTopicPickerS
     try {
       await _repository.ensureAllSeeded();
       final manifest = await _repository.loadManifest();
+      final readiness = await Future.wait(manifest.map((e) => _repository.hasRealSource(e.file)));
       if (!mounted) return;
       setState(() {
         _manifest = manifest;
+        _notReadyFiles = {
+          for (var i = 0; i < manifest.length; i++)
+            if (!readiness[i]) manifest[i].file,
+        };
         _loading = false;
       });
     } catch (error) {
@@ -128,6 +140,7 @@ class _SubjectGradeTopicPickerScreenState extends State<SubjectGradeTopicPickerS
               bySubject: cbcBySubject,
               pickTerm: widget.pickTerm,
               repository: _repository,
+              notReadyFiles: _notReadyFiles,
               onTemplateReady: _onTemplateReady,
               onTermSelected: _onTermSelected,
             ),
@@ -139,6 +152,7 @@ class _SubjectGradeTopicPickerScreenState extends State<SubjectGradeTopicPickerS
               bySubject: obcBySubject,
               pickTerm: widget.pickTerm,
               repository: _repository,
+              notReadyFiles: _notReadyFiles,
               onTemplateReady: _onTemplateReady,
               onTermSelected: _onTermSelected,
             ),
@@ -155,6 +169,7 @@ class _CurriculumColumn extends StatelessWidget {
     required this.bySubject,
     required this.pickTerm,
     required this.repository,
+    required this.notReadyFiles,
     required this.onTemplateReady,
     required this.onTermSelected,
   });
@@ -163,6 +178,7 @@ class _CurriculumColumn extends StatelessWidget {
   final Map<String, List<TemplateManifestEntry>> bySubject;
   final bool pickTerm;
   final TemplateRepository repository;
+  final Set<String> notReadyFiles;
   final ValueChanged<SyllabusTemplate> onTemplateReady;
   final void Function(SyllabusTemplate template, Term term) onTermSelected;
 
@@ -201,6 +217,7 @@ class _CurriculumColumn extends StatelessWidget {
                       entry: entry,
                       pickTerm: pickTerm,
                       repository: repository,
+                      isReady: !notReadyFiles.contains(entry.file),
                       onTemplateReady: onTemplateReady,
                       onTermSelected: onTermSelected,
                     ),
@@ -218,6 +235,7 @@ class _GradeTile extends StatefulWidget {
     required this.entry,
     required this.pickTerm,
     required this.repository,
+    required this.isReady,
     required this.onTemplateReady,
     required this.onTermSelected,
   });
@@ -225,6 +243,14 @@ class _GradeTile extends StatefulWidget {
   final TemplateManifestEntry entry;
   final bool pickTerm;
   final TemplateRepository repository;
+
+  /// False for a subject/grade whose bundled content is confirmed non-real
+  /// placeholder/seed material (see
+  /// [TemplateRepository.hasRealSource]'s own doc comment) — tentative,
+  /// 2026-09-03, per explicit request: shows a "Not Ready" blocker instead
+  /// of letting a teacher generate a Lesson Plan/Scheme of Work from
+  /// content that was never real to begin with.
+  final bool isReady;
   final ValueChanged<SyllabusTemplate> onTemplateReady;
   final void Function(SyllabusTemplate template, Term term) onTermSelected;
 
@@ -258,8 +284,48 @@ class _GradeTileState extends State<_GradeTile> {
     if (mounted) setState(() => _template = template);
   }
 
+  Widget _notReadyBadge(BuildContext context) => Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.errorContainer,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.block, size: 13, color: Theme.of(context).colorScheme.onErrorContainer),
+            const SizedBox(width: 4),
+            Text(
+              'Not Ready',
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.onErrorContainer,
+              ),
+            ),
+          ],
+        ),
+      );
+
   @override
   Widget build(BuildContext context) {
+    if (!widget.isReady) {
+      return ListTile(
+        dense: true,
+        contentPadding: const EdgeInsets.only(left: 24, right: 8),
+        title: Text(
+          widget.entry.gradeName,
+          style: TextStyle(fontSize: 13, color: Theme.of(context).disabledColor),
+        ),
+        subtitle: const Text(
+          'Real content not available yet — can\'t generate from this yet.',
+          style: TextStyle(fontSize: 10.5),
+        ),
+        trailing: _notReadyBadge(context),
+        enabled: false,
+      );
+    }
+
     if (!widget.pickTerm) {
       return ListTile(
         dense: true,

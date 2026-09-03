@@ -73,7 +73,7 @@ class _TopicSearchScreenState extends State<TopicSearchScreen> {
         MaterialPageRoute(builder: (_) => TermTopicPickerScreen(template: template)),
       );
       if (entry == null || !mounted) return;
-      Navigator.of(context).pop(entry);
+      Navigator.of(context).pop(TopicPickResult(template: template, entry: entry));
     } on TopicSearchUnavailable catch (e) {
       if (mounted) setState(() => _error = '$e');
     } finally {
@@ -82,9 +82,9 @@ class _TopicSearchScreenState extends State<TopicSearchScreen> {
   }
 
   Future<void> _browseInstead() async {
-    final entry = await pickTopicViaTermWeek(context, title: widget.title);
-    if (entry == null || !mounted) return;
-    Navigator.of(context).pop(entry);
+    final result = await pickTopicViaTermWeek(context, title: widget.title);
+    if (result == null || !mounted) return;
+    Navigator.of(context).pop(result);
   }
 
   @override
@@ -145,7 +145,7 @@ class _TopicSearchScreenState extends State<TopicSearchScreen> {
                   '${result.template.subject.name} · ${result.template.grade.name} · ${result.term.name}'
                   '${result.entry.realWeekNumber != null ? ' · Week ${result.entry.realWeekNumber}' : ''}',
                 ),
-                onTap: () => Navigator.of(context).pop(result.entry),
+                onTap: () => Navigator.of(context).pop(TopicPickResult(template: result.template, entry: result.entry)),
               ),
             ),
         ],

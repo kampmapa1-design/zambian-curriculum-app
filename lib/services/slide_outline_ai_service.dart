@@ -32,9 +32,15 @@ class SlideOutlineAiService {
     return !result.contains(ConnectivityResult.none);
   }
 
+  /// [subject], when given, is an extra grounding signal against the same
+  /// wrong-subject drift fixed elsewhere in this AI pipeline (2026-09-03) —
+  /// lower-risk here than Teaching Notes' own fix since this call condenses
+  /// already-generated [notesText] rather than researching fresh, but the
+  /// extra signal costs nothing when the caller has it.
   Future<SlideOutline> generate({
     required String topic,
     String? subtopic,
+    String? subject,
     required String notesText,
     required String notesFormat,
   }) async {
@@ -49,6 +55,7 @@ class SlideOutlineAiService {
       final result = await callable.call<Map<Object?, Object?>>({
         'topic': topic,
         if (subtopic != null) 'subtopic': subtopic,
+        if (subject != null) 'subject': subject,
         'notesText': notesText,
         'notesFormat': notesFormat,
       });

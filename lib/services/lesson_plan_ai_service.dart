@@ -98,9 +98,17 @@ class LessonPlanAiService {
     return !result.contains(ConnectivityResult.none);
   }
 
+  /// [subject] is required — real, reported bug fixed 2026-09-03: without
+  /// it, a generic topic name gave the model nothing to disambiguate
+  /// against its own general knowledge, and it could plan a lesson around
+  /// a different subject's version of a similarly-named topic. See
+  /// `buildLessonPlanPrompt` in index.ts for the actual grounding
+  /// instruction this enables.
   Future<LessonPlanAiResult> generate({
     required String topic,
     String? subtopic,
+    required String subject,
+    String? grade,
     required List<String> competencies,
     required List<String> objectives,
     String? references,
@@ -120,6 +128,8 @@ class LessonPlanAiService {
       final result = await callable.call<Map<Object?, Object?>>({
         'topic': topic,
         if (subtopic != null) 'subtopic': subtopic,
+        'subject': subject,
+        if (grade != null) 'grade': grade,
         'competencies': competencies,
         'objectives': objectives,
         if (references != null) 'references': references,

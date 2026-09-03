@@ -7,6 +7,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
+import '../models/minutes_session.dart';
 import 'minutes_reconstruction_service.dart';
 
 /// Minutes Maker, Stage 8 — renders a [ReconstructedMinutes] as a PDF or
@@ -21,6 +22,27 @@ class MinutesDocumentService {
     final raw = '${meetingTitle}_$dateStr';
     final safe = raw.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]+'), '_').replaceAll(RegExp(r'^_+|_+$'), '');
     return safe.isEmpty ? 'meeting_minutes' : safe;
+  }
+
+  /// Attendance/roll-call sections ("Present", "Attendance", "Apologies",
+  /// "Absent") move to the very end of the document — real, reported
+  /// layout fix (2026-09-03): the AI reconstruction orders sections
+  /// however the source notes laid them out, which conventionally puts a
+  /// hand-written attendee list first (how most people take meeting notes)
+  /// — but the expected final document reads the minutes themselves
+  /// first, the attendee list last. Detected by heading keyword match, not
+  /// by depending on the AI reliably following an ordering instruction, so
+  /// this is deterministic regardless of what the AI produces. Every
+  /// non-roll-call section keeps its original relative order.
+  List<MinutesSection> _orderedSections(List<MinutesSection> sections) {
+    bool isRollCall(MinutesSection s) {
+      final h = s.heading.toLowerCase();
+      return h.contains('attend') || h.contains('present') || h.contains('absent') || h.contains('apolog');
+    }
+
+    final body = [for (final s in sections) if (!isRollCall(s)) s];
+    final rollCall = [for (final s in sections) if (isRollCall(s)) s];
+    return [...body, ...rollCall];
   }
 
   Future<File> generatePdf(ReconstructedMinutes minutes, DateTime meetingDate) async {
@@ -46,7 +68,7 @@ class MinutesDocumentService {
             ),
           ),
           pw.SizedBox(height: 20),
-          for (final section in minutes.sections) ...[
+          for (final section in _orderedSections(minutes.sections)) ...[
             pw.Text(section.heading, style: pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold)),
             pw.SizedBox(height: 6),
             // pw.Bullet (2026-08-31), not a literal '•' character in
@@ -103,7 +125,7 @@ class MinutesDocumentService {
         '${meetingDate.day.toString().padLeft(2, '0')}';
     buffer.write(_docxParagraph(dateStr, italic: true, center: true));
 
-    for (final section in minutes.sections) {
+    for (final section in _orderedSections(minutes.sections)) {
       buffer.write(_docxHeading(section.heading, size: 26));
       for (final line in section.lines) {
         buffer.write(_docxBullet(line));

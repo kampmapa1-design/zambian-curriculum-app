@@ -237,6 +237,10 @@ const defaultCbcLessonPlanTemplate = LessonPlanTemplate(
       title: 'Lesson details',
       fields: [
         LessonPlanFieldDef(id: 'teacherName', label: 'Name of Teacher', type: LessonPlanFieldType.text),
+        // Added 2026-09-03 — real gap: this template had no School field at
+        // all (unlike defaultCdcLessonPlanTemplate's, which does), so a
+        // teacher using a CBC subject had nowhere to enter it.
+        LessonPlanFieldDef(id: 'school', label: 'School', type: LessonPlanFieldType.text),
         LessonPlanFieldDef(id: 'term', label: 'Term', type: LessonPlanFieldType.text),
         LessonPlanFieldDef(id: 'date', label: 'Date', type: LessonPlanFieldType.text),
         LessonPlanFieldDef(id: 'time', label: 'Time', type: LessonPlanFieldType.text),

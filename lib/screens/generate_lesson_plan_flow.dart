@@ -6,6 +6,7 @@ import '../models/lesson_stage.dart';
 import '../models/scheme_of_work.dart';
 import '../models/syllabus_models.dart';
 import '../services/lesson_checkpoint_repository.dart';
+import '../services/teacher_profile_repository.dart';
 import 'lesson_plan_screen.dart';
 import 'term_topic_picker_screen.dart';
 
@@ -114,6 +115,14 @@ Future<void> startGenerateLessonPlanFlow(
   if (!context.mounted) return;
   final chosenStage = stage ?? LessonStage.introduction;
 
+  // Asked right here — subject and topic are both chosen, this is the
+  // "appropriate place" per explicit request — and remembered from then on
+  // (see TeacherProfileRepository), so a teacher only ever types their own
+  // name/school once; class name still pre-fills but stays editable per
+  // lesson, since one teacher can cover more than one class.
+  final profile = await _askTeacherProfile(context);
+  if (!context.mounted) return;
+
   await Navigator.of(context).push(MaterialPageRoute(
     builder: (_) => LessonPlanScreen(
       subjectName: template.subject.name,
@@ -124,8 +133,80 @@ Future<void> startGenerateLessonPlanFlow(
       template: activeTemplate,
       checkpointRepository: checkpoints,
       focusStage: chosenStage,
+      teacherProfile: profile,
     ),
   ));
+}
+
+/// Asks for the teacher's name/school/(this lesson's) class, pre-filled
+/// from whatever was saved last time — real, reported gap fixed
+/// 2026-09-03: these details never came from the syllabus/scheme of work
+/// the way Subject/Topic do, so nothing previously prompted for them at
+/// all; a teacher had to notice the header fields buried in the lesson
+/// plan form itself and remember to fill them in every single time.
+/// Skippable (leaves whatever's already saved untouched) since none of
+/// these are required to generate a usable lesson plan.
+Future<TeacherProfile?> _askTeacherProfile(BuildContext context) async {
+  final repository = TeacherProfileRepository();
+  final saved = await repository.load();
+  if (!context.mounted) return saved;
+
+  final nameController = TextEditingController(text: saved.name);
+  final schoolController = TextEditingController(text: saved.school);
+  final classController = TextEditingController(text: saved.className);
+
+  final result = await showDialog<TeacherProfile>(
+    context: context,
+    builder: (dialogContext) => AlertDialog(
+      title: const Text('Your details'),
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Shown at the top of the lesson plan, alongside Subject/Topic. Remembered for next '
+                'time — edit any time from the lesson plan itself.'),
+            const SizedBox(height: 12),
+            TextField(
+              controller: nameController,
+              decoration: const InputDecoration(labelText: 'Your name', border: OutlineInputBorder()),
+              textCapitalization: TextCapitalization.words,
+            ),
+            const SizedBox(height: 8),
+            TextField(
+              controller: schoolController,
+              decoration: const InputDecoration(labelText: 'School name', border: OutlineInputBorder()),
+              textCapitalization: TextCapitalization.words,
+            ),
+            const SizedBox(height: 8),
+            TextField(
+              controller: classController,
+              decoration: const InputDecoration(labelText: 'Class (e.g. "10A")', border: OutlineInputBorder()),
+              textCapitalization: TextCapitalization.words,
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(onPressed: () => Navigator.of(dialogContext).pop(saved), child: const Text('Skip')),
+        FilledButton(
+          onPressed: () => Navigator.of(dialogContext).pop(TeacherProfile(
+            name: nameController.text.trim(),
+            school: schoolController.text.trim(),
+            className: classController.text.trim(),
+          )),
+          child: const Text('Continue'),
+        ),
+      ],
+    ),
+  );
+  nameController.dispose();
+  schoolController.dispose();
+  classController.dispose();
+
+  final profile = result ?? saved;
+  if (result != null) await repository.save(profile);
+  return profile;
 }
 
 enum _LessonPlanStart { next, resume }

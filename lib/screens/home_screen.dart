@@ -17,6 +17,7 @@ import 'settings_screen.dart';
 import 'subject_grade_topic_picker_screen.dart';
 import 'teaching_notes_sheet.dart';
 import 'teaching_resources_menu_screen.dart';
+import 'topic_picker_flow.dart';
 import 'topic_search_screen.dart';
 import 'word_pdf_converter_screen.dart';
 
@@ -83,17 +84,18 @@ class HomeScreen extends StatelessWidget {
     // direct SubjectGradeTopicPickerScreen(pickTopic: true) push, a flatter
     // path that never grouped by real week and hardcoded weekNumber: 1 on
     // every result; see that screen's own doc comment for the fix.
-    final entry = await Navigator.of(context).push<SchemeOfWorkEntry>(
+    final result = await Navigator.of(context).push<TopicPickResult>(
       MaterialPageRoute(builder: (_) => const TopicSearchScreen(title: 'Generate Teaching Notes & Slides')),
     );
-    if (entry == null || !context.mounted) return;
+    if (result == null || !context.mounted) return;
 
     final format = await _pickNotesFormat(context);
     if (format == null || !context.mounted) return;
 
     await showTeachingNotesSheet(
       context,
-      entry: entry,
+      entry: result.entry,
+      template: result.template,
       initialFormat: format == 'paragraph' ? 'paragraph' : 'bullet',
       autoGenerateSlides: format == 'slide',
     );

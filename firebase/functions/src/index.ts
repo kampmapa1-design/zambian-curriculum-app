@@ -50,6 +50,14 @@ type NotesFormat = "bullet" | "paragraph";
 interface GenerateTeachingNotesRequest {
   topic: string;
   subtopic?: string;
+  // Required (2026-09-03) — real, reported bug: without an explicit
+  // subject, a generic/short topic name (e.g. "Measurement", "Energy",
+  // "Cells") gave the model nothing to disambiguate against its own
+  // general knowledge, and it could drift into writing about a different
+  // subject's version of that same topic name entirely. See buildPrompt's
+  // use of this for the actual anti-hallucination instruction.
+  subject: string;
+  grade?: string;
   syllabusContext: string;
   format: NotesFormat;
   // Added 2026-09-02 for Lesson Plan's companion "Lesson Notes" document -
@@ -88,6 +96,8 @@ function buildPrompt(req: GenerateTeachingNotesRequest): string {
 
   return [
     lengthInstruction,
+    `Subject: ${req.subject}`,
+    req.grade ? `Grade/Form: ${req.grade}` : null,
     `Topic: ${req.topic}`,
     req.subtopic ? `Sub-topic: ${req.subtopic}` : null,
     "",
@@ -95,6 +105,11 @@ function buildPrompt(req: GenerateTeachingNotesRequest): string {
     req.syllabusContext,
     "",
     formatInstruction,
+    `IMPORTANT: These notes are exclusively for the ${req.subject} subject. Some topic names ` +
+      "sound similar across different subjects (e.g. a topic called \"Cells\" could mean biological " +
+      `cells or electrical/battery cells) — write ONLY about what this topic means within ${req.subject}, ` +
+      "as shown by the syllabus context above, never a different subject's version of a similarly-named " +
+      "topic, even if that other subject's meaning is more common in general knowledge.",
     "Draw only on well-established, credible educational knowledge appropriate for this " +
       "syllabus context. Do not fabricate facts, statistics, or sources. If the syllabus " +
       "context is too thin to responsibly cover the topic, say so explicitly rather than " +
@@ -126,10 +141,16 @@ export const generateTeachingNotes = onCall<GenerateTeachingNotesRequest>(
       );
     }
 
-    const { topic, subtopic, syllabusContext, format, maxLength } = request.data ?? {};
+    const { topic, subtopic, subject, grade, syllabusContext, format, maxLength } = request.data ?? {};
 
     if (typeof topic !== "string" || topic.trim().length === 0) {
       throw new HttpsError("invalid-argument", "'topic' is required.");
+    }
+    // Required (2026-09-03) — see GenerateTeachingNotesRequest's own doc
+    // comment on why: without this, a generic topic name had nothing to
+    // anchor the model to the right subject.
+    if (typeof subject !== "string" || subject.trim().length === 0) {
+      throw new HttpsError("invalid-argument", "'subject' is required.");
     }
     if (typeof syllabusContext !== "string" || syllabusContext.trim().length === 0) {
       throw new HttpsError("invalid-argument", "'syllabusContext' is required.");
@@ -140,12 +161,15 @@ export const generateTeachingNotes = onCall<GenerateTeachingNotesRequest>(
     if (subtopic !== undefined && typeof subtopic !== "string") {
       throw new HttpsError("invalid-argument", "'subtopic' must be a string if provided.");
     }
+    if (grade !== undefined && typeof grade !== "string") {
+      throw new HttpsError("invalid-argument", "'grade' must be a string if provided.");
+    }
     if (maxLength !== undefined && maxLength !== "page") {
       throw new HttpsError("invalid-argument", "'maxLength' must be 'page' if provided.");
     }
 
     const ai = new GoogleGenAI({ apiKey: geminiApiKey.value() });
-    const req: GenerateTeachingNotesRequest = { topic, subtopic, syllabusContext, format, maxLength };
+    const req: GenerateTeachingNotesRequest = { topic, subtopic, subject, grade, syllabusContext, format, maxLength };
 
     let text: string | undefined;
     try {
@@ -191,6 +215,12 @@ export const generateTeachingNotes = onCall<GenerateTeachingNotesRequest>(
 interface GenerateLessonPlanRequest {
   topic: string;
   subtopic?: string;
+  // Required (2026-09-03) — same real, reported hallucination bug fixed in
+  // GenerateTeachingNotesRequest: without an explicit subject, a generic
+  // topic name gave the model nothing to disambiguate against its own
+  // general knowledge.
+  subject: string;
+  grade?: string;
   competencies: string[];
   objectives: string[];
   references?: string;
@@ -272,12 +302,20 @@ function buildLessonPlanPrompt(req: GenerateLessonPlanRequest): string {
       "covering only the syllabus content below — do not introduce content outside its scope, and do " +
       "not pad any field to fill space.",
     "",
+    `Subject: ${req.subject}`,
+    req.grade ? `Grade/Form: ${req.grade}` : null,
     `Topic: ${req.topic}`,
     req.subtopic ? `Sub-topic: ${req.subtopic}` : null,
     "",
     "Syllabus context — the lesson MUST cover every one of these and nothing else:",
     ...req.competencies.map((c) => `- ${c}`),
     ...req.objectives.map((o) => `- ${o}`),
+    "",
+    `IMPORTANT: This lesson is exclusively for the ${req.subject} subject. Some topic names sound ` +
+      "similar across different subjects — write ONLY about what this topic means within " +
+      `${req.subject}, as shown by the syllabus content above, never a different subject's version ` +
+      "of a similarly-named topic, even if that other subject's meaning is more common in general " +
+      "knowledge.",
     "",
     req.references
       ? "References available for this lesson (cite naturally where relevant, never invent a " +
@@ -311,11 +349,25 @@ export const generateLessonPlan = onCall<GenerateLessonPlanRequest>(
       throw new HttpsError("unauthenticated", "Sign in is required to generate a lesson plan.");
     }
 
-    const { topic, subtopic, competencies, objectives, references, progressionStages, subjectContentExcerpt } =
-      request.data ?? {};
+    const {
+      topic,
+      subtopic,
+      subject,
+      grade,
+      competencies,
+      objectives,
+      references,
+      progressionStages,
+      subjectContentExcerpt,
+    } = request.data ?? {};
 
     if (typeof topic !== "string" || topic.trim().length === 0) {
       throw new HttpsError("invalid-argument", "'topic' is required.");
+    }
+    // Required (2026-09-03) — see GenerateLessonPlanRequest's own doc
+    // comment on why.
+    if (typeof subject !== "string" || subject.trim().length === 0) {
+      throw new HttpsError("invalid-argument", "'subject' is required.");
     }
     if (!Array.isArray(competencies) || !competencies.every((c) => typeof c === "string")) {
       throw new HttpsError("invalid-argument", "'competencies' must be a string array.");
@@ -332,6 +384,9 @@ export const generateLessonPlan = onCall<GenerateLessonPlanRequest>(
     }
     if (subtopic !== undefined && typeof subtopic !== "string") {
       throw new HttpsError("invalid-argument", "'subtopic' must be a string if provided.");
+    }
+    if (grade !== undefined && typeof grade !== "string") {
+      throw new HttpsError("invalid-argument", "'grade' must be a string if provided.");
     }
     if (references !== undefined && typeof references !== "string") {
       throw new HttpsError("invalid-argument", "'references' must be a string if provided.");
@@ -350,6 +405,8 @@ export const generateLessonPlan = onCall<GenerateLessonPlanRequest>(
     const req: GenerateLessonPlanRequest = {
       topic,
       subtopic,
+      subject,
+      grade,
       competencies,
       objectives,
       references,
@@ -682,6 +739,11 @@ type NotesFormatForSlides = "bullet" | "paragraph";
 interface GenerateSlideOutlineRequest {
   topic: string;
   subtopic?: string;
+  // Optional (2026-09-03) — this function's own hallucination risk is
+  // already low (it condenses the already-generated, already-grounded
+  // notesText rather than researching fresh), but the extra grounding
+  // costs nothing when the caller has it — see buildSlidePrompt.
+  subject?: string;
   notesText: string;
   notesFormat: NotesFormatForSlides;
 }
@@ -721,6 +783,7 @@ function buildSlidePrompt(req: GenerateSlideOutlineRequest): string {
   return [
     "Condense the following teaching notes into a PowerPoint slide deck outline for a teacher " +
       "to present in class.",
+    req.subject ? `Subject: ${req.subject}` : null,
     `Topic: ${req.topic}`,
     req.subtopic ? `Sub-topic: ${req.subtopic}` : null,
     "",
@@ -762,7 +825,7 @@ export const generateSlideOutline = onCall<GenerateSlideOutlineRequest>(
       throw new HttpsError("unauthenticated", "Sign in is required to generate slides.");
     }
 
-    const { topic, subtopic, notesText, notesFormat } = request.data ?? {};
+    const { topic, subtopic, subject, notesText, notesFormat } = request.data ?? {};
 
     if (typeof topic !== "string" || topic.trim().length === 0) {
       throw new HttpsError("invalid-argument", "'topic' is required.");
@@ -776,9 +839,12 @@ export const generateSlideOutline = onCall<GenerateSlideOutlineRequest>(
     if (subtopic !== undefined && typeof subtopic !== "string") {
       throw new HttpsError("invalid-argument", "'subtopic' must be a string if provided.");
     }
+    if (subject !== undefined && typeof subject !== "string") {
+      throw new HttpsError("invalid-argument", "'subject' must be a string if provided.");
+    }
 
     const ai = new GoogleGenAI({ apiKey: geminiApiKey.value() });
-    const req: GenerateSlideOutlineRequest = { topic, subtopic, notesText, notesFormat };
+    const req: GenerateSlideOutlineRequest = { topic, subtopic, subject, notesText, notesFormat };
 
     let text: string | undefined;
     try {

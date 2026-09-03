@@ -17,6 +17,12 @@ class TemplateRepository {
   List<TemplateManifestEntry>? _manifestCache;
   final Map<String, SyllabusTemplate> _templateCache = {};
 
+  /// Keyed by [TemplateManifestEntry.file] — whether that bundled file
+  /// discloses a real source (see every syllabus file's own `_source`
+  /// field). Populated for free while [ensureAllSeeded] already reads
+  /// every file's raw content; see [hasRealSource].
+  final Map<String, bool> _realSourceByFile = {};
+
   static const _manifestPath = 'assets/syllabi/manifest.json';
 
   String _cacheKey(String curriculumCode, String subjectCode, int gradeLevel) =>
@@ -52,11 +58,39 @@ class TemplateRepository {
     for (final entry in manifest) {
       try {
         final raw = await rootBundle.loadString('assets/syllabi/${entry.file}');
-        await _db.importTemplate(jsonDecode(raw) as Map<String, dynamic>);
+        final json = jsonDecode(raw) as Map<String, dynamic>;
+        _realSourceByFile[entry.file] = _looksLikeRealSource(json);
+        await _db.importTemplate(json);
       } catch (error) {
         // ignore: avoid_print
         print('TemplateRepository.ensureAllSeeded: skipping ${entry.file} — $error');
       }
+    }
+  }
+
+  bool _looksLikeRealSource(Map<String, dynamic> json) =>
+      json['_source'] is String && (json['_source'] as String).trim().isNotEmpty;
+
+  /// Whether the bundled file behind [file] (a [TemplateManifestEntry.file])
+  /// discloses a real source — false for genuinely non-real placeholder/
+  /// seed content (see the project's own corpus-survey notes: as of
+  /// 2026-09-02, `english_grade8.json`/`math_grade8.json` are the only
+  /// confirmed cases). Tentative, 2026-09-03: used only to show a "Not
+  /// Ready" indicator on subjects that can't yet produce a usable Lesson
+  /// Plan/Scheme of Work — never to hide or silently skip content, since a
+  /// subject/grade with thin-but-real content should still work, just
+  /// imperfectly. Normally answered instantly from what [ensureAllSeeded]
+  /// already read; falls back to a direct file check if called before that
+  /// for any reason, rather than assuming a file is ready.
+  Future<bool> hasRealSource(String file) async {
+    if (_realSourceByFile[file] case final known?) return known;
+    try {
+      final raw = await rootBundle.loadString('assets/syllabi/$file');
+      final hasSource = _looksLikeRealSource(jsonDecode(raw) as Map<String, dynamic>);
+      _realSourceByFile[file] = hasSource;
+      return hasSource;
+    } catch (_) {
+      return false;
     }
   }
 

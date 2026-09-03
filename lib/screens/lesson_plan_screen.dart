@@ -18,6 +18,7 @@ import '../services/lesson_plan_ai_service.dart';
 import '../services/lesson_plan_document_service.dart';
 import '../services/lesson_progression_generator.dart';
 import '../services/subject_content_index.dart';
+import '../services/teacher_profile_repository.dart';
 import '../services/teaching_notes_document_service.dart';
 import '../services/teaching_notes_service.dart';
 
@@ -59,6 +60,7 @@ class LessonPlanScreen extends StatefulWidget {
     this.guidedActivitiesText,
     this.guidedNoteText,
     this.focusStage,
+    this.teacherProfile,
   });
 
   final String subjectName;
@@ -103,6 +105,14 @@ class LessonPlanScreen extends StatefulWidget {
   /// of Work entry card, with no stage question asked). Ignored when
   /// resuming a checkpoint — that draft's progression is whatever was saved.
   final LessonStage? focusStage;
+
+  /// The teacher's own name/school/(most recently used) class name — asked
+  /// once, right after subject+topic are chosen (see
+  /// generate_lesson_plan_flow.dart), remembered on-device from then on
+  /// (see TeacherProfileRepository). Pre-fills the header's `teacherName`/
+  /// `school`/`className` fields when this is a fresh draft; never
+  /// overrides a resumed checkpoint's own already-saved values.
+  final TeacherProfile? teacherProfile;
 
   @override
   State<LessonPlanScreen> createState() => _LessonPlanScreenState();
@@ -270,6 +280,7 @@ class _LessonPlanScreenState extends State<LessonPlanScreen> {
       final result = await _aiService.generate(
         topic: widget.entry.topic.name,
         subtopic: widget.entry.subTopic?.name,
+        subject: widget.subjectName,
         subjectContentExcerpt: _subjectContentExcerpt,
         competencies: competencies,
         objectives: objectives,
@@ -382,6 +393,14 @@ class _LessonPlanScreenState extends State<LessonPlanScreen> {
           .withValue('topic', widget.entry.topic.name);
       if (widget.entry.subTopic != null) {
         built = built.withValue('subTopic', widget.entry.subTopic!.name);
+      }
+      // Teacher's name/school/class — asked once up front (see
+      // generate_lesson_plan_flow.dart), remembered on-device from then on,
+      // pre-filled here exactly where the other header details already go.
+      if (widget.teacherProfile case final profile? when !profile.isEmpty) {
+        if (profile.name.isNotEmpty) built = built.withValue('teacherName', profile.name);
+        if (profile.school.isNotEmpty) built = built.withValue('school', profile.school);
+        if (profile.className.isNotEmpty) built = built.withValue('className', profile.className);
       }
       final generalCompetences = widget.entry.topic.competencies.map((c) => c.description).join('\n');
       if (generalCompetences.isNotEmpty) {
@@ -551,6 +570,7 @@ class _LessonPlanScreenState extends State<LessonPlanScreen> {
           final notesResult = await _notesService.generate(
             topic: widget.entry.topic.name,
             subtopic: widget.entry.subTopic?.name,
+            subject: widget.subjectName,
             syllabusContext: _lessonNotesSyllabusContext(),
             format: 'bullet',
             onePage: true,
@@ -606,6 +626,7 @@ class _LessonPlanScreenState extends State<LessonPlanScreen> {
   String _lessonNotesSyllabusContext() {
     final excerpt = _subjectContentExcerpt;
     return [
+      'Subject: ${widget.subjectName}',
       'Topic: ${widget.entry.topic.name}',
       if (widget.entry.subTopic != null) 'Sub-topic: ${widget.entry.subTopic!.name}',
       for (final o in widget.entry.objectives) 'Learning objective: ${o.description}',
@@ -775,10 +796,11 @@ class _LessonPlanScreenState extends State<LessonPlanScreen> {
               label: const Text('Save progress here'),
             ),
           ],
+          // No section heading here — per explicit request (2026-09-03),
+          // "After the lesson" (this section's title text) is removed
+          // entirely, on-screen and in every exported document.
           for (final section in _activeTemplate.sections.where((s) => s.id == 'evaluation')) ...[
             const SizedBox(height: 16),
-            Text(section.title, style: Theme.of(context).textTheme.titleMedium),
-            const SizedBox(height: 8),
             for (final field in section.fields) _buildField(field),
           ],
         ],
