@@ -7,6 +7,7 @@ import '../widgets/function_button.dart';
 import 'assignments_tests_menu_screen.dart';
 import 'class_resume_picker_screen.dart';
 import 'generate_lesson_plan_flow.dart';
+import 'grade_teacher_home_screen.dart';
 import 'handwriting_to_word_screen.dart';
 import 'marking_queue_screen.dart';
 import 'minutes_maker_screen.dart';
@@ -288,6 +289,30 @@ class HomeScreen extends StatelessWidget {
                   subtitle: 'Photograph or upload a handwritten page, get back an editable Word document',
                   onTap: () => Navigator.of(context).push(
                     MaterialPageRoute(builder: (_) => const HandwritingToWordScreen()),
+                  ),
+                ),
+                // Grade Teacher — Report Form Pipeline (2026-09-03): class
+                // roster, Broad Mark Sheet, and report form generation. Its
+                // own section, not folded into Public Access Libraries or
+                // Admin Tools, since it's a distinct role-based function
+                // (class/learner administration) rather than content
+                // browsing or office utilities.
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(4, 20, 4, 8),
+                  child: Text(
+                    'GRADE TEACHER',
+                    style: Theme.of(context)
+                        .textTheme
+                        .labelMedium
+                        ?.copyWith(color: colorScheme.onSurfaceVariant, letterSpacing: 0.8),
+                  ),
+                ),
+                FunctionButton(
+                  icon: Icons.groups_outlined,
+                  label: 'Grade Teacher',
+                  subtitle: 'Class roster, Broad Mark Sheet, and report forms',
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const GradeTeacherHomeScreen()),
                   ),
                 ),
                 // Admin Tools — deliberately separate from the

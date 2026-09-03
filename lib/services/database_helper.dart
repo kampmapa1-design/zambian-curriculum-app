@@ -35,7 +35,7 @@ class DatabaseHelper {
   DatabaseHelper._internal();
   static final DatabaseHelper instance = DatabaseHelper._internal();
 
-  static const _schemaVersion = 6;
+  static const _schemaVersion = 7;
 
   Database? _db;
 
@@ -69,6 +69,10 @@ class DatabaseHelper {
 
   // Drop order matters for foreign keys: children before parents.
   static const _tableNamesNewestFirst = [
+    'report_scores',
+    'report_subjects',
+    'report_learners',
+    'report_classes',
     'lesson_history',
     'class_progress',
     // Superseded by class_progress (schema v6) — kept here so an upgrading
@@ -214,6 +218,77 @@ class DatabaseHelper {
     ''');
     await db.execute(
       'CREATE INDEX idx_lesson_history_scope ON lesson_history (subject_id, grade_id, date)',
+    );
+
+    // ---------------------------------------------------------------------
+    // Report Form Pipeline (Grade Teacher) — a real class roster + Broad
+    // Mark Sheet, genuinely new ground: nothing else in this app models a
+    // class as a persistent entity with a real learner list (class_progress
+    // above is just a resume-cursor label, not a roster). One school-year
+    // class → up to 140 learners → up to 12 subject containers → one score/
+    // comment per (learner, subject). See ReportClassRepository for all
+    // read/write access — nothing else should touch these tables directly.
+    // ---------------------------------------------------------------------
+    await db.execute('''
+      CREATE TABLE report_classes (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        school_name TEXT NOT NULL,
+        class_grade TEXT NOT NULL,
+        term TEXT NOT NULL,
+        created_at TEXT NOT NULL
+      )
+    ''');
+    await db.execute('''
+      CREATE TABLE report_learners (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        class_id INTEGER NOT NULL REFERENCES report_classes(id) ON DELETE CASCADE,
+        full_name TEXT NOT NULL,
+        roster_order INTEGER NOT NULL,
+        created_at TEXT NOT NULL,
+        UNIQUE (class_id, roster_order)
+      )
+    ''');
+    await db.execute(
+      'CREATE INDEX idx_report_learners_class ON report_learners (class_id, roster_order)',
+    );
+    // A composite subject's own score is always computed (part_a + part_b
+    // summed at read time — see ReportClassRepository.scoreFor) — never
+    // stored in report_scores, so it can never drift out of sync with its
+    // two real parts. composite_part_a_id/b_id reference sibling rows in
+    // this same table (same class), enforced in code (a subject from
+    // another class would never resolve any real learner's score anyway).
+    await db.execute('''
+      CREATE TABLE report_subjects (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        class_id INTEGER NOT NULL REFERENCES report_classes(id) ON DELETE CASCADE,
+        name TEXT NOT NULL,
+        sequence_number INTEGER NOT NULL,
+        is_composite INTEGER NOT NULL DEFAULT 0,
+        composite_part_a_id INTEGER REFERENCES report_subjects(id) ON DELETE SET NULL,
+        composite_part_b_id INTEGER REFERENCES report_subjects(id) ON DELETE SET NULL,
+        UNIQUE (class_id, name)
+      )
+    ''');
+    await db.execute(
+      'CREATE INDEX idx_report_subjects_class ON report_subjects (class_id, sequence_number)',
+    );
+    // comment_source distinguishes an auto-filled comment (Stage 8's
+    // deterministic band lookup, still editable) from one a teacher typed
+    // themselves — never set for a composite subject (see above).
+    await db.execute('''
+      CREATE TABLE report_scores (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        learner_id INTEGER NOT NULL REFERENCES report_learners(id) ON DELETE CASCADE,
+        subject_id INTEGER NOT NULL REFERENCES report_subjects(id) ON DELETE CASCADE,
+        score REAL,
+        comment TEXT,
+        comment_source TEXT,
+        updated_at TEXT NOT NULL,
+        UNIQUE (learner_id, subject_id)
+      )
+    ''');
+    await db.execute(
+      'CREATE INDEX idx_report_scores_learner ON report_scores (learner_id)',
     );
   }
 
