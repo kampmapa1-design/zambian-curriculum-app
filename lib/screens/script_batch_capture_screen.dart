@@ -2,44 +2,50 @@ import 'dart:io';
 
 import 'package:document_camera_frame/document_camera_frame.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../models/marking_scheme.dart';
 import '../models/marking_script.dart';
+import '../models/marking_session.dart';
 import '../models/syllabus_models.dart';
 import '../services/batch_grading_runner.dart';
 import '../services/marking_grading_service.dart';
 import '../services/marking_scheme_repository.dart';
 import '../services/marking_script_repository.dart';
+import '../services/marking_session_repository.dart';
+import '../services/template_repository.dart';
 import 'marked_scripts_screen.dart';
 import 'subject_grade_topic_picker_screen.dart';
 import '../widgets/score_pop_badge.dart';
 
 /// AI-Assisted Marking — "Upload Script" → "Upload through camera". One
-/// script (its whole batch of pages — typically around 6) per screen,
-/// not several scripts chained together: a teacher captures every page
-/// of ONE candidate's script, taps "Script Completed", and the screen
-/// stays put (pages still visible, still addable) until they explicitly
-/// tap "Complete Session" to finish with this script and return to the
-/// hub. Starting the NEXT script is a fresh, deliberate action from the
-/// hub ("Upload Script" again) — not automatic — so a teacher can stop
-/// and review/correct a script (via the hub, or MarkingReviewScreen once
-/// it's graded) before ever starting the next one.
+/// script (its whole batch of pages — typically around 6) per screen visit,
+/// but many scripts across one continuous *session* — see [MarkingSession].
+/// A teacher captures every page of ONE candidate's script, taps "Script
+/// Completed", and the screen stays put (pages still visible, still
+/// addable) until they explicitly tap "Complete Session" to finish with
+/// this script and return to the hub. Starting the NEXT script is a fresh,
+/// deliberate action from the hub ("Upload Script" again) — not automatic
+/// within one screen — but it no longer re-asks subject/grade/marking key,
+/// or how many scripts remain: those are asked exactly once, at the very
+/// start of a [MarkingSession], and persisted (see
+/// [MarkingSessionRepository]) so they survive leaving the app entirely,
+/// not just this screen closing.
 ///
-/// The camera opens immediately (2026-08-31) — no picker screens gate
-/// it. Subject/grade, the marking scheme, and the candidate's
-/// name/gender/ID/class are all asked in [_completeSetup] right after
-/// the *first* page is captured, not before — see [_captureNextPage].
-/// This screen used to auto-detect the name from the first captured page
-/// (a Gemini call, see CandidateNameDetectionService), but that turned
-/// out to be a significant, avoidable share of this app's AI cost at
-/// real scale (2026-08-30) for something a teacher can type in a few
-/// seconds while the script is already in hand. CandidateNameDetectionService/
-/// detectCandidateName are suspended, not deleted, in case a faster/
-/// cheaper detection path is worth revisiting later. Gender is required
-/// right alongside the name fields — every script this screen creates
-/// has a real, teacher-given MarkingScript.genderConfirmed: true from
-/// the start, not a placeholder MarkingReviewScreen has to stop and ask
-/// about later.
+/// The camera opens immediately (2026-08-31) — no picker screens gate it.
+/// Subject/grade, the marking scheme, how many scripts this session plans
+/// to capture, and the candidate's name/gender/ID/class are all asked in
+/// [_completeSetup] right after the *first* page is captured, not before —
+/// see [_captureNextPage]. This screen used to auto-detect the name from
+/// the first captured page (a Gemini call, see CandidateNameDetectionService),
+/// but that turned out to be a significant, avoidable share of this app's
+/// AI cost at real scale (2026-08-30) for something a teacher can type in a
+/// few seconds while the script is already in hand. CandidateNameDetectionService/
+/// detectCandidateName are suspended, not deleted, in case a faster/cheaper
+/// detection path is worth revisiting later. Gender is required right
+/// alongside the name fields — every script this screen creates has a
+/// real, teacher-given MarkingScript.genderConfirmed: true from the start,
+/// not a placeholder MarkingReviewScreen has to stop and ask about later.
 ///
 /// Nothing is sent anywhere until "Complete Session" → an explicit "Mark
 /// this script now?" Yes — capture itself is entirely offline.
@@ -49,29 +55,15 @@ class ScriptBatchCaptureScreen extends StatefulWidget {
     this.repository,
     this.schemeRepository,
     this.gradingService,
-    this.initialTemplate,
-    this.initialScheme,
-    this.onSetupComplete,
+    this.sessionRepository,
+    this.templateRepository,
   });
 
   final MarkingScriptRepository? repository;
   final MarkingSchemeRepository? schemeRepository;
   final MarkingGradingService? gradingService;
-
-  /// When both are given (2026-08-31), [_setUp] skips straight past the
-  /// Subject & Grade and "which marking key" pickers and starts this
-  /// script's details form directly — set by MarkingQueueScreen from
-  /// whatever the *previous* script in this session used, since asking
-  /// again for every single script in the same marking session is pure
-  /// repetition: those details were already given once, at the start.
-  /// Null (the ordinary case) runs the pickers as before.
-  final SyllabusTemplate? initialTemplate;
-  final MarkingScheme? initialScheme;
-
-  /// Fired once [_setUp] has a confirmed template+scheme — whether just
-  /// picked fresh or reused from [initialTemplate]/[initialScheme] — so
-  /// MarkingQueueScreen can remember them for the *next* script too.
-  final void Function(SyllabusTemplate template, MarkingScheme scheme)? onSetupComplete;
+  final MarkingSessionRepository? sessionRepository;
+  final TemplateRepository? templateRepository;
 
   @override
   State<ScriptBatchCaptureScreen> createState() => _ScriptBatchCaptureScreenState();
@@ -81,6 +73,8 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
   late final MarkingScriptRepository _repository = widget.repository ?? MarkingScriptRepository();
   late final MarkingSchemeRepository _schemeRepository = widget.schemeRepository ?? MarkingSchemeRepository();
   late final MarkingGradingService _gradingService = widget.gradingService ?? MarkingGradingService();
+  late final MarkingSessionRepository _sessionRepository = widget.sessionRepository ?? MarkingSessionRepository();
+  late final TemplateRepository _templateRepository = widget.templateRepository ?? TemplateRepository();
 
   bool _settingUp = true;
 
@@ -92,6 +86,11 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
   SyllabusTemplate? _subjectGrade;
   MarkingScheme? _scheme;
   int _scriptNumber = 1;
+
+  /// The active session (subject/scheme/target count), once resolved — see
+  /// [_bootstrap]. Null only very briefly before that resolves, or if this
+  /// screen was closed before any session ever started.
+  MarkingSession? _session;
 
   final List<File> _pages = [];
   String _firstName = '';
@@ -121,81 +120,165 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _captureNextPage());
+    WidgetsBinding.instance.addPostFrameCallback((_) => _bootstrap());
+  }
+
+  /// Resolves whatever session is already active — a real disk read, not a
+  /// network call, so this adds no perceptible delay before the camera
+  /// opens (see this class's own doc comment on why the camera isn't
+  /// gated). A session whose stated target was already reached (the
+  /// screen closed at exactly the wrong moment last time) is treated the
+  /// same as no session — nothing to resume, ask fresh.
+  Future<void> _bootstrap() async {
+    final active = await _sessionRepository.getActive();
+    if (mounted) {
+      if (active != null) {
+        final latestUsed = (await _repository.nextScriptNumber()) - 1;
+        if (!mounted) return;
+        if (active.isCompleteGiven(latestUsed)) {
+          await _sessionRepository.end();
+        } else {
+          _session = active;
+        }
+      }
+    }
+    if (mounted) _captureNextPage();
   }
 
   /// Runs right after the first page is captured (see [_captureNextPage])
-  /// rather than before — subject/grade, the marking scheme, and the
-  /// candidate's details no longer gate opening the camera at all.
-  /// Returns false if the teacher backs out at any point, in which case
-  /// the caller discards this attempt and returns to the hub.
+  /// rather than before — subject/grade, the marking scheme, how many
+  /// scripts this session plans to capture, and the candidate's details no
+  /// longer gate opening the camera at all. Returns false if the teacher
+  /// backs out at any point, in which case the caller discards this
+  /// attempt and returns to the hub.
   Future<bool> _completeSetup() async {
     setState(() => _settingUp = true);
     SyllabusTemplate template;
     MarkingScheme scheme;
 
-    if (widget.initialTemplate != null && widget.initialScheme != null) {
-      // Reused from the previous script in this session — see
-      // [ScriptBatchCaptureScreen.initialTemplate]'s doc. Skips both
-      // pickers entirely.
-      template = widget.initialTemplate!;
-      scheme = widget.initialScheme!;
-    } else {
-      final pickedTemplate = await Navigator.of(context).push<SyllabusTemplate>(
-        MaterialPageRoute(
-          builder: (_) => const SubjectGradeTopicPickerScreen(title: 'Subject & Grade'),
-        ),
+    if (_session case final session?) {
+      // Resuming an already-active session (the very common case: this is
+      // the 2nd+ script of the same sitting, or the teacher left the app
+      // entirely and came back) — never re-ask subject/grade/scheme/count,
+      // see MarkingSession's own doc comment on why this is persisted.
+      final reloadedTemplate = await _templateRepository.loadSyllabus(
+        curriculumCode: session.curriculumCode,
+        subjectCode: session.subjectCode,
+        gradeLevel: session.gradeLevel,
       );
+      final schemeCatalog = await _schemeRepository.loadCatalog();
+      final reloadedScheme = schemeCatalog.schemes.where((s) => s.id == session.schemeId).firstOrNull;
       if (!mounted) return false;
-      if (pickedTemplate == null) return false;
 
-      final schemes = await _schemeRepository.loadCatalog();
-      if (!mounted) return false;
-      if (schemes.schemes.isEmpty) {
-        await showDialog<void>(
-          context: context,
-          builder: (dialogContext) => AlertDialog(
-            title: const Text('No marking scheme yet'),
-            content: const Text(
-              'This script needs a marking key to grade against. Upload or build one first, then capture this script again.',
-            ),
-            actions: [FilledButton(onPressed: () => Navigator.of(dialogContext).pop(), child: const Text('OK'))],
-          ),
-        );
-        return false;
+      if (reloadedTemplate == null || reloadedScheme == null) {
+        // What this session pointed to no longer exists (e.g. the marking
+        // key was deleted mid-session) — can't silently resume against
+        // nothing. End the stale session and fall through to asking fresh,
+        // same as if none had existed, rather than failing outright.
+        await _sessionRepository.end();
+        _session = null;
+      } else {
+        template = reloadedTemplate;
+        scheme = reloadedScheme;
+        final details = await _askScriptDetails();
+        if (!mounted) return false;
+        if (details == null) return false;
+        final nextNumber = await _repository.nextScriptNumber();
+        if (!mounted) return false;
+        setState(() {
+          _subjectGrade = template;
+          _scheme = scheme;
+          _scriptNumber = nextNumber;
+          _firstName = details.firstName;
+          _surname = details.surname;
+          _gender = details.gender;
+          _studentId = details.studentId;
+          _classLevel = details.classLevel;
+          _settingUp = false;
+          _setupComplete = true;
+        });
+        return true;
       }
-
-      final pickedScheme = await showDialog<MarkingScheme>(
-        context: context,
-        builder: (dialogContext) => SimpleDialog(
-          title: const Text('Which marking key is this script for?'),
-          children: [
-            for (final s in schemes.schemes)
-              SimpleDialogOption(
-                onPressed: () => Navigator.of(dialogContext).pop(s),
-                child: Text('${s.title} (${s.questions.length} question(s))'),
-              ),
-          ],
-        ),
-      );
-      if (!mounted) return false;
-      if (pickedScheme == null) return false;
-      template = pickedTemplate;
-      scheme = pickedScheme;
     }
 
-    widget.onSetupComplete?.call(template, scheme);
+    // No active session — the real first-time setup: subject & grade, the
+    // marking key, and (new, per explicit request) how many scripts this
+    // session plans to capture, so none of it needs re-asking for every
+    // script in the same sitting.
+    if (!mounted) return false;
+    final pickedTemplate = await Navigator.of(context).push<SyllabusTemplate>(
+      MaterialPageRoute(
+        builder: (_) => const SubjectGradeTopicPickerScreen(title: 'Subject & Grade'),
+      ),
+    );
+    if (!mounted) return false;
+    if (pickedTemplate == null) return false;
+
+    final schemes = await _schemeRepository.loadCatalog();
+    if (!mounted) return false;
+    if (schemes.schemes.isEmpty) {
+      await showDialog<void>(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
+          title: const Text('No marking scheme yet'),
+          content: const Text(
+            'This script needs a marking key to grade against. Upload or build one first, then capture this script again.',
+          ),
+          actions: [FilledButton(onPressed: () => Navigator.of(dialogContext).pop(), child: const Text('OK'))],
+        ),
+      );
+      return false;
+    }
+
+    final pickedScheme = await showDialog<MarkingScheme>(
+      context: context,
+      builder: (dialogContext) => SimpleDialog(
+        title: const Text('Which marking key is this script for?'),
+        children: [
+          for (final s in schemes.schemes)
+            SimpleDialogOption(
+              onPressed: () => Navigator.of(dialogContext).pop(s),
+              child: Text('${s.title} (${s.questions.length} question(s))'),
+            ),
+        ],
+      ),
+    );
+    if (!mounted) return false;
+    if (pickedScheme == null) return false;
+    template = pickedTemplate;
+    scheme = pickedScheme;
+
+    final targetCount = await _askTargetScriptCount();
+    if (!mounted) return false;
+    if (targetCount == null) return false;
 
     final details = await _askScriptDetails();
     if (!mounted) return false;
     if (details == null) return false;
 
-    final nextNumber = await _repository.nextScriptNumber();
+    final startNumber = await _repository.nextScriptNumber();
     if (!mounted) return false;
+
+    final newSession = MarkingSession(
+      curriculumCode: template.curriculum.code,
+      subjectCode: template.subject.code,
+      gradeLevel: template.grade.level,
+      subjectName: template.subject.name,
+      gradeName: template.grade.name,
+      schemeId: scheme.id,
+      schemeTitle: scheme.title,
+      targetScriptCount: targetCount,
+      startScriptNumber: startNumber,
+      startedAt: DateTime.now(),
+    );
+    await _sessionRepository.start(newSession);
+    if (!mounted) return false;
+
     setState(() {
+      _session = newSession;
       _subjectGrade = template;
       _scheme = scheme;
-      _scriptNumber = nextNumber;
+      _scriptNumber = startNumber;
       _firstName = details.firstName;
       _surname = details.surname;
       _gender = details.gender;
@@ -205,6 +288,59 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
       _setupComplete = true;
     });
     return true;
+  }
+
+  /// Asked once, at the very start of a new session — per explicit request
+  /// ("add a requirement to indicate the number of scripts on the first
+  /// page so that it will not be requiring the re-stating of the subject
+  /// being marked"). A rough estimate is fine; it only decides when this
+  /// session auto-ends (see MarkingSession.isCompleteGiven) — nothing is
+  /// blocked or rejected for running over or under it. Returns null if the
+  /// teacher backs out.
+  Future<int?> _askTargetScriptCount() {
+    final controller = TextEditingController();
+    final formKey = GlobalKey<FormState>();
+    return showDialog<int>(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('How many scripts?'),
+        content: Form(
+          key: formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('How many scripts do you plan to capture in this session? Asked once — every script '
+                  'after this one reuses the same subject and marking key automatically.'),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: controller,
+                autofocus: true,
+                decoration: const InputDecoration(labelText: 'Number of scripts', border: OutlineInputBorder()),
+                keyboardType: TextInputType.number,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                validator: (v) {
+                  final n = int.tryParse(v?.trim() ?? '');
+                  if (n == null || n <= 0) return 'Enter a number greater than 0';
+                  return null;
+                },
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(dialogContext).pop(), child: const Text('Cancel')),
+          FilledButton(
+            onPressed: () {
+              if (!(formKey.currentState?.validate() ?? false)) return;
+              Navigator.of(dialogContext).pop(int.parse(controller.text.trim()));
+            },
+            child: const Text('Continue'),
+          ),
+        ],
+      ),
+    );
   }
 
   /// Asked once, before any page is captured — replaces the AI name
@@ -358,7 +494,8 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
     if (!_setupComplete) {
       // The camera opened before any of this was known (see this class's
       // doc comment) — now that there's a first page in hand, collect
-      // subject/grade, the marking scheme, and the candidate's details.
+      // whatever setup this session still needs (nothing at all, if
+      // resuming an already-active one).
       final ok = await _completeSetup();
       if (!mounted) return;
       if (!ok) {
@@ -407,6 +544,13 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
     if (_pages.isEmpty) return;
     await _saveOrUpdateScript();
     if (mounted) setState(() => _scriptSaved = true);
+
+    // This script just pushed the session to (or past) its stated target —
+    // end it now, so the *next* "Upload Script" from the hub asks fresh
+    // rather than silently continuing an already-"finished" session.
+    if (_session case final session? when session.isCompleteGiven(_scriptNumber)) {
+      await _sessionRepository.end();
+    }
   }
 
   Future<void> _onCompleteSession() async {
@@ -503,6 +647,17 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
     return const SizedBox.shrink();
   }
 
+  /// e.g. "Script 4 of 10 this session" — shown once a session is known,
+  /// so a teacher can see at a glance that their progress genuinely
+  /// carried over (across scripts, or across leaving and returning to the
+  /// app), not just trust it silently.
+  String? get _sessionProgressLabel {
+    final session = _session;
+    if (session == null) return null;
+    final soFar = session.capturedCountGiven(_scriptNumber).clamp(1, session.targetScriptCount);
+    return 'Script $soFar of ${session.targetScriptCount} this session — ${session.subjectName}, ${session.gradeName}';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -546,7 +701,7 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
               : Column(
               children: [
                 Padding(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
                   child: Row(
                     children: [
                       Expanded(
@@ -561,6 +716,17 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
                     ],
                   ),
                 ),
+                if (_sessionProgressLabel case final label?)
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                    child: Text(
+                      label,
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodySmall
+                          ?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                    ),
+                  ),
                 Expanded(
                   child: _pages.isEmpty
                       ? const Center(child: Text('No pages captured yet.'))

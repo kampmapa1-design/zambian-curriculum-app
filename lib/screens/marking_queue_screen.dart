@@ -6,6 +6,7 @@ import 'package:share_plus/share_plus.dart';
 
 import '../models/marking_scheme.dart';
 import '../models/marking_script.dart';
+import '../models/marking_session.dart';
 import '../models/syllabus_models.dart';
 import '../services/batch_grading_runner.dart';
 import '../services/marking_entitlement_service.dart';
@@ -15,8 +16,10 @@ import '../services/marking_grading_service.dart';
 import '../services/marked_results_list_repository.dart';
 import '../services/marking_key_generation_service.dart';
 import '../services/marking_scheme_repository.dart';
+import '../services/marking_session_repository.dart';
 import '../services/pending_marking_key_draft_repository.dart';
 import '../services/marking_script_repository.dart';
+import '../services/template_repository.dart';
 import 'burst_capture_screen.dart';
 import 'capture_manual_scores_screen.dart';
 import 'captured_list_analysis_intake_screen.dart';
@@ -71,17 +74,17 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
 
   MarkingScriptCatalog _catalog = MarkingScriptCatalog.empty();
   MarkingSchemeCatalog _schemes = MarkingSchemeCatalog.empty();
+  final MarkingSessionRepository _sessionRepository = MarkingSessionRepository();
+  final TemplateRepository _templateRepository = TemplateRepository();
 
-  /// Remembered from the most recent script captured via "Upload Script"
-  /// → camera (2026-08-31) — see ScriptBatchCaptureScreen.initialTemplate.
-  /// Lets every subsequent script in the same marking session skip
-  /// straight past the Subject & Grade and "which marking key" pickers,
-  /// since those details don't change script to script within one
-  /// session. Cleared by "Change subject / marking key" in the Upload
-  /// Script menu, for the (rare) case a teacher genuinely needs to
-  /// switch mid-session.
-  SyllabusTemplate? _lastTemplate;
-  MarkingScheme? _lastScheme;
+  /// The active AI-Assisted Marking session, if any (2026-09-03) — see
+  /// MarkingSession's own doc comment. Persisted on disk (not just this
+  /// screen's own State) specifically so it survives leaving the app
+  /// entirely, not just this screen closing; loaded here purely to show
+  /// "currently: <subject>" in the Upload Script menu and let "Change
+  /// subject / marking key" end it for the rare case a teacher genuinely
+  /// needs to switch mid-session.
+  MarkingSession? _activeSession;
   bool _loading = true;
   bool _selecting = false;
   final Set<String> _selectedIds = {};
@@ -160,11 +163,13 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
     final catalog = await _repository.loadCatalog();
     final schemes = await _schemeRepository.loadCatalog();
     final lists = await _listRepository.loadCatalog();
+    final activeSession = await _sessionRepository.getActive();
     if (!mounted) return;
     setState(() {
       _catalog = catalog;
       _schemes = schemes;
       _lockedScriptIds = {for (final l in lists.lists) if (l.exported) ...l.scriptIds};
+      _activeSession = activeSession;
       _loading = false;
     });
   }
@@ -207,9 +212,23 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
       return;
     }
 
+    // Reload the full SyllabusTemplate from the active session's own
+    // (curriculumCode, subjectCode, gradeLevel) identity, if any — the
+    // session only stores enough to do exactly this, not a full template
+    // object (see MarkingSession's own doc comment).
+    SyllabusTemplate? carriedTemplate;
+    if (_activeSession case final session?) {
+      carriedTemplate = await _templateRepository.loadSyllabus(
+        curriculumCode: session.curriculumCode,
+        subjectCode: session.subjectCode,
+        gradeLevel: session.gradeLevel,
+      );
+      if (!mounted) return;
+    }
+
     final result = await Navigator.of(context).push<MarkingScript>(
       MaterialPageRoute(
-        builder: (_) => BurstCaptureScreen(repository: _repository, initialPageFiles: files, initialTemplate: _lastTemplate),
+        builder: (_) => BurstCaptureScreen(repository: _repository, initialPageFiles: files, initialTemplate: carriedTemplate),
       ),
     );
     if (result != null) _load();
@@ -218,7 +237,9 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
   /// "Upload Script" → "Upload through camera" — the new continuous
   /// batch-capture flow (many scripts in one session, offline until
   /// explicitly confirmed) rather than BurstCaptureScreen's one-at-a-time
-  /// flow.
+  /// flow. The screen manages its own session persistence now (see
+  /// ScriptBatchCaptureScreen/MarkingSessionRepository) — nothing to pass
+  /// in from here beyond the repositories.
   Future<void> _batchCaptureScripts() async {
     await Navigator.of(context).push(
       MaterialPageRoute(
@@ -226,12 +247,6 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
           repository: _repository,
           schemeRepository: _schemeRepository,
           gradingService: _gradingService,
-          initialTemplate: _lastTemplate,
-          initialScheme: _lastScheme,
-          onSetupComplete: (template, scheme) => setState(() {
-            _lastTemplate = template;
-            _lastScheme = scheme;
-          }),
         ),
       ),
     );
@@ -239,13 +254,13 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
     _loadRemainingFreeGradings();
   }
 
-  /// Clears the remembered subject/grade/marking-key so the next "Upload
-  /// Script" asks again — for the rare case a teacher genuinely needs to
-  /// switch mid-session (see [_lastTemplate]'s doc).
-  void _changeRememberedSubjectScheme() => setState(() {
-        _lastTemplate = null;
-        _lastScheme = null;
-      });
+  /// Ends the active session so the next "Upload Script" asks fresh — for
+  /// the rare case a teacher genuinely needs to switch subject/marking key
+  /// mid-session (see [_activeSession]'s doc).
+  Future<void> _changeRememberedSubjectScheme() async {
+    await _sessionRepository.end();
+    if (mounted) setState(() => _activeSession = null);
+  }
 
   /// "Capture Manual Scores" — for teachers who mark entirely by hand:
   /// photograph a handwritten list (any pattern/table) and get back an
@@ -885,10 +900,10 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
                   items: [
                     const PopupMenuItem(value: 'device', child: Text('Upload from device')),
                     const PopupMenuItem(value: 'camera', child: Text('Upload through camera')),
-                    if (_lastTemplate != null)
+                    if (_activeSession != null)
                       PopupMenuItem(
                         value: 'change',
-                        child: Text('Change subject / marking key (currently: ${_lastTemplate!.subject.name})'),
+                        child: Text('Change subject / marking key (currently: ${_activeSession!.subjectName})'),
                       ),
                   ],
                   onSelected: (value) => switch (value) {
