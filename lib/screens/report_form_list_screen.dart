@@ -102,32 +102,54 @@ class _ReportFormListScreenState extends State<ReportFormListScreen> {
     await SharePlus.instance.share(ShareParams(files: [XFile(file.path)], subject: 'Report Form — ${report.learnerName}'));
   }
 
+  /// Sends via every channel the teacher checked in [_SendSheet] — real,
+  /// reported request: "give sending to all channels at the same time"
+  /// rather than forcing one channel per trip through this whole flow.
+  /// Each channel is attempted independently (one failing — a malformed
+  /// number, no email app installed — never stops the others), and the
+  /// result is one consolidated summary rather than a separate dialog per
+  /// channel.
   Future<void> _send(GeneratedReportForm report) async {
     final learner = _learnersById[report.learnerId];
-    final result = await showModalBottomSheet<_SendChoice>(
+    final result = await showModalBottomSheet<_SendSelection>(
       context: context,
+      isScrollControlled: true,
       builder: (sheetContext) => _SendSheet(learner: learner),
     );
-    if (result == null || !mounted) return;
+    if (result == null || result.channels.isEmpty || !mounted) return;
 
     setState(() => _busyReportId = report.id);
-    try {
-      switch (result.channel) {
-        case _SendChannel.email:
-          await _sendByEmail(report, result.contact);
-        case _SendChannel.whatsApp:
-          await _sendByWhatsApp(report, result.contact);
-        case _SendChannel.sms:
-          await _sendBySms(report, result.contact);
+    final succeeded = <String>[];
+    final failed = <String>[];
+    for (final channel in result.channels) {
+      try {
+        switch (channel) {
+          case _SendChannel.email:
+            await _sendByEmail(report, result.email);
+            succeeded.add('Email');
+          case _SendChannel.whatsApp:
+            await _sendByWhatsApp(report, result.phone);
+            succeeded.add('WhatsApp');
+          case _SendChannel.sms:
+            await _sendBySms(report, result.phone);
+            succeeded.add('SMS');
+        }
+      } catch (error) {
+        failed.add('${channel.label} ($error)');
       }
-    } catch (error) {
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Could not send: $error')));
-    } finally {
-      if (mounted) setState(() => _busyReportId = null);
+    }
+    if (mounted) {
+      final summary = [
+        if (succeeded.isNotEmpty) '${succeeded.join(', ')} done.',
+        if (failed.isNotEmpty) 'Failed: ${failed.join('; ')}.',
+      ].join(' ');
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(summary)));
+      setState(() => _busyReportId = null);
     }
   }
 
   Future<void> _sendByEmail(GeneratedReportForm report, String email) async {
+    if (email.trim().isEmpty) throw const FormatException('No guardian email given.');
     final file = await _reportFormRepository.fileFor(report);
     await _emailService.send(
       recipientEmail: email,
@@ -138,21 +160,27 @@ class _ReportFormListScreenState extends State<ReportFormListScreen> {
       attachments: [EmailAttachmentFile(file: file, filename: '${report.learnerName} Report Form.docx')],
       submissionKind: 'reportForm',
     );
-    if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Report emailed.')));
   }
 
+  /// One unmistakable action: shares the actual report FILE via the OS
+  /// share sheet, same working pattern [_print] already uses — the
+  /// teacher picks WhatsApp there, then the contact within WhatsApp
+  /// itself. Real, reported bug fixed here: the previous two-step flow
+  /// (a `wa.me` text-only deep link opening a specific chat, THEN a
+  /// second, easy-to-miss share-sheet prompt for the actual file) meant
+  /// most teachers only ever completed the first step — the text message
+  /// sent, the file never actually attached. There is no way to both
+  /// pre-select a specific WhatsApp contact AND attach a file in one
+  /// programmatic step on any platform (`wa.me` only ever supports plain
+  /// text) — so this is the most reliable version of "send by WhatsApp"
+  /// actually achievable, not a shortcut around a real limitation.
   Future<void> _sendByWhatsApp(GeneratedReportForm report, String phone) async {
-    final digits = phone.replaceAll(RegExp(r'[^0-9+]'), '').replaceAll('+', '');
-    if (digits.length < 7) throw const FormatException('That phone number looks too short for WhatsApp.');
-    final subject = 'Report Form — ${report.learnerName} (${widget.reportClass.classGrade})';
-    final waUri = Uri.parse('https://wa.me/$digits?text=${Uri.encodeComponent('$subject — attaching the file next.')}');
-    final opened = await launchUrl(waUri, mode: LaunchMode.externalApplication);
-    if (!opened || !mounted) return;
     final file = await _reportFormRepository.fileFor(report);
+    final subject = 'Report Form — ${report.learnerName} (${widget.reportClass.classGrade})';
     await SharePlus.instance.share(ShareParams(
       files: [XFile(file.path)],
       subject: subject,
-      text: 'Attach to the WhatsApp chat that just opened.',
+      text: phone.trim().isEmpty ? subject : '$subject — for $phone.',
     ));
   }
 
@@ -240,14 +268,38 @@ class _ReportFormListScreenState extends State<ReportFormListScreen> {
   }
 }
 
-enum _SendChannel { email, whatsApp, sms }
+enum _SendChannel {
+  email,
+  whatsApp,
+  sms;
 
-class _SendChoice {
-  final _SendChannel channel;
-  final String contact;
-  const _SendChoice(this.channel, this.contact);
+  String get label => switch (this) {
+        _SendChannel.email => 'Email',
+        _SendChannel.whatsApp => 'WhatsApp',
+        _SendChannel.sms => 'SMS',
+      };
 }
 
+class _SendSelection {
+  final Set<_SendChannel> channels;
+  final String email;
+  final String phone;
+  const _SendSelection({required this.channels, required this.email, required this.phone});
+}
+
+/// Real, reported bug fixed here (2026-09-03): with the on-screen keyboard
+/// open, this sheet's own send options could end up pushed off-screen —
+/// `showModalBottomSheet` without `isScrollControlled: true` (see [_send])
+/// caps the sheet's height and does nothing to keep its content clear of
+/// the keyboard beyond the [MediaQuery] padding already here; wrapping the
+/// content in [SingleChildScrollView] means it scrolls instead of
+/// clipping/overflowing once the keyboard and content together don't fit.
+///
+/// Checkboxes rather than one-tap-per-channel buttons, per explicit
+/// request ("give sending to all channels at the same time") — a teacher
+/// can tick Email, WhatsApp, and SMS together and fire all three with one
+/// "Send" tap; [ReportFormListScreen._send] attempts every checked channel
+/// independently and reports back one combined summary.
 class _SendSheet extends StatefulWidget {
   const _SendSheet({required this.learner});
   final ReportLearner? learner;
@@ -259,6 +311,7 @@ class _SendSheet extends StatefulWidget {
 class _SendSheetState extends State<_SendSheet> {
   late final _emailController = TextEditingController(text: widget.learner?.guardianEmail ?? '');
   late final _phoneController = TextEditingController(text: widget.learner?.guardianPhone ?? '');
+  final Set<_SendChannel> _selected = {};
 
   @override
   void dispose() {
@@ -267,60 +320,87 @@ class _SendSheetState extends State<_SendSheet> {
     super.dispose();
   }
 
+  bool _channelReady(_SendChannel channel) => switch (channel) {
+        _SendChannel.email => _emailController.text.trim().isNotEmpty,
+        _SendChannel.whatsApp || _SendChannel.sms => _phoneController.text.trim().isNotEmpty,
+      };
+
+  bool get _canSend => _selected.isNotEmpty && _selected.every(_channelReady);
+
+  void _toggle(_SendChannel channel, bool? checked) => setState(() {
+        if (checked == true) {
+          _selected.add(channel);
+        } else {
+          _selected.remove(channel);
+        }
+      });
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Padding(
-        padding: EdgeInsets.only(
-          left: 16,
-          right: 16,
-          top: 16,
-          bottom: 16 + MediaQuery.of(context).viewInsets.bottom,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Send Report Form', style: Theme.of(context).textTheme.titleMedium),
-            const SizedBox(height: 12),
-            TextField(
-              controller: _emailController,
-              decoration: const InputDecoration(labelText: 'Guardian email', border: OutlineInputBorder()),
-              keyboardType: TextInputType.emailAddress,
-              onChanged: (_) => setState(() {}),
-            ),
-            const SizedBox(height: 8),
-            OutlinedButton.icon(
-              onPressed: _emailController.text.trim().isEmpty
-                  ? null
-                  : () => Navigator.of(context).pop(_SendChoice(_SendChannel.email, _emailController.text.trim())),
-              icon: const Icon(Icons.email_outlined),
-              label: const Text('Send by Email'),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _phoneController,
-              decoration: const InputDecoration(labelText: 'Guardian phone', border: OutlineInputBorder()),
-              keyboardType: TextInputType.phone,
-              onChanged: (_) => setState(() {}),
-            ),
-            const SizedBox(height: 8),
-            OutlinedButton.icon(
-              onPressed: _phoneController.text.trim().isEmpty
-                  ? null
-                  : () => Navigator.of(context).pop(_SendChoice(_SendChannel.whatsApp, _phoneController.text.trim())),
-              icon: const Icon(Icons.chat_outlined),
-              label: const Text('Send by WhatsApp'),
-            ),
-            const SizedBox(height: 8),
-            OutlinedButton.icon(
-              onPressed: _phoneController.text.trim().isEmpty
-                  ? null
-                  : () => Navigator.of(context).pop(_SendChoice(_SendChannel.sms, _phoneController.text.trim())),
-              icon: const Icon(Icons.sms_outlined),
-              label: const Text('Notify by SMS (text only, no attachment)'),
-            ),
-          ],
+        padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Expanded(child: Text('Send Report Form', style: Theme.of(context).textTheme.titleMedium)),
+                  TextButton(
+                    onPressed: () => setState(() => _selected.addAll(_SendChannel.values)),
+                    child: const Text('Select all channels'),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              TextField(
+                controller: _emailController,
+                decoration: const InputDecoration(labelText: 'Guardian email', border: OutlineInputBorder()),
+                keyboardType: TextInputType.emailAddress,
+                onChanged: (_) => setState(() {}),
+              ),
+              CheckboxListTile(
+                contentPadding: EdgeInsets.zero,
+                value: _selected.contains(_SendChannel.email),
+                onChanged: (checked) => _toggle(_SendChannel.email, checked),
+                title: const Text('Email — attaches the report form file'),
+              ),
+              const SizedBox(height: 8),
+              TextField(
+                controller: _phoneController,
+                decoration: const InputDecoration(labelText: 'Guardian phone', border: OutlineInputBorder()),
+                keyboardType: TextInputType.phone,
+                onChanged: (_) => setState(() {}),
+              ),
+              CheckboxListTile(
+                contentPadding: EdgeInsets.zero,
+                value: _selected.contains(_SendChannel.whatsApp),
+                onChanged: (checked) => _toggle(_SendChannel.whatsApp, checked),
+                title: const Text('WhatsApp — attaches the file; pick the contact within WhatsApp'),
+              ),
+              CheckboxListTile(
+                contentPadding: EdgeInsets.zero,
+                value: _selected.contains(_SendChannel.sms),
+                onChanged: (checked) => _toggle(_SendChannel.sms, checked),
+                title: const Text('SMS — text only, no attachment (SMS cannot carry a file)'),
+              ),
+              const SizedBox(height: 12),
+              FilledButton.icon(
+                onPressed: _canSend
+                    ? () => Navigator.of(context).pop(_SendSelection(
+                          channels: _selected,
+                          email: _emailController.text.trim(),
+                          phone: _phoneController.text.trim(),
+                        ))
+                    : null,
+                icon: const Icon(Icons.send_outlined),
+                label: Text(_selected.isEmpty ? 'Select a channel above' : 'Send via ${_selected.map((c) => c.label).join(' + ')}'),
+              ),
+            ],
+          ),
         ),
       ),
     );

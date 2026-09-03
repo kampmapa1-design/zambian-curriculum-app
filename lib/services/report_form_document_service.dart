@@ -48,22 +48,56 @@ class ReportFormMailMergeData {
     required this.classSize,
     this.attendanceText = '',
   });
+
+  /// Every real (non-null) score entered for this learner — the basis for
+  /// [_ReportFormLayout]'s summary section. Never guesses a missing
+  /// subject's score as zero; a subject with nothing entered yet simply
+  /// isn't counted in the average, same "don't guess a missing part" rule
+  /// used everywhere else in this pipeline.
+  List<double> get enteredScores => [for (final s in subjects) if (scores[s.id] case final v?) v];
+
+  double? get averageScore => enteredScores.isEmpty ? null : enteredScores.reduce((a, b) => a + b) / enteredScores.length;
 }
 
 /// Report Form Pipeline, Stage 9 (the template) + Stage 10 (mail-merge
 /// generation) + Stage 12 (embedding a Head Teacher signature image) — an
 /// **original** report form layout built fresh from standard Zambian
-/// secondary-school report form conventions (school name / learner details
-/// / one row per subject with score+grade+comment / class position /
-/// attendance / signatures), per the brief's own explicit instruction not
-/// to copy any specific existing document's design. Hand-rolled minimal
-/// OOXML, same no-dependency approach as every other document service in
-/// this app (see LessonPlanDocumentService/SchemeOfWorkDocumentService) —
-/// the one genuinely new piece here is embedding a real image (the Head
-/// Teacher's signature, Stage 12) into that same minimal package, which no
-/// earlier service in this app has needed before; see [_buildDocumentXml]
-/// and the media/relationship parts added only when a signature is given.
+/// secondary-school report form conventions, per the brief's own explicit
+/// instruction not to copy any specific existing document's design.
+///
+/// Redesigned 2026-09-03 (real feedback: the previous layout was a plain
+/// labeled-line list with no real visual structure) into an actual form
+/// layout — a bordered two-column bio-data grid, a shaded/bold subjects
+/// table with proportional column widths (the old hardcoded per-cell width
+/// silently overflowed the page once the C.A. layout added extra columns —
+/// fixed here by weighting each column against a real, explicit page
+/// margin/content width instead), a summary (subject count / average /
+/// overall grade), and a grading-key legend built directly from
+/// [reportGradeFor]/[reportCommentFor]'s own real bands rather than a
+/// second, independently-invented scale. Ruled blank lines are used for
+/// anything genuinely hand-completed on a real report form (General
+/// Remarks, Next Term Begins) rather than fabricating text nobody wrote —
+/// same sourcing-integrity discipline this app applies everywhere else.
+///
+/// Hand-rolled minimal OOXML, same no-dependency approach as every other
+/// document service in this app (see LessonPlanDocumentService/
+/// SchemeOfWorkDocumentService) — the one genuinely new piece here is
+/// embedding a real image (the Head Teacher's signature, Stage 12) into
+/// that same minimal package, which no earlier service in this app has
+/// needed before; see [_buildDocumentXml] and the media/relationship parts
+/// added only when a signature is given.
 class ReportFormDocumentService {
+  // A4 portrait, in twips (1/1440 inch): 11906 x 16838. Margins are set
+  // explicitly (see [_sectPr]) rather than left to Word's own default —
+  // this is what [_contentWidthDxa] weights every table column against, so
+  // a table can never silently run past the printable area again.
+  static const _pageWidthDxa = 11906;
+  static const _marginDxa = 1080; // 0.75in each side
+  static const _contentWidthDxa = _pageWidthDxa - (_marginDxa * 2);
+
+  static const _navy = '1F3864';
+  static const _lightShade = 'F2F2F2';
+
   /// Generates one learner's report form. [signatureImageBytes]/[signedByName]
   /// are both null for an unsigned (Stage 10) report; both must be given
   /// together for a signed (Stage 12) one — see
@@ -113,6 +147,12 @@ class ReportFormDocumentService {
     addXml('docProps/core.xml', _corePropsXml);
     addXml('docProps/app.xml', _appPropsXml);
 
+    // Landscape here (unlike the portrait single-learner report form) —
+    // deliberately, this table can run to a dozen subject columns.
+    const landscapeWidth = 16838;
+    const landscapeContentWidth = landscapeWidth - (_marginDxa * 2);
+    final weights = [2.4, for (final _ in subjects) 1.0];
+
     final buffer = StringBuffer();
     buffer.write(
       '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
@@ -123,25 +163,30 @@ class ReportFormDocumentService {
     buffer.write(_subheading('BROAD MARK SHEET — ${reportClass.classGrade} — ${reportClass.term}'));
     buffer.write(_spacer());
 
-    buffer.write(
-      '<w:tbl><w:tblPr><w:tblW w:w="0" w:type="auto"/><w:tblBorders>'
-      '<w:top w:val="single" w:sz="4" w:space="0" w:color="auto"/>'
-      '<w:left w:val="single" w:sz="4" w:space="0" w:color="auto"/>'
-      '<w:bottom w:val="single" w:sz="4" w:space="0" w:color="auto"/>'
-      '<w:right w:val="single" w:sz="4" w:space="0" w:color="auto"/>'
-      '<w:insideH w:val="single" w:sz="4" w:space="0" w:color="auto"/>'
-      '<w:insideV w:val="single" w:sz="4" w:space="0" w:color="auto"/>'
-      '</w:tblBorders></w:tblPr>',
-    );
-    buffer.write(_tableRow(['Learner', for (final s in subjects) s.name], bold: true));
-    for (final learner in learners) {
-      buffer.write(_tableRow([
-        learner.fullName,
-        for (final s in subjects) scoresByLearnerThenSubject[learner.id]?[s.id]?.toStringAsFixed(0) ?? '—',
-      ]));
+    final columnWidths = _computeWidths(weights, landscapeContentWidth);
+    buffer.write(_tableOpen());
+    buffer.write(_tblGrid(columnWidths));
+    buffer.write(_weightedTableRow(
+      ['Learner', for (final s in subjects) s.name],
+      columnWidths,
+      bold: true,
+      fill: _navy,
+      textColor: 'FFFFFF',
+    ));
+    for (var i = 0; i < learners.length; i++) {
+      final learner = learners[i];
+      buffer.write(_weightedTableRow(
+        [learner.fullName, for (final s in subjects) scoresByLearnerThenSubject[learner.id]?[s.id]?.toStringAsFixed(0) ?? '—'],
+        columnWidths,
+        fill: i.isOdd ? _lightShade : null,
+      ));
     }
     buffer.write('</w:tbl>');
-    buffer.write('<w:sectPr><w:pgSz w:w="16838" w:h="11906" w:orient="landscape"/></w:sectPr></w:body></w:document>');
+    buffer.write(
+      '<w:sectPr><w:pgSz w:w="$landscapeWidth" w:h="$_pageWidthDxa" w:orient="landscape"/>'
+      '<w:pgMar w:top="$_marginDxa" w:right="$_marginDxa" w:bottom="$_marginDxa" w:left="$_marginDxa"/>'
+      '</w:sectPr></w:body></w:document>',
+    );
 
     addXml('word/document.xml', buffer.toString());
     return ZipEncoder().encode(archive);
@@ -159,118 +204,293 @@ class ReportFormDocumentService {
 
     buffer.write(_heading(data.reportClass.schoolName.toUpperCase()));
     buffer.write(_subheading('SECONDARY SCHOOL REPORT FORM'));
+    buffer.write(_ruleLine());
     buffer.write(_spacer());
 
-    buffer.write(_labeledLine('Learner Name', data.learner.fullName));
-    buffer.write(_labeledLine('Class', data.reportClass.classGrade));
-    buffer.write(_labeledLine('Term', data.reportClass.term));
-    buffer.write(_labeledLine(
-      'Position in Class',
-      data.classPosition == null ? 'Not yet ranked' : '${data.classPosition} out of ${data.classSize}',
-    ));
-    buffer.write(_labeledLine('Attendance', data.attendanceText.isEmpty ? '—' : data.attendanceText));
-    if (data.reportClass.isContinuousAssessment && data.reportClass.hasConfirmedCaWeights) {
-      buffer.write(_labeledLine(
-        'C.A. Weighting',
-        '${data.reportClass.caTestWeightPercent}% Test / ${data.reportClass.caExamWeightPercent}% Exam',
-      ));
-    }
+    buffer.write(_bioGrid(data));
     buffer.write(_spacer());
 
     buffer.write(_subjectsTable(data));
     buffer.write(_spacer());
 
-    buffer.write(_signatureSection(hasSignature: hasSignature, signedByName: signedByName));
+    buffer.write(_summarySection(data));
+    buffer.write(_spacer());
 
-    buffer.write('<w:sectPr><w:pgSz w:w="11906" w:h="16838"/></w:sectPr></w:body></w:document>');
+    buffer.write(_remarksSection());
+    buffer.write(_spacer());
+
+    buffer.write(_signatureSection(hasSignature: hasSignature, signedByName: signedByName));
+    buffer.write(_spacer());
+
+    buffer.write(_gradingKeyLegend());
+
+    buffer.write(
+      '<w:sectPr><w:pgSz w:w="$_pageWidthDxa" w:h="16838"/>'
+      '<w:pgMar w:top="$_marginDxa" w:right="$_marginDxa" w:bottom="$_marginDxa" w:left="$_marginDxa"/>'
+      '</w:sectPr></w:body></w:document>',
+    );
     return buffer.toString();
   }
 
   String _heading(String text) =>
       '<w:p><w:pPr><w:jc w:val="center"/><w:spacing w:after="60"/></w:pPr>'
-      '<w:r><w:rPr><w:b/><w:sz w:val="32"/></w:rPr>'
+      '<w:r><w:rPr><w:rFonts w:ascii="Cambria" w:hAnsi="Cambria"/><w:b/><w:sz w:val="34"/></w:rPr>'
       '<w:t xml:space="preserve">${_xmlEscape(text)}</w:t></w:r></w:p>';
 
   String _subheading(String text) =>
-      '<w:p><w:pPr><w:jc w:val="center"/><w:spacing w:after="200"/></w:pPr>'
-      '<w:r><w:rPr><w:sz w:val="24"/></w:rPr>'
+      '<w:p><w:pPr><w:jc w:val="center"/><w:spacing w:after="120"/></w:pPr>'
+      '<w:r><w:rPr><w:rFonts w:ascii="Cambria" w:hAnsi="Cambria"/><w:sz w:val="24"/></w:rPr>'
       '<w:t xml:space="preserve">${_xmlEscape(text)}</w:t></w:r></w:p>';
+
+  /// A thin horizontal rule under the heading — a paragraph with only a
+  /// bottom border, no text — the standard OOXML way to draw a plain line
+  /// without a table.
+  String _ruleLine() => '<w:p><w:pPr><w:pBdr><w:bottom w:val="single" w:sz="12" w:space="1" w:color="$_navy"/></w:pBdr>'
+      '<w:spacing w:after="120"/></w:pPr></w:p>';
 
   String _spacer() => '<w:p><w:pPr><w:spacing w:after="120"/></w:pPr></w:p>';
 
-  String _labeledLine(String label, String value) =>
-      '<w:p><w:pPr><w:spacing w:after="40"/></w:pPr>'
-      '<w:r><w:rPr><w:b/></w:rPr><w:t xml:space="preserve">${_xmlEscape(label)}: </w:t></w:r>'
-      '<w:r><w:t xml:space="preserve">${_xmlEscape(value)}</w:t></w:r></w:p>';
+  String _bodyRun(String text, {bool bold = false}) =>
+      '<w:r><w:rPr><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/><w:sz w:val="22"/>${bold ? '<w:b/>' : ''}</w:rPr>'
+      '<w:t xml:space="preserve">${_xmlEscape(text)}</w:t></w:r>';
 
-  String _subjectsTable(ReportFormMailMergeData data) {
-    final buffer = StringBuffer();
-    buffer.write(
-      '<w:tbl><w:tblPr><w:tblW w:w="0" w:type="auto"/><w:tblBorders>'
+  /// Learner/class bio-data as a real 2-column form grid (borderless — just
+  /// for alignment) instead of a long single-column list of labeled lines,
+  /// so the printed page actually reads like a form rather than a memo.
+  String _bioGrid(ReportFormMailMergeData data) {
+    final rows = <List<(String, String)>>[
+      [('Learner Name', data.learner.fullName), ('Class', data.reportClass.classGrade)],
+      [
+        ('Term', data.reportClass.term),
+        (
+          'Position in Class',
+          data.classPosition == null ? 'Not yet ranked' : '${data.classPosition} out of ${data.classSize}',
+        ),
+      ],
+      [
+        ('Attendance', data.attendanceText.isEmpty ? '—' : data.attendanceText),
+        ('No. of Subjects', '${data.subjects.length}'),
+      ],
+      if (data.reportClass.isContinuousAssessment && data.reportClass.hasConfirmedCaWeights)
+        [
+          (
+            'C.A. Weighting',
+            '${data.reportClass.caTestWeightPercent}% Test / ${data.reportClass.caExamWeightPercent}% Exam',
+          ),
+          ('', ''),
+        ],
+    ];
+
+    final halfWidth = (_contentWidthDxa / 2).round();
+    final buffer = StringBuffer('<w:tbl><w:tblPr><w:tblW w:w="0" w:type="auto"/><w:tblBorders>'
+        '<w:top w:val="none" w:sz="0" w:space="0"/><w:left w:val="none" w:sz="0" w:space="0"/>'
+        '<w:bottom w:val="none" w:sz="0" w:space="0"/><w:right w:val="none" w:sz="0" w:space="0"/>'
+        '<w:insideH w:val="none" w:sz="0" w:space="0"/><w:insideV w:val="none" w:sz="0" w:space="0"/>'
+        '</w:tblBorders></w:tblPr>');
+    buffer.write(_tblGrid([halfWidth, _contentWidthDxa - halfWidth]));
+    for (final row in rows) {
+      buffer.write('<w:tr>');
+      for (final (label, value) in row) {
+        buffer.write('<w:tc><w:tcPr><w:tcW w:w="$halfWidth" w:type="dxa"/></w:tcPr><w:p>');
+        if (label.isNotEmpty) {
+          buffer.write(_bodyRun('$label: ', bold: true));
+          buffer.write(_bodyRun(value));
+        }
+        buffer.write('</w:p></w:tc>');
+      }
+      buffer.write('</w:tr>');
+    }
+    buffer.write('</w:tbl>');
+    return buffer.toString();
+  }
+
+  String _tableOpen() => '<w:tbl><w:tblPr><w:tblW w:w="0" w:type="auto"/><w:tblBorders>'
       '<w:top w:val="single" w:sz="4" w:space="0" w:color="auto"/>'
       '<w:left w:val="single" w:sz="4" w:space="0" w:color="auto"/>'
       '<w:bottom w:val="single" w:sz="4" w:space="0" w:color="auto"/>'
       '<w:right w:val="single" w:sz="4" w:space="0" w:color="auto"/>'
       '<w:insideH w:val="single" w:sz="4" w:space="0" w:color="auto"/>'
       '<w:insideV w:val="single" w:sz="4" w:space="0" w:color="auto"/>'
-      '</w:tblBorders></w:tblPr>',
-    );
+      '</w:tblBorders></w:tblPr>';
+
+  /// The subjects table — "proper and sufficient columns and rows" per
+  /// explicit request: a No. column, one row per real subject (never
+  /// capped — see ReportFormMailMergeData.subjects, which the caller
+  /// already loads in full via ReportClassRepository.listSubjects), a
+  /// shaded/bold header, and alternating row shading for readability.
+  /// Column widths are weighted proportionally against a real, explicit
+  /// content width (see [_contentWidthDxa]) rather than a flat hardcoded
+  /// width per cell — the old flat width silently overflowed the page
+  /// once the C.A. layout added extra columns.
+  String _subjectsTable(ReportFormMailMergeData data) {
     final isCa = data.reportClass.isContinuousAssessment;
-    buffer.write(_tableRow(
-      isCa
-          ? ['Subject', 'C.A. Test', 'Exam', 'Final (%)', 'Grade', 'Comment']
-          : ['Subject', 'Score (%)', 'Grade', 'Comment'],
-      bold: true,
-    ));
-    for (final subject in data.subjects) {
+    final headers = isCa
+        ? ['No.', 'Subject', 'C.A. Test', 'Exam', 'Final (%)', 'Grade', 'Comment']
+        : ['No.', 'Subject', 'Score (%)', 'Grade', 'Comment'];
+    final weights = isCa ? [0.5, 3.2, 1.1, 1.1, 1.2, 0.9, 3.0] : [0.5, 3.4, 1.3, 1.0, 3.8];
+    final columnWidths = _computeWidths(weights, _contentWidthDxa);
+
+    final buffer = StringBuffer(_tableOpen());
+    buffer.write(_tblGrid(columnWidths));
+    buffer.write(_weightedTableRow(headers, columnWidths, bold: true, fill: _navy, textColor: 'FFFFFF'));
+
+    for (var i = 0; i < data.subjects.length; i++) {
+      final subject = data.subjects[i];
       final score = data.scores[subject.id];
-      if (isCa) {
-        buffer.write(_tableRow([
-          subject.name,
-          data.caTestScores[subject.id]?.toStringAsFixed(0) ?? '—',
-          data.caExamScores[subject.id]?.toStringAsFixed(0) ?? '—',
-          score?.toStringAsFixed(0) ?? '—',
-          score == null ? '—' : reportGradeFor(score),
-          data.comments[subject.id] ?? '',
-        ]));
-      } else {
-        buffer.write(_tableRow([
-          subject.name,
-          score?.toStringAsFixed(0) ?? '—',
-          score == null ? '—' : reportGradeFor(score),
-          data.comments[subject.id] ?? '',
-        ]));
-      }
+      final fill = i.isOdd ? _lightShade : null;
+      final cells = isCa
+          ? [
+              '${i + 1}',
+              subject.name,
+              data.caTestScores[subject.id]?.toStringAsFixed(0) ?? '—',
+              data.caExamScores[subject.id]?.toStringAsFixed(0) ?? '—',
+              score?.toStringAsFixed(0) ?? '—',
+              score == null ? '—' : reportGradeFor(score),
+              data.comments[subject.id] ?? '',
+            ]
+          : [
+              '${i + 1}',
+              subject.name,
+              score?.toStringAsFixed(0) ?? '—',
+              score == null ? '—' : reportGradeFor(score),
+              data.comments[subject.id] ?? '',
+            ];
+      buffer.write(_weightedTableRow(cells, columnWidths, fill: fill));
     }
     buffer.write('</w:tbl>');
     return buffer.toString();
   }
 
-  String _tableRow(List<String> cells, {bool bold = false}) {
-    final buffer = StringBuffer('<w:tr>');
-    for (final cell in cells) {
-      final rPr = bold ? '<w:rPr><w:b/></w:rPr>' : '';
-      buffer.write(
-        '<w:tc><w:tcPr><w:tcW w:w="2500" w:type="dxa"/></w:tcPr>'
-        '<w:p><w:r>$rPr<w:t xml:space="preserve">${_xmlEscape(cell)}</w:t></w:r></w:p></w:tc>',
-      );
-    }
-    buffer.write('</w:tr>');
+  /// Number of subjects / class average / overall grade — computed
+  /// straight from [ReportFormMailMergeData.enteredScores]/[averageScore],
+  /// never fabricated: a class with no scores entered yet shows '—'
+  /// rather than a misleading 0%.
+  String _summarySection(ReportFormMailMergeData data) {
+    final average = data.averageScore;
+    final buffer = StringBuffer();
+    buffer.write('<w:p><w:pPr><w:spacing w:after="40"/></w:pPr>');
+    buffer.write(_bodyRun('Summary', bold: true));
+    buffer.write('</w:p>');
+    buffer.write(_bioRow('Subjects with a score entered', '${data.enteredScores.length} of ${data.subjects.length}'));
+    buffer.write(_bioRow('Average', average == null ? '—' : '${average.toStringAsFixed(1)}%'));
+    buffer.write(_bioRow('Overall Grade', average == null ? '—' : reportGradeFor(average)));
     return buffer.toString();
   }
 
+  String _bioRow(String label, String value) =>
+      '<w:p><w:pPr><w:spacing w:after="20"/></w:pPr>${_bodyRun('$label: ', bold: true)}${_bodyRun(value)}</w:p>';
+
+  /// Blank ruled lines for whatever a real report form is always
+  /// hand-completed for after printing — never fabricated text, matching
+  /// this app's own sourcing-integrity discipline extended to document
+  /// generation: nothing here claims a remark or a date that was never
+  /// actually given.
+  String _remarksSection() {
+    final buffer = StringBuffer();
+    buffer.write('<w:p><w:pPr><w:spacing w:after="40"/></w:pPr>');
+    buffer.write(_bodyRun("Class Teacher's General Remarks:", bold: true));
+    buffer.write('</w:p>');
+    buffer.write(_ruledBlankLine());
+    buffer.write(_ruledBlankLine());
+    buffer.write(_spacer());
+    buffer.write('<w:p>');
+    buffer.write(_bodyRun('Next Term Begins: ', bold: true));
+    buffer.write(_bodyRun('________________________________'));
+    buffer.write('</w:p>');
+    return buffer.toString();
+  }
+
+  String _ruledBlankLine() => '<w:p><w:pPr><w:pBdr><w:bottom w:val="single" w:sz="4" w:space="1" w:color="808080"/></w:pBdr>'
+      '<w:spacing w:after="160"/></w:pPr></w:p>';
+
   String _signatureSection({required bool hasSignature, String? signedByName}) {
     final buffer = StringBuffer();
-    buffer.write(_labeledLine('Class / Subject Teacher', ''));
+    buffer.write('<w:p>${_bodyRun('Class / Subject Teacher: ', bold: true)}${_bodyRun('________________________')}</w:p>');
     buffer.write(_spacer());
-    buffer.write('<w:p><w:r><w:rPr><w:b/></w:rPr><w:t xml:space="preserve">Head Teacher / Deputy: </w:t></w:r></w:p>');
+    buffer.write('<w:p>${_bodyRun('Head Teacher / Deputy: ', bold: true)}</w:p>');
     if (hasSignature) {
       buffer.write(_signatureImageParagraph());
-      buffer.write(_labeledLine('Approved by', signedByName ?? ''));
+      buffer.write('<w:p>${_bodyRun('Approved by: ', bold: true)}${_bodyRun(signedByName ?? '')}</w:p>');
     } else {
       buffer.write(_spacer());
-      buffer.write(_labeledLine('Signature', '________________________'));
+      buffer.write('<w:p>${_bodyRun('Signature: ', bold: true)}${_bodyRun('________________________')}</w:p>');
     }
+    return buffer.toString();
+  }
+
+  /// A small legend explaining the Grade column — built directly from
+  /// [reportGradeFor]/[reportCommentFor]'s own real, fixed bands (the
+  /// single source of truth every grade on this report was computed
+  /// from), never a second, independently-invented scale.
+  String _gradingKeyLegend() {
+    const bands = [
+      ('A', '75–100', 'Outstanding'),
+      ('B+', '70–74', 'Brilliant'),
+      ('B', '60–69', 'Meritorious'),
+      ('C+', '55–59', 'Commendable'),
+      ('C', '50–54', 'Average'),
+      ('D', '40–49', 'Must improve'),
+      ('F', '0–39', 'More focus needed'),
+    ];
+    final buffer = StringBuffer();
+    buffer.write('<w:p><w:pPr><w:spacing w:after="40"/></w:pPr>${_bodyRun('Grading Key', bold: true)}</w:p>');
+    buffer.write('<w:p><w:pPr><w:spacing w:after="0"/></w:pPr>');
+    buffer.write(_bodyRun(bands.map((b) => '${b.$1} (${b.$2}) ${b.$3}').join('   ·   ')));
+    buffer.write('</w:p>');
+    return buffer.toString();
+  }
+
+  /// Turns column [weights] into real dxa widths summing to
+  /// [contentWidthDxa] — computed once per table and reused for both the
+  /// required `<w:tblGrid>` declaration and every row's own `<w:tcW>`, so
+  /// the two can never drift apart (see [_tblGrid]'s own doc comment on
+  /// why that element has to exist at all).
+  List<int> _computeWidths(List<double> weights, int contentWidthDxa) {
+    final totalWeight = weights.fold<double>(0, (a, b) => a + b);
+    if (totalWeight <= 0) {
+      return [for (var i = 0; i < weights.length; i++) (contentWidthDxa / weights.length).round()];
+    }
+    return [for (final w in weights) (w / totalWeight * contentWidthDxa).round()];
+  }
+
+  /// `<w:tblGrid>` — a REQUIRED child of `<w:tbl>` per the OOXML schema
+  /// (declares each column's width at the table level, separate from the
+  /// per-cell `<w:tcW>` every row also carries). Real, found bug
+  /// (2026-09-03): every hand-rolled table in this file omitted it since
+  /// this pipeline's very first version — desktop Word tolerates the
+  /// omission by silently recomputing column layout on its own, but a
+  /// stricter reader (confirmed here via a real python-docx round-trip,
+  /// not just `flutter analyze`) rejects the table outright, and other
+  /// real-world DOCX viewers (mobile Word, WPS Office, Google Docs) are
+  /// exactly the kind of "less forgiving than desktop Word" readers where
+  /// an invalid table like this could easily explain a report showing
+  /// only some of a learner's real subjects.
+  String _tblGrid(List<int> widths) =>
+      '<w:tblGrid>${widths.map((w) => '<w:gridCol w:w="$w"/>').join()}</w:tblGrid>';
+
+  /// One table row using pre-computed [widths] (see [_computeWidths]) —
+  /// always the same widths the table's own `<w:tblGrid>` declares, never
+  /// recomputed per row.
+  String _weightedTableRow(
+    List<String> cells,
+    List<int> widths, {
+    bool bold = false,
+    String? fill,
+    String? textColor,
+  }) {
+    final buffer = StringBuffer('<w:tr>');
+    for (var i = 0; i < cells.length; i++) {
+      final width = i < widths.length ? widths[i] : widths.isEmpty ? 0 : widths.last;
+      final shd = fill != null ? '<w:shd w:val="clear" w:color="auto" w:fill="$fill"/>' : '';
+      final colorTag = textColor != null ? '<w:color w:val="$textColor"/>' : '';
+      buffer.write(
+        '<w:tc><w:tcPr><w:tcW w:w="$width" w:type="dxa"/>$shd</w:tcPr>'
+        '<w:p><w:r><w:rPr><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/><w:sz w:val="20"/>'
+        '$colorTag${bold ? '<w:b/>' : ''}</w:rPr>'
+        '<w:t xml:space="preserve">${_xmlEscape(cells[i])}</w:t></w:r></w:p></w:tc>',
+      );
+    }
+    buffer.write('</w:tr>');
     return buffer.toString();
   }
 
