@@ -35,7 +35,7 @@ class DatabaseHelper {
   DatabaseHelper._internal();
   static final DatabaseHelper instance = DatabaseHelper._internal();
 
-  static const _schemaVersion = 7;
+  static const _schemaVersion = 8;
 
   Database? _db;
 
@@ -244,6 +244,8 @@ class DatabaseHelper {
         class_id INTEGER NOT NULL REFERENCES report_classes(id) ON DELETE CASCADE,
         full_name TEXT NOT NULL,
         roster_order INTEGER NOT NULL,
+        guardian_email TEXT,
+        guardian_phone TEXT,
         created_at TEXT NOT NULL,
         UNIQUE (class_id, roster_order)
       )

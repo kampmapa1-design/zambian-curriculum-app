@@ -29,11 +29,21 @@ class ReportLearner {
   final String fullName;
   final int rosterOrder;
 
+  /// Stage 15's send target — set via LearnerEditScreen (Stage 7),
+  /// entirely optional. Both null is a normal, common state (nothing has
+  /// stopped working before this point without them); Stage 15's send
+  /// screen simply asks for a recipient at send time when neither is set,
+  /// same as Assignment/Test Submission already do for their own email.
+  final String? guardianEmail;
+  final String? guardianPhone;
+
   const ReportLearner({
     required this.id,
     required this.classId,
     required this.fullName,
     required this.rosterOrder,
+    this.guardianEmail,
+    this.guardianPhone,
   });
 }
 

@@ -103,6 +103,8 @@ class ReportClassRepository {
         classId: r['class_id'] as int,
         fullName: r['full_name'] as String,
         rosterOrder: r['roster_order'] as int,
+        guardianEmail: r['guardian_email'] as String?,
+        guardianPhone: r['guardian_phone'] as String?,
       );
 
   /// Adds one learner at the end of the roster — Stage 6's "Omitted Entry"
@@ -129,6 +131,23 @@ class ReportClassRepository {
   Future<void> renameLearner(int learnerId, String newFullName) async {
     final db = await _db;
     await db.update('report_learners', {'full_name': newFullName.trim()}, where: 'id = ?', whereArgs: [learnerId]);
+  }
+
+  /// Stage 15's send-target fields — a guardian's email/phone, both
+  /// optional, both editable from the same Stage 7 "Edit?" screen. Empty
+  /// string is treated the same as null (clears the field) rather than
+  /// stored as a real value.
+  Future<void> updateGuardianContact(int learnerId, {String? email, String? phone}) async {
+    final db = await _db;
+    await db.update(
+      'report_learners',
+      {
+        'guardian_email': (email == null || email.trim().isEmpty) ? null : email.trim(),
+        'guardian_phone': (phone == null || phone.trim().isEmpty) ? null : phone.trim(),
+      },
+      where: 'id = ?',
+      whereArgs: [learnerId],
+    );
   }
 
   /// Stage 2 — roster establishment/matching. On the FIRST subject upload
@@ -326,6 +345,65 @@ class ReportClassRepository {
     final b = await scoreFor(learnerId, partB, allSubjects: subjects);
     if (a == null || b == null) return null;
     return a + b;
+  }
+
+  // -------------------------------------------------------------------
+  // Class position / rank — Stage 10's "auto-computing class position"
+  // -------------------------------------------------------------------
+
+  /// Every learner's aggregate score (sum of every subject container that
+  /// isn't itself a PART of some other composite subject on this class —
+  /// a composite's own two parts are entered separately for the composite
+  /// score to be computed FROM, but only the composite's combined figure
+  /// is meant to count as its own graded subject on a report; counting
+  /// the parts too would double-count that same subject's worth). Null in
+  /// the map for a learner with no scores recorded on any counted subject
+  /// yet — excluded from ranking, never treated as zero.
+  Future<Map<int, double?>> aggregateScores(int classId) async {
+    final learners = await listLearners(classId);
+    final subjects = await listSubjects(classId);
+    final partIds = {
+      for (final s in subjects)
+        if (s.isComposite) ...[
+          if (s.compositePartAId != null) s.compositePartAId!,
+          if (s.compositePartBId != null) s.compositePartBId!,
+        ],
+    };
+    final countedSubjects = subjects.where((s) => !partIds.contains(s.id)).toList();
+
+    final result = <int, double?>{};
+    for (final learner in learners) {
+      double? total;
+      var any = false;
+      for (final subject in countedSubjects) {
+        final score = await scoreFor(learner.id, subject, allSubjects: subjects);
+        if (score == null) continue;
+        any = true;
+        total = (total ?? 0) + score;
+      }
+      result[learner.id] = any ? total : null;
+    }
+    return result;
+  }
+
+  /// Competition ranking (1, 2, 2, 4 — two tied learners share the same
+  /// position, the next learner's position accounts for both of them),
+  /// the real convention for a school report card's "Position in Class".
+  /// A learner with no aggregate score yet gets no entry in the returned
+  /// map at all, rather than an arbitrary last place.
+  Future<Map<int, int>> classPositions(int classId) async {
+    final scores = await aggregateScores(classId);
+    final ranked = scores.entries.where((e) => e.value != null).toList()
+      ..sort((a, b) => b.value!.compareTo(a.value!));
+    final positions = <int, int>{};
+    for (var i = 0; i < ranked.length; i++) {
+      if (i > 0 && ranked[i].value == ranked[i - 1].value) {
+        positions[ranked[i].key] = positions[ranked[i - 1].key]!;
+      } else {
+        positions[ranked[i].key] = i + 1;
+      }
+    }
+    return positions;
   }
 
   // -------------------------------------------------------------------

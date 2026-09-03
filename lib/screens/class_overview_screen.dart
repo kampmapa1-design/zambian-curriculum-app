@@ -4,6 +4,7 @@ import '../models/report_class.dart';
 import '../services/report_class_repository.dart';
 import 'broad_mark_sheet_screen.dart';
 import 'manage_subjects_screen.dart';
+import 'report_form_list_screen.dart';
 import 'upload_score_sheet_flow.dart';
 
 /// Report Form Pipeline — the hub for one [ReportClass]: upload subject
@@ -61,6 +62,15 @@ class _ClassOverviewScreenState extends State<ClassOverviewScreen> {
     if (mounted) _load();
   }
 
+  Future<void> _openReportForms() async {
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => ReportFormListScreen(reportClass: widget.reportClass, repository: _repository),
+      ),
+    );
+    if (mounted) _load();
+  }
+
   Future<void> _openMarkSheet() async {
     await Navigator.of(context).push(
       MaterialPageRoute(
@@ -113,6 +123,12 @@ class _ClassOverviewScreenState extends State<ClassOverviewScreen> {
                   title: 'Manage Subjects',
                   subtitle: 'Add subject containers, or set up a Composite Subject (e.g. Science = Physics + Chemistry).',
                   onTap: _manageSubjects,
+                ),
+                _actionTile(
+                  icon: Icons.description_outlined,
+                  title: 'Report Forms',
+                  subtitle: 'Create, approve & sign, print, and send report forms to parents/guardians.',
+                  onTap: _learnerCount == 0 ? null : _openReportForms,
                 ),
               ],
             ),

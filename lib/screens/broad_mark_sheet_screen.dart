@@ -1,7 +1,13 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:path/path.dart' as p;
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../models/report_class.dart';
 import '../services/report_class_repository.dart';
+import '../services/report_form_document_service.dart';
 import 'learner_edit_screen.dart';
 import 'omitted_entry_screen.dart';
 
@@ -24,8 +30,10 @@ class BroadMarkSheetScreen extends StatefulWidget {
 
 class _BroadMarkSheetScreenState extends State<BroadMarkSheetScreen> {
   late final ReportClassRepository _repository = widget.repository ?? ReportClassRepository();
+  final _documentService = ReportFormDocumentService();
   BroadMarkSheet? _sheet;
   Map<int, Map<int, double?>> _resolvedScores = {}; // learnerId -> subjectId -> resolved score (composite-aware)
+  bool _sharing = false;
 
   @override
   void initState() {
@@ -71,6 +79,34 @@ class _BroadMarkSheetScreenState extends State<BroadMarkSheetScreen> {
     if (mounted) _load();
   }
 
+  /// Stage 14 — "Print" at the Broad Mark Sheet stage: shares a simple
+  /// table document via the OS share sheet (a print app/service commonly
+  /// appears there, the same "print via share" pattern already used
+  /// everywhere else in this app — no dedicated print plugin exists).
+  Future<void> _printOrShare() async {
+    final sheet = _sheet;
+    if (sheet == null) return;
+    setState(() => _sharing = true);
+    try {
+      final bytes = _documentService.generateBroadMarkSheetDocx(
+        reportClass: widget.reportClass,
+        learners: sheet.learners,
+        subjects: sheet.subjects,
+        scoresByLearnerThenSubject: _resolvedScores,
+      );
+      final dir = await getTemporaryDirectory();
+      final file = File(p.join(dir.path, 'broad_mark_sheet_${widget.reportClass.id}.docx'));
+      await file.writeAsBytes(bytes, flush: true);
+      if (!mounted) return;
+      await SharePlus.instance.share(ShareParams(
+        files: [XFile(file.path)],
+        subject: 'Broad Mark Sheet — ${widget.reportClass.classGrade}',
+      ));
+    } finally {
+      if (mounted) setState(() => _sharing = false);
+    }
+  }
+
   Future<void> _omittedEntry() async {
     await Navigator.of(context).push(
       MaterialPageRoute(
@@ -84,7 +120,21 @@ class _BroadMarkSheetScreenState extends State<BroadMarkSheetScreen> {
   Widget build(BuildContext context) {
     final sheet = _sheet;
     return Scaffold(
-      appBar: AppBar(title: const Text('Broad Mark Sheet')),
+      appBar: AppBar(
+        title: const Text('Broad Mark Sheet'),
+        actions: [
+          _sharing
+              ? const Padding(
+                  padding: EdgeInsets.all(16),
+                  child: SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2)),
+                )
+              : IconButton(
+                  icon: const Icon(Icons.print_outlined),
+                  tooltip: 'Print / Share',
+                  onPressed: _sheet == null ? null : _printOrShare,
+                ),
+        ],
+      ),
       body: sheet == null
           ? const Center(child: CircularProgressIndicator())
           : sheet.learners.isEmpty

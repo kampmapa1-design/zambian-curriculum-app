@@ -16,3 +16,17 @@ String reportCommentFor(double score) {
   if (score >= 40) return 'Must improve';
   return 'More focus needed';
 }
+
+/// A short grade code for the report form's "Grade" column — the same 7
+/// bands as [reportCommentFor], just abbreviated, so the two columns are
+/// always consistent with each other rather than drawn from two different,
+/// independently-invented scales.
+String reportGradeFor(double score) {
+  if (score >= 75) return 'A';
+  if (score >= 70) return 'B+';
+  if (score >= 60) return 'B';
+  if (score >= 55) return 'C+';
+  if (score >= 50) return 'C';
+  if (score >= 40) return 'D';
+  return 'F';
+}

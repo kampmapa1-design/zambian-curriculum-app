@@ -26,6 +26,8 @@ class LearnerEditScreen extends StatefulWidget {
 class _LearnerEditScreenState extends State<LearnerEditScreen> {
   late final ReportClassRepository _repository = widget.repository ?? ReportClassRepository();
   late final TextEditingController _nameController;
+  late final TextEditingController _guardianEmailController;
+  late final TextEditingController _guardianPhoneController;
   List<ReportSubject> _subjects = const [];
   final Map<int, TextEditingController> _scoreControllers = {};
   final Map<int, TextEditingController> _commentControllers = {};
@@ -37,12 +39,16 @@ class _LearnerEditScreenState extends State<LearnerEditScreen> {
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: widget.learner.fullName);
+    _guardianEmailController = TextEditingController(text: widget.learner.guardianEmail ?? '');
+    _guardianPhoneController = TextEditingController(text: widget.learner.guardianPhone ?? '');
     _load();
   }
 
   @override
   void dispose() {
     _nameController.dispose();
+    _guardianEmailController.dispose();
+    _guardianPhoneController.dispose();
     for (final c in _scoreControllers.values) {
       c.dispose();
     }
@@ -78,6 +84,11 @@ class _LearnerEditScreenState extends State<LearnerEditScreen> {
       if (_nameController.text.trim() != widget.learner.fullName) {
         await _repository.renameLearner(widget.learner.id, _nameController.text);
       }
+      await _repository.updateGuardianContact(
+        widget.learner.id,
+        email: _guardianEmailController.text,
+        phone: _guardianPhoneController.text,
+      );
       for (final subject in _subjects) {
         if (subject.isComposite) continue;
         final scoreText = _scoreControllers[subject.id]!.text.trim();
@@ -118,6 +129,26 @@ class _LearnerEditScreenState extends State<LearnerEditScreen> {
                   controller: _nameController,
                   decoration: const InputDecoration(labelText: 'Full name', border: OutlineInputBorder()),
                   textCapitalization: TextCapitalization.words,
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: _guardianEmailController,
+                  decoration: const InputDecoration(
+                    labelText: 'Guardian email (optional)',
+                    helperText: 'Where this learner\'s report form will be sent',
+                    border: OutlineInputBorder(),
+                  ),
+                  keyboardType: TextInputType.emailAddress,
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: _guardianPhoneController,
+                  decoration: const InputDecoration(
+                    labelText: 'Guardian phone (optional)',
+                    helperText: 'For WhatsApp / SMS — include the country code',
+                    border: OutlineInputBorder(),
+                  ),
+                  keyboardType: TextInputType.phone,
                 ),
                 const SizedBox(height: 16),
                 for (final subject in _subjects) _buildSubjectCard(subject),
