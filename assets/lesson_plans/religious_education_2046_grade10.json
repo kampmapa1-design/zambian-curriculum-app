@@ -1,8 +1,10 @@
 {
   "_source": "Real Religious Education 2046 Grade 10 lesson plans (Drive folder shared by the user 2026-08-30, 'GRADE 10-12 RELIGIOUS EDUCATION 2046 LESSON PLANS (2).pdf') — the same real Ministry document family already used to term-split religious_education_grade10.json (see that file's own UPDATE note). This document's own header carried a real individual's name, a real TS (Teaching Service) registration number, and a real named school on every one of its 26 lessons — all three identifiers stripped entirely; none of their actual values appear anywhere in this file, including this note (2026-08-31: an earlier version of this note quoted the actual name/number/school values while describing that they'd been stripped, putting them right back into the shipped file in a different field — fixed). UPDATE (2026-08-30): now covers all 8 real sub-topics of Topic 10.1 and all 7 real sub-topics of Topic 10.2 (the document's own 'Topic Review & Synthesis' lesson, which doesn't map to one specific sub-topic, was deliberately left out rather than force-fit). The document has ~10 more lessons covering Topics 10.3-10.4, left for a follow-up pass rather than rushed. Progression stages are faithful condensed summaries of genuinely rich, detailed source content (each real lesson ran Introduction/Development/Exercise/Homework/Conclusion with full dialogue and worked answers) — not a verbatim reproduction, which would be excessive for this app's purposes, but every activity/example named is real, none invented.",
   "curriculum_code": "OBC_2013",
-  "subject_code": "RE",
-  "grade_levels": [10],
+  "subject_code": "RE2046",
+  "grade_levels": [
+    10
+  ],
   "lesson_plans": [
     {
       "topic_name": "10.1 Birth and Infancy of John the Baptist and Jesus",
