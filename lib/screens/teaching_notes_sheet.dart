@@ -127,10 +127,22 @@ class _TeachingNotesSheetState extends State<_TeachingNotesSheet> {
   /// nothing's stored or nothing matches. Silently does nothing on
   /// failure or when no match is found: this is a "nice to have"
   /// enrichment, never something the notes should visibly depend on.
+  ///
+  /// Real, reported bug fixed 2026-09-04: this call never passed
+  /// [SubjectContentRepository.findRelevantExcerpt]'s own `subjectName`
+  /// filter, so it searched every stored subject's content by keyword
+  /// overlap alone — a Religious Education search for "Work in a Changing
+  /// Society" could match a Geography module's generic front matter
+  /// ("How to use this teaching module...") purely on shared common
+  /// words, and that wrong-subject text then got handed to the AI as
+  /// "real material — ground the notes in this FIRST". LessonPlanScreen's
+  /// own excerpt lookup (via SubjectContentIndex.resolve) already passed
+  /// subjectName correctly; only this direct call was missing it.
   Future<void> _loadSubjectContentExcerpt() async {
     _excerptLoadAttempted = true;
     try {
       final excerpt = await _subjectContentRepository.findRelevantExcerpt(
+        subjectName: widget.template.subject.name,
         topicName: widget.entry.topic.name,
         subTopicName: widget.entry.subTopic?.name,
       );
