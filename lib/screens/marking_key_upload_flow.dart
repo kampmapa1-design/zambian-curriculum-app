@@ -71,7 +71,27 @@ Future<MarkingScheme?> runMarkingKeyUploadFlow({
   try {
     if (method == MarkingKeyUploadMethod.uploadFromDevice) {
       final results = await FilePicker.pickFiles(type: FileType.custom, allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png']);
-      if (results.isEmpty || !context.mounted) return null;
+      if (!context.mounted) return null;
+      if (results.isEmpty) {
+        // Real, reported bug (2026-09-04): this used to return here with
+        // zero feedback — from the teacher's side that looked exactly
+        // like "I uploaded a marking key and the app just went back to
+        // the previous screen instantly", with no way to tell whether
+        // they'd cancelled the picker themselves or the picker had
+        // genuinely failed to return a usable file (a real, known class of
+        // Android file-picker issue on some devices/providers). Now says
+        // so plainly either way, and points at the camera path as a
+        // working alternative that doesn't depend on the device's own
+        // file picker at all.
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('No file was selected. If you did pick one and this keeps happening, try "Capture with '
+                'camera" instead — it doesn\'t use the device file picker.'),
+            duration: Duration(seconds: 6),
+          ),
+        );
+        return null;
+      }
       final file = results.single;
       final extension = file.name.contains('.') ? file.name.split('.').last.toLowerCase() : '';
       final isImage = ['jpg', 'jpeg', 'png'].contains(extension);
@@ -79,6 +99,21 @@ Future<MarkingScheme?> runMarkingKeyUploadFlow({
       onLoadingChanged?.call(true);
       if (context.mounted) _showProgressDialog(context, statusNotifier, isImage ? 'Reading marking key' : 'Reading PDF marking key');
       final bytes = await file.readAsBytes();
+      if (bytes.isEmpty) {
+        // Distinct from the file-picker returning nothing at all: here a
+        // file WAS picked, but reading its actual content came back
+        // empty — e.g. a cloud-backed/"Recent" file the device couldn't
+        // fully hand over. Close the progress dialog and say so plainly
+        // rather than silently sending an empty document to the AI step.
+        onLoadingChanged?.call(false);
+        if (context.mounted) Navigator.of(context, rootNavigator: true).pop();
+        if (!context.mounted) return null;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('That file appears to be empty or unreadable. Try a different file, or use '
+              'the camera instead.')),
+        );
+        return null;
+      }
       derived = isImage
           ? await keyGenerationService.deriveFromImageBytes(
               [bytes],
