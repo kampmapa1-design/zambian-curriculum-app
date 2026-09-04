@@ -60,8 +60,11 @@ List<Topic> flattenTopics(SyllabusTemplate template) => [
 /// numbered as consecutive weeks starting at 1 — the full, unbounded
 /// sequence [generateSchemeOfWork] slices into. Not `flattenTopics` (which
 /// stops at [Topic] granularity): this descends into sub-topics too, in the
-/// exact order a generated scheme presents them.
-List<SchemeOfWorkEntry> _allEntries(SyllabusTemplate template) {
+/// exact order a generated scheme presents them. Public (2026-09-04, was
+/// `_allEntries`) — "Topics in the Scheme" lists directly from this same
+/// authoritative source, so its list can never drift out of sync with what
+/// a generated scheme actually contains.
+List<SchemeOfWorkEntry> allSchemeOfWorkEntries(SyllabusTemplate template) {
   final entries = <SchemeOfWorkEntry>[];
   var week = 1;
   for (final topic in flattenTopics(template)) {
@@ -112,7 +115,7 @@ List<SchemeOfWorkEntry> generateSchemeOfWork(
   int? lastConcludedTopicId, {
   int? lastConcludedSubTopicId,
 }) {
-  final allEntries = _allEntries(template);
+  final allEntries = allSchemeOfWorkEntries(template);
   if (allEntries.isEmpty) return const [];
 
   int startIndex;
@@ -166,4 +169,34 @@ List<SchemeOfWorkEntry> generateSchemeOfWorkForTerm(
 }) {
   final entries = generateSchemeOfWork(template, lastConcludedTopicId, lastConcludedSubTopicId: lastConcludedSubTopicId);
   return entries.length <= TermDates.teachingWeekCount ? entries : entries.sublist(0, TermDates.teachingWeekCount);
+}
+
+/// "Topics in the Scheme" (2026-09-04, per explicit request): builds a
+/// full term's scheme of work with [start] as its very FIRST entry,
+/// regardless of any class's real tracked progress — a teacher picking a
+/// specific topic directly rather than resuming from where a real class
+/// left off. Slices [allSchemeOfWorkEntries] from [start]'s own position
+/// onward and caps it the same way [generateSchemeOfWorkForTerm] does,
+/// rather than going through [generateSchemeOfWork]'s "resume after X"
+/// indirection — that machinery means something different (a topic with
+/// its own content AND sub-topics is treated as fully concluded, skipping
+/// straight to the next topic, once its sub-topics are done) that would
+/// silently skip content here if [start] happened to land right after
+/// such a topic. Falls back to generating from the very beginning if
+/// [start] can't be found in [template] (e.g. stale content).
+List<SchemeOfWorkEntry> generateSchemeOfWorkStartingAt(SyllabusTemplate template, SchemeOfWorkEntry start) {
+  final all = allSchemeOfWorkEntries(template);
+  final index = all.indexWhere((e) => e.topic.id == start.topic.id && e.subTopic?.id == start.subTopic?.id);
+  final sliced = index == -1 ? all : all.sublist(index);
+  final capped = sliced.length <= TermDates.teachingWeekCount ? sliced : sliced.sublist(0, TermDates.teachingWeekCount);
+  return [
+    for (var i = 0; i < capped.length; i++)
+      SchemeOfWorkEntry(
+        weekNumber: i + 1,
+        topic: capped[i].topic,
+        subTopic: capped[i].subTopic,
+        objectives: capped[i].objectives,
+        competencies: capped[i].competencies,
+      ),
+  ];
 }

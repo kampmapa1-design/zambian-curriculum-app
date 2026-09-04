@@ -159,6 +159,33 @@ void main() {
     }
   });
 
+  // "Topics in the Scheme" (2026-09-04) — generateSchemeOfWorkStartingAt
+  // puts the picked entry FIRST, unlike generateSchemeOfWork's "resume
+  // after X" semantics (which this deliberately does NOT reuse — see that
+  // function's own doc comment on why it would silently skip content for
+  // a topic-level entry followed by its own real sub-topics).
+  test('generateSchemeOfWorkStartingAt puts the picked entry first, keeping everything after it', () {
+    final start = SchemeOfWorkEntry(weekNumber: 1, topic: topicA, subTopic: subA2, objectives: const [], competencies: const []);
+    final entries = generateSchemeOfWorkStartingAt(template, start);
+    expect(entries.map((e) => e.subTopic?.name).toList(), ['A.2', 'A.3', 'B.1', 'B.2', 'C.1', 'D.1']);
+    expect(entries.map((e) => e.weekNumber).toList(), [1, 2, 3, 4, 5, 6]);
+  });
+
+  test('generateSchemeOfWorkStartingAt at the very first entry matches starting the whole subject from scratch', () {
+    final start = SchemeOfWorkEntry(weekNumber: 1, topic: topicA, subTopic: subA1, objectives: const [], competencies: const []);
+    final entries = generateSchemeOfWorkStartingAt(template, start);
+    expect(entries.map((e) => e.subTopic?.name).toList(), ['A.1', 'A.2', 'A.3', 'B.1', 'B.2', 'C.1', 'D.1']);
+  });
+
+  test('generateSchemeOfWorkStartingAt never skips a topic\'s own remaining sub-topics (unlike "resume after")', () {
+    // The real bug this function was built to avoid: picking B.1 directly
+    // must include B.1 AND B.2, not jump straight to Topic C the way
+    // generateSchemeOfWork(template, topicB.id) (no sub-topic given) would.
+    final start = SchemeOfWorkEntry(weekNumber: 1, topic: topicB, subTopic: subB1, objectives: const [], competencies: const []);
+    final entries = generateSchemeOfWorkStartingAt(template, start);
+    expect(entries.map((e) => e.subTopic?.name).toList(), ['B.1', 'B.2', 'C.1', 'D.1']);
+  });
+
   test('week numbers are always plain numerals, never spelled out as words', () {
     final template2 = SyllabusTemplate(
       curriculum: const Curriculum(id: 1, code: 'X', name: 'X'),

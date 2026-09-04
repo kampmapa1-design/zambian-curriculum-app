@@ -17,6 +17,7 @@ import 'settings_screen.dart';
 import 'subject_grade_topic_picker_screen.dart';
 import 'teaching_notes_sheet.dart';
 import 'teaching_resources_menu_screen.dart';
+import 'term_topic_picker_screen.dart';
 import 'topic_picker_flow.dart';
 import 'topic_search_screen.dart';
 import 'word_pdf_converter_screen.dart';
@@ -57,6 +58,52 @@ class HomeScreen extends StatelessWidget {
       ),
     );
     if (selection == null || !context.mounted) return;
+
+    // "Topics in the Scheme" (2026-09-04, per explicit request) sits
+    // alongside the existing resume flow here, not instead of it — a
+    // teacher picking a specific topic directly, rather than resuming
+    // from a real class's tracked progress.
+    final choice = await showDialog<_SchemeStart>(
+      context: context,
+      builder: (dialogContext) => SimpleDialog(
+        title: const Text('Generate scheme of work'),
+        children: [
+          SimpleDialogOption(
+            onPressed: () => Navigator.of(dialogContext).pop(_SchemeStart.resume),
+            child: const ListTile(
+              leading: Icon(Icons.history),
+              title: Text('Resume from class progress'),
+              subtitle: Text('Continues from where a specific class last left off'),
+            ),
+          ),
+          SimpleDialogOption(
+            onPressed: () => Navigator.of(dialogContext).pop(_SchemeStart.topicsInScheme),
+            child: const ListTile(
+              leading: Icon(Icons.list_alt_outlined),
+              title: Text('Topics in the Scheme'),
+              subtitle: Text('Pick any topic to start this scheme from'),
+            ),
+          ),
+        ],
+      ),
+    );
+    if (choice == null || !context.mounted) return;
+
+    if (choice == _SchemeStart.topicsInScheme) {
+      final picked = await Navigator.of(context).push<SchemeOfWorkEntry>(
+        MaterialPageRoute(builder: (_) => TermTopicPickerScreen(template: selection.template)),
+      );
+      if (picked == null || !context.mounted) return;
+      final entries = generateSchemeOfWorkStartingAt(selection.template, picked);
+      await Navigator.of(context).push(MaterialPageRoute(
+        builder: (_) => SchemeOfWorkDocumentScreen(
+          template: selection.template,
+          entries: entries,
+          targetTerm: selection.term,
+        ),
+      ));
+      return;
+    }
 
     final resume = await Navigator.of(context).push<ClassResumeSelection>(
       MaterialPageRoute(builder: (_) => ClassResumePickerScreen(template: selection.template)),
@@ -377,3 +424,5 @@ class HomeScreen extends StatelessWidget {
     );
   }
 }
+
+enum _SchemeStart { resume, topicsInScheme }

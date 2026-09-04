@@ -26,7 +26,7 @@ class SchemeOfWorkDocumentScreen extends StatefulWidget {
     super.key,
     required this.template,
     required this.entries,
-    required this.classLabel,
+    this.classLabel,
     this.targetTerm,
     this.documentService,
   });
@@ -37,8 +37,14 @@ class SchemeOfWorkDocumentScreen extends StatefulWidget {
   /// Which named class this generated scheme is for — see
   /// ClassResumePickerScreen/ClassProgressRepository. Every "mark taught"
   /// and the automatic post-export progress update (see [_export]) write
-  /// to this specific class's own cursor, never any other class's.
-  final String classLabel;
+  /// to this specific class's own cursor, never any other class's. Null
+  /// for a scheme with no real class attached (2026-09-04 — "Topics in
+  /// the Scheme" builds one starting from a teacher-picked topic rather
+  /// than a real class's tracked position) — [_markTaught]/[_export]
+  /// simply skip the progress write in that case, same "a one-off scheme
+  /// must never corrupt a real class's progress record" principle the
+  /// resume flow was already built on.
+  final String? classLabel;
 
   /// The term the teacher picked this scheme's real calendar dates for
   /// (see [_realCalendarNote]) — distinct from which topics actually end
@@ -277,14 +283,16 @@ class _SchemeOfWorkDocumentScreenState extends State<SchemeOfWorkDocumentScreen>
       // lookup suggests, not a silent decision: the teacher still confirms
       // (or overrides) it next time, same as every other generation. A
       // per-row "mark taught" below can later move this cursor BACK if the
-      // class didn't actually get through everything shared here.
-      if (widget.entries.isNotEmpty) {
+      // class didn't actually get through everything shared here. Skipped
+      // entirely when there's no real class attached (see classLabel's own
+      // doc comment).
+      if (widget.classLabel case final label? when widget.entries.isNotEmpty) {
         final last = widget.entries.last;
         unawaited(_classProgressRepository.markConcluded(
           curriculumCode: widget.template.curriculum.code,
           subjectCode: widget.template.subject.code,
           gradeLevel: widget.template.grade.level,
-          classLabel: widget.classLabel,
+          classLabel: label,
           topicId: last.topic.id,
           subTopicId: last.subTopic?.id,
         ));
@@ -426,14 +434,18 @@ class _SchemeOfWorkDocumentScreenState extends State<SchemeOfWorkDocumentScreen>
   /// offer, now offered per row here instead since that screen no longer
   /// sits in the "Generate Scheme of Work" flow.
   /// Marks every topic in this row taught — for OBC's merged-week rows,
-  /// that can be more than one topic at once.
+  /// that can be more than one topic at once. Never called with no real
+  /// class attached — the button itself is hidden in that case (see the
+  /// `trailing` builder above).
   Future<void> _markTaught(List<SchemeOfWorkEntry> entries) async {
+    final label = widget.classLabel;
+    if (label == null) return;
     for (final entry in entries) {
       await _classProgressRepository.markConcluded(
         curriculumCode: widget.template.curriculum.code,
         subjectCode: widget.template.subject.code,
         gradeLevel: widget.template.grade.level,
-        classLabel: widget.classLabel,
+        classLabel: label,
         topicId: entry.topic.id,
         subTopicId: entry.subTopic?.id,
       );
@@ -467,7 +479,7 @@ class _SchemeOfWorkDocumentScreenState extends State<SchemeOfWorkDocumentScreen>
       child: ExpansionTile(
         title: Text('Week $week — $title'),
         subtitle: _activeTemplate.columns.any((c) => c.id == 'stage') ? Text('Lesson ${row.lessonNumber}') : null,
-        trailing: isSpecialRow
+        trailing: isSpecialRow || widget.classLabel == null
             ? null
             : IconButton(
                 icon: Icon(
