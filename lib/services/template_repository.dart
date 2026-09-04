@@ -20,8 +20,28 @@ class TemplateRepository {
   /// Keyed by [TemplateManifestEntry.file] — whether that bundled file
   /// discloses a real source (see every syllabus file's own `_source`
   /// field). Populated for free while [ensureAllSeeded] already reads
-  /// every file's raw content; see [hasRealSource].
-  final Map<String, bool> _realSourceByFile = {};
+  /// every file's raw content; see [hasRealSource]. Static — see
+  /// [_seededThisProcess]'s own doc comment for why.
+  static final Map<String, bool> _realSourceByFile = {};
+
+  /// Whether [ensureAllSeeded] has already run once in this app process.
+  /// Real, reported bug (2026-09-04): every subject/grade picker screen
+  /// calls [ensureAllSeeded] in its own `initState`, and a fresh
+  /// `TemplateRepository()` is constructed per screen — so re-opening
+  /// "Generate Scheme of Work" (or any other topic picker) from the home
+  /// button re-ran the FULL ~60-file import (each file doing dozens of
+  /// small SQLite SELECT/INSERT calls per topic/sub-topic/objective/
+  /// competency) every single time, even though the bundled asset content
+  /// never changes within one running app — reported as "yielding of
+  /// subjects takes too long". Static so it holds regardless of how many
+  /// `TemplateRepository` instances get created; a real app restart (new
+  /// process) naturally reseeds, which is correct since that's the only
+  /// time the bundled assets could have changed (a new app version).
+  /// [_seedingInFlight] additionally makes concurrent first-calls (e.g. two
+  /// screens both mounting at once) await the same single import instead
+  /// of racing two full imports against each other.
+  static bool _seededThisProcess = false;
+  static Future<void>? _seedingInFlight;
 
   static const _manifestPath = 'assets/syllabi/manifest.json';
 
@@ -54,6 +74,19 @@ class TemplateRepository {
   /// the subject/grade picker — far too broad a blast radius for one bad
   /// file.
   Future<void> ensureAllSeeded() async {
+    if (_seededThisProcess) return;
+    if (_seedingInFlight case final inFlight?) return inFlight;
+    final future = _doEnsureAllSeeded();
+    _seedingInFlight = future;
+    try {
+      await future;
+      _seededThisProcess = true;
+    } finally {
+      _seedingInFlight = null;
+    }
+  }
+
+  Future<void> _doEnsureAllSeeded() async {
     final manifest = await loadManifest();
     for (final entry in manifest) {
       try {

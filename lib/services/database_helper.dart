@@ -552,14 +552,42 @@ class DatabaseHelper {
       where: 'curriculum_id = ? AND code = ?',
       whereArgs: [curriculum.id, subjectCode],
     );
-    final gradeRows = await db.query(
-      'grades',
-      where: 'curriculum_id = ? AND sequence_number = ?',
-      whereArgs: [curriculum.id, gradeLevel],
-    );
-    if (subjectRows.isEmpty || gradeRows.isEmpty) return null;
-
+    if (subjectRows.isEmpty) return null;
     final subject = Subject.fromMap(subjectRows.first);
+
+    // Resolve the grade row THROUGH this subject's own topics first, not by
+    // a bare (curriculum_id, sequence_number) lookup on its own. Real,
+    // confirmed bug (2026-09-04): `grades.sequence_number` isn't guaranteed
+    // unique per curriculum — two different `grade.code` values can both
+    // mean "Form 1" (history_form1.json used to say "F1" while every other
+    // CBC Form 1 subject says "F1_CBC"; same for civic_education_form2.json's
+    // "F2" vs "F2_CBC"), giving two grade ROWS with the same sequence_number.
+    // A plain `WHERE sequence_number = ?` then `.first` silently returned
+    // whichever row happened to be inserted first — correct only for
+    // whichever ONE subject actually used that exact code, and an always-
+    // empty topic join (hence a blank screen, no error) for every other
+    // subject sharing that form, since their real topics live under the
+    // OTHER grade row. Both source files were fixed to use the shared code,
+    // but this query is hardened too so a future new subject with a typo'd
+    // grade code degrades to "this one subject's grade lookup is off" rather
+    // than silently reusing a stranger's grade row. Falls back to the plain
+    // lookup only when this subject has no topics at all yet (a genuinely
+    // not-yet-authored subject/grade should still resolve, just with an
+    // empty terms list, not null).
+    final gradeViaTopicsRows = await db.rawQuery('''
+      SELECT grades.* FROM grades
+      JOIN topics ON topics.grade_id = grades.id
+      WHERE grades.curriculum_id = ? AND grades.sequence_number = ? AND topics.subject_id = ?
+      LIMIT 1
+    ''', [curriculum.id, gradeLevel, subject.id]);
+    final gradeRows = gradeViaTopicsRows.isNotEmpty
+        ? gradeViaTopicsRows
+        : await db.query(
+            'grades',
+            where: 'curriculum_id = ? AND sequence_number = ?',
+            whereArgs: [curriculum.id, gradeLevel],
+          );
+    if (gradeRows.isEmpty) return null;
     final grade = Grade.fromMap(gradeRows.first);
 
     final topicRows = await db.rawQuery('''

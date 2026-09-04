@@ -19,6 +19,7 @@
   "terms": [
     {
       "name": "Term 1",
+      "sequence_number": 1,
       "topics": [
         {
           "name": "12.1 International Human Rights Instruments",
@@ -98,6 +99,7 @@
     },
     {
       "name": "Term 2",
+      "sequence_number": 2,
       "topics": [
         {
           "name": "12.5 Poverty Reduction in Zambia",

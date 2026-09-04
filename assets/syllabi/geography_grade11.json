@@ -19,6 +19,7 @@
   "terms": [
     {
       "name": "Term 1",
+      "sequence_number": 1,
       "topics": [
         {
           "name": "11.1 Population in Zambia and the World",
@@ -116,6 +117,7 @@
     },
     {
       "name": "Term 2",
+      "sequence_number": 2,
       "topics": [
         {
           "name": "11.3 Fuel, Energy and Power in Zambia, Sub-Region and the World",
@@ -198,6 +200,7 @@
     },
     {
       "name": "Term 3",
+      "sequence_number": 3,
       "topics": [
         {
           "name": "11.4 Agriculture in Zambia, Sub-Region and the World",

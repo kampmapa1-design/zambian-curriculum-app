@@ -19,6 +19,7 @@
   "terms": [
     {
       "name": "Term 1",
+      "sequence_number": 1,
       "topics": [
         {
           "name": "Living in a Changing Society",
@@ -66,6 +67,7 @@
     },
     {
       "name": "Term 2",
+      "sequence_number": 2,
       "topics": [
         {
           "name": "Living in a Changing Society",
@@ -125,6 +127,7 @@
     },
     {
       "name": "Term 3",
+      "sequence_number": 3,
       "topics": [
         {
           "name": "Order and Freedom in Society",

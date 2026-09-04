@@ -19,6 +19,7 @@
   "terms": [
     {
       "name": "Term 1",
+      "sequence_number": 1,
       "topics": [
         {
           "name": "Definition of Geography and Its Importance",
@@ -182,6 +183,7 @@
     },
     {
       "name": "Term 2",
+      "sequence_number": 2,
       "topics": [
         {
           "name": "10.4 Weathering and Mass Wasting",
@@ -261,6 +263,7 @@
     },
     {
       "name": "Term 3",
+      "sequence_number": 3,
       "topics": [
         {
           "name": "10.6 Weather and Climate",

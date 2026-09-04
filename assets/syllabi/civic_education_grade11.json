@@ -19,6 +19,7 @@
   "terms": [
     {
       "name": "Term 1",
+      "sequence_number": 1,
       "topics": [
         {
           "name": "11.1 The Zambian Bill of Rights",
@@ -93,6 +94,7 @@
     },
     {
       "name": "Term 2",
+      "sequence_number": 2,
       "topics": [
         {
           "name": "11.4 Zambia's Legal System",
@@ -143,6 +145,7 @@
     },
     {
       "name": "Term 3",
+      "sequence_number": 3,
       "topics": [
         {
           "name": "11.6 Culture of Peace",
