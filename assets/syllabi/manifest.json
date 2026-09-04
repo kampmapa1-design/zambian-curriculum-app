@@ -1,24 +1,6 @@
 {
   "templates": [
     {
-      "curriculum_code": "CBC_2023",
-      "curriculum_name": "2023 Competency-Based Curriculum",
-      "subject_code": "MATH",
-      "subject_name": "Mathematics",
-      "grade_level": 8,
-      "grade_name": "Grade 8",
-      "file": "math_grade8.json"
-    },
-    {
-      "curriculum_code": "CBC_2023",
-      "curriculum_name": "2023 Competency-Based Curriculum",
-      "subject_code": "ENG",
-      "subject_name": "English Language",
-      "grade_level": 8,
-      "grade_name": "Grade 8",
-      "file": "english_grade8.json"
-    },
-    {
       "curriculum_code": "OBC_2013",
       "curriculum_name": "2013 Outcome-Based Curriculum",
       "subject_code": "ENG",

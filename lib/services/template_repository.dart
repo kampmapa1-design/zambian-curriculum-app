@@ -73,10 +73,14 @@ class TemplateRepository {
 
   /// Whether the bundled file behind [file] (a [TemplateManifestEntry.file])
   /// discloses a real source — false for genuinely non-real placeholder/
-  /// seed content (see the project's own corpus-survey notes: as of
-  /// 2026-09-02, `english_grade8.json`/`math_grade8.json` are the only
-  /// confirmed cases). Tentative, 2026-09-03: used only to show a "Not
-  /// Ready" indicator on subjects that can't yet produce a usable Lesson
+  /// seed content. (`english_grade8.json`/`math_grade8.json`, the only
+  /// confirmed cases as of 2026-09-04, were removed from the app entirely
+  /// that same day — real, user-confirmed: Grade 8 English/Mathematics
+  /// were phased out and replaced by Form 1 in the actual curriculum, so
+  /// there was never real content to source for them in the first place.
+  /// This check remains for whatever future upload turns out the same
+  /// way.) Tentative, 2026-09-03: used only to show a "Not Ready"
+  /// indicator on subjects that can't yet produce a usable Lesson
   /// Plan/Scheme of Work — never to hide or silently skip content, since a
   /// subject/grade with thin-but-real content should still work, just
   /// imperfectly. Normally answered instantly from what [ensureAllSeeded]
