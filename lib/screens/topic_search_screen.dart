@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/scheme_of_work.dart';
 import '../services/topic_search_service.dart';
+import 'generate_notes_by_topic_screen.dart';
 import 'term_topic_picker_screen.dart';
 import 'topic_picker_flow.dart';
 
@@ -87,6 +88,17 @@ class _TopicSearchScreenState extends State<TopicSearchScreen> {
     Navigator.of(context).pop(result);
   }
 
+  /// A topic typed directly, not tied to the bundled syllabus at all — see
+  /// GenerateNotesByTopicScreen's own doc comment. Doesn't pop this screen
+  /// on return: unlike Search/Browse, that screen handles its own output
+  /// (sharing a document/deck) entirely by itself, so there's nothing for
+  /// the caller of THIS screen to receive.
+  Future<void> _openGenerateByTopic() async {
+    await Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => const GenerateNotesByTopicScreen()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -121,6 +133,12 @@ class _TopicSearchScreenState extends State<TopicSearchScreen> {
                 ),
               ),
             ],
+          ),
+          const SizedBox(height: 12),
+          OutlinedButton.icon(
+            onPressed: _searching ? null : _openGenerateByTopic,
+            icon: const Icon(Icons.auto_stories_outlined),
+            label: const Text('Generate Notes & Slides by Topic'),
           ),
           const SizedBox(height: 16),
           if (_searching) const Center(child: Padding(padding: EdgeInsets.all(16), child: CircularProgressIndicator())),

@@ -879,6 +879,164 @@ export const generateSlideOutline = onCall<GenerateSlideOutlineRequest>(
 );
 
 // ---------------------------------------------------------------------
+// generateFreeTopicNotes — "Generate Notes & Slides by Topic" (2026-09-04):
+// a topic the teacher types directly, not tied to any bundled syllabus
+// topic at all — unlike generateTeachingNotes/generateLessonPlan, there is
+// deliberately no syllabus context to ground this in; the whole point is
+// covering topics the bundled curriculum doesn't have. Three fixed output
+// shapes, per explicit request: 'paragraph' (flowing prose, up to 700
+// words), 'bulletin' (bullet points, thorough, up to ~6 printed pages),
+// 'slides' (exactly 6 slides, 4-5 bullets each). Per explicit request,
+// this capability is not labeled as AI-powered anywhere in the app's own
+// UI — this comment is the only place that says so, for the project's own
+// record; the content itself still carries the same no-fabrication
+// instruction as every other AI call in this app.
+// ---------------------------------------------------------------------
+
+type FreeTopicFormat = "paragraph" | "bulletin" | "slides";
+
+interface GenerateFreeTopicNotesRequest {
+  topic: string;
+  format: FreeTopicFormat;
+}
+
+interface GenerateFreeTopicNotesResponse {
+  text?: string;
+  deckTitle?: string;
+  slides?: SlideOutlineSlide[];
+}
+
+const freeTopicSlideSchema = {
+  type: "object",
+  properties: {
+    deckTitle: { type: "string" },
+    slides: {
+      type: "array",
+      minItems: 6,
+      maxItems: 6,
+      items: {
+        type: "object",
+        properties: {
+          title: { type: "string" },
+          bullets: { type: "array", items: { type: "string" }, minItems: 4, maxItems: 5 },
+        },
+        required: ["title", "bullets"],
+        additionalProperties: false,
+      },
+    },
+  },
+  required: ["deckTitle", "slides"],
+  additionalProperties: false,
+};
+
+function buildFreeTopicPrompt(topic: string, format: "paragraph" | "bulletin"): string {
+  const common = [
+    `Topic: ${topic}`,
+    "",
+    "Draw on well-established, credible general knowledge appropriate for a secondary-school teaching " +
+      "context. Do not fabricate facts, statistics, or sources.",
+  ];
+  if (format === "paragraph") {
+    return [
+      "Write detailed, well-organized teaching notes on the topic below, as flowing prose paragraphs " +
+        "under short subheadings, no more than 700 words in total.",
+      ...common,
+      "Write only the notes themselves — no preamble, no meta-commentary about the word count or format.",
+      "Write in plain text only — no Markdown formatting of any kind (no #, ##, ###, **, *, __, ---, or " +
+        "backticks).",
+    ].join("\n");
+  }
+  return [
+    "Summarize the topic below as clearly organized bullet points, grouped under short subheadings, " +
+      "thorough enough to fill up to approximately 6 printed pages (roughly 2500-3000 words of bullets) " +
+      "— stop naturally once the topic is genuinely covered, even if that's fewer than 6 pages; never pad " +
+      "with filler just to reach the target.",
+    ...common,
+    "Write only the notes themselves — no preamble, no meta-commentary about the word count or format.",
+    "Write in plain text only — no Markdown formatting of any kind (no #, ##, ###, **, *, __, ---, or " +
+      "backticks).",
+  ].join("\n");
+}
+
+function buildFreeTopicSlidePrompt(topic: string): string {
+  return [
+    `Topic: ${topic}`,
+    "",
+    "Produce a PowerPoint slide deck outline summarizing this topic: exactly 6 slides, each with 4 to 5 " +
+      "concise bullet points in point form (short phrases, not full sentences). No more and no fewer " +
+      "than 6 slides.",
+    "Draw on well-established, credible general knowledge appropriate for a secondary-school teaching " +
+      "context. Do not fabricate facts, statistics, or sources.",
+    "Write only the slide outline — no preamble or meta-commentary.",
+    "Write in plain text only — no Markdown formatting of any kind (no #, ##, ###, **, *, __, ---, or " +
+      "backticks) anywhere in the deck title, slide titles, or bullets.",
+  ].join("\n");
+}
+
+export const generateFreeTopicNotes = onCall<GenerateFreeTopicNotesRequest>(
+  { secrets: [geminiApiKey], region: "us-central1", maxInstances: 5 },
+  async (request): Promise<GenerateFreeTopicNotesResponse> => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "Sign in is required to generate notes.");
+    }
+
+    const { topic, format } = request.data ?? {};
+    if (typeof topic !== "string" || topic.trim().length === 0) {
+      throw new HttpsError("invalid-argument", "'topic' is required.");
+    }
+    if (format !== "paragraph" && format !== "bulletin" && format !== "slides") {
+      throw new HttpsError("invalid-argument", "'format' must be 'paragraph', 'bulletin', or 'slides'.");
+    }
+
+    const ai = new GoogleGenAI({ apiKey: geminiApiKey.value() });
+
+    if (format === "slides") {
+      let text: string | undefined;
+      try {
+        const response = await ai.models.generateContent({
+          model: GEMINI_MODEL,
+          contents: buildFreeTopicSlidePrompt(topic),
+          config: {
+            responseMimeType: "application/json",
+            responseJsonSchema: freeTopicSlideSchema,
+          },
+        });
+        text = response.text;
+      } catch (err) {
+        console.error("generateFreeTopicNotes (slides): Gemini call failed", err);
+        throw new HttpsError("internal", "Failed to generate slides. Please try again.");
+      }
+      if (!text) {
+        throw new HttpsError("internal", "The AI did not return any slides.");
+      }
+      try {
+        const parsed = JSON.parse(text) as { deckTitle: string; slides: SlideOutlineSlide[] };
+        return { deckTitle: parsed.deckTitle, slides: parsed.slides };
+      } catch (err) {
+        console.error("generateFreeTopicNotes (slides): response was not valid JSON", text);
+        throw new HttpsError("internal", "The slide response could not be parsed.");
+      }
+    }
+
+    let text: string | undefined;
+    try {
+      const response = await ai.models.generateContent({
+        model: GEMINI_MODEL,
+        contents: buildFreeTopicPrompt(topic, format),
+      });
+      text = response.text;
+    } catch (err) {
+      console.error("generateFreeTopicNotes: Gemini call failed", err);
+      throw new HttpsError("internal", "Failed to generate notes. Please try again.");
+    }
+    if (!text) {
+      throw new HttpsError("internal", "The AI did not return any text.");
+    }
+    return { text };
+  }
+);
+
+// ---------------------------------------------------------------------
 // cleanPastPaperDownload — fetches a past-paper PDF from its source URL
 // (Google Drive, see CdcResourcesService in the Flutter app) and strips
 // known redistributor watermarks (zedpastpapers.com, zambiapapers.com,
