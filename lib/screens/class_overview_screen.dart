@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/report_class.dart';
 import '../services/report_class_repository.dart';
 import 'broad_mark_sheet_screen.dart';
+import 'class_roster_screen.dart';
 import 'manage_subjects_screen.dart';
 import 'report_form_list_screen.dart';
 import 'upload_score_sheet_flow.dart';
@@ -80,6 +81,15 @@ class _ClassOverviewScreenState extends State<ClassOverviewScreen> {
     if (mounted) _load();
   }
 
+  Future<void> _openRoster() async {
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => ClassRosterScreen(reportClass: widget.reportClass, repository: _repository),
+      ),
+    );
+    if (mounted) _load();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -117,6 +127,13 @@ class _ClassOverviewScreenState extends State<ClassOverviewScreen> {
                   title: 'Broad Mark Sheet',
                   subtitle: 'View every learner and subject, edit a learner\'s row, or add one missed on upload.',
                   onTap: _openMarkSheet,
+                ),
+                _actionTile(
+                  icon: Icons.contact_page_outlined,
+                  title: 'Class Roster & Guardian Contacts',
+                  subtitle: 'Review/edit learner names, mark the roster upload complete, and enter guardian '
+                      'email/phone for notifications.',
+                  onTap: _openRoster,
                 ),
                 _actionTile(
                   icon: Icons.calculate_outlined,

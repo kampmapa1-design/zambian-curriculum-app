@@ -216,13 +216,27 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
 
     final schemes = await _schemeRepository.loadCatalog();
     if (!mounted) return false;
-    if (schemes.schemes.isEmpty) {
+
+    // Scoped to the chosen subject only (2026-09-04, real, reported gap):
+    // showing every marking key regardless of subject risked a teacher
+    // picking the wrong subject's key by mistake once more than one had
+    // been uploaded. Newest first, with a real date on each option, so
+    // several keys for the same subject are clearly told apart — see
+    // MarkingSchemeRepository's own doc comment on why a key is uploaded
+    // and processed exactly once, then always just picked from here after.
+    final subjectSchemes = schemes.schemes
+        .where((s) => s.subjectName.trim().toLowerCase() == pickedTemplate.subject.name.trim().toLowerCase())
+        .toList()
+      ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+
+    if (subjectSchemes.isEmpty) {
       await showDialog<void>(
         context: context,
         builder: (dialogContext) => AlertDialog(
-          title: const Text('No marking scheme yet'),
-          content: const Text(
-            'This script needs a marking key to grade against. Upload or build one first, then capture this script again.',
+          title: const Text('No marking key for this subject yet'),
+          content: Text(
+            'No marking key has been uploaded for ${pickedTemplate.subject.name} yet. Upload or build one '
+            'first (Upload Marking Key), then capture this script again.',
           ),
           actions: [FilledButton(onPressed: () => Navigator.of(dialogContext).pop(), child: const Text('OK'))],
         ),
@@ -233,12 +247,12 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
     final pickedScheme = await showDialog<MarkingScheme>(
       context: context,
       builder: (dialogContext) => SimpleDialog(
-        title: const Text('Which marking key is this script for?'),
+        title: Text('Which ${pickedTemplate.subject.name} marking key should this session use?'),
         children: [
-          for (final s in schemes.schemes)
+          for (final s in subjectSchemes)
             SimpleDialogOption(
               onPressed: () => Navigator.of(dialogContext).pop(s),
-              child: Text('${s.title} (${s.questions.length} question(s))'),
+              child: Text('${s.title} — ${_formatSchemeDate(s.createdAt)} (${s.questions.length} question(s))'),
             ),
         ],
       ),
@@ -460,6 +474,9 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
       ),
     );
   }
+
+  String _formatSchemeDate(DateTime d) =>
+      '${d.day.toString().padLeft(2, '0')}/${d.month.toString().padLeft(2, '0')}/${d.year}';
 
   Future<void> _captureNextPage() async {
     final result = await Navigator.of(context).push<DocumentCaptureData>(
