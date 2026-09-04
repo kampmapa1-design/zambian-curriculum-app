@@ -37,11 +37,28 @@ class UploadScoreSheetFlow extends StatefulWidget {
     required this.reportClass,
     this.repository,
     this.transcriptionService,
+    this.initialSubjectName,
+    this.initialExtractedRows,
   });
 
   final ReportClass reportClass;
   final ReportClassRepository? repository;
   final HandwrittenListTranscriptionService? transcriptionService;
+
+  /// Consolidate-from-Chief-Marker entry point (2026-09-04, see
+  /// ConsolidateMarkedScriptsScreen): when both this and
+  /// [initialExtractedRows] are given, Stage 3 (OCR capture) is skipped
+  /// entirely — there's nothing to photograph, the scores already exist
+  /// from AI-Assisted Marking — and the flow jumps straight into Stage 2's
+  /// roster matching against these rows, landing on the same Stage 4
+  /// review screen a captured score sheet would. Pre-fills the subject
+  /// field; still editable, matching the ordinary flow.
+  final String? initialSubjectName;
+
+  /// Name/score pairs already in hand (a class's marked scripts' candidate
+  /// names + AI-graded percentages) instead of an OCR-transcribed table.
+  /// See [initialSubjectName].
+  final List<({String name, String? score})>? initialExtractedRows;
 
   @override
   State<UploadScoreSheetFlow> createState() => _UploadScoreSheetFlowState();
@@ -106,6 +123,54 @@ class _UploadScoreSheetFlowState extends State<UploadScoreSheetFlow> {
   /// ever asked (and used) for a [ReportAssessmentSystem.continuousAssessment]
   /// class; null and unused for a standalone-test class.
   ReportCaComponent? _caComponent;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.initialExtractedRows != null) {
+      _subjectController.text = widget.initialSubjectName ?? '';
+      WidgetsBinding.instance.addPostFrameCallback((_) => _initFromExternalRows(widget.initialExtractedRows!));
+    }
+  }
+
+  /// Consolidate-from-Chief-Marker entry point — see
+  /// [UploadScoreSheetFlow.initialExtractedRows]'s own doc comment. Same
+  /// Continuous-Assessment questions [_chooseCaptureMethod] would ask
+  /// before an OCR capture (weights, then which component), then the same
+  /// roster-matching [_transcribe] runs after a real transcription —
+  /// landing on the identical Stage 4 review screen either path takes, so
+  /// nothing downstream (matching, editing, Confirm & Save) needs to know
+  /// or care which path got it there.
+  Future<void> _initFromExternalRows(List<({String name, String? score})> rows) async {
+    if (widget.reportClass.isContinuousAssessment) {
+      if (!widget.reportClass.hasConfirmedCaWeights) {
+        final confirmed = await _confirmCaWeights();
+        if (!confirmed || !mounted) return;
+      }
+      final component = await _pickCaComponent();
+      if (component == null || !mounted) return;
+      _caComponent = component;
+    }
+    final roster = await _repository.listLearners(widget.reportClass.id);
+    final matches = await _repository.matchNamesAgainstRoster(widget.reportClass.id, rows);
+    if (!mounted) return;
+    setState(() {
+      _roster = roster;
+      _isRosterEstablishingUpload ??= roster.isEmpty;
+      _rows
+        ..clear()
+        ..addAll([
+          for (final m in matches)
+            _ScoreRowState(
+              name: m.extractedName,
+              score: m.extractedScore ?? '',
+              matchedLearner: m.matchedLearner,
+              closestMatch: m.closestMatch,
+            ),
+        ]);
+      _step = _Step.review;
+    });
+  }
 
   @override
   void dispose() {

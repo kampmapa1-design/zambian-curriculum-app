@@ -5,6 +5,7 @@ import '../models/marking_script.dart';
 import '../services/marked_results_list_repository.dart';
 import '../services/marking_scheme_repository.dart';
 import '../services/marking_script_repository.dart';
+import 'consolidate_marked_scripts_screen.dart';
 import 'marked_results_lists_screen.dart';
 import 'marking_review_screen.dart';
 
@@ -225,6 +226,13 @@ class _MarkedScriptsScreenState extends State<MarkedScriptsScreen> {
               child: const Text('New List'),
             )
           else ...[
+            IconButton(
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const ConsolidateMarkedScriptsScreen()),
+              ),
+              icon: const Icon(Icons.merge_type),
+              tooltip: 'Consolidate into a class\'s Broad Mark Sheet',
+            ),
             IconButton(
               onPressed: () => Navigator.of(context).push(
                 MaterialPageRoute(builder: (_) => MarkedResultsListsScreen(listRepository: _listRepository)),

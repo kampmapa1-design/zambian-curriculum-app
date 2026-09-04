@@ -144,6 +144,24 @@ class _MarkingSchemePaperStructureScreenState extends State<MarkingSchemePaperSt
 
   bool get _canConfirm => _computedTotal != null && _requiredAnswerCount != null && _requiredAnswerCount! > 0;
 
+  /// Human-readable reason the button is disabled, shown right above it —
+  /// see this screen's own note on why this exists. Null once [_canConfirm]
+  /// is true.
+  String? get _blockingReason {
+    final missingSections = [
+      for (final key in _sectionKeys)
+        if (_confirmedMarksFor(key) == null) (key == _noSectionKey ? '(No Section)' : key),
+    ];
+    if (missingSections.isNotEmpty) {
+      return 'Enter marks per question for: ${missingSections.join(', ')}.';
+    }
+    final required = _requiredAnswerCount;
+    if (required == null || required <= 0) {
+      return 'Enter how many questions must be answered in total (above).';
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     final total = _computedTotal;
@@ -217,11 +235,32 @@ class _MarkingSchemePaperStructureScreenState extends State<MarkingSchemePaperSt
       ),
       bottomNavigationBar: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: FilledButton.icon(
-            onPressed: _canConfirm ? _confirmAndReturn : null,
-            icon: const Icon(Icons.check_circle_outline),
-            label: const Text('Confirm & Save'),
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Real, reported bug (2026-09-04): the button below simply
+              // stayed disabled with no explanation — a section whose
+              // questions have inconsistent AI-extracted mark values starts
+              // with a BLANK marks-per-question field (see initState), and
+              // a blank field anywhere silently keeps _computedTotal (and
+              // so _canConfirm) null forever. Nothing on screen pointed at
+              // which field was the problem. Now it does.
+              if (!_canConfirm)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: Text(
+                    _blockingReason ?? '',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).colorScheme.error),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              FilledButton.icon(
+                onPressed: _canConfirm ? _confirmAndReturn : null,
+                icon: const Icon(Icons.check_circle_outline),
+                label: const Text('Confirm & Save'),
+              ),
+            ],
           ),
         ),
       ),
@@ -257,6 +296,11 @@ class _MarkingSchemePaperStructureScreenState extends State<MarkingSchemePaperSt
               decoration: InputDecoration(
                 labelText: key == _noSectionKey ? 'Marks per question' : 'Marks per question in $title',
                 border: const OutlineInputBorder(),
+                // See _blockingReason's own comment — this is the field
+                // that silently blocked Confirm & Save with no visual cue
+                // before 2026-09-04. A section whose questions all agreed
+                // on marks already starts pre-filled and passes here.
+                errorText: _confirmedMarksFor(key) == null ? 'Required' : null,
               ),
               keyboardType: const TextInputType.numberWithOptions(decimal: true),
               inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*$'))],
