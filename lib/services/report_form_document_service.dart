@@ -28,9 +28,25 @@ class ReportFormMailMergeData {
   /// real Continuous Assessment Test and End-of-Term Exam components each
   /// (non-composite) subject's [scores] entry was computed from. Both maps
   /// stay empty for a standalone-test class; [_subjectsTable] renders the
-  /// simple Subject/Score/Grade/Comment layout in that case.
+  /// simple layout (no separate Mid/End columns) in that case.
   final Map<int, double?> caTestScores;
   final Map<int, double?> caExamScores;
+
+  /// Keyed by subject id — this learner's competition-ranked position
+  /// WITHIN that one subject (see
+  /// [ReportClassRepository.subjectPositions]), not the whole-class
+  /// aggregate [classPosition] below. Added 2026-09-04, per explicit
+  /// request, matching a real uploaded report form template's own
+  /// per-subject "Position in Class" column. Null for a subject this
+  /// learner has no score in yet.
+  final Map<int, int?> subjectPositions;
+
+  /// Keyed by subject id — that subject's teacher name, entered once via
+  /// Manage Subjects and reused for every learner (see
+  /// SubjectTeacherRepository). Added 2026-09-04, per explicit request.
+  /// Null/blank where no name has been entered — left as a blank cell
+  /// rather than a guess.
+  final Map<int, String?> teacherNames;
 
   final int? classPosition;
   final int classSize;
@@ -44,6 +60,8 @@ class ReportFormMailMergeData {
     required this.comments,
     this.caTestScores = const {},
     this.caExamScores = const {},
+    this.subjectPositions = const {},
+    this.teacherNames = const {},
     this.classPosition,
     required this.classSize,
     this.attendanceText = '',
@@ -57,6 +75,21 @@ class ReportFormMailMergeData {
   List<double> get enteredScores => [for (final s in subjects) if (scores[s.id] case final v?) v];
 
   double? get averageScore => enteredScores.isEmpty ? null : enteredScores.reduce((a, b) => a + b) / enteredScores.length;
+
+  /// The real Zambian secondary-school "Score in the Best (6) Subjects"
+  /// convention (2026-09-04, per explicit request, matching a real
+  /// uploaded report form template) — adapted honestly to this app's own
+  /// percentage grading rather than pretending to replicate the separate
+  /// ECZ 1-9 points-aggregate system this app has no data to compute: the
+  /// average percentage across whichever 6 (or fewer, if this learner has
+  /// under 6 scored subjects) subjects scored highest. Null with fewer
+  /// than 1 entered score.
+  double? get bestSixAverage {
+    if (enteredScores.isEmpty) return null;
+    final sorted = [...enteredScores]..sort((a, b) => b.compareTo(a));
+    final best = sorted.take(6).toList();
+    return best.reduce((a, b) => a + b) / best.length;
+  }
 }
 
 /// Report Form Pipeline, Stage 9 (the template) + Stage 10 (mail-merge
@@ -258,6 +291,7 @@ class ReportFormDocumentService {
   /// for alignment) instead of a long single-column list of labeled lines,
   /// so the printed page actually reads like a form rather than a memo.
   String _bioGrid(ReportFormMailMergeData data) {
+    final bestSix = data.bestSixAverage;
     final rows = <List<(String, String)>>[
       [('Learner Name', data.learner.fullName), ('Class', data.reportClass.classGrade)],
       [
@@ -269,7 +303,11 @@ class ReportFormDocumentService {
       ],
       [
         ('Attendance', data.attendanceText.isEmpty ? '—' : data.attendanceText),
+        ('Total Number in Class', '${data.classSize}'),
+      ],
+      [
         ('No. of Subjects', '${data.subjects.length}'),
+        ('Score in Best 6 Subjects', bestSix == null ? '—' : '${bestSix.toStringAsFixed(1)}%'),
       ],
       if (data.reportClass.isContinuousAssessment && data.reportClass.hasConfirmedCaWeights)
         [
@@ -313,21 +351,25 @@ class ReportFormDocumentService {
       '<w:insideV w:val="single" w:sz="4" w:space="0" w:color="auto"/>'
       '</w:tblBorders></w:tblPr>';
 
-  /// The subjects table — "proper and sufficient columns and rows" per
-  /// explicit request: a No. column, one row per real subject (never
-  /// capped — see ReportFormMailMergeData.subjects, which the caller
-  /// already loads in full via ReportClassRepository.listSubjects), a
-  /// shaded/bold header, and alternating row shading for readability.
-  /// Column widths are weighted proportionally against a real, explicit
-  /// content width (see [_contentWidthDxa]) rather than a flat hardcoded
-  /// width per cell — the old flat width silently overflowed the page
-  /// once the C.A. layout added extra columns.
+  /// The subjects table — matches a real report form template's own
+  /// column set (2026-09-04, per explicit request: "switch the app's
+  /// report form to this layout"): Subject, Mid/End (C.A. classes only)
+  /// or a single Score (standalone classes), Final %, Position in Class
+  /// (per-subject — see [ReportFormMailMergeData.subjectPositions]),
+  /// Grade, Subject Teacher's Name, Comment. One row per real subject,
+  /// never capped (see [ReportFormMailMergeData.subjects], loaded in full
+  /// by the caller via ReportClassRepository.listSubjects), shaded/bold
+  /// header, alternating row shading. Column widths are weighted
+  /// proportionally against a real, explicit content width (see
+  /// [_contentWidthDxa]) rather than a flat hardcoded width per cell —
+  /// the old flat width silently overflowed the page once the C.A.
+  /// layout added extra columns.
   String _subjectsTable(ReportFormMailMergeData data) {
     final isCa = data.reportClass.isContinuousAssessment;
     final headers = isCa
-        ? ['No.', 'Subject', 'C.A. Test', 'Exam', 'Final (%)', 'Grade', 'Comment']
-        : ['No.', 'Subject', 'Score (%)', 'Grade', 'Comment'];
-    final weights = isCa ? [0.5, 3.2, 1.1, 1.1, 1.2, 0.9, 3.0] : [0.5, 3.4, 1.3, 1.0, 3.8];
+        ? ['Subject', 'Mid', 'End', 'Final (%)', 'Position', 'Grade', "Teacher's Name", 'Comment']
+        : ['Subject', 'Score (%)', 'Position', 'Grade', "Teacher's Name", 'Comment'];
+    final weights = isCa ? [2.8, 0.9, 0.9, 1.1, 1.0, 0.8, 2.2, 2.8] : [3.0, 1.1, 1.0, 0.8, 2.4, 3.2];
     final columnWidths = _computeWidths(weights, _contentWidthDxa);
 
     final buffer = StringBuffer(_tableOpen());
@@ -337,22 +379,26 @@ class ReportFormDocumentService {
     for (var i = 0; i < data.subjects.length; i++) {
       final subject = data.subjects[i];
       final score = data.scores[subject.id];
+      final position = data.subjectPositions[subject.id];
+      final teacher = data.teacherNames[subject.id] ?? '';
       final fill = i.isOdd ? _lightShade : null;
       final cells = isCa
           ? [
-              '${i + 1}',
               subject.name,
               data.caTestScores[subject.id]?.toStringAsFixed(0) ?? '—',
               data.caExamScores[subject.id]?.toStringAsFixed(0) ?? '—',
               score?.toStringAsFixed(0) ?? '—',
+              position == null ? '—' : '$position',
               score == null ? '—' : reportGradeFor(score),
+              teacher,
               data.comments[subject.id] ?? '',
             ]
           : [
-              '${i + 1}',
               subject.name,
               score?.toStringAsFixed(0) ?? '—',
+              position == null ? '—' : '$position',
               score == null ? '—' : reportGradeFor(score),
+              teacher,
               data.comments[subject.id] ?? '',
             ];
       buffer.write(_weightedTableRow(cells, columnWidths, fill: fill));

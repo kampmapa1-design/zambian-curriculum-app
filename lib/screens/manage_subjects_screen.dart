@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/report_class.dart';
 import '../services/report_class_repository.dart';
+import '../services/subject_teacher_repository.dart';
 
 /// Report Form Pipeline, Stage 5 — Broad Mark Sheet subject containers (up
 /// to 12 per class). A plain subject is created automatically the first
@@ -21,7 +22,9 @@ class ManageSubjectsScreen extends StatefulWidget {
 
 class _ManageSubjectsScreenState extends State<ManageSubjectsScreen> {
   late final ReportClassRepository _repository = widget.repository ?? ReportClassRepository();
+  final _teacherRepository = SubjectTeacherRepository();
   List<ReportSubject> _subjects = const [];
+  Map<int, String> _teacherNames = const {};
   bool _loading = true;
 
   @override
@@ -32,11 +35,40 @@ class _ManageSubjectsScreenState extends State<ManageSubjectsScreen> {
 
   Future<void> _load() async {
     final subjects = await _repository.listSubjects(widget.reportClass.id);
+    final teacherNames = await _teacherRepository.teacherNamesFor([for (final s in subjects) s.id]);
     if (!mounted) return;
     setState(() {
       _subjects = subjects;
+      _teacherNames = teacherNames;
       _loading = false;
     });
+  }
+
+  /// One-time-per-subject entry (2026-09-04, per explicit request) — the
+  /// "Subject Teacher's Name" column on the report form reuses whatever's
+  /// entered here for every learner, rather than asking again per learner.
+  Future<void> _editTeacherName(ReportSubject subject) async {
+    final controller = TextEditingController(text: _teacherNames[subject.id] ?? '');
+    final result = await showDialog<String>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text('${subject.name} — Teacher\'s Name'),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          textCapitalization: TextCapitalization.words,
+          decoration: const InputDecoration(labelText: 'Teacher\'s name', border: OutlineInputBorder()),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(dialogContext).pop(), child: const Text('Cancel')),
+          FilledButton(onPressed: () => Navigator.of(dialogContext).pop(controller.text), child: const Text('Save')),
+        ],
+      ),
+    );
+    controller.dispose();
+    if (result == null) return;
+    await _teacherRepository.setTeacherName(subject.id, result);
+    if (mounted) _load();
   }
 
   Future<void> _addPlainSubject() async {
@@ -118,10 +150,22 @@ class _ManageSubjectsScreenState extends State<ManageSubjectsScreen> {
                     child: ListTile(
                       leading: Icon(subject.isComposite ? Icons.calculate_outlined : Icons.menu_book_outlined),
                       title: Text(subject.name),
-                      subtitle: subject.isComposite
-                          ? Text('Composite — auto-sum of ${_partName(subject.compositePartAId)} + '
-                              '${_partName(subject.compositePartBId)}')
-                          : const Text('Plain subject'),
+                      subtitle: Text(
+                        [
+                          if (subject.isComposite)
+                            'Composite — auto-sum of ${_partName(subject.compositePartAId)} + '
+                                '${_partName(subject.compositePartBId)}'
+                          else
+                            'Plain subject',
+                          'Teacher: ${_teacherNames[subject.id] ?? 'not set'}',
+                        ].join('\n'),
+                      ),
+                      isThreeLine: true,
+                      trailing: IconButton(
+                        icon: const Icon(Icons.edit_outlined),
+                        tooltip: "Set Teacher's Name",
+                        onPressed: () => _editTeacherName(subject),
+                      ),
                     ),
                   ),
                 if (_subjects.isEmpty)

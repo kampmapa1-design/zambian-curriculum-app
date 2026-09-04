@@ -631,6 +631,27 @@ class ReportClassRepository {
   /// map at all, rather than an arbitrary last place.
   Future<Map<int, int>> classPositions(int classId) async {
     final scores = await aggregateScores(classId);
+    return _rankScores(scores);
+  }
+
+  /// Same competition-ranking convention as [classPositions], but WITHIN
+  /// one [subject] alone rather than the whole-class aggregate — the
+  /// per-subject "Position in Class" column some real report form
+  /// layouts use (2026-09-04, per explicit request, matching a real
+  /// uploaded report form template). A learner with no score yet for
+  /// this specific subject gets no entry, same "don't guess" rule as
+  /// [classPositions].
+  Future<Map<int, int>> subjectPositions(int classId, ReportSubject subject, {List<ReportSubject>? allSubjects}) async {
+    final learners = await listLearners(classId);
+    final subjects = allSubjects ?? await listSubjects(classId);
+    final scores = <int, double?>{};
+    for (final learner in learners) {
+      scores[learner.id] = await scoreFor(learner.id, subject, allSubjects: subjects);
+    }
+    return _rankScores(scores);
+  }
+
+  Map<int, int> _rankScores(Map<int, double?> scores) {
     final ranked = scores.entries.where((e) => e.value != null).toList()
       ..sort((a, b) => b.value!.compareTo(a.value!));
     final positions = <int, int>{};

@@ -8,6 +8,7 @@ import '../services/report_class_repository.dart';
 import '../services/report_comment_engine.dart';
 import '../services/report_form_document_service.dart';
 import '../services/generated_report_form_repository.dart';
+import '../services/subject_teacher_repository.dart';
 import 'report_form_list_screen.dart';
 
 /// Report Form Pipeline, Stage 10 (mail-merge generation) + Stage 11
@@ -42,6 +43,7 @@ class _ReportFormGenerationScreenState extends State<ReportFormGenerationScreen>
   late final GeneratedReportFormRepository _reportFormRepository =
       widget.reportFormRepository ?? GeneratedReportFormRepository();
   late final ReportFormDocumentService _documentService = widget.documentService ?? ReportFormDocumentService();
+  final _teacherRepository = SubjectTeacherRepository();
 
   List<ReportSubject> _subjects = const [];
   List<ReportLearner> _learners = const [];
@@ -79,6 +81,17 @@ class _ReportFormGenerationScreenState extends State<ReportFormGenerationScreen>
         .values
         .where((v) => v != null)
         .length;
+
+    // Per-subject "Position in Class" (2026-09-04, per explicit request,
+    // matching a real uploaded report form template) — computed once per
+    // subject here, not once per learner, since it's the same ranking for
+    // everyone on the roster.
+    final subjectPositionsBySubject = <int, Map<int, int>>{};
+    for (final subject in _subjects) {
+      subjectPositionsBySubject[subject.id] =
+          await _repository.subjectPositions(widget.reportClass.id, subject, allSubjects: _subjects);
+    }
+    final teacherNames = await _teacherRepository.teacherNamesFor([for (final s in _subjects) s.id]);
 
     var done = 0;
     for (final learner in _learners) {
@@ -138,6 +151,8 @@ class _ReportFormGenerationScreenState extends State<ReportFormGenerationScreen>
         comments: comments,
         caTestScores: caTestScores,
         caExamScores: caExamScores,
+        subjectPositions: {for (final s in _subjects) s.id: subjectPositionsBySubject[s.id]?[learner.id]},
+        teacherNames: teacherNames,
         classPosition: positions[learner.id],
         classSize: classSize,
       );

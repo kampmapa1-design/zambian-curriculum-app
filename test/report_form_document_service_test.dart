@@ -22,6 +22,8 @@ void main() {
     ];
     final scores = {for (final s in subjects) s.id: 60.0 + s.id};
     final comments = {for (final s in subjects) s.id: 'Comment for ${s.name}'};
+    final positions = {for (final s in subjects) s.id: s.id};
+    final teacherNames = {for (final s in subjects) s.id: 'Teacher ${s.name}'};
 
     final data = ReportFormMailMergeData(
       reportClass: reportClass,
@@ -29,6 +31,8 @@ void main() {
       subjects: subjects,
       scores: scores,
       comments: comments,
+      subjectPositions: positions,
+      teacherNames: teacherNames,
       classPosition: 3,
       classSize: 30,
     );
@@ -40,15 +44,20 @@ void main() {
 
     for (final s in subjects) {
       expect(xml.contains(s.name), isTrue, reason: '${s.name} missing from generated document.xml');
+      expect(xml.contains('Teacher ${s.name}'), isTrue, reason: '${s.name}\'s teacher name missing');
     }
+    // The new per-subject "Position in Class" column — real report form
+    // template match, 2026-09-04. XML-escaped apostrophe, not a literal one.
+    expect(xml.contains('Teacher&apos;s Name'), isTrue);
+    expect(xml.contains('Position'), isTrue);
 
-    // The document has two <w:tbl> tables: a 3-row bio-data grid (this
-    // standalone, non-C.A. class has no 4th C.A.-weighting row), then the
+    // The document has two <w:tbl> tables: a 4-row bio-data grid (this
+    // standalone, non-C.A. class has no 5th C.A.-weighting row), then the
     // subjects table (1 header row + one row per real subject, never
     // capped — see ReportFormMailMergeData.subjects). Total <w:tr> across
     // the whole document is the sum of both.
     final rowCount = RegExp('<w:tr>').allMatches(xml).length;
-    const expectedBioGridRows = 3;
+    const expectedBioGridRows = 4;
     const expectedSubjectsTableRows = 1 + 9; // header + one per subject
     expect(
       rowCount,
