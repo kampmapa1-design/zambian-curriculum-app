@@ -1,0 +1,279 @@
+{
+  "_source": "Ministry of Education, Science, Vocational Training and Early Education / Curriculum Development Centre, Zambia. 'Commerce and Principles of Accounts Syllabus, Grades 10-12' (2013, ISBN 9982-00-567-7) -- Principles of Accounts, Grade 10, Topics 10.1-10.7. Topic, sub-topic and Specific Outcome statements only (Knowledge/Skills/Values omitted, as elsewhere in this app). Cross-checked against the syllabus's own 'Scope and Sequence Chart' summary table -- both agree. No real scheme of work was available for Grade 10 Principles of Accounts, so -- exactly as done for Chemistry Grade 10 before its own scheme-of-work documents arrived -- the 7 real topics above have been divided into 3 roughly-equal-by-content-volume groups, in original curriculum order, labelled Term 1/2/3 purely so the app can generate and share one term at a time. This division is NOT sourced from any real scheme of work; no topic, sub-topic, competency or objective was added, removed, or altered.",
+  "curriculum": {
+    "code": "OBC_2013",
+    "name": "2013 Outcome-Based Curriculum",
+    "description": "Zambia's 2013 outcome-based curriculum for Grades 10-12 (Senior Secondary)."
+  },
+  "subject": {
+    "name": "Principles of Accounts",
+    "code": "POA",
+    "description": "Senior Secondary Principles of Accounts syllabus (Commerce and Principles of Accounts, Grades 10-12), Curriculum Development Centre, 2013."
+  },
+  "grade": {
+    "name": "Grade 10",
+    "code": "G10_OBC",
+    "level": 10,
+    "phase": "Senior Secondary"
+  },
+  "terms": [
+    {
+      "name": "Term 1",
+      "sequence_number": 1,
+      "topics": [
+        {
+          "name": "10.1 Principles of Accounts",
+          "sequence_number": 1,
+          "sub_topics": [
+            {
+              "name": "10.1.1 General Outline of Accounting",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Explain the importance of Principles of Accounts",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "10.1.2 Job Opportunities",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Identify career prospects in the accounting profession",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "10.1.3 Accounting Concepts (Conventions)",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Identify the accounting concepts",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Explain the accounting concepts",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "10.2 Business Transactions",
+          "sequence_number": 2,
+          "sub_topics": [
+            {
+              "name": "10.2.1 Types of Business Transactions",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Explain business transactions",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Identify different types of business transactions",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Record business transactions",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "10.3 Books of Prime Entries",
+          "sequence_number": 3,
+          "sub_topics": [
+            {
+              "name": "10.3.1 Source Documents Used in the Books of Prime Entries",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Explain source documents used in books of prime entries",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "10.3.2 Types of Books of Prime Entries",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Explain types of books of prime entries",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Record transactions in the books of prime entries",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 2",
+      "sequence_number": 2,
+      "topics": [
+        {
+          "name": "10.4 Double Entry",
+          "sequence_number": 1,
+          "sub_topics": [
+            {
+              "name": "10.4.1 Principle of Double Entry",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Explain Double Entry",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "10.4.2 Types of Accounts",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Explain the types of accounts",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "10.5 Ledger",
+          "sequence_number": 2,
+          "sub_topics": [
+            {
+              "name": "10.5.1 Types of Ledgers",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Explain the Ledger",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Explain types of the Ledger",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "10.6 Trial Balance",
+          "sequence_number": 3,
+          "sub_topics": [
+            {
+              "name": "10.6.1 Purpose of Trial Balance",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Explain the purpose of Trial Balance",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Prepare Trial Balance",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 3",
+      "sequence_number": 3,
+      "topics": [
+        {
+          "name": "10.7 Final Accounts",
+          "sequence_number": 1,
+          "sub_topics": [
+            {
+              "name": "10.7.1 Trading Account (Income Statement)",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Explain trading Account",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Prepare trading Account",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "10.7.2 Profit and Loss Account (Income Statement)",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Explain profit and loss account",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Prepare profit and loss account",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Calculate net profit/loss",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "10.7.3 Balance Sheet (Statement of Financial Position)",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Explain Balance Sheet",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Prepare balance sheet",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Calculate capitals",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

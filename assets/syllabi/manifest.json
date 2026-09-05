@@ -539,6 +539,60 @@
       "grade_level": 1,
       "grade_name": "Form 1",
       "file": "art_and_design_form1.json"
+    },
+    {
+      "curriculum_code": "OBC_2013",
+      "curriculum_name": "2013 Outcome-Based Curriculum",
+      "subject_code": "COMM",
+      "subject_name": "Commerce",
+      "grade_level": 10,
+      "grade_name": "Grade 10",
+      "file": "commerce_grade10.json"
+    },
+    {
+      "curriculum_code": "OBC_2013",
+      "curriculum_name": "2013 Outcome-Based Curriculum",
+      "subject_code": "COMM",
+      "subject_name": "Commerce",
+      "grade_level": 11,
+      "grade_name": "Grade 11",
+      "file": "commerce_grade11.json"
+    },
+    {
+      "curriculum_code": "OBC_2013",
+      "curriculum_name": "2013 Outcome-Based Curriculum",
+      "subject_code": "COMM",
+      "subject_name": "Commerce",
+      "grade_level": 12,
+      "grade_name": "Grade 12",
+      "file": "commerce_grade12.json"
+    },
+    {
+      "curriculum_code": "OBC_2013",
+      "curriculum_name": "2013 Outcome-Based Curriculum",
+      "subject_code": "POA",
+      "subject_name": "Principles of Accounts",
+      "grade_level": 10,
+      "grade_name": "Grade 10",
+      "file": "principles_of_accounts_grade10.json"
+    },
+    {
+      "curriculum_code": "OBC_2013",
+      "curriculum_name": "2013 Outcome-Based Curriculum",
+      "subject_code": "POA",
+      "subject_name": "Principles of Accounts",
+      "grade_level": 11,
+      "grade_name": "Grade 11",
+      "file": "principles_of_accounts_grade11.json"
+    },
+    {
+      "curriculum_code": "OBC_2013",
+      "curriculum_name": "2013 Outcome-Based Curriculum",
+      "subject_code": "POA",
+      "subject_name": "Principles of Accounts",
+      "grade_level": 12,
+      "grade_name": "Grade 12",
+      "file": "principles_of_accounts_grade12.json"
     }
   ]
 }

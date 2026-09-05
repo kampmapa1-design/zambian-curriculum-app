@@ -87,6 +87,12 @@ flutter:
     - assets/syllabi/civic_education_form4.json
     - assets/syllabi/principles_of_accounts_form1.json
     - assets/syllabi/principles_of_accounts_form2.json
+    - assets/syllabi/commerce_grade10.json
+    - assets/syllabi/commerce_grade11.json
+    - assets/syllabi/commerce_grade12.json
+    - assets/syllabi/principles_of_accounts_grade10.json
+    - assets/syllabi/principles_of_accounts_grade11.json
+    - assets/syllabi/principles_of_accounts_grade12.json
     - assets/syllabi/english_form2.json
     - assets/activity_banks/manifest.json
     - assets/activity_banks/hist_f1_1_1_1.json

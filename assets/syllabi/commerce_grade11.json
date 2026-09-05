@@ -1,0 +1,353 @@
+{
+  "_source": "Ministry of Education, Science, Vocational Training and Early Education / Curriculum Development Centre, Zambia. 'Commerce and Principles of Accounts Syllabus, Grades 10-12' (2013, ISBN 9982-00-567-7) -- Commerce, Grade 11, Topics 11.1-11.5. Topic, sub-topic and Specific Outcome statements only (Knowledge/Skills/Values omitted, as elsewhere in this app). TERM PLACEMENT IS REAL for this file: a real teacher's 'Grade 11 Commerce Scheme of Work, Term 1-3' (Mkushi Boarding STEM Secondary School, Business Studies Department) was shared with this project and reviewed in full -- it covers all three terms of the school year and, matched by content (not by the scheme's own topic numbers, which renumber 'Public Sector' from a sub-topic of 11.2 up to its own top-level topic '11.3', shifting Stock Exchange/LuSE/Banking up by one -- the syllabus's OWN numbering, reproduced in this file, was kept as authoritative), against the syllabus's reliable topic numbering, confirms: Term 1 covers all of 11.1 Foreign Trade plus the first part of 11.2 Organisation of Business Units (11.2.1 Types, and the 'documents needed for formation' portion of 11.2.2); Term 2 covers the rest of 11.2.2 (similarities/differences and advantages/disadvantages of private vs public companies), all of 11.2.3 Public Sector, all of 11.3 Stock Exchange, all of 11.4 Lusaka Stock Exchange (LuSE), and the start of 11.5 Banking (11.5.1 Banking Institutions); Term 3 covers the rest of 11.5 Banking (11.5.2 through 11.5.8) plus end-of-year revision. The scheme document's own teacher name, Teaching Service number, and phone number have been stripped entirely and are not reproduced anywhere in this file. No sub-topic, competency, or objective was added, removed, or altered -- only which term each topic (and, for 11.2 and 11.5, each part of that topic) belongs to.",
+  "curriculum": {
+    "code": "OBC_2013",
+    "name": "2013 Outcome-Based Curriculum",
+    "description": "Zambia's 2013 outcome-based curriculum for Grades 10-12 (Senior Secondary)."
+  },
+  "subject": {
+    "name": "Commerce",
+    "code": "COMM",
+    "description": "Senior Secondary Commerce syllabus (Commerce and Principles of Accounts, Grades 10-12), Curriculum Development Centre, 2013."
+  },
+  "grade": {
+    "name": "Grade 11",
+    "code": "G11_OBC",
+    "level": 11,
+    "phase": "Senior Secondary"
+  },
+  "terms": [
+    {
+      "name": "Term 1",
+      "sequence_number": 1,
+      "topics": [
+        {
+          "name": "11.1 Foreign Trade (International Trade)",
+          "sequence_number": 1,
+          "sub_topics": [
+            {
+              "name": "11.1.1 Importance of Foreign Trade",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "State the importance of foreign trade",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "11.1.2 Problems Experienced in Foreign Trade",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Mention the problems experienced in foreign trade",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "11.1.3 Documents Used in Foreign Trade",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Explain documents used in Foreign trade",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "11.1.4 Zambia Revenue Authority, Customs Authority and Port Authority",
+              "sequence_number": 4,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Explain the functions of Revenue authority",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "State the requirements for harbour or port",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "11.1.5 Bonded Warehouses",
+              "sequence_number": 5,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "State the importance of bonded warehouses",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "11.1.6 Means of Payment",
+              "sequence_number": 6,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe the means of payment",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "11.1.7 Balance of Trade and Balance of Payment",
+              "sequence_number": 7,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Explain the balances of trade and payment",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "11.2 Organisation of Business Units",
+          "sequence_number": 2,
+          "sub_topics": [
+            {
+              "name": "11.2.1 Types of Business Units",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Identify different types of business units",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Explain different types of business units",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "11.2.2 Formation of Business Units",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe the documents needed for the formation of different types of businesses",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 2",
+      "sequence_number": 2,
+      "topics": [
+        {
+          "name": "11.2 Organisation of Business Units",
+          "sequence_number": 1,
+          "sub_topics": [
+            {
+              "name": "11.2.2 Formation of Business Units",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "State the similarities and differences between private and public limited companies",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Explain the advantages and disadvantages of private and public companies",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "11.2.3 Public Sector",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe the features of public Corporation(s)",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Explain the advantages and disadvantages of public utility corporations",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Explain the similarities and differences between public utility Corporations and Public Limited Companies",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "11.3 Stock Exchange",
+          "sequence_number": 2,
+          "sub_topics": [
+            {
+              "name": "11.3.1 Types of Shares",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe stock Exchange",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Explain types of shares",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "11.4 Lusaka Stock Exchange (LuSE)",
+          "sequence_number": 3,
+          "sub_topics": [
+            {
+              "name": "11.4.1 Purpose and Functions of LuSE",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Explain the establishment, purpose and functions of LuSE",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "11.4.2 Main Players on LuSE",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Identify the main players on LuSE",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "11.5 Banking",
+          "sequence_number": 4,
+          "sub_topics": [
+            {
+              "name": "11.5.1 Banking Institutions",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Identify types of banking institutions",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 3",
+      "sequence_number": 3,
+      "topics": [
+        {
+          "name": "11.5 Banking",
+          "sequence_number": 1,
+          "sub_topics": [
+            {
+              "name": "11.5.2 Non-Banking Institutions",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Identify non-banking institutions",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "11.5.3 Services Offered",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Explain the services offered by banking institutions",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "11.5.4 Accounts Offered",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Explain types of accounts offered by financial institutions",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "11.5.5 Documents Used",
+              "sequence_number": 4,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Identify types of documents used in banking",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "11.5.6 Means of Payments",
+              "sequence_number": 5,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Explain the means of payment through the bank",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "11.5.7 The Central Bank",
+              "sequence_number": 6,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "List the functions of the Central Bank",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "11.5.8 Electronic Cheque Clearing System",
+              "sequence_number": 7,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Outline the electronic cheque clearing system",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,232 @@
+{
+  "_source": "Ministry of Education, Science, Vocational Training and Early Education / Curriculum Development Centre, Zambia. 'Commerce and Principles of Accounts Syllabus, Grades 10-12' (2013, ISBN 9982-00-567-7) -- Principles of Accounts, Grade 12, Topics 12.1-12.5. Topic, sub-topic and Specific Outcome statements only (Knowledge/Skills/Values omitted, as elsewhere in this app). A real teacher's 'Grade 12 Accounts Scheme of Work, Term 1' (Mkushi Boarding STEM Secondary School, Business Studies Department) was shared with this project and reviewed in full: it confirms 12.3 Manufacturing Accounts (all 5 sub-topics), 12.4 Ethics in Accountancy (both sub-topics), and 12.5 Interpretation of Final Accounts (its one sub-topic) are all real Term 1 content for this school. It does not cover 12.1 Incomplete Records or 12.2 Partnerships at all, so -- exactly as done for Chemistry Grade 10's own topic left over after its two real scheme documents -- those two topics have been split one per remaining term by this app's own non-sourced, elimination-based inference: 12.1 Incomplete Records in Term 2, 12.2 Partnerships in Term 3 (original curriculum order preserved; not itself sourced from any real scheme of work). The scheme document's own teacher name, Teaching Service number, and phone number have been stripped entirely and are not reproduced anywhere in this file. No sub-topic, competency, or objective was added, removed, or altered -- only which term each topic belongs to.",
+  "curriculum": {
+    "code": "OBC_2013",
+    "name": "2013 Outcome-Based Curriculum",
+    "description": "Zambia's 2013 outcome-based curriculum for Grades 10-12 (Senior Secondary)."
+  },
+  "subject": {
+    "name": "Principles of Accounts",
+    "code": "POA",
+    "description": "Senior Secondary Principles of Accounts syllabus (Commerce and Principles of Accounts, Grades 10-12), Curriculum Development Centre, 2013."
+  },
+  "grade": {
+    "name": "Grade 12",
+    "code": "G12_OBC",
+    "level": 12,
+    "phase": "Senior Secondary"
+  },
+  "terms": [
+    {
+      "name": "Term 1",
+      "sequence_number": 1,
+      "topics": [
+        {
+          "name": "12.3 Manufacturing Accounts",
+          "sequence_number": 1,
+          "sub_topics": [
+            {
+              "name": "12.3.1 Types of Costs",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Explain types of costs",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "12.3.2 Types of Stocks",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Identify types of manufacturing stocks",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "12.3.3 Manufacturing Accounts",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Prepare manufacturing accounts",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "12.3.4 Current Market Value",
+              "sequence_number": 4,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Calculate manufacturing profit",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "12.3.5 Financial Statements/Final Accounts",
+              "sequence_number": 5,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Explain financial statements",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "12.4 Ethics in Accountancy",
+          "sequence_number": 2,
+          "sub_topics": [
+            {
+              "name": "12.4.1 Ethics",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Explain ethics in accountancy",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "12.4.2 Effects of Non-Adherence to Ethics",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Identify effects of non-adherence to ethics",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Explain effects of non-adherence to ethics",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "12.5 Interpretation of Final Accounts",
+          "sequence_number": 3,
+          "sub_topics": [
+            {
+              "name": "12.5.1 Accounting Ratios and Percentages",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Explain the importance of accounting ratios and percentages",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Explain the various accounting ratios/percentages",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Calculate various ratios/percentages",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 2",
+      "sequence_number": 2,
+      "topics": [
+        {
+          "name": "12.1 Incomplete Records",
+          "sequence_number": 1,
+          "sub_topics": [
+            {
+              "name": "12.1.1 Single Entry and Incomplete Records",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Explain increase and decrease in net worth and Statement of Affairs",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "12.1.2 Difference Between Double and Single Entries",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Explain the difference between double and single entry",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "12.1.3 Final Accounts of Incomplete Records",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Prepare final accounts and balance sheet of incomplete records",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 3",
+      "sequence_number": 3,
+      "topics": [
+        {
+          "name": "12.2 Partnerships",
+          "sequence_number": 1,
+          "sub_topics": [
+            {
+              "name": "12.2.1 Formation of Partnerships",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Explain formation of partnership",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Explain partnership accounts",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "12.2.2 Final Accounts",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Prepare final accounts under partnerships",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

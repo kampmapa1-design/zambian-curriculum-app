@@ -1,0 +1,265 @@
+{
+  "_source": "Ministry of Education, Science, Vocational Training and Early Education / Curriculum Development Centre, Zambia. 'Commerce and Principles of Accounts Syllabus, Grades 10-12' (2013, ISBN 9982-00-567-7) -- Commerce, Grade 10, Topics 10.1-10.5. Topic, sub-topic and Specific Outcome statements only; the Knowledge/Skills/Values content columns are omitted, consistent with the approach used for every other bundled 2013 OBC subject in this app (e.g. chemistry_grade10.json). The source PDF's table layout was heavily jumbled by text extraction (cell contents interleaved out of reading order); this file was reconstructed using the syllabus's own reliable x.x.x outcome numbering, and cross-checked against the syllabus's own 'Scope and Sequence Chart' (which lists each grade's topics as a summary table) -- both agree. No real scheme of work was available for Grade 10 Commerce, so -- exactly as done for Chemistry Grade 10 before its own scheme-of-work documents arrived -- the 5 real topics above have been divided into 3 roughly-equal-by-content-volume groups, in their original curriculum order, labelled Term 1/2/3 purely so the app can generate and share one term at a time. This division is NOT sourced from any real scheme of work; no topic, sub-topic, competency or objective was added, removed, or altered.",
+  "curriculum": {
+    "code": "OBC_2013",
+    "name": "2013 Outcome-Based Curriculum",
+    "description": "Zambia's 2013 outcome-based curriculum for Grades 10-12 (Senior Secondary)."
+  },
+  "subject": {
+    "name": "Commerce",
+    "code": "COMM",
+    "description": "Senior Secondary Commerce syllabus (Commerce and Principles of Accounts, Grades 10-12), Curriculum Development Centre, 2013."
+  },
+  "grade": {
+    "name": "Grade 10",
+    "code": "G10_OBC",
+    "level": 10,
+    "phase": "Senior Secondary"
+  },
+  "terms": [
+    {
+      "name": "Term 1",
+      "sequence_number": 1,
+      "topics": [
+        {
+          "name": "10.1 Commerce",
+          "sequence_number": 1,
+          "sub_topics": [
+            {
+              "name": "10.1.1 Aids to Trade",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Explain the importance of commerce",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Explain the aids to trade",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Draw the aids to trade",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "10.1.2 Career Prospects",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Identify career prospects in Commerce",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "10.2 Production",
+          "sequence_number": 2,
+          "sub_topics": [
+            {
+              "name": "10.2.1 Needs and Wants",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Explain needs and wants",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "10.2.2 Direct and Indirect Methods of Production",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe the branches of production",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "10.2.3 Factors of Production",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe methods of production",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Explain the factors of production",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Describe types of goods",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 2",
+      "sequence_number": 2,
+      "topics": [
+        {
+          "name": "10.3 Contracts",
+          "sequence_number": 1,
+          "sub_topics": [
+            {
+              "name": "10.3.1 Elements of a Valid Simple Contract",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Explain contracts",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "10.4 Home Trade",
+          "sequence_number": 2,
+          "sub_topics": [
+            {
+              "name": "10.4.1 Retail Trade",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Explain the functions of a retailer",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Explain the factors to consider before putting up a retail business",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Explain characteristics of small and large retailers",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Explain advantages and disadvantages of a retailer",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "10.4.2 Wholesale Trade",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Identify types of wholesalers",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Explain the functions of a wholesaler",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Explain the advantages and disadvantages of a wholesaler",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "10.4.3 Documents Used in Home Trade",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Identify documents used in home trade",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Explain documents used in home trade",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Draw documents used in home trade",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Fill in documents used in home trade",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 5,
+                  "description": "Explain cash and trade discounts in home trade",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 3",
+      "sequence_number": 3,
+      "topics": [
+        {
+          "name": "10.5 Buying and Selling on Credit",
+          "sequence_number": 1,
+          "sub_topics": [
+            {
+              "name": "10.5.1 Methods of Buying and Selling on Credit",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "State the methods of buying and selling on credit",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Distinguish between hire purchase and credit sale",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "10.5.2 Consumer Protection",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Explain reasons for protecting consumers",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Identify organisations that protect consumers",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
