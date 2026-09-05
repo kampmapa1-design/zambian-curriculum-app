@@ -95,6 +95,7 @@ flutter:
     - assets/cdc_resources/seed_catalog.json
     - assets/subject_content/manifest.json
     - assets/subject_content/principles_of_accounts/ecz_past_papers_p1_2016_2021.txt
+    - assets/subject_content/chemistry/ecz_grade10_science_chemistry_p1.txt
     - assets/subject_content/civic_education/form1_term3_teaching_module.txt
     - assets/subject_content/civic_education/form_1_civic_education_teaching_module_form_1_term_2.txt
     - assets/subject_content/history/form_1_history_teaching_module_form_1_term_2.txt

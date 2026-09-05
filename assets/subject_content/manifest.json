@@ -9,6 +9,14 @@
       "_source": "Real Examinations Council of Zambia (ECZ) O-Level Principles of Accounts Paper 1 (7110/1) past-paper questions, 2016, 2017, 2018, 2019, and 2021 (2020's question paper was not available from the source used — only that year's answer key, which is not included here since it has no matching real questions to pair with). Extracted from a privately-compiled Zambian revision booklet shared with this project — the booklet's own compiler name, contact details, and 'buy from me'/anti-sharing text have been stripped entirely and are not reproduced anywhere in this file or credited in any way; only the real ECZ exam questions and each one's correct answer (cross-referenced from the same booklet's own separately-printed answer key, letter verified against standard accounting principles) are kept, attributed only to ECZ. 40 questions per year, one paragraph per question (question stem + all four options + the correct one), formatted for this app's offline keyword search."
     },
     {
+      "title": "ECZ Past Paper Questions & Marking Key — Grade 10 Science, Chemistry Section, Paper 1 (2009–2019)",
+      "subjectName": "Chemistry",
+      "resourceType": "pastPapers",
+      "sourceUrl": "ecz://science-chemistry/grade10-paper1/2009-2019",
+      "fileName": "chemistry/ecz_grade10_science_chemistry_p1.txt",
+      "_source": "Real Examinations Council of Zambia (ECZ) Grade 10 Science (Chemistry section) Paper 1 multiple-choice past-paper questions, spanning 2009–2017 plus the 2017 and 2019 General Certificate of Education (G.C.E.) sittings (58 real ECZ questions found in the source; 6 were excluded here because they depend on a diagram, apparatus photo, or data table that this text-only extraction could not capture and would be meaningless or misleading without it — 52 fully self-contained questions were kept). Extracted from a privately-compiled Zambian revision booklet shared with this project — the booklet's own compiler name and price notice (confined to its title page, outside the extracted question/answer content) have been stripped entirely and are not reproduced anywhere in this file or credited in any way; only the real ECZ exam questions and each one's correct answer (cross-referenced from the same booklet's own separately-printed answer key) are kept, attributed only to ECZ. One paragraph per question (question stem + all four options + the correct one), formatted for this app's offline keyword search."
+    },
+    {
       "title": "Chemestry Teaching Module — Form 1, Term 2",
       "subjectName": "Chemistry",
       "resourceType": "module",
