@@ -3,30 +3,40 @@ import 'package:flutter/services.dart';
 
 import '../models/marking_scheme.dart';
 import '../services/marking_key_generation_service.dart';
+import '../services/marking_scheme_section_marks.dart';
 
 /// AI-Assisted Marking — the "get the total marks right" confirmation
 /// step, shown right before a [MarkingScheme] is actually saved (from
 /// both the AI-derivation flow and manual entry — MarkingSchemeBuilderScreen
 /// routes here on every save, not just the AI path).
 ///
-/// The problem this solves: a flat sum of every listed question's marks
-/// is wrong for a paper with a real "answer N of M" structure (e.g.
-/// "Section B: answer any THREE of the following FIVE essay questions") —
-/// summing all five would overstate the paper's real total. Rather than
-/// guess how a teacher's "answer N of M" instruction should be resolved,
-/// this screen asks the teacher directly, using their own knowledge of
-/// the paper: how many questions a candidate must answer overall, and
-/// what each section's questions are really worth — then computes the
-/// paper's real total from those confirmed numbers and flags (without
-/// blocking) any mismatch against how many questions are actually listed,
-/// rather than silently trusting either number.
+/// **Redesigned 2026-09-05, per explicit request**: a real exam's own
+/// rules state each SECTION's total directly (e.g. "Section A = 30
+/// marks, Section B = 30 marks, Section C: one essay = 20 marks, Section
+/// D = 20 marks" — a real Zambian History paper's actual structure, per
+/// the request that prompted this). The previous version asked for
+/// "marks per question in this section" and multiplied by however many
+/// rows were listed — which silently broke the moment a section's
+/// questions were split into Roman-numeral sub-parts ("2(i)", "2(ii)",
+/// "2(iii)"), since those are a CONTINUATION of one numbered question,
+/// not three separate ones, and multiplying by the raw row count
+/// overcounted. Now a teacher enters each section's own real total
+/// directly — exactly the number they already know from the paper's own
+/// rules — and marks are apportioned across that section's rows
+/// automatically (see [apportionSectionMarks]): every row shares the
+/// total when all of them get answered (Section A/B), or every row gets
+/// the FULL total on its own when only one of several alternatives is
+/// ever actually answered (Section C/D "answer ONE of the following"
+/// essay style) — the app suggests which pattern fits from the section's
+/// own printed answer instructions, but never applies it without the
+/// teacher seeing and confirming it (see [SectionMarkingStyle]).
 ///
 /// [derivedSections] carries the AI's own detected section headings and
 /// their real printed answer-instructions (see
 /// deriveMarkingKeyFromQuestionPaper's Cloud Function comment) when this
-/// scheme came from an AI-derived marking key — shown as a hint next to
-/// the matching section's own question here, never auto-applied. Empty
-/// for manual entry or a scheme with no detected sections.
+/// scheme came from an AI-derived marking key — used both as a hint shown
+/// next to the matching section, and to suggest that section's marking
+/// style. Empty for manual entry or a scheme with no detected sections.
 class MarkingSchemePaperStructureScreen extends StatefulWidget {
   const MarkingSchemePaperStructureScreen({
     super.key,
@@ -43,15 +53,37 @@ class MarkingSchemePaperStructureScreen extends StatefulWidget {
 
 /// Null key = questions with no section at all, grouped together under
 /// "(No Section)" — a paper with no section structure ends up with just
-/// this one group, so the screen degrades gracefully to "how many marks
-/// does each question carry?" for a scheme with no sections whatsoever.
+/// this one group, so the screen degrades gracefully to "what's this
+/// paper's total?" for a scheme with no sections whatsoever.
 const String _noSectionKey = '';
 
+/// Keywords a real standardized mock/national/final exam's own "type of
+/// exam" or title tends to use — see [_looksLikeStandardizedExam]'s own
+/// doc comment on how this is used (a suggestion only, never a hard
+/// gate).
+final _standardizedExamPattern = RegExp(
+  r'\bmock\b|\bnational\b|\bfinal\b|\bexam(ination)?\b|\bprelim(inary)?\b|\btrial\b|\bpaper\s*(one|two|1|2)\b',
+  caseSensitive: false,
+);
+
+/// True when [text] (the "type of exam" a teacher typed, or the AI's own
+/// detected document title) reads like a standardized mock/national exam
+/// rather than an ordinary class test — see this screen's own doc
+/// comment on why that distinction matters (a real exam's section
+/// structure follows well-known fixed rules; a class test's rules vary
+/// assessment to assessment). A suggestion for which framing to show,
+/// never a hard gate — the section-total confirmation below works
+/// identically either way; only the extra "how do you want marks
+/// allocated" guidance prompt is gated on this.
+bool _looksLikeStandardizedExam(String text) => _standardizedExamPattern.hasMatch(text);
+
 class _MarkingSchemePaperStructureScreenState extends State<MarkingSchemePaperStructureScreen> {
-  late final TextEditingController _requiredAnswerCountController;
-  final Map<String, TextEditingController> _sectionMarksControllers = {};
+  final Map<String, TextEditingController> _sectionTotalControllers = {};
+  final Map<String, SectionMarkingStyle> _sectionStyles = {};
   late final List<String> _sectionKeys;
   late final Map<String, List<MarkingSchemeQuestion>> _questionsBySection;
+  late final bool _looksStandardized;
+  TextEditingController? _gradingGuidanceController;
 
   @override
   void initState() {
@@ -69,22 +101,39 @@ class _MarkingSchemePaperStructureScreenState extends State<MarkingSchemePaperSt
     ];
 
     for (final key in _sectionKeys) {
-      final marksInSection = _questionsBySection[key]!.map((q) => q.maxMarks).toList();
-      final consistent = marksInSection.toSet().length == 1;
-      _sectionMarksControllers[key] = TextEditingController(
-        text: consistent ? _formatMarks(marksInSection.first) : '',
+      final questions = _questionsBySection[key]!;
+      final instructions = _instructionsFor(key) ?? '';
+      _sectionStyles[key] = suggestSectionMarkingStyle(instructions);
+      // Pre-filled with whatever the currently-listed rows already sum
+      // to, as a starting point — the teacher's job here is to correct
+      // this to the paper's own REAL stated total, not necessarily to
+      // accept this guess. Left blank when everything's currently zero
+      // (nothing to guess from yet), same as the previous version did
+      // for an inconsistent/empty section.
+      final currentSum = questions.fold<double>(0, (sum, q) => sum + q.maxMarks);
+      _sectionTotalControllers[key] = TextEditingController(
+        text: currentSum > 0 ? _formatMarks(currentSum) : '',
       );
     }
 
-    _requiredAnswerCountController = TextEditingController(text: widget.draft.questions.length.toString());
+    // Best-effort signal only (see _looksLikeStandardizedExam's own doc
+    // comment) — topicName carries the teacher-typed "type of exam" for
+    // schemes from the marking-key-upload flow (see
+    // MarkingSchemeBuilderScreen's own doc comment on why), and falls
+    // back to the scheme's title for manually-built schemes.
+    _looksStandardized =
+        _looksLikeStandardizedExam(widget.draft.topicName) || _looksLikeStandardizedExam(widget.draft.title);
+    if (!_looksStandardized) {
+      _gradingGuidanceController = TextEditingController(text: widget.draft.gradingGuidance ?? '');
+    }
   }
 
   @override
   void dispose() {
-    _requiredAnswerCountController.dispose();
-    for (final c in _sectionMarksControllers.values) {
+    for (final c in _sectionTotalControllers.values) {
       c.dispose();
     }
+    _gradingGuidanceController?.dispose();
     super.dispose();
   }
 
@@ -100,64 +149,78 @@ class _MarkingSchemePaperStructureScreenState extends State<MarkingSchemePaperSt
     return null;
   }
 
-  double? _confirmedMarksFor(String sectionKey) => double.tryParse(_sectionMarksControllers[sectionKey]!.text.trim());
+  double? _confirmedTotalFor(String sectionKey) => double.tryParse(_sectionTotalControllers[sectionKey]!.text.trim());
 
-  int get _listedQuestionCount => widget.draft.questions.length;
+  int _topLevelQuestionCountFor(String sectionKey) =>
+      countTopLevelQuestions([for (final q in _questionsBySection[sectionKey]!) q.label]);
 
-  int? get _requiredAnswerCount => int.tryParse(_requiredAnswerCountController.text.trim());
-
-  /// Null while any section's marks-per-question field is empty/invalid —
-  /// the live total simply doesn't show until every section is filled in,
-  /// rather than silently treating a blank field as zero.
+  /// Null while any section's total is empty/invalid — the live total
+  /// simply doesn't show until every section is filled in, rather than
+  /// silently treating a blank field as zero.
   double? get _computedTotal {
     var total = 0.0;
     for (final key in _sectionKeys) {
-      final marks = _confirmedMarksFor(key);
+      final marks = _confirmedTotalFor(key);
       if (marks == null) return null;
-      total += marks * _questionsBySection[key]!.length;
+      total += marks;
     }
     return total;
   }
 
-  bool get _hasMismatch {
-    final required = _requiredAnswerCount;
-    return required != null && required != _listedQuestionCount;
+  /// How many questions a candidate actually answers across the whole
+  /// paper, GIVEN each section's confirmed marking style — one per
+  /// section using [SectionMarkingStyle.oneRowGetsFullTotal] (only one
+  /// alternative is ever chosen), every distinct top-level question for
+  /// [SectionMarkingStyle.allRowsSumToTotal] (every one of them is
+  /// answered). Computed, not asked — the previous version made a
+  /// teacher type this separately, which could silently disagree with
+  /// what the section structure below already implies.
+  int get _derivedRequiredAnswerCount {
+    var count = 0;
+    for (final key in _sectionKeys) {
+      count += _sectionStyles[key] == SectionMarkingStyle.oneRowGetsFullTotal ? 1 : _topLevelQuestionCountFor(key);
+    }
+    return count;
   }
 
   void _confirmAndReturn() {
     final total = _computedTotal;
-    final required = _requiredAnswerCount;
-    final updatedQuestions = [
-      for (final q in widget.draft.questions)
-        q.copyWith(maxMarks: _confirmedMarksFor(q.sectionName?.trim().isNotEmpty == true ? q.sectionName!.trim() : _noSectionKey)),
-    ];
+    final updatedQuestions = <MarkingSchemeQuestion>[];
+    for (final key in _sectionKeys) {
+      final questions = _questionsBySection[key]!;
+      final sectionTotal = _confirmedTotalFor(key)!;
+      final style = _sectionStyles[key]!;
+      final apportioned = apportionSectionMarks([for (final q in questions) q.maxMarks], sectionTotal, style);
+      for (var i = 0; i < questions.length; i++) {
+        updatedQuestions.add(questions[i].copyWith(maxMarks: apportioned[i]));
+      }
+    }
+    final guidance = _gradingGuidanceController?.text.trim();
     Navigator.of(context).pop<MarkingScheme>(
       widget.draft.copyWith(
         questions: updatedQuestions,
-        requiredAnswerCount: required,
+        requiredAnswerCount: _derivedRequiredAnswerCount,
         confirmedPaperTotalMarks: total,
+        gradingGuidance: guidance == null || guidance.isEmpty ? null : guidance,
       ),
     );
   }
 
   void _skip() => Navigator.of(context).pop<MarkingScheme>(widget.draft);
 
-  bool get _canConfirm => _computedTotal != null && _requiredAnswerCount != null && _requiredAnswerCount! > 0;
+  bool get _canConfirm => _computedTotal != null;
 
   /// Human-readable reason the button is disabled, shown right above it —
-  /// see this screen's own note on why this exists. Null once [_canConfirm]
-  /// is true.
+  /// a real, reported bug (2026-09-04) was this button staying disabled
+  /// with zero explanation of why; never repeat that regardless of how
+  /// this screen's own fields change shape.
   String? get _blockingReason {
     final missingSections = [
       for (final key in _sectionKeys)
-        if (_confirmedMarksFor(key) == null) (key == _noSectionKey ? '(No Section)' : key),
+        if (_confirmedTotalFor(key) == null) (key == _noSectionKey ? '(No Section)' : key),
     ];
     if (missingSections.isNotEmpty) {
-      return 'Enter marks per question for: ${missingSections.join(', ')}.';
-    }
-    final required = _requiredAnswerCount;
-    if (required == null || required <= 0) {
-      return 'Enter how many questions must be answered in total (above).';
+      return 'Enter the total marks for: ${missingSections.join(', ')}.';
     }
     return null;
   }
@@ -176,44 +239,39 @@ class _MarkingSchemePaperStructureScreenState extends State<MarkingSchemePaperSt
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 96),
         children: [
           Text(
-            'A couple of quick questions so this paper\'s total marks are right — especially important if '
-            'some questions are optional (e.g. "answer any 3 of 5").',
+            _looksStandardized
+                ? 'Enter each section\'s own real total marks, straight from the paper\'s own rules (e.g. '
+                    '"Section A = 30 marks") — not a guess, and not multiplied from a per-question value.'
+                : 'This looks like a class test rather than a standardized mock/national exam, so its own mark '
+                    'allocation is yours to set — enter each section\'s total the way you want it marked.',
             style: Theme.of(context).textTheme.bodyMedium,
           ),
-          const SizedBox(height: 20),
-          TextField(
-            controller: _requiredAnswerCountController,
-            decoration: const InputDecoration(
-              labelText: 'How many questions must a candidate answer in total on this paper?',
-              border: OutlineInputBorder(),
-            ),
-            keyboardType: TextInputType.number,
-            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-            onChanged: (_) => setState(() {}),
-          ),
-          if (_hasMismatch) ...[
-            const SizedBox(height: 8),
-            _WarningBanner(
-              text: 'This marking key currently lists $_listedQuestionCount question(s), but you said '
-                  'candidates answer ${_requiredAnswerCount ?? 0} in total. Double-check the questions before '
-                  'saving — a candidate who answers fewer than what\'s listed is still graded correctly '
-                  'question-by-question, but the paper\'s stated total marks should match what you confirm '
-                  'here.',
+          if (_gradingGuidanceController case final controller?) ...[
+            const SizedBox(height: 16),
+            TextField(
+              controller: controller,
+              decoration: const InputDecoration(
+                labelText: 'How should marks be allocated for this test? (optional notes for your own records)',
+                border: OutlineInputBorder(),
+                hintText: 'e.g. "Open book, half marks for a partially correct working"',
+              ),
+              maxLines: 3,
+              onChanged: (_) => setState(() {}),
             ),
           ],
           const SizedBox(height: 24),
-          Text('Marks per section', style: Theme.of(context).textTheme.titleMedium),
+          Text('Section totals', style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 4),
           Text(
             _sectionKeys.length == 1 && _sectionKeys.single == _noSectionKey
-                ? 'This paper has no section headings — confirm the mark value below.'
-                : 'Confirm how many marks each question is worth in every section this key found.',
+                ? 'This paper has no section headings — confirm its total marks below.'
+                : 'Confirm each section\'s own real total marks.',
             style: Theme.of(context).textTheme.bodySmall,
           ),
           const SizedBox(height: 12),
           for (final key in _sectionKeys) _buildSectionCard(key),
           const SizedBox(height: 20),
-          if (total != null)
+          if (total != null) ...[
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -231,6 +289,13 @@ class _MarkingSchemePaperStructureScreenState extends State<MarkingSchemePaperSt
                 ],
               ),
             ),
+            const SizedBox(height: 8),
+            Text(
+              'A candidate answers $_derivedRequiredAnswerCount question(s) in total across '
+              '${_sectionKeys.length} section(s), based on the structure above.',
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+          ],
         ],
       ),
       bottomNavigationBar: SafeArea(
@@ -239,13 +304,6 @@ class _MarkingSchemePaperStructureScreenState extends State<MarkingSchemePaperSt
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Real, reported bug (2026-09-04): the button below simply
-              // stayed disabled with no explanation — a section whose
-              // questions have inconsistent AI-extracted mark values starts
-              // with a BLANK marks-per-question field (see initState), and
-              // a blank field anywhere silently keeps _computedTotal (and
-              // so _canConfirm) null forever. Nothing on screen pointed at
-              // which field was the problem. Now it does.
               if (!_canConfirm)
                 Padding(
                   padding: const EdgeInsets.only(bottom: 8),
@@ -271,6 +329,8 @@ class _MarkingSchemePaperStructureScreenState extends State<MarkingSchemePaperSt
     final questions = _questionsBySection[key]!;
     final title = key == _noSectionKey ? '(No Section)' : key;
     final instructions = _instructionsFor(key);
+    final topLevelCount = _topLevelQuestionCountFor(key);
+    final style = _sectionStyles[key]!;
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
       child: Padding(
@@ -280,7 +340,9 @@ class _MarkingSchemePaperStructureScreenState extends State<MarkingSchemePaperSt
           children: [
             Text(title, style: Theme.of(context).textTheme.titleSmall),
             Text(
-              '${questions.length} question(s) currently listed',
+              topLevelCount == questions.length
+                  ? '$topLevelCount question(s)'
+                  : '$topLevelCount question(s) (${questions.length} row(s) listed, including sub-parts)',
               style: Theme.of(context).textTheme.bodySmall,
             ),
             if (instructions != null) ...[
@@ -292,54 +354,35 @@ class _MarkingSchemePaperStructureScreenState extends State<MarkingSchemePaperSt
             ],
             const SizedBox(height: 8),
             TextField(
-              controller: _sectionMarksControllers[key],
+              controller: _sectionTotalControllers[key],
               decoration: InputDecoration(
-                labelText: key == _noSectionKey ? 'Marks per question' : 'Marks per question in $title',
+                labelText: key == _noSectionKey ? 'Total marks for this paper' : 'Total marks for $title',
                 border: const OutlineInputBorder(),
-                // See _blockingReason's own comment — this is the field
-                // that silently blocked Confirm & Save with no visual cue
-                // before 2026-09-04. A section whose questions all agreed
-                // on marks already starts pre-filled and passes here.
-                errorText: _confirmedMarksFor(key) == null ? 'Required' : null,
+                errorText: _confirmedTotalFor(key) == null ? 'Required' : null,
               ),
               keyboardType: const TextInputType.numberWithOptions(decimal: true),
               inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*$'))],
               onChanged: (_) => setState(() {}),
             ),
+            const SizedBox(height: 10),
+            Text('How is this section marked?', style: Theme.of(context).textTheme.labelMedium),
+            const SizedBox(height: 4),
+            SegmentedButton<SectionMarkingStyle>(
+              segments: const [
+                ButtonSegment(
+                  value: SectionMarkingStyle.allRowsSumToTotal,
+                  label: Text('Every question shares this total', style: TextStyle(fontSize: 11.5)),
+                ),
+                ButtonSegment(
+                  value: SectionMarkingStyle.oneRowGetsFullTotal,
+                  label: Text('Only ONE is answered, in full', style: TextStyle(fontSize: 11.5)),
+                ),
+              ],
+              selected: {style},
+              onSelectionChanged: (selected) => setState(() => _sectionStyles[key] = selected.first),
+            ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _WarningBanner extends StatelessWidget {
-  const _WarningBanner({required this.text});
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.errorContainer,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(Icons.warning_amber_rounded, size: 18, color: Theme.of(context).colorScheme.onErrorContainer),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              text,
-              style: Theme.of(context)
-                  .textTheme
-                  .bodySmall
-                  ?.copyWith(color: Theme.of(context).colorScheme.onErrorContainer),
-            ),
-          ),
-        ],
       ),
     );
   }

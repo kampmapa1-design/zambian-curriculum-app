@@ -1498,10 +1498,19 @@ function buildDeriveMarkingKeyPrompt(sourceType: MarkingKeySourceType, isImageSo
         "than discarding them; only actual answerable questions go in the questions array itself.",
       "6. Set each question's sectionName to the heading of the section it falls under, exactly as printed " +
         "(e.g. 'Section A', 'Part II'), or an empty string if the document has no section headings at all.",
-      "7. Populate sections with one entry per distinct section heading found (in the order they appear), " +
+      "7. A question split into Roman-numeral/lettered sub-parts (e.g. '2(i)', '2(ii)', '2(iii)') is ONE " +
+        "numbered question, not several - keep its own label exactly as printed for each sub-part (each " +
+        "still needs its own row here, since each sub-part genuinely needs its own expected answer for " +
+        "grading), but do not treat '2(i)'/'2(ii)'/'2(iii)' as three independent top-level questions when " +
+        "estimating marks: if the source states a section's own total (e.g. 'Section A: 30 marks') or an " +
+        "overall per-question value that the sub-parts should sum to, distribute marks across that " +
+        "question's own sub-parts so they add up to what the source actually states for that question - " +
+        "never invent extra marks by treating each Roman-numeral sub-part as if it carried the full " +
+        "per-question or per-section allocation on its own.",
+      "8. Populate sections with one entry per distinct section heading found (in the order they appear), " +
         "each paired with that section's own real answer-instruction line exactly as printed/written - " +
         "empty array if there are no sections.",
-      "8. Set detectedTitle to the document's own title/heading exactly as printed or written (e.g. 'Grade " +
+      "9. Set detectedTitle to the document's own title/heading exactly as printed or written (e.g. 'Grade " +
         "12 Mathematics Final Examination'), or an empty string if none is genuinely visible - never invent " +
         "one.",
       "",
@@ -1530,10 +1539,23 @@ function buildDeriveMarkingKeyPrompt(sourceType: MarkingKeySourceType, isImageSo
       "than discarding them; only actual answerable questions go in the questions array itself.",
     "5. Set each question's sectionName to the heading of the section it falls under, exactly as printed " +
       "(e.g. 'Section A', 'Part II'), or an empty string if the paper has no section headings at all.",
-    "6. Populate sections with one entry per distinct section heading found (in the order they appear), " +
+    "6. A question split into Roman-numeral/lettered sub-parts (e.g. '2(i)', '2(ii)', '2(iii)') is ONE " +
+      "numbered question, not several - keep its own label exactly as printed for each sub-part (each " +
+      "still needs its own row here, since each sub-part genuinely needs its own model answer for " +
+      "grading), but do not treat '2(i)'/'2(ii)'/'2(iii)' as three independent top-level questions when " +
+      "estimating marks: if the paper states a section's own total (e.g. 'Section A: 30 marks') or an " +
+      "overall per-question value that the sub-parts should sum to, distribute marks across that " +
+      "question's own sub-parts so they add up to what the paper actually states for that question - " +
+      "never invent extra marks by treating each Roman-numeral sub-part as if it carried the full " +
+      "per-question or per-section allocation on its own. A real Zambian exam convention worth knowing: " +
+      "a paper with Section A/B (several questions, some split into sub-parts, ALL answered) and Section " +
+      "C/D (one full essay chosen from several alternatives) typically states each section's own fixed " +
+      "total (e.g. 30/30/20/20 marks summing to 100) rather than a per-question value - read the paper's " +
+      "own stated totals rather than assuming this exact split, but recognise the pattern when it's there.",
+    "7. Populate sections with one entry per distinct section heading found (in the order they appear), " +
       "each paired with that section's own real answer-instruction line exactly as printed/written - empty " +
       "array if there are no sections.",
-    "7. Set detectedTitle to the document's own title/heading exactly as printed or written (e.g. 'Grade " +
+    "8. Set detectedTitle to the document's own title/heading exactly as printed or written (e.g. 'Grade " +
       "12 Mathematics Final Examination'), or an empty string if none is genuinely visible - never invent " +
       "one.",
   ].join("\n");

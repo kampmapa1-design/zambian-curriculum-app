@@ -1,5 +1,6 @@
 import '../models/scheme_of_work.dart';
 import '../models/zambian_term_calendar.dart';
+import 'proportional_allocation.dart';
 
 /// The real bug this fixes: most bundled CBC subjects have far fewer
 /// authored topics/sub-topics than a real 13-week Zambian school term has
@@ -228,38 +229,10 @@ int _pacingWeight(SchemeOfWorkEntry e) => 1 + e.competencies.length + e.objectiv
 
 /// Largest-remainder apportionment: allocates [totalWeeks] whole weeks
 /// across entries proportional to [weights], every entry getting at least
-/// one week, summing to exactly [totalWeeks].
-List<int> _allocateWeeks(List<int> weights, int totalWeeks) {
-  final n = weights.length;
-  final totalWeight = weights.fold<int>(0, (a, b) => a + b);
-  final raw = [for (final w in weights) w * totalWeeks / totalWeight];
-  final base = [for (final r in raw) r.floor()];
-
-  for (var i = 0; i < n; i++) {
-    if (base[i] < 1) base[i] = 1;
-  }
-  var remaining = totalWeeks - base.fold<int>(0, (a, b) => a + b);
-
-  if (remaining > 0) {
-    final byFraction = List.generate(n, (i) => i)
-      ..sort((a, b) => (raw[b] - raw[b].floor()).compareTo(raw[a] - raw[a].floor()));
-    for (var k = 0; k < remaining; k++) {
-      base[byFraction[k % n]] += 1;
-    }
-  } else if (remaining < 0) {
-    final byWeeksDesc = List.generate(n, (i) => i)..sort((a, b) => base[b].compareTo(base[a]));
-    var i = 0;
-    while (remaining < 0 && i < n * 4) {
-      final j = byWeeksDesc[i % n];
-      if (base[j] > 1) {
-        base[j] -= 1;
-        remaining += 1;
-      }
-      i++;
-    }
-  }
-  return base;
-}
+/// one week, summing to exactly [totalWeeks]. Now a thin wrapper over the
+/// shared [allocateProportionally] — see that function's own doc comment
+/// for why it's shared rather than duplicated.
+List<int> _allocateWeeks(List<int> weights, int totalWeeks) => allocateProportionally(weights, totalWeeks);
 
 SchemeOfWorkEntry _withWeekNumber(SchemeOfWorkEntry e, int weekNumber) => SchemeOfWorkEntry(
       weekNumber: weekNumber,

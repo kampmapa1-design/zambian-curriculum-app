@@ -92,13 +92,26 @@ class MarkingScheme {
   final int? requiredAnswerCount;
 
   /// The paper's own real total, as the teacher confirmed it on
-  /// MarkingSchemePaperStructureScreen (section-by-section marks-per-
-  /// question times how many questions are really in each section) —
-  /// takes priority over the raw `questions` sum in [totalMarks] whenever
-  /// it's set, since it accounts for a paper's real "answer N of M"
-  /// structure in a way a flat sum over every listed question cannot.
-  /// Null for a scheme that never went through that confirmation step.
+  /// MarkingSchemePaperStructureScreen (each section's own real total,
+  /// per how that section is actually marked — see
+  /// [MarkingSchemeSectionMarks]) — takes priority over the raw
+  /// `questions` sum in [totalMarks] whenever it's set, since it accounts
+  /// for a paper's real "answer N of M"/section-total structure in a way
+  /// a flat sum over every listed question cannot. Null for a scheme that
+  /// never went through that confirmation step.
   final double? confirmedPaperTotalMarks;
+
+  /// A teacher's own free-text note on how marks should be allocated for
+  /// THIS assessment (2026-09-05, per explicit request) — asked on
+  /// MarkingSchemePaperStructureScreen specifically for an assessment that
+  /// doesn't look like a standardized mock/national exam (an ordinary
+  /// class test, whose mark-allocation rules genuinely vary assessment to
+  /// assessment, unlike a real exam's well-known Section A/B/C/D
+  /// convention). Purely a record of the teacher's own stated intent —
+  /// never generated or altered by the app; null when never asked (a
+  /// standardized-exam-looking assessment, or a scheme saved before this
+  /// field existed).
+  final String? gradingGuidance;
 
   const MarkingScheme({
     required this.id,
@@ -112,6 +125,7 @@ class MarkingScheme {
     this.preserveScriptOrder = false,
     this.requiredAnswerCount,
     this.confirmedPaperTotalMarks,
+    this.gradingGuidance,
   });
 
   /// The paper's total marks — [confirmedPaperTotalMarks] when a teacher
@@ -142,6 +156,7 @@ class MarkingScheme {
     bool? preserveScriptOrder,
     int? requiredAnswerCount,
     double? confirmedPaperTotalMarks,
+    String? gradingGuidance,
   }) =>
       MarkingScheme(
         id: id,
@@ -155,6 +170,7 @@ class MarkingScheme {
         preserveScriptOrder: preserveScriptOrder ?? this.preserveScriptOrder,
         requiredAnswerCount: requiredAnswerCount ?? this.requiredAnswerCount,
         confirmedPaperTotalMarks: confirmedPaperTotalMarks ?? this.confirmedPaperTotalMarks,
+        gradingGuidance: gradingGuidance ?? this.gradingGuidance,
       );
 
   factory MarkingScheme.fromJson(Map<String, dynamic> json) => MarkingScheme(
@@ -172,6 +188,7 @@ class MarkingScheme {
         preserveScriptOrder: json['preserveScriptOrder'] as bool? ?? false,
         requiredAnswerCount: json['requiredAnswerCount'] as int?,
         confirmedPaperTotalMarks: (json['confirmedPaperTotalMarks'] as num?)?.toDouble(),
+        gradingGuidance: json['gradingGuidance'] as String?,
       );
 
   Map<String, dynamic> toJson() => {
@@ -186,6 +203,7 @@ class MarkingScheme {
         'preserveScriptOrder': preserveScriptOrder,
         if (requiredAnswerCount != null) 'requiredAnswerCount': requiredAnswerCount,
         if (confirmedPaperTotalMarks != null) 'confirmedPaperTotalMarks': confirmedPaperTotalMarks,
+        if (gradingGuidance != null) 'gradingGuidance': gradingGuidance,
       };
 }
 

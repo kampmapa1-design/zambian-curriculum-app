@@ -231,6 +231,30 @@ class _MarkingSchemeBuilderScreenState extends State<MarkingSchemeBuilderScreen>
                 ],
               ),
             ),
+          // The teacher's own mark-allocation guidance for this specific
+          // test (see MarkingSchemePaperStructureScreen — only ever asked
+          // for an assessment that doesn't look like a standardized mock/
+          // national exam) — shown here so it isn't captured once and
+          // then never seen again.
+          if (widget.existing?.gradingGuidance case final guidance? when guidance.trim().isNotEmpty)
+            Container(
+              margin: const EdgeInsets.only(bottom: 12),
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.secondaryContainer,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Icon(Icons.rule_outlined, size: 18),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text('Your marking guidance: $guidance', style: Theme.of(context).textTheme.bodySmall),
+                  ),
+                ],
+              ),
+            ),
           Text(
             '${widget.subjectName} · ${widget.gradeName} · ${widget.subTopicName ?? widget.topicName}',
             style: Theme.of(context).textTheme.labelLarge,
