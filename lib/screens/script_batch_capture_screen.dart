@@ -10,13 +10,20 @@ import '../models/marking_session.dart';
 import '../models/syllabus_models.dart';
 import '../services/batch_grading_runner.dart';
 import '../services/marking_grading_service.dart';
+import '../services/marking_key_generation_service.dart';
+import '../services/marking_scheme_key_picker.dart';
 import '../services/marking_scheme_repository.dart';
 import '../services/marking_script_repository.dart';
 import '../services/marking_session_repository.dart';
 import '../services/template_repository.dart';
 import 'marked_scripts_screen.dart';
+import 'marking_key_upload_flow.dart';
 import 'subject_grade_topic_picker_screen.dart';
 import '../widgets/score_pop_badge.dart';
+
+/// Which of the two real options a teacher picked when starting a new
+/// cohort — see [_ScriptBatchCaptureScreenState._resolveMarkingKeyForNewCohort].
+enum _KeySourceChoice { useSaved, uploadNew }
 
 /// AI-Assisted Marking — "Upload Script" → "Upload through camera". One
 /// script (its whole batch of pages — typically around 6) per screen visit,
@@ -214,49 +221,7 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
     if (!mounted) return false;
     if (pickedTemplate == null) return false;
 
-    final schemes = await _schemeRepository.loadCatalog();
-    if (!mounted) return false;
-
-    // Scoped to the chosen subject only (2026-09-04, real, reported gap):
-    // showing every marking key regardless of subject risked a teacher
-    // picking the wrong subject's key by mistake once more than one had
-    // been uploaded. Newest first, with a real date on each option, so
-    // several keys for the same subject are clearly told apart — see
-    // MarkingSchemeRepository's own doc comment on why a key is uploaded
-    // and processed exactly once, then always just picked from here after.
-    final subjectSchemes = schemes.schemes
-        .where((s) => s.subjectName.trim().toLowerCase() == pickedTemplate.subject.name.trim().toLowerCase())
-        .toList()
-      ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
-
-    if (subjectSchemes.isEmpty) {
-      await showDialog<void>(
-        context: context,
-        builder: (dialogContext) => AlertDialog(
-          title: const Text('No marking key for this subject yet'),
-          content: Text(
-            'No marking key has been uploaded for ${pickedTemplate.subject.name} yet. Upload or build one '
-            'first (Upload Marking Key), then capture this script again.',
-          ),
-          actions: [FilledButton(onPressed: () => Navigator.of(dialogContext).pop(), child: const Text('OK'))],
-        ),
-      );
-      return false;
-    }
-
-    final pickedScheme = await showDialog<MarkingScheme>(
-      context: context,
-      builder: (dialogContext) => SimpleDialog(
-        title: Text('Which ${pickedTemplate.subject.name} marking key should this session use?'),
-        children: [
-          for (final s in subjectSchemes)
-            SimpleDialogOption(
-              onPressed: () => Navigator.of(dialogContext).pop(s),
-              child: Text('${s.title} — ${_formatSchemeDate(s.createdAt)} (${s.questions.length} question(s))'),
-            ),
-        ],
-      ),
-    );
+    final pickedScheme = await _resolveMarkingKeyForNewCohort(pickedTemplate);
     if (!mounted) return false;
     if (pickedScheme == null) return false;
     template = pickedTemplate;
@@ -477,6 +442,151 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
 
   String _formatSchemeDate(DateTime d) =>
       '${d.day.toString().padLeft(2, '0')}/${d.month.toString().padLeft(2, '0')}/${d.year}';
+
+  /// "Use a saved marking key, or upload a new one?" — real, reported gap
+  /// (2026-09-05): the previous version only ever offered marking keys
+  /// whose own typed subject name matched the bundled syllabus subject
+  /// EXACTLY (case/whitespace aside). A teacher who typed "History Paper
+  /// 1" and "History Paper 2" when uploading two real keys — a completely
+  /// reasonable way to name them — never saw either one here once they
+  /// picked the bundled "History" subject (the syllabus has no "Paper 1"/
+  /// "Paper 2" split), and the app wrongly reported "no marking key
+  /// uploaded" despite both being safely saved. Now offers both real
+  /// options explicitly at the start of every new cohort, and
+  /// [_pickAnyMarkingScheme] always shows every saved key regardless of
+  /// subject-name wording, never hiding one behind a filter that can
+  /// silently fail. Loops back to this same choice if either path is
+  /// backed out of, rather than dead-ending the whole "start a cohort"
+  /// attempt on a single misstep.
+  Future<MarkingScheme?> _resolveMarkingKeyForNewCohort(SyllabusTemplate pickedTemplate) async {
+    while (true) {
+      if (!mounted) return null;
+      final choice = await showDialog<_KeySourceChoice>(
+        context: context,
+        barrierDismissible: false,
+        builder: (dialogContext) => SimpleDialog(
+          title: const Text('Use a saved marking key, or upload a new one?'),
+          children: [
+            SimpleDialogOption(
+              onPressed: () => Navigator.of(dialogContext).pop(_KeySourceChoice.useSaved),
+              child: const Text('Use a saved marking key'),
+            ),
+            SimpleDialogOption(
+              onPressed: () => Navigator.of(dialogContext).pop(_KeySourceChoice.uploadNew),
+              child: const Text('Upload a new one'),
+            ),
+          ],
+        ),
+      );
+      if (!mounted || choice == null) return null;
+
+      if (choice == _KeySourceChoice.useSaved) {
+        final picked = await _pickAnyMarkingScheme(pickedTemplate);
+        if (!mounted) return null;
+        if (picked != null) return picked;
+        continue; // backed out of the list, or nothing saved yet — ask again
+      }
+
+      final uploaded = await _uploadNewMarkingKeyInline();
+      if (!mounted) return null;
+      if (uploaded != null) return uploaded;
+      continue; // backed out of the upload flow — ask again
+    }
+  }
+
+  /// Every saved marking key, regardless of subject — see
+  /// [_resolveMarkingKeyForNewCohort]'s own doc comment on why this no
+  /// longer filters by an exact subject-name match. Keys whose own
+  /// subject name matches [pickedTemplate]'s real syllabus subject are
+  /// listed first under their own heading (still the common, convenient
+  /// case), everything else follows under "Other saved keys" — labeled
+  /// with its own subject name so a different subject's key is never
+  /// mistaken for this one — rather than being hidden entirely.
+  Future<MarkingScheme?> _pickAnyMarkingScheme(SyllabusTemplate pickedTemplate) async {
+    final schemes = await _schemeRepository.loadCatalog();
+    if (!mounted) return null;
+    if (schemes.schemes.isEmpty) {
+      await showDialog<void>(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
+          title: const Text('No marking keys saved yet'),
+          content: const Text('Upload one first, then come back to start this cohort.'),
+          actions: [FilledButton(onPressed: () => Navigator.of(dialogContext).pop(), child: const Text('OK'))],
+        ),
+      );
+      return null;
+    }
+
+    final (:matching, :other) = splitMarkingSchemesBySubjectMatch(schemes.schemes, pickedTemplate.subject.name);
+
+    if (!mounted) return null;
+    return showDialog<MarkingScheme>(
+      context: context,
+      builder: (dialogContext) => SimpleDialog(
+        title: const Text('Which marking key should this session use?'),
+        children: [
+          if (matching.isNotEmpty) ...[
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+              child: Text(pickedTemplate.subject.name, style: Theme.of(dialogContext).textTheme.labelMedium),
+            ),
+            for (final s in matching)
+              SimpleDialogOption(
+                onPressed: () => Navigator.of(dialogContext).pop(s),
+                child: Text('${s.title} — ${_formatSchemeDate(s.createdAt)} (${s.questions.length} question(s))'),
+              ),
+          ],
+          if (other.isNotEmpty) ...[
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+              child: Text('Other saved keys', style: Theme.of(dialogContext).textTheme.labelMedium),
+            ),
+            for (final s in other)
+              SimpleDialogOption(
+                onPressed: () => Navigator.of(dialogContext).pop(s),
+                child: Text('${s.subjectName} — ${s.title} — ${_formatSchemeDate(s.createdAt)}'),
+              ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  /// "Upload a new one" — the device/camera choice a teacher would
+  /// otherwise only see from the AutoGrade hub's own "Upload Marking Key"
+  /// button, now reachable right at the point a new cohort actually needs
+  /// one, so uploading and then immediately using it for this session
+  /// doesn't require backing all the way out to the hub and back in.
+  /// Runs the exact same shared flow (marking_key_upload_flow.dart) as
+  /// every other entry point into it.
+  Future<MarkingScheme?> _uploadNewMarkingKeyInline() async {
+    final method = await showModalBottomSheet<MarkingKeyUploadMethod>(
+      context: context,
+      builder: (sheetContext) => SafeArea(
+        child: Wrap(
+          children: [
+            ListTile(
+              leading: const Icon(Icons.camera_alt_outlined),
+              title: const Text('Upload through camera'),
+              onTap: () => Navigator.of(sheetContext).pop(MarkingKeyUploadMethod.camera),
+            ),
+            ListTile(
+              leading: const Icon(Icons.upload_file_outlined),
+              title: const Text('Upload from device'),
+              onTap: () => Navigator.of(sheetContext).pop(MarkingKeyUploadMethod.uploadFromDevice),
+            ),
+          ],
+        ),
+      ),
+    );
+    if (!mounted || method == null) return null;
+    return runMarkingKeyUploadFlow(
+      context: context,
+      sourceType: MarkingKeySourceType.markingKey,
+      method: method,
+      schemeRepository: _schemeRepository,
+    );
+  }
 
   Future<void> _captureNextPage() async {
     final result = await Navigator.of(context).push<DocumentCaptureData>(
