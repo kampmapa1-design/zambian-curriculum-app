@@ -63,6 +63,7 @@ class MarkingScriptRepository {
     required String subjectName,
     required String gradeName,
     String classLevel = '',
+    String cohortName = '',
     required List<File> capturedPageFiles,
     List<PreSegmentedAnswer>? preSegmentedAnswers,
   }) async {
@@ -87,6 +88,7 @@ class MarkingScriptRepository {
       subjectName: subjectName,
       gradeName: gradeName,
       classLevel: classLevel,
+      cohortName: cohortName,
       pageFileNames: pageFileNames,
       capturedAt: DateTime.now(),
       preSegmentedAnswers: preSegmentedAnswers,

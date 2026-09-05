@@ -35,6 +35,25 @@ class MarkingSession {
 
   /// How many scripts the teacher said, up front, they plan to capture in
   /// this session — the whole point of asking once instead of per script.
+  /// The three free-text fields a teacher gives THIS cohort at the very
+  /// start (2026-09-05, per explicit request) — e.g. "Grade 12 Mock
+  /// Exam", "Grade 12", "12A" — asked once a marking key is chosen/
+  /// uploaded and the first script's first page is captured, purely to
+  /// tell cohorts apart later (the same marking key genuinely gets reused
+  /// across several different classes/sittings — see
+  /// [MarkingScript.cohortName]'s own doc comment on why this needed a
+  /// real fix, not just a label). Deliberately NEVER validated against
+  /// the marking key's own subject/title/grade — a real class/exam is
+  /// often named differently from how the key itself was titled when
+  /// uploaded, and requiring them to match would block real marking work
+  /// over a wording mismatch, exactly the trap
+  /// splitMarkingSchemesBySubjectMatch already fixed for key selection
+  /// itself. Empty string (not null) for a session that predates this
+  /// field, or where a teacher left one blank.
+  final String cohortName;
+  final String examLevel;
+  final String className;
+
   final int targetScriptCount;
 
   /// The first MarkingScript.scriptNumber issued for this session —
@@ -55,6 +74,9 @@ class MarkingSession {
     required this.gradeName,
     required this.schemeId,
     required this.schemeTitle,
+    this.cohortName = '',
+    this.examLevel = '',
+    this.className = '',
     required this.targetScriptCount,
     required this.startScriptNumber,
     required this.startedAt,
@@ -78,6 +100,9 @@ class MarkingSession {
         'gradeName': gradeName,
         'schemeId': schemeId,
         'schemeTitle': schemeTitle,
+        'cohortName': cohortName,
+        'examLevel': examLevel,
+        'className': className,
         'targetScriptCount': targetScriptCount,
         'startScriptNumber': startScriptNumber,
         'startedAt': startedAt.toIso8601String(),
@@ -91,6 +116,9 @@ class MarkingSession {
         gradeName: json['gradeName'] as String,
         schemeId: json['schemeId'] as String,
         schemeTitle: json['schemeTitle'] as String,
+        cohortName: json['cohortName'] as String? ?? '',
+        examLevel: json['examLevel'] as String? ?? '',
+        className: json['className'] as String? ?? '',
         targetScriptCount: json['targetScriptCount'] as int,
         startScriptNumber: json['startScriptNumber'] as int,
         startedAt: DateTime.parse(json['startedAt'] as String),

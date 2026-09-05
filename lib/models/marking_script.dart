@@ -190,6 +190,21 @@ class MarkingScript {
   /// nothing entered.
   final String classLevel;
 
+  /// Which cohort/sitting this script belongs to (2026-09-05, real fix,
+  /// not just a label) — the free-text "cohort name" a teacher gives once
+  /// per marking session (see MarkingSession.cohortName), stamped onto
+  /// every script saved during it. Exists because the SAME marking key is
+  /// genuinely reused across different classes/sittings (e.g. "History
+  /// Paper 1" marked for both 12A and 12B on different days) — without
+  /// this, MarkingQueueScreen's "Completed Marking Cohort" could only
+  /// scope by schemeId, which would silently merge two different
+  /// classes' scripts into one cohort just because they share a marking
+  /// key. Empty string (not null) for a script saved before this field
+  /// existed, or a session where a teacher left the cohort name blank —
+  /// both cases fall back to scoping by schemeId alone, same as before
+  /// this field existed, rather than treating "" as a stricter filter.
+  final String cohortName;
+
   /// File names only (relative to this script's own subdirectory), in
   /// page order — not full paths, since the app documents directory
   /// itself can move between app versions/reinstalls. Still populated
@@ -243,6 +258,7 @@ class MarkingScript {
     required this.subjectName,
     required this.gradeName,
     this.classLevel = '',
+    this.cohortName = '',
     required this.pageFileNames,
     this.photosDiscarded = false,
     required this.capturedAt,
@@ -279,6 +295,7 @@ class MarkingScript {
     CandidateGender? gender,
     bool? genderConfirmed,
     String? classLevel,
+    String? cohortName,
     List<String>? pageFileNames,
     bool? photosDiscarded,
     MarkingScriptStatus? status,
@@ -302,6 +319,7 @@ class MarkingScript {
         subjectName: subjectName,
         gradeName: gradeName,
         classLevel: classLevel ?? this.classLevel,
+        cohortName: cohortName ?? this.cohortName,
         pageFileNames: pageFileNames ?? this.pageFileNames,
         photosDiscarded: photosDiscarded ?? this.photosDiscarded,
         capturedAt: capturedAt,
@@ -351,6 +369,7 @@ class MarkingScript {
       subjectName: json['subjectName'] as String? ?? 'Unknown subject',
       gradeName: json['gradeName'] as String? ?? 'Unknown grade',
       classLevel: json['classLevel'] as String? ?? '',
+      cohortName: json['cohortName'] as String? ?? '',
       pageFileNames: (json['pageFileNames'] as List).cast<String>(),
       photosDiscarded: json['photosDiscarded'] as bool? ?? false,
       capturedAt: DateTime.parse(json['capturedAt'] as String),
@@ -380,6 +399,7 @@ class MarkingScript {
         'subjectName': subjectName,
         'gradeName': gradeName,
         'classLevel': classLevel,
+        'cohortName': cohortName,
         'pageFileNames': pageFileNames,
         'photosDiscarded': photosDiscarded,
         'capturedAt': capturedAt.toIso8601String(),

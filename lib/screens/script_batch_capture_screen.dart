@@ -227,11 +227,15 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
     template = pickedTemplate;
     scheme = pickedScheme;
 
+    final cohortDetails = await _askCohortDetails();
+    if (!mounted) return false;
+    if (cohortDetails == null) return false;
+
     final targetCount = await _askTargetScriptCount();
     if (!mounted) return false;
     if (targetCount == null) return false;
 
-    final details = await _askScriptDetails();
+    final details = await _askScriptDetails(initialClassLevel: cohortDetails.className);
     if (!mounted) return false;
     if (details == null) return false;
 
@@ -246,6 +250,9 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
       gradeName: template.grade.name,
       schemeId: scheme.id,
       schemeTitle: scheme.title,
+      cohortName: cohortDetails.cohortName,
+      examLevel: cohortDetails.examLevel,
+      className: cohortDetails.className,
       targetScriptCount: targetCount,
       startScriptNumber: startNumber,
       startedAt: DateTime.now(),
@@ -267,6 +274,100 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
       _setupComplete = true;
     });
     return true;
+  }
+
+  /// Asked once, right after a marking key is chosen/uploaded for a new
+  /// cohort (2026-09-05, per explicit request): a real name for this
+  /// cohort, the exam's level, and the class being marked — e.g. "Grade
+  /// 12 Mock Exam", "Grade 12", "12A". Deliberately free text with NO
+  /// validation against the marking key's own subject/title/level — the
+  /// explicit request was that these "should not block the marking
+  /// process even if the name or details given to the cohort do not
+  /// exactly match with the title of the marking key selected", since a
+  /// real class/exam sitting is very often named differently from
+  /// however the key itself was titled when it was uploaded (the same
+  /// key is routinely reused across several different classes). Stored
+  /// on the new MarkingSession and stamped onto every script saved during
+  /// it (see MarkingScript.cohortName) purely so cohorts stay tellable
+  /// apart later, never to gate anything. Returns null if the teacher
+  /// backs out.
+  Future<_CohortDetails?> _askCohortDetails() {
+    final cohortNameController = TextEditingController();
+    final examLevelController = TextEditingController();
+    final classNameController = TextEditingController();
+    final formKey = GlobalKey<FormState>();
+
+    return showDialog<_CohortDetails>(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Name this cohort'),
+        content: SizedBox(
+          width: double.maxFinite,
+          child: SingleChildScrollView(
+            child: Form(
+              key: formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'A few words to tell this class/sitting apart later — especially useful if you mark the '
+                    'same paper for more than one class. These don\'t need to match the marking key\'s own '
+                    'title.',
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: cohortNameController,
+                    autofocus: true,
+                    decoration: const InputDecoration(
+                      labelText: 'Cohort name (e.g. "Grade 12 Mock Exam")',
+                      border: OutlineInputBorder(),
+                    ),
+                    textCapitalization: TextCapitalization.sentences,
+                    validator: (v) => (v == null || v.trim().isEmpty) ? 'Required' : null,
+                  ),
+                  const SizedBox(height: 12),
+                  TextFormField(
+                    controller: examLevelController,
+                    decoration: const InputDecoration(
+                      labelText: 'Level of the exam (e.g. "Grade 12")',
+                      border: OutlineInputBorder(),
+                    ),
+                    textCapitalization: TextCapitalization.words,
+                    validator: (v) => (v == null || v.trim().isEmpty) ? 'Required' : null,
+                  ),
+                  const SizedBox(height: 12),
+                  TextFormField(
+                    controller: classNameController,
+                    decoration: const InputDecoration(
+                      labelText: 'Name of the class (e.g. "12A")',
+                      border: OutlineInputBorder(),
+                    ),
+                    textCapitalization: TextCapitalization.words,
+                    validator: (v) => (v == null || v.trim().isEmpty) ? 'Required' : null,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(dialogContext).pop(), child: const Text('Cancel')),
+          FilledButton(
+            onPressed: () {
+              if (!(formKey.currentState?.validate() ?? false)) return;
+              Navigator.of(dialogContext).pop(_CohortDetails(
+                cohortName: cohortNameController.text.trim(),
+                examLevel: examLevelController.text.trim(),
+                className: classNameController.text.trim(),
+              ));
+            },
+            child: const Text('Continue'),
+          ),
+        ],
+      ),
+    );
   }
 
   /// Asked once, at the very start of a new session — per explicit request
@@ -331,11 +432,15 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
   /// screen saves now has a real, teacher-confirmed gender from the start
   /// instead of a placeholder needing correction later. Returns null if
   /// the teacher backs out.
-  Future<_ScriptDetails?> _askScriptDetails() {
+  Future<_ScriptDetails?> _askScriptDetails({String initialClassLevel = ''}) {
     final firstNameController = TextEditingController();
     final surnameController = TextEditingController();
     final idController = TextEditingController();
-    final classLevelController = TextEditingController();
+    // Pre-filled from the cohort's own "name of the class" (asked once, at
+    // the very start of the cohort — see _askCohortDetails) so the very
+    // first script doesn't make a teacher retype what they just entered;
+    // still freely editable per script, same as before this existed.
+    final classLevelController = TextEditingController(text: initialClassLevel);
     final formKey = GlobalKey<FormState>();
     CandidateGender? gender;
     String? genderError;
@@ -657,6 +762,7 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
       subjectName: _subjectGrade!.subject.name,
       gradeName: _subjectGrade!.grade.name,
       classLevel: _classLevel,
+      cohortName: _session?.cohortName ?? '',
       capturedPageFiles: _pages,
     );
     // Gender is now collected up front (see _askScriptDetails) and is
@@ -944,4 +1050,18 @@ class _ScriptDetails {
   final CandidateGender gender;
   final String studentId;
   final String classLevel;
+}
+
+/// Result of [_ScriptBatchCaptureScreenState._askCohortDetails] — plain
+/// data, no behavior.
+class _CohortDetails {
+  const _CohortDetails({
+    required this.cohortName,
+    required this.examLevel,
+    required this.className,
+  });
+
+  final String cohortName;
+  final String examLevel;
+  final String className;
 }

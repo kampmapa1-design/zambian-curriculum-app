@@ -25,11 +25,23 @@ class CohortCompletionScreen extends StatefulWidget {
   const CohortCompletionScreen({
     super.key,
     required this.scheme,
+    this.cohortName = '',
     this.repository,
     this.documentService,
   });
 
   final MarkingScheme scheme;
+
+  /// Which cohort of this scheme's scripts to complete — see
+  /// MarkingScript.cohortName's own doc comment on why this exists: the
+  /// same marking key is routinely reused across different classes, and
+  /// without this every class sharing a key would be treated as one
+  /// cohort. Empty string (the default) scopes by [scheme] alone, same as
+  /// this screen's original behavior — correct for a scheme that's only
+  /// ever been used by one cohort, or for scripts saved before cohort
+  /// names existed.
+  final String cohortName;
+
   final MarkingScriptRepository? repository;
   final MarksheetDocumentService? documentService;
 
@@ -56,7 +68,12 @@ class _CohortCompletionScreenState extends State<CohortCompletionScreen> {
     final catalog = await _repository.loadCatalog();
     if (!mounted) return;
     setState(() {
-      _cohortScripts = catalog.scripts.where((s) => s.schemeId == widget.scheme.id).toList();
+      // Exact match on cohortName (see this class's own doc comment) —
+      // '' scopes correctly to old-data scripts that never had a cohort
+      // name, without also swallowing a different, real, named cohort
+      // that happens to share this same scheme.
+      _cohortScripts =
+          catalog.scripts.where((s) => s.schemeId == widget.scheme.id && s.cohortName == widget.cohortName).toList();
       _loading = false;
     });
     _checkForCompletion();
@@ -192,7 +209,11 @@ class _CohortCompletionScreenState extends State<CohortCompletionScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Cohort — ${widget.scheme.title}')),
+      appBar: AppBar(
+        title: Text(
+          widget.cohortName.trim().isEmpty ? 'Cohort — ${widget.scheme.title}' : '${widget.cohortName} — ${widget.scheme.title}',
+        ),
+      ),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : _showingSummary

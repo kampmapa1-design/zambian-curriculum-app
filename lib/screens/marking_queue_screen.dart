@@ -9,6 +9,7 @@ import '../models/marking_script.dart';
 import '../models/marking_session.dart';
 import '../models/syllabus_models.dart';
 import '../services/batch_grading_runner.dart';
+import '../services/marking_cohort_grouping.dart';
 import '../services/marking_entitlement_service.dart';
 import '../services/marking_gap_report_document_service.dart';
 import '../services/marking_gap_report_service.dart';
@@ -654,43 +655,54 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
   }
 
   /// "Completed Marking Cohort" — the final action for one class'
-  /// scripts (one marking scheme). Scopes to whichever scheme(s) actually
-  /// have scripts that have entered the marking pipeline (queued or
-  /// later) — a script still sitting at [MarkingScriptStatus.captured],
-  /// not yet linked to any scheme, isn't part of any cohort yet.
+  /// scripts. Scopes to whichever (scheme, cohort) PAIR actually has
+  /// scripts that have entered the marking pipeline (queued or later) —
+  /// a script still sitting at [MarkingScriptStatus.captured], not yet
+  /// linked to any scheme, isn't part of any cohort yet.
+  ///
+  /// Real, reported gap this fixes (2026-09-05): the same marking key is
+  /// routinely reused across different classes/sittings (e.g. "History
+  /// Paper 1" marked for both 12A and 12B) — grouping by schemeId alone
+  /// would silently merge two genuinely different classes' scripts into
+  /// one cohort just because they share a marking key. Now groups by
+  /// (schemeId, cohortName) — see MarkingSession.cohortName/
+  /// MarkingScript.cohortName — so each class stays its own cohort even
+  /// when several share one key. A script/cohort with no cohort name at
+  /// all (saved before this existed) groups under '' same as always,
+  /// scoped by scheme alone — unchanged behavior for old data.
   Future<void> _completeMarkingCohort() async {
-    final schemeIds = <String>{
-      for (final s in _catalog.scripts)
-        if (s.schemeId != null && s.status != MarkingScriptStatus.captured) s.schemeId!,
-    };
-    if (schemeIds.isEmpty) {
+    final candidates = activeMarkingCohorts(_catalog.scripts, _schemes.schemes);
+    if (candidates.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('No scripts have been queued or marked yet for any class.')),
       );
       return;
     }
 
-    final candidates = _schemes.schemes.where((s) => schemeIds.contains(s.id)).toList();
-    final scheme = candidates.length == 1
+    final picked = candidates.length == 1
         ? candidates.single
-        : await showDialog<MarkingScheme>(
+        : await showDialog<({MarkingScheme scheme, String cohortName})>(
             context: context,
             builder: (dialogContext) => SimpleDialog(
               title: const Text('Complete marking for which class?'),
               children: [
-                for (final s in candidates)
+                for (final c in candidates)
                   SimpleDialogOption(
-                    onPressed: () => Navigator.of(dialogContext).pop(s),
-                    child: Text(s.title),
+                    onPressed: () => Navigator.of(dialogContext).pop(c),
+                    child: Text(markingCohortLabel(c)),
                   ),
               ],
             ),
           );
-    if (scheme == null || !mounted) return;
+    if (picked == null || !mounted) return;
 
     final action = await Navigator.of(context).push<CohortCompletionAction>(
       MaterialPageRoute(
-        builder: (_) => CohortCompletionScreen(scheme: scheme, repository: _repository),
+        builder: (_) => CohortCompletionScreen(
+          scheme: picked.scheme,
+          cohortName: picked.cohortName,
+          repository: _repository,
+        ),
       ),
     );
     await _load();
@@ -903,7 +915,10 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
                     if (_activeSession != null)
                       PopupMenuItem(
                         value: 'change',
-                        child: Text('Change subject / marking key (currently: ${_activeSession!.subjectName})'),
+                        child: Text(
+                          'Change subject / marking key (currently: '
+                          '${_activeSession!.cohortName.trim().isEmpty ? _activeSession!.subjectName : _activeSession!.cohortName})',
+                        ),
                       ),
                   ],
                   onSelected: (value) => switch (value) {
