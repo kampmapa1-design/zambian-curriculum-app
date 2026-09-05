@@ -5,6 +5,7 @@ import '../models/lesson_plan.dart';
 import '../models/subject_content_item.dart';
 import '../services/custom_template_repository.dart';
 import '../services/subject_content_repository.dart';
+import 'data_backup_screen.dart';
 import 'template_upload_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -150,6 +151,26 @@ class _SettingsScreenState extends State<SettingsScreen> {
           : ListView(
               padding: const EdgeInsets.all(16),
               children: [
+                Text('Data backup', style: Theme.of(context).textTheme.titleMedium),
+                const SizedBox(height: 4),
+                const Text(
+                  'Back up class rosters, scores, and marking data to a file you control, or restore from one.',
+                  style: TextStyle(fontSize: 13),
+                ),
+                const SizedBox(height: 12),
+                ListTile(
+                  leading: const Icon(Icons.backup_outlined),
+                  title: const Text('Data Backup'),
+                  subtitle: const Text('Back up or restore rosters, scores, and marking data'),
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const DataBackupScreen()),
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    side: BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
+                  ),
+                ),
+                const SizedBox(height: 20),
                 Text('Lesson plan templates', style: Theme.of(context).textTheme.titleMedium),
                 const SizedBox(height: 4),
                 const Text(
