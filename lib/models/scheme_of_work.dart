@@ -13,20 +13,32 @@ class SchemeOfWorkEntry {
   final List<LearningObjective> objectives;
   final List<Competency> competencies;
 
+  /// False only when [applyCalendarPacing] has determined this entry's own
+  /// sourced week number can't be trusted for THIS generation — see that
+  /// function's own doc comment. [topic]/[subTopic] are immutable models
+  /// shared with every other generation of the same syllabus, so their own
+  /// `weekNumber` can't just be cleared there; this flag is what makes
+  /// [realWeekNumber] correctly report "nothing real to go on" for this
+  /// specific generation without touching the underlying syllabus data at
+  /// all. True (trust it) for every entry until proven otherwise.
+  final bool realWeekTrusted;
+
   const SchemeOfWorkEntry({
     required this.weekNumber,
     required this.topic,
     this.subTopic,
     required this.objectives,
     required this.competencies,
+    this.realWeekTrusted = true,
   });
 
   String get title => subTopic == null ? topic.name : '${topic.name} — ${subTopic!.name}';
 
   /// The real teaching week from a sourced scheme of work, when known — see
   /// [SubTopic.weekNumber]. Null for content ingested before real week data
-  /// was tracked; callers should fall back to [weekNumber] in that case.
-  int? get realWeekNumber => subTopic?.weekNumber ?? topic.weekNumber;
+  /// was tracked, OR when [realWeekTrusted] is false; callers should fall
+  /// back to [weekNumber] in either case.
+  int? get realWeekNumber => realWeekTrusted ? (subTopic?.weekNumber ?? topic.weekNumber) : null;
 
   /// Real sourced reference material, when known — see
   /// [SubTopic.references]. Null for content with no sourced references

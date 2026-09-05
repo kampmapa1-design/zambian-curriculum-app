@@ -186,6 +186,75 @@ void main() {
     expect(entries.map((e) => e.subTopic?.name).toList(), ['B.1', 'B.2', 'C.1', 'D.1']);
   });
 
+  // Real, reported bug (2026-09-05): picking a topic partway through one
+  // term as a "Topics in the Scheme" starting point, for a SUBJECT WITH
+  // REAL SOURCED WEEK NUMBERS (unlike this file's other cross-term tests,
+  // which use topics with no real week data at all), produced a scheme
+  // that stopped short and "could not draw from the next term's topics" —
+  // even though generateSchemeOfWorkStartingAt already correctly slices
+  // across every one of a template's terms (see allSchemeOfWorkEntries).
+  // The real cause: Term A's own real week numbers (7,8,9,10,11) and Term
+  // B's own real week numbers (1,2,...) are both genuinely real, sourced,
+  // and non-overlapping WITHIN their own term — but concatenated, they go
+  // 7,8,9,10,11,1,2,3,4,5,6, which is not ascending. Trusting them
+  // verbatim (the pre-fix behavior) made _insertSpecialWeekRow think week
+  // 7 (Term A's own real week 7) was already "real content" and skip
+  // inserting a Mid-Term Break row for THIS document entirely, and
+  // capped the whole document at fewer than a real teaching week's worth
+  // of rows with no End-of-Term row landing where it should. Fixed via
+  // applyCalendarPacing's monotonicity check (see its own doc comment).
+  test('generateSchemeOfWorkStartingAt spilling into a second term with its own real week '
+      'numbers still produces a genuinely full scheme, not a stunted one', () {
+    final termAWeeks = [7, 8, 9, 10, 11];
+    final termASubs = [
+      for (var i = 0; i < termAWeeks.length; i++)
+        SubTopic(id: 1000 + i, sequenceNumber: i, name: 'A.${i + 1}', weekNumber: termAWeeks[i], competencies: [_competency(1000 + i)]),
+    ];
+    final termATopic = _topicWithSubTopics(100, 'Term A Topic', termASubs);
+
+    final termBSubs = [
+      for (var i = 0; i < 10; i++)
+        SubTopic(id: 2000 + i, sequenceNumber: i, name: 'B.${i + 1}', weekNumber: i + 1, competencies: [_competency(2000 + i)]),
+    ];
+    final termBTopic = _topicWithSubTopics(200, 'Term B Topic', termBSubs);
+
+    final spanningRealWeekTemplate = SyllabusTemplate(
+      curriculum: const Curriculum(id: 1, code: 'X', name: 'X'),
+      subject: const Subject(id: 1, curriculumId: 1, code: 'SUBJ', name: 'Subject'),
+      grade: const Grade(id: 1, curriculumId: 1, code: 'G', name: 'Grade', level: 10),
+      terms: [
+        Term(id: 1, sequenceNumber: 1, name: 'Term A', topics: [termATopic]),
+        Term(id: 2, sequenceNumber: 2, name: 'Term B', topics: [termBTopic]),
+      ],
+    );
+
+    // Picking Term A's very FIRST sub-topic (its own real week 7) as the
+    // starting point — matches the real reported scenario almost exactly.
+    final start = SchemeOfWorkEntry(weekNumber: 1, topic: termATopic, subTopic: termASubs.first, objectives: const [], competencies: const []);
+    final entries = generateSchemeOfWorkStartingAt(spanningRealWeekTemplate, start);
+
+    // Plenty of real content exists across both terms (5 + 10 = 15) to
+    // fill a full term's real teaching weeks — the generation must reach
+    // the cap, not stop at Term A's own 5 entries.
+    expect(entries.length, TermDates.teachingWeekCount);
+
+    final draft = SchemeOfWorkDocumentDraft.fromEntries(entries, curriculumCode: 'OBC_2013', subjectName: 'Subject');
+
+    // A full 13-row document: every real teaching week PLUS exactly one
+    // Mid-Term Break row and exactly one End of Term Examinations row —
+    // never silently missing either just because real week numbers from
+    // two different terms don't line up with each other.
+    expect(draft.rows.length, TermDates.totalWeeks);
+    expect(draft.rows.where((r) => r.specialRowLabel == 'MID-TERM BREAK').length, 1);
+    expect(draft.rows.where((r) => r.specialRowLabel == 'END OF TERM EXAMINATIONS').length, 1);
+
+    // Displayed week numbers are always a clean, gapless 1..13 by row
+    // position, regardless of any entry's own original real week number.
+    for (var i = 0; i < draft.rows.length; i++) {
+      expect(draft.rows[i].value(const SchemeOfWorkColumnDef(id: 'week', label: 'Week')), '${i + 1}');
+    }
+  });
+
   test('week numbers are always plain numerals, never spelled out as words', () {
     final template2 = SyllabusTemplate(
       curriculum: const Curriculum(id: 1, code: 'X', name: 'X'),
