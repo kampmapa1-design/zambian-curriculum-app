@@ -12,8 +12,8 @@ import '../services/device_downloads_service.dart';
 /// [ReportClassBackupService]'s existing opportunistic backup-email (a
 /// human-readable document, not restorable, and Chief Marker data isn't in
 /// it at all). See [DataBackupService]'s own doc comment for exactly
-/// what's covered and what's deliberately left for a Stage 2 (script
-/// photos).
+/// what's covered — including, as of the same day, every marking script's
+/// actual photographed pages, not just the marking data around them.
 class DataBackupScreen extends StatefulWidget {
   const DataBackupScreen({super.key, this.backupService, this.downloadsService});
 
@@ -34,13 +34,14 @@ class _DataBackupScreenState extends State<DataBackupScreen> {
     setState(() => _busy = true);
     try {
       final file = await _backupService.exportBackup();
+      final sizeLabel = _formatBytes(await file.length());
       final fileName = file.uri.pathSegments.last;
       try {
         await _downloadsService.saveToDownloads(file: file, fileName: fileName, mimeType: 'application/zip');
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Backup saved to your Downloads folder. Keep a copy somewhere off this '
-              'device too (Google Drive, email to yourself, etc.) — a backup that only lives on this phone '
+          SnackBar(content: Text('Backup saved to your Downloads folder ($sizeLabel). Keep a copy somewhere off '
+              'this device too (Google Drive, email to yourself, etc.) — a backup that only lives on this phone '
               'doesn\'t protect against losing this phone.')),
         );
       } on DeviceDownloadsUnsupported {
@@ -86,18 +87,20 @@ class _DataBackupScreenState extends State<DataBackupScreen> {
             Text('Made ${_formatDateTime(manifest.exportedAt)}'),
             const SizedBox(height: 8),
             Text('${manifest.reportClassCount} class(es), ${manifest.markingScriptCount} marked script(s).'),
-            if (!manifest.includesScriptPhotos) ...[
+            if (manifest.includesScriptPhotos && manifest.scriptPhotoCount > 0) ...[
+              const SizedBox(height: 4),
+              Text('Includes ${manifest.scriptPhotoCount} script photo(s), ${_formatBytes(manifest.scriptPhotoBytes)}.'),
+            ] else ...[
               const SizedBox(height: 8),
               const Text(
-                'This backup does not include script photos (not yet covered by backups) — only the marking '
-                'data itself.',
+                'This backup does not include script photos — only the marking data around them.',
                 style: TextStyle(fontStyle: FontStyle.italic, fontSize: 12.5),
               ),
             ],
             const SizedBox(height: 16),
             const Text(
-              'This REPLACES every class, learner, score, marking scheme, and results list currently on this '
-              'device with what\'s in this backup. Anything added since this backup was made will be lost. '
+              'This REPLACES every class, learner, score, marking scheme, results list, and script photo currently '
+              'on this device with what\'s in this backup. Anything added since this backup was made will be lost. '
               'This cannot be undone.',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
@@ -137,6 +140,11 @@ class _DataBackupScreenState extends State<DataBackupScreen> {
     }
   }
 
+  String _formatBytes(int bytes) {
+    if (bytes < 1024 * 1024) return '${(bytes / 1024).toStringAsFixed(0)} KB';
+    return '${(bytes / (1024 * 1024)).toStringAsFixed(1)} MB';
+  }
+
   String _formatDateTime(DateTime dt) {
     final local = dt.toLocal();
     String two(int n) => n.toString().padLeft(2, '0');
@@ -155,14 +163,15 @@ class _DataBackupScreenState extends State<DataBackupScreen> {
             padding: const EdgeInsets.all(16),
             children: [
               const Text(
-                'Backs up your class rosters (including guardian contacts), scores, marking schemes, and marked '
-                'results lists into one file you control — separate from the automatic backup-email some classes '
-                'already send, which is just a document, not something the app can restore from.',
+                'Backs up your class rosters (including guardian contacts), scores, marking schemes, marked '
+                'results lists, and every marking script\'s photographed pages into one file you control — '
+                'separate from the automatic backup-email some classes already send, which is just a document, '
+                'not something the app can restore from.',
               ),
               const SizedBox(height: 4),
               Text(
-                'Does not yet include the photographed pages of marking scripts themselves — that\'s a planned '
-                'follow-up.',
+                'Script photos can make this a large file — expect a noticeable wait for a class with many '
+                'marked scripts.',
                 style: Theme.of(context).textTheme.bodySmall,
               ),
               const SizedBox(height: 24),
