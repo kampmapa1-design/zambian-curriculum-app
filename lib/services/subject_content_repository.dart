@@ -9,6 +9,17 @@ import 'package:path_provider/path_provider.dart';
 import '../models/subject_content_item.dart';
 import 'on_device_pdf_text_extraction_service.dart';
 import 'subject_content_extraction_service.dart';
+import 'text_excerpt_matching.dart';
+
+/// One ranked hit from [SubjectContentRepository.searchContent] — the
+/// stored item itself, its own best-matching excerpt, and the raw
+/// keyword-overlap score results are ranked by (higher first).
+class SubjectContentSearchHit {
+  final SubjectContentItem item;
+  final String excerpt;
+  final int score;
+  const SubjectContentSearchHit({required this.item, required this.excerpt, required this.score});
+}
 
 /// The app's on-device "Subject Content Database" — a physical local store
 /// of downloaded CDC materials (Teaching Modules, syllabi, etc.), organized
@@ -339,7 +350,7 @@ class SubjectContentRepository {
     );
     if (candidates.isEmpty) return null;
 
-    final keywords = _keywordsOf('$topicName ${subTopicName ?? ''}');
+    final keywords = keywordsOf('$topicName ${subTopicName ?? ''}');
     if (keywords.isEmpty) return null;
 
     String? bestExcerpt;
@@ -348,37 +359,45 @@ class SubjectContentRepository {
     for (final item in candidates) {
       final text = await readText(item);
       if (text == null || text.isEmpty) continue;
-
-      final paragraphs = text.split(RegExp(r'\n\s*\n')).where((p) => p.trim().length > 40).toList();
-      for (var i = 0; i < paragraphs.length; i++) {
-        final paragraph = paragraphs[i].trim();
-        final paragraphWords = _keywordsOf(paragraph);
-        final score = keywords.where(paragraphWords.contains).length;
-        if (score > bestScore) {
-          bestScore = score;
-          // Include the next paragraph too when it's short (often a
-          // continuation/example) — capped so this stays an excerpt, not
-          // a dump of the whole module.
-          final extended = (i + 1 < paragraphs.length && paragraphs[i + 1].trim().length < 300)
-              ? '$paragraph\n\n${paragraphs[i + 1].trim()}'
-              : paragraph;
-          bestExcerpt = _capExcerptWords(extended, 350);
-        }
+      final found = bestExcerptFor(text, keywords);
+      if (found != null && found.score > bestScore) {
+        bestScore = found.score;
+        bestExcerpt = found.excerpt;
       }
     }
 
     return bestScore > 0 ? bestExcerpt : null;
   }
 
-  Set<String> _keywordsOf(String text) => text
-      .toLowerCase()
-      .split(RegExp(r'[^a-z0-9]+'))
-      .where((w) => w.length > 3)
-      .toSet();
+  /// Full-text, keyword-overlap search across every stored item's text —
+  /// entirely offline, no AI (2026-09-05, per explicit request: make the
+  /// "Generate Teaching Notes & Slides" home screen's upper search bar
+  /// draw on real on-device material, not just bundled syllabus topic
+  /// titles — that's all it searched before this existed, a real gap
+  /// since anything already in this database, bundled or teacher-
+  /// imported, was otherwise invisible to it). Returns the best-matching
+  /// item(s), highest-scoring first, each paired with its own best
+  /// excerpt — empty when nothing stored shares any real wording with
+  /// [query]. Scoring itself (see [bestExcerptFor]) is shared with
+  /// [findRelevantExcerpt] and directly unit-tested in
+  /// text_excerpt_matching_test.dart, since this repository's own
+  /// path_provider/asset-bundle dependencies make it impractical to unit
+  /// test directly.
+  Future<List<SubjectContentSearchHit>> searchContent(String query, {int maxResults = 10}) async {
+    final keywords = keywordsOf(query);
+    if (keywords.isEmpty) return const [];
 
-  String _capExcerptWords(String text, int maxWords) {
-    final words = text.trim().split(RegExp(r'\s+'));
-    if (words.length <= maxWords) return text.trim();
-    return '${words.take(maxWords).join(' ')}...';
+    final catalog = await loadCatalog();
+    final hits = <SubjectContentSearchHit>[];
+    for (final item in catalog.items) {
+      if (item.isLegacyPdf) continue;
+      final text = await readText(item);
+      if (text == null || text.isEmpty) continue;
+      final found = bestExcerptFor(text, keywords);
+      if (found != null) hits.add(SubjectContentSearchHit(item: item, excerpt: found.excerpt, score: found.score));
+    }
+
+    hits.sort((a, b) => b.score.compareTo(a.score));
+    return hits.take(maxResults).toList();
   }
 }

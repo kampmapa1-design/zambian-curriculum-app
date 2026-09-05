@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/scheme_of_work.dart';
+import '../services/subject_content_repository.dart';
 import '../services/topic_search_service.dart';
 import 'generate_notes_by_topic_screen.dart';
 import 'term_topic_picker_screen.dart';
@@ -11,14 +12,27 @@ import 'topic_picker_flow.dart';
 /// what you're teaching"), with "Browse by Grade/Term/Week instead"
 /// always available as a fallback to Method 1's plain drill-down — this
 /// never replaces that, only sits in front of it. See
-/// topic_search_service.dart for the two-tier search itself (local word
-/// match, then an AI-assisted fallback that only ever narrows to a real
-/// subject/grade, never invents a topic).
+/// topic_search_service.dart for the two-tier syllabus-topic search
+/// itself (local word match, then an AI-assisted fallback that only ever
+/// narrows to a real subject/grade, never invents a topic).
+///
+/// **2026-09-05, per explicit request**: also searches the on-device
+/// Subject Content Database (SubjectContentRepository) — every bundled
+/// Teaching Module and everything a teacher has imported via Settings →
+/// "Add My Own Material" — entirely offline, alongside the syllabus-topic
+/// search above. Real gap this closes: that database already held real,
+/// detailed material and already powered background enrichment
+/// (lesson-plan/teaching-notes generation quietly drawing on it), but
+/// this search bar itself never looked at it at all — searching for
+/// something that only existed in an imported document, not in any
+/// bundled topic's own title, came back empty even though the app
+/// genuinely had material on it.
 class TopicSearchScreen extends StatefulWidget {
-  const TopicSearchScreen({super.key, required this.title, this.searchService});
+  const TopicSearchScreen({super.key, required this.title, this.searchService, this.contentRepository});
 
   final String title;
   final TopicSearchService? searchService;
+  final SubjectContentRepository? contentRepository;
 
   @override
   State<TopicSearchScreen> createState() => _TopicSearchScreenState();
@@ -26,11 +40,13 @@ class TopicSearchScreen extends StatefulWidget {
 
 class _TopicSearchScreenState extends State<TopicSearchScreen> {
   late final TopicSearchService _searchService = widget.searchService ?? TopicSearchService();
+  late final SubjectContentRepository _contentRepository = widget.contentRepository ?? SubjectContentRepository();
   final _queryController = TextEditingController();
 
   bool _searching = false;
   bool _searchedOnce = false;
   List<TopicSearchResult> _results = [];
+  List<SubjectContentSearchHit> _contentHits = [];
   String? _error;
 
   @override
@@ -48,12 +64,44 @@ class _TopicSearchScreenState extends State<TopicSearchScreen> {
       _error = null;
     });
     try {
+      // Both entirely offline, run together — the syllabus-topic search
+      // (titles only) and the Subject Content Database's own full-text
+      // search (real stored material) are complementary, not a fallback
+      // chain; a query can genuinely have real hits in either, both, or
+      // neither.
       final results = await _searchService.searchLocal(query);
+      final contentHits = await _contentRepository.searchContent(query);
       if (!mounted) return;
-      setState(() => _results = results);
+      setState(() {
+        _results = results;
+        _contentHits = contentHits;
+      });
     } finally {
       if (mounted) setState(() => _searching = false);
     }
+  }
+
+  void _showContentExcerpt(SubjectContentSearchHit hit) {
+    showDialog<void>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(hit.item.title),
+        content: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(hit.item.subjectName, style: Theme.of(dialogContext).textTheme.labelLarge),
+              const SizedBox(height: 12),
+              Text(hit.excerpt),
+            ],
+          ),
+        ),
+        actions: [
+          FilledButton(onPressed: () => Navigator.of(dialogContext).pop(), child: const Text('Close')),
+        ],
+      ),
+    );
   }
 
   Future<void> _askAi() async {
@@ -146,7 +194,7 @@ class _TopicSearchScreenState extends State<TopicSearchScreen> {
             padding: const EdgeInsets.only(bottom: 12),
             child: Text(_error!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
           ),
-          if (!_searching && _searchedOnce && _results.isEmpty) ...[
+          if (!_searching && _searchedOnce && _results.isEmpty && _contentHits.isEmpty) ...[
             const Text("Nothing on-device shares that wording. Ask AI to help, or browse by Grade/Term/Week instead."),
             const SizedBox(height: 12),
             OutlinedButton.icon(
@@ -166,6 +214,26 @@ class _TopicSearchScreenState extends State<TopicSearchScreen> {
                 onTap: () => Navigator.of(context).pop(TopicPickResult(template: result.template, entry: result.entry)),
               ),
             ),
+          if (_contentHits.isNotEmpty) ...[
+            const SizedBox(height: 8),
+            Text('From your stored materials', style: Theme.of(context).textTheme.titleSmall),
+            const SizedBox(height: 4),
+            Text(
+              'Real content already on this device — bundled or imported via Settings. Tap one to read the '
+              'matching excerpt.',
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+            const SizedBox(height: 8),
+            for (final hit in _contentHits)
+              Card(
+                child: ListTile(
+                  leading: const Icon(Icons.description_outlined),
+                  title: Text(hit.item.title),
+                  subtitle: Text(hit.item.subjectName),
+                  onTap: () => _showContentExcerpt(hit),
+                ),
+              ),
+          ],
         ],
       ),
     );
