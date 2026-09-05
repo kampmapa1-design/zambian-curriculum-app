@@ -102,6 +102,7 @@ flutter:
     - assets/subject_content/manifest.json
     - assets/subject_content/principles_of_accounts/ecz_past_papers_p1_2016_2021.txt
     - assets/subject_content/chemistry/ecz_grade10_science_chemistry_p1.txt
+    - assets/subject_content/chemistry/ecz_pure_chemistry_p1_2015_2021.txt
     - assets/subject_content/civic_education/ecz_civic_education_p2_section_a.txt
     - assets/subject_content/civic_education/form1_term3_teaching_module.txt
     - assets/subject_content/civic_education/form_1_civic_education_teaching_module_form_1_term_2.txt
