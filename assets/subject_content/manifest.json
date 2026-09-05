@@ -17,6 +17,14 @@
       "_source": "Real Examinations Council of Zambia (ECZ) Grade 10 Science (Chemistry section) Paper 1 multiple-choice past-paper questions, spanning 2009–2017 plus the 2017 and 2019 General Certificate of Education (G.C.E.) sittings (58 real ECZ questions found in the source; 6 were excluded here because they depend on a diagram, apparatus photo, or data table that this text-only extraction could not capture and would be meaningless or misleading without it — 52 fully self-contained questions were kept). Extracted from a privately-compiled Zambian revision booklet shared with this project — the booklet's own compiler name and price notice (confined to its title page, outside the extracted question/answer content) have been stripped entirely and are not reproduced anywhere in this file or credited in any way; only the real ECZ exam questions and each one's correct answer (cross-referenced from the same booklet's own separately-printed answer key) are kept, attributed only to ECZ. One paragraph per question (question stem + all four options + the correct one), formatted for this app's offline keyword search."
     },
     {
+      "title": "ECZ Past Paper Questions & Model Answers — Civic Education Paper 2, Section A (2017–2020)",
+      "subjectName": "Civic Education",
+      "resourceType": "pastPapers",
+      "sourceUrl": "ecz://civic-education/paper2-section-a/2017-2020",
+      "fileName": "civic_education/ecz_civic_education_p2_section_a.txt",
+      "_source": "Real Examinations Council of Zambia (ECZ) Civic Education 2030/2 Paper 2, Section A (short-answer) past-paper questions from five sittings: July 2017, November 2017, July 2018, November 2018, and 2020 (70 of the 71 real questions found in the source; 1 was excluded because the intended answer could not be confidently identified). Unlike the app's MCQ-format bundled content, this subject's real answer is a short written response rather than a lettered option, so per this project's sourcing rule each answer here was independently composed in this app's own words rather than copied from the privately-compiled revision booklet this was sourced from -- the booklet's own written answers (where it gave any) were used only as a cross-check, and are not reproduced; one answer (the 1991 Mvunga Constitutional Review Commission's real recommendations) was corrected against an independent source after the booklet's own stated answer could not be verified. The booklet's compiler name, price, and contact details (confined to its title page) are not reproduced anywhere. Section B (comprehension/table-based) and Section C (long-form essay) questions from the same papers were left out of this pass. One paragraph per question (real ECZ question + a fresh model answer), formatted for this app's offline keyword search."
+    },
+    {
       "title": "Chemestry Teaching Module — Form 1, Term 2",
       "subjectName": "Chemistry",
       "resourceType": "module",
