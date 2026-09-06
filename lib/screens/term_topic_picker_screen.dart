@@ -22,14 +22,25 @@ import '../services/scheme_of_work_calendar_pacing.dart';
 ///
 /// Returns a [SchemeOfWorkEntry] via `Navigator.pop`, same shape as
 /// [TopicPickerScreen] but grouped one level deeper.
+///
+/// [windows], when given, REPLACES the default fresh-class baseline with
+/// pre-computed windows (see [schemeOfWorkTermWindowsFrom]) — used by
+/// `startGenerateLessonPlanFlow` (2026-09-06) to show a SPECIFIC class's
+/// own real term/week placement once that class's resume point is known,
+/// rather than always the fresh-class default. Left null (the default)
+/// wherever no specific class's resume point is known yet — in
+/// particular, [ClassResumePickerScreen] itself uses the default when
+/// letting a teacher pick where a class reached in the first place, since
+/// that class's own resume point doesn't exist yet at that point.
 class TermTopicPickerScreen extends StatelessWidget {
-  const TermTopicPickerScreen({super.key, required this.template});
+  const TermTopicPickerScreen({super.key, required this.template, this.windows});
 
   final SyllabusTemplate template;
+  final List<List<SchemeOfWorkEntry>>? windows;
 
   @override
   Widget build(BuildContext context) {
-    final windows = schemeOfWorkTermWindows(template);
+    final resolvedWindows = windows ?? schemeOfWorkTermWindows(template);
     return Scaffold(
       appBar: AppBar(title: Text('${template.subject.name} · ${template.grade.name}')),
       body: ListView(
@@ -39,7 +50,7 @@ class TermTopicPickerScreen extends StatelessWidget {
             ExpansionTile(
               title: Text(template.terms[i].name, style: Theme.of(context).textTheme.titleMedium),
               initiallyExpanded: template.terms.length == 1,
-              children: _entriesForWindow(context, i < windows.length ? windows[i] : const []),
+              children: _entriesForWindow(context, i < resolvedWindows.length ? resolvedWindows[i] : const []),
             ),
         ],
       ),

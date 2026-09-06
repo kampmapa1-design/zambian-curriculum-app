@@ -798,7 +798,7 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Chief Marker'),
+        title: const Text('Scan Marker'),
         actions: [
           IconButton(
             icon: const Icon(Icons.fact_check_outlined),

@@ -155,4 +155,44 @@ void main() {
       expect(flattenedTitles, wholeSyllabusTitles.sublist(0, flattenedTitles.length), reason: '$label: window entries drifted out of real syllabus order');
     }
   });
+
+  test(
+      'schemeOfWorkTermWindowsFrom (2026-09-06, per-class Lesson Plan parity) matches '
+      "generateSchemeOfWorkForTerm's own real starting point, then keeps chaining safely", () {
+    // design_and_technology_form1's "GRAPHICS" topic is exactly the shape
+    // that broke naive id-based chaining (own content AND further
+    // sub-topics) — resume from a class whose recorded progress says
+    // "concluded up through GRAPHICS itself" (real ClassProgress semantics:
+    // no sub-topic id means the WHOLE topic, GRAPHICS's own sub-topics
+    // included, is done) and confirm the first window matches
+    // generateSchemeOfWorkForTerm's own real output for that same resume
+    // point exactly, while later windows still don't drop content.
+    final template = _loadTemplate('assets/syllabi/design_and_technology_form1.json', 'dt1');
+    // "GRAPHICS" is used as a topic name twice in this real syllabus (a
+    // genuine content quirk, not a bug) — the one that actually exhibits
+    // the "own content AND further sub-topics" shape is the one this test
+    // needs, so find it by shape, not by name alone.
+    final graphicsTopic = flattenTopics(template).firstWhere(
+        (t) => t.name == 'GRAPHICS' && t.subTopics.isNotEmpty && (t.objectives.isNotEmpty || t.competencies.isNotEmpty));
+
+    final expectedFirstWindow = generateSchemeOfWorkForTerm(template, graphicsTopic.id);
+    final windows = schemeOfWorkTermWindowsFrom(template, graphicsTopic.id);
+
+    expect(windows[0].map((e) => e.title).toList(), expectedFirstWindow.map((e) => e.title).toList(),
+        reason: "The first window must match generateSchemeOfWorkForTerm's own real resume semantics exactly — "
+            'the whole point is parity with what that class\'s actual Scheme of Work document shows');
+
+    // GRAPHICS's own sub-topics (SYMBOLS, INTRODUCTION TO CAD) were
+    // concluded along with GRAPHICS itself per the resume point above, so
+    // they must NOT reappear in any later window either.
+    final allTitles = [for (final w in windows) for (final e in w) e.title];
+    expect(allTitles.where((t) => t.contains('GRAPHICS')), isEmpty,
+        reason: 'GRAPHICS and its sub-topics were all marked concluded by this resume point — none should reappear');
+
+    // No entry should ever appear in two different windows at once.
+    final seenTitles = <String>{};
+    for (final title in allTitles) {
+      expect(seenTitles.add(title), isTrue, reason: '"$title" appeared in more than one term window');
+    }
+  });
 }

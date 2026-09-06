@@ -7,18 +7,27 @@ import '../models/scheme_of_work.dart';
 import '../models/syllabus_models.dart';
 import '../services/lesson_checkpoint_repository.dart';
 import '../services/teacher_profile_repository.dart';
+import 'class_resume_picker_screen.dart';
 import 'lesson_plan_screen.dart';
 import 'term_topic_picker_screen.dart';
 
 /// Orchestrates the "Generate Lesson Plan" entry point end to end: asks
 /// whether to start a new lesson or resume one that was paused mid-lesson.
-/// For a new lesson, the teacher picks exactly which topic to teach (via
-/// [TermTopicPickerScreen] — Term, then that term's topics by week) and
-/// which of the three stages (Introduction/Main Body/Conclusion) this
-/// specific lesson plan should cover, before opening [LessonPlanScreen].
-/// Resuming reuses that screen's own checkpoint dialog (which already shows
-/// the real stage that was reached) rather than asking the stage question
-/// twice.
+/// For a new lesson, the teacher first answers "which class, and where did
+/// it reach?" (via [ClassResumePickerScreen] — 2026-09-06, the exact same
+/// step [HomeScreen]'s "Generate Scheme of Work" already asks, reused here
+/// rather than duplicated) so the topic picker that follows shows THAT
+/// class's own real term/week placement instead of always a fresh class's
+/// (see [schemeOfWorkTermWindowsFrom]'s own doc comment for why the two
+/// can otherwise disagree). The teacher then picks exactly which topic to
+/// teach (via [TermTopicPickerScreen] — Term, then that term's topics by
+/// week) and which of the three stages (Introduction/Main Body/Conclusion)
+/// this specific lesson plan should cover, before opening
+/// [LessonPlanScreen]. Resuming reuses that screen's own checkpoint dialog
+/// (which already shows the real stage that was reached) rather than
+/// asking the stage question twice, and skips the class-resume step
+/// entirely — a paused lesson resumes by its own saved checkpoint, not by
+/// a class's Scheme of Work progress.
 Future<void> startGenerateLessonPlanFlow(
   BuildContext context,
   SyllabusTemplate template, {
@@ -90,12 +99,32 @@ Future<void> startGenerateLessonPlanFlow(
     }
   }
 
-  // New lesson: let the teacher pick exactly which term/week/topic to
-  // teach, rather than auto-advancing to "whatever comes next" — a topic
-  // can need several separate lesson plans (one per stage, or per CBC
-  // learning point), so there's no single "next" topic to guess at.
+  // New lesson: first "which class, and where did it reach?" (2026-09-06)
+  // — the same question Scheme of Work generation already asks, via the
+  // very same screen, so the topic/week picker that follows can show THIS
+  // class's own real placement rather than always a fresh class's. Never
+  // skipped, same as Scheme of Work's own flow, for the same reason (see
+  // ClassResumePickerScreen's own doc comment): a lesson plan generated
+  // for a colleague's class, or a one-off, must never silently get
+  // confused with — or overwrite — the teacher's own regular class's real
+  // progress record.
+  final resume = await Navigator.of(context).push<ClassResumeSelection>(
+    MaterialPageRoute(builder: (_) => ClassResumePickerScreen(template: template)),
+  );
+  if (resume == null || !context.mounted) return;
+
+  final classWindows = schemeOfWorkTermWindowsFrom(
+    template,
+    resume.topicId,
+    lastConcludedSubTopicId: resume.subTopicId,
+  );
+
+  // Let the teacher pick exactly which term/week/topic to teach, rather
+  // than auto-advancing to "whatever comes next" — a topic can need
+  // several separate lesson plans (one per stage, or per CBC learning
+  // point), so there's no single "next" topic to guess at.
   final entry = await Navigator.of(context).push<SchemeOfWorkEntry>(
-    MaterialPageRoute(builder: (_) => TermTopicPickerScreen(template: template)),
+    MaterialPageRoute(builder: (_) => TermTopicPickerScreen(template: template, windows: classWindows)),
   );
   if (entry == null || !context.mounted) return;
 
@@ -119,8 +148,11 @@ Future<void> startGenerateLessonPlanFlow(
   // "appropriate place" per explicit request — and remembered from then on
   // (see TeacherProfileRepository), so a teacher only ever types their own
   // name/school once; class name still pre-fills but stays editable per
-  // lesson, since one teacher can cover more than one class.
-  final profile = await _askTeacherProfile(context);
+  // lesson, since one teacher can cover more than one class. Pre-fills from
+  // the class just picked above (2026-09-06) rather than whatever class
+  // name happened to be saved last time — this lesson plan is already
+  // known to be for THAT class specifically.
+  final profile = await _askTeacherProfile(context, defaultClassLabel: resume.classLabel);
   if (!context.mounted) return;
 
   await Navigator.of(context).push(MaterialPageRoute(
@@ -146,14 +178,22 @@ Future<void> startGenerateLessonPlanFlow(
 /// plan form itself and remember to fill them in every single time.
 /// Skippable (leaves whatever's already saved untouched) since none of
 /// these are required to generate a usable lesson plan.
-Future<TeacherProfile?> _askTeacherProfile(BuildContext context) async {
+///
+/// [defaultClassLabel], when non-empty, pre-fills the class field instead
+/// of whatever class name was saved last time (2026-09-06) — this lesson
+/// is already known to be for that specific class, from the class-resume
+/// step just answered above.
+Future<TeacherProfile?> _askTeacherProfile(BuildContext context, {String? defaultClassLabel}) async {
   final repository = TeacherProfileRepository();
   final saved = await repository.load();
   if (!context.mounted) return saved;
 
+  final resolvedClassName =
+      (defaultClassLabel != null && defaultClassLabel.trim().isNotEmpty) ? defaultClassLabel.trim() : saved.className;
+
   final nameController = TextEditingController(text: saved.name);
   final schoolController = TextEditingController(text: saved.school);
-  final classController = TextEditingController(text: saved.className);
+  final classController = TextEditingController(text: resolvedClassName);
 
   final result = await showDialog<TeacherProfile>(
     context: context,

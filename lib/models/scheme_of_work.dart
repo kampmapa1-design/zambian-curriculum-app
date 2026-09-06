@@ -184,10 +184,24 @@ List<SchemeOfWorkEntry> generateSchemeOfWorkForTerm(
 }
 
 /// The exact per-term topic/week windows a brand-new class's Scheme of
-/// Work would show — [generateSchemeOfWorkForTerm] applied term by term,
-/// each term picking up exactly where the previous term's own window left
-/// off (chained the same way a real continuing class's resume point
-/// chains), starting from the very first topic. `windows[i]` is
+/// Work would show — starting from the very first topic. `windows[i]` is
+/// `template.terms[i]`'s window. A thin convenience over
+/// [schemeOfWorkTermWindowsFrom] with no resume point — see that
+/// function's own doc comment for the real reported bug both fix and for
+/// why each term's window is computed the way it is.
+List<List<SchemeOfWorkEntry>> schemeOfWorkTermWindows(SyllabusTemplate template) =>
+    schemeOfWorkTermWindowsFrom(template, null);
+
+/// The exact per-term topic/week windows a SPECIFIC class's Scheme of Work
+/// would show, resuming from [lastConcludedTopicId]/[lastConcludedSubTopicId]
+/// — the same resume point [ClassResumePickerScreen] hands
+/// [generateSchemeOfWorkForTerm] for that class's own Scheme of Work
+/// document, so this must use the exact same starting-point semantics (see
+/// [generateSchemeOfWork]'s own doc comment on what a null
+/// [lastConcludedSubTopicId] alone means there) to genuinely match it, not
+/// some independently-"more correct" reading of the same two ids. `null`
+/// for [lastConcludedTopicId] starts from the very first topic (a class
+/// that hasn't started this subject yet). `windows[i]` is
 /// `template.terms[i]`'s window.
 ///
 /// Real, reported bug this fixes (2026-09-06): a subject whose real
@@ -203,46 +217,59 @@ List<SchemeOfWorkEntry> generateSchemeOfWorkForTerm(
 /// further) could only ever be found under a DIFFERENT term's tile when
 /// picking a topic to generate a lesson plan for — exactly the mismatch
 /// reported (PE10.9.2, Term 3 in the syllabus JSON, showing up in a Term 1
-/// Scheme of Work). This function is the one place both screens now read
-/// term/week placement from, so the two can never drift apart again for
-/// the case this fixes.
+/// Scheme of Work). This function is the one place both the Scheme of Work
+/// generator and every topic-first Lesson Plan flow now read term/week
+/// placement from, so the two can never drift apart again for the case
+/// this fixes — including per-class (2026-09-06,
+/// startGenerateLessonPlanFlow's own "which class, where did it reach?"
+/// step), not only for a fresh class.
 ///
-/// This guarantees parity only for a class starting fresh (no resume
-/// progress recorded yet) — also exactly the state a teacher is in the
-/// first time they generate a term's Scheme of Work for a subject. A real
-/// class whose OWN tracked progress has since fallen behind or run ahead
-/// of this fresh baseline will see its own Scheme of Work legitimately
-/// differ from these windows from then on; there is no way to predict that
-/// from the template alone, since it depends on that specific class's own
-/// recorded history, not on the syllabus content.
+/// Full parity holds for exactly the class whose real resume point this
+/// was called with. It does NOT retroactively fix a resume point that was
+/// itself computed some other way (there is no other way left in this
+/// codebase after this change) or predict a class's future progress — a
+/// class's own record can always move again after this is called.
 ///
-/// Slices [allSchemeOfWorkEntries] directly by INDEX rather than chaining
-/// through [generateSchemeOfWorkForTerm]'s own topic/sub-topic-id "resume"
-/// parameters — a real edge case surfaced while testing this against every
-/// bundled subject (2026-09-06): `design_and_technology_form1`'s "GRAPHICS"
-/// topic carries its own content directly AND has further sub-topics of
-/// its own after it. When a term's window happened to end exactly on that
-/// topic's own top-level entry, resuming via `lastConcludedTopicId` alone
-/// (no sub-topic id, since a topic-level entry has none) is genuinely
-/// ambiguous with [generateSchemeOfWork]'s OTHER real meaning for that same
-/// input — "the whole topic, every one of its sub-topics included, was
-/// concluded" (the real semantic a class's own tracked resume progress
-/// needs) — so it skipped straight to the NEXT topic, silently dropping
-/// "GRAPHICS — SYMBOLS" and "GRAPHICS — INTRODUCTION TO COMPUTER AIDED
-/// DESIGN (CAD)" from every later window. Slicing by index instead has no
-/// such ambiguity: "the next window starts at the entry right after the
-/// last one" is exactly what it says, always.
-List<List<SchemeOfWorkEntry>> schemeOfWorkTermWindows(SyllabusTemplate template) {
-  final all = allSchemeOfWorkEntries(template);
+/// The very first term's window comes from [generateSchemeOfWork] itself —
+/// same starting point, same quirks, as [generateSchemeOfWorkForTerm]
+/// (which is exactly what makes this genuinely match that function's own
+/// output rather than an independent reinterpretation of the same resume
+/// point). Every LATER term's window, though, continues by INDEX from the
+/// previous window's own last entry, never by re-encoding that entry back
+/// into a topic/sub-topic-id pair and re-resolving it — a real edge case
+/// surfaced while testing this against every bundled subject (2026-09-06):
+/// `design_and_technology_form1`'s "GRAPHICS" topic carries its own
+/// content directly AND has further sub-topics of its own after it. An
+/// earlier version of this function chained terms by feeding the previous
+/// window's last topic/sub-topic ids back into
+/// [generateSchemeOfWorkForTerm] — genuinely ambiguous whenever that last
+/// entry happened to be such a topic's own top-level entry, since a null
+/// sub-topic id there collides with [generateSchemeOfWork]'s OTHER real
+/// meaning for that same input, "the whole topic, every sub-topic
+/// included, was concluded" — silently dropping "GRAPHICS — SYMBOLS" and
+/// "GRAPHICS — INTRODUCTION TO COMPUTER AID DESIGN (CAD)" from every later
+/// window. Continuing by index has no such ambiguity: "the next window
+/// starts at the entry right after the last one" is exactly what it says,
+/// always — and only the very first term's resume point (an intentional
+/// topic/sub-topic-id input from the caller, not an internal artifact of
+/// this function's own chaining) goes through the real, quirk-and-all
+/// [generateSchemeOfWork] semantics at all.
+List<List<SchemeOfWorkEntry>> schemeOfWorkTermWindowsFrom(
+  SyllabusTemplate template,
+  int? lastConcludedTopicId, {
+  int? lastConcludedSubTopicId,
+}) {
+  final remaining =
+      generateSchemeOfWork(template, lastConcludedTopicId, lastConcludedSubTopicId: lastConcludedSubTopicId);
   final windows = <List<SchemeOfWorkEntry>>[];
   var cursor = 0;
   for (var i = 0; i < template.terms.length; i++) {
-    if (cursor >= all.length) {
+    if (cursor >= remaining.length) {
       windows.add(const []);
       continue;
     }
-    final end = (cursor + TermDates.teachingWeekCount).clamp(cursor, all.length);
-    final slice = all.sublist(cursor, end);
+    final end = (cursor + TermDates.teachingWeekCount).clamp(cursor, remaining.length);
+    final slice = remaining.sublist(cursor, end);
     windows.add([
       for (var j = 0; j < slice.length; j++)
         SchemeOfWorkEntry(
