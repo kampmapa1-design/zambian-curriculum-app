@@ -166,99 +166,138 @@ List<SchemeOfWorkEntry> generateSchemeOfWork(
   ];
 }
 
+/// Every real, authored topic/sub-topic entry for [term] ALONE (not the
+/// whole syllabus) — see [allSchemeOfWorkEntries], scoped to just this
+/// term's own topics and renumbered as consecutive weeks starting at 1
+/// within it. This is "genuinely supported by the syllabus" for [term]
+/// specifically, with no cross-term borrowing at all — [applyCalendarPacing]
+/// is what stretches or packs this list to fill (or fit) the term's real
+/// teaching weeks, whether it has too few or too many entries of its own.
+List<SchemeOfWorkEntry> entriesForOwnTerm(SyllabusTemplate template, Term term) {
+  final topicIds = term.topics.map((t) => t.id).toSet();
+  final filtered = allSchemeOfWorkEntries(template).where((e) => topicIds.contains(e.topic.id)).toList();
+  return [
+    for (var i = 0; i < filtered.length; i++)
+      SchemeOfWorkEntry(
+        weekNumber: i + 1,
+        topic: filtered[i].topic,
+        subTopic: filtered[i].subTopic,
+        objectives: filtered[i].objectives,
+        competencies: filtered[i].competencies,
+      ),
+  ];
+}
+
 /// [generateSchemeOfWork], capped to how many entries actually fit in one
 /// real term's teaching time ([TermDates.teachingWeekCount] — the same
 /// fixed real-calendar figure every term uses, midterm break and
-/// end-of-term week already excluded). This is what lets one term's
-/// generated scheme legitimately spill into a later term's own original
-/// topics (or fall short of reaching them, if a class is behind) — the cap
-/// is real available teaching time, not "does this topic belong to the
-/// term I picked."
+/// end-of-term week already excluded) — but ONLY when [lastConcludedTopicId]
+/// is non-null, i.e. there is a REAL class resume point to honour. In that
+/// case this is what lets one term's generated scheme legitimately spill
+/// into a later term's own original topics (or fall short of reaching
+/// them, if a class is behind) — the cap is real available teaching time,
+/// not "does this topic belong to the term I picked," and that spillover
+/// reflects that SPECIFIC class's own real, lived pace.
+///
+/// Real, reported bug fixed (2026-09-07): when [lastConcludedTopicId] is
+/// null (a FRESH generation, no real class history yet — the common case
+/// for "Generate Scheme of Work" the very first time, or any one-off) AND
+/// [term] is given, this used to flatten the WHOLE syllabus and cap at one
+/// term's real teaching weeks regardless — for a subject with few total
+/// topics across the whole year (e.g. Physics Grade 11: 14 real entries
+/// total; Principles of Accounts Form 2: 6), that front-loaded almost — or
+/// literally all — of the subject's content into Term 1's own window,
+/// leaving Term 2 and/or Term 3 completely empty ("No topics left to place
+/// in this term") even though the syllabus genuinely DOES have real,
+/// authored content for those terms (Physics 11.7 Magnetism in Term 3;
+/// POA 2.3–2.5 in Terms 2–3). A fresh start has no real teaching history to
+/// justify assuming a class is already "ahead of schedule" enough to need
+/// content borrowed from a later term, so it now always uses exactly that
+/// term's own authored topics via [entriesForOwnTerm] — [applyCalendarPacing]
+/// alone already solves "not enough distinct topics for a whole term" by
+/// stretching them across more weeks, with no cross-term borrowing needed
+/// for that. [term] omitted (or a non-null [lastConcludedTopicId]) keeps
+/// the original whole-syllabus-coverage behaviour, e.g. for a caller with
+/// no term context, or for a real class's own resume point.
 List<SchemeOfWorkEntry> generateSchemeOfWorkForTerm(
   SyllabusTemplate template,
   int? lastConcludedTopicId, {
   int? lastConcludedSubTopicId,
+  Term? term,
 }) {
+  if (lastConcludedTopicId == null && term != null) {
+    return entriesForOwnTerm(template, term);
+  }
   final entries = generateSchemeOfWork(template, lastConcludedTopicId, lastConcludedSubTopicId: lastConcludedSubTopicId);
   return entries.length <= TermDates.teachingWeekCount ? entries : entries.sublist(0, TermDates.teachingWeekCount);
 }
 
 /// The exact per-term topic/week windows a brand-new class's Scheme of
-/// Work would show — starting from the very first topic. `windows[i]` is
-/// `template.terms[i]`'s window. A thin convenience over
-/// [schemeOfWorkTermWindowsFrom] with no resume point — see that
-/// function's own doc comment for the real reported bug both fix and for
-/// why each term's window is computed the way it is.
+/// Work would show — `windows[i]` is exactly `template.terms[i]`'s OWN
+/// authored topics (see [entriesForOwnTerm]), independent of every other
+/// term. A thin convenience over [schemeOfWorkTermWindowsFrom] with no
+/// resume point — see that function's own doc comment for why a fresh
+/// window is deliberately per-term rather than chained.
 List<List<SchemeOfWorkEntry>> schemeOfWorkTermWindows(SyllabusTemplate template) =>
     schemeOfWorkTermWindowsFrom(template, null);
 
 /// The exact per-term topic/week windows a SPECIFIC class's Scheme of Work
-/// would show, resuming from [lastConcludedTopicId]/[lastConcludedSubTopicId]
-/// — the same resume point [ClassResumePickerScreen] hands
-/// [generateSchemeOfWorkForTerm] for that class's own Scheme of Work
-/// document, so this must use the exact same starting-point semantics (see
-/// [generateSchemeOfWork]'s own doc comment on what a null
-/// [lastConcludedSubTopicId] alone means there) to genuinely match it, not
-/// some independently-"more correct" reading of the same two ids. `null`
-/// for [lastConcludedTopicId] starts from the very first topic (a class
-/// that hasn't started this subject yet). `windows[i]` is
-/// `template.terms[i]`'s window.
+/// would show. `windows[i]` is `template.terms[i]`'s window.
 ///
-/// Real, reported bug this fixes (2026-09-06): a subject whose real
-/// per-term topic count doesn't match Zambia's real per-term teaching-week
-/// count spills content across term boundaries by design (see
-/// [generateSchemeOfWorkForTerm]'s own doc comment — e.g. Physical
-/// Education Grade 10's Term 1 has only 10 real sub-topic entries against
-/// 11 real teaching weeks, so a fresh Term 1 Scheme of Work already pulls
-/// its 11th week from Term 2's own first topic). [TermTopicPickerScreen]
-/// used to group topics by each topic's own AUTHORED JSON term instead of
-/// by this real generated placement, so a topic a generated Scheme of Work
-/// placed in "Term 1, Week 11" (or later, for a subject that spills
-/// further) could only ever be found under a DIFFERENT term's tile when
-/// picking a topic to generate a lesson plan for — exactly the mismatch
-/// reported (PE10.9.2, Term 3 in the syllabus JSON, showing up in a Term 1
-/// Scheme of Work). This function is the one place both the Scheme of Work
-/// generator and every topic-first Lesson Plan flow now read term/week
-/// placement from, so the two can never drift apart again for the case
-/// this fixes — including per-class (2026-09-06,
-/// startGenerateLessonPlanFlow's own "which class, where did it reach?"
-/// step), not only for a fresh class.
+/// **`lastConcludedTopicId` null (no real class history yet — a fresh
+/// start, or a one-off):** each `windows[i]` is exactly
+/// `template.terms[i]`'s OWN authored topics ([entriesForOwnTerm]), with NO
+/// cross-term borrowing — matching [generateSchemeOfWorkForTerm]'s own
+/// fresh-start behaviour (see that function's own doc comment for the real
+/// reported bug this fixes: a subject with few total topics across the
+/// whole year — e.g. Physics Grade 11, Principles of Accounts Form 2 —
+/// used to have almost all of its content front-loaded into Term 1's
+/// window by chained whole-syllabus coverage, leaving Term 2 and/or Term 3
+/// completely empty even though the syllabus genuinely has real content
+/// for them). This also keeps [TermTopicPickerScreen] naturally consistent
+/// with a fresh Scheme of Work: a topic authored under Term 3 is found
+/// under Term 3 in both, with no spillover to reconcile at all.
 ///
-/// Full parity holds for exactly the class whose real resume point this
-/// was called with. It does NOT retroactively fix a resume point that was
-/// itself computed some other way (there is no other way left in this
-/// codebase after this change) or predict a class's future progress — a
-/// class's own record can always move again after this is called.
-///
-/// The very first term's window comes from [generateSchemeOfWork] itself —
-/// same starting point, same quirks, as [generateSchemeOfWorkForTerm]
-/// (which is exactly what makes this genuinely match that function's own
-/// output rather than an independent reinterpretation of the same resume
-/// point). Every LATER term's window, though, continues by INDEX from the
+/// **`lastConcludedTopicId` non-null (a REAL class's own tracked resume
+/// point):** [generateSchemeOfWork] is used from that point, and every
+/// window is a consecutive [TermDates.teachingWeekCount]-sized slice of
+/// what follows, spilling across term boundaries freely — this reflects
+/// that SPECIFIC class's own real, lived pace (ahead of or behind the
+/// calendar), which a fresh start has no basis to assume. The very first
+/// window comes from [generateSchemeOfWork] itself — same starting point,
+/// same quirks, as [generateSchemeOfWorkForTerm] for the same resume point
+/// (what makes this genuinely match that function's own output for a real
+/// class, rather than an independent reinterpretation of the same resume
+/// point). Every LATER window, though, continues by INDEX from the
 /// previous window's own last entry, never by re-encoding that entry back
 /// into a topic/sub-topic-id pair and re-resolving it — a real edge case
 /// surfaced while testing this against every bundled subject (2026-09-06):
 /// `design_and_technology_form1`'s "GRAPHICS" topic carries its own
-/// content directly AND has further sub-topics of its own after it. An
-/// earlier version of this function chained terms by feeding the previous
-/// window's last topic/sub-topic ids back into
-/// [generateSchemeOfWorkForTerm] — genuinely ambiguous whenever that last
-/// entry happened to be such a topic's own top-level entry, since a null
-/// sub-topic id there collides with [generateSchemeOfWork]'s OTHER real
-/// meaning for that same input, "the whole topic, every sub-topic
-/// included, was concluded" — silently dropping "GRAPHICS — SYMBOLS" and
-/// "GRAPHICS — INTRODUCTION TO COMPUTER AID DESIGN (CAD)" from every later
-/// window. Continuing by index has no such ambiguity: "the next window
-/// starts at the entry right after the last one" is exactly what it says,
-/// always — and only the very first term's resume point (an intentional
-/// topic/sub-topic-id input from the caller, not an internal artifact of
-/// this function's own chaining) goes through the real, quirk-and-all
-/// [generateSchemeOfWork] semantics at all.
+/// content directly AND has further sub-topics of its own after it, and a
+/// null sub-topic id for such a topic collides with [generateSchemeOfWork]'s
+/// OTHER real meaning for that same input, "the whole topic, every
+/// sub-topic included, was concluded" — silently dropping "GRAPHICS —
+/// SYMBOLS" and "GRAPHICS — INTRODUCTION TO COMPUTER AIDED DESIGN (CAD)"
+/// from every later window when chained the naive way. Continuing by index
+/// has no such ambiguity.
+///
+/// This function is the one place both the Scheme of Work generator and
+/// every topic-first Lesson Plan flow now read term/week placement from,
+/// so the two can never drift apart for either case above — a fresh class
+/// (2026-09-06) or a specific class's own real resume point
+/// (startGenerateLessonPlanFlow's "which class, where did it reach?" step).
+/// Full parity for the resume-point case holds only for exactly the class
+/// whose real resume point this was called with, and only as of when it
+/// was called — that class's own record can always move again afterwards.
 List<List<SchemeOfWorkEntry>> schemeOfWorkTermWindowsFrom(
   SyllabusTemplate template,
   int? lastConcludedTopicId, {
   int? lastConcludedSubTopicId,
 }) {
+  if (lastConcludedTopicId == null) {
+    return [for (final term in template.terms) entriesForOwnTerm(template, term)];
+  }
+
   final remaining =
       generateSchemeOfWork(template, lastConcludedTopicId, lastConcludedSubTopicId: lastConcludedSubTopicId);
   final windows = <List<SchemeOfWorkEntry>>[];

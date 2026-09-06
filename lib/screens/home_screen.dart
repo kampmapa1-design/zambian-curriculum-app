@@ -120,6 +120,14 @@ class HomeScreen extends StatelessWidget {
       selection.template,
       resume.topicId,
       lastConcludedSubTopicId: resume.subTopicId,
+      // For a class with no real recorded progress yet (topicId null),
+      // this is what makes the generated scheme use exactly the picked
+      // term's OWN authored topics rather than front-loaded coverage from
+      // the whole syllabus — see generateSchemeOfWorkForTerm's own doc
+      // comment for the real reported "No topics left to place in this
+      // term" bug this fixes. Ignored once this class has a real resume
+      // point (coverage/spillover correctly takes over from there).
+      term: selection.term,
     );
 
     await Navigator.of(context).push(MaterialPageRoute(

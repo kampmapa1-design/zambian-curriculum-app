@@ -1,25 +1,34 @@
-// A real, permanent regression test (2026-09-06) for a real reported bug:
-// "Generate Scheme of Work" placed a topic authored under a LATER term
-// (physical_education_grade10.json's Term 3 "PE10.9.2 First Aid
-// Techniques") into an earlier term's generated document — a real,
-// documented, deliberate behaviour of generateSchemeOfWorkForTerm (a
-// term's real teaching weeks can outnumber a sparse subject's own topics
-// for that term, so the generator pulls forward whatever comes next in
-// the whole-syllabus sequence to fill the remaining real weeks — see that
-// function's own doc comment). TermTopicPickerScreen (the topic picker
-// "Generate Lesson Plan" and every other topic-first feature share) used
-// to group topics by each topic's own AUTHORED JSON term instead, so a
-// topic a generated Scheme of Work had already placed under one term
-// could only ever be found under a DIFFERENT term here — a teacher who
-// had just generated a Term 1 Scheme of Work naming "PE10.9.2" could never
-// find it while picking a Term 1 topic to write a lesson plan for.
+// Two real, permanent regression tests, for two related but DIFFERENT
+// real reported bugs:
 //
-// The fix (schemeOfWorkTermWindows, in lib/models/scheme_of_work.dart) is
-// the one place both the Scheme of Work generator and
-// TermTopicPickerScreen now read term/week placement from — this test
-// locks in that both keep computing that placement the SAME way, using
-// physical_education_grade10.json's own real, sparse data as the exact
-// case that first exposed the mismatch.
+// (2026-09-06) "Generate Scheme of Work" placed a topic authored under a
+// LATER term (physical_education_grade10.json's Term 3 "PE10.9.2 First
+// Aid Techniques") into an earlier term's generated document, while
+// TermTopicPickerScreen (the topic picker "Generate Lesson Plan" and every
+// other topic-first feature share) grouped topics by each topic's own
+// AUTHORED JSON term instead — so a topic a generated Scheme of Work had
+// already placed under one term could only ever be found under a
+// DIFFERENT term when picking a topic to generate a lesson plan for.
+//
+// (2026-09-07) A follow-up, more serious bug from the FIRST fix's own
+// chained-coverage model: for a subject with few total topics across the
+// whole year (Physics Grade 11: 14 real entries; Principles of Accounts
+// Form 2: 6), a FRESH generation (no real class history yet) front-loaded
+// almost all of that content into Term 1's window, leaving Term 2 and/or
+// Term 3 completely empty — "No topics left to place in this term" — even
+// though the syllabus genuinely has real, authored content for those
+// terms. Cross-term spillover only ever makes sense for a REAL class's own
+// tracked resume point (real drift from the calendar); a fresh start has
+// no history to justify assuming that drift, so it now always uses
+// exactly each term's own authored topics — see
+// generateSchemeOfWorkForTerm's and schemeOfWorkTermWindowsFrom's own doc
+// comments in lib/models/scheme_of_work.dart.
+//
+// schemeOfWorkTermWindows/schemeOfWorkTermWindowsFrom (in
+// lib/models/scheme_of_work.dart) is the one place both the Scheme of Work
+// generator and TermTopicPickerScreen read term/week placement from — this
+// file locks in both fixes together, since the second fix changes what
+// "matching placement" for a fresh generation actually means.
 import 'dart:convert';
 import 'dart:io';
 
@@ -97,8 +106,8 @@ SyllabusTemplate _loadTemplate(String path, String label) {
 
 void main() {
   test(
-      'schemeOfWorkTermWindows places PE10.9.2 in the SAME term a fresh '
-      'Scheme of Work generation would (not its own authored Term 3)', () {
+      'schemeOfWorkTermWindows places PE10.9.2 under its OWN authored Term 3 '
+      'for a fresh generation (no cross-term borrowing)', () {
     final template = _loadTemplate('assets/syllabi/physical_education_grade10.json', 'pe10');
     final windows = schemeOfWorkTermWindows(template);
     expect(windows.length, 3);
@@ -106,20 +115,25 @@ void main() {
     bool windowContains(List<SchemeOfWorkEntry> window, String needle) =>
         window.any((e) => e.title.contains(needle));
 
-    // Term 1's 10 own real entries only fill 10 of the term's 11 real
-    // teaching weeks, so a fresh Scheme of Work's Term 1 pulls its 11th
-    // week from Term 2's own first topic (PE10.6.1) — never as far as
-    // PE10.9.2, which needs a further 3 entries of spillover room.
-    expect(windowContains(windows[0], 'PE10.9.2'), isFalse,
-        reason: 'Term 1 only has enough real teaching weeks to spill one topic into Term 2, not into Term 3');
-    expect(windowContains(windows[0], 'PE10.6.1 Human Body Systems'), isTrue,
-        reason: "Term 1's real 11th week is genuinely Term 2's own first topic — this is correct spillover, not a bug");
+    // A fresh generation has no real class history to justify borrowing
+    // from a later term, so Term 1's window is exactly PE10.1–PE10.5 (its
+    // own 10 real entries) — never PE10.9.2, and never PE10.6.1 either
+    // (that's Term 2's own topic).
+    expect(windows[0].length, 10, reason: "Term 1's window must be exactly its own 10 real entries, no more, no less");
+    expect(windowContains(windows[0], 'PE10.9.2'), isFalse);
+    expect(windowContains(windows[0], 'PE10.6.1'), isFalse,
+        reason: 'PE10.6.1 is Term 2\'s own topic — a fresh Term 1 must not borrow it just to fill 11 weeks '
+            '(applyCalendarPacing stretches Term 1\'s own 10 entries across the real 11 weeks instead)');
 
-    // PE10.9.2 is where the whole-syllabus sequence actually lands once starting
-    // from right after Term 1's window — Term 2's own window.
-    expect(windowContains(windows[1], 'PE10.9.2'), isTrue,
-        reason: 'A fresh class reaches PE10.9.2 (authored under Term 3 in the syllabus JSON) while still in Term 2, '
-            'by real calendar coverage — TermTopicPickerScreen must show it there too, not under Term 3');
+    expect(windowContains(windows[1], 'PE10.6.1'), isTrue, reason: "Term 2's own topics must appear in Term 2's window");
+    expect(windowContains(windows[1], 'PE10.9.2'), isFalse);
+
+    // PE10.9.2 is authored under Term 3 in the syllabus JSON — a fresh
+    // Scheme of Work and the Lesson Plan topic picker must agree it lives
+    // there, matching what the syllabus genuinely supports.
+    expect(windowContains(windows[2], 'PE10.9.2'), isTrue,
+        reason: 'PE10.9.2 is genuinely authored under Term 3 — a fresh generation must show it there, matching '
+            'the real syllabus, not wherever whole-syllabus coverage happened to place it');
 
     // No entry should ever appear in two different terms' windows at once —
     // every real topic/sub-topic is taught exactly once.
@@ -131,10 +145,16 @@ void main() {
     }
   });
 
-  test('every syllabus term window is internally consistent with generateSchemeOfWorkForTerm chaining', () {
-    // Any bundled syllabus: chaining schemeOfWorkTermWindows must visit
-    // every entry generateSchemeOfWork(template, null) would, in the same
-    // order, with no entry skipped or duplicated across term windows.
+  test(
+      'a fresh schemeOfWorkTermWindows never leaves a term with real authored '
+      'content showing "no topics left to place in this term"', () {
+    // Real, reported bug (2026-09-07): Physics Grade 11 (14 real entries
+    // across the whole year) and Principles of Accounts Form 2 (6) used to
+    // have almost all of their content front-loaded into Term 1 by chained
+    // whole-syllabus coverage, leaving later terms with genuinely-authored
+    // content (Physics 11.7 Magnetism in Term 3; POA 2.3–2.5 in Terms 2–3)
+    // showing as empty. Checked here across every bundled subject, not
+    // just those two — the fix is general, not a special case for them.
     final files = Directory('assets/syllabi')
         .listSync()
         .whereType<File>()
@@ -144,15 +164,25 @@ void main() {
       final label = f.uri.pathSegments.last.replaceAll('.json', '');
       final template = _loadTemplate(f.path, label);
       final windows = schemeOfWorkTermWindows(template);
+
+      for (var i = 0; i < template.terms.length; i++) {
+        final termHasRealTopics = template.terms[i].topics.isNotEmpty;
+        if (termHasRealTopics) {
+          expect(windows[i], isNotEmpty,
+              reason: '$label: ${template.terms[i].name} has ${template.terms[i].topics.length} real authored '
+                  'topic(s) but its fresh window came back empty');
+        }
+      }
+
+      // Every term's window must be EXACTLY that term's own authored
+      // entries — concatenating all of them must reconstruct the whole
+      // syllabus exactly (same order, nothing dropped, nothing duplicated,
+      // nothing borrowed from a different term).
       final flattenedTitles = [for (final w in windows) for (final e in w) e.title];
       final wholeSyllabusTitles = allSchemeOfWorkEntries(template).map((e) => e.title).toList();
-
-      // Every window entry must come from the real syllabus, in the real
-      // authored order, with no repeats — i.e. flattenedTitles is exactly
-      // wholeSyllabusTitles truncated wherever the last term's window ran
-      // out of real teaching weeks (it never reorders or duplicates).
-      expect(flattenedTitles.length <= wholeSyllabusTitles.length, isTrue, reason: '$label: more window entries than real topics exist');
-      expect(flattenedTitles, wholeSyllabusTitles.sublist(0, flattenedTitles.length), reason: '$label: window entries drifted out of real syllabus order');
+      expect(flattenedTitles, wholeSyllabusTitles,
+          reason: '$label: fresh term windows must exactly reconstruct the whole syllabus, term by term, with no '
+              'cross-term borrowing and nothing dropped');
     }
   });
 
