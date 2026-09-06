@@ -1,5 +1,5 @@
 {
-  "_source": "Ministry of Education, Science, Vocational Training and Early Education / Curriculum Development Centre, Zambia. 'Commerce and Principles of Accounts Syllabus, Grades 10-12' (2013, ISBN 9982-00-567-7) -- Commerce, Grade 12, Topics 12.1-12.6. Topic, sub-topic and Specific Outcome statements only (Knowledge/Skills/Values omitted, as elsewhere in this app). A real teacher's scheme of work was shared with this project for this grade/subject (Mkushi Boarding STEM Secondary School) -- its filename says 'term 3' but its own internal document header says 'TERM: 1' (a real inconsistency in the source itself, noted here rather than silently resolved); the internal label was trusted since the document's own content (opening with Grade 11 revision, the normal start of a new school year) is consistent with it being an actual Term 1. It confirms 12.1 Insurance (all 5 sub-topics) is real Term 1 content (alongside revision of Grade 11 Stock Exchange/LuSE/Banking topics, which are not new Grade 12 content so are not modelled here). The document does not cover 12.2-12.6, so -- exactly as done for Chemistry Grade 10's own topic left over after its two real scheme documents -- those five remaining topics have been grouped into Term 2/3 by this app's own non-sourced, roughly-equal split in original curriculum order. The scheme document's own teacher name, Teaching Service number, and phone number have been stripped entirely and are not reproduced anywhere in this file. No sub-topic, competency, or objective was added, removed, or altered.",
+  "_source": "Ministry of Education, Science, Vocational Training and Early Education / Curriculum Development Centre, Zambia. 'Commerce and Principles of Accounts Syllabus, Grades 10-12' (2013, ISBN 9982-00-567-7) -- Commerce, Grade 12, Topics 12.1-12.6. Topic, sub-topic and Specific Outcome statements only (Knowledge/Skills/Values omitted, as elsewhere in this app). TERM PLACEMENT IS NOW FULLY REAL: a complete real 'Grade 12 Commerce Scheme of Work, Term 1-3' (Mkushi Boarding STEM Secondary School; the source's own teacher name, Teaching Service number and phone number are not reproduced here per this app's standing sourcing policy) was shared with this project and reviewed in full, superseding an earlier partial (Term-1-only) version of this same scheme. It confirms: Term 1 covers all of 12.1 Insurance plus the Postal Services sub-topic (12.2.1) of Communication; Term 2 covers the Telecommunication Services sub-topic (12.2.2) of Communication, all of 12.3 Transport, and the 'types' half of Warehousing (renamed 12.4.1 Types of Warehouses, its own single competency); Term 3 covers the 'functions' half of Warehousing (split out into its own new sub-topic, 12.4.2 Functions of Warehouses, carrying the competency this file previously grouped together with 12.4.1), plus all of 12.5 Advertising and 12.6 Production and Commerce versus Environment. This replaces the file's earlier non-sourced organizational split (which had grouped all of 12.2-12.6 into Term 2/3 evenly). The only structural change beyond term placement is this one sub-topic split -- 12.4's two competencies, previously combined under a single 12.4.1 Types of Warehouses sub-topic, are now two sub-topics (12.4.1 Types, 12.4.2 Functions) matching how the real scheme of work actually teaches them a term apart; no competency wording, topic, or objective was added, removed, or altered.",
   "curriculum": {
     "code": "OBC_2013",
     "name": "2013 Outcome-Based Curriculum",
@@ -81,16 +81,10 @@
               ]
             }
           ]
-        }
-      ]
-    },
-    {
-      "name": "Term 2",
-      "sequence_number": 2,
-      "topics": [
+        },
         {
           "name": "12.2 Communication",
-          "sequence_number": 1,
+          "sequence_number": 2,
           "sub_topics": [
             {
               "name": "12.2.1 Postal Services",
@@ -112,10 +106,22 @@
                   "category": "Specific Outcome"
                 }
               ]
-            },
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 2",
+      "sequence_number": 2,
+      "topics": [
+        {
+          "name": "12.2 Communication",
+          "sequence_number": 1,
+          "sub_topics": [
             {
               "name": "12.2.2 Telecommunication Services",
-              "sequence_number": 2,
+              "sequence_number": 1,
               "competencies": [
                 {
                   "sequence_number": 1,
@@ -180,6 +186,23 @@
               ]
             }
           ]
+        },
+        {
+          "name": "12.4 Warehousing",
+          "sequence_number": 3,
+          "sub_topics": [
+            {
+              "name": "12.4.1 Types of Warehouses",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Explain types of Warehouses",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
+          ]
         }
       ]
     },
@@ -192,16 +215,11 @@
           "sequence_number": 1,
           "sub_topics": [
             {
-              "name": "12.4.1 Types of Warehouses",
+              "name": "12.4.2 Functions of Warehouses",
               "sequence_number": 1,
               "competencies": [
                 {
                   "sequence_number": 1,
-                  "description": "Explain types of Warehouses",
-                  "category": "Specific Outcome"
-                },
-                {
-                  "sequence_number": 2,
                   "description": "State the functions of the different warehouses",
                   "category": "Specific Outcome"
                 }

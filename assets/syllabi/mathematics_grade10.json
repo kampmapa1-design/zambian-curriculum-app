@@ -1,5 +1,5 @@
 {
-  "_source": "Ministry of Education / Curriculum Development Centre, Zambia. 'O-Level Mathematics Syllabus, Grade 10-12' (2013, published by CDC) — Grade 10, Topics 10.1-10.10. Topic, sub-topic and Specific Outcome statements only; the 'Content' (Knowledge/Skills/Values) columns are omitted, consistent with the approach used for the other 2013 OBC subjects in this app. This document's outcome numbering is reliable and matches its sub-topic structure throughout Grade 10 (unlike several of the other OBC syllabi processed for this app), so outcomes are reproduced as printed rather than positionally reconstructed. The syllabus organizes content by Grade only, not by Term, so all of Grade 10 is modeled as a single term here. STRUCTURAL TERM SPLIT (2026-08-31, not sourced): this file's topics were previously modeled as a single undivided 'Year' block (no real per-topic term/week data exists for this subject/grade). At the user's own explicit request and choice among alternatives offered, the SAME real topics above have now been divided into three roughly-equal-by-content-volume groups, in their original curriculum order, labelled 'Term 1'/'Term 2'/'Term 3' purely so the app can generate and share one term at a time. This division of which topic falls in which term is NOT sourced from any real scheme of work - it is an organizational split only. No topic, sub-topic, competency, or objective was added, removed, or altered; only the grouping changed. Each term's own topics still have no real week_number of their own, so within a term the app's existing calendar-pacing engine spreads them algorithmically across that term's real teaching weeks, exactly as it already did for the whole undivided Year block before this split. UPDATE (2026-09-02): a real 'MATHEMATICS... GRADE: 10. TERM: ___' scheme of work from Mkushi Boarding STEM Secondary School (shared with this app's Drive account; the source header's real teacher name, 'Bernard Tito', is not reproduced here per this app's standing sourcing policy) is titled Term 3 and, matched by topic NAME against this file's own reliable official numbering (the source document's own topic numbers run one lower than this file's, e.g. its '10.6 Similarity and Congruency' vs this file's '10.5' of the same name - a drift in the teacher's own scheme, not in the official syllabus this file already uses), confirms Term 3 actually covers Similarity and Congruency, Travel Graphs, Social and Commercial Arithmetic, Bearings and Symmetry, in that order - all five of which move into Term 3 here (three of them - Social and Commercial Arithmetic, Bearings - had been organizationally placed in Term 2 by the earlier non-sourced split, and Symmetry was already correctly the first Term 3 topic). Computer and Calculator (10.10), which this real document never mentions, is not sourced for a specific term; its Term 1/Term 2 placement (alongside Sets, Index Notation, Algebra and Matrices, none of which this document covers either) remains an organizational choice only. No topic, sub-topic, competency, or objective was added, removed, or altered anywhere in this update - only which term five of the topics belong to, and their order within Term 3.",
+  "_source": "Ministry of Education / Curriculum Development Centre, Zambia. 'O-Level Mathematics Syllabus, Grade 10-12' (2013, published by CDC) — Grade 10, Topics 10.1-10.10. Topic, sub-topic and Specific Outcome statements only; the 'Content' (Knowledge/Skills/Values) columns are omitted, consistent with the approach used for the other 2013 OBC subjects in this app. This document's outcome numbering is reliable and matches its sub-topic structure throughout Grade 10, so outcomes are reproduced as printed rather than positionally reconstructed. TERM PLACEMENT IS NOW FULLY REAL: a complete real 'MATHEMATICS SYLLABUS D... GRADE: 10' scheme of work covering all three terms (Mkushi Boarding STEM Secondary School; the source's own teacher name is not reproduced here per this app's standing sourcing policy) was shared with this project and reviewed in full. Its own Term 1 block is internally mislabelled 'TERM: 3' in its header — a real error in the source, not resolved silently — but its content unambiguously ends with 'END OF TERM ONE TEST', so the block's true position was read from that closing marker rather than its header. Matched by topic name against this file's own reliable official numbering (the source's own topic numbers run one lower throughout, e.g. its '10.6 Similarity and Congruency' vs this file's '10.5' of the same name — a drift in the teacher's own scheme, not in the official syllabus this file already uses), the real document confirms: Term 1 covers Sets, Index Notation, Algebra and Matrices (10.1-10.4); Term 2 covers Similarity and Congruency, Travel Graphs, and Social and Commercial Arithmetic (10.5-10.7); Term 3 covers Bearings, Symmetry, and Computer and Calculator (10.8-10.10). This supersedes an earlier update to this file based on a single Term-3-only version of this same scheme, which had left Computer and Calculator's placement (and part of Similarity/Congruency, Travel Graphs and Social/Commercial Arithmetic's) as a non-sourced organizational guess; with this fuller document now in hand, every topic's term placement is real and sourced, and no organizational (non-sourced) grouping remains in this file. No topic, sub-topic, competency, or objective was added, removed, or altered anywhere in this update — only which term each topic belongs to.",
   "curriculum": {
     "code": "OBC_2013",
     "name": "2013 Outcome-Based Curriculum",
@@ -101,16 +101,10 @@
               ]
             }
           ]
-        }
-      ]
-    },
-    {
-      "name": "Term 2",
-      "sequence_number": 2,
-      "topics": [
+        },
         {
           "name": "10.4 Matrices",
-          "sequence_number": 1,
+          "sequence_number": 4,
           "sub_topics": [
             {
               "name": "10.4.1 Transpose of a Matrix",
@@ -161,62 +155,12 @@
               ]
             }
           ]
-        },
-        {
-          "name": "10.10 Computer and Calculator",
-          "sequence_number": 2,
-          "sub_topics": [
-            {
-              "name": "10.10.1 Functions on a Calculator",
-              "sequence_number": 1,
-              "competencies": [
-                {
-                  "sequence_number": 1,
-                  "description": "Demonstrate the use of different functions on a calculator",
-                  "category": "Specific Outcome"
-                }
-              ]
-            },
-            {
-              "name": "10.10.2 Basic Components of a Computer",
-              "sequence_number": 2,
-              "competencies": [
-                {
-                  "sequence_number": 1,
-                  "description": "Describe components of a computer",
-                  "category": "Specific Outcome"
-                }
-              ]
-            },
-            {
-              "name": "10.10.3 Algorithms",
-              "sequence_number": 3,
-              "competencies": [
-                {
-                  "sequence_number": 1,
-                  "description": "Describe various methods of implementing an algorithm",
-                  "category": "Specific Outcome"
-                }
-              ]
-            },
-            {
-              "name": "10.10.4 Methods of Implementing an Algorithm",
-              "sequence_number": 4,
-              "competencies": [
-                {
-                  "sequence_number": 1,
-                  "description": "Outline problem solving stages",
-                  "category": "Specific Outcome"
-                }
-              ]
-            }
-          ]
         }
       ]
     },
     {
-      "name": "Term 3",
-      "sequence_number": 3,
+      "name": "Term 2",
+      "sequence_number": 2,
       "topics": [
         {
           "name": "10.5 Similarity and Congruency",
@@ -315,10 +259,16 @@
               ]
             }
           ]
-        },
+        }
+      ]
+    },
+    {
+      "name": "Term 3",
+      "sequence_number": 3,
+      "topics": [
         {
           "name": "10.8 Bearings",
-          "sequence_number": 4,
+          "sequence_number": 1,
           "sub_topics": [
             {
               "name": "10.8.1 Bearings and Scale Drawing",
@@ -340,7 +290,7 @@
         },
         {
           "name": "10.9 Symmetry",
-          "sequence_number": 5,
+          "sequence_number": 2,
           "sub_topics": [
             {
               "name": "10.9.1 Symmetry of Solids",
@@ -359,6 +309,56 @@
                 {
                   "sequence_number": 3,
                   "description": "Determine plane symmetry",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "10.10 Computer and Calculator",
+          "sequence_number": 3,
+          "sub_topics": [
+            {
+              "name": "10.10.1 Functions on a Calculator",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Demonstrate the use of different functions on a calculator",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "10.10.2 Basic Components of a Computer",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe components of a computer",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "10.10.3 Algorithms",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe various methods of implementing an algorithm",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "10.10.4 Methods of Implementing an Algorithm",
+              "sequence_number": 4,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Outline problem solving stages",
                   "category": "Specific Outcome"
                 }
               ]
