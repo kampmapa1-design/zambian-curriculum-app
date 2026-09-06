@@ -1,0 +1,392 @@
+{
+  "_source": "Ministry of General Education (Western Province), 'Physical Education Grade 10 to Grade 12 Common Schemes of Work' (2018) -- Grade 11, all three terms. This is a province-wide common scheme of work, not an individual teacher's own document, and covers all three terms of Grade 11 in full. The source has no numeric topic or sub-topic codes of its own (its own table columns are simply 'TOPIC' and 'SUB-TOPIC' in plain text); this app has assigned its own PE11.x / PE11.x.x numbering, consistent with how every other OBC subject in this app is coded, purely as a structural key -- every topic name, sub-topic name, and Specific Outcome statement is the source's own real wording (its own 'Content' Knowledge/Skill/Value columns are omitted, consistent with the approach used for every other bundled OBC subject). Term placement for every topic here is real, read directly from which Grade/Term block of the source document it appears in -- unlike several other OBC subjects in this app, no part of this file's term placement is a non-sourced organizational guess. Where the same topic and sub-topic recur across several consecutive weeks of the source with closely related specific outcomes (a normal feature of a week-by-week scheme), those weeks' outcomes have been consolidated under that one sub-topic rather than repeated week by week.",
+  "curriculum": {
+    "code": "OBC_2013",
+    "name": "2013 Outcome-Based Curriculum",
+    "description": "Zambia's 2013 outcome-based curriculum for Grades 10-12 (Senior Secondary)."
+  },
+  "subject": {
+    "name": "Physical Education",
+    "code": "PE",
+    "description": "Senior Secondary Physical Education, Grades 10-12 (Ministry of General Education / school common scheme of work)."
+  },
+  "grade": {
+    "name": "Grade 11",
+    "code": "G11_OBC",
+    "level": 11,
+    "phase": "Senior Secondary"
+  },
+  "terms": [
+    {
+      "name": "Term 1",
+      "sequence_number": 1,
+      "topics": [
+        {
+          "name": "PE11.1 Entrepreneurship in Sports",
+          "sequence_number": 1,
+          "sub_topics": [
+            {
+              "name": "PE11.1.1 Project Work, Marketing and Management",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Identify economic sports activities in the community",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "State the value of economic activities in sport",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Design and make an economic sports project",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "PE11.2 Sports Skills Development",
+          "sequence_number": 2,
+          "sub_topics": [
+            {
+              "name": "PE11.2.1 Ball Games and Board Games",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Demonstrate coordinated motor skills in various ball games and board games",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Participate in advanced strategies in board games",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "PE11.2.2 Field and Track Events and Modified Sport",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Demonstrate advanced skills in track and field events",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Apply the rules of modified games and sports activities",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "PE11.2.3 Racquet Games",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Demonstrate skills in racquet games",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Demonstrate the impact of sport on the environment",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "State reasons why drug abuse is bad",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "PE11.3 Recreational Games and Activities",
+          "sequence_number": 3,
+          "sub_topics": [
+            {
+              "name": "PE11.3.1 Traditional and Conventional Games",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Demonstrate recreational activities",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Perform dances in games and sports",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "PE11.3.2 Aerobics and Dance Activities",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Demonstrate advanced rhythmic patterns of aerobics",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Demonstrate leadership skills",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "PE11.4 Orienteering",
+          "sequence_number": 4,
+          "sub_topics": [
+            {
+              "name": "PE11.4.1 Mapping and Direction",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use a six-figure grid reference to locate a feature on a map",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Locate places using a map and compass",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "PE11.4.2 Scale and Distance",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use map scale to find actual distances between points",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 2",
+      "sequence_number": 2,
+      "topics": [
+        {
+          "name": "PE11.5 Gymnastics",
+          "sequence_number": 1,
+          "sub_topics": [
+            {
+              "name": "PE11.5.1 Tumbling and Stunts",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Perform complex floor agilities",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Perform complex stunts on apparatus",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "PE11.6 Fitness Activities",
+          "sequence_number": 2,
+          "sub_topics": [
+            {
+              "name": "PE11.6.1 Developmental Fitness",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "State the value of cardiovascular, respiratory and muscular endurance activities in games and sports",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Participate in physical activities to develop own fitness levels",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Perform isometric exercises",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "PE11.7 Anatomy and Physiology",
+          "sequence_number": 3,
+          "sub_topics": [
+            {
+              "name": "PE11.7.1 Human Body Systems",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe the roles of the human circulatory system in sporting activities",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Describe the functions of the respiratory system in sporting activities",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Describe the effect of exercise on circulatory and respiratory systems",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "PE11.8 Biomechanics",
+          "sequence_number": 4,
+          "sub_topics": [
+            {
+              "name": "PE11.8.1 Energy and Movement",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe the body's sources of energy during exercise",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Explain how the energy produced in the body is used in movement",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Explain the heavy breathing of an athlete after vigorous activity",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Demonstrate the effects of vigorous exercise on heart beat and breathing rates",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 3",
+      "sequence_number": 3,
+      "topics": [
+        {
+          "name": "PE11.9 Nutrition",
+          "sequence_number": 1,
+          "sub_topics": [
+            {
+              "name": "PE11.9.1 Nutrition for Fitness and Sport",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "State how eating habits can affect performance in games and sports",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Plan a diet for a sports person",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "PE11.10 First Aid",
+          "sequence_number": 2,
+          "sub_topics": [
+            {
+              "name": "PE11.10.1 Health and Safety",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Demonstrate first aid techniques",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "PE11.10.2 First Aid Techniques",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Apply first aid skills according to situations",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "PE11.11 Swimming",
+          "sequence_number": 3,
+          "sub_topics": [
+            {
+              "name": "PE11.11.1 Strokes",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Perform refined swimming styles",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Perform advanced diving styles",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "PE11.11.2 Competitive Swimming and Survival Skills",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Demonstrate water games",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Perform rescue operations during swimming",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

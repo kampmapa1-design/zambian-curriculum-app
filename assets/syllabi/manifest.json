@@ -593,6 +593,51 @@
       "grade_level": 12,
       "grade_name": "Grade 12",
       "file": "principles_of_accounts_grade12.json"
+    },
+    {
+      "curriculum_code": "OBC_2013",
+      "curriculum_name": "2013 Outcome-Based Curriculum",
+      "subject_code": "PE",
+      "subject_name": "Physical Education",
+      "grade_level": 10,
+      "grade_name": "Grade 10",
+      "file": "physical_education_grade10.json"
+    },
+    {
+      "curriculum_code": "OBC_2013",
+      "curriculum_name": "2013 Outcome-Based Curriculum",
+      "subject_code": "PE",
+      "subject_name": "Physical Education",
+      "grade_level": 11,
+      "grade_name": "Grade 11",
+      "file": "physical_education_grade11.json"
+    },
+    {
+      "curriculum_code": "OBC_2013",
+      "curriculum_name": "2013 Outcome-Based Curriculum",
+      "subject_code": "PE",
+      "subject_name": "Physical Education",
+      "grade_level": 12,
+      "grade_name": "Grade 12",
+      "file": "physical_education_grade12.json"
+    },
+    {
+      "curriculum_code": "CBC_2023",
+      "curriculum_name": "2023 Competency-Based Curriculum",
+      "subject_code": "AD",
+      "subject_name": "Art and Design",
+      "grade_level": 2,
+      "grade_name": "Form 2",
+      "file": "art_and_design_form2.json"
+    },
+    {
+      "curriculum_code": "CBC_2023",
+      "curriculum_name": "2023 Competency-Based Curriculum",
+      "subject_code": "POA",
+      "subject_name": "Principles of Accounts",
+      "grade_level": 3,
+      "grade_name": "Form 3",
+      "file": "principles_of_accounts_form3.json"
     }
   ]
 }

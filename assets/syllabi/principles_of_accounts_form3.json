@@ -1,0 +1,243 @@
+{
+  "_source": "A real 'Form 3 Principles of Accounts Scheme of Work, Term 1-3' (Mkushi Boarding Secondary School; the source's own teacher name and Teaching Service number are not reproduced here per this app's standing sourcing policy) was shared with this project and reviewed in full, covering all three terms. This extends the existing Form 1/Form 2 Principles of Accounts files in this app to Form 3, under the same 2023 Competency-Based Curriculum. The source cites real page numbers from an official Principles of Accounts syllabus throughout (e.g. 'Syllabus p.41', 'Syllabus p.47'), confirming its own topic/sub-topic/outcome numbering (3.1 through 3.5) tracks that official document directly, though this app does not hold that syllabus document itself -- the scheme's own real content (Topic, Sub-topic and Specific Competence statements) is reproduced here; its own Content/Concept and Learning Activities columns are omitted, consistent with the approach used for every other bundled subject in this app. Term placement for every topic is real, read directly from which Term block of the source document it appears in. Note that the source's own numbering places two distinct topics both under an 'Adjustments to Financial Statements' heading -- 3.1 (accruals, prepayments, bad debts, doubtful debts) in Term 1, and 3.5 (depreciation of non-current assets) in Term 3, with Bank Reconciliation (3.2), Limitations of the Trial Balance (3.3) and Control Accounts (3.4) numbered in between -- reproduced here exactly as the source itself numbers them, with '(Depreciation)' added to 3.5's own topic name only to distinguish the two in this file's listings.",
+  "curriculum": {
+    "code": "CBC_2023",
+    "name": "2023 Competency-Based Curriculum",
+    "description": "Zambia's current competency-based curriculum."
+  },
+  "subject": {
+    "name": "Principles of Accounts",
+    "code": "POA",
+    "description": "Ordinary Level Secondary Principles of Accounts syllabus, Form 1-4 (Curriculum Development Centre)."
+  },
+  "grade": {
+    "name": "Form 3",
+    "code": "F3_CBC",
+    "level": 3,
+    "phase": "Secondary — the source scheme itself uses \"Form 3\" for this level under the 2023 CBC."
+  },
+  "terms": [
+    {
+      "name": "Term 1",
+      "sequence_number": 1,
+      "topics": [
+        {
+          "name": "3.1 Adjustments to Financial Statements",
+          "sequence_number": 1,
+          "sub_topics": [
+            {
+              "name": "3.1.1 Introduction to Adjustments to Financial Statements",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Justify adjustments to Financial Statements",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "3.1.2 Accruals and Prepayments",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Show treatment of Accrued Expenses and Incomes in Financial Statements",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Show treatment of Prepaid Expenses and Incomes in Financial Statements",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "3.1.3 Bad Debts",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Show treatment of Bad Debts in Financial Statements",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "3.1.4 Bad Debts Recovered",
+              "sequence_number": 4,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Show treatment of Bad Debts Recovered in Financial Statements",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "3.1.5 Allowance (Provision) for Doubtful Debts",
+              "sequence_number": 5,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Show treatment of Allowance for Doubtful Debts in Financial Statements",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "3.1.6 Financial Statements with Adjustments",
+              "sequence_number": 6,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Prepare adjusted Financial Statements",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 2",
+      "sequence_number": 2,
+      "topics": [
+        {
+          "name": "3.2 Bank Reconciliation",
+          "sequence_number": 1,
+          "sub_topics": [
+            {
+              "name": "3.2.1 Revised Cash Book",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Prepare Revised Cash Book",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "3.2.2 Bank Reconciliation Statement",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Prepare Bank Reconciliation Statement",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "3.3 Limitations of the Trial Balance",
+          "sequence_number": 2,
+          "sub_topics": [
+            {
+              "name": "3.3.1 Errors Not Revealed by the Trial Balance",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Correct errors not revealed by the Trial Balance",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "3.3.2 Errors Revealed by the Trial Balance",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Correct errors revealed by the Trial Balance",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "3.3.3 Suspense Account",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Prepare Suspense Account",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "3.4 Control Accounts",
+          "sequence_number": 3,
+          "sub_topics": [
+            {
+              "name": "3.4.1 Types of Control Accounts",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Prepare Sales/Receivables Ledger Control Account",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Prepare Purchases/Payables Ledger Control Account",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Prepare Control Accounts",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 3",
+      "sequence_number": 3,
+      "topics": [
+        {
+          "name": "3.5 Adjustments to Financial Statements (Depreciation)",
+          "sequence_number": 1,
+          "sub_topics": [
+            {
+              "name": "3.5.1 Depreciation of Non-Current Assets",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Demonstrate understanding of the effects of Depreciation of Non-Current Assets on Financial Statements",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "3.5.2 Calculating Depreciation",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use different methods to calculate Depreciation",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Show the Allowance/Provision for Depreciation of Non-Current Assets in Financial Statements",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

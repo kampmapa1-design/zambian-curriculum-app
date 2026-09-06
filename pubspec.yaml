@@ -70,6 +70,11 @@ flutter:
     - assets/syllabi/mathematics_grade10.json
     - assets/syllabi/mathematics_grade11.json
     - assets/syllabi/mathematics_grade12.json
+    - assets/syllabi/physical_education_grade10.json
+    - assets/syllabi/physical_education_grade11.json
+    - assets/syllabi/physical_education_grade12.json
+    - assets/syllabi/art_and_design_form2.json
+    - assets/syllabi/principles_of_accounts_form3.json
     - assets/syllabi/physics_grade10.json
     - assets/syllabi/physics_grade11.json
     - assets/syllabi/physics_grade12.json

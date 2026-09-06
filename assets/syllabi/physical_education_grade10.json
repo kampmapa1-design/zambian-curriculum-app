@@ -1,0 +1,464 @@
+{
+  "_source": "Ministry of General Education (Western Province), 'Physical Education Grade 10 to Grade 12 Common Schemes of Work' (2018) -- Grade 10, all three terms. This is a province-wide common scheme of work, not an individual teacher's own document, and covers all three terms of Grade 10 in full. The source has no numeric topic or sub-topic codes of its own (its own table columns are simply 'TOPIC' and 'SUB-TOPIC' in plain text); this app has assigned its own PE10.x / PE10.x.x numbering, consistent with how every other OBC subject in this app is coded, purely as a structural key -- every topic name, sub-topic name, and Specific Outcome statement is the source's own real wording (its own 'Content' Knowledge/Skill/Value columns are omitted, consistent with the approach used for every other bundled OBC subject). Term placement for every topic here is real, read directly from which Grade/Term block of the source document it appears in -- unlike several other OBC subjects in this app, no part of this file's term placement is a non-sourced organizational guess. Where the same topic and sub-topic recur across several consecutive weeks of the source with closely related specific outcomes (a normal feature of a week-by-week scheme), those weeks' outcomes have been consolidated under that one sub-topic rather than repeated week by week.",
+  "curriculum": {
+    "code": "OBC_2013",
+    "name": "2013 Outcome-Based Curriculum",
+    "description": "Zambia's 2013 outcome-based curriculum for Grades 10-12 (Senior Secondary)."
+  },
+  "subject": {
+    "name": "Physical Education",
+    "code": "PE",
+    "description": "Senior Secondary Physical Education, Grades 10-12 (Ministry of General Education / school common scheme of work)."
+  },
+  "grade": {
+    "name": "Grade 10",
+    "code": "G10_OBC",
+    "level": 10,
+    "phase": "Senior Secondary"
+  },
+  "terms": [
+    {
+      "name": "Term 1",
+      "sequence_number": 1,
+      "topics": [
+        {
+          "name": "PE10.1 Sports Skills Development",
+          "sequence_number": 1,
+          "sub_topics": [
+            {
+              "name": "PE10.1.1 Ball Games and Modified Sport",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Mark out sports playfields",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Perform improved motor skills in all ball games",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Apply the rules of modified games and sports activities",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Talk about effects of doping",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "PE10.1.2 Board Games and Racquet Games",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "State ways to control drug abuse in sports",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Demonstrate advanced strategies in board games",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Perform skills in racquet games",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "PE10.1.3 Track and Field Events",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Demonstrate leadership skills in games and sports activities",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "PE10.2 Recreational Games and Activities",
+          "sequence_number": 2,
+          "sub_topics": [
+            {
+              "name": "PE10.2.1 Traditional and Conventional Games",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "State the importance of recreational activities and games",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "PE10.2.2 Aerobics and Dance Activities",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Demonstrate advanced rhythmic patterns using equipment",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Apply advanced steps and patterns of aerobic dance",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "PE10.3 Entrepreneurship in Sports",
+          "sequence_number": 3,
+          "sub_topics": [
+            {
+              "name": "PE10.3.1 Portfolio Making",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Identify economic sports activities in the community",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Design a sports portfolio",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Design simple sports equipment",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "PE10.4 Gymnastics",
+          "sequence_number": 4,
+          "sub_topics": [
+            {
+              "name": "PE10.4.1 Tumbling",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Perform complex floor agilities",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "PE10.4.2 Stunts",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Perform complex stunts",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "PE10.5 Fitness Activities",
+          "sequence_number": 5,
+          "sub_topics": [
+            {
+              "name": "PE10.5.1 Isotonic (Dynamic) Activities",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Perform physical cardiovascular, respiratory and muscular endurance activities",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "PE10.5.2 Isometric (Static) Activities",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Demonstrate physical activities for fitness levels",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 2",
+      "sequence_number": 2,
+      "topics": [
+        {
+          "name": "PE10.6 Anatomy and Physiology",
+          "sequence_number": 1,
+          "sub_topics": [
+            {
+              "name": "PE10.6.1 Human Body Systems",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Identify the general body make up",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Describe the structure and functions of the human body",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Identify body systems that have voluntary action in games and sports",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Describe the roles of the human muscular-skeletal system in sporting activities",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 5,
+                  "description": "Describe the functions of the muscular system in sporting activities",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 6,
+                  "description": "Describe the effect of exercise on skeletal and muscular systems",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "PE10.7 Biomechanics",
+          "sequence_number": 2,
+          "sub_topics": [
+            {
+              "name": "PE10.7.1 Forces",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Demonstrate force, including friction, in sports",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Explain external forces and their effects in sports",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Generate forces to maintain positioning in sports",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Explain how forces create movement in physical activities in sports",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 5,
+                  "description": "Calculate force, work, friction, speed and energy",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 6,
+                  "description": "Relate lever systems to how the human body operates",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "PE10.8 Nutrition",
+          "sequence_number": 3,
+          "sub_topics": [
+            {
+              "name": "PE10.8.1 Nutrition for Fitness and Sport",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "State types of nutrients and their functions",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Explain the functions of water and fibre in the human body",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Relate nutrition requirements to physical fitness and sports",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "State ways to control drug abuse in sport",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 5,
+                  "description": "Explain effects of doping in sports",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 3",
+      "sequence_number": 3,
+      "topics": [
+        {
+          "name": "PE10.9 First Aid",
+          "sequence_number": 1,
+          "sub_topics": [
+            {
+              "name": "PE10.9.1 Health and Safety",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Observe safety precautions during PE lessons, games and sports activities",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "PE10.9.2 First Aid Techniques",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Demonstrate basic first aid techniques",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Differentiate between strain, sprain and fracture",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Talk about doping in sports",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Participate in a talk on reproductive health",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "PE10.10 Facilities and Equipment",
+          "sequence_number": 2,
+          "sub_topics": [
+            {
+              "name": "PE10.10.1 Design, Management and Maintenance",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Design simple sports facilities",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Manage sports facilities",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Maintain sports facilities",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Demonstrate entrepreneurship skills",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "PE10.11 Swimming",
+          "sequence_number": 3,
+          "sub_topics": [
+            {
+              "name": "PE10.11.1 Strokes",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Perform improved swimming techniques",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "PE10.11.2 Competitive Swimming",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Participate in water games",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Participate in competitive swimming",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "PE10.11.3 Survival Skills and Water Safety",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Demonstrate elements of survival skills",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Participate in water sports",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

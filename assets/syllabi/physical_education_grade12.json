@@ -1,0 +1,263 @@
+{
+  "_source": "Ministry of General Education (Western Province), 'Physical Education Grade 10 to Grade 12 Common Schemes of Work' (2018) -- Grade 12, all three terms. This is a province-wide common scheme of work, not an individual teacher's own document, and covers all three terms of Grade 12 in full. The source has no numeric topic or sub-topic codes of its own (its own table columns are simply 'TOPIC' and 'SUB-TOPIC' in plain text); this app has assigned its own PE12.x / PE12.x.x numbering, consistent with how every other OBC subject in this app is coded, purely as a structural key -- every topic name, sub-topic name, and Specific Outcome statement is the source's own real wording (its own 'Content' Knowledge/Skill/Value columns are omitted, consistent with the approach used for every other bundled OBC subject). Term placement for every topic here is real, read directly from which Grade/Term block of the source document it appears in -- unlike several other OBC subjects in this app, no part of this file's term placement is a non-sourced organizational guess. Where the same topic and sub-topic recur across several consecutive weeks of the source with closely related specific outcomes (a normal feature of a week-by-week scheme), those weeks' outcomes have been consolidated under that one sub-topic rather than repeated week by week.",
+  "curriculum": {
+    "code": "OBC_2013",
+    "name": "2013 Outcome-Based Curriculum",
+    "description": "Zambia's 2013 outcome-based curriculum for Grades 10-12 (Senior Secondary)."
+  },
+  "subject": {
+    "name": "Physical Education",
+    "code": "PE",
+    "description": "Senior Secondary Physical Education, Grades 10-12 (Ministry of General Education / school common scheme of work)."
+  },
+  "grade": {
+    "name": "Grade 12",
+    "code": "G12_OBC",
+    "level": 12,
+    "phase": "Senior Secondary"
+  },
+  "terms": [
+    {
+      "name": "Term 1",
+      "sequence_number": 1,
+      "topics": [
+        {
+          "name": "PE12.1 Sports Skills Development",
+          "sequence_number": 1,
+          "sub_topics": [
+            {
+              "name": "PE12.1.1 Ball Games, Board Games and Racquet Games",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Officiate various ball games, board and racquet games",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "PE12.1.2 Field and Track Events and Modified Sport",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Officiate track and field events",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "State effects of using drugs in sports activities",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "State ways to deal with drug problems in sports",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Participate in modified games and sports activities",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 5,
+                  "description": "Explain factors affecting participation in physical education",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "PE12.2 Recreational Games and Activities",
+          "sequence_number": 2,
+          "sub_topics": [
+            {
+              "name": "PE12.2.1 Traditional and Conventional Games",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Perform games and dances in relation to cross-cutting issues",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "PE12.2.2 Aerobics",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use aerobics to disseminate information on cross-cutting issues",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "PE12.3 Gymnastics",
+          "sequence_number": 3,
+          "sub_topics": [
+            {
+              "name": "PE12.3.1 Tumbling and Stunts",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Organize gymnastic activities",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Devise and perform a variety of gymnastic activities",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Describe ways in which gymnastic skills can be used to earn a living",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 2",
+      "sequence_number": 2,
+      "topics": [
+        {
+          "name": "PE12.4 Anatomy and Physiology",
+          "sequence_number": 1,
+          "sub_topics": [
+            {
+              "name": "PE12.4.1 Human Body Systems",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Describe the digestive and nervous systems",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Relate the roles of the digestive and nervous systems to sport",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "PE12.5 Biomechanics",
+          "sequence_number": 2,
+          "sub_topics": [
+            {
+              "name": "PE12.5.1 Laws of Motion",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Discuss the laws of motion in relation to sporting activities",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Apply the three laws of motion in sports activities",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Calculate the acceleration of an athlete in a sprint race",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "PE12.6 Swimming",
+          "sequence_number": 3,
+          "sub_topics": [
+            {
+              "name": "PE12.6.1 Swimming Competitions and Water Games",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Demonstrate skills in organizing swimming competitions",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 3",
+      "sequence_number": 3,
+      "topics": [
+        {
+          "name": "PE12.7 Swimming",
+          "sequence_number": 1,
+          "sub_topics": [
+            {
+              "name": "PE12.7.1 Swimming Competitions and Water Games",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Organize various races in swimming",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "State ways in which skills in swimming can be used to earn a living",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "PE12.8 Organization and Management of Games and Sports Events",
+          "sequence_number": 2,
+          "sub_topics": [
+            {
+              "name": "PE12.8.1 Organizing Events",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Organize games and sports events",
+                  "category": "Specific Outcome"
+                }
+              ]
+            },
+            {
+              "name": "PE12.8.2 Resource Mobilization and Partnership",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Organize material resources for games and sports competitions",
+                  "category": "Specific Outcome"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Mobilize stakeholders in organizing sports and games events",
+                  "category": "Specific Outcome"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

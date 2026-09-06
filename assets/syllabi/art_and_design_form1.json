@@ -1,5 +1,5 @@
 {
-  "_source": "Curriculum Development Centre Teaching Module — \"Art and Design Module\" (https://library.cdcrepository.info/resource.php?id=260). Topic/sub-topic structure and competencies extracted with AI assistance (Gemini) directly from this module's own stated content — never invented; the extraction was instructed to use only what the module itself says, and to flag anything unclear rather than guess. Covers only the term this specific module addresses. CORRECTION (2026-08-28): originally mislabeled as \"Term 2\" — the module's own text never states its term, so the batch extraction script's default assumption went unchecked. Cross-checked directly against the CDC library's own term filter (library.cdcrepository.info, browse by term), which confirms resource id=260 is filed under Term 3. Relabeled accordingly; no content was changed, only the term/sequence fields. Other terms are not included since no source document for them was available at extraction time. AI-flagged completeness notes from extraction: The module content starts at topic 1.11, indicating that earlier topics (1.1 through 1.10) are missing from the provided text, with the exception of an appended sample lesson plan referencing topic 1.9. Sub-topic 1.14.1 (Entrepreneurship in Art) did not contain an explicitly labeled 'Specific Competence' heading like the other sub-topics, so its competencies array was left empty. General competences listed at the topic level were omitted from the sub-topic competency arrays to adhere strictly to stated sub-topic competencies. ADDED (2026-08-28): Term 2 content. Curriculum Development Centre Teaching Module — \"Art and Design Teaching Module\" (https://library.cdcrepository.info/resource.php?id=401). Topic/sub-topic structure and competencies extracted with AI assistance (Gemini) directly from this module's own stated content — never invented; the extraction was instructed to use only what the module itself says, and to flag anything unclear rather than guess. Term confirmed directly against the CDC library's own term filter (browse.php?...&term=2), not assumed. AI-flagged completeness notes from extraction: The module text begins mid-sequence at section 1.2.3 under topic '1.2 HISTORY OF ZAMBIAN ART', skipping sections 1.1, 1.2.1, and 1.2.2. Topics 1.3 and 1.4 are completely omitted between 1.2 and 1.5. No week numbers or explicitly labeled 'Learning Objectives' headings are provided in the module text.",
+  "_source": "A real, complete 'Art and Design Form 1 Scheme of Work, Term 1-3' (Mkushi Boarding STEM Secondary School; the source's own teacher name is not reproduced here per this app's standing sourcing policy) was shared with this project and reviewed in full. This replaces this file's earlier content, which was pieced together from two separate, individually incomplete CDC teaching-module extracts (one starting mid-sequence at topic 1.11, the other beginning mid-sequence at 1.2.3, both missing real topics entirely) -- this new source covers Form 1 topics 1.1-1.14 across all three terms without gaps, and cites real page numbers from the official '2024 Art and Design Syllabus, Ordinary Secondary Education Form 1-4' throughout (e.g. 'pg. 2', 'pg. 12'), confirming its own topic and outcome numbering tracks that official syllabus directly. Topic, sub-topic and Specific Competence statements are the source's own real wording; its own Content/Concept and Learning Activities columns are omitted, consistent with the approach used for every other bundled subject in this app. Term placement for every topic is real, read directly from which Term block of the source document it appears in. A few sub-topics in the source had their own numbering visibly collide across adjacent weeks (e.g. two different sub-topics both initially labelled '2.2.1' for Colour Properties and Colour Pigments) -- resolved here by keeping the source's own topic-level number and renumbering only the colliding sub-topic sequence, without altering any competency wording.",
   "curriculum": {
     "code": "CBC_2023",
     "name": "2023 Competency-Based Curriculum",
@@ -14,59 +14,190 @@
     "name": "Form 1",
     "code": "F1_CBC",
     "level": 1,
-    "phase": "Secondary — the source scheme itself uses \"Form 1\" for this level under the 2023 CBC."
+    "phase": "Secondary — the source scheme itself uses \"Form\" numbering for this level under the 2023 CBC."
   },
   "terms": [
+    {
+      "name": "Term 1",
+      "sequence_number": 1,
+      "topics": [
+        {
+          "name": "1.1 Introduction to Art, Crafts and Design",
+          "sequence_number": 1,
+          "sub_topics": [
+            {
+              "name": "1.1.1 Art Awareness and Appreciation",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Categorise branches of Art",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "1.1.2 Careers in Art and Design",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Classify careers in Art and Design",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "1.1.3 Visual Arts",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Identify forms of Visual Arts",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "1.1.4 Pioneers of Zambian Visual Arts",
+              "sequence_number": 4,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Identify pioneers of Zambian Visual Arts",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "1.1.5 Elements of Art",
+              "sequence_number": 5,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Apply Art elements in practical activities",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "1.1.6 Principles of Art",
+              "sequence_number": 6,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Create artworks using principles of art",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "1.1.7 Basic Shapes",
+              "sequence_number": 7,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Apply knowledge of basic shapes in drawing",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "1.1.8 Types of Shading",
+              "sequence_number": 8,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Apply shading techniques appropriately",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "1.1.9 Different Textures",
+              "sequence_number": 9,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Compose pictures using a variety of textures and values",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "1.2 History of Zambian Art - I",
+          "sequence_number": 2,
+          "sub_topics": [
+            {
+              "name": "1.2.1 Pre-Historic Rock Art of Zambia",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Research the pre-historic rock art of Zambia",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "1.2.2 Traditional Crafts",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Identify traditional crafts",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "1.2.3 Post-Independence and Contemporary Art",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Explain post-independence art",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Explain contemporary art",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
     {
       "name": "Term 2",
       "sequence_number": 2,
       "topics": [
         {
-          "name": "1.2 HISTORY OF ZAMBIAN ART",
+          "name": "1.2 History of Zambian Art - I",
           "sequence_number": 1,
-          "description": "Explores Post-Independence Contemporary Art, Traditional Decorations, and Traditional Artifacts in Zambia.",
-          "week_number": null,
-          "learning_objectives": [],
-          "competencies": [],
           "sub_topics": [
             {
-              "name": "1.2.3 POST-INDEPENDENCE CONTEMPORARY ART",
+              "name": "1.2.4 Traditional Decorations",
               "sequence_number": 1,
-              "description": "In this subtopic, learners will study Post Independence Contemporary Art in Zambia which reflects the country’s cultural heritage and modern influences. Characterized by a blend of traditional and modern styles, Zambian artists address local themes like poverty, inequality, and environmental concerns.",
-              "week_number": null,
-              "learning_objectives": [],
               "competencies": [
                 {
                   "sequence_number": 1,
-                  "description": "1.2.3.1 Explain Post-Independence Contemporary Art",
+                  "description": "Make traditional decorations",
                   "category": "Specific Competence"
                 }
               ]
             },
             {
-              "name": "1.2.4 TRADITIONAL DECORATIONS",
+              "name": "1.2.5 Traditional Artefacts",
               "sequence_number": 2,
-              "description": "Traditional decorations in Zambia are a vibrant reflection of the country’s rich cultural heritage and diversity. These decorations feature a range of artistic expressions, including intricately woven basketry, carved wood items, colourful textiles, and beautiful beadwork.",
-              "week_number": null,
-              "learning_objectives": [],
               "competencies": [
                 {
                   "sequence_number": 1,
-                  "description": "1.2.4.1 Make traditional decorations",
-                  "category": "Specific Competence"
-                }
-              ]
-            },
-            {
-              "name": "1.2.5 TRADITIONAL ARTIFACTS",
-              "sequence_number": 3,
-              "description": "Traditional artefacts in Zambia are physical objects that hold significant cultural, historical, and spiritual value to the country’s diverse communities. These artefacts can include masks, sculptures, Textiles and jewellery.",
-              "week_number": null,
-              "learning_objectives": [],
-              "competencies": [
-                {
-                  "sequence_number": 1,
-                  "description": "1.2.5.1 Create traditional Artefacts.",
+                  "description": "Create traditional artefacts",
                   "category": "Specific Competence"
                 }
               ]
@@ -74,37 +205,27 @@
           ]
         },
         {
-          "name": "1.5 GRAPHIC DESIGN",
+          "name": "1.3 Introduction to Colour",
           "sequence_number": 2,
-          "description": "Covers graphic design principles including poster making and computer-aided design.",
-          "week_number": null,
-          "learning_objectives": [],
-          "competencies": [],
           "sub_topics": [
             {
-              "name": "1.5.1 POSTER MAKING",
+              "name": "1.3.1 Types of Colours",
               "sequence_number": 1,
-              "description": "In this subtopic, learners will explore the art of Poster making, focusing on how to convey important messages related to cross-cutting issues such as conservation and social activities. Through creative design, learners will learn to express ideas visually.",
-              "week_number": null,
-              "learning_objectives": [],
               "competencies": [
                 {
                   "sequence_number": 1,
-                  "description": "1.5.1.1 Design various posters on crosscutting issues to convey messages.",
+                  "description": "Experiment colours of the spectrum",
                   "category": "Specific Competence"
                 }
               ]
             },
             {
-              "name": "1.5.2 COMPUTER AIDED DESIGN (CAD)",
+              "name": "1.3.2 Colour Schemes",
               "sequence_number": 2,
-              "description": "Computer Aided Design (CAD) is a powerful tool used by designers to create precise drawings and models. This topic will introduce learners to the fundamentals of CAD and its application in designing various types of cards and models.",
-              "week_number": null,
-              "learning_objectives": [],
               "competencies": [
                 {
                   "sequence_number": 1,
-                  "description": "1.5.2.1 Design various types of cards using a computer",
+                  "description": "Use colour schemes in painting",
                   "category": "Specific Competence"
                 }
               ]
@@ -112,29 +233,43 @@
           ]
         },
         {
-          "name": "1.6 PATTERN AND DESIGN",
+          "name": "1.4 Studio Practice",
           "sequence_number": 3,
-          "description": "The topic discusses patterns and designs around the environment, shaping our emotions, behaviours and interactions. Patterns influence our experiences through various forms.",
-          "week_number": null,
-          "learning_objectives": [],
-          "competencies": [
-            {
-              "sequence_number": 1,
-              "description": "Creative and innovation, analytical thinking, collaboration, problem solving skills.",
-              "category": "General Competence"
-            }
-          ],
           "sub_topics": [
             {
-              "name": "1.6.1 PATTERNS",
+              "name": "1.4.1 Tools and Materials",
               "sequence_number": 1,
-              "description": "In this topic, the focus is aligned with Pattern design which is the creation of repeating designs or motifs, often used to add visual interest and beauty to various surfaces, objects and materials.",
-              "week_number": null,
-              "learning_objectives": [],
               "competencies": [
                 {
                   "sequence_number": 1,
-                  "description": "1.6.1.1 Make patterns",
+                  "description": "Use a variety of tools and materials for drawing and painting",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "1.4.2 Types of Drawing and Painting",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Identify types of drawing and painting",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Apply types of drawing and painting",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "1.4.3 Forms of Drawing",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Demonstrate forms of drawing",
                   "category": "Specific Competence"
                 }
               ]
@@ -142,29 +277,38 @@
           ]
         },
         {
-          "name": "1.7 DRAWING AND OR PAINTING FROM IMAGINATION",
+          "name": "1.5 Graphic Design",
           "sequence_number": 4,
-          "description": "This topic will help learners unlock the power of their imagination, it will give them freedom to explore their thoughts, emotions, experiences and express them in a visual language.",
-          "week_number": null,
-          "learning_objectives": [],
-          "competencies": [
-            {
-              "sequence_number": 1,
-              "description": "creative and innovation, analytical thinking, collaboration, communication.",
-              "category": "General Competence"
-            }
-          ],
           "sub_topics": [
             {
-              "name": "1.7.1 IMAGINATIVE COMPOSITIONS",
+              "name": "1.5.1 Lettering",
               "sequence_number": 1,
-              "description": "Imaginative Composition is the creative process of arranging visual elements and principles to convey visual representations, ideas, emotions or stories.",
-              "week_number": null,
-              "learning_objectives": [],
               "competencies": [
                 {
                   "sequence_number": 1,
-                  "description": "1.7.1.1 Compose pictures based on a given theme",
+                  "description": "Design letters",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "1.5.2 Poster Making",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Design posters",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "1.5.3 Computer Aided Design (CAD)",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Design types of cards using a computer",
                   "category": "Specific Competence"
                 }
               ]
@@ -172,29 +316,16 @@
           ]
         },
         {
-          "name": "1.8 DRAWING AND OR PAINTING FROM OBSERVATION",
+          "name": "1.6 Pattern and Design",
           "sequence_number": 5,
-          "description": "Drawing and painting from observation is a fundamental skill for artists, allowing them to accurately capture the world around them.",
-          "week_number": null,
-          "learning_objectives": [],
-          "competencies": [
-            {
-              "sequence_number": 1,
-              "description": "Analytical Thinking, Communication, Creativity and Innovation, Collaboration, Critical Thinking",
-              "category": "General Competence"
-            }
-          ],
           "sub_topics": [
             {
-              "name": "1.8.1 DRAWING OR PAINTING FROM NATURAL OR MAN–MADE OBJECTS",
+              "name": "1.6.1 Patterns",
               "sequence_number": 1,
-              "description": "Drawing and painting from observation enhances learner’s ability to capture the world around them accurately. This topic focuses on observing and representing both Natural and Man-made objects through various drawing techniques.",
-              "week_number": null,
-              "learning_objectives": [],
               "competencies": [
                 {
                   "sequence_number": 1,
-                  "description": "1.8.1.1 Draw and or paint pictures from observation",
+                  "description": "Make patterns",
                   "category": "Specific Competence"
                 }
               ]
@@ -202,53 +333,16 @@
           ]
         },
         {
-          "name": "1.9 DRAWING AND OR PAINTING FROM STILL LIFE",
+          "name": "1.7 Drawing and/or Painting from Imagination",
           "sequence_number": 6,
-          "description": "In this topic, the learners will acquire skills such as, creativity, observation and analytical thinking. Still life drawing and painting is an artistic style that captures the aesthetics and essence of static objects, often arranged in deliberate compositions.",
-          "week_number": null,
-          "learning_objectives": [],
-          "competencies": [],
           "sub_topics": [
             {
-              "name": "1.9.1 STILL LIFE DRAWING AND OR PAINTING",
+              "name": "1.7.1 Imaginative Compositions",
               "sequence_number": 1,
-              "description": "Still life drawing and painting offers numerous benefits that can enhance skills, creativity and overall artistic growth. Fundamental skills like; Observation, form rendering and color theory are developed.",
-              "week_number": null,
-              "learning_objectives": [],
               "competencies": [
                 {
                   "sequence_number": 1,
-                  "description": "1.9.1.1 Compose pictures from Still life",
-                  "category": "Specific Competence"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "name": "1.10 FIGURE DRAWING",
-          "sequence_number": 7,
-          "description": "The topic will discuss the fundamental skills like proportion, pose, gesture and line art. Stick-Figure introduces the learners to basics on the use of line and shape in order to create simple imagery.",
-          "week_number": null,
-          "learning_objectives": [],
-          "competencies": [
-            {
-              "sequence_number": 1,
-              "description": "Analytical Thinking, Collaboration, Communication, Creativity and Innovation, Critical Thinking",
-              "category": "General Competence"
-            }
-          ],
-          "sub_topics": [
-            {
-              "name": "1.10.1. STICK FIGURE DRAWING",
-              "sequence_number": 1,
-              "description": "Stick Figure Drawing is a creative process that involves generating visual representations on a two-dimensional surface, such as paper, canvas, or digital screens.",
-              "week_number": null,
-              "learning_objectives": [],
-              "competencies": [
-                {
-                  "sequence_number": 1,
-                  "description": "1.10.1.1 Compose Stick-Figures",
+                  "description": "Compose pictures based on a given theme",
                   "category": "Specific Competence"
                 }
               ]
@@ -262,14 +356,63 @@
       "sequence_number": 3,
       "topics": [
         {
-          "name": "1.11 CRAFTS IN 2D",
+          "name": "1.8 Drawing and/or Painting from Observation",
           "sequence_number": 1,
-          "description": "This topic focuses on the exploration and creation of two-dimensional art forms, emphasizing the development of essential skills such as analytical thinking, creativity, and collaboration. Learners experiment with different materials and methods to express ideas visually while enhancing their understanding of artistic concepts.",
           "sub_topics": [
             {
-              "name": "1.11.1 PICTURE MAKING",
+              "name": "1.8.1 Drawing or Painting from Natural or Man-Made Objects",
               "sequence_number": 1,
-              "description": "Explores various two-dimensional composition methods such as collage, montage, mosaic, and frieze, enabling learners to express thoughts and emotions through visual storytelling.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Draw or paint pictures from observation",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "1.9 Drawing and/or Painting from Still Life",
+          "sequence_number": 2,
+          "sub_topics": [
+            {
+              "name": "1.9.1 Still Life Drawing and/or Painting",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Compose pictures from still life",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "1.10 Figure Drawing",
+          "sequence_number": 3,
+          "sub_topics": [
+            {
+              "name": "1.10.1 Stick-Figure Drawing",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Compose stick-figures",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "1.11 Crafts in 2D",
+          "sequence_number": 4,
+          "sub_topics": [
+            {
+              "name": "1.11.1 Picture Making",
+              "sequence_number": 1,
               "competencies": [
                 {
                   "sequence_number": 1,
@@ -279,9 +422,8 @@
               ]
             },
             {
-              "name": "1.11.2 WEAVING",
+              "name": "1.11.2 Weaving",
               "sequence_number": 2,
-              "description": "Exposes learners to the definition, materials, and techniques of weaving, involving the interlacing of threads or flexible materials to create textiles and decorative items.",
               "competencies": [
                 {
                   "sequence_number": 1,
@@ -293,42 +435,38 @@
           ]
         },
         {
-          "name": "1.12 CRAFTS IN 3D",
-          "sequence_number": 2,
-          "description": "This topic covers the creation of three-dimensional objects using various materials and techniques. It allows learners to express creativity and imagination by producing both traditional and modern crafts.",
+          "name": "1.12 Crafts in 3D",
+          "sequence_number": 5,
           "sub_topics": [
             {
-              "name": "1.12.1 BOOK CRAFT",
+              "name": "1.12.1 Book Crafts",
               "sequence_number": 1,
-              "description": "Provides skills and knowledge to design and create handmade books using techniques such as bookbinding, design, and craftsmanship.",
               "competencies": [
                 {
                   "sequence_number": 1,
-                  "description": "Apply binding skills",
+                  "description": "Apply book binding skills",
                   "category": "Specific Competence"
                 }
               ]
             },
             {
-              "name": "1.12.2 PAPIER-MÂCHÉ CRAFT",
+              "name": "1.12.2 Papier-Mache Craft",
               "sequence_number": 2,
-              "description": "Explores the traditional art of creating objects by layering paper strips or pulp with adhesive materials onto bases or molds.",
               "competencies": [
                 {
                   "sequence_number": 1,
-                  "description": "Create items using Papier-mâché",
+                  "description": "Create items using papier-mache",
                   "category": "Specific Competence"
                 }
               ]
             },
             {
-              "name": "1.12.3 GENERAL CRAFTS",
+              "name": "1.12.3 General Crafts",
               "sequence_number": 3,
-              "description": "Covers a broad range of hand-made craft activities using found materials such as paper, fabric, and wood to develop cutting, shaping, and assembling skills.",
               "competencies": [
                 {
                   "sequence_number": 1,
-                  "description": "Make various items using found materials",
+                  "description": "Make items using found materials",
                   "category": "Specific Competence"
                 }
               ]
@@ -336,42 +474,38 @@
           ]
         },
         {
-          "name": "1.13 SCULPTURE",
-          "sequence_number": 3,
-          "description": "Focuses on the art of making solid, three-dimensional figures viewable from all sides ('in the round'). It introduces learners to freestanding and relief forms ranging from small figurines to life-size statues.",
+          "name": "1.13 Sculpture",
+          "sequence_number": 6,
           "sub_topics": [
             {
-              "name": "1.13.1 INTRODUCTION TO SCULPTURE",
+              "name": "1.13.1 Introduction to Sculpture",
               "sequence_number": 1,
-              "description": "Introduces fundamental concepts, types, and approaches in sculpture making, encouraging experimentation with local materials.",
               "competencies": [
                 {
                   "sequence_number": 1,
-                  "description": "Experimenting with basic approaches in sculpture making",
+                  "description": "Apply basic approaches in sculpture making",
                   "category": "Specific Competence"
                 }
               ]
             },
             {
-              "name": "1.13.2 CONSTRUCTION AND ASSEMBLAGE",
+              "name": "1.13.2 Construction and Assemblage Sculptures",
               "sequence_number": 2,
-              "description": "Focuses on creating three-dimensional artworks by combining, joining, and assembling various recyclable and found materials.",
               "competencies": [
                 {
                   "sequence_number": 1,
-                  "description": "Create constructional and assemblage sculptures",
+                  "description": "Construct and assemble sculptures",
                   "category": "Specific Competence"
                 }
               ]
             },
             {
-              "name": "1.13.3 CARVING",
+              "name": "1.13.3 Wood Carving",
               "sequence_number": 3,
-              "description": "Exposes learners to subtractive sculptural techniques involving cutting or chipping away parts of materials like wood, stone, or soap to create forms.",
               "competencies": [
                 {
                   "sequence_number": 1,
-                  "description": "Carving various items",
+                  "description": "Carve various items",
                   "category": "Specific Competence"
                 }
               ]
@@ -379,15 +513,19 @@
           ]
         },
         {
-          "name": "1.14 ENTREPRENEURSHIP",
-          "sequence_number": 4,
-          "description": "Explores the intersection of art and business, teaching learners how to leverage their artistic skills and creativity to launch viable business ventures.",
+          "name": "1.14 Entrepreneurship",
+          "sequence_number": 7,
           "sub_topics": [
             {
-              "name": "1.14.1 ENTREPRENEURSHIP IN ART",
+              "name": "1.14.1 Entrepreneurship in Art",
               "sequence_number": 1,
-              "description": "Guides learners on turning artistic passion into sustainable business enterprises such as art studios, custom painting, craft production, digital services, and exhibitions.",
-              "competencies": []
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use Art as a business",
+                  "category": "Specific Competence"
+                }
+              ]
             }
           ]
         }
