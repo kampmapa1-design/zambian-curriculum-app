@@ -183,6 +183,99 @@ List<SchemeOfWorkEntry> generateSchemeOfWorkForTerm(
   return entries.length <= TermDates.teachingWeekCount ? entries : entries.sublist(0, TermDates.teachingWeekCount);
 }
 
+/// The exact per-term topic/week windows a brand-new class's Scheme of
+/// Work would show — [generateSchemeOfWorkForTerm] applied term by term,
+/// each term picking up exactly where the previous term's own window left
+/// off (chained the same way a real continuing class's resume point
+/// chains), starting from the very first topic. `windows[i]` is
+/// `template.terms[i]`'s window.
+///
+/// Real, reported bug this fixes (2026-09-06): a subject whose real
+/// per-term topic count doesn't match Zambia's real per-term teaching-week
+/// count spills content across term boundaries by design (see
+/// [generateSchemeOfWorkForTerm]'s own doc comment — e.g. Physical
+/// Education Grade 10's Term 1 has only 10 real sub-topic entries against
+/// 11 real teaching weeks, so a fresh Term 1 Scheme of Work already pulls
+/// its 11th week from Term 2's own first topic). [TermTopicPickerScreen]
+/// used to group topics by each topic's own AUTHORED JSON term instead of
+/// by this real generated placement, so a topic a generated Scheme of Work
+/// placed in "Term 1, Week 11" (or later, for a subject that spills
+/// further) could only ever be found under a DIFFERENT term's tile when
+/// picking a topic to generate a lesson plan for — exactly the mismatch
+/// reported (PE10.9.2, Term 3 in the syllabus JSON, showing up in a Term 1
+/// Scheme of Work). This function is the one place both screens now read
+/// term/week placement from, so the two can never drift apart again for
+/// the case this fixes.
+///
+/// This guarantees parity only for a class starting fresh (no resume
+/// progress recorded yet) — also exactly the state a teacher is in the
+/// first time they generate a term's Scheme of Work for a subject. A real
+/// class whose OWN tracked progress has since fallen behind or run ahead
+/// of this fresh baseline will see its own Scheme of Work legitimately
+/// differ from these windows from then on; there is no way to predict that
+/// from the template alone, since it depends on that specific class's own
+/// recorded history, not on the syllabus content.
+///
+/// Slices [allSchemeOfWorkEntries] directly by INDEX rather than chaining
+/// through [generateSchemeOfWorkForTerm]'s own topic/sub-topic-id "resume"
+/// parameters — a real edge case surfaced while testing this against every
+/// bundled subject (2026-09-06): `design_and_technology_form1`'s "GRAPHICS"
+/// topic carries its own content directly AND has further sub-topics of
+/// its own after it. When a term's window happened to end exactly on that
+/// topic's own top-level entry, resuming via `lastConcludedTopicId` alone
+/// (no sub-topic id, since a topic-level entry has none) is genuinely
+/// ambiguous with [generateSchemeOfWork]'s OTHER real meaning for that same
+/// input — "the whole topic, every one of its sub-topics included, was
+/// concluded" (the real semantic a class's own tracked resume progress
+/// needs) — so it skipped straight to the NEXT topic, silently dropping
+/// "GRAPHICS — SYMBOLS" and "GRAPHICS — INTRODUCTION TO COMPUTER AIDED
+/// DESIGN (CAD)" from every later window. Slicing by index instead has no
+/// such ambiguity: "the next window starts at the entry right after the
+/// last one" is exactly what it says, always.
+List<List<SchemeOfWorkEntry>> schemeOfWorkTermWindows(SyllabusTemplate template) {
+  final all = allSchemeOfWorkEntries(template);
+  final windows = <List<SchemeOfWorkEntry>>[];
+  var cursor = 0;
+  for (var i = 0; i < template.terms.length; i++) {
+    if (cursor >= all.length) {
+      windows.add(const []);
+      continue;
+    }
+    final end = (cursor + TermDates.teachingWeekCount).clamp(cursor, all.length);
+    final slice = all.sublist(cursor, end);
+    windows.add([
+      for (var j = 0; j < slice.length; j++)
+        SchemeOfWorkEntry(
+          weekNumber: j + 1,
+          topic: slice[j].topic,
+          subTopic: slice[j].subTopic,
+          objectives: slice[j].objectives,
+          competencies: slice[j].competencies,
+        ),
+    ]);
+    cursor = end;
+  }
+  return windows;
+}
+
+/// Groups [entries] by each entry's EFFECTIVE week — its real sourced week
+/// when known, else its own [SchemeOfWorkEntry.weekNumber] (which, for
+/// entries already run through [applyCalendarPacing], IS the same
+/// calendar-paced/stretched week a generated Scheme of Work document
+/// actually presents — see that function's own doc comment). Unlike
+/// [groupEntriesByRealWeek], this never comes back empty just because a
+/// subject has no real sourced week data of its own — the common case (see
+/// [schemeOfWorkTermWindows]'s own doc comment), and exactly the case the
+/// reported topic/lesson-plan mismatch happened in.
+Map<int, List<SchemeOfWorkEntry>> groupEntriesByEffectiveWeek(List<SchemeOfWorkEntry> entries) {
+  final byWeek = <int, List<SchemeOfWorkEntry>>{};
+  for (final entry in entries) {
+    final week = entry.realWeekNumber ?? entry.weekNumber;
+    byWeek.putIfAbsent(week, () => []).add(entry);
+  }
+  return Map.fromEntries(byWeek.entries.toList()..sort((a, b) => a.key.compareTo(b.key)));
+}
+
 /// "Topics in the Scheme" (2026-09-04, per explicit request): builds a
 /// full term's scheme of work with [start] as its very FIRST entry,
 /// regardless of any class's real tracked progress — a teacher picking a
