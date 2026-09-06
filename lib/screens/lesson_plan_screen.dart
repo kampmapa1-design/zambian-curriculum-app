@@ -61,6 +61,7 @@ class LessonPlanScreen extends StatefulWidget {
     this.guidedNoteText,
     this.focusStage,
     this.teacherProfile,
+    this.isOneOff = false,
   });
 
   final String subjectName;
@@ -113,6 +114,19 @@ class LessonPlanScreen extends StatefulWidget {
   /// `school`/`className` fields when this is a fresh draft; never
   /// overrides a resumed checkpoint's own already-saved values.
   final TeacherProfile? teacherProfile;
+
+  /// "One off lesson plan?" (2026-09-06, per explicit request) — set by
+  /// generate_lesson_plan_flow.dart when the teacher answered "yes" to
+  /// that question, or read back from a resumed checkpoint that was itself
+  /// started that way (see [LessonCheckpoint.isOneOff]). Skips logging
+  /// this lesson to [LessonHistoryRepository] on export — a one-off lesson
+  /// plan (no class ever named, or a class name typed in just for this one
+  /// document — see generate_lesson_plan_flow.dart's own
+  /// `_askTeacherProfile`) must never feed "Generate Record of Work",
+  /// which aggregates by curriculum+subject+grade only, not by class, so
+  /// even a one-off WITH a class name typed in would otherwise still
+  /// silently count toward every class's record for that subject+grade.
+  final bool isOneOff;
 
   @override
   State<LessonPlanScreen> createState() => _LessonPlanScreenState();
@@ -542,6 +556,7 @@ class _LessonPlanScreenState extends State<LessonPlanScreen> {
       reachedStageIndex: _reachedStageIndex!,
       draft: _draft,
       savedAt: DateTime.now(),
+      isOneOff: widget.isOneOff,
     ));
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
@@ -601,13 +616,19 @@ class _LessonPlanScreenState extends State<LessonPlanScreen> {
               : "Shared the lesson plan — connect to the internet to also include Lesson Notes next time."),
         ));
       }
-      unawaited(_lessonHistoryRepository.logLessonPlanGenerated(
-        curriculumCode: widget.curriculumCode,
-        subjectCode: widget.subjectCode,
-        gradeLevel: widget.gradeLevel,
-        topicId: widget.entry.topic.id,
-        subTopicId: widget.entry.subTopic?.id,
-      ));
+      // Skipped entirely for a one-off lesson plan — see widget.isOneOff's
+      // own doc comment for why (this aggregates by subject+grade only,
+      // not by class, so even a one-off with a class name typed in would
+      // otherwise still count toward every class's Record of Work).
+      if (!widget.isOneOff) {
+        unawaited(_lessonHistoryRepository.logLessonPlanGenerated(
+          curriculumCode: widget.curriculumCode,
+          subjectCode: widget.subjectCode,
+          gradeLevel: widget.gradeLevel,
+          topicId: widget.entry.topic.id,
+          subTopicId: widget.entry.subTopic?.id,
+        ));
+      }
     } catch (error) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(

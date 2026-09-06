@@ -43,14 +43,26 @@ class HomeScreen extends StatelessWidget {
 
   /// "Generate Scheme of Work": subject → grade/form → term (for the real
   /// calendar dates shown in the document header — see
-  /// SchemeOfWorkDocumentScreen._realCalendarNote), then always asks which
-  /// class this is for and where it reached (ClassResumePickerScreen —
-  /// never skipped, never silently trusted from a stored cursor alone) so
-  /// the generated content starts at exactly the right topic. Coverage,
-  /// not the picked term's own original topic list, drives what's
-  /// included: the scheme can legitimately spill into a later term's
-  /// topics (a class that's ahead) or fall short of them (a class that's
-  /// behind) — see generateSchemeOfWorkForTerm's own doc comment.
+  /// SchemeOfWorkDocumentScreen._realCalendarNote), then "One off scheme of
+  /// work?" (2026-09-06, replaces the older "Resume from class progress" /
+  /// "Topics in the Scheme" wording with an explicit yes/no gate — same two
+  /// underlying paths, clearer framing of what each one means):
+  ///
+  /// - **Yes** (one-off): no class name needed at all — pick any topic to
+  ///   start this scheme from (via [TermTopicPickerScreen]'s own default,
+  ///   fresh-class windows), and nothing about it is written to this app's
+  ///   own records (SchemeOfWorkDocumentScreen skips both the lesson-history
+  ///   log and any class progress update whenever `classLabel` is null —
+  ///   see that field's own doc comment).
+  /// - **No**: always asks which class this is for and where it reached
+  ///   (ClassResumePickerScreen — never skipped, never silently trusted
+  ///   from a stored cursor alone) so the generated content starts at
+  ///   exactly the right topic, and DOES update that class's own tracked
+  ///   progress/records on export. Coverage, not the picked term's own
+  ///   original topic list, drives what's included: the scheme can
+  ///   legitimately spill into a later term's topics (a class that's
+  ///   ahead) or fall short of them (a class that's behind) — see
+  ///   generateSchemeOfWorkForTerm's own doc comment.
   Future<void> _openSchemeOfWork(BuildContext context) async {
     final selection = await Navigator.of(context).push<TermSelection>(
       MaterialPageRoute(
@@ -59,37 +71,31 @@ class HomeScreen extends StatelessWidget {
     );
     if (selection == null || !context.mounted) return;
 
-    // "Topics in the Scheme" (2026-09-04, per explicit request) sits
-    // alongside the existing resume flow here, not instead of it — a
-    // teacher picking a specific topic directly, rather than resuming
-    // from a real class's tracked progress.
-    final choice = await showDialog<_SchemeStart>(
+    final isOneOff = await showDialog<bool>(
       context: context,
-      builder: (dialogContext) => SimpleDialog(
-        title: const Text('Generate scheme of work'),
-        children: [
-          SimpleDialogOption(
-            onPressed: () => Navigator.of(dialogContext).pop(_SchemeStart.resume),
-            child: const ListTile(
-              leading: Icon(Icons.history),
-              title: Text('Resume from class progress'),
-              subtitle: Text('Continues from where a specific class last left off'),
-            ),
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('One off scheme of work?'),
+        content: const Text(
+          "A one-off scheme isn't tied to any class: pick any topic to start it from, no class name "
+          "needed, and it won't affect any class's tracked progress or this app's own records.\n\n"
+          'Choose "No, for a class" to generate one tied to a specific class instead, resuming from (or '
+          "updating) that class's own real progress.",
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: const Text('No, for a class'),
           ),
-          SimpleDialogOption(
-            onPressed: () => Navigator.of(dialogContext).pop(_SchemeStart.topicsInScheme),
-            child: const ListTile(
-              leading: Icon(Icons.list_alt_outlined),
-              title: Text('Topics in the Scheme'),
-              subtitle: Text('Pick any topic to start this scheme from'),
-            ),
+          FilledButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: const Text('Yes, one-off'),
           ),
         ],
       ),
     );
-    if (choice == null || !context.mounted) return;
+    if (isOneOff == null || !context.mounted) return;
 
-    if (choice == _SchemeStart.topicsInScheme) {
+    if (isOneOff) {
       final picked = await Navigator.of(context).push<SchemeOfWorkEntry>(
         MaterialPageRoute(builder: (_) => TermTopicPickerScreen(template: selection.template)),
       );
@@ -424,5 +430,3 @@ class HomeScreen extends StatelessWidget {
     );
   }
 }
-
-enum _SchemeStart { resume, topicsInScheme }

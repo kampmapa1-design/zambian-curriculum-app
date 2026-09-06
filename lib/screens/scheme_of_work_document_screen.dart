@@ -269,14 +269,25 @@ class _SchemeOfWorkDocumentScreenState extends State<SchemeOfWorkDocumentScreen>
         files: [XFile(file.path)],
         subject: 'Scheme of Work — ${widget.template.subject.name} ${widget.template.grade.name}',
       ));
-      for (final entry in widget.entries) {
-        unawaited(_lessonHistoryRepository.logSchemeGenerated(
-          curriculumCode: widget.template.curriculum.code,
-          subjectCode: widget.template.subject.code,
-          gradeLevel: widget.template.grade.level,
-          topicId: entry.topic.id,
-          subTopicId: entry.subTopic?.id,
-        ));
+      // Real, reported gap fixed (2026-09-06): this used to log EVERY
+      // export unconditionally, including a one-off scheme with no real
+      // class attached (widget.classLabel null — see that field's own doc
+      // comment) — LessonHistoryEntry carries no class label of its own at
+      // all (it's keyed only by curriculum+subject+grade+topic), so a
+      // one-off's "generated" entries fed straight into "Generate Record
+      // of Work" for EVERY class of that subject+grade, exactly the
+      // "affecting records the app collects" a one-off must not do. Gated
+      // on the same classLabel signal markConcluded below already uses.
+      if (widget.classLabel != null) {
+        for (final entry in widget.entries) {
+          unawaited(_lessonHistoryRepository.logSchemeGenerated(
+            curriculumCode: widget.template.curriculum.code,
+            subjectCode: widget.template.subject.code,
+            gradeLevel: widget.template.grade.level,
+            topicId: entry.topic.id,
+            subTopicId: entry.subTopic?.id,
+          ));
+        }
       }
       // Auto-advances this class's own resume cursor to the end of what was
       // just generated and shared — the default a future ClassResumePicker

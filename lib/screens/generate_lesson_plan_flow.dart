@@ -13,21 +13,34 @@ import 'term_topic_picker_screen.dart';
 
 /// Orchestrates the "Generate Lesson Plan" entry point end to end: asks
 /// whether to start a new lesson or resume one that was paused mid-lesson.
-/// For a new lesson, the teacher first answers "which class, and where did
-/// it reach?" (via [ClassResumePickerScreen] — 2026-09-06, the exact same
-/// step [HomeScreen]'s "Generate Scheme of Work" already asks, reused here
-/// rather than duplicated) so the topic picker that follows shows THAT
-/// class's own real term/week placement instead of always a fresh class's
-/// (see [schemeOfWorkTermWindowsFrom]'s own doc comment for why the two
-/// can otherwise disagree). The teacher then picks exactly which topic to
-/// teach (via [TermTopicPickerScreen] — Term, then that term's topics by
-/// week) and which of the three stages (Introduction/Main Body/Conclusion)
-/// this specific lesson plan should cover, before opening
-/// [LessonPlanScreen]. Resuming reuses that screen's own checkpoint dialog
-/// (which already shows the real stage that was reached) rather than
-/// asking the stage question twice, and skips the class-resume step
-/// entirely — a paused lesson resumes by its own saved checkpoint, not by
-/// a class's Scheme of Work progress.
+///
+/// For a new lesson, the teacher first answers "One off lesson plan?"
+/// (2026-09-06, per explicit request — a standalone alternative alongside
+/// everything below, not a replacement for it):
+/// - **No** (unchanged from before this question existed): "which class,
+///   and where did it reach?" (via [ClassResumePickerScreen] — the exact
+///   same step [HomeScreen]'s "Generate Scheme of Work" already asks,
+///   reused here rather than duplicated) so the topic picker that follows
+///   shows THAT class's own real term/week placement instead of always a
+///   fresh class's (see [schemeOfWorkTermWindowsFrom]'s own doc comment
+///   for why the two can otherwise disagree).
+/// - **Yes**: skips the class question entirely — the topic picker falls
+///   back to its own fresh-class default, the Class field is left blank
+///   (see `_askTeacherProfile`'s own doc comment), and nothing about this
+///   lesson is logged to this app's own records (see [LessonPlanScreen
+///   .isOneOff]) — a document produced without needing to connect it to
+///   any class's tracked progress.
+///
+/// Either way, the teacher then picks exactly which topic to teach (via
+/// [TermTopicPickerScreen] — Term, then that term's topics by week) and
+/// which of the three stages (Introduction/Main Body/Conclusion) this
+/// specific lesson plan should cover, before opening [LessonPlanScreen].
+/// Resuming reuses that screen's own checkpoint dialog (which already
+/// shows the real stage that was reached) rather than asking the stage
+/// question twice, and skips both the one-off and class-resume questions
+/// entirely — a paused lesson resumes by its own saved checkpoint
+/// (carrying forward whichever of the two it was originally started as,
+/// see [LessonCheckpoint.isOneOff]), not by asking either question again.
 Future<void> startGenerateLessonPlanFlow(
   BuildContext context,
   SyllabusTemplate template, {
@@ -92,6 +105,7 @@ Future<void> startGenerateLessonPlanFlow(
             entry: entry,
             template: activeTemplate,
             checkpointRepository: checkpoints,
+            isOneOff: checkpoint.isOneOff,
           ),
         ));
         return;
@@ -99,25 +113,63 @@ Future<void> startGenerateLessonPlanFlow(
     }
   }
 
-  // New lesson: first "which class, and where did it reach?" (2026-09-06)
-  // — the same question Scheme of Work generation already asks, via the
-  // very same screen, so the topic/week picker that follows can show THIS
-  // class's own real placement rather than always a fresh class's. Never
-  // skipped, same as Scheme of Work's own flow, for the same reason (see
-  // ClassResumePickerScreen's own doc comment): a lesson plan generated
-  // for a colleague's class, or a one-off, must never silently get
-  // confused with — or overwrite — the teacher's own regular class's real
-  // progress record.
-  final resume = await Navigator.of(context).push<ClassResumeSelection>(
-    MaterialPageRoute(builder: (_) => ClassResumePickerScreen(template: template)),
+  // New lesson: "One off lesson plan?" (2026-09-06, per explicit request)
+  // — asked before anything class-related, so a one-off never needs a
+  // class question at all. See isOneOff's own branches below for exactly
+  // what each answer skips.
+  final isOneOff = await showDialog<bool>(
+    context: context,
+    builder: (dialogContext) => AlertDialog(
+      title: const Text('One off lesson plan?'),
+      content: const Text(
+        "A one-off lesson plan isn't tied to any class: pick any topic to write it for, no class name "
+        "needed (the Class field is simply left blank), and it won't affect any class's tracked progress "
+        "or this app's own records.\n\n"
+        'Choose "No, for a class" to generate one tied to a specific class instead, using that class\'s '
+        'own real progress to place it in the right term and week.',
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(dialogContext).pop(false),
+          child: const Text('No, for a class'),
+        ),
+        FilledButton(
+          onPressed: () => Navigator.of(dialogContext).pop(true),
+          child: const Text('Yes, one-off'),
+        ),
+      ],
+    ),
   );
-  if (resume == null || !context.mounted) return;
+  if (isOneOff == null || !context.mounted) return;
 
-  final classWindows = schemeOfWorkTermWindowsFrom(
-    template,
-    resume.topicId,
-    lastConcludedSubTopicId: resume.subTopicId,
-  );
+  List<List<SchemeOfWorkEntry>>? classWindows;
+  String? defaultClassLabel;
+
+  if (!isOneOff) {
+    // "Which class, and where did it reach?" (2026-09-06) — the same
+    // question Scheme of Work generation already asks, via the very same
+    // screen, so the topic/week picker that follows can show THIS class's
+    // own real placement rather than always a fresh class's. Never
+    // skipped for a class-tracked lesson, same as Scheme of Work's own
+    // flow, for the same reason (see ClassResumePickerScreen's own doc
+    // comment): a lesson plan generated for a colleague's class must
+    // never silently get confused with — or overwrite — the teacher's own
+    // regular class's real progress record.
+    final resume = await Navigator.of(context).push<ClassResumeSelection>(
+      MaterialPageRoute(builder: (_) => ClassResumePickerScreen(template: template)),
+    );
+    if (resume == null || !context.mounted) return;
+    classWindows = schemeOfWorkTermWindowsFrom(
+      template,
+      resume.topicId,
+      lastConcludedSubTopicId: resume.subTopicId,
+    );
+    defaultClassLabel = resume.classLabel;
+  }
+  // isOneOff: classWindows stays null, so TermTopicPickerScreen falls back
+  // to its own default fresh-class windows below — exactly right, since a
+  // one-off has no class whose real progress could place it any more
+  // precisely than that.
 
   // Let the teacher pick exactly which term/week/topic to teach, rather
   // than auto-advancing to "whatever comes next" — a topic can need
@@ -151,8 +203,10 @@ Future<void> startGenerateLessonPlanFlow(
   // lesson, since one teacher can cover more than one class. Pre-fills from
   // the class just picked above (2026-09-06) rather than whatever class
   // name happened to be saved last time — this lesson plan is already
-  // known to be for THAT class specifically.
-  final profile = await _askTeacherProfile(context, defaultClassLabel: resume.classLabel);
+  // known to be for THAT class specifically. For a one-off, the Class
+  // field is left blank instead (see _askTeacherProfile's own doc comment)
+  // and never persisted back to the remembered profile.
+  final profile = await _askTeacherProfile(context, defaultClassLabel: defaultClassLabel, isOneOff: isOneOff);
   if (!context.mounted) return;
 
   await Navigator.of(context).push(MaterialPageRoute(
@@ -162,6 +216,7 @@ Future<void> startGenerateLessonPlanFlow(
       subjectCode: template.subject.code,
       gradeLevel: template.grade.level,
       entry: entry,
+      isOneOff: isOneOff,
       template: activeTemplate,
       checkpointRepository: checkpoints,
       focusStage: chosenStage,
@@ -182,14 +237,32 @@ Future<void> startGenerateLessonPlanFlow(
 /// [defaultClassLabel], when non-empty, pre-fills the class field instead
 /// of whatever class name was saved last time (2026-09-06) — this lesson
 /// is already known to be for that specific class, from the class-resume
-/// step just answered above.
-Future<TeacherProfile?> _askTeacherProfile(BuildContext context, {String? defaultClassLabel}) async {
+/// step just answered above. Ignored when [isOneOff] is true.
+///
+/// [isOneOff] (2026-09-06, per explicit request): leaves the Class field
+/// BLANK instead — a one-off lesson plan needs no class name at all — but
+/// still fully editable, so a teacher who wants to note something for a
+/// one-off print (e.g. "printing for Mr. Banda") still can. Whatever ends
+/// up in that field for a one-off is used on THIS document only and is
+/// never written back to the remembered profile (name/school still are,
+/// same as any other time this dialog is used) — a one-off's own "leave
+/// it empty, don't affect the app's records" principle would otherwise be
+/// undermined by silently overwriting the teacher's own regular
+/// class-name default the very next time this dialog opens.
+Future<TeacherProfile?> _askTeacherProfile(
+  BuildContext context, {
+  String? defaultClassLabel,
+  bool isOneOff = false,
+}) async {
   final repository = TeacherProfileRepository();
   final saved = await repository.load();
   if (!context.mounted) return saved;
 
-  final resolvedClassName =
-      (defaultClassLabel != null && defaultClassLabel.trim().isNotEmpty) ? defaultClassLabel.trim() : saved.className;
+  final resolvedClassName = isOneOff
+      ? ''
+      : (defaultClassLabel != null && defaultClassLabel.trim().isNotEmpty)
+          ? defaultClassLabel.trim()
+          : saved.className;
 
   final nameController = TextEditingController(text: saved.name);
   final schoolController = TextEditingController(text: saved.school);
@@ -228,7 +301,14 @@ Future<TeacherProfile?> _askTeacherProfile(BuildContext context, {String? defaul
         ),
       ),
       actions: [
-        TextButton(onPressed: () => Navigator.of(dialogContext).pop(saved), child: const Text('Skip')),
+        TextButton(
+          // One-off: Skip must still leave the Class field blank for THIS
+          // document (see isOneOff's own doc comment) — popping `saved`
+          // verbatim here would silently bring back whatever class name
+          // was remembered from a previous, non-one-off lesson.
+          onPressed: () => Navigator.of(dialogContext).pop(isOneOff ? saved.copyWith(className: '') : saved),
+          child: const Text('Skip'),
+        ),
         FilledButton(
           onPressed: () => Navigator.of(dialogContext).pop(TeacherProfile(
             name: nameController.text.trim(),
@@ -245,7 +325,14 @@ Future<TeacherProfile?> _askTeacherProfile(BuildContext context, {String? defaul
   classController.dispose();
 
   final profile = result ?? saved;
-  if (result != null) await repository.save(profile);
+  if (result != null) {
+    // One-off: name/school are still the teacher's own real, persistent
+    // details, worth remembering as always — but the class text (even
+    // blank, even something explicitly typed for this one-off print)
+    // must never overwrite the remembered profile's own class name, per
+    // isOneOff's own doc comment above.
+    await repository.save(isOneOff ? profile.copyWith(className: saved.className) : profile);
+  }
   return profile;
 }
 

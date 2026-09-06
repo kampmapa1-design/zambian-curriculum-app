@@ -17,6 +17,16 @@ class LessonCheckpoint {
   final LessonPlanDraft draft;
   final DateTime savedAt;
 
+  /// Whether the lesson this checkpoint belongs to was started as a
+  /// "one off" lesson plan (2026-09-06 — see generate_lesson_plan_flow
+  /// .dart's own "One off lesson plan?" question) — carried through so
+  /// resuming a paused one-off lesson keeps behaving like one (no class
+  /// question re-asked, no lesson-history entry logged on export) rather
+  /// than silently reverting to normal, class-tracked behaviour just
+  /// because it was paused partway through. Defaults false for checkpoints
+  /// saved before this field existed.
+  final bool isOneOff;
+
   const LessonCheckpoint({
     required this.curriculumCode,
     required this.subjectCode,
@@ -27,6 +37,7 @@ class LessonCheckpoint {
     required this.reachedStageIndex,
     required this.draft,
     required this.savedAt,
+    this.isOneOff = false,
   });
 
   String get lessonKey => keyFor(
@@ -56,6 +67,7 @@ class LessonCheckpoint {
         'reachedStageIndex': reachedStageIndex,
         'draft': draft.toJson(),
         'savedAt': savedAt.toIso8601String(),
+        'isOneOff': isOneOff,
       };
 
   factory LessonCheckpoint.fromJson(Map<String, dynamic> json) => LessonCheckpoint(
@@ -68,5 +80,6 @@ class LessonCheckpoint {
         reachedStageIndex: json['reachedStageIndex'] as int,
         draft: LessonPlanDraft.fromJson(json['draft'] as Map<String, dynamic>),
         savedAt: DateTime.parse(json['savedAt'] as String),
+        isOneOff: json['isOneOff'] as bool? ?? false,
       );
 }
