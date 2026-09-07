@@ -159,6 +159,7 @@ flutter:
     - assets/syllabi/biology_form2.json
     - assets/subject_content/religious_education/form1_religious_education_teaching_module.txt
     - assets/syllabi/religious_education_form1.json
+    - assets/syllabi/religious_education_form2.json
     - assets/subject_content/physics/form1_physics_form_1_teaching_module.txt
     - assets/syllabi/physics_form1.json
     - assets/subject_content/music/form1_musical_art_education_teaching_module.txt

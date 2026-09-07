@@ -1,5 +1,5 @@
 {
-  "_source": "Curriculum Development Centre Teaching Module — \"Religious Education Teaching Module\" (https://library.cdcrepository.info/resource.php?id=277). Topic/sub-topic structure and competencies extracted with AI assistance (Gemini) directly from this module's own stated content — never invented; the extraction was instructed to use only what the module itself says, and to flag anything unclear rather than guess. Covers only the term this specific module addresses (Term 2) — other terms are not included since no source document for them was available at extraction time. AI-flagged completeness notes from extraction: The source text includes a sample lesson plan at the end referencing Topic 1.3 (Morality and Values) and Sub-topic 1.3.1 (Morality), which are not included as full module topics in the main text provided.",
+  "_source": "SUPERSEDES this file's earlier content, which covered only one term (labelled 'Term 2', inferred by AI extraction from a CDC teaching module with no real term data of its own) and only two of Form 1's six real topics (1.5, 1.6). A real, complete 'Religious Education Form 1 Scheme of Work, Term 1-3' (a real Zambian secondary school's Social Science Department; the source's own teacher name and school name are not reproduced here per this app's standing sourcing policy) was shared with this project and reviewed in full, covering all three terms and all six real topics (1.1-1.6). It confirms: Term 1 covers 1.1 Learning about Religion and 1.2 Growing Up; Term 2 covers 1.3 Morality and Values and 1.4 Choosing and Talents; Term 3 covers 1.5 Competition, Co-operation and Trust and 1.6 Learning and Truth -- meaning this file's own previous 'Term 2' label for 1.5/1.6 was itself a wrong guess (the AI extraction had no real term data to go on): the real scheme places them in Term 3, not Term 2. 1.5 and 1.6's own Topic/Sub-topic/Specific Competence wording is kept exactly as this file already had it (it was already real, sourced content from the earlier CDC teaching module extraction) -- only the term it's filed under has changed. 1.1-1.4 are new to this file, reproduced from the real scheme of work document. A numbering irregularity in the source is reproduced transparently rather than silently fixed: under Topic 1.2 Growing Up, a competency about caring for the environment is numbered '1.2.1.3' in the source even though it appears under the Sub-topic discussing relationships with God and others (Sub-topic 1.2.2), not under Sub-topic 1.2.1 Types of Growth where its own number would suggest -- reproduced here under 1.2.2 (where the source's own table row places it) with its own '1.2.1.3' competency code kept as printed. The source cites the syllabus generically ('Syllabus p.13' etc.) for Form 1, without naming an edition/year -- unlike the same document's own Form 2 section, which explicitly names the '2024 Religious Education Syllabus, Ordinary Secondary Education Form 1-4'. Its own Content/Concept, Learning Activities, Strategies/Methods and Materials/Resources columns are omitted, consistent with the approach used for every other bundled subject in this app.",
   "curriculum": {
     "code": "CBC_2023",
     "name": "2023 Competency-Based Curriculum",
@@ -18,18 +18,192 @@
   },
   "terms": [
     {
+      "name": "Term 1",
+      "sequence_number": 1,
+      "topics": [
+        {
+          "name": "1.1 LEARNING ABOUT RELIGION",
+          "sequence_number": 1,
+          "sub_topics": [
+            {
+              "name": "SUB-TOPIC 1.1.1 THE IDEA OF RELIGION",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Recognise other people's religions",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Appreciate Religious Education in school and society",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "SUB-TOPIC 1.1.2 FOUR RELIGIONS IN ZAMBIA",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Evaluate the four Religions in Zambia (Christianity, Hinduism, Islam, Zambian Traditional Religion)",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "1.2 GROWING UP",
+          "sequence_number": 2,
+          "sub_topics": [
+            {
+              "name": "SUB-TOPIC 1.2.1 TYPES OF GROWTH",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Analyse types of growth",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Demonstrate responsible citizenship in growing up",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "SUB-TOPIC 1.2.2 BEING WITH GOD AND WITH OTHERS",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Demonstrate different ways people develop good relations with God and with others",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Care for the environment appropriately (numbered 1.2.1.3 in the real source, reproduced as printed)",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "SUB-TOPIC 1.2.3 GROWING UP IN DIFFERENT RELIGIONS",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Communicate teachings of different religions on growing up",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
       "name": "Term 2",
       "sequence_number": 2,
       "topics": [
         {
+          "name": "1.3 MORALITY AND VALUES",
+          "sequence_number": 1,
+          "sub_topics": [
+            {
+              "name": "SUB-TOPIC 1.3.1 MORALITY",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Apply moral principles in daily living",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Analyse moral dilemmas",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "SUB-TOPIC 1.3.2 SOURCES OF MORAL CODES",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Differentiate sources of religious and secular moral codes",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "1.4 CHOOSING AND TALENTS",
+          "sequence_number": 2,
+          "sub_topics": [
+            {
+              "name": "SUB-TOPIC 1.4.1 MAKING CHOICES",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Accept responsibility for one's choices",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Evaluate decision making in real-life situations",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "SUB-TOPIC 1.4.2 TEACHINGS ON MAKING CHOICES",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Analyse central teachings from the four religions on making choices",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "SUB-TOPIC 1.4.3 TALENTS",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use talent as a source of earning a living",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Develop talent to promote entrepreneurship",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 3",
+      "sequence_number": 3,
+      "topics": [
+        {
           "name": "1.5 COMPETITION, CO-OPERATION AND TRUST",
           "sequence_number": 1,
-          "description": "Competition, cooperation and trust are part and parcel of society, helping individuals and groups work together for social development. This topic provides an overview of the important values, attitudes, and skills developed through competition, co-operation, and trust.",
           "sub_topics": [
             {
               "name": "SUB-TOPIC 1.5.1 COMPETITION AND CO-OPERATION",
               "sequence_number": 1,
-              "description": "Explores the importance of competition, co-operation, and collaboration in society, as well as their advantages and disadvantages.",
               "competencies": [
                 {
                   "sequence_number": 1,
@@ -41,76 +215,78 @@
                   "description": "Promote collaboration in competition and co-operation",
                   "category": "Specific Competence"
                 }
-              ]
+              ],
+              "description": "Explores the importance of competition, co-operation, and collaboration in society, as well as their advantages and disadvantages."
             },
             {
               "name": "SUB-TOPIC 1.5.2 TRUST",
               "sequence_number": 2,
-              "description": "Focuses on justifying the importance of trust in everyday life, explaining how trust can be created, demonstrated, maintained, and its role in competition and co-operation.",
               "competencies": [
                 {
                   "sequence_number": 1,
                   "description": "Justify importance of Trust in real life",
                   "category": "Specific Competence"
                 }
-              ]
+              ],
+              "description": "Focuses on justifying the importance of trust in everyday life, explaining how trust can be created, demonstrated, maintained, and its role in competition and co-operation."
             },
             {
               "name": "SUB-TOPIC: 1.5.3 RELIGIOUS TEACHINGS ON COMPETITION, CO-OPERATION AND TRUST",
               "sequence_number": 3,
-              "description": "Explores, examines, and evaluates teachings on competition, co-operation, and trust from Christianity, Islam, Hinduism, and Zambian Traditional Religion, and how they apply to modern society.",
               "competencies": [
                 {
                   "sequence_number": 1,
                   "description": "Apply religious teachings on competition, co-operation and trust in society",
                   "category": "Specific Competence"
                 }
-              ]
+              ],
+              "description": "Explores, examines, and evaluates teachings on competition, co-operation, and trust from Christianity, Islam, Hinduism, and Zambian Traditional Religion, and how they apply to modern society."
             }
-          ]
+          ],
+          "description": "Competition, cooperation and trust are part and parcel of society, helping individuals and groups work together for social development. This topic provides an overview of the important values, attitudes, and skills developed through competition, co-operation, and trust."
         },
         {
           "name": "1.6 LEARNING AND TRUTH",
           "sequence_number": 2,
-          "description": "Learning is a lifelong process of acquiring new knowledge, skills, attitudes, and behaviours, while truth refers to being in accord with fact or reality. Learning and truth are closely intertwined concepts, with truth serving as the ultimate goal of learning.",
           "sub_topics": [
             {
               "name": "SUB-TOPIC 1.6.1 LEARNING",
               "sequence_number": 1,
-              "description": "Explores guided and unguided types of learning experiences at home and school, analyzing their respective advantages and disadvantages.",
               "competencies": [
                 {
                   "sequence_number": 1,
                   "description": "Analyse different types of learning",
                   "category": "Specific Competence"
                 }
-              ]
+              ],
+              "description": "Explores guided and unguided types of learning experiences at home and school, analyzing their respective advantages and disadvantages."
             },
             {
               "name": "SUB-TOPIC 1.6.2 TRUTH",
               "sequence_number": 2,
-              "description": "Explores the concept of truth, different ways statements can be true, distinctions among facts, opinions, and beliefs, and how social media can be used to justify truth.",
               "competencies": [
                 {
                   "sequence_number": 1,
                   "description": "Explore use of social media to justify truth",
                   "category": "Specific Competence"
                 }
-              ]
+              ],
+              "description": "Explores the concept of truth, different ways statements can be true, distinctions among facts, opinions, and beliefs, and how social media can be used to justify truth."
             },
             {
               "name": "SUB-TOPIC: 1.6.3 RELIGIOUS TEACHINGS ON LEARNING AND TRUTH",
               "sequence_number": 3,
-              "description": "Analyses religious teachings on learning and truth from Christianity, Zambian Traditional Religion, Islam, and Hinduism.",
               "competencies": [
                 {
                   "sequence_number": 1,
                   "description": "Analyse religious teaching on learning and truth",
                   "category": "Specific Competence"
                 }
-              ]
+              ],
+              "description": "Analyses religious teachings on learning and truth from Christianity, Zambian Traditional Religion, Islam, and Hinduism."
             }
-          ]
+          ],
+          "description": "Learning is a lifelong process of acquiring new knowledge, skills, attitudes, and behaviours, while truth refers to being in accord with fact or reality. Learning and truth are closely intertwined concepts, with truth serving as the ultimate goal of learning."
         }
       ]
     }
