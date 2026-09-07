@@ -1,0 +1,261 @@
+{
+  "_source": "A real 'History Form 2 Scheme of Work' (a real Zambian secondary school's Social Science Department; the source's own teacher name and school name are not reproduced here per this app's standing sourcing policy) was shared with this project via Drive, across separate Term 1 and Term 2 documents. This is a genuine gap fill -- this app previously had no History Form 2 content at all. Cites the real official '2024 History Syllabus, Ordinary Secondary Education Form 1-4' with real page citations (Term 1: pp.18-24; Term 2: pp.30-33).\n\nTERM 3 IS DELIBERATELY NOT INCLUDED: a separate real Term 3 document was checked (via two independent copies, from two different Drive folders shared with this project on different dates) and both agree it contains no new curriculum content at all -- just 'COMPREHENSIVE REVISION OF FORM 2 SYLLABUS' (weeks 1-6), mid-term tests, 'FULL SYLLABUS REVISION AND EXAM PREPARATION' (weeks 8-11), and end-of-year examinations. This is confirmed real teacher practice (Term 3 devoted entirely to revision and exams, teaching no new topics), not a missing document -- consistent with this app's standing approach of never encoding generic revision/exam weeks as topics, since they name no new specific competences of their own. Term 2's own opening 3 weeks ('REVISION OF TERM 1 TOPICS') and closing 3 weeks ('REVISION OF ALL FORM 2 TOPICS') are excluded for the same reason -- only its 4 real new topics (weeks 4-6, 8) are included here.\n\nIts own Content/Concept, Learning Activities, Strategies/Methods and Materials/Resources columns are omitted, consistent with the approach used for every other bundled subject in this app.",
+  "curriculum": {
+    "code": "CBC_2023",
+    "name": "2023 Competency-Based Curriculum",
+    "description": "Zambia's current competency-based curriculum."
+  },
+  "subject": {
+    "name": "History",
+    "code": "HIST",
+    "description": "Ordinary Level Secondary History syllabus, Form 1-4 (Curriculum Development Centre, 2024)."
+  },
+  "grade": {
+    "name": "Form 2",
+    "code": "F2_CBC",
+    "level": 2,
+    "phase": "Secondary — the source syllabus itself uses \"Form 1-4\" for Ordinary Level Secondary under the 2023 CBC, not \"Grade\"."
+  },
+  "terms": [
+    {
+      "name": "Term 1",
+      "sequence_number": 1,
+      "topics": [
+        {
+          "name": "2.1 Slavery and Slave Trade",
+          "sequence_number": 1,
+          "sub_topics": [
+            {
+              "name": "2.1.1 Development of Slavery and Slave Trade",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Show respect for human dignity",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "Meaning of slavery and slave trade; forms; reasons; impact; abolition."
+            },
+            {
+              "name": "2.1.2 Europe and the Benefits from Slave Trade",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Analyse Europeans' benefits from slave trade",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "Benefits European countries gained from the slave trade (infrastructural development, corporations)."
+            },
+            {
+              "name": "2.1.3 Human Trafficking as a Modern Form of Slave Trade",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Show respect for Human rights",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "Human trafficking; its forms and effects; demonstrating respect for rights."
+            },
+            {
+              "name": "2.1.4 Slave Trade and Black Friday",
+              "sequence_number": 4,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Relate Black Friday to modern day commerce",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "Origin of the term 'Black Friday'; its adoption in Zambia."
+            }
+          ]
+        },
+        {
+          "name": "2.2 Missionary Activities in Zambia",
+          "sequence_number": 2,
+          "sub_topics": [
+            {
+              "name": "2.2.1 Missionary Work in Zambia",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Analyse impact of missionary activities in Zambia",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "Missionary groups in Zambia; their aims, activities, and impact (education, health, colonialism)."
+            }
+          ]
+        },
+        {
+          "name": "2.3 Establishment of Colonial Rule in Zambia",
+          "sequence_number": 3,
+          "sub_topics": [
+            {
+              "name": "2.3.1 British Occupation of Northern Rhodesia",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Analyse process of colonial occupation of Northern Rhodesia",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "Motives for colonisation; formation of Northern Rhodesia; process of occupation."
+            }
+          ]
+        },
+        {
+          "name": "2.4 Colonial Administration in Northern Rhodesia",
+          "sequence_number": 4,
+          "sub_topics": [
+            {
+              "name": "2.4.1 Types of Governance in Northern Rhodesia",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Critique colonial types of governance",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "Types of colonial governance (direct/indirect rule); features; impact; neo-colonialism."
+            },
+            {
+              "name": "2.4.2 The Central African Federation (1953-1963)",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Demonstrate understanding of Central African Federation",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "Formation of the Federation; African collaboration to dismantle it; current collaboration."
+            }
+          ]
+        },
+        {
+          "name": "2.5 Resistance to Colonial Rule",
+          "sequence_number": 5,
+          "sub_topics": [
+            {
+              "name": "2.5.1 Primary and Secondary Resistance to Colonial Rule",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Interpret resistance methods to colonial rule",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "Primary resistance (chiefs, churches); secondary resistance (welfare societies, unions, parties)."
+            }
+          ]
+        },
+        {
+          "name": "2.6 Zambia's Struggle for Independence",
+          "sequence_number": 6,
+          "sub_topics": [
+            {
+              "name": "2.6.1 Nationalists in Zambia's Independence Struggle",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciate the role of nationalists and Freedom fighters during Independence struggle",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "Role of leading nationalists (e.g. Nkumbula, Kaunda) and other individuals; demonstrating respect."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 2",
+      "sequence_number": 2,
+      "topics": [
+        {
+          "name": "3.1 Copper Mining in Zambia",
+          "sequence_number": 1,
+          "sub_topics": [
+            {
+              "name": "3.1.1 The History of Copper Mining in Zambia",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Explore copper mining in Zambia",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "Background of copper mining in Zambia (pre-colonial to post-colonial); its impact (economic, social, political)."
+            }
+          ]
+        },
+        {
+          "name": "3.2 Labour Migration",
+          "sequence_number": 2,
+          "sub_topics": [
+            {
+              "name": "3.2.1 Labour Migration in Colonial and Post-Colonial Zambia",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Assess impact of labour migration in colonial and post-colonial Zambia",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "Causes of labour migration; recruiting organisations (e.g. WENELA); impact of labour migration."
+            }
+          ]
+        },
+        {
+          "name": "3.3 Liberation Struggle in Southern Africa",
+          "sequence_number": 3,
+          "sub_topics": [
+            {
+              "name": "3.3.1 Zambia's Role in the Liberation Struggle of Southern Africa",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Evaluate Zambia's role in the liberation struggle of Southern Africa",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "Countries Zambia helped to liberate; Zambia's role (hosting leaders, diplomacy, support); impact on Zambia."
+            }
+          ]
+        },
+        {
+          "name": "3.4 The Pan-African Movement",
+          "sequence_number": 4,
+          "sub_topics": [
+            {
+              "name": "3.4.1 The Pan-Africanism",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Promote unity in Africa through Pan-Africanism",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "Aims of the Pan-African movement; role of African leaders (Kaunda, Nkrumah); efforts to achieve it."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

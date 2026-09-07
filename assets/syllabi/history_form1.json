@@ -1,5 +1,5 @@
 {
-  "_source": "Ministry of Education / Curriculum Development Centre, Zambia. 'History Syllabus, Ordinary Level Secondary Education, Form 1-4' (2024) for topic/sub-topic/specific-competence/expected-standard text; 'History Teaching Module, Form 1 - Term 1' (CDC, 2025) confirms Term 1 covers exactly Topics 1.1-1.4. Terms 2-3 are intentionally omitted until their own Teaching Module documents are sourced and confirmed.",
+  "_source": "Ministry of Education / Curriculum Development Centre, Zambia. 'History Syllabus, Ordinary Level Secondary Education, Form 1-4' (2024) for topic/sub-topic/specific-competence/expected-standard text; 'History Teaching Module, Form 1 - Term 1' (CDC, 2025) confirms Term 1 covers exactly Topics 1.1-1.4. Terms 2-3 are intentionally omitted until their own Teaching Module documents are sourced and confirmed.\n\nADDED: a real 'History Form 1 Scheme of Work, Term 2' (a real Zambian secondary school's Social Science Department; the source's own teacher name and school name are not reproduced here per this app's standing sourcing policy) was shared with this project via Drive, confirming Term 2 covers Topics 1.4-1.7 (1.4 Stone Age, 1.5 Beginning and Spread of Iron-Working and Farming, 1.6 The Bantu Speaking People, 1.7 National Heritage Sites in Zambia), citing the same real '2024 History Syllabus, Ordinary Secondary Education Form 1-4' (pp.8-12). Unlike Term 1's own content (extracted from a richer CDC Teaching Module with detailed learning_objectives), this Term 2 content comes from a scheme-of-work table, so only Topic/Sub-topic/Specific Competence/Content-Concept text is available -- no separate learning_objectives list is included for these new topics, consistent with how every other scheme-of-work-sourced (as opposed to teaching-module-sourced) subject in this app is built. Term 3 remains intentionally omitted -- a real Term 3 document for Form 1 was not part of what was shared.",
   "curriculum": {
     "code": "CBC_2023",
     "name": "2023 Competency-Based Curriculum",
@@ -38,10 +38,22 @@
                 }
               ],
               "learning_objectives": [
-                { "sequence_number": 1, "description": "Explaining the meaning of History (past events)" },
-                { "sequence_number": 2, "description": "Describing past events in the family (funerals, weddings, outings)" },
-                { "sequence_number": 3, "description": "Describing the importance of past events (past experience can provide present or future solutions, become better citizens, develop critical thinking)" },
-                { "sequence_number": 4, "description": "Showing the importance of history in different fields and topics (Medicine, Music, Law)" }
+                {
+                  "sequence_number": 1,
+                  "description": "Explaining the meaning of History (past events)"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Describing past events in the family (funerals, weddings, outings)"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Describing the importance of past events (past experience can provide present or future solutions, become better citizens, develop critical thinking)"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Showing the importance of history in different fields and topics (Medicine, Music, Law)"
+                }
               ]
             },
             {
@@ -49,12 +61,25 @@
               "sequence_number": 2,
               "description": "Expected standard: local history interpreted accordingly.",
               "competencies": [
-                { "sequence_number": 1, "description": "Interpret local history", "category": "Specific Competence" }
+                {
+                  "sequence_number": 1,
+                  "description": "Interpret local history",
+                  "category": "Specific Competence"
+                }
               ],
               "learning_objectives": [
-                { "sequence_number": 1, "description": "Discussing the history of your township/village" },
-                { "sequence_number": 2, "description": "Analysing the developments that have taken place in your township/village in the recent past" },
-                { "sequence_number": 3, "description": "Examining the importance of local history" }
+                {
+                  "sequence_number": 1,
+                  "description": "Discussing the history of your township/village"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Analysing the developments that have taken place in your township/village in the recent past"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Examining the importance of local history"
+                }
               ]
             },
             {
@@ -62,11 +87,21 @@
               "sequence_number": 3,
               "description": "Expected standard: types or branches of history classified correctly.",
               "competencies": [
-                { "sequence_number": 1, "description": "Classify types or branches of history", "category": "Specific Competence" }
+                {
+                  "sequence_number": 1,
+                  "description": "Classify types or branches of history",
+                  "category": "Specific Competence"
+                }
               ],
               "learning_objectives": [
-                { "sequence_number": 1, "description": "Identifying types/branches of history study (Chronological: Ancient, Medieval, Modern; Thematic: Political, Social, Economic; Geographical: World History, African History; Music history, Sports history)" },
-                { "sequence_number": 2, "description": "Classifying branches of history" }
+                {
+                  "sequence_number": 1,
+                  "description": "Identifying types/branches of history study (Chronological: Ancient, Medieval, Modern; Thematic: Political, Social, Economic; Geographical: World History, African History; Music history, Sports history)"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Classifying branches of history"
+                }
               ]
             },
             {
@@ -74,12 +109,25 @@
               "sequence_number": 4,
               "description": "Expected standard: credibility of sources of historical information assessed appropriately.",
               "competencies": [
-                { "sequence_number": 1, "description": "Assess credibility of sources of historical information", "category": "Specific Competence" }
+                {
+                  "sequence_number": 1,
+                  "description": "Assess credibility of sources of historical information",
+                  "category": "Specific Competence"
+                }
               ],
               "learning_objectives": [
-                { "sequence_number": 1, "description": "Discussing methods of gathering information about the past (Oral tradition, Written records, Anthropology, Archaeology, Linguistics, Genetics)" },
-                { "sequence_number": 2, "description": "Analysing the reliability of methods of gathering information about the past" },
-                { "sequence_number": 3, "description": "Utilising reliable methods to write history" }
+                {
+                  "sequence_number": 1,
+                  "description": "Discussing methods of gathering information about the past (Oral tradition, Written records, Anthropology, Archaeology, Linguistics, Genetics)"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Analysing the reliability of methods of gathering information about the past"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Utilising reliable methods to write history"
+                }
               ]
             },
             {
@@ -87,11 +135,21 @@
               "sequence_number": 5,
               "description": "Expected standard: digital resources applied in learning about the past correctly.",
               "competencies": [
-                { "sequence_number": 1, "description": "Apply digital resources in learning about the past", "category": "Specific Competence" }
+                {
+                  "sequence_number": 1,
+                  "description": "Apply digital resources in learning about the past",
+                  "category": "Specific Competence"
+                }
               ],
               "learning_objectives": [
-                { "sequence_number": 1, "description": "Identifying digital resources (phone, computer)" },
-                { "sequence_number": 2, "description": "Using digital resources to find out new information about the past" }
+                {
+                  "sequence_number": 1,
+                  "description": "Identifying digital resources (phone, computer)"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Using digital resources to find out new information about the past"
+                }
               ]
             }
           ]
@@ -106,12 +164,25 @@
               "sequence_number": 1,
               "description": "Expected standard: patterns of historical durations explored accordingly.",
               "competencies": [
-                { "sequence_number": 1, "description": "Explore patterns of historical durations", "category": "Specific Competence" }
+                {
+                  "sequence_number": 1,
+                  "description": "Explore patterns of historical durations",
+                  "category": "Specific Competence"
+                }
               ],
               "learning_objectives": [
-                { "sequence_number": 1, "description": "Mentioning historical durations (year, decade, generation, century, millennium)" },
-                { "sequence_number": 2, "description": "Calculating number of years in a given period" },
-                { "sequence_number": 3, "description": "Converting a year into a century" }
+                {
+                  "sequence_number": 1,
+                  "description": "Mentioning historical durations (year, decade, generation, century, millennium)"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Calculating number of years in a given period"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Converting a year into a century"
+                }
               ]
             },
             {
@@ -119,11 +190,21 @@
               "sequence_number": 2,
               "description": "Expected standard: series of related events arranged in chronological order correctly.",
               "competencies": [
-                { "sequence_number": 1, "description": "Arrange series of related events in chronological order", "category": "Specific Competence" }
+                {
+                  "sequence_number": 1,
+                  "description": "Arrange series of related events in chronological order",
+                  "category": "Specific Competence"
+                }
               ],
               "learning_objectives": [
-                { "sequence_number": 1, "description": "Explaining the meaning of chronology" },
-                { "sequence_number": 2, "description": "Arranging identified prominent events in our family, community, country and international chronologically" }
+                {
+                  "sequence_number": 1,
+                  "description": "Explaining the meaning of chronology"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Arranging identified prominent events in our family, community, country and international chronologically"
+                }
               ]
             },
             {
@@ -131,13 +212,29 @@
               "sequence_number": 3,
               "description": "Expected standard: chronology in writing timeline applied correctly.",
               "competencies": [
-                { "sequence_number": 1, "description": "Apply chronology in writing time line", "category": "Specific Competence" }
+                {
+                  "sequence_number": 1,
+                  "description": "Apply chronology in writing time line",
+                  "category": "Specific Competence"
+                }
               ],
               "learning_objectives": [
-                { "sequence_number": 1, "description": "Discussing types of time lines (progressive, regressive, pictorial)" },
-                { "sequence_number": 2, "description": "Constructing a personal timeline under specified guidelines" },
-                { "sequence_number": 3, "description": "Constructing events timeline under specified guidelines" },
-                { "sequence_number": 4, "description": "Describing the importance of a timeline" }
+                {
+                  "sequence_number": 1,
+                  "description": "Discussing types of time lines (progressive, regressive, pictorial)"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Constructing a personal timeline under specified guidelines"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Constructing events timeline under specified guidelines"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Describing the importance of a timeline"
+                }
               ]
             },
             {
@@ -145,13 +242,29 @@
               "sequence_number": 4,
               "description": "Expected standard: use of abbreviations (BC/BCE and AD/CE) to denote historical periods demonstrated correctly.",
               "competencies": [
-                { "sequence_number": 1, "description": "Use abbreviations (BC/BCE and AD/CE) to denote historical periods", "category": "Specific Competence" }
+                {
+                  "sequence_number": 1,
+                  "description": "Use abbreviations (BC/BCE and AD/CE) to denote historical periods",
+                  "category": "Specific Competence"
+                }
               ],
               "learning_objectives": [
-                { "sequence_number": 1, "description": "Explaining the meaning of abbreviations BC or BCE and AD or CE" },
-                { "sequence_number": 2, "description": "Counting years in BC and AD" },
-                { "sequence_number": 3, "description": "Demonstrating the use of BC/BCE and AD/CE to a given date" },
-                { "sequence_number": 4, "description": "Calculating the number of years between two given periods of time" }
+                {
+                  "sequence_number": 1,
+                  "description": "Explaining the meaning of abbreviations BC or BCE and AD or CE"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Counting years in BC and AD"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Demonstrating the use of BC/BCE and AD/CE to a given date"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Calculating the number of years between two given periods of time"
+                }
               ]
             }
           ]
@@ -166,12 +279,25 @@
               "sequence_number": 1,
               "description": "Expected standard: religion and scientific views on the origins of man analysed accordingly.",
               "competencies": [
-                { "sequence_number": 1, "description": "Analyse religious and scientific views on the origins of man", "category": "Specific Competence" }
+                {
+                  "sequence_number": 1,
+                  "description": "Analyse religious and scientific views on the origins of man",
+                  "category": "Specific Competence"
+                }
               ],
               "learning_objectives": [
-                { "sequence_number": 1, "description": "Describing creation of man according to religion (Christianity and Islam)" },
-                { "sequence_number": 2, "description": "Explaining the beginning of life on earth according to scientists (Charles Darwin's theory)" },
-                { "sequence_number": 3, "description": "Contrasting religious and scientific views on the origins of man" }
+                {
+                  "sequence_number": 1,
+                  "description": "Describing creation of man according to religion (Christianity and Islam)"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Explaining the beginning of life on earth according to scientists (Charles Darwin's theory)"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Contrasting religious and scientific views on the origins of man"
+                }
               ]
             }
           ]
@@ -186,14 +312,33 @@
               "sequence_number": 1,
               "description": "Expected standard: lessons from Stone Age way of life drawn appropriately.",
               "competencies": [
-                { "sequence_number": 1, "description": "Draw lessons from Stone Age way of life", "category": "Specific Competence" }
+                {
+                  "sequence_number": 1,
+                  "description": "Draw lessons from Stone Age way of life",
+                  "category": "Specific Competence"
+                }
               ],
               "learning_objectives": [
-                { "sequence_number": 1, "description": "Classifying Stone Age (Paleolithic/Early, Mesolithic/Middle, Neolithic/Late Stone Age)" },
-                { "sequence_number": 2, "description": "Identifying creatures that existed in the three Stone Ages (Early: Homo-Habilis; Middle: Broken Hillman; Late: Bushmen/San)" },
-                { "sequence_number": 3, "description": "Describing social, political, economic aspects of the Stone Age" },
-                { "sequence_number": 4, "description": "Analysing the use of various Stone Age tools (hunting, cutting, digging)" },
-                { "sequence_number": 5, "description": "Contrasting Stone Age way of life with modern way of life" }
+                {
+                  "sequence_number": 1,
+                  "description": "Classifying Stone Age (Paleolithic/Early, Mesolithic/Middle, Neolithic/Late Stone Age)"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Identifying creatures that existed in the three Stone Ages (Early: Homo-Habilis; Middle: Broken Hillman; Late: Bushmen/San)"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Describing social, political, economic aspects of the Stone Age"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Analysing the use of various Stone Age tools (hunting, cutting, digging)"
+                },
+                {
+                  "sequence_number": 5,
+                  "description": "Contrasting Stone Age way of life with modern way of life"
+                }
               ]
             },
             {
@@ -201,12 +346,172 @@
               "sequence_number": 2,
               "description": "Expected standard: importance of Stone Age sites in Zambia assessed appropriately.",
               "competencies": [
-                { "sequence_number": 1, "description": "Assess importance of Stone Age sites in Zambia", "category": "Specific Competence" }
+                {
+                  "sequence_number": 1,
+                  "description": "Assess importance of Stone Age sites in Zambia",
+                  "category": "Specific Competence"
+                }
               ],
               "learning_objectives": [
-                { "sequence_number": 1, "description": "Locating Stone Age sites on the map of Zambia (Mwela Rocks, Nachikufu Caves, Gwisho Hot Springs)" },
-                { "sequence_number": 2, "description": "Analysing the importance of Stone Age sites (tourism, cultural heritage)" }
+                {
+                  "sequence_number": 1,
+                  "description": "Locating Stone Age sites on the map of Zambia (Mwela Rocks, Nachikufu Caves, Gwisho Hot Springs)"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Analysing the importance of Stone Age sites (tourism, cultural heritage)"
+                }
               ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 2",
+      "sequence_number": 2,
+      "topics": [
+        {
+          "name": "1.4 Stone Age",
+          "sequence_number": 4,
+          "sub_topics": [
+            {
+              "name": "1.4.1 The Way of Life in Stone Age",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Draw lessons from Stone Age way of life",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "Classification of Stone Age (Paleolithic, Mesolithic, Neolithic); social, political, economic aspects; tools."
+            },
+            {
+              "name": "1.4.2 Stone Age Sites in Zambia",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Assess importance of Stone Age sites in Zambia",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "Location of Stone Age sites in Zambia (e.g. Mwela rocks) and their importance (tourism, cultural heritage)."
+            }
+          ]
+        },
+        {
+          "name": "1.5 The Beginning and Spread of Iron-Working and Farming",
+          "sequence_number": 5,
+          "sub_topics": [
+            {
+              "name": "1.5.1 Development of Iron-Technology and Farming",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Analyse impact of Iron technology in farming",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "Early areas of farming and iron-working; settlement areas in Zambia (Kalambo, Isamu Pati); impact of iron technology."
+            }
+          ]
+        },
+        {
+          "name": "1.6 The Bantu Speaking People",
+          "sequence_number": 6,
+          "sub_topics": [
+            {
+              "name": "1.6.1 Early Bantu Settlement in Africa",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Locate origins of Bantu Speaking People in Africa",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "The term 'Bantu'; reasons for and course of early migrations from West Africa."
+            },
+            {
+              "name": "1.6.2 Bantu Migrations into Zambia",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use knowledge of common origins of Zambian people to promote National unity",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "Causes and course of Bantu migrations into Zambia; effects on national unity."
+            },
+            {
+              "name": "1.6.3 Decentralised Societies in Pre Colonial Zambia",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Analyse features of decentralised societies",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "Decentralised societies in Zambia (Tonga, Ila, etc.) and their key features."
+            },
+            {
+              "name": "1.6.4 Centralised Societies in Pre-Colonial Zambia",
+              "sequence_number": 4,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Integrate features of Centralised Societies in modern Zambian society",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "Centralised societies in Zambia (Lozi, Bemba, Ngoni, etc.), their key features, and integration in modern Zambia."
+            }
+          ]
+        },
+        {
+          "name": "1.7 National Heritage Sites in Zambia",
+          "sequence_number": 7,
+          "sub_topics": [
+            {
+              "name": "1.7.1 Heritage Sites in Zambia",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Promote heritage sites",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "National heritage sites in Zambia (Victoria Falls, Kalambo Falls, etc.) and ways to promote them."
+            },
+            {
+              "name": "1.7.2 Importance of Heritage Sites",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Utilise business opportunities found in national heritage sites",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "Historical background of Victoria Falls; activities and business opportunities there."
+            },
+            {
+              "name": "1.7.3 Conservation of Heritage Sites",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Conserve historical sites",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "Dangers to heritage sites; activities that promote conservation."
             }
           ]
         }
