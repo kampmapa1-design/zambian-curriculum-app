@@ -507,6 +507,15 @@
     {
       "curriculum_code": "CBC_2023",
       "curriculum_name": "2023 Competency-Based Curriculum",
+      "subject_code": "BIO",
+      "subject_name": "Biology",
+      "grade_level": 2,
+      "grade_name": "Form 2",
+      "file": "biology_form2.json"
+    },
+    {
+      "curriculum_code": "CBC_2023",
+      "curriculum_name": "2023 Competency-Based Curriculum",
       "subject_code": "RE",
       "subject_name": "Religious Education",
       "grade_level": 1,
