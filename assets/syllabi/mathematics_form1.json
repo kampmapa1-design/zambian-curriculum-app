@@ -1,5 +1,5 @@
 {
-  "_source": "Ministry of Education / Curriculum Development Centre, Zambia — 'Form 1 Mathematics II Term 3 Scheme of Work', covering Topics 1.7-1.13 (the syllabus's own numbering; Topics 1.1-1.6 belong to Terms 1-2, not sourced here). The scheme also cites a commercial textbook (Zambia Educational Publishing House, 2024) alongside the CDC syllabus for its assessment/resource suggestions; that citation and a repeated vendor contact footer offering 'editable schemes' have been omitted — this file contains no identifying or promotional information, per this app's standing content policy of crediting only CDC/Ministry of Education. The source PDF's table layout did not extract in strict reading order (rows interleaved across pages); topic/sub-topic/competency groupings below were reconstructed by matching each numbered competency code (1.7.1.1 etc.) to its correct topic based on the code itself and surrounding context, not assumed from extraction order. Week numbers were similarly reconstructed from the scheme's week-range headers (e.g. \"1-2\", \"3-4\"), which paced two weeks per topic; the first week of each range is used per sub-topic (the second sub-topic of a pair, where present, takes the following week) — an approximation, not a literal per-row extraction.",
+  "_source": "A real 'Mathematics 1 Form 1 Scheme of Work, Term 3' (a real Zambian secondary school's Mathematics Department; the source's own teacher name and school name are not reproduced here per this app's standing sourcing policy) was shared with this project via Drive. This fills a genuine gap: this app's own mathematics_form1.json file previously held Mathematics II content mislabeled as generic 'Mathematics' -- see mathematics_ii_form1.json's own _source for that fix -- meaning real Mathematics (Paper I) content for Form 1 did not exist in this app at all before this file. Cites the real official '2024 Mathematics Syllabus, Ordinary Secondary Education Form 1-4' with real page citations (pp.27-30). Covers only the term this specific document addresses (Term 3) -- Term 1 and Term 2 are not included since no source document for them was available at the time this file was built. Its own Content/Concept, Learning Activities, Strategies/Methods and Materials/Resources columns are omitted, consistent with the approach used for every other bundled subject in this app.",
   "curriculum": {
     "code": "CBC_2023",
     "name": "2023 Competency-Based Curriculum",
@@ -8,7 +8,7 @@
   "subject": {
     "name": "Mathematics",
     "code": "MATH",
-    "description": "Ordinary Level Secondary Mathematics syllabus, Form 1-4 (Curriculum Development Centre)."
+    "description": "Ordinary Level Secondary Mathematics (Paper I) syllabus, Form 1-4 (Curriculum Development Centre)."
   },
   "grade": {
     "name": "Form 1",
@@ -22,311 +22,64 @@
       "sequence_number": 3,
       "topics": [
         {
-          "name": "1.7 Relations and Functions",
-          "sequence_number": 7,
+          "name": "1.7 Angles",
+          "sequence_number": 1,
           "sub_topics": [
             {
-              "name": "1.7.1 Introduction to Relations and Functions",
+              "name": "1.7.1 Angles Associated with Straight Lines",
               "sequence_number": 1,
-              "description": "Expected standard: learners define relations and represent functions with 90% accuracy.",
               "competencies": [
                 {
                   "sequence_number": 1,
-                  "description": "Define relations and identify their properties",
+                  "description": "Use angles associated with straight lines in everyday life (corresponding, vertically opposite, alternate angles)",
                   "category": "Specific Competence"
                 }
-              ],
-              "learning_objectives": [
-                {
-                  "sequence_number": 1,
-                  "description": "Creating mapping diagrams for relations in pairs (relations: ordered pairs, domain, range)"
-                }
-              ],
-              "week_number": 1
+              ]
             },
             {
-              "name": "1.7.2 Functions Notation and Graphs",
+              "name": "1.7.2 Angle of Elevation and Depression",
               "sequence_number": 2,
-              "description": "Expected standard: learners define relations and represent functions with 90% accuracy.",
               "competencies": [
                 {
                   "sequence_number": 1,
-                  "description": "Represent functions using notation",
+                  "description": "Use Angle of Elevation and Depression in everyday life",
                   "category": "Specific Competence"
                 }
-              ],
-              "learning_objectives": [
-                {
-                  "sequence_number": 1,
-                  "description": "Graphing simple functions (e.g. y = 2x + 1) on graph paper (function definition, notation e.g. f(x), graphs of linear functions)"
-                },
-                {
-                  "sequence_number": 2,
-                  "description": "Group discussions on function properties; solving function value problems (e.g. find f(2))"
-                }
-              ],
-              "week_number": 2
+              ]
             }
           ]
         },
         {
           "name": "1.8 Trigonometry",
-          "sequence_number": 8,
+          "sequence_number": 2,
           "sub_topics": [
             {
-              "name": "1.8.1 Trigonometric Ratios",
+              "name": "1.8.1 Pythagoras Theorem",
               "sequence_number": 1,
-              "description": "Expected standard: learners define ratios and solve problems with 85% accuracy.",
               "competencies": [
                 {
                   "sequence_number": 1,
-                  "description": "Define sine, cosine, and tangent ratios",
+                  "description": "Use Pythagoras theorem to solve problems in different contexts",
                   "category": "Specific Competence"
                 }
-              ],
-              "learning_objectives": [
-                {
-                  "sequence_number": 1,
-                  "description": "Measuring angles and sides of model triangles (trigonometric ratios: sine, cosine, tangent in right-angled triangles)"
-                }
-              ],
-              "week_number": 3
-            },
-            {
-              "name": "1.8.2 Angles of Elevation and Depression",
-              "sequence_number": 2,
-              "description": "Expected standard: learners define ratios and solve problems with 85% accuracy.",
-              "competencies": [
-                {
-                  "sequence_number": 1,
-                  "description": "Solve problems involving elevation and depression",
-                  "category": "Specific Competence"
-                }
-              ],
-              "learning_objectives": [
-                {
-                  "sequence_number": 1,
-                  "description": "Solving elevation/depression problems in groups; drawing diagrams for real-world scenarios (e.g. height calculations)"
-                }
-              ],
-              "week_number": 4
+              ]
             }
           ]
         },
         {
           "name": "1.9 Statistics",
-          "sequence_number": 9,
+          "sequence_number": 3,
           "sub_topics": [
             {
-              "name": "1.9.1 Data Collection and Representation",
+              "name": "1.9.1 Statistical Presentations and Measures of Central Tendency",
               "sequence_number": 1,
-              "description": "Expected standard: learners collect, represent, and calculate measures with 90% accuracy.",
               "competencies": [
                 {
                   "sequence_number": 1,
-                  "description": "Collect and represent data using charts",
+                  "description": "Apply statistics in making informed decisions in real life",
                   "category": "Specific Competence"
                 }
-              ],
-              "learning_objectives": [
-                {
-                  "sequence_number": 1,
-                  "description": "Conducting a class survey in groups (data types: qualitative, quantitative)"
-                },
-                {
-                  "sequence_number": 2,
-                  "description": "Creating bar and pie charts from data"
-                }
-              ],
-              "week_number": 5
-            },
-            {
-              "name": "1.9.2 Measures of Central Tendency",
-              "sequence_number": 2,
-              "description": "Expected standard: learners collect, represent, and calculate measures with 90% accuracy.",
-              "competencies": [
-                {
-                  "sequence_number": 1,
-                  "description": "Calculate mean, median, and mode",
-                  "category": "Specific Competence"
-                }
-              ],
-              "learning_objectives": [
-                {
-                  "sequence_number": 1,
-                  "description": "Calculating mean, median and mode for datasets, and presenting charts to the class"
-                }
-              ],
-              "week_number": 6
-            }
-          ]
-        },
-        {
-          "name": "1.10 Probability",
-          "sequence_number": 10,
-          "sub_topics": [
-            {
-              "name": "1.10.1 Basic Probability",
-              "sequence_number": 1,
-              "description": "Expected standard: learners calculate probabilities and identify sample spaces with 85% accuracy.",
-              "competencies": [
-                {
-                  "sequence_number": 1,
-                  "description": "Define probability and calculate probability",
-                  "category": "Specific Competence"
-                }
-              ],
-              "learning_objectives": [
-                {
-                  "sequence_number": 1,
-                  "description": "Conducting probability experiments (e.g. coin toss) in groups (probability: definition, formula)"
-                }
-              ],
-              "week_number": 7
-            },
-            {
-              "name": "1.10.2 Sample Spaces",
-              "sequence_number": 2,
-              "description": "Expected standard: learners calculate probabilities and identify sample spaces with 85% accuracy.",
-              "competencies": [
-                {
-                  "sequence_number": 1,
-                  "description": "Identify sample spaces and simple events",
-                  "category": "Specific Competence"
-                }
-              ],
-              "learning_objectives": [
-                {
-                  "sequence_number": 1,
-                  "description": "Listing sample spaces for simple events; solving probability problems in pairs (e.g. dice, coins)"
-                },
-                {
-                  "sequence_number": 2,
-                  "description": "Discussing real-world probability applications"
-                }
-              ],
-              "week_number": 8
-            }
-          ]
-        },
-        {
-          "name": "1.11 Geometry",
-          "sequence_number": 11,
-          "sub_topics": [
-            {
-              "name": "1.11.1 Angles and Triangles",
-              "sequence_number": 1,
-              "description": "Expected standard: learners calculate angles and prove congruence/similarity with 85% accuracy.",
-              "competencies": [
-                {
-                  "sequence_number": 1,
-                  "description": "Identify and calculate angles in triangles",
-                  "category": "Specific Competence"
-                }
-              ],
-              "learning_objectives": [
-                {
-                  "sequence_number": 1,
-                  "description": "Measuring angles in triangles using protractors (angle types, angle sum in triangles)"
-                }
-              ],
-              "week_number": 9
-            },
-            {
-              "name": "1.11.2 Congruence and Similarity",
-              "sequence_number": 2,
-              "description": "Expected standard: learners calculate angles and prove congruence/similarity with 85% accuracy.",
-              "competencies": [
-                {
-                  "sequence_number": 1,
-                  "description": "Prove congruence and similarity",
-                  "category": "Specific Competence"
-                }
-              ],
-              "learning_objectives": [
-                {
-                  "sequence_number": 1,
-                  "description": "Constructing congruent triangles in pairs (congruence: SSS, SAS, ASA criteria; similarity: properties, ratios)"
-                },
-                {
-                  "sequence_number": 2,
-                  "description": "Group tasks to prove similarity; drawing geometric figures on graph paper"
-                }
-              ],
-              "week_number": 10
-            }
-          ]
-        },
-        {
-          "name": "1.12 Vectors",
-          "sequence_number": 12,
-          "sub_topics": [
-            {
-              "name": "1.12.1 Introduction to Vectors",
-              "sequence_number": 1,
-              "description": "Expected standard: learners define vectors, perform operations, and calculate areas/perimeters with 85-90% accuracy.",
-              "competencies": [
-                {
-                  "sequence_number": 1,
-                  "description": "Define vectors and their notation",
-                  "category": "Specific Competence"
-                }
-              ],
-              "learning_objectives": [
-                {
-                  "sequence_number": 1,
-                  "description": "Drawing vectors on graph paper (vectors: notation, magnitude, direction)"
-                }
-              ],
-              "week_number": 11
-            },
-            {
-              "name": "1.12.2 Vector Operations",
-              "sequence_number": 2,
-              "description": "Expected standard: learners define vectors, perform operations, and calculate areas/perimeters with 85-90% accuracy.",
-              "competencies": [
-                {
-                  "sequence_number": 1,
-                  "description": "Perform vector addition and subtraction",
-                  "category": "Specific Competence"
-                }
-              ],
-              "learning_objectives": [
-                {
-                  "sequence_number": 1,
-                  "description": "Solving vector addition problems in groups"
-                }
-              ],
-              "week_number": 11
-            }
-          ]
-        },
-        {
-          "name": "1.13 Mensuration",
-          "sequence_number": 13,
-          "sub_topics": [
-            {
-              "name": "1.13.1 Area and Perimeter",
-              "sequence_number": 1,
-              "description": "Expected standard: learners calculate compound area and perimeter of 2D shapes with 90% accuracy.",
-              "competencies": [
-                {
-                  "sequence_number": 1,
-                  "description": "Calculate compound area and perimeter of 2D shapes",
-                  "category": "Specific Competence"
-                }
-              ],
-              "learning_objectives": [
-                {
-                  "sequence_number": 1,
-                  "description": "Measuring and calculating areas/perimeters of shapes (triangles, rectangles, circles)"
-                },
-                {
-                  "sequence_number": 2,
-                  "description": "Field activity: measuring the school compound to calculate areas"
-                }
-              ],
-              "week_number": 12
+              ]
             }
           ]
         }

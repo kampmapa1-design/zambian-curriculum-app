@@ -1,0 +1,83 @@
+{
+  "_source": "A real 'Mathematics 1 Form 2 Scheme of Work, Term 3' (a real Zambian secondary school's Mathematics Department; the source's own teacher name and school name are not reproduced here per this app's standing sourcing policy) was shared with this project via Drive. This is a genuine gap fill -- this app previously had no Mathematics (Paper I) content for Form 2 at all. Cites the real official '2024 Mathematics Syllabus, Ordinary Secondary Education Form 1-4' with real page citations (pp.38-41). Covers only the term this specific document addresses (Term 3) -- Term 1 and Term 2 are not included since no source document for them was available at the time this file was built. Its own Content/Concept, Learning Activities, Strategies/Methods and Materials/Resources columns are omitted, consistent with the approach used for every other bundled subject in this app.",
+  "curriculum": {
+    "code": "CBC_2023",
+    "name": "2023 Competency-Based Curriculum",
+    "description": "Zambia's current competency-based curriculum."
+  },
+  "subject": {
+    "name": "Mathematics",
+    "code": "MATH",
+    "description": "Ordinary Level Secondary Mathematics (Paper I) syllabus, Form 1-4 (Curriculum Development Centre)."
+  },
+  "grade": {
+    "name": "Form 2",
+    "code": "F2_CBC",
+    "level": 2,
+    "phase": "Secondary — the source scheme itself uses \"Form 2\" for this level under the 2023 CBC."
+  },
+  "terms": [
+    {
+      "name": "Term 3",
+      "sequence_number": 3,
+      "topics": [
+        {
+          "name": "2.6 Travel Graphs",
+          "sequence_number": 1,
+          "sub_topics": [
+            {
+              "name": "2.6.1 Distance-Time Graphs",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Apply distance-time graphs in a variety of perspectives",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "2.6.2 Velocity-Time Graphs",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Apply velocity-time graphs in a variety of perspectives, including acceleration, retardation and area under the graph",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "2.7 Financial Arithmetic",
+          "sequence_number": 2,
+          "sub_topics": [
+            {
+              "name": "2.7.1 Financial Interest",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Apply the Financial Interest in everyday life (compound interest, hire purchase)",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "2.7.2 Investment",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Apply the concept of Investment in everyday life (types of tax, types of investment, investment calculations)",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

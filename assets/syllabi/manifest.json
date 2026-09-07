@@ -48,6 +48,33 @@
     {
       "curriculum_code": "CBC_2023",
       "curriculum_name": "2023 Competency-Based Curriculum",
+      "subject_code": "MATH2",
+      "subject_name": "Mathematics II",
+      "grade_level": 1,
+      "grade_name": "Form 1",
+      "file": "mathematics_ii_form1.json"
+    },
+    {
+      "curriculum_code": "CBC_2023",
+      "curriculum_name": "2023 Competency-Based Curriculum",
+      "subject_code": "MATH",
+      "subject_name": "Mathematics",
+      "grade_level": 2,
+      "grade_name": "Form 2",
+      "file": "mathematics_form2.json"
+    },
+    {
+      "curriculum_code": "CBC_2023",
+      "curriculum_name": "2023 Competency-Based Curriculum",
+      "subject_code": "MATH2",
+      "subject_name": "Mathematics II",
+      "grade_level": 2,
+      "grade_name": "Form 2",
+      "file": "mathematics_ii_form2.json"
+    },
+    {
+      "curriculum_code": "CBC_2023",
+      "curriculum_name": "2023 Competency-Based Curriculum",
       "subject_code": "CIVIC",
       "subject_name": "Civic Education",
       "grade_level": 1,

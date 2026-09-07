@@ -87,6 +87,9 @@ flutter:
     - assets/syllabi/civic_education_form2.json
     - assets/syllabi/english_form1.json
     - assets/syllabi/mathematics_form1.json
+    - assets/syllabi/mathematics_ii_form1.json
+    - assets/syllabi/mathematics_form2.json
+    - assets/syllabi/mathematics_ii_form2.json
     - assets/syllabi/civic_education_form1.json
     - assets/syllabi/civic_education_form3.json
     - assets/syllabi/civic_education_form4.json

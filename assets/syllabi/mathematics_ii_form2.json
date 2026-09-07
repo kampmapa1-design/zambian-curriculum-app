@@ -1,0 +1,123 @@
+{
+  "_source": "A real 'Mathematics II Form 2 Scheme of Work' (a real Zambian secondary school's Mathematics Department; the source's own teacher name and school name are not reproduced here per this app's standing sourcing policy) was shared with this project via Drive. This is a genuine gap fill -- this app previously had no Mathematics II content for Form 2 at all. Cites the real official '2024 Mathematics II Syllabus, Ordinary Secondary Education Form 1-4' with real page citations (pp.15-20). REAL LABEL DISCREPANCY, reproduced transparently rather than silently resolved: the source file's own name says 'Term 3', but the document's own internal header explicitly states 'TERM: 2' -- trusted here over the filename, matching this app's standing practice of trusting a scheme's own internal declaration over an external label when the two disagree (e.g. mathematics_grade10.json's own Term 1 block, similarly mislabelled in its own header, resolved the same way). Filed under Term 2 accordingly. Its own Content/Concept, Learning Activities, Strategies/Methods and Materials/Resources columns are omitted, consistent with the approach used for every other bundled subject in this app.",
+  "curriculum": {
+    "code": "CBC_2023",
+    "name": "2023 Competency-Based Curriculum",
+    "description": "Zambia's current competency-based curriculum."
+  },
+  "subject": {
+    "name": "Mathematics II",
+    "code": "MATH2",
+    "description": "Ordinary Level Secondary Mathematics II (Paper II) syllabus, Form 1-4 (Curriculum Development Centre)."
+  },
+  "grade": {
+    "name": "Form 2",
+    "code": "F2_CBC",
+    "level": 2,
+    "phase": "Secondary — the source scheme itself uses \"Form 2\" for this level under the 2023 CBC."
+  },
+  "terms": [
+    {
+      "name": "Term 2",
+      "sequence_number": 2,
+      "topics": [
+        {
+          "name": "2.3 Equations and Inequalities",
+          "sequence_number": 1,
+          "sub_topics": [
+            {
+              "name": "2.3.1 Linear Equations and Inequalities",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Apply linear equations and inequalities in daily context (formulating, solving in one and two variables, graphical/elimination/substitution methods, inequalities and their representations)",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "2.4 Algebra",
+          "sequence_number": 2,
+          "sub_topics": [
+            {
+              "name": "2.4.1 Basic Processes",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Apply basic processes of algebra in different contexts (factorising, algebraic fractions, LCM)",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "2.4.2 Remainder and Factor Theorem",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use the remainder and factor theorems in different contexts (long/synthetic division, cubic equations)",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "2.5 Matrices",
+          "sequence_number": 3,
+          "sub_topics": [
+            {
+              "name": "2.5.1 Matrix Operations",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use matrix operations in day to day activities (types, order, transposing, addition, subtraction, scalar multiplication, multiplication up to order 3x3, determinants, inverse, systems of linear equations)",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "2.6 Variation",
+          "sequence_number": 4,
+          "sub_topics": [
+            {
+              "name": "2.6.1 Types of Variation",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Apply the concept of variation in daily contexts (direct, inverse, joint and partial variation)",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "2.7 Mensuration",
+          "sequence_number": 5,
+          "sub_topics": [
+            {
+              "name": "2.7.1 Three Dimensional Shapes",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use the concept of three dimensional shapes in everyday life (nets, formulae, surface area and volume of prisms, cones, pyramids, cylinders)",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
