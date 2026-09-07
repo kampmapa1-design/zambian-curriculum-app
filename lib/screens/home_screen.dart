@@ -13,6 +13,8 @@ import 'marking_queue_screen.dart';
 import 'minutes_maker_screen.dart';
 import 'record_of_work_screen.dart';
 import 'scheme_of_work_document_screen.dart';
+import 'select_own_topics_screen.dart';
+import 'select_own_topics_subject_picker_screen.dart';
 import 'settings_screen.dart';
 import 'subject_grade_topic_picker_screen.dart';
 import 'teaching_notes_sheet.dart';
@@ -63,7 +65,45 @@ class HomeScreen extends StatelessWidget {
   ///   legitimately spill into a later term's topics (a class that's
   ///   ahead) or fall short of them (a class that's behind) — see
   ///   generateSchemeOfWorkForTerm's own doc comment.
+  /// First choice on "Generate Scheme of Work" (2026-09-08, added alongside
+  /// [_openSelectOwnTopicsScheme] — see that method's own doc comment):
+  /// the normal by-term flow below is completely unchanged past this
+  /// point, so picking "By subject, grade/form & term" costs nothing but
+  /// one extra tap versus before this was added.
   Future<void> _openSchemeOfWork(BuildContext context) async {
+    final mode = await showDialog<String>(
+      context: context,
+      builder: (dialogContext) => SimpleDialog(
+        title: const Text('Generate Scheme of Work'),
+        children: [
+          SimpleDialogOption(
+            onPressed: () => Navigator.of(dialogContext).pop('normal'),
+            child: const ListTile(
+              leading: Icon(Icons.event_note_outlined),
+              title: Text('By subject, grade/form & term'),
+              subtitle: Text('The usual way — one term at a time'),
+            ),
+          ),
+          SimpleDialogOption(
+            onPressed: () => Navigator.of(dialogContext).pop('own_topics'),
+            child: const ListTile(
+              leading: Icon(Icons.playlist_add_check),
+              title: Text('Select Own Topics Scheme'),
+              subtitle: Text(
+                'Pick any topics or sub-topics from anywhere across the whole subject — '
+                'e.g. to review/re-teach specific topics winding down a final year',
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+    if (mode == null || !context.mounted) return;
+    if (mode == 'own_topics') {
+      await _openSelectOwnTopicsScheme(context);
+      return;
+    }
+
     final selection = await Navigator.of(context).push<TermSelection>(
       MaterialPageRoute(
         builder: (_) => const SubjectGradeTopicPickerScreen(title: 'Generate Scheme of Work', pickTerm: true),
@@ -136,6 +176,61 @@ class HomeScreen extends StatelessWidget {
         entries: entries,
         classLabel: resume.classLabel,
         targetTerm: selection.term,
+      ),
+    ));
+  }
+
+  /// "Select Own Topics Scheme" (2026-09-08, per explicit request): lets a
+  /// teacher build a scheme from ANY topics/sub-topics they pick themselves
+  /// across a subject's whole Grade 10–12 (OBC) or Form 1–4 (CBC) range,
+  /// rather than being confined to one grade/term's own authored topic
+  /// list — for a Teacher/Lecturer winding down a final year who needs to
+  /// review or re-teach very specific topics, not necessarily in their
+  /// original syllabus order or all from the same grade/form.
+  ///
+  /// Always a one-off (see [SchemeOfWorkDocumentScreen.classLabel]): a pick
+  /// spanning several real grades/terms has no single real class progress
+  /// record it could legitimately update. [SyllabusTemplate.grade] here is
+  /// synthetic (id -1, not a real database row) — it exists only to label
+  /// the document header/share subject with the real range of grades the
+  /// picks were drawn from ("Form 1–Form 4 (Selected Topics)"); curriculum
+  /// and subject are the real, shared rows every loaded grade/form already
+  /// points at (see database_helper.dart's `_getOrCreate` — subjects are
+  /// looked up/shared by curriculum+code, never duplicated per grade file).
+  Future<void> _openSelectOwnTopicsScheme(BuildContext context) async {
+    final templates = await Navigator.of(context).push<List<SyllabusTemplate>>(
+      MaterialPageRoute(builder: (_) => const SelectOwnTopicsSubjectPickerScreen()),
+    );
+    if (templates == null || templates.isEmpty || !context.mounted) return;
+
+    final entries = await Navigator.of(context).push<List<SchemeOfWorkEntry>>(
+      MaterialPageRoute(builder: (_) => SelectOwnTopicsScreen(templates: templates)),
+    );
+    if (entries == null || entries.isEmpty || !context.mounted) return;
+
+    final sorted = [...templates]..sort((a, b) => a.grade.level.compareTo(b.grade.level));
+    final gradeLabel = sorted.length == 1
+        ? '${sorted.first.grade.name} (Selected Topics)'
+        : '${sorted.first.grade.name}–${sorted.last.grade.name} (Selected Topics)';
+
+    final first = templates.first;
+    final syntheticTemplate = SyllabusTemplate(
+      curriculum: first.curriculum,
+      subject: first.subject,
+      grade: Grade(
+        id: -1,
+        curriculumId: first.curriculum.id,
+        name: gradeLabel,
+        code: '${first.subject.code}_CUSTOM',
+        level: sorted.first.grade.level,
+      ),
+      terms: const [],
+    );
+
+    await Navigator.of(context).push(MaterialPageRoute(
+      builder: (_) => SchemeOfWorkDocumentScreen(
+        template: syntheticTemplate,
+        entries: entries,
       ),
     ));
   }
@@ -289,6 +384,16 @@ class HomeScreen extends StatelessWidget {
             padding: const EdgeInsets.all(16),
             sliver: SliverList.list(
               children: [
+                // Home button order (2026-09-08, per explicit request):
+                // Data Manager / Scan Marker / Assignments, Exams & Test
+                // Submissions were moved up to be buttons #3/#4/#5
+                // specifically — previously scattered across the
+                // Public Access Libraries/Data Manager/Admin Tools sections
+                // below. Those sections' own labelled headers are removed
+                // along with this reorder rather than left pointing at a
+                // now-scattered, no-longer-contiguous set of buttons — every
+                // function below keeps its exact prior behaviour, only its
+                // position (and the section labels) changed.
                 FunctionButton(
                   icon: Icons.assignment_outlined,
                   label: 'Generate Lesson Plan',
@@ -298,8 +403,32 @@ class HomeScreen extends StatelessWidget {
                 FunctionButton(
                   icon: Icons.event_note_outlined,
                   label: 'Generate Scheme of Work',
-                  subtitle: 'Pick a subject, grade/form, and term',
+                  subtitle: 'Pick a subject, grade/form, and term — or select your own topics',
                   onTap: () => _openSchemeOfWork(context),
+                ),
+                FunctionButton(
+                  icon: Icons.folder_shared_outlined,
+                  label: 'Data Manager',
+                  subtitle: 'Grade Teacher — class roster, Broad Mark Sheet, and report forms',
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const DataManagerMenuScreen()),
+                  ),
+                ),
+                FunctionButton(
+                  icon: Icons.document_scanner_outlined,
+                  label: 'Scan Marker',
+                  subtitle: 'Marking assistant — capture and queue student scripts for AI-assisted grading (early build)',
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const MarkingQueueScreen()),
+                  ),
+                ),
+                FunctionButton(
+                  icon: Icons.assignment_turned_in_outlined,
+                  label: 'Assignments, Exams & Test Submissions',
+                  subtitle: 'Send a handwritten assignment or test to your teacher',
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const AssignmentsTestsMenuScreen()),
+                  ),
                 ),
                 FunctionButton(
                   icon: Icons.auto_awesome_outlined,
@@ -312,16 +441,6 @@ class HomeScreen extends StatelessWidget {
                   label: 'Generate Record of Work',
                   subtitle: 'Weekly or fortnightly, pulled from what you\'ve already generated',
                   onTap: () => _openRecordOfWork(context),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(4, 20, 4, 8),
-                  child: Text(
-                    'PUBLIC ACCESS LIBRARIES',
-                    style: Theme.of(context)
-                        .textTheme
-                        .labelMedium
-                        ?.copyWith(color: colorScheme.onSurfaceVariant, letterSpacing: 0.8),
-                  ),
                 ),
                 // Combined (2026-09-02) — CDC Teaching Modules, CDC Syllabi,
                 // and ECZ Past Papers used to be two separate home-screen
@@ -339,79 +458,11 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ),
                 FunctionButton(
-                  icon: Icons.document_scanner_outlined,
-                  label: 'Scan Marker',
-                  subtitle: 'Marking assistant — capture and queue student scripts for AI-assisted grading (early build)',
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const MarkingQueueScreen()),
-                  ),
-                ),
-                FunctionButton(
                   icon: Icons.edit_document,
                   label: 'Handwriting to Word Document Conversion',
                   subtitle: 'Photograph or upload a handwritten page, get back an editable Word document',
                   onTap: () => Navigator.of(context).push(
                     MaterialPageRoute(builder: (_) => const HandwritingToWordScreen()),
-                  ),
-                ),
-                // Data Manager (2026-09-03, renamed from "Grade Teacher" per
-                // explicit request): a home-screen entry point for
-                // administrative/record-keeping functions, starting with
-                // Grade Teacher (Report Form Pipeline — class roster, Broad
-                // Mark Sheet, report forms) but structured to hold more than
-                // one such function over time, same "button leads to a sub-
-                // menu" pattern as Teaching Resources/Assignments & Tests
-                // below — see DataManagerMenuScreen. Its own section, not
-                // folded into Public Access Libraries or Admin Tools, since
-                // this is administrative record-keeping, not content
-                // browsing or office utilities.
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(4, 20, 4, 8),
-                  child: Text(
-                    'DATA MANAGER',
-                    style: Theme.of(context)
-                        .textTheme
-                        .labelMedium
-                        ?.copyWith(color: colorScheme.onSurfaceVariant, letterSpacing: 0.8),
-                  ),
-                ),
-                FunctionButton(
-                  icon: Icons.folder_shared_outlined,
-                  label: 'Data Manager',
-                  subtitle: 'Grade Teacher — class roster, Broad Mark Sheet, and report forms',
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const DataManagerMenuScreen()),
-                  ),
-                ),
-                // Admin Tools — deliberately separate from the
-                // curriculum/lesson features above: general-purpose office
-                // utilities rather than anything syllabus-driven.
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(4, 20, 4, 8),
-                  child: Text(
-                    'ADMIN TOOLS',
-                    style: Theme.of(context)
-                        .textTheme
-                        .labelMedium
-                        ?.copyWith(color: colorScheme.onSurfaceVariant, letterSpacing: 0.8),
-                  ),
-                ),
-                // Combined (2026-09-02) — Assignment Submission and Test
-                // Submission used to be two side-by-side home-screen
-                // buttons; now both live one level down, behind a single
-                // home-screen entry point, same declutter rationale as the
-                // Teaching Modules/Syllabi/Past Papers combination above.
-                // Both keep their exact prior functions — nothing about
-                // either feature changed here, only where they're reached
-                // from. Moved to the top of Admin Tools (2026-09-02, per
-                // explicit request) — swapped with Word ↔ PDF Converter,
-                // which moved to the very bottom of the home screen.
-                FunctionButton(
-                  icon: Icons.assignment_turned_in_outlined,
-                  label: 'Assignments, Exams & Test Submissions',
-                  subtitle: 'Send a handwritten assignment or test to your teacher',
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const AssignmentsTestsMenuScreen()),
                   ),
                 ),
                 FunctionButton(
