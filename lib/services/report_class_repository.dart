@@ -164,6 +164,232 @@ class ReportClassRepository {
     await db.delete('report_classes', where: 'id = ?', whereArgs: [classId]);
   }
 
+  /// "Consolidation" (2026-09-08, per explicit request): merges 2+ EXISTING
+  /// classes/cohorts that really represent the same physical class — e.g.
+  /// scores entered as separate uploads/sessions and ended up as separate
+  /// Broad Mark Sheets — into ONE brand-new class, which then goes through
+  /// Report Forms/completion like any other real class/cohort. Every
+  /// source class in [sourceClassIds] is left completely untouched: this
+  /// only ever reads from them, never writes to or deletes them, so a
+  /// consolidation that turns out wrong can simply be discarded (delete
+  /// the new class) without having lost anything.
+  ///
+  /// Requires every source to share the same [ReportAssessmentSystem] (and,
+  /// for Continuous Assessment, the same confirmed Test/Exam weighting) —
+  /// merging a C.A. class with a standalone-test one, or two C.A. classes
+  /// with different weightings, would make a "final score" genuinely
+  /// ambiguous rather than a safe default to guess; both throw [StateError]
+  /// so the caller can surface a clear message instead.
+  ///
+  /// **Learners**: unioned by exact normalized name (same never-fuzzy rule
+  /// as [matchNamesAgainstRoster] — see its own doc comment on why), added
+  /// to the new roster in alphabetical order — this IS the "put in order
+  /// entries which may have been marked separately" the merge exists for.
+  /// A name present in more than one source becomes exactly one learner
+  /// here, carrying forward whichever source's own spelling is found first.
+  ///
+  /// **Subjects**: unioned by exact normalized name; composite subjects are
+  /// rebuilt (never just copied — their part-subject ids are only valid
+  /// within their own original class) once both real parts already exist
+  /// in the new class.
+  ///
+  /// **Scores**: when the SAME learner+subject was genuinely scored in more
+  /// than one source (a real conflict, not just the common case of each
+  /// source covering a different slice of the roster/subjects), the most
+  /// RECENTLY updated one wins — disclosed here rather than silently
+  /// averaged, dropped, or left for the teacher to notice is missing.
+  Future<ReportClass> consolidateClasses({
+    required List<int> sourceClassIds,
+    required String schoolName,
+    required String classGrade,
+    required String term,
+  }) async {
+    if (sourceClassIds.toSet().length < 2) {
+      throw ArgumentError('Consolidation needs at least 2 distinct source classes.');
+    }
+    final sources = <ReportClass>[];
+    for (final id in sourceClassIds.toSet()) {
+      final c = await getClass(id);
+      if (c == null) throw ArgumentError('A source class no longer exists.');
+      sources.add(c);
+    }
+
+    final systems = sources.map((c) => c.assessmentSystem).toSet();
+    if (systems.length > 1) {
+      throw StateError(
+        'These classes mix Continuous Assessment and standalone-test scoring, so they cannot be '
+        'consolidated directly — make them consistent first.',
+      );
+    }
+    final assessmentSystem = sources.first.assessmentSystem;
+    if (assessmentSystem == ReportAssessmentSystem.continuousAssessment) {
+      final weightPairs = sources.map((c) => (c.caTestWeightPercent, c.caExamWeightPercent)).toSet();
+      if (weightPairs.length > 1) {
+        throw StateError(
+          'These classes have different confirmed Continuous Assessment Test/Exam weightings, so they '
+          'cannot be consolidated directly — make them consistent first.',
+        );
+      }
+    }
+
+    final newClass = await createClass(
+      schoolName: schoolName,
+      classGrade: classGrade,
+      term: term,
+      assessmentSystem: assessmentSystem,
+    );
+    final firstWeights = sources.first;
+    if (assessmentSystem == ReportAssessmentSystem.continuousAssessment &&
+        firstWeights.caTestWeightPercent != null &&
+        firstWeights.caExamWeightPercent != null) {
+      await confirmCaWeights(
+        newClass.id,
+        testWeightPercent: firstWeights.caTestWeightPercent!,
+        examWeightPercent: firstWeights.caExamWeightPercent!,
+      );
+    }
+
+    // --- Learners ---
+    final learnersBySource = <int, List<ReportLearner>>{};
+    for (final source in sources) {
+      learnersBySource[source.id] = await listLearners(source.id);
+    }
+    final allNormalizedNames = <String>{
+      for (final list in learnersBySource.values) for (final l in list) _normalizeName(l.fullName),
+    };
+    final newLearnerIdByNormalizedName = <String, int>{};
+    for (final normalized in allNormalizedNames.toList()..sort()) {
+      String? realName;
+      for (final source in sources) {
+        final match = learnersBySource[source.id]!.where((l) => _normalizeName(l.fullName) == normalized).firstOrNull;
+        if (match != null) {
+          realName = match.fullName;
+          break;
+        }
+      }
+      final newLearner = await addLearner(newClass.id, realName!);
+      newLearnerIdByNormalizedName[normalized] = newLearner.id;
+    }
+    final oldToNewLearnerId = <int, int>{
+      for (final list in learnersBySource.values)
+        for (final l in list) l.id: newLearnerIdByNormalizedName[_normalizeName(l.fullName)]!,
+    };
+
+    // --- Subjects (plain first, then composites once their real parts
+    // exist in the new class) ---
+    final subjectsBySource = <int, List<ReportSubject>>{};
+    for (final source in sources) {
+      subjectsBySource[source.id] = await listSubjects(source.id);
+    }
+    final oldSubjectById = <int, ReportSubject>{
+      for (final list in subjectsBySource.values) for (final s in list) s.id: s,
+    };
+    final newSubjectIdByNormalizedName = <String, int>{};
+    for (final list in subjectsBySource.values) {
+      for (final s in list) {
+        if (s.isComposite) continue;
+        final normalized = s.name.trim().toLowerCase();
+        if (newSubjectIdByNormalizedName.containsKey(normalized)) continue;
+        final newSubject = await getOrCreateSubject(newClass.id, s.name);
+        newSubjectIdByNormalizedName[normalized] = newSubject.id;
+      }
+    }
+    for (final list in subjectsBySource.values) {
+      for (final s in list) {
+        if (!s.isComposite) continue;
+        final normalized = s.name.trim().toLowerCase();
+        if (newSubjectIdByNormalizedName.containsKey(normalized)) continue;
+        final partA = oldSubjectById[s.compositePartAId];
+        final partB = oldSubjectById[s.compositePartBId];
+        if (partA == null || partB == null) continue; // defensive — shouldn't happen with real data
+        final newPartAId = newSubjectIdByNormalizedName[partA.name.trim().toLowerCase()];
+        final newPartBId = newSubjectIdByNormalizedName[partB.name.trim().toLowerCase()];
+        if (newPartAId == null || newPartBId == null) continue;
+        final newSubjects = await listSubjects(newClass.id);
+        final newPartA = newSubjects.firstWhere((x) => x.id == newPartAId);
+        final newPartB = newSubjects.firstWhere((x) => x.id == newPartBId);
+        final newComposite = await createCompositeSubject(
+          classId: newClass.id,
+          name: s.name,
+          partA: newPartA,
+          partB: newPartB,
+        );
+        newSubjectIdByNormalizedName[normalized] = newComposite.id;
+      }
+    }
+
+    // --- Scores (composite subjects skipped — always computed, never
+    // stored, see ReportSubject's own doc comment) ---
+    final winningScoreByKey = <String, ReportScore>{};
+    for (final source in sources) {
+      for (final l in learnersBySource[source.id]!) {
+        for (final s in subjectsBySource[source.id]!) {
+          if (s.isComposite) continue;
+          final newSubjectId = newSubjectIdByNormalizedName[s.name.trim().toLowerCase()];
+          if (newSubjectId == null) continue;
+          final score = await getScore(l.id, s.id);
+          if (score == null) continue;
+          if (score.score == null && score.comment == null && score.caTestScore == null && score.caExamScore == null) {
+            continue;
+          }
+          final newLearnerId = oldToNewLearnerId[l.id]!;
+          final key = '${newLearnerId}_$newSubjectId';
+          final winning = winningScoreByKey[key];
+          if (winning == null || score.updatedAt.isAfter(winning.updatedAt)) {
+            winningScoreByKey[key] = score;
+          }
+        }
+      }
+    }
+    final newSubjectsById = {for (final s in await listSubjects(newClass.id)) s.id: s};
+    for (final entry in winningScoreByKey.entries) {
+      final parts = entry.key.split('_');
+      final newLearnerId = int.parse(parts[0]);
+      final newSubject = newSubjectsById[int.parse(parts[1])]!;
+      final score = entry.value;
+      if (assessmentSystem == ReportAssessmentSystem.continuousAssessment &&
+          (score.caTestScore != null || score.caExamScore != null)) {
+        if (score.caTestScore != null) {
+          await setComponentScore(
+            learnerId: newLearnerId,
+            subject: newSubject,
+            reportClass: newClass,
+            component: ReportCaComponent.test,
+            value: score.caTestScore!,
+          );
+        }
+        if (score.caExamScore != null) {
+          await setComponentScore(
+            learnerId: newLearnerId,
+            subject: newSubject,
+            reportClass: newClass,
+            component: ReportCaComponent.exam,
+            value: score.caExamScore!,
+          );
+        }
+        if (score.comment != null) {
+          await setComment(learnerId: newLearnerId, subject: newSubject, comment: score.comment, commentSource: score.commentSource);
+        }
+      } else {
+        await setScore(
+          learnerId: newLearnerId,
+          subject: newSubject,
+          score: score.score,
+          comment: score.comment,
+          commentSource: score.commentSource,
+        );
+      }
+    }
+
+    return newClass;
+  }
+
+  /// Same never-fuzzy normalization rule used throughout this repository
+  /// (trim, collapse whitespace, case-insensitive) — see
+  /// [matchNamesAgainstRoster]'s own doc comment on why an exact match is
+  /// required rather than a best guess.
+  String _normalizeName(String s) => s.trim().toLowerCase().replaceAll(RegExp(r'\s+'), ' ');
+
   // -------------------------------------------------------------------
   // Learners / roster
   // -------------------------------------------------------------------
@@ -262,13 +488,12 @@ class ReportClassRepository {
       return created;
     }
 
-    String normalize(String s) => s.trim().toLowerCase().replaceAll(RegExp(r'\s+'), ' ');
-    final byNormalizedName = {for (final l in roster) normalize(l.fullName): l};
+    final byNormalizedName = {for (final l in roster) _normalizeName(l.fullName): l};
 
     return [
       for (final e in extracted)
         () {
-          final matched = byNormalizedName[normalize(e.name)];
+          final matched = byNormalizedName[_normalizeName(e.name)];
           return RosterNameMatch(
             extractedName: e.name,
             extractedScore: e.score,

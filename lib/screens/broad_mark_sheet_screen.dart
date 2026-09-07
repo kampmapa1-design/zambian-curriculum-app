@@ -10,6 +10,7 @@ import '../models/report_class.dart';
 import '../services/report_class_backup_service.dart';
 import '../services/report_class_repository.dart';
 import '../services/report_form_document_service.dart';
+import 'consolidate_classes_screen.dart';
 import 'learner_edit_screen.dart';
 import 'omitted_entry_screen.dart';
 import 'report_form_list_screen.dart';
@@ -208,6 +209,20 @@ class _BroadMarkSheetScreenState extends State<BroadMarkSheetScreen> {
     );
   }
 
+  /// "Consolidate" (2026-09-08, per explicit request): merges this list
+  /// with one or more other real class lists that are really the same
+  /// cohort — see ConsolidateClassesScreen / ReportClassRepository
+  /// .consolidateClasses. Available regardless of completion status, same
+  /// as every other Broad Mark Sheet action — a class doesn't need to be
+  /// "done" to discover it should be merged with another.
+  void _openConsolidate() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => ConsolidateClassesScreen(currentClass: _reportClass, repository: _repository),
+      ),
+    );
+  }
+
   DateTime? _editStampFor(int learnerId, ReportSubject subject, BroadMarkSheet sheet) {
     if (!subject.isComposite) {
       return sheet.scoreRowFor(learnerId, subject.id)?.editedAfterCompletionAt;
@@ -251,6 +266,11 @@ class _BroadMarkSheetScreenState extends State<BroadMarkSheetScreen> {
       appBar: AppBar(
         title: const Text('Broad Mark Sheet'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.call_merge),
+            tooltip: 'Consolidate with another list',
+            onPressed: _openConsolidate,
+          ),
           if (sheet != null)
             isComplete
                 ? IconButton(
