@@ -1,7 +1,10 @@
+import 'dart:async' show unawaited;
+
 import 'package:flutter/material.dart';
 
 import '../models/syllabus_models.dart';
 import '../services/template_repository.dart';
+import '../services/usage_tracker.dart';
 
 /// Returned by [SubjectGradeTopicPickerScreen] when [SubjectGradeTopicPickerScreen.pickTerm] is true.
 typedef TermSelection = ({SyllabusTemplate template, Term term});
@@ -53,6 +56,15 @@ class _SubjectGradeTopicPickerScreenState extends State<SubjectGradeTopicPickerS
   /// instead of flashing "ready" then "not ready" a moment later.
   Set<String> _notReadyFiles = {};
 
+  /// "Quick Picks" (2026-09-08, per explicit request — "personalized
+  /// shortcuts"): the real, on-device usage ranking from [UsageTracker],
+  /// resolved to actual bundled manifest entries (a combination that was
+  /// used before but has since been removed/renamed simply drops out
+  /// rather than erroring) and filtered to ready-only, same as everything
+  /// else on this screen.
+  List<TemplateManifestEntry> _quickPicks = [];
+  bool _quickPickLoading = false;
+
   @override
   void initState() {
     super.initState();
@@ -64,13 +76,25 @@ class _SubjectGradeTopicPickerScreenState extends State<SubjectGradeTopicPickerS
       await _repository.ensureAllSeeded();
       final manifest = await _repository.loadManifest();
       final readiness = await Future.wait(manifest.map((e) => _repository.hasRealSource(e.file)));
+      final notReady = {
+        for (var i = 0; i < manifest.length; i++)
+          if (!readiness[i]) manifest[i].file,
+      };
+      final topPicks = await UsageTracker().topPicks();
+      final quickPicks = <TemplateManifestEntry>[
+        for (final pick in topPicks)
+          for (final entry in manifest)
+            if (entry.curriculumCode == pick.curriculumCode &&
+                entry.subjectCode == pick.subjectCode &&
+                entry.gradeLevel == pick.gradeLevel &&
+                !notReady.contains(entry.file))
+              entry,
+      ];
       if (!mounted) return;
       setState(() {
         _manifest = manifest;
-        _notReadyFiles = {
-          for (var i = 0; i < manifest.length; i++)
-            if (!readiness[i]) manifest[i].file,
-        };
+        _notReadyFiles = notReady;
+        _quickPicks = quickPicks;
         _loading = false;
       });
     } catch (error) {
@@ -80,6 +104,50 @@ class _SubjectGradeTopicPickerScreenState extends State<SubjectGradeTopicPickerS
         _loading = false;
       });
     }
+  }
+
+  /// A Quick Pick chip skips straight to loading that subject+grade's own
+  /// template — for [SubjectGradeTopicPickerScreen.pickTerm], it still
+  /// needs one more tap (which term), offered as a small picker sheet
+  /// rather than silently guessing a term.
+  Future<void> _onQuickPickTap(TemplateManifestEntry entry) async {
+    setState(() => _quickPickLoading = true);
+    final template = await _repository.loadSyllabus(
+      curriculumCode: entry.curriculumCode,
+      subjectCode: entry.subjectCode,
+      gradeLevel: entry.gradeLevel,
+    );
+    if (!mounted) return;
+    setState(() => _quickPickLoading = false);
+    if (template == null) return;
+    unawaited(UsageTracker().recordPick(
+      curriculumCode: entry.curriculumCode,
+      subjectCode: entry.subjectCode,
+      gradeLevel: entry.gradeLevel,
+    ));
+    if (!widget.pickTerm) {
+      _onTemplateReady(template);
+      return;
+    }
+    final term = await showModalBottomSheet<Term>(
+      context: context,
+      builder: (sheetContext) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(12),
+              child: Text('${template.subject.name} · ${template.grade.name} — pick a term',
+                  style: Theme.of(sheetContext).textTheme.titleSmall),
+            ),
+            for (final t in template.terms)
+              ListTile(title: Text(t.name), onTap: () => Navigator.of(sheetContext).pop(t)),
+          ],
+        ),
+      ),
+    );
+    if (term == null || !mounted) return;
+    _onTermSelected(template, term);
   }
 
   /// CBC subjects go left, everything else (OBC, and any future curriculum
@@ -131,31 +199,60 @@ class _SubjectGradeTopicPickerScreenState extends State<SubjectGradeTopicPickerS
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(12),
-      child: Row(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            child: _CurriculumColumn(
-              heading: 'CBC',
-              bySubject: cbcBySubject,
-              pickTerm: widget.pickTerm,
-              repository: _repository,
-              notReadyFiles: _notReadyFiles,
-              onTemplateReady: _onTemplateReady,
-              onTermSelected: _onTermSelected,
+          if (_quickPicks.isNotEmpty) ...[
+            Row(
+              children: [
+                Text('Quick Picks', style: Theme.of(context).textTheme.labelLarge),
+                const SizedBox(width: 8),
+                if (_quickPickLoading)
+                  const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2)),
+              ],
             ),
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: _CurriculumColumn(
-              heading: 'OBC',
-              bySubject: obcBySubject,
-              pickTerm: widget.pickTerm,
-              repository: _repository,
-              notReadyFiles: _notReadyFiles,
-              onTemplateReady: _onTemplateReady,
-              onTermSelected: _onTermSelected,
+            const SizedBox(height: 6),
+            Wrap(
+              spacing: 8,
+              runSpacing: 4,
+              children: [
+                for (final entry in _quickPicks)
+                  ActionChip(
+                    avatar: const Icon(Icons.bolt, size: 16),
+                    label: Text('${entry.subjectName} · ${entry.gradeName}', style: const TextStyle(fontSize: 12.5)),
+                    onPressed: _quickPickLoading ? null : () => _onQuickPickTap(entry),
+                  ),
+              ],
             ),
+            const SizedBox(height: 16),
+          ],
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: _CurriculumColumn(
+                  heading: 'CBC',
+                  bySubject: cbcBySubject,
+                  pickTerm: widget.pickTerm,
+                  repository: _repository,
+                  notReadyFiles: _notReadyFiles,
+                  onTemplateReady: _onTemplateReady,
+                  onTermSelected: _onTermSelected,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: _CurriculumColumn(
+                  heading: 'OBC',
+                  bySubject: obcBySubject,
+                  pickTerm: widget.pickTerm,
+                  repository: _repository,
+                  notReadyFiles: _notReadyFiles,
+                  onTemplateReady: _onTemplateReady,
+                  onTermSelected: _onTermSelected,
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -275,7 +372,13 @@ class _GradeTileState extends State<_GradeTile> {
 
   Future<void> _onTap() async {
     final template = await _load();
-    if (template != null) widget.onTemplateReady(template);
+    if (template == null) return;
+    unawaited(UsageTracker().recordPick(
+      curriculumCode: widget.entry.curriculumCode,
+      subjectCode: widget.entry.subjectCode,
+      gradeLevel: widget.entry.gradeLevel,
+    ));
+    widget.onTemplateReady(template);
   }
 
   Future<void> _onExpand(bool expanding) async {
@@ -363,7 +466,14 @@ class _GradeTileState extends State<_GradeTile> {
                     dense: true,
                     contentPadding: EdgeInsets.zero,
                     title: Text(term.name, style: const TextStyle(fontSize: 12.5)),
-                    onTap: () => widget.onTermSelected(_template!, term),
+                    onTap: () {
+                      unawaited(UsageTracker().recordPick(
+                        curriculumCode: widget.entry.curriculumCode,
+                        subjectCode: widget.entry.subjectCode,
+                        gradeLevel: widget.entry.gradeLevel,
+                      ));
+                      widget.onTermSelected(_template!, term);
+                    },
                   ),
                 ),
           ],
