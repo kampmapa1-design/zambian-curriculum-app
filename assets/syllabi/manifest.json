@@ -399,6 +399,15 @@
     {
       "curriculum_code": "CBC_2023",
       "curriculum_name": "2023 Competency-Based Curriculum",
+      "subject_code": "ZAMLANG",
+      "subject_name": "Zambian Language",
+      "grade_level": 1,
+      "grade_name": "Form 1",
+      "file": "zambian_language_form1.json"
+    },
+    {
+      "curriculum_code": "CBC_2023",
+      "curriculum_name": "2023 Competency-Based Curriculum",
       "subject_code": "FF",
       "subject_name": "Fashion and Fabrics",
       "grade_level": 1,
