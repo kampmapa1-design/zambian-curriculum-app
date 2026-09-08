@@ -58,6 +58,18 @@ class LessonCheckpointRepository {
     return matches.isEmpty ? null : matches.first;
   }
 
+  /// The single most recently saved checkpoint across EVERY subject/grade —
+  /// 2026-09-08, for the voice-command "continue where I left off" /
+  /// "resume my last lesson" action, which deliberately names no subject
+  /// at all (that's the whole point of it). Null when nothing is paused
+  /// anywhere.
+  Future<LessonCheckpoint?> findMostRecentOverall() async {
+    final all = await _all();
+    if (all.isEmpty) return null;
+    final matches = all.values.toList()..sort((a, b) => b.savedAt.compareTo(a.savedAt));
+    return matches.first;
+  }
+
   Future<void> save(LessonCheckpoint checkpoint) async {
     final all = await _all();
     all[checkpoint.lessonKey] = checkpoint;

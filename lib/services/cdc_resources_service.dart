@@ -190,15 +190,22 @@ class CdcResourcesService {
   }
 
   /// How many cached resources (optionally filtered to one
-  /// [CdcResource.resourceType]) haven't been marked seen yet — 0 on a
+  /// [CdcResource.resourceType] and/or a [subjectName] substring — the
+  /// latter added 2026-09-08 for the voice-command "are there new CDC
+  /// materials for Geography" query) haven't been marked seen yet — 0 on a
   /// fresh install (nothing catalogued) or once everything catalogued has
   /// already been viewed, which callers should treat as "nothing to
   /// announce," not an error.
-  Future<int> unseenCount({String? resourceType}) async {
+  Future<int> unseenCount({String? resourceType, String? subjectName}) async {
     final catalog = await loadCached();
     final seen = await _seenUrls();
+    final normalizedSubject = subjectName?.trim().toLowerCase();
     return catalog.resources
         .where((r) => resourceType == null || r.resourceType == resourceType)
+        .where((r) =>
+            normalizedSubject == null ||
+            normalizedSubject.isEmpty ||
+            (r.subjectName?.toLowerCase().contains(normalizedSubject) ?? false))
         .where((r) => !seen.contains(r.url))
         .length;
   }

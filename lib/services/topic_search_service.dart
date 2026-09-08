@@ -5,6 +5,7 @@ import '../models/scheme_of_work.dart';
 import '../models/syllabus_models.dart';
 import 'auth_service.dart';
 import 'template_repository.dart';
+import 'text_excerpt_matching.dart';
 
 /// One ranked hit from [TopicSearchService.searchLocal] — everything a
 /// caller needs to both show the result (subject/grade/term/week/topic
@@ -26,6 +27,20 @@ class TopicSearchUnavailable implements Exception {
   String toString() => message;
 }
 
+/// Result of [TopicSearchService.searchWithinTemplate] — up to a few
+/// top-ranked candidates, plus whether the top one is confident enough to
+/// act on directly rather than asking the teacher to pick.
+class WithinSubjectTopicSearch {
+  final List<TopicSearchResult> results;
+
+  /// True when [results.first] is safe to treat as THE answer rather than
+  /// one of several options — see [TopicSearchService.searchWithinTemplate]
+  /// for exactly what earns this.
+  final bool precise;
+
+  const WithinSubjectTopicSearch({required this.results, required this.precise});
+}
+
 /// Topic search, Method 2 of the three topic-selection strategies decided
 /// on 2026-09-02 — a free-text shortcut layered ON TOP of (never instead
 /// of) Method 1's Grade→Term→Week→Topic drill-down (see
@@ -39,10 +54,19 @@ class TopicSearchUnavailable implements Exception {
 class TopicSearchService {
   TopicSearchService({TemplateRepository? repository, FirebaseFunctions? functions})
       : _repository = repository ?? TemplateRepository(),
-        _functions = functions ?? FirebaseFunctions.instance;
+        _providedFunctions = functions;
 
   final TemplateRepository _repository;
-  final FirebaseFunctions _functions;
+
+  // Lazy (2026-09-08): touching FirebaseFunctions.instance requires
+  // Firebase.initializeApp() to have already run, which every other
+  // method on this service (searchLocal, searchWithinTemplate — both
+  // pure on-device logic) has no need for at all. Resolving it eagerly
+  // in the constructor made this service impossible to construct in a
+  // plain `flutter test` unit test for those methods; only
+  // searchWithAiAssist (the one real network path) actually needs it.
+  final FirebaseFunctions? _providedFunctions;
+  FirebaseFunctions get _functions => _providedFunctions ?? FirebaseFunctions.instance;
 
   Future<bool> get isOnline async {
     final result = await Connectivity().checkConnectivity();
@@ -104,6 +128,80 @@ class TopicSearchService {
 
     results.sort((a, b) => b.score.compareTo(a.score));
     return results.take(25).toList();
+  }
+
+  static const _phraseMatchBonus = 100.0;
+
+  /// Searches every real topic/sub-topic WITHIN one already-known
+  /// [template] for a content phrase (e.g. "parable of talents") — the
+  /// scoped counterpart to [searchLocal], which searches every bundled
+  /// subject at once by title alone. Used by VoiceCommandResolver for a
+  /// command that already named a subject and described a topic by
+  /// content rather than by number (2026-09-08, per explicit request:
+  /// "which topic number in RE 2046 can I find work on the parable of
+  /// talents"). Scores against topic/sub-topic NAME, description, AND
+  /// competency/objective text — not title alone, since a content phrase
+  /// like "parable of talents" is far more likely to appear in a
+  /// sub-topic's real description than in its short numbered title.
+  ///
+  /// Entirely on-device, no network — same reasoning as [searchLocal].
+  WithinSubjectTopicSearch searchWithinTemplate(SyllabusTemplate template, String query, {int limit = 3}) {
+    // keywordsOf (>3 characters, see text_excerpt_matching.dart), not this
+    // class's own looser _words (>1 character, deliberately permissive for
+    // searchLocal's fuzzy across-every-subject title matching) — a content
+    // phrase search needs real, meaningful words, not incidental 2-letter
+    // substring collisions ("on" inside "nonsense") that _words'/
+    // _overlapScore's bidirectional-substring rule lets through.
+    final queryWords = keywordsOf(query);
+    final normalizedPhrase = query.toLowerCase().trim();
+    if (queryWords.isEmpty) return const WithinSubjectTopicSearch(results: [], precise: false);
+
+    final scored = <TopicSearchResult>[];
+    for (final term in template.terms) {
+      for (final entry in _entriesForTerm(term)) {
+        final score = _withinSubjectScore(queryWords, normalizedPhrase, entry);
+        if (score <= 0) continue;
+        scored.add(TopicSearchResult(template: template, term: term, entry: entry, score: score));
+      }
+    }
+    scored.sort((a, b) => b.score.compareTo(a.score));
+    final top = scored.take(limit).toList();
+
+    // "Precise" (safe to auto-pick instantly, no need to show a list): the
+    // literal phrase itself was found — not just scattered word overlap —
+    // AND either it's the only match, or it clearly leads the runner-up.
+    // A teacher who names a specific phrase like "parable of talents" is
+    // describing exact content, so a literal hit is a much stronger
+    // signal than accumulated word-overlap alone.
+    final precise = top.isNotEmpty &&
+        top.first.score >= _phraseMatchBonus &&
+        (top.length == 1 || top.first.score - top[1].score >= _phraseMatchBonus / 2);
+
+    return WithinSubjectTopicSearch(results: top, precise: precise);
+  }
+
+  double _withinSubjectScore(Set<String> queryWords, String normalizedPhrase, SchemeOfWorkEntry entry) {
+    final nameText = '${entry.topic.name} ${entry.subTopic?.name ?? ''}';
+    final fullText = [
+      nameText,
+      entry.topic.description ?? '',
+      entry.subTopic?.description ?? '',
+      for (final c in entry.competencies) c.description,
+      for (final o in entry.objectives) o.description,
+    ].join(' ');
+
+    final contentWords = keywordsOf(fullText);
+    var score = queryWords.where(contentWords.contains).length.toDouble() * 10;
+    if (normalizedPhrase.isNotEmpty && fullText.toLowerCase().contains(normalizedPhrase)) {
+      score += _phraseMatchBonus;
+      // A phrase named directly in the topic/sub-topic's own title is the
+      // single strongest signal available — e.g. a topic literally called
+      // "The Parable of the Talents".
+      if (nameText.toLowerCase().contains(normalizedPhrase)) {
+        score += _phraseMatchBonus / 2;
+      }
+    }
+    return score;
   }
 
   List<SchemeOfWorkEntry> _entriesForTerm(Term term) => [

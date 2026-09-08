@@ -3344,6 +3344,11 @@ type VoiceCommandAction =
   | "generate_scheme_of_work"
   | "generate_record_of_work"
   | "generate_teaching_notes"
+  | "find_topic"
+  | "open_marking"
+  | "open_class_roster"
+  | "check_cdc_materials"
+  | "resume_lesson"
   | "unrecognized";
 
 interface ParseVoiceCommandResponse {
@@ -3353,6 +3358,17 @@ interface ParseVoiceCommandResponse {
   topicNumber: number | null;
   weekNumber: number | null;
   termNumber: number | null;
+  // A content phrase describing a topic by WHAT it's about rather than by
+  // number (2026-09-08, e.g. "parable of talents", "photosynthesis") — set
+  // whenever the teacher described a topic this way instead of (or as well
+  // as) a topicNumber, on ANY action, not just 'find_topic'. Never a whole
+  // sentence — just the real subject-matter phrase itself.
+  topicKeyword: string | null;
+  // The class this command is about, exactly as spoken (e.g. "Grade 10A",
+  // "11B") — only ever set for 'open_class_roster'. Not the same as
+  // gradeName/subjectName: a class here is one specific real roster in the
+  // Grade Teacher / Report Form pipeline, not a curriculum subject.
+  className: string | null;
   // A short, plain-language restatement of what was understood, e.g.
   // "Generate Lesson Plan — Civic Education, Grade 10, topic 2, week 8" —
   // shown to the teacher to confirm before anything happens. Always
@@ -3371,11 +3387,23 @@ const parseVoiceCommandSchema = {
         "generate_scheme_of_work",
         "generate_record_of_work",
         "generate_teaching_notes",
+        "find_topic",
+        "open_marking",
+        "open_class_roster",
+        "check_cdc_materials",
+        "resume_lesson",
         "unrecognized",
       ],
       description:
-        "Which of this app's real functions the command is asking for. 'unrecognized' when the " +
-        "transcript doesn't clearly ask for any of the other four, or is missing a subject entirely.",
+        "Which of this app's real functions the command is asking for. 'find_topic' is a LOOKUP — the " +
+        "teacher is asking where/which topic covers something, not yet asking to generate anything from " +
+        "it (e.g. 'which topic can I find the parable of talents in'). 'open_marking' opens the AI " +
+        "marking assistant. 'open_class_roster' opens one specific class's roster/report-form status in " +
+        "the Grade Teacher pipeline (needs className, not subjectName). 'check_cdc_materials' asks " +
+        "whether new official CDC materials are available. 'resume_lesson' continues the single most " +
+        "recently paused lesson, across any subject, with no subject named at all. 'unrecognized' when " +
+        "the transcript doesn't clearly ask for any of the above, or (for every action except " +
+        "'resume_lesson') is missing a subject entirely.",
     },
     subjectName: {
       type: ["string", "null"],
@@ -3400,31 +3428,75 @@ const parseVoiceCommandSchema = {
       type: ["integer", "null"],
       description: "The term number (1, 2, or 3) if one was spoken, or null if none was said.",
     },
+    topicKeyword: {
+      type: ["string", "null"],
+      description:
+        "A real content phrase describing a topic by WHAT it covers (e.g. 'parable of talents', " +
+        "'photosynthesis', 'the French Revolution') — set whenever the teacher named a topic this way " +
+        "instead of, or alongside, a topicNumber. Extract only the real subject-matter phrase itself, " +
+        "never the surrounding sentence. Null when no such phrase was said.",
+    },
+    className: {
+      type: ["string", "null"],
+      description:
+        "The specific class named, exactly as spoken (e.g. 'Grade 10A', '11B') — set ONLY for " +
+        "'open_class_roster'. This is a real roster/class in the Grade Teacher pipeline, not a " +
+        "curriculum subject/grade — never confuse this with subjectName/gradeName.",
+    },
     summary: {
       type: "string",
       description: "A short, plain-language restatement of what was understood, per this function's own doc comment.",
     },
   },
-  required: ["action", "subjectName", "gradeName", "topicNumber", "weekNumber", "termNumber", "summary"],
+  required: [
+    "action",
+    "subjectName",
+    "gradeName",
+    "topicNumber",
+    "weekNumber",
+    "termNumber",
+    "topicKeyword",
+    "className",
+    "summary",
+  ],
   additionalProperties: false,
 };
 
 function buildParseVoiceCommandPrompt(transcript: string): string {
   return [
     "A teacher just spoke a voice command to an app that generates Lesson Plans, Schemes of Work, " +
-      "Records of Work, and Teaching Notes from a bundled Zambian school curriculum. Extract a " +
-      "structured intent from their transcript — do not invent, guess, or default any field that " +
-      "genuinely wasn't said; leave it null instead.",
+      "Records of Work, and Teaching Notes from a bundled Zambian school curriculum, plus an AI " +
+      "marking assistant, a Grade Teacher class/report-form pipeline, and a catalog of official CDC " +
+      "curriculum materials. Extract a structured intent from their transcript — do not invent, guess, " +
+      "or default any field that genuinely wasn't said; leave it null instead.",
     "",
     `Transcript: "${transcript}"`,
     "",
-    "Example: \"make a lesson plan for topic number two in week 8 in the subject of Civic Education " +
-      "grade 10\" -> action=generate_lesson_plan, subjectName=\"Civic Education\", " +
-      "gradeName=\"Grade 10\", topicNumber=2, weekNumber=8, termNumber=null.",
+    "Examples:",
+    "- \"make a lesson plan for topic number two in week 8 in the subject of Civic Education grade " +
+      "10\" -> action=generate_lesson_plan, subjectName=\"Civic Education\", gradeName=\"Grade 10\", " +
+      "topicNumber=2, weekNumber=8, termNumber=null, topicKeyword=null, className=null.",
+    "- \"which topic number in RE 2046 can I find work on the parable of talents\" -> action=find_topic, " +
+      "subjectName=\"RE 2046\", topicKeyword=\"parable of talents\", gradeName=null, topicNumber=null, " +
+      "weekNumber=null, termNumber=null, className=null.",
+    "- \"make a lesson plan on the parable of talents for RE 2046\" -> action=generate_lesson_plan, " +
+      "subjectName=\"RE 2046\", topicKeyword=\"parable of talents\", topicNumber=null, weekNumber=null, " +
+      "termNumber=null, className=null (a topic can be named by content phrase directly on a " +
+      "generate action too, not only via 'find_topic').",
+    "- \"start marking for Grade 10 Mathematics\" -> action=open_marking, subjectName=\"Mathematics\", " +
+      "gradeName=\"Grade 10\", everything else null.",
+    "- \"open my Grade 10A roster\" or \"how complete is Grade 11B's report forms\" -> " +
+      "action=open_class_roster, className=\"Grade 10A\" / \"Grade 11B\", subjectName=null, " +
+      "gradeName=null, everything else null.",
+    "- \"are there new CDC materials for Geography\" -> action=check_cdc_materials, " +
+      "subjectName=\"Geography\", everything else null. \"any new teaching materials\" -> " +
+      "action=check_cdc_materials, subjectName=null too (a genuinely subject-less check is valid here).",
+    "- \"continue where I left off\" / \"resume my last lesson\" -> action=resume_lesson, every field " +
+      "(including subjectName) null — this is the one action that never needs a subject named.",
     "",
-    "Only ever set action to one of the four real functions when the transcript clearly asks for " +
-      "that specific one; use 'unrecognized' for small talk, an unsupported request, or a command " +
-      "with no subject mentioned at all (a subject is always required to do anything useful here).",
+    "Only ever set action to one of the real functions above when the transcript clearly asks for that " +
+      "specific one; use 'unrecognized' for small talk, an unsupported request, or (for every action " +
+      "except 'resume_lesson') a command with no subject mentioned at all.",
   ].join("\n");
 }
 
