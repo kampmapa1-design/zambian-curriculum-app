@@ -1,0 +1,192 @@
+{
+  "_source": "Extracted from a real Google Drive document, 'Form 2 Physical Education And Sport - Lesson Plans (Term 1).docx' (a blank-template document -- SCHOOL/NAME OF TEACHER/DATE/TIME/TOTAL NO. OF PUPILS fields were all left as blank underscores in the source, so there was no individual/school name to strip). One real, disclosed exception: a vendor promotional footer naming a WhatsApp contact number appeared once at the very end of the document and has been removed entirely -- neither the footer's wording nor the number is reproduced anywhere here. 4 real lesson plans covering the first 4 of this file's own Term 1 topics/sub-topics (2.1.1, 2.1.2, and the first two lessons of a real 4-lesson series on 2.2.1) are included -- exactly what the source document itself contains, no more. Sub-topic names are matched to this app's own existing physical_education_form2.json wording ('2.2.1 First-aid', without the source's own parenthetical '(Types of injuries)'/'(Prevention)' suffixes) so both real lessons correctly attach to that one real sub-topic rather than two near-duplicate, non-matching names.",
+  "curriculum_code": "CBC_2023",
+  "subject_code": "PE",
+  "grade_levels": [
+    2
+  ],
+  "lesson_plans": [
+    {
+      "topic_name": "2.1 History of Physical Education and Sport",
+      "subtopic_name": "2.1.1 History of Physical Education in ancient Greece",
+      "sequence_label": "Lesson 1 of 2",
+      "majorLearningPoint": "History of Physical Education in ancient Greece",
+      "lessonGoal": "By the end of the lesson, learners should be able to understand and appreciate the historical foundations of physical education in ancient Greek civilization.",
+      "duration": "80 minutes",
+      "references": "Physical Education History textbooks, Ancient Greek civilization resources, Olympic history documentation, internet resources",
+      "tlm": "Historical charts and timelines, documentary videos, images of ancient Greek gymnasiums, reading materials on Greek civilization, markers, chart paper",
+      "rationale": "Learners will learn about the history of Physical Education in ancient Greece using lecture method, multimedia presentations, and discussion groups, to understand the cultural and philosophical foundations of modern physical education. This is the 1st lesson in the series of 2 lessons on the History of Physical Education and Sport.",
+      "objectives": [
+        "Specific competence: 2.1.1.1 Exhibit knowledge of the history of Physical Education in ancient Greece",
+        "General competence: Critical thinking",
+        "General competence: Communication"
+      ],
+      "priorKnowledge": "Learners have basic knowledge of ancient civilizations and understand that physical activity is important for health.",
+      "progression": [
+        {
+          "stage": "INTRODUCTION",
+          "teacherRole": "Greets learners, shows images of ancient Greek structures, asks what learners know about ancient Greece and sports, introduces lesson objectives.",
+          "learnersRole": "Respond to greetings, observe images, share prior knowledge, listen to objectives. Assessment criteria: participation in discussion, relevance of responses."
+        },
+        {
+          "stage": "LESSON DEVELOPMENT",
+          "teacherRole": "Presents a lecture on ancient Greek physical education systems, shows documentary clips, explains the role of gymnasiums in Greek society, discusses body-mind-balance philosophy, facilitates group discussions, guides creation of historical timelines, assigns research on Greek gymnasiums.",
+          "learnersRole": "Take notes, watch the documentary, ask questions, participate in group discussions, create timelines, research Greek gymnasiums and share findings. Assessment criteria: quality of notes, engagement, depth of discussion, accuracy of timeline, quality of research findings."
+        },
+        {
+          "stage": "EXERCISE/ASSESSMENT",
+          "teacherRole": "Administers oral questions on Greek PE history, reviews timeline creations, evaluates research presentations.",
+          "learnersRole": "Answer oral questions, present timelines, share research findings, peer-evaluate. Assessment criteria: accuracy of responses, completeness of timelines, quality of presentations."
+        },
+        {
+          "stage": "HOMEWORK",
+          "teacherRole": "Assigns a 2-page written report on the significance of PE in ancient Greek society.",
+          "learnersRole": "Note down homework, ask clarification questions."
+        },
+        {
+          "stage": "CONCLUSION",
+          "teacherRole": "Summarises key points about Greek PE, links ancient practices to modern PE, previews the next lesson on the Olympic Games.",
+          "learnersRole": "Listen to summary, ask final questions, prepare for next lesson. Assessment criteria: attention and engagement."
+        }
+      ],
+      "grade_level": 2
+    },
+    {
+      "topic_name": "2.1 History of Physical Education and Sport",
+      "subtopic_name": "2.1.2 Beliefs and origin of Olympic Games",
+      "sequence_label": "Lesson 2 of 2",
+      "majorLearningPoint": "Beliefs and origin of the Olympic Games",
+      "lessonGoal": "By the end of the lesson, learners should be able to understand the religious, cultural beliefs, and origins of the Olympic Games.",
+      "duration": "80 minutes",
+      "references": "Olympic history books, IOC official documentation, ancient history resources, cultural anthropology materials",
+      "tlm": "Olympic symbol charts, historical documentation, comparison matrices, video footage of Olympic ceremonies, images of ancient Olympic sites, markers, chart paper",
+      "rationale": "Learners will learn about the beliefs and origin of the Olympic Games using interactive discussions, symbol analysis, and video analysis, to appreciate the cultural significance of the Olympics and compare ancient and modern traditions. This is the 2nd lesson in the series of 2 lessons on the History of Physical Education and Sport.",
+      "objectives": [
+        "Specific competence: 2.1.2.1 Demonstrate understanding of the beliefs and the origin of Olympic Games",
+        "General competence: Critical thinking",
+        "General competence: Communication",
+        "General competence: Collaboration"
+      ],
+      "priorKnowledge": "Learners have knowledge of ancient Greek civilization and physical education systems from the previous lesson.",
+      "progression": [
+        {
+          "stage": "INTRODUCTION",
+          "teacherRole": "Reviews the previous lesson on Greek PE, displays Olympic symbols, asks what the symbols mean, states lesson objectives.",
+          "learnersRole": "Recap previous learning, observe symbols, share ideas, listen to objectives. Assessment criteria: connection to prior knowledge, participation."
+        },
+        {
+          "stage": "LESSON DEVELOPMENT",
+          "teacherRole": "Explains the religious/cultural beliefs behind the ancient Olympics, discusses founding myths, analyses Olympic symbols, shows video of ancient vs modern Olympic ceremonies, facilitates a comparison activity, guides group presentations, explains the evolution from religious festival to modern sporting event.",
+          "learnersRole": "Listen and take notes, analyse Olympic symbols in groups, watch footage, create comparison matrices, present, ask questions. Assessment criteria: quality of symbol analysis, depth of understanding, accuracy of comparisons, quality of presentations."
+        },
+        {
+          "stage": "EXERCISE/ASSESSMENT",
+          "teacherRole": "Conducts an oral examination on Olympic beliefs, reviews comparison essays, administers a comprehension test on Olympic evolution.",
+          "learnersRole": "Answer oral questions, submit comparison essays, complete the comprehension test. Assessment criteria: accuracy of oral responses, quality of written explanations."
+        },
+        {
+          "stage": "HOMEWORK",
+          "teacherRole": "Assigns a 2-3 page essay comparing and contrasting ancient and modern Olympic Games.",
+          "learnersRole": "Note the homework, seek clarification if needed."
+        },
+        {
+          "stage": "CONCLUSION",
+          "teacherRole": "Summarises key beliefs and origins, highlights Olympic values, previews the next topic on health and first-aid.",
+          "learnersRole": "Listen to summary, reflect on learning, prepare for the next topic. Assessment criteria: engagement and attention."
+        }
+      ],
+      "grade_level": 2
+    },
+    {
+      "topic_name": "2.2 Physical Education and Health",
+      "subtopic_name": "2.2.1 First-aid",
+      "sequence_label": "Lesson 1 of 4",
+      "majorLearningPoint": "Types of sports injuries",
+      "lessonGoal": "By the end of the lesson, learners should be able to identify and classify different types of sports injuries.",
+      "duration": "80 minutes",
+      "references": "First-aid textbooks, sports medicine resources, injury prevention guides, Red Cross first-aid materials",
+      "tlm": "First-aid manuals, injury identification charts, illustrated guides, video compilations of sports injuries, first-aid kits, injury classification posters",
+      "rationale": "Learners will learn about types of sports injuries using demonstration, case study analysis, and practical simulations, to recognise injury severity and respond appropriately in sports situations. This is the 1st lesson in the series of 4 lessons on Physical Education and Health.",
+      "objectives": [
+        "Specific competence: 2.2.1.1 Exhibit knowledge on the types of sports injuries",
+        "General competence: Critical thinking",
+        "General competence: Communication"
+      ],
+      "priorKnowledge": "Learners have experienced or witnessed minor injuries during physical activities and understand basic body parts.",
+      "progression": [
+        {
+          "stage": "INTRODUCTION",
+          "teacherRole": "Asks whether anyone has been injured during sports, discusses common experiences, introduces topic and objectives, shows a first-aid kit.",
+          "learnersRole": "Share personal injury experiences, listen to others, observe the first-aid kit, note objectives. Assessment criteria: willingness to share, relevance of contributions."
+        },
+        {
+          "stage": "LESSON DEVELOPMENT",
+          "teacherRole": "Explains chronic vs acute injury classification, demonstrates identifying injury types, shows injury-scenario videos, presents case studies, discusses sprains/strains/fractures/dislocations/contusions, facilitates group discussion, guides practical identification exercises, explains recognising injury severity.",
+          "learnersRole": "Listen and take notes, observe demonstrations, watch videos, analyse case studies in groups, discuss injury types, practice identifying injuries, explore the first-aid kit. Assessment criteria: understanding of classifications, ability to differentiate injury types, accuracy in identifying injuries."
+        },
+        {
+          "stage": "EXERCISE/ASSESSMENT",
+          "teacherRole": "Administers a written test on injury types, conducts identification assessments using scenarios, evaluates oral explanations.",
+          "learnersRole": "Complete the written test, identify injuries from scenarios, explain classifications orally. Assessment criteria: accuracy of test responses, correct identification, clarity of explanations."
+        },
+        {
+          "stage": "HOMEWORK",
+          "teacherRole": "Assigns learners to interview a coach or athlete about sports injuries and classify them.",
+          "learnersRole": "Note the assignment, plan interview questions."
+        },
+        {
+          "stage": "CONCLUSION",
+          "teacherRole": "Reviews main injury types, emphasises recognition, previews the next lesson on prevention.",
+          "learnersRole": "Listen to review, ask final questions, prepare for next lesson. Assessment criteria: attention and engagement."
+        }
+      ],
+      "grade_level": 2
+    },
+    {
+      "topic_name": "2.2 Physical Education and Health",
+      "subtopic_name": "2.2.1 First-aid",
+      "sequence_label": "Lesson 2 of 4",
+      "majorLearningPoint": "Causes and prevention of sports injuries",
+      "lessonGoal": "By the end of the lesson, learners should be able to understand causes of sports injuries and implement effective prevention strategies.",
+      "duration": "80 minutes",
+      "references": "Sports safety manuals, injury prevention textbooks, coaching resources, sports science materials",
+      "tlm": "Prevention protocol posters, warm-up routine guides, technique demonstration videos, prevention checklists, proper sports/safety equipment",
+      "rationale": "Learners will learn about causes and prevention of sports injuries using practical demonstrations, peer teaching, and technique analysis, to prevent injuries during sports participation. This is the 2nd lesson in the series of 4 lessons on Physical Education and Health.",
+      "objectives": [
+        "Specific competence: 2.2.1.2 Exhibit knowledge on causes and prevention of sports injuries",
+        "General competence: Critical thinking",
+        "General competence: Communication",
+        "General competence: Innovation"
+      ],
+      "priorKnowledge": "Learners can identify different types of sports injuries from the previous lesson.",
+      "progression": [
+        {
+          "stage": "INTRODUCTION",
+          "teacherRole": "Reviews injury types from the previous lesson, asks why injuries happen in sports, states objectives.",
+          "learnersRole": "Recall previous learning, share ideas about causes, listen to objectives. Assessment criteria: connection to prior knowledge, quality of responses."
+        },
+        {
+          "stage": "LESSON DEVELOPMENT",
+          "teacherRole": "Outlines causes (over-stretching, not warming up, poor training practices, incorrect technique), demonstrates proper warm-up routines, shows technique-error videos, explains prevention strategies, facilitates peer teaching of warm-up exercises, guides technique analysis, discusses safety protocols, conducts reflection activities.",
+          "learnersRole": "Take notes, participate in warm-up demonstrations, watch and analyse technique videos, practise proper warm-ups, teach peers, analyse technique errors, discuss safety protocols, reflect on own practices. Assessment criteria: understanding of causes, quality of warm-up execution, effectiveness of peer teaching."
+        },
+        {
+          "stage": "EXERCISE/ASSESSMENT",
+          "teacherRole": "Observes warm-up routine performances, conducts technique assessments, administers written explanations of prevention strategies, checks safety protocol understanding.",
+          "learnersRole": "Perform warm-up routines, demonstrate correct techniques, write prevention strategies, explain safety protocols. Assessment criteria: correctness of execution, technique accuracy, completeness of prevention strategies."
+        },
+        {
+          "stage": "HOMEWORK",
+          "teacherRole": "Assigns creating a prevention checklist for a favourite sport and teaching it to a family member.",
+          "learnersRole": "Note the assignment, plan checklist development."
+        },
+        {
+          "stage": "CONCLUSION",
+          "teacherRole": "Summarises causes and prevention strategies, emphasises personal responsibility, previews the reproductive-health topic.",
+          "learnersRole": "Listen to summary, commit to safe practices, prepare for next topic. Assessment criteria: engagement and commitment."
+        }
+      ],
+      "grade_level": 2
+    }
+  ]
+}

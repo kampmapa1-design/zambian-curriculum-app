@@ -1,0 +1,190 @@
+{
+  "_source": "Extracted from a real Google Drive document, 'Introduction to Hospitality, hospitality and Management Form 2 Lesson Plans.pdf', headed on every one of its 4 lessons with a real Zambian secondary school's name, a real individual teacher's name, and a real Teaching Service number -- none of which is reproduced anywhere below, per this app's standing sourcing policy. 4 real, complete lesson plans, citing the real '2024 Hospitality Management Syllabus, Ordinary Secondary Education Form 1-4' (pg. 30). REAL, DISCLOSED RENUMBERING, not silently hidden: this source document's own topic/sub-topic numbering ('2.1 Introduction to Hospitality' / '2.1.1 Economic Effect in Hospitality Industry') does not match ANY topic in this app's own hospitality_management_form2.json (which was built from a different real school's scheme of work, and numbers this exact same real content -- local economic development, job creation and foreign exchange, infrastructure/tourism growth, an educational tour reinforcing all of it -- as '2.5 Hospitality Economics' / '2.5.1 Economic Effects of Hospitality'). Matched here by real content, not by the source's own topic number, using this app's own already-bundled topic/sub-topic wording so these lessons correctly attach to the real sub-topic already in the syllabus -- the same content-over-numbering precedent already established for this app's commerce_grade11.json.",
+  "curriculum_code": "CBC_2023",
+  "subject_code": "HM",
+  "grade_levels": [
+    2
+  ],
+  "lesson_plans": [
+    {
+      "topic_name": "2.5 Hospitality Economics",
+      "subtopic_name": "2.5.1 Economic Effects of Hospitality",
+      "sequence_label": "Lesson 1 of 4",
+      "majorLearningPoint": "Local economic development (small and medium enterprises)",
+      "lessonGoal": "By the end of the lesson, learners should be able to explain how the hospitality industry stimulates local economic development, with a focus on Small and Medium Enterprises (SMEs).",
+      "duration": null,
+      "references": "2024 Hospitality Management Syllabus, Ordinary Secondary Education Form 1-4, pg. 30.",
+      "tlm": "Blackboard, markers, case study handouts on local SMEs linked to tourism, 'Economic Chain' worksheet.",
+      "rationale": "This lesson helps learners understand the direct economic benefits of hospitality at the community level, instilling the value of local sourcing and entrepreneurship. This is the 1st lesson in the series.",
+      "objectives": [
+        "Specific competence: 2.5.1.1 Evaluate the effects of the hospitality industry on the economy",
+        "General competence: Financial Literacy",
+        "General competence: Critical Thinking"
+      ],
+      "priorKnowledge": "Learners understand basic business concepts from Form 1 and are aware of local businesses.",
+      "progression": [
+        {
+          "stage": "INTRODUCTION/ENGAGEMENT",
+          "teacherRole": "Asks which local small businesses benefit directly when a new hotel opens in a town.",
+          "learnersRole": "Suggest businesses (farmers, taxi drivers, curio sellers, laundry services, construction). Assessment criteria: identify direct links between a large hospitality business and local SMEs."
+        },
+        {
+          "stage": "DEVELOPMENT",
+          "teacherRole": "Explains direct support to SMEs, the multiplier effect (money circulating through the local economy), and infrastructure development benefiting residents; in groups, learners analyse a case study of a local lodge and map its economic chain.",
+          "learnersRole": "Listen and ask questions; in groups, analyse the case study and map the economic chain. Assessment criteria: accurately identify local SME suppliers and explain the flow of economic benefits."
+        },
+        {
+          "stage": "EXERCISE/ASSESSMENT",
+          "teacherRole": "Presents scenarios (a hotel sourcing fish locally; a new resort in a rural area) and asks about the economic effect.",
+          "learnersRole": "Write a short paragraph explaining the local economic impact for each scenario. Assessment criteria: clearly explain the local economic benefits with logical connections."
+        },
+        {
+          "stage": "HOMEWORK",
+          "teacherRole": "Asks learners to identify a local SME and write how it could benefit from the hospitality industry.",
+          "learnersRole": "Research a local SME and hypothesise its link to hospitality."
+        },
+        {
+          "stage": "CONCLUSION",
+          "teacherRole": "Summarises that a thriving hospitality industry is an engine for local economic development.",
+          "learnersRole": "Share one insight about how hospitality supports small local businesses."
+        }
+      ],
+      "grade_level": 2
+    },
+    {
+      "topic_name": "2.5 Hospitality Economics",
+      "subtopic_name": "2.5.1 Economic Effects of Hospitality",
+      "sequence_label": "Lesson 2 of 4",
+      "majorLearningPoint": "Job creation (entrepreneurship, chef, receptionist, housekeeper) and foreign exchange earnings",
+      "lessonGoal": "By the end of the lesson, learners should be able to analyse how the hospitality industry creates diverse employment opportunities and generates foreign exchange for Zambia.",
+      "duration": null,
+      "references": "2024 Hospitality Management Syllabus, Ordinary Secondary Education Form 1-4, pg. 30.",
+      "tlm": "Board, markers, 'Job Tree' diagram, data on tourism's contribution to GDP, role-play cards for hospitality jobs.",
+      "rationale": "This lesson highlights the hospitality industry's role as a major employer and a source of national revenue. This is the 2nd lesson in the series.",
+      "objectives": [
+        "Specific competence: 2.5.1.1 Evaluate the effects of the hospitality industry on the economy",
+        "General competence: Financial Literacy",
+        "General competence: Collaboration"
+      ],
+      "priorKnowledge": "Learners understand the various departments and jobs within a hospitality facility from Form 1.",
+      "progression": [
+        {
+          "stage": "INTRODUCTION/ENGAGEMENT",
+          "teacherRole": "Asks what kinds of jobs exist at a large hotel or safari lodge beyond the front desk and kitchen.",
+          "learnersRole": "List jobs (accountants, gardeners, drivers, security, marketers, managers). Assessment criteria: recognise the wide range of hospitality careers."
+        },
+        {
+          "stage": "DEVELOPMENT",
+          "teacherRole": "Explains direct/indirect/induced job creation across skill levels, and how foreign tourist spending brings foreign currency into the country; in groups, learners create a 'Job Tree' poster and discuss how tourist spending flows through the economy.",
+          "learnersRole": "Listen and contribute examples; collaborate on the Job Tree and discuss foreign exchange flow. Assessment criteria: create a detailed Job Tree and explain foreign exchange earnings simply."
+        },
+        {
+          "stage": "EXERCISE/ASSESSMENT",
+          "teacherRole": "Gives a short-answer test on indirect jobs, the importance of foreign exchange earnings, and how a manager's salary benefits the local economy.",
+          "learnersRole": "Provide accurate and complete answers. Assessment criteria: accuracy and completeness."
+        },
+        {
+          "stage": "HOMEWORK",
+          "teacherRole": "Asks learners to find a news article about tourism in Zambia mentioning jobs or earnings.",
+          "learnersRole": "Write one sentence connecting the article to classroom learning."
+        },
+        {
+          "stage": "CONCLUSION",
+          "teacherRole": "Summarises hospitality as a powerful tool for job creation and national income generation.",
+          "learnersRole": "State one appealing hospitality job and one reason foreign exchange matters."
+        }
+      ],
+      "grade_level": 2
+    },
+    {
+      "topic_name": "2.5 Hospitality Economics",
+      "subtopic_name": "2.5.1 Economic Effects of Hospitality",
+      "sequence_label": "Lesson 3 of 4",
+      "majorLearningPoint": "Infrastructure development and tourism growth",
+      "lessonGoal": "By the end of the lesson, learners should be able to explain the cyclical relationship between tourism growth, infrastructure development, and further economic expansion.",
+      "duration": null,
+      "references": "2024 Hospitality Management Syllabus, Ordinary Secondary Education Form 1-4, pg. 30.",
+      "tlm": "Board, markers, before-and-after pictures of tourism-developed areas, 'Cycle of Development' diagram.",
+      "rationale": "This lesson explores the long-term economic transformations driven by hospitality and tourism. This is the 3rd lesson in the series.",
+      "objectives": [
+        "Specific competence: 2.5.1.1 Evaluate the effects of the hospitality industry on the economy",
+        "General competence: Critical Thinking",
+        "General competence: Environmental Sustainability"
+      ],
+      "priorKnowledge": "Learners understand basic economic effects like job creation from previous lessons.",
+      "progression": [
+        {
+          "stage": "INTRODUCTION/ENGAGEMENT",
+          "teacherRole": "Shows before/after pictures of a tourist area and asks what changed and why.",
+          "learnersRole": "Identify new roads, airports, hotels, and shops, suggesting tourism provided the reason and money. Assessment criteria: recognise tourism as a catalyst for infrastructure improvement."
+        },
+        {
+          "stage": "DEVELOPMENT",
+          "teacherRole": "Explains the cycle of development (tourism potential, initial investment, tourism growth, further development, economic expansion); in groups, learners propose infrastructure developments for a named tourist area and explain community benefits.",
+          "learnersRole": "Listen and relate the cycle to known examples; brainstorm and present development proposals. Assessment criteria: propose logical developments and explain dual benefits."
+        },
+        {
+          "stage": "EXERCISE/ASSESSMENT",
+          "teacherRole": "Asks how improving a road to a national park helps the local economy, what happens if tourist numbers double, and why careful planning matters.",
+          "learnersRole": "Discuss and write down answers. Assessment criteria: show understanding of both positive impacts and potential challenges."
+        },
+        {
+          "stage": "HOMEWORK",
+          "teacherRole": "Asks learners to draw a 'Cycle of Development' diagram for a tourist destination of their choice.",
+          "learnersRole": "Create a visual representation of the development cycle."
+        },
+        {
+          "stage": "CONCLUSION",
+          "teacherRole": "Summarises that strategic tourism development can modernise infrastructure but requires careful planning.",
+          "learnersRole": "Share a potential challenge of rapid tourism development and how to manage it."
+        }
+      ],
+      "grade_level": 2
+    },
+    {
+      "topic_name": "2.5 Hospitality Economics",
+      "subtopic_name": "2.5.1 Economic Effects of Hospitality",
+      "sequence_label": "Lesson 4 of 4",
+      "majorLearningPoint": "Undertaking an educational tour to appreciate the economic benefit of the hospitality industry",
+      "lessonGoal": "By the end of the lesson, learners should be able to observe and document real-world examples of the hospitality industry's economic impact within their local community.",
+      "duration": null,
+      "references": "2024 Hospitality Management Syllabus, Ordinary Secondary Education Form 1-4, pg. 30.",
+      "tlm": "'Economic Impact Observation' checklist, pens, permission forms, safety guidelines.",
+      "rationale": "This practical lesson solidifies theoretical knowledge by connecting it to tangible, observable reality. This is the 4th lesson in the series.",
+      "objectives": [
+        "Specific competence: 2.5.1.1 Evaluate the effects of the hospitality industry on the economy",
+        "General competence: Critical Thinking",
+        "General competence: Collaboration"
+      ],
+      "priorKnowledge": "Learners understand the key economic effects (local development, jobs, infrastructure) from previous lessons.",
+      "progression": [
+        {
+          "stage": "INTRODUCTION/ENGAGEMENT",
+          "teacherRole": "Briefs learners as 'Economic Detectives' looking for evidence of the business's local economic effect.",
+          "learnersRole": "Review the observation checklist and ask clarifying questions. Assessment criteria: understand the tour's objective."
+        },
+        {
+          "stage": "DEVELOPMENT",
+          "teacherRole": "Guides observation of local sourcing, employment, linked businesses, and infrastructure during the tour.",
+          "learnersRole": "Actively observe, ask polite questions, take detailed notes on the checklist. Assessment criteria: checklists filled with specific, relevant observations."
+        },
+        {
+          "stage": "EXERCISE/ASSESSMENT",
+          "teacherRole": "Leads a debriefing session asking groups to present their top three findings with evidence.",
+          "learnersRole": "Compile findings and present to the class using notes as evidence. Assessment criteria: presentations backed by concrete observations."
+        },
+        {
+          "stage": "HOMEWORK",
+          "teacherRole": "Assigns a one-page report on the economic footprint of the visited business.",
+          "learnersRole": "Synthesise observations into a structured report."
+        },
+        {
+          "stage": "CONCLUSION",
+          "teacherRole": "Summarises that seeing the theory in action makes the economic role of hospitality clear.",
+          "learnersRole": "Share the most surprising or impactful thing learned from the tour."
+        }
+      ],
+      "grade_level": 2
+    }
+  ]
+}

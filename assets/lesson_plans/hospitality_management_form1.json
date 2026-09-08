@@ -1,0 +1,681 @@
+{
+  "_source": "Extracted from two real Google Drive documents. (1) 'Introduction to Hospitality, hospitality and Management Form 1 Lesson Plan.docx' -- 13 real, complete lesson plans covering this app's own '1.1 Introduction to Hospitality' topic in full (sub-topics 1.1.1-1.1.4), each headed with a real Zambian secondary school's name, a real individual teacher's name, and a real Teaching Service number -- none of which is reproduced anywhere below, per this app's standing sourcing policy. (2) 'Form 1 Hospitality Management Term 2 Lesson Plans... SAMPLE.pdf' -- a 2-lesson promotional sample (its own filename and a footer at the end of the document named a commercial vendor group and a WhatsApp contact number advertising the 'complete' paid set; the vendor's own name and contact number are not reproduced anywhere here, per the same standing policy applied to individual/school identifiers) -- its own header field for school/teacher name was left blank in the source, so nothing to strip there. These 2 lessons cover '1.3 Food and Beverage Operations' / '1.3.3 Safety and Security in the Cooking Area', matched here to this app's own existing, differently-capitalised topic/sub-topic wording (source: 'Food and Beverages Operations', this app: 'FOOD AND BEVERAGE OPERATIONS') so they correctly attach to the real, already-bundled sub-topic rather than a near-duplicate non-matching name. All narrative content (scenarios, activities, questions, expected answers) is real content drawn directly from the source documents.",
+  "curriculum_code": "CBC_2023",
+  "subject_code": "HM",
+  "grade_levels": [
+    1
+  ],
+  "lesson_plans": [
+    {
+      "topic_name": "1.1 Introduction to Hospitality",
+      "subtopic_name": "1.1.1 Historical Overview",
+      "sequence_label": "Lesson 1 of 13",
+      "majorLearningPoint": "Discussing hospitality industry sectors (lodging, food and beverage, travel and tourism, recreation and entertainment, event management)",
+      "lessonGoal": "By the end of the lesson, learners should be able to identify and describe the five main sectors of the hospitality industry.",
+      "duration": null,
+      "references": "2024 Hospitality Management Syllabus, Ordinary Secondary Education Form 1-4, pg. 13-15.",
+      "tlm": "Board, markers, pictures depicting different sectors, flip chart paper.",
+      "rationale": "This foundational lesson provides a broad overview of the industry, showing learners its scope beyond just hotels and restaurants, using collaborative learning and real-world examples. This is the 1st lesson in the series.",
+      "objectives": [
+        "Specific competence: 1.1.1.1 Demonstrate understanding of the historical background of the hospitality industry",
+        "General competence: Communication",
+        "General competence: Critical Thinking"
+      ],
+      "priorKnowledge": "Learners have basic experiences with eating in restaurants, travelling, or attending events.",
+      "progression": [
+        {
+          "stage": "INTRODUCTION/ENGAGEMENT",
+          "teacherRole": "Asks learners to imagine relatives visiting for the first time and list every service they would use from arrival to departure.",
+          "learnersRole": "Brainstorm and list services (airport, hotel, restaurant, taxi, tourist attractions, shopping). Assessment criteria: actively participate and list services related to hosting guests."
+        },
+        {
+          "stage": "DEVELOPMENT",
+          "teacherRole": "Defines hospitality as the friendly and generous reception and entertainment of guests; introduces the five main sectors (Lodging, Food & Beverage, Travel & Tourism, Recreation & Entertainment, Event Management) with local examples; divides learners into 5 groups, each assigned one sector to draw and list 5 local examples of businesses in.",
+          "learnersRole": "Listen, take notes, ask questions; in groups, collaborate to draw and list examples for the assigned sector. Assessment criteria: groups identify relevant local examples for their sector."
+        },
+        {
+          "stage": "EXERCISE/ASSESSMENT",
+          "teacherRole": "Shows pictures of various businesses; learners must identify which sector each belongs to.",
+          "learnersRole": "Individually identify the correct sector for each displayed picture. Assessment criteria: correctly categorise at least 4 out of 5 pictures."
+        },
+        {
+          "stage": "HOMEWORK",
+          "teacherRole": "Asks learners to list three hospitality businesses in their local community and identify which sector each belongs to.",
+          "learnersRole": "Identify and classify local businesses."
+        },
+        {
+          "stage": "CONCLUSION",
+          "teacherRole": "Summarises the five sectors, emphasising hospitality as a large, interconnected web of services.",
+          "learnersRole": "State one sector they find most interesting and why."
+        }
+      ],
+      "grade_level": 1
+    },
+    {
+      "topic_name": "1.1 Introduction to Hospitality",
+      "subtopic_name": "1.1.1 Historical Overview",
+      "sequence_label": "Lesson 2 of 13",
+      "majorLearningPoint": "Explaining the history of the hospitality industry (ancient times, middle ages, renaissance, enlightenment)",
+      "lessonGoal": "By the end of the lesson, learners should be able to trace the evolution of hospitality from ancient civilisations to the modern era.",
+      "duration": null,
+      "references": "2024 Hospitality Management Syllabus, Ordinary Secondary Education Form 1-4, pg. 13-15.",
+      "tlm": "Board, markers, a long roll of paper for a timeline, pictures of ancient inns/medieval taverns/grand hotels, printed historical facts.",
+      "rationale": "This lesson provides historical context, helping learners understand hospitality as an ancient human tradition, using storytelling and timeline creation. This is the 2nd lesson in the series.",
+      "objectives": [
+        "Specific competence: 1.1.1.1 Demonstrate understanding of the historical background of the hospitality industry",
+        "General competence: Critical Thinking",
+        "General competence: Communication"
+      ],
+      "priorKnowledge": "Learners have basic knowledge of history from Social Studies.",
+      "progression": [
+        {
+          "stage": "INTRODUCTION/ENGAGEMENT",
+          "teacherRole": "Asks how travellers found food and shelter before hotels existed.",
+          "learnersRole": "Speculate answers (slept under trees, stayed in villages, carried their own food). Assessment criteria: show curiosity about how hospitality was provided in the past."
+        },
+        {
+          "stage": "DEVELOPMENT",
+          "teacherRole": "Creates a timeline on the board covering Ancient Times (inns along Roman roads, the Code of Hammurabi), Middle Ages (monasteries sheltering pilgrims), Renaissance (coaching inns), Enlightenment (first modern hotels), and the Modern Era (luxury hotel chains, online booking); divides learners into 5 groups, each assigned an era, to place facts/images on a class timeline.",
+          "learnersRole": "Listen and take notes; in groups, place their era on the timeline with a description and drawing. Assessment criteria: groups accurately place their era and give a correct description."
+        },
+        {
+          "stage": "EXERCISE/ASSESSMENT",
+          "teacherRole": "Asks who provided shelter in the Middle Ages, what invention led to coaching inns, where the first modern hotels appeared, and what defines the modern era.",
+          "learnersRole": "Write down answers individually. Assessment criteria: answer at least 3 of 4 questions correctly."
+        },
+        {
+          "stage": "HOMEWORK",
+          "teacherRole": "Asks learners to interview an elder about how travellers were hosted in their youth.",
+          "learnersRole": "Conduct a short interview and note the findings."
+        },
+        {
+          "stage": "CONCLUSION",
+          "teacherRole": "Reviews the timeline, highlighting that the core of hospitality — welcoming the stranger — has remained constant even as methods changed.",
+          "learnersRole": "Share one surprising thing learned about the history of hospitality."
+        }
+      ],
+      "grade_level": 1
+    },
+    {
+      "topic_name": "1.1 Introduction to Hospitality",
+      "subtopic_name": "1.1.1 Historical Overview",
+      "sequence_label": "Lesson 3 of 13",
+      "majorLearningPoint": "Describing the link between hospitality and tourism (hotels and resorts, restaurants and bars, tour operations, travel agencies)",
+      "lessonGoal": "By the end of the lesson, learners should be able to explain the symbiotic relationship between the hospitality and tourism industries.",
+      "duration": null,
+      "references": "2024 Hospitality Management Syllabus, Ordinary Secondary Education Form 1-4, pg. 13-15.",
+      "tlm": "Board, markers, pictures of tourist destinations, a tour bus, a hotel, a restaurant, string/arrows.",
+      "rationale": "This lesson clarifies how two major industries depend on each other for success, using a mind-mapping activity. This is the 3rd lesson in the series.",
+      "objectives": [
+        "Specific competence: 1.1.1.1 Demonstrate understanding of the historical background of the hospitality industry",
+        "General competence: Collaboration",
+        "General competence: Communication"
+      ],
+      "priorKnowledge": "Learners understand the basic sectors of hospitality from Lesson 1.",
+      "progression": [
+        {
+          "stage": "INTRODUCTION/ENGAGEMENT",
+          "teacherRole": "Asks what a tourist visiting a famous local attraction needs besides just transport there.",
+          "learnersRole": "Suggest needs (a hotel, food, a guide, transport, souvenirs). Assessment criteria: identify services that support a tourist's journey."
+        },
+        {
+          "stage": "DEVELOPMENT",
+          "teacherRole": "Defines tourism; draws a central 'TOURIST' circle and links it by arrows to Lodging, Food & Beverage, and Travel & Tourism services, emphasising that hospitality and tourism depend on each other; in pairs, learners draw a mind map of hospitality services a visiting family would use over a weekend.",
+          "learnersRole": "Listen and contribute ideas; in pairs, create mind maps for the given scenario. Assessment criteria: mind maps include at least 4 connected hospitality services."
+        },
+        {
+          "stage": "EXERCISE/ASSESSMENT",
+          "teacherRole": "Poses a scenario about improved roads to a tourist area and asks how this benefits a local lodge owner.",
+          "learnersRole": "Discuss in pairs and write a short explanation. Assessment criteria: articulate that better access brings more tourists needing the lodge's services."
+        },
+        {
+          "stage": "HOMEWORK",
+          "teacherRole": "Asks learners to find a picture of a local tourist attraction and list two hospitality businesses that benefit from it.",
+          "learnersRole": "Find a picture and complete the list."
+        },
+        {
+          "stage": "CONCLUSION",
+          "teacherRole": "Summarises that hospitality and tourism are like two legs walking together.",
+          "learnersRole": "Complete the sentence 'Tourists need hospitality for...'."
+        }
+      ],
+      "grade_level": 1
+    },
+    {
+      "topic_name": "1.1 Introduction to Hospitality",
+      "subtopic_name": "1.1.1 Historical Overview",
+      "sequence_label": "Lesson 4 of 13",
+      "majorLearningPoint": "Identifying job/career opportunities in the hospitality business (hotel manager, receptionist, chef, event coordinator, entrepreneur)",
+      "lessonGoal": "By the end of the lesson, learners should be able to identify various career paths in the hospitality industry and match them with required skills and interests.",
+      "duration": null,
+      "references": "2024 Hospitality Management Syllabus, Ordinary Secondary Education Form 1-4, pg. 13-15.",
+      "tlm": "Board, markers, career cards with job descriptions, skills matching worksheets, role-play props.",
+      "rationale": "This lesson exposes learners to practical career opportunities, helping them see hospitality as a viable profession, using role-playing and career matching. This is the 4th lesson in the series.",
+      "objectives": [
+        "Specific competence: 1.1.1.1 Demonstrate understanding of the historical background of the hospitality industry",
+        "General competence: Entrepreneurship",
+        "General competence: Digital Literacy"
+      ],
+      "priorKnowledge": "Learners have basic understanding of different jobs in their community.",
+      "progression": [
+        {
+          "stage": "INTRODUCTION/ENGAGEMENT",
+          "teacherRole": "Asks what different jobs learners see when visiting a local mall.",
+          "learnersRole": "Brainstorm jobs (shop attendant, security guard, waiter, cleaner, manager). Assessment criteria: identify various service jobs."
+        },
+        {
+          "stage": "DEVELOPMENT",
+          "teacherRole": "Introduces careers (Hotel Manager, Receptionist, Chef, Event Coordinator, Tour Guide, Entrepreneur) with local examples and required skills; learners play 'Career Charades' acting out hospitality jobs, then match job cards with skill cards in pairs.",
+          "learnersRole": "Listen, ask questions, act out jobs, match skills to careers. Assessment criteria: correctly match at least 4 of 6 job-skill pairs."
+        },
+        {
+          "stage": "EXERCISE/ASSESSMENT",
+          "teacherRole": "Presents scenarios describing a person's interests/traits and asks which career suits each.",
+          "learnersRole": "Identify which career suits each scenario and explain why. Assessment criteria: correctly match scenarios to careers with reasonable explanations."
+        },
+        {
+          "stage": "HOMEWORK",
+          "teacherRole": "Asks learners to interview someone in hospitality or research one career and present three main duties.",
+          "learnersRole": "Conduct research and prepare a brief career profile."
+        },
+        {
+          "stage": "CONCLUSION",
+          "teacherRole": "Summarises that hospitality offers many career paths.",
+          "learnersRole": "Share one hospitality career of interest and one skill needed for it."
+        }
+      ],
+      "grade_level": 1
+    },
+    {
+      "topic_name": "1.1 Introduction to Hospitality",
+      "subtopic_name": "1.1.1 Historical Overview",
+      "sequence_label": "Lesson 5 of 13",
+      "majorLearningPoint": "Conducting career talks by industry people",
+      "lessonGoal": "By the end of the lesson, learners should be able to interact with hospitality professionals and ask relevant questions about careers in the industry.",
+      "duration": null,
+      "references": "2024 Hospitality Management Syllabus, Ordinary Secondary Education Form 1-4, pg. 13-15.",
+      "tlm": "Question cards, notepads, pens, thank-you card for the guest.",
+      "rationale": "This lesson provides real-world exposure to hospitality careers through a guest speaker, using interactive Q&A and reflection. This is the 5th lesson in the series.",
+      "objectives": [
+        "Specific competence: 1.1.1.1 Demonstrate understanding of the historical background of the hospitality industry",
+        "General competence: Collaboration",
+        "General competence: Communication"
+      ],
+      "priorKnowledge": "Learners understand basic hospitality careers from the previous lesson.",
+      "progression": [
+        {
+          "stage": "INTRODUCTION/ENGAGEMENT",
+          "teacherRole": "Introduces the guest speaker and asks what surprised them most when they first started working in hospitality.",
+          "learnersRole": "Listen attentively and take initial notes."
+        },
+        {
+          "stage": "DEVELOPMENT",
+          "teacherRole": "Facilitates the session, ensuring the guest covers their career journey, daily responsibilities, challenges/rewards, needed skills, and advice for young people.",
+          "learnersRole": "Ask prepared questions from question cards and take notes on key points. Assessment criteria: ask relevant questions and take meaningful notes."
+        },
+        {
+          "stage": "EXERCISE/ASSESSMENT",
+          "teacherRole": "Asks learners to write three key takeaways and one remaining question.",
+          "learnersRole": "Complete a reflection exercise individually. Assessment criteria: identify three valid insights."
+        },
+        {
+          "stage": "HOMEWORK",
+          "teacherRole": "Asks learners to write a thank-you letter to the guest speaker mentioning something learned.",
+          "learnersRole": "Write a personalised thank-you letter."
+        },
+        {
+          "stage": "CONCLUSION",
+          "teacherRole": "Thanks the guest speaker and summarises main learning points.",
+          "learnersRole": "Participate in final Q&A and thank the speaker."
+        }
+      ],
+      "grade_level": 1
+    },
+    {
+      "topic_name": "1.1 Introduction to Hospitality",
+      "subtopic_name": "1.1.1 Historical Overview",
+      "sequence_label": "Lesson 6 of 13",
+      "majorLearningPoint": "Undertaking an educational tour to a hospitality facility (hotels, leisure resorts, restaurants)",
+      "lessonGoal": "By the end of the lesson, learners should be able to observe and analyse real hospitality operations and connect classroom learning to practical applications.",
+      "duration": null,
+      "references": "2024 Hospitality Management Syllabus, Ordinary Secondary Education Form 1-4, pg. 13-15.",
+      "tlm": "Observation checklists, pens, safety guidelines, permission forms.",
+      "rationale": "This hands-on experience makes hospitality concepts tangible, using guided observation and reflection. This is the 6th lesson in the series.",
+      "objectives": [
+        "Specific competence: 1.1.1.1 Demonstrate understanding of the historical background of the hospitality industry",
+        "General competence: Critical Thinking",
+        "General competence: Environmental Sustainability"
+      ],
+      "priorKnowledge": "Learners have studied hospitality sectors, history, and careers.",
+      "progression": [
+        {
+          "stage": "INTRODUCTION/ENGAGEMENT",
+          "teacherRole": "Briefs learners on tour objectives, safety rules, and professional behaviour expectations.",
+          "learnersRole": "Share expectations and review safety guidelines."
+        },
+        {
+          "stage": "DEVELOPMENT",
+          "teacherRole": "Facilitates the tour, pointing out front office, housekeeping, food and beverage, safety/security, and customer service interactions.",
+          "learnersRole": "Complete observation checklists noting departments, staff roles, customer service examples, and safety measures. Assessment criteria: complete checklists with accurate, detailed notes."
+        },
+        {
+          "stage": "EXERCISE/ASSESSMENT",
+          "teacherRole": "Conducts a debriefing session asking what was most impressive, what safety measures were noticed, and how staff handled customers.",
+          "learnersRole": "Share observations and insights in group discussion. Assessment criteria: give specific examples and meaningful reflections."
+        },
+        {
+          "stage": "HOMEWORK",
+          "teacherRole": "Assigns a visual presentation showcasing the tour experience and key learnings.",
+          "learnersRole": "Work on presentations individually or in small groups."
+        },
+        {
+          "stage": "CONCLUSION",
+          "teacherRole": "Summarises key learnings from the tour, connecting them to classroom lessons.",
+          "learnersRole": "Share one thing they will remember from the tour."
+        }
+      ],
+      "grade_level": 1
+    },
+    {
+      "topic_name": "1.1 Introduction to Hospitality",
+      "subtopic_name": "1.1.2 Traditional and Modern Hospitality Practices in Zambia",
+      "sequence_label": "Lesson 1 of 4",
+      "majorLearningPoint": "Practising traditional and modern social hospitality norms (greeting people, waiting in line, taking turns)",
+      "lessonGoal": "By the end of the lesson, learners should be able to demonstrate appropriate traditional and modern hospitality greetings and social interactions.",
+      "duration": null,
+      "references": "2024 Hospitality Management Syllabus, Ordinary Secondary Education Form 1-4, pg. 13-15.",
+      "tlm": "Board, markers, scenario cards, cultural items, modern business attire examples.",
+      "rationale": "This lesson connects hospitality to local cultural values while understanding modern professional standards, using role-playing and cultural demonstrations. This is the 7th lesson in the series.",
+      "objectives": [
+        "Specific competence: 1.1.2.1 Apply traditional and modern hospitality practices in Zambia",
+        "General competence: Emotional Intelligence",
+        "General competence: Cultural Awareness"
+      ],
+      "priorKnowledge": "Learners have experience with local greeting customs from family and community.",
+      "progression": [
+        {
+          "stage": "INTRODUCTION/ENGAGEMENT",
+          "teacherRole": "Asks why greetings differ depending on who is being greeted.",
+          "learnersRole": "Share different greeting customs observed in different situations. Assessment criteria: recognise that greetings vary by context and relationship."
+        },
+        {
+          "stage": "DEVELOPMENT",
+          "teacherRole": "Explains traditional norms (greeting elders respectfully, offering food/water to guests, waiting one's turn) and modern professional norms (firm handshakes, formal titles, queuing, phone/email etiquette); learners role-play traditional village greeting, hotel check-in, restaurant service, and business meeting scenarios.",
+          "learnersRole": "Observe demonstrations, ask questions, practise greeting scenarios in pairs and receive feedback. Assessment criteria: demonstrate appropriate greetings for different contexts."
+        },
+        {
+          "stage": "EXERCISE/ASSESSMENT",
+          "teacherRole": "Presents scenarios (greeting an elder, checking into a hotel, serving customers, answering a business call).",
+          "learnersRole": "Demonstrate the appropriate greeting/interaction for each scenario. Assessment criteria: choose culturally and professionally appropriate behaviours."
+        },
+        {
+          "stage": "HOMEWORK",
+          "teacherRole": "Asks learners to observe and document three greeting interactions in their community and classify them as traditional or modern.",
+          "learnersRole": "Complete the observation assignment."
+        },
+        {
+          "stage": "CONCLUSION",
+          "teacherRole": "Emphasises respecting both traditional values and modern professional standards.",
+          "learnersRole": "Share one traditional custom valued and one modern skill to develop."
+        }
+      ],
+      "grade_level": 1
+    },
+    {
+      "topic_name": "1.1 Introduction to Hospitality",
+      "subtopic_name": "1.1.2 Traditional and Modern Hospitality Practices in Zambia",
+      "sequence_label": "Lesson 2 of 4",
+      "majorLearningPoint": "Applying cultural hospitality norms (removing shoes before entering the house, using correct utensils, observing table manners)",
+      "lessonGoal": "By the end of the lesson, learners should be able to demonstrate proper cultural and dining etiquette in both traditional and modern contexts.",
+      "duration": null,
+      "references": "2024 Hospitality Management Syllabus, Ordinary Secondary Education Form 1-4, pg. 13-15.",
+      "tlm": "Place settings, traditional food samples, cultural items, etiquette guidelines, scenario cards.",
+      "rationale": "This lesson teaches cultural protocols that show respect and enhance guest experiences, using practical demonstrations and simulated dining. This is the 8th lesson in the series.",
+      "objectives": [
+        "Specific competence: 1.1.2.1 Apply traditional and modern hospitality practices in Zambia",
+        "General competence: Cultural Awareness",
+        "General competence: Collaboration"
+      ],
+      "priorKnowledge": "Learners have basic experience with meal times and visiting others' homes.",
+      "progression": [
+        {
+          "stage": "INTRODUCTION/ENGAGEMENT",
+          "teacherRole": "Shows pictures of different dining settings and asks what differences learners notice.",
+          "learnersRole": "Identify differences in seating, utensils, serving styles, and behaviour. Assessment criteria: recognise that dining etiquette varies by context."
+        },
+        {
+          "stage": "DEVELOPMENT",
+          "teacherRole": "Demonstrates traditional norms (hand-washing, eating with the right hand, serving elders first) and modern dining etiquette (utensil use, table manners, napkin use); learners practise both traditional hand-eating and modern table setting.",
+          "learnersRole": "Observe demonstrations, ask questions, practise both traditional and modern dining scenarios in small groups. Assessment criteria: demonstrate proper techniques for both."
+        },
+        {
+          "stage": "EXERCISE/ASSESSMENT",
+          "teacherRole": "Presents dining scenarios (village meal with elders, family dinner, business lunch, wedding buffet).",
+          "learnersRole": "Demonstrate appropriate behaviour/etiquette for each. Assessment criteria: apply context-appropriate dining etiquette."
+        },
+        {
+          "stage": "HOMEWORK",
+          "teacherRole": "Asks learners to help with and reflect on a family meal, practising traditional or modern etiquette.",
+          "learnersRole": "Participate and write a reflection."
+        },
+        {
+          "stage": "CONCLUSION",
+          "teacherRole": "Summarises that good hospitality respects guests' dining preferences and cultural background.",
+          "learnersRole": "Share one dining custom learned and why it matters."
+        }
+      ],
+      "grade_level": 1
+    },
+    {
+      "topic_name": "1.1 Introduction to Hospitality",
+      "subtopic_name": "1.1.2 Traditional and Modern Hospitality Practices in Zambia",
+      "sequence_label": "Lesson 3 of 4",
+      "majorLearningPoint": "Illustrating organisational hospitality norms (dress code, communication styles, protocols)",
+      "lessonGoal": "By the end of the lesson, learners should be able to identify and apply appropriate organisational norms in hospitality settings, including dress codes and communication protocols.",
+      "duration": null,
+      "references": "2024 Hospitality Management Syllabus, Ordinary Secondary Education Form 1-4, pg. 13-15.",
+      "tlm": "Dress code examples, organisational charts, communication protocol guides, scenario cards, sample uniforms.",
+      "rationale": "This lesson prepares learners for professional environments by teaching organisational culture and expectations, using case studies and uniform demonstrations. This is the 9th lesson in the series.",
+      "objectives": [
+        "Specific competence: 1.1.2.1 Apply traditional and modern hospitality practices in Zambia",
+        "General competence: Collaboration",
+        "General competence: Emotional Intelligence"
+      ],
+      "priorKnowledge": "Learners understand basic differences between casual and formal attire.",
+      "progression": [
+        {
+          "stage": "INTRODUCTION/ENGAGEMENT",
+          "teacherRole": "Shows pictures of staff from different hospitality establishments and asks why they wear uniforms.",
+          "learnersRole": "Observe uniform differences and suggest reasons (identification, professionalism, safety). Assessment criteria: identify purposes behind dress codes."
+        },
+        {
+          "stage": "DEVELOPMENT",
+          "teacherRole": "Explains dress codes, formal vs informal communication, protocols, and organisational hierarchy; learners match job roles with appropriate attire and practise formal communication scenarios.",
+          "learnersRole": "Examine uniform examples and organisational charts; practise professional communication and receive peer feedback. Assessment criteria: demonstrate understanding of dress/communication standards."
+        },
+        {
+          "stage": "EXERCISE/ASSESSMENT",
+          "teacherRole": "Presents scenarios (interview attire, addressing a manager, reporting broken equipment, handling a complaint per protocol).",
+          "learnersRole": "Demonstrate appropriate responses. Assessment criteria: apply correct organisational norms."
+        },
+        {
+          "stage": "HOMEWORK",
+          "teacherRole": "Asks learners to observe a local hospitality business's uniforms/communication/protocols and write a brief report.",
+          "learnersRole": "Complete the observation assignment."
+        },
+        {
+          "stage": "CONCLUSION",
+          "teacherRole": "Emphasises that following organisational norms is essential for professional success.",
+          "learnersRole": "Share one organisational norm considered most important and why."
+        }
+      ],
+      "grade_level": 1
+    },
+    {
+      "topic_name": "1.1 Introduction to Hospitality",
+      "subtopic_name": "1.1.2 Traditional and Modern Hospitality Practices in Zambia",
+      "sequence_label": "Lesson 4 of 4",
+      "majorLearningPoint": "Developing group hospitality norms (team work, conflict resolution, communication)",
+      "lessonGoal": "By the end of the lesson, learners should be able to demonstrate effective teamwork, conflict resolution, and communication skills in hospitality group settings.",
+      "duration": null,
+      "references": "2024 Hospitality Management Syllabus, Ordinary Secondary Education Form 1-4, pg. 13-15.",
+      "tlm": "Team challenge cards, conflict scenario cards, communication exercise materials, reflection worksheets.",
+      "rationale": "This lesson focuses on essential soft skills for hospitality teams, using team-building exercises and role-playing. This is the 10th lesson in the series.",
+      "objectives": [
+        "Specific competence: 1.1.2.1 Apply traditional and modern hospitality practices in Zambia",
+        "General competence: Collaboration",
+        "General competence: Emotional Intelligence"
+      ],
+      "priorKnowledge": "Learners have experience working in groups in school settings.",
+      "progression": [
+        {
+          "stage": "INTRODUCTION/ENGAGEMENT",
+          "teacherRole": "Asks learners to recall a group that worked well and one that struggled, and why.",
+          "learnersRole": "Share positive/negative group experiences and identify success factors. Assessment criteria: identify key elements of effective teamwork."
+        },
+        {
+          "stage": "DEVELOPMENT",
+          "teacherRole": "Explains teamwork, conflict resolution (active listening, compromise), communication, and group protocols; learners complete team challenges ('Hotel Setup', 'Conflict Resolution' role-play, 'Communication Chain').",
+          "learnersRole": "Participate in team challenges and role-plays, debrief after each. Assessment criteria: show improvement in teamwork and conflict resolution."
+        },
+        {
+          "stage": "EXERCISE/ASSESSMENT",
+          "teacherRole": "Presents group scenarios (planning an event, rescheduling duties fairly, handling a complaint as a team, dividing tasks equally).",
+          "learnersRole": "Develop and present solutions, explaining the teamwork approach. Assessment criteria: present reasonable solutions demonstrating good teamwork."
+        },
+        {
+          "stage": "HOMEWORK",
+          "teacherRole": "Asks learners to observe a team in action and identify three effective teamwork behaviours.",
+          "learnersRole": "Complete the observation and analysis assignment."
+        },
+        {
+          "stage": "CONCLUSION",
+          "teacherRole": "Summarises that successful hospitality depends on teams that communicate well and resolve conflicts constructively.",
+          "learnersRole": "Share one teamwork skill to improve and how."
+        }
+      ],
+      "grade_level": 1
+    },
+    {
+      "topic_name": "1.1 Introduction to Hospitality",
+      "subtopic_name": "1.1.3 Benefits of the Hospitality Industry",
+      "sequence_label": "Lesson 1 of 2",
+      "majorLearningPoint": "Creating relationships in the hospitality industry (loyalty programs, consistency and reliability, active listening, community involvement)",
+      "lessonGoal": "By the end of the lesson, learners should be able to identify and explain strategies for building strong customer relationships in hospitality businesses.",
+      "duration": null,
+      "references": "2024 Hospitality Management Syllabus, Ordinary Secondary Education Form 1-4, pg. 13-15.",
+      "tlm": "Relationship-building strategy cards, local business examples, role-play scenarios, loyalty program examples.",
+      "rationale": "This lesson teaches that hospitality success depends on lasting relationships, not just transactions, using case studies and relationship-building exercises. This is the 11th lesson in the series.",
+      "objectives": [
+        "Specific competence: 1.1.1.1 Explore benefits of the hospitality industry",
+        "General competence: Entrepreneurship",
+        "General competence: Financial Literacy"
+      ],
+      "priorKnowledge": "Learners have experience as customers in various businesses.",
+      "progression": [
+        {
+          "stage": "INTRODUCTION/ENGAGEMENT",
+          "teacherRole": "Asks what makes learners return to a shop or restaurant repeatedly.",
+          "learnersRole": "Share experiences and identify factors (friendly staff, good service, familiarity, rewards). Assessment criteria: identify factors that create customer loyalty."
+        },
+        {
+          "stage": "DEVELOPMENT",
+          "teacherRole": "Explains loyalty programmes, consistency, active listening, community involvement, and personalisation; learners design simple loyalty programmes and practise active listening in pairs.",
+          "learnersRole": "Examine local loyalty programme examples; design loyalty programmes and practise listening skills. Assessment criteria: create feasible loyalty programmes and demonstrate improved listening."
+        },
+        {
+          "stage": "EXERCISE/ASSESSMENT",
+          "teacherRole": "Presents scenarios (designing a loyalty programme, handling a special request, planning sponsorship, remembering a guest's preferences).",
+          "learnersRole": "Develop and present solutions. Assessment criteria: demonstrate multiple relationship-building strategies."
+        },
+        {
+          "stage": "HOMEWORK",
+          "teacherRole": "Asks learners to identify a local business with good customer relationships and interview or observe how they build them.",
+          "learnersRole": "Complete the observation/interview assignment."
+        },
+        {
+          "stage": "CONCLUSION",
+          "teacherRole": "Summarises that successful businesses turn customers into loyal advocates.",
+          "learnersRole": "Share the most effective relationship-building strategy and why."
+        }
+      ],
+      "grade_level": 1
+    },
+    {
+      "topic_name": "1.1 Introduction to Hospitality",
+      "subtopic_name": "1.1.3 Benefits of the Hospitality Industry",
+      "sequence_label": "Lesson 2 of 2",
+      "majorLearningPoint": "Conducting a cultural exchange in the hospitality industry (language training, cultural orientation, traditional events, local partnerships)",
+      "lessonGoal": "By the end of the lesson, learners should be able to plan and demonstrate cultural exchange activities that enhance hospitality experiences for international visitors.",
+      "duration": null,
+      "references": "2024 Hospitality Management Syllabus, Ordinary Secondary Education Form 1-4, pg. 13-15.",
+      "tlm": "Cultural exchange planning templates, traditional items, language phrase cards, event planning guides.",
+      "rationale": "This lesson highlights how hospitality facilitates cultural understanding and exchange, using cultural demonstration planning and role-playing. This is the 12th lesson in the series.",
+      "objectives": [
+        "Specific competence: 1.1.1.1 Explore benefits of the hospitality industry",
+        "General competence: Cultural Awareness",
+        "General competence: Collaboration"
+      ],
+      "priorKnowledge": "Learners understand basic local cultural traditions.",
+      "progression": [
+        {
+          "stage": "INTRODUCTION/ENGAGEMENT",
+          "teacherRole": "Shows pictures of tourists participating in local cultural activities and asks why visitors enjoy these experiences.",
+          "learnersRole": "Discuss the appeal of cultural immersion for tourists. Assessment criteria: recognise the value of cultural exchange in tourism."
+        },
+        {
+          "stage": "DEVELOPMENT",
+          "teacherRole": "Explains language basics, cultural orientation, traditional events, local partnerships, and cultural sensitivity; in groups, learners plan a 'Cultural Welcome Package' for international visitors.",
+          "learnersRole": "Practise basic greetings in local languages; collaborate on the welcome package. Assessment criteria: create comprehensive cultural exchange plans."
+        },
+        {
+          "stage": "EXERCISE/ASSESSMENT",
+          "teacherRole": "Presents scenarios (welcoming different visitor groups, organising a cultural night, training staff on cultural sensitivity).",
+          "learnersRole": "Adapt cultural exchange plans for different scenarios. Assessment criteria: demonstrate adaptability."
+        },
+        {
+          "stage": "HOMEWORK",
+          "teacherRole": "Asks learners to research one local cultural tradition and prepare a brief presentation on sharing it with international visitors.",
+          "learnersRole": "Research and prepare a presentation."
+        },
+        {
+          "stage": "CONCLUSION",
+          "teacherRole": "Emphasises that cultural exchange benefits both visitors and local communities.",
+          "learnersRole": "Share one cultural tradition proud to share with visitors, and why."
+        }
+      ],
+      "grade_level": 1
+    },
+    {
+      "topic_name": "1.1 Introduction to Hospitality",
+      "subtopic_name": "1.1.4 Departments of the Hospitality Facility",
+      "sequence_label": "Lesson 1 of 1",
+      "majorLearningPoint": "Discussing departments in a hospitality facility (Front office, Housekeeping, Food and Beverage, Food Production, supporting departments)",
+      "lessonGoal": "By the end of the lesson, learners should be able to identify and explain the functions of all major departments in a hospitality facility and how they interrelate.",
+      "duration": null,
+      "references": "2024 Hospitality Management Syllabus, Ordinary Secondary Education Form 1-4, pg. 13-15.",
+      "tlm": "Department description cards, facility floor plans, interdepartmental communication examples, simulation scenarios.",
+      "rationale": "This final lesson in the introduction series provides a comprehensive understanding of hospitality operations, using facility mapping and department simulation. This is the 13th lesson in the series.",
+      "objectives": [
+        "Specific competence: 1.1.4.1 Analyse departments of the hospitality facility",
+        "General competence: Analytical Thinking",
+        "General competence: Collaboration"
+      ],
+      "priorKnowledge": "Learners understand basic hospitality concepts from previous lessons.",
+      "progression": [
+        {
+          "stage": "INTRODUCTION/ENGAGEMENT",
+          "teacherRole": "Shows a video tour of a hotel or a floor plan and asks which departments a guest would interact with during a stay.",
+          "learnersRole": "Trace a guest's journey and identify departments involved from arrival to departure. Assessment criteria: identify multiple departments involved in the guest experience."
+        },
+        {
+          "stage": "DEVELOPMENT",
+          "teacherRole": "Explains each department's role (Front Office, Housekeeping, Food & Beverage, Food Production, Supporting departments) and their interdependence; learners play 'Department Relay' passing simulated guest requests through correct departments, then create organisational charts.",
+          "learnersRole": "Examine department function cards, ask questions; create organisational charts and practise department coordination. Assessment criteria: create accurate organisational charts."
+        },
+        {
+          "stage": "EXERCISE/ASSESSMENT",
+          "teacherRole": "Presents operational scenarios (a cleanliness complaint, a special dietary request, a maintenance issue, a hiring process).",
+          "learnersRole": "Identify which departments are involved and how they should coordinate. Assessment criteria: correctly identify involved departments and coordination needs."
+        },
+        {
+          "stage": "HOMEWORK",
+          "teacherRole": "Asks learners to diagram their school as a 'hospitality facility' identifying different departments and how they work together.",
+          "learnersRole": "Create school organisational diagrams applying hospitality concepts."
+        },
+        {
+          "stage": "CONCLUSION",
+          "teacherRole": "Summarises that successful hospitality operations require all departments working together seamlessly.",
+          "learnersRole": "Share one insight about department interdependence."
+        }
+      ],
+      "grade_level": 1
+    },
+    {
+      "topic_name": "TOPIC: 1.3 FOOD AND BEVERAGE OPERATIONS",
+      "subtopic_name": "Sub-Topic: 1.3.3 Safety and Security in the Cooking Area",
+      "sequence_label": "Lesson 2 of 3",
+      "majorLearningPoint": "Discussing health and safety regulations in kitchens",
+      "lessonGoal": "To discuss health and safety in the hospitality industry.",
+      "duration": null,
+      "references": "Hayes, D.K., & Ninemeier, J.D. (2009). Food and Beverage Management. Zambia Educational Publishing House.",
+      "tlm": "Projector, safety regulation handouts, markers.",
+      "rationale": "Learners will learn about health and safety in hospitality using discussion-based learning, to ensure compliance in hospitality settings. This is the 2nd in the series of 3 lessons on this sub-topic.",
+      "objectives": [
+        "Specific competence: 1.3.3.1 Apply safety and security practices in the cooking area"
+      ],
+      "priorKnowledge": "Basic safety knowledge.",
+      "progression": [
+        {
+          "stage": "INTRODUCTION",
+          "teacherRole": "Discusses health and safety regulations in kitchens.",
+          "learnersRole": "Share known safety regulations. Assessment criteria: participation in discussion."
+        },
+        {
+          "stage": "LESSON DEVELOPMENT",
+          "teacherRole": "Explains regulations using visuals, facilitates group discussions on compliance.",
+          "learnersRole": "Discuss regulations and compliance in groups. Assessment criteria: accuracy in explaining regulations."
+        },
+        {
+          "stage": "EXERCISE/ASSESSMENT",
+          "teacherRole": "Assigns groups to create a safety regulation poster.",
+          "learnersRole": "Present posters to the class. Assessment criteria: clarity and accuracy in posters."
+        },
+        {
+          "stage": "HOMEWORK",
+          "teacherRole": "Assigns research on a health and safety regulation locally.",
+          "learnersRole": "Write a short report on findings. Assessment criteria: depth and accuracy in reports."
+        },
+        {
+          "stage": "CONCLUSION",
+          "teacherRole": "Summarises the importance of health and safety.",
+          "learnersRole": "Share one regulation learned. Assessment criteria: ability to articulate the regulation's importance."
+        }
+      ],
+      "grade_level": 1
+    },
+    {
+      "topic_name": "TOPIC: 1.3 FOOD AND BEVERAGE OPERATIONS",
+      "subtopic_name": "Sub-Topic: 1.3.3 Safety and Security in the Cooking Area",
+      "sequence_label": "Lesson 3 of 3",
+      "majorLearningPoint": "Describing safety signs, symbols, and barricades",
+      "lessonGoal": "To describe safety signs, symbols, and barricades.",
+      "duration": null,
+      "references": "Hayes, D.K., & Ninemeier, J.D. (2009). Food and Beverage Management. Zambia Educational Publishing House.",
+      "tlm": "Projector, mock signs, handouts.",
+      "rationale": "Learners will learn about safety signs, symbols, and barricades using hands-on learning, to enhance safety in hospitality kitchens. This is the 3rd in the series of 3 lessons on this sub-topic.",
+      "objectives": [
+        "Specific competence: 1.3.3.1 Apply safety and security practices in the cooking area"
+      ],
+      "priorKnowledge": "Basic knowledge of signs and symbols.",
+      "progression": [
+        {
+          "stage": "INTRODUCTION",
+          "teacherRole": "Shows examples of kitchen safety signs.",
+          "learnersRole": "Share known safety signs. Assessment criteria: engagement in discussion."
+        },
+        {
+          "stage": "LESSON DEVELOPMENT",
+          "teacherRole": "Explains signs, symbols, and barricades using visuals; organises group identification.",
+          "learnersRole": "Identify and discuss signs in groups. Assessment criteria: accuracy in identifying signs and symbols."
+        },
+        {
+          "stage": "EXERCISE/ASSESSMENT",
+          "teacherRole": "Assigns groups to create a safety sign poster.",
+          "learnersRole": "Present posters to the class. Assessment criteria: creativity and accuracy in posters."
+        },
+        {
+          "stage": "HOMEWORK",
+          "teacherRole": "Assigns research on safety signs used in hotels.",
+          "learnersRole": "Write a short report on findings. Assessment criteria: depth and accuracy in reports."
+        },
+        {
+          "stage": "CONCLUSION",
+          "teacherRole": "Summarises the importance of safety signs.",
+          "learnersRole": "Share one sign learned. Assessment criteria: ability to articulate the sign's purpose."
+        }
+      ],
+      "grade_level": 1
+    }
+  ]
+}
