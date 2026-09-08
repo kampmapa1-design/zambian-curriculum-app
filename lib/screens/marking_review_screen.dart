@@ -1,3 +1,4 @@
+import 'dart:async' show unawaited;
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -6,6 +7,7 @@ import 'package:share_plus/share_plus.dart';
 
 import '../models/marking_scheme.dart';
 import '../models/marking_script.dart';
+import '../services/marking_correction_repository.dart';
 import '../services/marking_script_repository.dart';
 import '../services/student_performance_report_service.dart';
 
@@ -202,6 +204,7 @@ class _MarkingReviewScreenState extends State<MarkingReviewScreen> {
         genderConfirmed: true,
       );
       await _repository.update(updated);
+      unawaited(_recordCorrections(originalAnswers, updatedAnswers));
       if (!mounted) return;
       // Pops with the next script to review (or null) — see
       // [nextInQueue]'s doc. MarkingQueueScreen._openScript's loop reads
@@ -220,6 +223,33 @@ class _MarkingReviewScreenState extends State<MarkingReviewScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Could not save this script: $error')),
       );
+    }
+  }
+
+  /// "Learn from AI-marking corrections" (2026-09-08, per explicit
+  /// request) — for every question whose AWARDED MARKS genuinely changed
+  /// from what AI gave (a transcription-only edit with the same marks is
+  /// not a marking correction and is skipped), records it via
+  /// [MarkingCorrectionRepository] so future scripts of this SAME subject
+  /// can be graded with this teacher's own real marking standard in mind.
+  /// Fire-and-forget (same pattern as [ReportClassBackupService]) — never
+  /// blocks or fails the actual save this method exists to do.
+  Future<void> _recordCorrections(List<GradedAnswer> original, List<GradedAnswer> updated) async {
+    try {
+      final repository = MarkingCorrectionRepository();
+      for (var i = 0; i < updated.length && i < original.length; i++) {
+        if (original[i].marksAwarded == updated[i].marksAwarded) continue;
+        await repository.record(
+          subjectName: widget.script.subjectName,
+          questionLabel: updated[i].questionLabel,
+          maxMarks: updated[i].maxMarks,
+          aiMarks: original[i].marksAwarded,
+          correctedMarks: updated[i].marksAwarded,
+          answerExcerpt: updated[i].transcribedAnswer,
+        );
+      }
+    } catch (_) {
+      // Best-effort only, per this method's own doc comment.
     }
   }
 

@@ -1194,10 +1194,25 @@ interface PreSegmentedAnswerHint {
   text: string;
 }
 
+// "Learn from AI-marking corrections" (2026-09-08, per explicit request,
+// clarified via AskUserQuestion — one half of "get smarter with more
+// usage"): a real, past correction a teacher made to this SAME subject's
+// AI grading (see MarkingCorrectionRepository, client-side) — a helpful
+// prior about how strictly/leniently to mark, never ground truth for
+// THIS script. See buildGradingPrompt's own use of it.
+interface PriorCorrectionHint {
+  questionLabel: string;
+  maxMarks: number;
+  aiMarks: number;
+  correctedMarks: number;
+  answerExcerpt: string;
+}
+
 interface GradeMarkingScriptRequest {
   pageImagesBase64: string[];
   questions: GradeMarkingScriptQuestion[];
   preSegmentedAnswers?: PreSegmentedAnswerHint[];
+  priorCorrections?: PriorCorrectionHint[];
 }
 
 interface GradedAnswerResult {
@@ -1246,7 +1261,8 @@ const gradeMarkingScriptSchema = {
 
 function buildGradingPrompt(
   questions: GradeMarkingScriptQuestion[],
-  preSegmentedAnswers?: PreSegmentedAnswerHint[]
+  preSegmentedAnswers?: PreSegmentedAnswerHint[],
+  priorCorrections?: PriorCorrectionHint[]
 ): string {
   const schemeText = questions
     .map((q) => `${q.label} (max ${q.maxMarks} marks): expected answer/keywords — ${q.expectedAnswerOrKeywords}`)
@@ -1263,6 +1279,31 @@ function buildGradingPrompt(
             "- correct any mismatch silently rather than propagating it.",
           "Pre-segmented answers (questionNumber: text):",
           preSegmentedAnswers.map((s) => `${s.questionNumber}: ${s.text}`).join("\n"),
+        ].join("\n")
+      : "";
+
+  // "Learn from AI-marking corrections" — real corrections THIS teacher
+  // already made to THIS subject's past AI-graded scripts, most recent
+  // first. A prior, not ground truth for this specific script's own
+  // answers: use it to calibrate how strictly/leniently this teacher
+  // expects a similar answer to be marked, never to copy a mark or
+  // answer verbatim onto an unrelated question.
+  const correctionsSection =
+    priorCorrections && priorCorrections.length > 0
+      ? [
+          "",
+          "Known correction patterns for this subject — this teacher previously corrected the AI's own " +
+            "marking on these real past answers. Use them ONLY to calibrate how strictly or leniently this " +
+            "teacher expects a similar kind of answer to be marked (e.g. whether partial credit is generous " +
+            "or strict for this subject) — never apply one of these marks to a different, unrelated answer " +
+            "just because the question label happens to match:",
+          priorCorrections
+            .map(
+              (c) =>
+                `${c.questionLabel} (max ${c.maxMarks}): an answer like "${c.answerExcerpt}" — AI gave ` +
+                `${c.aiMarks}, teacher corrected to ${c.correctedMarks}.`
+            )
+            .join("\n"),
         ].join("\n")
       : "";
 
@@ -1300,6 +1341,7 @@ function buildGradingPrompt(
     "Marking scheme:",
     schemeText,
     hintSection,
+    correctionsSection,
     "",
     "Return exactly one answer per question in the marking scheme, using the same question label, plus " +
       "the 3-5 observations. Every mark you award must be a first-pass suggestion for a teacher to review, " +
@@ -1314,13 +1356,19 @@ export const gradeMarkingScript = onCall<GradeMarkingScriptRequest>(
       throw new HttpsError("unauthenticated", "Sign in is required to grade a script.");
     }
 
-    const { pageImagesBase64, questions, preSegmentedAnswers } = request.data ?? {};
+    const { pageImagesBase64, questions, preSegmentedAnswers, priorCorrections } = request.data ?? {};
     if (!Array.isArray(pageImagesBase64) || pageImagesBase64.length === 0) {
       throw new HttpsError("invalid-argument", "'pageImagesBase64' must be a non-empty array.");
     }
     if (!Array.isArray(questions) || questions.length === 0) {
       throw new HttpsError("invalid-argument", "'questions' must be a non-empty array.");
     }
+    // Same defensive cap already applied to preSegmentedAnswers elsewhere in
+    // this app (see generateSchemeOfWorkContent's 20-item cap) — a client
+    // bug sending an unbounded list should shrink to nothing usable, not
+    // blow up prompt size/cost.
+    const cappedPriorCorrections =
+      Array.isArray(priorCorrections) ? priorCorrections.slice(0, 15) : undefined;
 
     const ai = new GoogleGenAI({ apiKey: geminiApiKey.value() });
 
@@ -1333,7 +1381,13 @@ export const gradeMarkingScript = onCall<GradeMarkingScriptRequest>(
       const response = await ai.models.generateContent({
         model: GEMINI_MODEL,
         contents: [
-          { role: "user", parts: [{ text: buildGradingPrompt(questions, preSegmentedAnswers) }, ...imageParts] },
+          {
+            role: "user",
+            parts: [
+              { text: buildGradingPrompt(questions, preSegmentedAnswers, cappedPriorCorrections) },
+              ...imageParts,
+            ],
+          },
         ],
         config: {
           responseMimeType: "application/json",

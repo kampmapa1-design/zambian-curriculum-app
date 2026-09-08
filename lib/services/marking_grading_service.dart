@@ -7,6 +7,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import '../models/marking_scheme.dart';
 import '../models/marking_script.dart';
 import 'auth_service.dart';
+import 'marking_correction_repository.dart';
 
 /// [MarkingGradingService.grade]'s result — the per-question answers plus
 /// the 3-5 script-level performance observations, kept together since
@@ -49,13 +50,21 @@ class MarkingGradingService {
     required List<File> pageFiles,
     required MarkingScheme scheme,
     List<PreSegmentedAnswer>? preSegmentedAnswers,
+    // "Learn from AI-marking corrections" (2026-09-08, per explicit
+    // request): when given, recent real corrections THIS teacher already
+    // made for this same subject (see MarkingCorrectionRepository) are
+    // sent along as grading calibration — see gradeMarkingScript's own
+    // `priorCorrections` doc comment for exactly how they're used. Optional
+    // and silently skipped when null/empty — no subject known, or no real
+    // corrections recorded for it yet.
+    String? subjectName,
   }) async {
     // Hard backstop covering EVERYTHING, including the connectivity check
     // itself — see HandwrittenListTranscriptionService.transcribe for the
     // full reasoning: a connectivity-plugin call that stalls ahead of the
     // timeout wrapper defeats it entirely, so nothing runs outside this.
     try {
-      return await _doGrade(pageFiles, scheme, preSegmentedAnswers).timeout(
+      return await _doGrade(pageFiles, scheme, preSegmentedAnswers, subjectName).timeout(
         const Duration(seconds: 200),
         onTimeout: () => throw const MarkingGradingUnavailable(
           'Grading this script is taking too long and may be stuck. Check your connection and try again.',
@@ -72,6 +81,7 @@ class MarkingGradingService {
     List<File> pageFiles,
     MarkingScheme scheme,
     List<PreSegmentedAnswer>? preSegmentedAnswers,
+    String? subjectName,
   ) async {
     if (!await isOnline) {
       throw const MarkingGradingUnavailable("You're offline. Connect to the internet to grade this script.");
@@ -81,6 +91,9 @@ class MarkingGradingService {
     final pageImagesBase64 = [
       for (final file in pageFiles) base64Encode(await file.readAsBytes()),
     ];
+
+    final priorCorrections =
+        subjectName == null ? const <MarkingCorrection>[] : await MarkingCorrectionRepository().recentFor(subjectName);
 
     final callable = _functions.httpsCallable(
       'gradeMarkingScript',
@@ -101,6 +114,8 @@ class MarkingGradingService {
         ],
         if (preSegmentedAnswers != null && preSegmentedAnswers.isNotEmpty)
           'preSegmentedAnswers': [for (final s in preSegmentedAnswers) s.toJson()],
+        if (priorCorrections.isNotEmpty)
+          'priorCorrections': [for (final c in priorCorrections) c.toCloudFunctionHint()],
       });
       rawData = result.data;
     } on FirebaseFunctionsException catch (e) {

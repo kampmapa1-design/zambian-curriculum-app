@@ -51,6 +51,7 @@ Future<void> runBatchGrading({
         pageFiles: pageFiles,
         scheme: scheme,
         preSegmentedAnswers: script.preSegmentedAnswers,
+        subjectName: script.subjectName,
       );
       result = script.copyWith(
         status: MarkingScriptStatus.graded,
