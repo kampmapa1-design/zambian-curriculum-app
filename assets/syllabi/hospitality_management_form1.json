@@ -1,5 +1,5 @@
 {
-  "_source": "Curriculum Development Centre Teaching Module — \"Hospitality Management Teaching Module Form1 - Term 2\" (https://library.cdcrepository.info/resource.php?id=302). Topic/sub-topic structure and competencies extracted with AI assistance (Gemini) directly from this module's own stated content — never invented; the extraction was instructed to use only what the module itself says, and to flag anything unclear rather than guess. Covers only the term this specific module addresses (Term 2) — other terms are not included since no source document for them was available at extraction time. AI-flagged completeness notes from extraction: General competences were explicitly provided for major topic headers (1.3 and 1.4) while sub-topics explicitly provided single 'Specific Competence' statements, extracted directly. Formatting contains minor numbering typos in the original text (e.g., duplicate 'Learning Activity 4' headings in Topic 1.3.4), but all topic structures and sub-topics were parsed as explicitly named.",
+  "_source": "Curriculum Development Centre Teaching Module — \"Hospitality Management Teaching Module Form1 - Term 2\" (https://library.cdcrepository.info/resource.php?id=302). Topic/sub-topic structure and competencies extracted with AI assistance (Gemini) directly from this module's own stated content — never invented; the extraction was instructed to use only what the module itself says, and to flag anything unclear rather than guess. Covers only the term this specific module addresses (Term 2) — other terms are not included since no source document for them was available at extraction time. AI-flagged completeness notes from extraction: General competences were explicitly provided for major topic headers (1.3 and 1.4) while sub-topics explicitly provided single 'Specific Competence' statements, extracted directly. Formatting contains minor numbering typos in the original text (e.g., duplicate 'Learning Activity 4' headings in Topic 1.3.4), but all topic structures and sub-topics were parsed as explicitly named.\n\nADDED (2026-09-08): a real, complete 'Hospitality Management Scheme of Work, Form 1, Term 1-3' (a real Zambian secondary school; the source's own teacher name and school name are not reproduced here per this app's standing sourcing policy) was shared with this project via Drive, citing 'Hospitality Management Syllabus 2024' throughout. New Term 1 (1.1 Introduction to Hospitality, 1.2 Front Office Operations) is this document's own content wholesale -- this app had no Term 1 content at all before. New Term 3 and the two topics appended to the existing Term 2 (1.4 Cosmetology, 1.5 Ethics and Entrepreneurship) are this same document's own genuinely new subject matter (Cosmetology and Entrepreneurship do not appear anywhere in this file's original CDC-Teaching-Module-sourced Term 2 content).\n\nREAL, DISCLOSED CONFLICTS, not resolved by guessing: (1) this same document's own Term 1 also contains a '1.3 Housekeeping Operations' topic and its own Term 2 contains a '1.4 Food and Beverage Operations' topic (weeks 1-8) -- both are NOT included here because their real content (hygiene, safety, nutrition, cookery basics, room/facility care) already substantively duplicates this file's own, differently-numbered, originally-CDC-Teaching-Module-sourced Term 2 topics ('TOPIC: 1.3 FOOD AND BEVERAGE OPERATIONS', 'TOPIC: 1.4 HOUSE KEEPING OPERATIONS'). (2) This document's own topic numbering genuinely collides with the numbering already established from that other real source -- its own 'Cosmetology' and 'Entrepreneurship' content is itself labelled '1.4'/'1.5' in the source, which numerically coincides with this file's pre-existing, differently-themed '1.4 Housekeeping' topic from the OTHER real source. Both real placements are kept exactly as their own source states them rather than silently renumbering either one to hide the coincidence.",
   "curriculum": {
     "code": "CBC_2023",
     "name": "2023 Competency-Based Curriculum",
@@ -17,6 +17,102 @@
     "phase": "Secondary — the source scheme itself uses \"Form 1\" for this level under the 2023 CBC."
   },
   "terms": [
+    {
+      "name": "Term 1",
+      "sequence_number": 1,
+      "topics": [
+        {
+          "name": "1.1 Introduction to Hospitality",
+          "sequence_number": 1,
+          "sub_topics": [
+            {
+              "name": "1.1.1 Historical Overview",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Discuss hospitality in sectors",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "Hospitality in lodging, food and beverage, travel and tour, recreation and entertainment, event management; history of the hospitality industry from ancient times through the enlightenment.",
+              "week_number": 1
+            },
+            {
+              "name": "1.1.2 Traditional and Modern Hospitality Practices in Zambia",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Apply traditional and modern hospitality practices",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "Traditional and modern social, cultural and organizational hospitality norms in Zambia.",
+              "week_number": 2
+            },
+            {
+              "name": "1.1.3 Benefits of the Hospitality Industry",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Explore benefits of the hospitality industry",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "Relationship-building, cultural exchange, and memorable-experience benefits of the hospitality industry.",
+              "week_number": 3
+            },
+            {
+              "name": "1.1.4 Departments of the Hospitality Facility",
+              "sequence_number": 4,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Analyse departments of the hospitality facility",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "Front office, housekeeping, food and beverage, and supporting departments of a hospitality facility.",
+              "week_number": 4
+            }
+          ]
+        },
+        {
+          "name": "1.2 Front Office Operations",
+          "sequence_number": 2,
+          "sub_topics": [
+            {
+              "name": "1.2.1 Perform Roles of the Front Office",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Identify front office personnel and roles",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "Front office personnel, personal hygiene/appearance, and professional characteristics.",
+              "week_number": 5
+            },
+            {
+              "name": "1.2.2 Front Office Equipment",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Utilise front office equipment",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "Property management systems, key card/surveillance systems, and payment/billing equipment.",
+              "week_number": 6
+            }
+          ]
+        }
+      ]
+    },
     {
       "name": "Term 2",
       "sequence_number": 2,
@@ -176,6 +272,224 @@
                   "category": "Specific Competence"
                 }
               ]
+            }
+          ]
+        },
+        {
+          "name": "1.4 Cosmetology",
+          "sequence_number": 3,
+          "sub_topics": [
+            {
+              "name": "1.4.7 History of Cosmetology",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Demonstrate understanding of history of cosmetology",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "Background and gradual development of cosmetology from ancient civilisations to the contemporary era.",
+              "week_number": 9
+            },
+            {
+              "name": "1.4.8 Introduction to Cosmetology Practices",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Demonstrate understanding of cosmetology practices",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "Components (hair styling, aesthetics, nail technology, barbering) and importance of cosmetology.",
+              "week_number": 10
+            },
+            {
+              "name": "1.4.9 Tools and Equipment in Cosmetology",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Make use of tools and equipment in cosmetology",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "Hair, make-up, and sanitising tools/equipment used in cosmetology.",
+              "week_number": 11
+            }
+          ]
+        },
+        {
+          "name": "1.5 Ethics and Entrepreneurship",
+          "sequence_number": 4,
+          "sub_topics": [
+            {
+              "name": "1.5.1 Identify Business Opportunities",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Identify business opportunities",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "Entrepreneurship as a key competency; qualities of an entrepreneur; real business opportunities in hospitality.",
+              "week_number": 12
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 3",
+      "sequence_number": 3,
+      "topics": [
+        {
+          "name": "1.4 Cosmetology (continued)",
+          "sequence_number": 1,
+          "sub_topics": [
+            {
+              "name": "1.4.10 Professional Practices in Cosmetology",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Practice professional cosmetology standards",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "Client consultation, professional appearance, salon protocols, and health and safety in cosmetology.",
+              "week_number": 2
+            }
+          ]
+        },
+        {
+          "name": "1.4 Food and Beverage Operations (Advanced)",
+          "sequence_number": 2,
+          "sub_topics": [
+            {
+              "name": "1.4.11 Advanced Nutrition and Meal Planning",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Apply advanced nutrition in meal planning",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "Special dietary meal planning, cost-effective and sustainable meal planning, seasonal menus.",
+              "week_number": 3
+            },
+            {
+              "name": "1.4.12 Advanced Cookery Techniques",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Apply advanced cooking techniques",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "Plating/presentation, advanced sauces, specialised cooking methods, recipe development, food cost analysis.",
+              "week_number": 4
+            },
+            {
+              "name": "1.4.13 Food Service and Beverage Service",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Demonstrate food and beverage service skills",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "Table setting/etiquette, service procedures, beverage service, service styles, guest interaction.",
+              "week_number": 5
+            },
+            {
+              "name": "1.4.14 Menu Planning and Design",
+              "sequence_number": 4,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Create and design menus",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "Menu types, planning considerations, design elements, terminology, pricing and menu engineering.",
+              "week_number": 6
+            },
+            {
+              "name": "1.4.15 Food Costing and Cost Control",
+              "sequence_number": 5,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Apply food costing principles",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "Food cost percentage, recipe costing, portion control, waste management, pricing strategies.",
+              "week_number": 8
+            },
+            {
+              "name": "1.4.16 Food Commodities and Sourcing",
+              "sequence_number": 6,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Employ various food commodities in cookery",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "Classification of food commodities, quality standards, supplier relationships, storage and preservation.",
+              "week_number": 9
+            }
+          ]
+        },
+        {
+          "name": "1.5 Entrepreneurship",
+          "sequence_number": 3,
+          "sub_topics": [
+            {
+              "name": "1.5.2 Develop Business Skills",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Develop foundational business skills",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "Business planning basics, record keeping, customer service, marketing, legal/regulatory requirements.",
+              "week_number": 10
+            },
+            {
+              "name": "1.5.3 Small Business Management",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Apply small business management principles",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "Business structure, operations, human resource management, quality control, growth and sustainability.",
+              "week_number": 11
+            },
+            {
+              "name": "1.5.4 Entrepreneurial Practice",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Practice entrepreneurial skills",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "Identifying opportunities, feasibility analysis, resource planning, risk assessment, innovation.",
+              "week_number": 12
             }
           ]
         }

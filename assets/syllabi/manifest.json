@@ -498,6 +498,15 @@
     {
       "curriculum_code": "CBC_2023",
       "curriculum_name": "2023 Competency-Based Curriculum",
+      "subject_code": "HM",
+      "subject_name": "Hospitality Management",
+      "grade_level": 2,
+      "grade_name": "Form 2",
+      "file": "hospitality_management_form2.json"
+    },
+    {
+      "curriculum_code": "CBC_2023",
+      "curriculum_name": "2023 Competency-Based Curriculum",
       "subject_code": "COMM",
       "subject_name": "Commerce",
       "grade_level": 1,
