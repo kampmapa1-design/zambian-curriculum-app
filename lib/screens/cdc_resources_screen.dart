@@ -87,8 +87,25 @@ class _CdcResourcesScreenState extends State<CdcResourcesScreen> {
     });
     // Opportunistic — only actually calls the function if online and due.
     // Chained (not parallel) so the auto-download prompt sees a
-    // just-refreshed catalog rather than possibly-stale cached data.
-    unawaited(_refresh(force: false).then((_) => _maybePromptAutoDownload()));
+    // just-refreshed catalog rather than possibly-stale cached data, and
+    // so "mark seen" (see _markVisibleAsSeen) reflects the freshest list
+    // rather than missing anything this refresh just found.
+    unawaited(_refresh(force: false).then((_) {
+      _markVisibleAsSeen();
+      return _maybePromptAutoDownload();
+    }));
+  }
+
+  /// "New materials available" (2026-09-08): marks exactly what THIS
+  /// screen instance shows as seen — see CdcResourcesService.markSeen's
+  /// own doc comment on why that's scoped to what was actually shown,
+  /// not the whole catalog regardless of [widget.resourceType]/[widget
+  /// .sections].
+  void _markVisibleAsSeen() {
+    final urls = widget.sections != null
+        ? [for (final s in widget.sections!) ..._resourcesFor(s.resourceType).map((r) => r.url)]
+        : _visibleResources.map((r) => r.url).toList();
+    if (urls.isNotEmpty) unawaited(_service.markSeen(urls));
   }
 
   /// Once a week (per device, only from the "CDC Teaching Modules" screen),

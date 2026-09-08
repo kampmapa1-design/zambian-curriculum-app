@@ -40,6 +40,7 @@ class CdcResourcesService {
 
   static const _cacheFileName = 'cdc_resources_cache.json';
   static const _lastCheckedKey = 'cdc_resources_last_checked_at';
+  static const _seenUrlsKey = 'cdc_resources_seen_urls';
   static const refreshInterval = Duration(days: 7);
 
   Future<bool> get isOnline async {
@@ -157,6 +158,49 @@ class CdcResourcesService {
     await prefs.setString(_lastCheckedKey, DateTime.now().toIso8601String());
 
     return merged;
+  }
+
+  // -------------------------------------------------------------------
+  // "New materials available" (2026-09-08, per explicit request): the
+  // catalog itself already accumulates every resource ever found (see
+  // [refreshIfDue]'s merge-by-URL), but nothing previously told a teacher
+  // WHICH of those are new since they last looked — a home-screen banner
+  // and per-category badges (see CdcNewMaterialsBanner /
+  // TeachingResourcesMenuScreen) need exactly that. "Seen" is tracked
+  // separately from the catalog cache itself, as a plain set of resource
+  // URLs, so a resource stays "new" until a screen that actually shows it
+  // has been opened — not just until the next catalog refresh.
+  // -------------------------------------------------------------------
+
+  Future<Set<String>> _seenUrls() async {
+    final prefs = await SharedPreferences.getInstance();
+    return (prefs.getStringList(_seenUrlsKey) ?? const []).toSet();
+  }
+
+  /// Marks specific resources as seen (union with whatever's already
+  /// marked — never removes an existing "seen" entry). Call this with
+  /// exactly the resources a screen actually displayed, so a teacher who
+  /// only opens "CDC Syllabi" doesn't silently lose the "new" flag on a
+  /// past paper they never looked at.
+  Future<void> markSeen(Iterable<String> urls) async {
+    final prefs = await SharedPreferences.getInstance();
+    final seen = await _seenUrls();
+    seen.addAll(urls);
+    await prefs.setStringList(_seenUrlsKey, seen.toList());
+  }
+
+  /// How many cached resources (optionally filtered to one
+  /// [CdcResource.resourceType]) haven't been marked seen yet — 0 on a
+  /// fresh install (nothing catalogued) or once everything catalogued has
+  /// already been viewed, which callers should treat as "nothing to
+  /// announce," not an error.
+  Future<int> unseenCount({String? resourceType}) async {
+    final catalog = await loadCached();
+    final seen = await _seenUrls();
+    return catalog.resources
+        .where((r) => resourceType == null || r.resourceType == resourceType)
+        .where((r) => !seen.contains(r.url))
+        .length;
   }
 
   /// Every resource in this app is a PDF (the download always writes a

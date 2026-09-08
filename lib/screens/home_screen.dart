@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/record_of_work.dart';
 import '../models/scheme_of_work.dart';
 import '../models/syllabus_models.dart';
+import '../widgets/cdc_new_materials_banner.dart';
 import '../widgets/function_button.dart';
 import 'assignments_tests_menu_screen.dart';
 import 'class_resume_picker_screen.dart';
@@ -385,6 +386,7 @@ class HomeScreen extends StatelessWidget {
             padding: const EdgeInsets.all(16),
             sliver: SliverList.list(
               children: [
+                const CdcNewMaterialsBanner(),
                 // Home button order (2026-09-08, per explicit request):
                 // Data Manager / Scan Marker / Assignments, Exams & Test
                 // Submissions were moved up to be buttons #3/#4/#5
