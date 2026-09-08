@@ -1,5 +1,5 @@
 {
-  "_source": "A real 'History Form 2 Scheme of Work' (a real Zambian secondary school's Social Science Department; the source's own teacher name and school name are not reproduced here per this app's standing sourcing policy) was shared with this project via Drive, across separate Term 1 and Term 2 documents. This is a genuine gap fill -- this app previously had no History Form 2 content at all. Cites the real official '2024 History Syllabus, Ordinary Secondary Education Form 1-4' with real page citations (Term 1: pp.18-24; Term 2: pp.30-33).\n\nTERM 3 IS DELIBERATELY NOT INCLUDED: a separate real Term 3 document was checked (via two independent copies, from two different Drive folders shared with this project on different dates) and both agree it contains no new curriculum content at all -- just 'COMPREHENSIVE REVISION OF FORM 2 SYLLABUS' (weeks 1-6), mid-term tests, 'FULL SYLLABUS REVISION AND EXAM PREPARATION' (weeks 8-11), and end-of-year examinations. This is confirmed real teacher practice (Term 3 devoted entirely to revision and exams, teaching no new topics), not a missing document -- consistent with this app's standing approach of never encoding generic revision/exam weeks as topics, since they name no new specific competences of their own. Term 2's own opening 3 weeks ('REVISION OF TERM 1 TOPICS') and closing 3 weeks ('REVISION OF ALL FORM 2 TOPICS') are excluded for the same reason -- only its 4 real new topics (weeks 4-6, 8) are included here.\n\nIts own Content/Concept, Learning Activities, Strategies/Methods and Materials/Resources columns are omitted, consistent with the approach used for every other bundled subject in this app.",
+  "_source": "A real 'History Form 2 Scheme of Work' (a real Zambian secondary school's Social Science Department; the source's own teacher name and school name are not reproduced here per this app's standing sourcing policy) was shared with this project via Drive, across separate Term 1 and Term 2 documents. This is a genuine gap fill -- this app previously had no History Form 2 content at all. Cites the real official '2024 History Syllabus, Ordinary Secondary Education Form 1-4' with real page citations (Term 1: pp.18-24; Term 2: pp.30-33). Term 2's own opening 3 weeks ('REVISION OF TERM 1 TOPICS') and closing 3 weeks ('REVISION OF ALL FORM 2 TOPICS') are excluded, since they name no new specific competences of their own -- only its 4 real new topics (weeks 4-6, 8) are included here.\n\nTERM 3 REBUILT (2026-09-08) from the real, official Curriculum Development Centre 'History Teaching Module, Form 2 Term 3' (a genuine CDC publication, added to the CDC Digital Library 06/09/2026 -- no individual/school name to strip). This CORRECTS an earlier placement: this file previously carried these same two topics (2.5 Resistance to Colonial Rule, 2.6 Zambia's Struggle for Independence) under Term 1, based on the one real school's own scheme -- the official CDC Teaching Module confirms both belong in Term 3 instead, and its own real content (introductions, hooks, key words, full learning activities) is markedly richer than the school scheme's brief one-line competency entries, so it now supersedes that placement. A real irregularity in the official module itself is documented, not silently corrected: its own Sub-topic 2.5.1 and Specific Competence code are both printed as '2.3.1'/'2.3.1.1' (a copy-paste artifact from an earlier template) even though the topic itself is unambiguously 2.5, referenced consistently everywhere else in the module (table of contents, running headers, its own introduction) -- this file uses the topic-consistent '2.5.1' numbering instead of reproducing the source's own typo.\n\nSame-day cross-check: the real, official CDC 'History Form 2 Terms 1 and 2' Teaching Module (on the CDC Digital Library since 27/04/2026) was also checked and confirms this file's own Term 1 content (2.1 Slavery and Slave Trade through 2.4 Colonial Administration, including sub-topic 2.1.4 Slave Trade and Black Friday) matches the real official module exactly -- no changes needed there. That same official module explicitly states it covers 'form 2 level, particularly term 1 and term 2' but its own table of contents lists no topic beyond 2.4 -- this file's own Term 2 content (3.1 Copper Mining through 3.4 The Pan-African Movement) is NOT covered by either official Teaching Module checked, but is left exactly as originally sourced since it carries its own real official syllabus page citations (pp.30-33) from a different real document -- Teaching Modules are known to not always cover every real syllabus topic in full lesson-plan depth, so an absence from a Teaching Module's own table of contents is not by itself evidence the syllabus topic isn't real.\n\nIts own Content/Concept, Learning Activities, Strategies/Methods and Materials/Resources columns are omitted, consistent with the approach used for every other bundled subject in this app.",
   "curriculum": {
     "code": "CBC_2023",
     "name": "2023 Competency-Based Curriculum",
@@ -140,42 +140,6 @@
               "description": "Formation of the Federation; African collaboration to dismantle it; current collaboration."
             }
           ]
-        },
-        {
-          "name": "2.5 Resistance to Colonial Rule",
-          "sequence_number": 5,
-          "sub_topics": [
-            {
-              "name": "2.5.1 Primary and Secondary Resistance to Colonial Rule",
-              "sequence_number": 1,
-              "competencies": [
-                {
-                  "sequence_number": 1,
-                  "description": "Interpret resistance methods to colonial rule",
-                  "category": "Specific Competence"
-                }
-              ],
-              "description": "Primary resistance (chiefs, churches); secondary resistance (welfare societies, unions, parties)."
-            }
-          ]
-        },
-        {
-          "name": "2.6 Zambia's Struggle for Independence",
-          "sequence_number": 6,
-          "sub_topics": [
-            {
-              "name": "2.6.1 Nationalists in Zambia's Independence Struggle",
-              "sequence_number": 1,
-              "competencies": [
-                {
-                  "sequence_number": 1,
-                  "description": "Appreciate the role of nationalists and Freedom fighters during Independence struggle",
-                  "category": "Specific Competence"
-                }
-              ],
-              "description": "Role of leading nationalists (e.g. Nkumbula, Kaunda) and other individuals; demonstrating respect."
-            }
-          ]
         }
       ]
     },
@@ -252,6 +216,50 @@
                 }
               ],
               "description": "Aims of the Pan-African movement; role of African leaders (Kaunda, Nkrumah); efforts to achieve it."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 3",
+      "sequence_number": 3,
+      "topics": [
+        {
+          "name": "2.5 Resistance to Colonial Rule in Northern Rhodesia",
+          "sequence_number": 1,
+          "description": "In the late 19th century, European powers scrambled to colonise Africa and Northern Rhodesia was no exception. The British South Africa Company, led by Cecil Rhodes, expanded its influence in the region, leading to its colonisation; Northern Rhodesia remained under British control for almost 70 years. In the 1940s a wave of awakening became known as resistance to colonial rule -- this topic covers the different forms colonised people used to push back against foreign control, primary and secondary.",
+          "sub_topics": [
+            {
+              "name": "2.5.1 Primary and Secondary Resistance to Colonial Rule",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Interpret resistance methods to colonial rule",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "Resistance to colonial rule changed character over time. Primary/early resistance was organised by individual communities and traditional leaders, often direct opposition to colonial authority. Secondary/later resistance was more organised and involved wider sections of the population -- welfare associations, religious movements, trade unions, political organisations, strikes, boycotts, petitions and demonstrations."
+            }
+          ]
+        },
+        {
+          "name": "2.6 Zambia's Struggle for Independence",
+          "sequence_number": 2,
+          "description": "Zambia officially gained independence on 24 October 1964, transforming from the British protectorate of Northern Rhodesia into a sovereign Republic. This independence was achieved through many sacrifices made by people who risked their lives for their nation's freedom -- this topic covers the nationalists in Zambia's independence struggle.",
+          "sub_topics": [
+            {
+              "name": "2.6.1 Nationalists in Zambia's Independence Struggle",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Appreciate the role of nationalists and Freedom fighters during Independence struggle",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "The role of Zambia's leading nationalists in the struggle for independence (e.g. Dauti Yamba, Godwin Mbikusita Lewanika, Harry Mwaanga Nkumbula, Kenneth Kaunda, Simon Mwansa Kapwepwe, Mainza Chona, Julia Mulenga Nsofwa) and other individuals in the resistance struggle; demonstrating respect to Zambia's nationalists and freedom fighters."
             }
           ]
         }
