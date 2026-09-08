@@ -11,7 +11,7 @@ import 'data_manager_menu_screen.dart';
 import 'generate_lesson_plan_flow.dart';
 import 'handwriting_to_word_screen.dart';
 import 'marking_queue_screen.dart';
-import 'minutes_maker_screen.dart';
+import 'office_tools_menu_screen.dart';
 import 'record_of_work_screen.dart';
 import 'scheme_of_work_document_screen.dart';
 import 'select_own_topics_screen.dart';
@@ -24,7 +24,6 @@ import 'term_topic_picker_screen.dart';
 import 'topic_picker_flow.dart';
 import 'topic_search_screen.dart';
 import 'voice_command_screen.dart';
-import 'word_pdf_converter_screen.dart';
 
 /// The app's home screen: a branded header (not a bare list dropped
 /// straight under the system status bar) followed by one clearly labeled
@@ -468,37 +467,40 @@ class HomeScreen extends StatelessWidget {
                     MaterialPageRoute(builder: (_) => const HandwritingToWordScreen()),
                   ),
                 ),
+                // Combined (2026-09-08, per explicit request) — Minutes
+                // Maker and Word ↔ PDF Converter used to be two separate
+                // home-screen buttons; each keeps its exact prior function,
+                // completely separate from the other, just reached one tap
+                // further in now (same pattern already used for Teaching
+                // Modules/Syllabi/Past Papers and Assignments/Tests above).
                 FunctionButton(
                   icon: Icons.groups_outlined,
-                  label: 'Minutes Maker',
-                  subtitle: 'Photograph handwritten meeting notes, get back formatted minutes',
+                  label: 'Minutes Maker & Word ↔ PDF Converter',
+                  subtitle: 'Meeting minutes from handwritten notes, and .docx ↔ PDF conversion',
                   onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const MinutesMakerScreen()),
+                    MaterialPageRoute(builder: (_) => const OfficeToolsMenuScreen()),
                   ),
                 ),
+                // "Standby" voice command (2026-09-08, per explicit
+                // request): moved from a floating action button (which sat
+                // over the button list) to the last home button in the
+                // hierarchy — a real button like every other function here,
+                // not a persistent overlay — while this feature is still
+                // being refined to cover more of the app's own functions
+                // (see VoiceCommandScreen's own doc comment).
                 FunctionButton(
-                  icon: Icons.picture_as_pdf_outlined,
-                  label: 'Word ↔ PDF Converter',
-                  subtitle: 'Convert a .docx file to PDF, entirely on-device',
+                  icon: Icons.mic_none,
+                  label: 'Voice Command',
+                  subtitle: 'Tap and speak a command — e.g. "make a lesson plan for topic 2 in week 8 of Civic '
+                      'Education grade 10"',
                   onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const WordPdfConverterScreen()),
+                    MaterialPageRoute(builder: (_) => const VoiceCommandScreen()),
                   ),
                 ),
               ],
             ),
           ),
         ],
-      ),
-      // "Standby" voice command (2026-09-08, per explicit request,
-      // clarified via AskUserQuestion: tap-to-talk, always visible/ready
-      // from the home screen — not an always-on background listener, see
-      // VoiceCommandScreen's own doc comment for why).
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => Navigator.of(context).push(
-          MaterialPageRoute(builder: (_) => const VoiceCommandScreen()),
-        ),
-        icon: const Icon(Icons.mic_none),
-        label: const Text('Voice Command'),
       ),
     );
   }
