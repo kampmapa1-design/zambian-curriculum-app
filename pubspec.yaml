@@ -31,6 +31,7 @@ dependencies:
   pdf_manipulator: 4.1.0
   crypto: ^3.0.5
   url_launcher: ^6.3.1
+  speech_to_text: ^7.4.0
   # google_mobile_ads REMOVED (2026-08-30): confirmed root cause of an
   # app-wide crash-on-launch on a real device (Moto G05), isolated via two
   # separate diagnostic test builds. See rewarded_ad_service.dart for the

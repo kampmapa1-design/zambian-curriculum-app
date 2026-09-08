@@ -41,14 +41,27 @@ import 'term_topic_picker_screen.dart';
 /// entirely — a paused lesson resumes by its own saved checkpoint
 /// (carrying forward whichever of the two it was originally started as,
 /// see [LessonCheckpoint.isOneOff]), not by asking either question again.
+///
+/// [initialEntry] (2026-09-08, voice commands — see VoiceCommandResolver):
+/// when given, this is already a specific, resolved topic/sub-topic to
+/// teach — the "resume paused lesson?" question and the term/topic picker
+/// are both skipped entirely (there is nothing left to resume from or
+/// pick, the command already named it), going straight into a NEW lesson
+/// for that exact entry. Every other question (one-off vs class, which
+/// stage, teacher details) is still asked exactly as normal — voice only
+/// ever answers what it was actually told (subject/grade/topic/week), it
+/// never guesses the rest.
 Future<void> startGenerateLessonPlanFlow(
   BuildContext context,
   SyllabusTemplate template, {
   LessonCheckpointRepository? checkpointRepository,
+  SchemeOfWorkEntry? initialEntry,
 }) async {
   final checkpoints = checkpointRepository ?? LessonCheckpointRepository();
 
-  final choice = await showDialog<_LessonPlanStart>(
+  final choice = initialEntry != null
+      ? _LessonPlanStart.next
+      : await showDialog<_LessonPlanStart>(
     context: context,
     builder: (dialogContext) => AlertDialog(
       title: const Text('Generate lesson plan'),
@@ -145,7 +158,7 @@ Future<void> startGenerateLessonPlanFlow(
   List<List<SchemeOfWorkEntry>>? classWindows;
   String? defaultClassLabel;
 
-  if (!isOneOff) {
+  if (!isOneOff && initialEntry == null) {
     // "Which class, and where did it reach?" (2026-09-06) — the same
     // question Scheme of Work generation already asks, via the very same
     // screen, so the topic/week picker that follows can show THIS class's
@@ -174,10 +187,13 @@ Future<void> startGenerateLessonPlanFlow(
   // Let the teacher pick exactly which term/week/topic to teach, rather
   // than auto-advancing to "whatever comes next" — a topic can need
   // several separate lesson plans (one per stage, or per CBC learning
-  // point), so there's no single "next" topic to guess at.
-  final entry = await Navigator.of(context).push<SchemeOfWorkEntry>(
-    MaterialPageRoute(builder: (_) => TermTopicPickerScreen(template: template, windows: classWindows)),
-  );
+  // point), so there's no single "next" topic to guess at. Skipped
+  // entirely when [initialEntry] already names one (voice commands) — see
+  // this function's own doc comment.
+  final entry = initialEntry ??
+      await Navigator.of(context).push<SchemeOfWorkEntry>(
+        MaterialPageRoute(builder: (_) => TermTopicPickerScreen(template: template, windows: classWindows)),
+      );
   if (entry == null || !context.mounted) return;
 
   final stage = await showDialog<LessonStage>(

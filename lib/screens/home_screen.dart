@@ -22,6 +22,7 @@ import 'teaching_resources_menu_screen.dart';
 import 'term_topic_picker_screen.dart';
 import 'topic_picker_flow.dart';
 import 'topic_search_screen.dart';
+import 'voice_command_screen.dart';
 import 'word_pdf_converter_screen.dart';
 
 /// The app's home screen: a branded header (not a bare list dropped
@@ -485,6 +486,17 @@ class HomeScreen extends StatelessWidget {
             ),
           ),
         ],
+      ),
+      // "Standby" voice command (2026-09-08, per explicit request,
+      // clarified via AskUserQuestion: tap-to-talk, always visible/ready
+      // from the home screen — not an always-on background listener, see
+      // VoiceCommandScreen's own doc comment for why).
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => Navigator.of(context).push(
+          MaterialPageRoute(builder: (_) => const VoiceCommandScreen()),
+        ),
+        icon: const Icon(Icons.mic_none),
+        label: const Text('Voice Command'),
       ),
     );
   }

@@ -2,6 +2,11 @@
     <!-- AI-Assisted Marking (Stage 1): burst-capturing student script pages. -->
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-feature android:name="android.hardware.camera" android:required="true"/>
+    <!-- Voice Commands (2026-09-08): tap-to-talk speech recognition
+         (speech_to_text, on-device Android SpeechRecognizer — no audio is
+         ever recorded to a file or uploaded; only the transcribed text is
+         sent anywhere, to Gemini for command parsing). -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
     <!-- 2026-08-29: android:largeHeap reduces the chance Android's low
          memory killer picks this process specifically during memory heavy
          moments (base64-encoding a bulky marking key PDF, holding several

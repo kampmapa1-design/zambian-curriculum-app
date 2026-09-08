@@ -3264,3 +3264,158 @@ export const generateSchemeOfWorkContent = onCall<GenerateSchemeOfWorkContentReq
     return parsed;
   }
 );
+
+// ---------------------------------------------------------------------
+// parseVoiceCommand — the tap-to-talk "standby" voice-command capability
+// (2026-09-08, per explicit request, clarified via AskUserQuestion:
+// tap-to-talk, not always-on background listening; a transcript sent
+// here to be parsed, not a fixed local keyword parser). The client does
+// on-device speech-to-text (speech_to_text, Android's own
+// SpeechRecognizer — no audio ever leaves the device); only the resulting
+// TEXT transcript is sent here. This function's only job is turning that
+// free-form transcript into a structured intent — it does NOT look up or
+// touch any real syllabus content itself, and never invents a subject/
+// grade/topic that wasn't actually said; the client resolves the
+// returned fields against the app's own real bundled data (see
+// VoiceCommandResolver) and always shows the teacher a plain-language
+// confirmation of what it understood before acting on it.
+// ---------------------------------------------------------------------
+
+interface ParseVoiceCommandRequest {
+  transcript: string;
+}
+
+type VoiceCommandAction =
+  | "generate_lesson_plan"
+  | "generate_scheme_of_work"
+  | "generate_record_of_work"
+  | "generate_teaching_notes"
+  | "unrecognized";
+
+interface ParseVoiceCommandResponse {
+  action: VoiceCommandAction;
+  subjectName: string | null;
+  gradeName: string | null;
+  topicNumber: number | null;
+  weekNumber: number | null;
+  termNumber: number | null;
+  // A short, plain-language restatement of what was understood, e.g.
+  // "Generate Lesson Plan — Civic Education, Grade 10, topic 2, week 8" —
+  // shown to the teacher to confirm before anything happens. Always
+  // present, even for an 'unrecognized' action (explains what was
+  // missing/unclear instead).
+  summary: string;
+}
+
+const parseVoiceCommandSchema = {
+  type: "object",
+  properties: {
+    action: {
+      type: "string",
+      enum: [
+        "generate_lesson_plan",
+        "generate_scheme_of_work",
+        "generate_record_of_work",
+        "generate_teaching_notes",
+        "unrecognized",
+      ],
+      description:
+        "Which of this app's real functions the command is asking for. 'unrecognized' when the " +
+        "transcript doesn't clearly ask for any of the other four, or is missing a subject entirely.",
+    },
+    subjectName: {
+      type: ["string", "null"],
+      description: "The subject exactly as spoken (e.g. 'Civic Education'), or null if none was said.",
+    },
+    gradeName: {
+      type: ["string", "null"],
+      description:
+        "The grade/form exactly as spoken (e.g. 'Grade 10', 'Form 2'), or null if none was said.",
+    },
+    topicNumber: {
+      type: ["integer", "null"],
+      description:
+        "The topic's ordinal position if a number was spoken (e.g. 'topic number two' -> 2, 'the " +
+        "third topic' -> 3), or null if no topic number was said.",
+    },
+    weekNumber: {
+      type: ["integer", "null"],
+      description: "The week number if one was spoken (e.g. 'week 8' -> 8), or null if none was said.",
+    },
+    termNumber: {
+      type: ["integer", "null"],
+      description: "The term number (1, 2, or 3) if one was spoken, or null if none was said.",
+    },
+    summary: {
+      type: "string",
+      description: "A short, plain-language restatement of what was understood, per this function's own doc comment.",
+    },
+  },
+  required: ["action", "subjectName", "gradeName", "topicNumber", "weekNumber", "termNumber", "summary"],
+  additionalProperties: false,
+};
+
+function buildParseVoiceCommandPrompt(transcript: string): string {
+  return [
+    "A teacher just spoke a voice command to an app that generates Lesson Plans, Schemes of Work, " +
+      "Records of Work, and Teaching Notes from a bundled Zambian school curriculum. Extract a " +
+      "structured intent from their transcript — do not invent, guess, or default any field that " +
+      "genuinely wasn't said; leave it null instead.",
+    "",
+    `Transcript: "${transcript}"`,
+    "",
+    "Example: \"make a lesson plan for topic number two in week 8 in the subject of Civic Education " +
+      "grade 10\" -> action=generate_lesson_plan, subjectName=\"Civic Education\", " +
+      "gradeName=\"Grade 10\", topicNumber=2, weekNumber=8, termNumber=null.",
+    "",
+    "Only ever set action to one of the four real functions when the transcript clearly asks for " +
+      "that specific one; use 'unrecognized' for small talk, an unsupported request, or a command " +
+      "with no subject mentioned at all (a subject is always required to do anything useful here).",
+  ].join("\n");
+}
+
+export const parseVoiceCommand = onCall<ParseVoiceCommandRequest>(
+  { secrets: [geminiApiKey], region: "us-central1", maxInstances: 5 },
+  async (request): Promise<ParseVoiceCommandResponse> => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "Sign in is required to use voice commands.");
+    }
+
+    const { transcript } = request.data ?? {};
+    if (typeof transcript !== "string" || transcript.trim().length === 0) {
+      throw new HttpsError("invalid-argument", "'transcript' is required.");
+    }
+
+    const ai = new GoogleGenAI({ apiKey: geminiApiKey.value() });
+
+    let text: string | undefined;
+    try {
+      const response = await ai.models.generateContent({
+        model: GEMINI_MODEL,
+        contents: buildParseVoiceCommandPrompt(transcript),
+        config: {
+          responseMimeType: "application/json",
+          responseJsonSchema: parseVoiceCommandSchema,
+        },
+      });
+      text = response.text;
+    } catch (err) {
+      console.error("parseVoiceCommand: Gemini call failed", err);
+      throw new HttpsError("internal", "Failed to understand the voice command. Please try again.");
+    }
+
+    if (!text) {
+      throw new HttpsError("internal", "The AI did not return a result.");
+    }
+
+    let parsed: ParseVoiceCommandResponse;
+    try {
+      parsed = JSON.parse(text);
+    } catch (err) {
+      console.error("parseVoiceCommand: response was not valid JSON", text);
+      throw new HttpsError("internal", "The voice command response could not be parsed.");
+    }
+
+    return parsed;
+  }
+);
