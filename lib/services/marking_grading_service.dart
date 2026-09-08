@@ -116,6 +116,13 @@ class MarkingGradingService {
           'preSegmentedAnswers': [for (final s in preSegmentedAnswers) s.toJson()],
         if (priorCorrections.isNotEmpty)
           'priorCorrections': [for (final c in priorCorrections) c.toCloudFunctionHint()],
+        // Rules Engine (2026-09-08): the scheme's own subject and
+        // front-page-stated conventions/standard — see
+        // gradeMarkingScript's own doc comment for exactly how these
+        // shape the grading prompt.
+        'subjectName': scheme.subjectName,
+        if (scheme.markConventions.isNotEmpty) 'markConventions': scheme.markConventions,
+        if (scheme.examStandard.wireValue != null) 'examStandard': scheme.examStandard.wireValue,
       });
       rawData = result.data;
     } on FirebaseFunctionsException catch (e) {
@@ -158,6 +165,7 @@ class MarkingGradingService {
             marksAwarded:
                 (a['marksAwarded'] is num ? (a['marksAwarded'] as num).toDouble() : 0.0).clamp(0, q.maxMarks).toDouble(),
             confidence: MarkingConfidence.fromValue(a['confidence'] is String ? a['confidence'] as String : 'low'),
+            markingBasis: MarkingBasis.fromValue(a['markingBasis'] is String ? a['markingBasis'] as String : null),
           )
         else
           GradedAnswer(

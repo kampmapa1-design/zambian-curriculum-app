@@ -1,3 +1,51 @@
+/// Which real marking regime a [MarkingScheme] follows — Rules Engine
+/// (2026-09-08, per explicit request, see the user's own
+/// Smart_Teacher_AI_Marking_Rules_Engine-1.md design doc). Set from
+/// [DerivedMarkingKey.examStandardHint] as a starting suggestion (see
+/// MarkingSchemePaperStructureScreen), always teacher-confirmable, same
+/// "never auto-apply an AI/heuristic judgment call" standing rule as
+/// [SectionMarkingStyle].
+enum MarkingExamStandard {
+  /// A standardized mock/national/final exam — marked to the identical
+  /// strictness as the real ECZ national exam, no softening either way.
+  nationalMock,
+
+  /// An ordinary school-based Continuous Assessment test (a Mid-Term Test
+  /// or End-of-Term Test) — marked accurately per the scheme's own
+  /// conventions, same rigor as any other script (see gradeMarkingScript's
+  /// own `examStandardGuidance`, Cloud Function side).
+  schoolCa,
+
+  /// Genuinely unclear, or never confirmed — the default for every scheme
+  /// saved before this field existed. Grading proceeds with no special
+  /// standard-specific guidance either way, same as before this field
+  /// existed.
+  unspecified;
+
+  String get dbValue => name;
+
+  static MarkingExamStandard fromValue(String? value) => switch (value) {
+        'nationalMock' => MarkingExamStandard.nationalMock,
+        'schoolCa' => MarkingExamStandard.schoolCa,
+        _ => MarkingExamStandard.unspecified,
+      };
+
+  /// The Cloud Function's own wire value for `examStandard` — null for
+  /// [unspecified] (the absence of a strong signal, not a third real
+  /// value the AI needs to reason about).
+  String? get wireValue => switch (this) {
+        MarkingExamStandard.nationalMock => 'NATIONAL_MOCK',
+        MarkingExamStandard.schoolCa => 'SCHOOL_CA',
+        MarkingExamStandard.unspecified => null,
+      };
+
+  String get label => switch (this) {
+        MarkingExamStandard.nationalMock => 'National Mock Standard',
+        MarkingExamStandard.schoolCa => 'School CA Test',
+        MarkingExamStandard.unspecified => 'Not sure / other',
+      };
+}
+
 /// One question within a [MarkingScheme] — what a teacher fills in when
 /// building the scheme, and what Stage 4 (AI grading dispatch) will later
 /// send to the AI provider alongside a script's page images.
@@ -113,6 +161,22 @@ class MarkingScheme {
   /// field existed).
   final String? gradingGuidance;
 
+  /// Rules Engine (2026-09-08) — see [MarkingExamStandard]'s own doc
+  /// comment. Defaults to [MarkingExamStandard.unspecified] for every
+  /// scheme saved before this field existed.
+  final MarkingExamStandard examStandard;
+
+  /// This assessment's own front-page-stated marking conventions (e.g.
+  /// "one mark per bullet point", "accept alternative answers separated
+  /// by /") — Rules Engine (2026-09-08), from [DerivedMarkingKey
+  /// .markConventions] as a starting draft, always teacher-editable on
+  /// MarkingSchemePaperStructureScreen. Sent to gradeMarkingScript
+  /// verbatim, taking priority over that Cloud Function's own universal
+  /// defaults. Empty for manual entry, a scheme whose source document
+  /// stated no explicit conventions, or a scheme saved before this field
+  /// existed.
+  final List<String> markConventions;
+
   const MarkingScheme({
     required this.id,
     required this.title,
@@ -126,6 +190,8 @@ class MarkingScheme {
     this.requiredAnswerCount,
     this.confirmedPaperTotalMarks,
     this.gradingGuidance,
+    this.examStandard = MarkingExamStandard.unspecified,
+    this.markConventions = const [],
   });
 
   /// The paper's total marks — [confirmedPaperTotalMarks] when a teacher
@@ -157,6 +223,8 @@ class MarkingScheme {
     int? requiredAnswerCount,
     double? confirmedPaperTotalMarks,
     String? gradingGuidance,
+    MarkingExamStandard? examStandard,
+    List<String>? markConventions,
   }) =>
       MarkingScheme(
         id: id,
@@ -171,6 +239,8 @@ class MarkingScheme {
         requiredAnswerCount: requiredAnswerCount ?? this.requiredAnswerCount,
         confirmedPaperTotalMarks: confirmedPaperTotalMarks ?? this.confirmedPaperTotalMarks,
         gradingGuidance: gradingGuidance ?? this.gradingGuidance,
+        examStandard: examStandard ?? this.examStandard,
+        markConventions: markConventions ?? this.markConventions,
       );
 
   factory MarkingScheme.fromJson(Map<String, dynamic> json) => MarkingScheme(
@@ -189,6 +259,8 @@ class MarkingScheme {
         requiredAnswerCount: json['requiredAnswerCount'] as int?,
         confirmedPaperTotalMarks: (json['confirmedPaperTotalMarks'] as num?)?.toDouble(),
         gradingGuidance: json['gradingGuidance'] as String?,
+        examStandard: MarkingExamStandard.fromValue(json['examStandard'] as String?),
+        markConventions: (json['markConventions'] as List?)?.cast<String>() ?? const [],
       );
 
   Map<String, dynamic> toJson() => {
@@ -204,6 +276,8 @@ class MarkingScheme {
         if (requiredAnswerCount != null) 'requiredAnswerCount': requiredAnswerCount,
         if (confirmedPaperTotalMarks != null) 'confirmedPaperTotalMarks': confirmedPaperTotalMarks,
         if (gradingGuidance != null) 'gradingGuidance': gradingGuidance,
+        'examStandard': examStandard.dbValue,
+        if (markConventions.isNotEmpty) 'markConventions': markConventions,
       };
 }
 

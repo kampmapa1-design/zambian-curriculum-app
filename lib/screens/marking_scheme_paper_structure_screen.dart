@@ -42,10 +42,23 @@ class MarkingSchemePaperStructureScreen extends StatefulWidget {
     super.key,
     required this.draft,
     this.derivedSections = const [],
+    this.aiMarkConventions = const [],
+    this.aiExamStandardHint,
+    this.aiDetectedTotalMarks,
   });
 
   final MarkingScheme draft;
   final List<DerivedMarkingKeySection> derivedSections;
+
+  /// Rules Engine (2026-09-08) — the AI's own detected front-page marking
+  /// conventions, exam-standard suggestion, and grand total, when this
+  /// scheme came from an AI-derived marking key. Empty/null for manual
+  /// entry or a re-edit of an already-saved scheme (which uses its own
+  /// already-confirmed [MarkingScheme.markConventions]/[.examStandard]
+  /// instead — see initState).
+  final List<String> aiMarkConventions;
+  final MarkingExamStandard? aiExamStandardHint;
+  final double? aiDetectedTotalMarks;
 
   @override
   State<MarkingSchemePaperStructureScreen> createState() => _MarkingSchemePaperStructureScreenState();
@@ -84,6 +97,13 @@ class _MarkingSchemePaperStructureScreenState extends State<MarkingSchemePaperSt
   late final Map<String, List<MarkingSchemeQuestion>> _questionsBySection;
   late final bool _looksStandardized;
   TextEditingController? _gradingGuidanceController;
+
+  /// Rules Engine (2026-09-08) — one convention per line, pre-filled from
+  /// the AI's own front-page extraction (or, when re-editing an
+  /// already-saved scheme, from its own already-confirmed conventions),
+  /// always teacher-editable.
+  late final TextEditingController _markConventionsController;
+  late MarkingExamStandard _examStandard;
 
   @override
   void initState() {
@@ -126,6 +146,25 @@ class _MarkingSchemePaperStructureScreenState extends State<MarkingSchemePaperSt
     if (!_looksStandardized) {
       _gradingGuidanceController = TextEditingController(text: widget.draft.gradingGuidance ?? '');
     }
+
+    // Rules Engine (2026-09-08) — prefer the draft's OWN already-confirmed
+    // values (a re-edit of an already-saved scheme, see
+    // MarkingSchemeBuilderScreen's own doc comment) over the AI's fresh
+    // draft suggestion, which only applies the first time a scheme is
+    // saved from the AI-derivation flow.
+    final startingConventions =
+        widget.draft.markConventions.isNotEmpty ? widget.draft.markConventions : widget.aiMarkConventions;
+    _markConventionsController = TextEditingController(text: startingConventions.join('\n'));
+
+    _examStandard = widget.draft.examStandard != MarkingExamStandard.unspecified
+        ? widget.draft.examStandard
+        : (widget.aiExamStandardHint ??
+            // No AI hint either (manual entry, or the AI genuinely found no
+            // signal) — fall back to the same standardized-exam heuristic
+            // this screen already computes for the grading-guidance prompt
+            // above, since "looks like a mock/national exam" and "should be
+            // marked to National Mock standard" are the same real signal.
+            (_looksStandardized ? MarkingExamStandard.nationalMock : MarkingExamStandard.unspecified));
   }
 
   @override
@@ -134,6 +173,7 @@ class _MarkingSchemePaperStructureScreenState extends State<MarkingSchemePaperSt
       c.dispose();
     }
     _gradingGuidanceController?.dispose();
+    _markConventionsController.dispose();
     super.dispose();
   }
 
@@ -196,12 +236,19 @@ class _MarkingSchemePaperStructureScreenState extends State<MarkingSchemePaperSt
       }
     }
     final guidance = _gradingGuidanceController?.text.trim();
+    final conventions = _markConventionsController.text
+        .split('\n')
+        .map((line) => line.trim())
+        .where((line) => line.isNotEmpty)
+        .toList();
     Navigator.of(context).pop<MarkingScheme>(
       widget.draft.copyWith(
         questions: updatedQuestions,
         requiredAnswerCount: _derivedRequiredAnswerCount,
         confirmedPaperTotalMarks: total,
         gradingGuidance: guidance == null || guidance.isEmpty ? null : guidance,
+        examStandard: _examStandard,
+        markConventions: conventions,
       ),
     );
   }
@@ -257,6 +304,73 @@ class _MarkingSchemePaperStructureScreenState extends State<MarkingSchemePaperSt
               ),
               maxLines: 3,
               onChanged: (_) => setState(() {}),
+            ),
+          ],
+          const SizedBox(height: 24),
+          Text('Marking standard', style: Theme.of(context).textTheme.titleMedium),
+          const SizedBox(height: 4),
+          Text(
+            'A National Mock is marked to the identical standard as the real ECZ national exam. A School '
+            'CA Test (Mid-Term/End-of-Term) is marked just as accurately, but its own weighted contribution '
+            'to a term mark is handled separately in Data Manager.',
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
+          const SizedBox(height: 8),
+          SegmentedButton<MarkingExamStandard>(
+            segments: const [
+              ButtonSegment(
+                value: MarkingExamStandard.nationalMock,
+                label: Text('National Mock', style: TextStyle(fontSize: 11.5)),
+              ),
+              ButtonSegment(
+                value: MarkingExamStandard.schoolCa,
+                label: Text('School CA Test', style: TextStyle(fontSize: 11.5)),
+              ),
+              ButtonSegment(
+                value: MarkingExamStandard.unspecified,
+                label: Text('Not sure', style: TextStyle(fontSize: 11.5)),
+              ),
+            ],
+            selected: {_examStandard},
+            onSelectionChanged: (selected) => setState(() => _examStandard = selected.first),
+          ),
+          const SizedBox(height: 20),
+          Text('Marking conventions', style: Theme.of(context).textTheme.titleMedium),
+          const SizedBox(height: 4),
+          Text(
+            widget.aiMarkConventions.isNotEmpty
+                ? 'Detected from this paper\'s own front page — check these are right, and add/remove any '
+                    'as needed (one per line).'
+                : 'Anything this paper\'s own front page states about how marks are awarded, one per line '
+                    '(e.g. "one mark per bullet point", "accept alternative answers separated by /"). '
+                    'Leave blank to use sensible defaults.',
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
+          const SizedBox(height: 8),
+          TextField(
+            controller: _markConventionsController,
+            decoration: const InputDecoration(
+              border: OutlineInputBorder(),
+              hintText: 'One convention per line',
+              isDense: true,
+            ),
+            maxLines: 4,
+            onChanged: (_) => setState(() {}),
+          ),
+          if (widget.aiDetectedTotalMarks case final detected? when (detected - (_computedTotal ?? detected)).abs() >= 0.5) ...[
+            const SizedBox(height: 8),
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.errorContainer,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                'The paper\'s own front page states a total of ${_formatMarks(detected)} marks, but the '
+                'section totals below currently add up to ${_formatMarks(_computedTotal ?? 0)}. Worth '
+                'double-checking before saving.',
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
             ),
           ],
           const SizedBox(height: 24),

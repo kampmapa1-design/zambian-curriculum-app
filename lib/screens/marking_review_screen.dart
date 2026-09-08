@@ -72,11 +72,13 @@ class _AnswerControllers {
   final answer = TextEditingController();
   final marks = TextEditingController();
   MarkingConfidence confidence;
+  final MarkingBasis markingBasis;
   final double maxMarks;
   final String questionLabel;
 
   _AnswerControllers(GradedAnswer a)
       : confidence = a.confidence,
+        markingBasis = a.markingBasis,
         maxMarks = a.maxMarks,
         questionLabel = a.questionLabel {
     answer.text = a.transcribedAnswer;
@@ -149,6 +151,38 @@ class _MarkingReviewScreenState extends State<MarkingReviewScreen> {
 
   double get _totalPossible => _rows.fold(0, (sum, r) => sum + r.maxMarks);
 
+  /// Rules Engine Review Queue sorting (2026-09-08, per explicit request:
+  /// "sort amber/red items to the top so the teacher's attention goes
+  /// where the AI is least certain") — indices into [_rows], amber
+  /// ([ReviewSeverity.amber], see [reviewSeverityFor]) first, green after,
+  /// each group in its original question order (a stable sort, not a
+  /// reshuffle). [_rows] itself and every index-based lookup elsewhere
+  /// (save, [_confirmAndFinish]'s `originalAnswers[i]` matching) are
+  /// untouched — this only reorders how question cards are DISPLAYED.
+  List<int> get _reviewOrderedIndices {
+    final indices = List<int>.generate(_rows.length, (i) => i);
+    indices.sort((a, b) {
+      final severityA = reviewSeverityFor(_asGradedAnswerForSeverity(_rows[a]));
+      final severityB = reviewSeverityFor(_asGradedAnswerForSeverity(_rows[b]));
+      if (severityA == severityB) return a.compareTo(b);
+      return severityA == ReviewSeverity.amber ? -1 : 1;
+    });
+    return indices;
+  }
+
+  /// [reviewSeverityFor] takes a [GradedAnswer] — a throwaway one built
+  /// from just the two fields it actually reads ([GradedAnswer.confidence]
+  /// / [GradedAnswer.markingBasis]) is cheaper and clearer than changing
+  /// that function's signature just for this screen's own sort.
+  GradedAnswer _asGradedAnswerForSeverity(_AnswerControllers row) => GradedAnswer(
+        questionLabel: row.questionLabel,
+        maxMarks: row.maxMarks,
+        transcribedAnswer: '',
+        marksAwarded: 0,
+        confidence: row.confidence,
+        markingBasis: row.markingBasis,
+      );
+
   /// The recorded final result — a percentage, not a raw mark, since raw
   /// totals aren't comparable across papers with different total marks.
   /// Always derived from whatever [_totalPossible] this scheme's
@@ -193,6 +227,7 @@ class _MarkingReviewScreenState extends State<MarkingReviewScreen> {
             transcribedAnswer: _rows[i].answer.text.trim(),
             marksAwarded: _awardedFor(_rows[i]),
             confidence: _rows[i].confidence,
+            markingBasis: _rows[i].markingBasis,
             teacherEdited: i < originalAnswers.length ? _rows[i].changedFrom(originalAnswers[i]) : true,
           ),
       ];
@@ -349,7 +384,7 @@ class _MarkingReviewScreenState extends State<MarkingReviewScreen> {
                       if (!_genderConfirmed) _buildGenderConfirmationCard(context),
                       if (widget.script.observations case final obs? when obs.isNotEmpty)
                         _buildObservationsCard(context, obs),
-                      for (var i = 0; i < _rows.length; i++) _buildAnswerCard(context, i),
+                      for (final i in _reviewOrderedIndices) _buildAnswerCard(context, i),
                     ],
                   ),
                 ),
@@ -570,6 +605,21 @@ class _MarkingReviewScreenState extends State<MarkingReviewScreen> {
               children: [
                 Text(row.questionLabel, style: Theme.of(context).textTheme.titleSmall),
                 const Spacer(),
+                if (row.markingBasis == MarkingBasis.reasonableEquivalence) ...[
+                  Tooltip(
+                    message: 'The AI awarded this mark for a point not explicitly listed in the marking '
+                        'key — a judgment call worth a closer look.',
+                    child: Chip(
+                      label: const Text('AI judgment call', style: TextStyle(fontSize: 11)),
+                      avatar: const Icon(Icons.psychology_alt_outlined, size: 14),
+                      backgroundColor: Colors.orange.withValues(alpha: 0.15),
+                      side: BorderSide(color: Colors.orange.withValues(alpha: 0.4)),
+                      visualDensity: VisualDensity.compact,
+                      padding: EdgeInsets.zero,
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                ],
                 Chip(
                   label: Text(row.confidence.label, style: const TextStyle(fontSize: 11)),
                   backgroundColor: color.withValues(alpha: 0.15),

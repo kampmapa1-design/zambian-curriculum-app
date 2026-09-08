@@ -28,16 +28,33 @@ class PendingMarkingKeyDraft {
   final String detectedTitle;
   final DateTime savedAt;
 
+  /// Rules Engine (2026-09-08) — see [DerivedMarkingKey]'s own doc
+  /// comments for these three fields; persisted here too so a resumed
+  /// draft (see this class's own doc comment) doesn't silently lose them.
+  final List<String> markConventions;
+  final MarkingExamStandard? examStandardHint;
+  final double? detectedTotalMarks;
+
   const PendingMarkingKeyDraft({
     required this.questions,
     this.sections = const [],
     required this.notes,
     required this.detectedTitle,
     required this.savedAt,
+    this.markConventions = const [],
+    this.examStandardHint,
+    this.detectedTotalMarks,
   });
 
-  DerivedMarkingKey get asDerivedMarkingKey =>
-      DerivedMarkingKey(questions: questions, sections: sections, notes: notes, detectedTitle: detectedTitle);
+  DerivedMarkingKey get asDerivedMarkingKey => DerivedMarkingKey(
+        questions: questions,
+        sections: sections,
+        notes: notes,
+        detectedTitle: detectedTitle,
+        markConventions: markConventions,
+        examStandardHint: examStandardHint,
+        detectedTotalMarks: detectedTotalMarks,
+      );
 
   Map<String, dynamic> toJson() => {
         'questions': [
@@ -55,6 +72,9 @@ class PendingMarkingKeyDraft {
         'notes': notes,
         'detectedTitle': detectedTitle,
         'savedAt': savedAt.toIso8601String(),
+        if (markConventions.isNotEmpty) 'markConventions': markConventions,
+        if (examStandardHint != null) 'examStandardHint': examStandardHint!.dbValue,
+        if (detectedTotalMarks != null) 'detectedTotalMarks': detectedTotalMarks,
       };
 
   static PendingMarkingKeyDraft? fromJson(Map<String, dynamic> json) {
@@ -90,12 +110,28 @@ class PendingMarkingKeyDraft {
 
     final savedAtRaw = json['savedAt'];
     final savedAt = savedAtRaw is String ? DateTime.tryParse(savedAtRaw) : null;
+
+    final markConventionsRaw = json['markConventions'];
+    final markConventions = markConventionsRaw is List ? markConventionsRaw.whereType<String>().toList() : <String>[];
+    final examStandardHintRaw = json['examStandardHint'];
+    final examStandardHint = examStandardHintRaw is String
+        ? switch (MarkingExamStandard.fromValue(examStandardHintRaw)) {
+            MarkingExamStandard.unspecified => null,
+            final v => v,
+          }
+        : null;
+    final detectedTotalMarksRaw = json['detectedTotalMarks'];
+    final detectedTotalMarks = detectedTotalMarksRaw is num ? detectedTotalMarksRaw.toDouble() : null;
+
     return PendingMarkingKeyDraft(
       questions: questions,
       sections: sections,
       notes: json['notes'] is String ? json['notes'] as String : '',
       detectedTitle: json['detectedTitle'] is String ? json['detectedTitle'] as String : '',
       savedAt: savedAt ?? DateTime.now(),
+      markConventions: markConventions,
+      examStandardHint: examStandardHint,
+      detectedTotalMarks: detectedTotalMarks,
     );
   }
 }
@@ -114,6 +150,9 @@ class PendingMarkingKeyDraftRepository {
       sections: derived.sections,
       notes: derived.notes,
       detectedTitle: derived.detectedTitle,
+      markConventions: derived.markConventions,
+      examStandardHint: derived.examStandardHint,
+      detectedTotalMarks: derived.detectedTotalMarks,
       savedAt: DateTime.now(),
     );
     final file = await _file();

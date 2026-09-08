@@ -1208,11 +1208,190 @@ interface PriorCorrectionHint {
   answerExcerpt: string;
 }
 
+// ---------------------------------------------------------------------
+// AI Marking Rules Engine (2026-09-08, per explicit request — "the front
+// page is the law"): a marking key's OWN stated conventions always win;
+// these are the sensible defaults applied when it states nothing more
+// specific, plus subject-shaped grading texture layered on top. See
+// Smart_Teacher_AI_Marking_Rules_Engine-1.md (the user's own design doc)
+// for the full rationale — this is that document's Sections 2-4 turned
+// into real prompt text.
+// ---------------------------------------------------------------------
+
+const UNIVERSAL_MARKING_CONVENTIONS = [
+  "Universal marking conventions (apply these UNLESS this scheme's own stated conventions above override " +
+    "them for a specific point):",
+  "- One bullet point/keyword listed in the expected answer = 1 mark, unless a maxMarks value or the " +
+    "scheme's own conventions say otherwise.",
+  "- A question's maxMarks is a HARD CAP - never award more than that, however good the answer.",
+  "- Where the expected answer lists alternatives separated by '/', any one of them is acceptable.",
+  "- For short factual answers (a name, date, term, single fact): correct or zero - no partial marks for " +
+    "an incorrect or incomplete factual answer, unless the scheme's own conventions explicitly allow it.",
+  "- For a passage/comprehension-based question: an answer in the candidate's own words is acceptable " +
+    "provided the meaning genuinely matches what's expected - it does not need to match the expected " +
+    "wording verbatim.",
+  "- For an essay/extended-response question: award marks for any point that is relevant and factually " +
+    "accurate, even where it is not explicitly listed in the expected answer - this is 'reasonable " +
+    "equivalence' judgment, and every mark awarded this way must be marked markingBasis='reasonable_" +
+    "equivalence' (see below), never treated as if it were an exact match.",
+  "- Exact facts (dates, specific names, figures, precise terminology) must match precisely where the " +
+    "expected answer names one specifically - a related-but-different term is not the same as the exact " +
+    "one the key asks for.",
+].join("\n");
+
+// Subject-shaped grading texture. HISTORY is fully specified from the
+// user's own real, detailed ECZ standards. The other five are a DRAFT
+// first pass from general ECZ/Zambian-curriculum convention knowledge,
+// per explicit request to draft them now rather than wait - NOT yet
+// verified against a real marking key front page for that subject. Each
+// is clearly marked as a draft in its own comment; refine once the
+// teacher supplies a real sample (matches the user's own doc, which asks
+// for exactly that).
+const SUBJECT_MODULES: { matches: RegExp; text: string }[] = [
+  {
+    // Real, fully specified — from the user's own detailed ECZ History
+    // standards (2167/1, 2167/2).
+    matches: /\bhistory\b/i,
+    text: [
+      "Subject-specific guidance for HISTORY:",
+      "- Source-based sections (map, picture, passage, chart, table, timeline): most items are worth 1 " +
+        "mark; a correct answer is a single word, name, date, or short phrase - never more than 2 " +
+        "sentences. A map/picture question needs the EXACT specific term the key asks for, not a broader " +
+        "correct-but-imprecise term (e.g. a specific clan/place name, not just a general region).",
+      "- Essay sections: mark-split brackets apply per sub-part exactly. Award marks for any historically " +
+        "accurate point, not only points explicitly listed in the key - flag these as markingBasis=" +
+        "'reasonable_equivalence'.",
+      "- Dates must be exact.",
+      "- Paper 2167/1 covers Central + Southern African History; Paper 2167/2 covers World History only - " +
+        "these are never mixed, so an answer drawing on the wrong paper's content is not creditable even " +
+        "if factually accurate about that other region/era.",
+    ].join("\n"),
+  },
+  {
+    // DRAFT - general ECZ Mathematics convention, not yet checked against
+    // a real marking key front page.
+    matches: /\bmath(s|ematics)?\b/i,
+    text: [
+      "Subject-specific guidance for MATHEMATICS (draft convention, not yet confirmed against a real " +
+        "marking key for this exact paper):",
+      "- Distinguish method marks from accuracy marks where working is shown: correct method/working " +
+        "shown earns credit even if the final answer is wrong; a bare correct final answer with no working " +
+        "at all may not earn full marks where the expected answer implies working was required.",
+      "- Apply the 'follow-through' principle: if a candidate makes an early error but then correctly " +
+        "applies the right method to their OWN (now-wrong) intermediate result, later steps still earn " +
+        "their own marks - do not zero out an entire multi-step answer for one early slip.",
+      "- Units and significant figures matter only where the expected answer itself specifies them.",
+    ].join("\n"),
+  },
+  {
+    // DRAFT - general ECZ English convention, not yet checked against a
+    // real marking key front page.
+    matches: /\benglish\b/i,
+    text: [
+      "Subject-specific guidance for ENGLISH (draft convention, not yet confirmed against a real marking " +
+        "key for this exact paper):",
+      "- Comprehension short-answers: an own-words paraphrase is acceptable when the meaning matches, not " +
+        "just a word-for-word match.",
+      "- A composition/essay question is marked holistically against content, language, and organisation " +
+        "rather than a bullet-point key - award marks by overall quality across those three, and mark " +
+        "every such award markingBasis='reasonable_equivalence' since it is a judgment call, not an exact " +
+        "match.",
+      "- Grammar/summary-type questions: match closely to the expected answer, per the scheme's own stated " +
+        "tolerance.",
+    ].join("\n"),
+  },
+  {
+    // DRAFT - general ECZ Religious Education convention (both 2044 and
+    // 2046 syllabi), not yet checked against a real marking key.
+    matches: /\breligious education\b|\bR\.?E\.?\b|\b204[46]\b/i,
+    text: [
+      "Subject-specific guidance for RELIGIOUS EDUCATION (draft convention, not yet confirmed against a " +
+        "real marking key for this exact paper):",
+      "- Source/short-answer sections behave like a factual short-answer item: exact or zero, per the " +
+        "universal conventions above.",
+      "- Essay sections: award marks for any relevant, doctrinally/factually accurate point, flagged as " +
+        "markingBasis='reasonable_equivalence' where not explicitly listed.",
+      "- Where a question specifically asks for a scripture reference or the name of a religious text, " +
+        "that reference/name itself must be exact even when the surrounding explanation is well-argued.",
+    ].join("\n"),
+  },
+  {
+    // DRAFT - general ECZ Geography convention, not yet checked against a
+    // real marking key front page.
+    matches: /\bgeography\b/i,
+    text: [
+      "Subject-specific guidance for GEOGRAPHY (draft convention, not yet confirmed against a real marking " +
+        "key for this exact paper):",
+      "- Map-reading and diagram-labelling items need the EXACT specific term the key asks for, the same " +
+        "exact-term rule as a History map question - a broader or related term is not the same as the " +
+        "specific one required.",
+      "- Non-map short-answer and essay sections otherwise follow the same rules as History's source-based " +
+        "and essay sections respectively.",
+    ].join("\n"),
+  },
+  {
+    // DRAFT - general ECZ Civic Education convention, not yet checked
+    // against a real marking key front page.
+    matches: /\bcivic education\b|\bcivics\b/i,
+    text: [
+      "Subject-specific guidance for CIVIC EDUCATION (draft convention, not yet confirmed against a real " +
+        "marking key for this exact paper):",
+      "- Source/short-answer sections behave like a factual short-answer item: exact or zero, per the " +
+        "universal conventions above.",
+      "- Essay sections: award marks for any relevant, factually accurate point, flagged as markingBasis=" +
+        "'reasonable_equivalence' where not explicitly listed in the key.",
+    ].join("\n"),
+  },
+];
+
+/// Best-effort subject-name match against [SUBJECT_MODULES] - substring/
+/// regex match, same tolerant spirit as this app's other free-text
+/// subject matching (e.g. RelatedMarkingKeyFinder, client-side). Returns
+/// null (generic universal-conventions-only grading, today's existing
+/// behaviour) when nothing matches - never a wrong subject's texture
+/// applied to an unrelated one.
+function selectSubjectModule(subjectName: string | undefined): string | null {
+  if (!subjectName || !subjectName.trim()) return null;
+  for (const module of SUBJECT_MODULES) {
+    if (module.matches.test(subjectName)) return module.text;
+  }
+  return null;
+}
+
+function examStandardGuidance(examStandard: string | null | undefined): string {
+  if (examStandard === "NATIONAL_MOCK") {
+    return (
+      "This is a NATIONAL MOCK examination - mark it to the IDENTICAL standard as the real ECZ national " +
+      "exam. Do not soften or go easier than a real national exam marker would; do not be harsher either " +
+      "- match the real standard exactly, neither curved up nor down."
+    );
+  }
+  if (examStandard === "SCHOOL_CA") {
+    return (
+      "This is one component of a school's own Continuous Assessment (a Mid-Term or End-of-Term test) - " +
+      "mark it fairly and accurately per the scheme's own stated conventions, exactly as you would any " +
+      "other script. This mark will later be combined with the school's other CA component into a " +
+      "weighted term mark outside of this grading step - your job here is only to mark THIS script " +
+      "correctly against its own key, not to apply any special leniency because it is a school test " +
+      "rather than a national exam."
+    );
+  }
+  return "";
+}
+
 interface GradeMarkingScriptRequest {
   pageImagesBase64: string[];
   questions: GradeMarkingScriptQuestion[];
   preSegmentedAnswers?: PreSegmentedAnswerHint[];
   priorCorrections?: PriorCorrectionHint[];
+  // Rules Engine (2026-09-08): the scheme's own subject, front-page-stated
+  // conventions (see deriveMarkingKeyFromQuestionPaper's markConventions),
+  // and marking standard - all optional, all silently skipped when absent
+  // (an older client, or a scheme saved before these existed) rather than
+  // blocking grading on their absence.
+  subjectName?: string;
+  markConventions?: string[];
+  examStandard?: "NATIONAL_MOCK" | "SCHOOL_CA" | null;
 }
 
 interface GradedAnswerResult {
@@ -1220,6 +1399,12 @@ interface GradedAnswerResult {
   transcribedAnswer: string;
   marksAwarded: number;
   confidence: "high" | "medium" | "low";
+  // Rules Engine confidence tagging (2026-09-08): DISTINCT from
+  // `confidence` (which is about handwriting/transcription legibility) -
+  // this is about whether the mark itself came from an exact key match or
+  // required subject-matter judgment. 'reasonable_equivalence' should
+  // never be paired with confidence='high' (see buildGradingPrompt).
+  markingBasis: "exact_match" | "reasonable_equivalence" | "not_applicable";
 }
 
 interface GradeMarkingScriptResponse {
@@ -1239,8 +1424,9 @@ const gradeMarkingScriptSchema = {
           transcribedAnswer: { type: "string" },
           marksAwarded: { type: "number" },
           confidence: { type: "string", enum: ["high", "medium", "low"] },
+          markingBasis: { type: "string", enum: ["exact_match", "reasonable_equivalence", "not_applicable"] },
         },
-        required: ["questionLabel", "transcribedAnswer", "marksAwarded", "confidence"],
+        required: ["questionLabel", "transcribedAnswer", "marksAwarded", "confidence", "markingBasis"],
         additionalProperties: false,
       },
     },
@@ -1262,11 +1448,33 @@ const gradeMarkingScriptSchema = {
 function buildGradingPrompt(
   questions: GradeMarkingScriptQuestion[],
   preSegmentedAnswers?: PreSegmentedAnswerHint[],
-  priorCorrections?: PriorCorrectionHint[]
+  priorCorrections?: PriorCorrectionHint[],
+  subjectName?: string,
+  markConventions?: string[],
+  examStandard?: "NATIONAL_MOCK" | "SCHOOL_CA" | null
 ): string {
   const schemeText = questions
     .map((q) => `${q.label} (max ${q.maxMarks} marks): expected answer/keywords — ${q.expectedAnswerOrKeywords}`)
     .join("\n");
+
+  // Rules Engine (2026-09-08): this scheme's OWN stated conventions come
+  // first and take priority — the universal defaults and subject module
+  // below explicitly say they apply only where this doesn't override them.
+  const schemeConventionsSection =
+    markConventions && markConventions.length > 0
+      ? [
+          "",
+          "This marking scheme's own front page states these conventions — they take priority over " +
+            "everything below wherever they conflict:",
+          markConventions.map((c) => `- ${c}`).join("\n"),
+        ].join("\n")
+      : "";
+
+  const subjectModuleText = selectSubjectModule(subjectName);
+  const subjectModuleSection = subjectModuleText ? `\n${subjectModuleText}` : "";
+
+  const examStandardText = examStandardGuidance(examStandard);
+  const examStandardSection = examStandardText ? `\n${examStandardText}` : "";
 
   const hintSection =
     preSegmentedAnswers && preSegmentedAnswers.length > 0
@@ -1325,13 +1533,23 @@ function buildGradingPrompt(
       "plainly in transcribedAnswer (e.g. 'illegible' or 'no answer found') rather than guessing at words " +
       "that aren't really there.",
     "3. Compare the transcribed answer against the expected answer/keywords and award marks out of that " +
-      "question's maximum — partial credit is expected and normal, not just full marks or zero.",
-    "4. Give a confidence level for EACH answer: 'high' only when both the handwriting was clearly " +
-      "legible AND you're confident the mark awarded is correct; 'low' whenever either the handwriting " +
-      "was hard to read, the answer was ambiguous, or you're unsure the mark is right; 'medium' " +
-      "otherwise. Confidence reflects your own uncertainty honestly — it is what determines whether a " +
-      "teacher is required to double-check this specific answer, so do not default to 'high'.",
-    "5. Separately, write 3 to 5 short observations about this candidate's performance on THIS script — " +
+      "question's maximum — partial credit is expected and normal, not just full marks or zero. Apply the " +
+      "marking conventions given below, in this priority order: this scheme's own stated conventions " +
+      "first, then the subject-specific guidance, then the universal defaults.",
+    "4. For EACH answer, set markingBasis: 'exact_match' when the mark came directly from a listed " +
+      "expected answer or one of its stated alternatives, with no judgment call involved; " +
+      "'reasonable_equivalence' when you awarded a mark for a point that is relevant and accurate but was " +
+      "NOT explicitly listed in the expected answer (a genuine judgment call on your part); " +
+      "'not_applicable' for a question with no such judgment involved either way (e.g. no answer found, or " +
+      "the question is objective/multiple-choice with only one possible interpretation).",
+    "5. Give a confidence level for EACH answer: 'high' only when both the handwriting was clearly " +
+      "legible AND you're confident the mark awarded is correct — NEVER 'high' when markingBasis is " +
+      "'reasonable_equivalence' (a judgment call always warrants a teacher's review, however confident you " +
+      "are in it); 'low' whenever either the handwriting was hard to read, the answer was ambiguous, or " +
+      "you're unsure the mark is right; 'medium' otherwise. Confidence reflects your own uncertainty " +
+      "honestly — it is what determines whether a teacher is required to double-check this specific " +
+      "answer, so do not default to 'high'.",
+    "6. Separately, write 3 to 5 short observations about this candidate's performance on THIS script — " +
       "specific strengths and/or weaknesses grounded in what the marking scheme actually asked for (e.g. " +
       "'Consistently applied the correct formula but made arithmetic slips in Q2 and Q4' or 'Strong on " +
       "definitions (Q1, Q3) but answers to application questions were too brief to earn full marks'), not " +
@@ -1340,6 +1558,11 @@ function buildGradingPrompt(
     "",
     "Marking scheme:",
     schemeText,
+    schemeConventionsSection,
+    subjectModuleSection,
+    examStandardSection,
+    "",
+    UNIVERSAL_MARKING_CONVENTIONS,
     hintSection,
     correctionsSection,
     "",
@@ -1356,7 +1579,8 @@ export const gradeMarkingScript = onCall<GradeMarkingScriptRequest>(
       throw new HttpsError("unauthenticated", "Sign in is required to grade a script.");
     }
 
-    const { pageImagesBase64, questions, preSegmentedAnswers, priorCorrections } = request.data ?? {};
+    const { pageImagesBase64, questions, preSegmentedAnswers, priorCorrections, subjectName, markConventions, examStandard } =
+      request.data ?? {};
     if (!Array.isArray(pageImagesBase64) || pageImagesBase64.length === 0) {
       throw new HttpsError("invalid-argument", "'pageImagesBase64' must be a non-empty array.");
     }
@@ -1369,6 +1593,7 @@ export const gradeMarkingScript = onCall<GradeMarkingScriptRequest>(
     // blow up prompt size/cost.
     const cappedPriorCorrections =
       Array.isArray(priorCorrections) ? priorCorrections.slice(0, 15) : undefined;
+    const cappedMarkConventions = Array.isArray(markConventions) ? markConventions.slice(0, 20) : undefined;
 
     const ai = new GoogleGenAI({ apiKey: geminiApiKey.value() });
 
@@ -1384,7 +1609,16 @@ export const gradeMarkingScript = onCall<GradeMarkingScriptRequest>(
           {
             role: "user",
             parts: [
-              { text: buildGradingPrompt(questions, preSegmentedAnswers, cappedPriorCorrections) },
+              {
+                text: buildGradingPrompt(
+                  questions,
+                  preSegmentedAnswers,
+                  cappedPriorCorrections,
+                  subjectName,
+                  cappedMarkConventions,
+                  examStandard
+                ),
+              },
               ...imageParts,
             ],
           },
@@ -1455,11 +1689,35 @@ interface DerivedSection {
   answerInstructions: string;
 }
 
+// Which real marking regime this assessment is: an ECZ-style national mock
+// (marked to the identical strictness as the real national exam) or an
+// ordinary school-based continuous-assessment test (Mid-Term/End-of-Term).
+// "UNSPECIFIED" is a real, honest answer — never guessed when the document
+// genuinely doesn't say one way or the other (see buildDeriveMarkingKeyPrompt).
+type ExamStandardHint = "NATIONAL_MOCK" | "SCHOOL_CA" | "UNSPECIFIED";
+
 interface DeriveMarkingKeyResponse {
   questions: DerivedQuestion[];
   sections: DerivedSection[];
   notes: string;
   detectedTitle: string;
+  // Rules Engine (2026-09-08, per explicit request — "the front page is
+  // the law"): explicit statements the front page/header itself makes
+  // about how marks are awarded (e.g. "one mark per bullet point", "no
+  // half marks", "accept alternative answers separated by /", "own words
+  // acceptable"). Only what the document ACTUALLY states — empty array
+  // when nothing explicit is printed, never invented or inferred from
+  // general exam convention (gradeMarkingScript already applies sensible
+  // universal defaults on top of whatever real conventions land here).
+  markConventions: string[];
+  examStandardHint: ExamStandardHint;
+  // The paper's own EXPLICITLY PRINTED grand total (e.g. "Total: 100
+  // marks"), never computed/summed by the AI itself — null when no such
+  // statement is genuinely visible. Lets the client warn a teacher when
+  // their own confirmed section totals (MarkingSchemePaperStructureScreen)
+  // disagree with what the paper itself claims, without ever silently
+  // overriding what the teacher enters.
+  detectedTotalMarks: number | null;
 }
 
 const deriveMarkingKeySchema = {
@@ -1521,10 +1779,64 @@ const deriveMarkingKeySchema = {
         "genuinely says at the top of the document. Empty string if no such title/heading is visible " +
         "anywhere on the document - never invent one.",
     },
+    markConventions: {
+      type: "array",
+      items: { type: "string" },
+      description:
+        "Explicit statements the document ITSELF makes about how marks are awarded (e.g. 'one mark per " +
+        "bullet point', 'no half marks awarded', 'alternative answers separated by / are all acceptable', " +
+        "'answers in the candidate's own words are acceptable'). Only what is genuinely printed/written - " +
+        "empty array if the document states no such conventions of its own.",
+    },
+    examStandardHint: {
+      type: "string",
+      enum: ["NATIONAL_MOCK", "SCHOOL_CA", "UNSPECIFIED"],
+      description:
+        "'NATIONAL_MOCK' when the document's own title/heading reads like a standardized mock, national, " +
+        "final, or trial examination (meant to be marked at the same strictness as the real national exam). " +
+        "'SCHOOL_CA' when it reads like an ordinary school-based test (a Mid-Term Test, End-of-Term Test, or " +
+        "similar continuous-assessment paper). 'UNSPECIFIED' when the document genuinely gives no clear " +
+        "signal either way - never guess.",
+    },
+    detectedTotalMarks: {
+      type: ["number", "null"],
+      description:
+        "The paper's own EXPLICITLY PRINTED grand total (e.g. 'Total: 100 marks'), never computed or " +
+        "summed by you from the individual questions - null if no such statement is genuinely visible " +
+        "anywhere on the document.",
+    },
   },
-  required: ["questions", "sections", "notes", "detectedTitle"],
+  required: [
+    "questions",
+    "sections",
+    "notes",
+    "detectedTitle",
+    "markConventions",
+    "examStandardHint",
+    "detectedTotalMarks",
+  ],
   additionalProperties: false,
 };
+
+// Rules Engine, Step 0 (2026-09-08, per explicit request: "the front page
+// is the law") — instructions shared by BOTH source-type branches below,
+// since a marking key/answer key and a bare question paper carry these
+// same three signals the same way: read what the document's own front
+// page/header genuinely states, never invent or infer beyond it.
+const RULE_EXTRACTION_INSTRUCTIONS = [
+  "Also extract three more things from the document's own front page/header, if present:",
+  "- markConventions: any EXPLICIT statement about how marks are awarded (e.g. 'one mark per bullet " +
+    "point', 'no half marks', 'alternative answers separated by / are all acceptable', 'own words " +
+    "acceptable', 'no partial marks for an incomplete short answer'). Only what is genuinely printed or " +
+    "written - empty array if the document states no such conventions of its own; never invent one just " +
+    "because it sounds like a plausible exam rule.",
+  "- examStandardHint: 'NATIONAL_MOCK' if the title/heading reads like a standardized mock, national, " +
+    "final, or trial examination; 'SCHOOL_CA' if it reads like an ordinary school-based test (Mid-Term " +
+    "Test, End-of-Term Test, continuous-assessment paper); 'UNSPECIFIED' if genuinely unclear either way " +
+    "- never guess.",
+  "- detectedTotalMarks: the paper's own EXPLICITLY PRINTED grand total (e.g. 'Total: 100 marks') - " +
+    "null if not genuinely stated anywhere; never compute this yourself by summing the questions.",
+].join("\n");
 
 function buildDeriveMarkingKeyPrompt(sourceType: MarkingKeySourceType, isImageSource: boolean): string {
   const sourceDescription = isImageSource
@@ -1567,6 +1879,8 @@ function buildDeriveMarkingKeyPrompt(sourceType: MarkingKeySourceType, isImageSo
       "9. Set detectedTitle to the document's own title/heading exactly as printed or written (e.g. 'Grade " +
         "12 Mathematics Final Examination'), or an empty string if none is genuinely visible - never invent " +
         "one.",
+      "",
+      RULE_EXTRACTION_INSTRUCTIONS,
       "",
       isImageSource ? "" : "--- MARKING KEY TEXT ---",
       isImageSource ? "" : "",
@@ -1612,6 +1926,8 @@ function buildDeriveMarkingKeyPrompt(sourceType: MarkingKeySourceType, isImageSo
     "8. Set detectedTitle to the document's own title/heading exactly as printed or written (e.g. 'Grade " +
       "12 Mathematics Final Examination'), or an empty string if none is genuinely visible - never invent " +
       "one.",
+    "",
+    RULE_EXTRACTION_INSTRUCTIONS,
   ].join("\n");
 }
 

@@ -29,6 +29,9 @@ class MarkingSchemeBuilderScreen extends StatefulWidget {
     this.initialQuestions,
     this.aiNotes,
     this.aiDetectedSections = const [],
+    this.aiMarkConventions = const [],
+    this.aiExamStandardHint,
+    this.aiDetectedTotalMarks,
     this.repository,
   });
 
@@ -52,6 +55,14 @@ class MarkingSchemeBuilderScreen extends StatefulWidget {
   /// MarkingSchemePaperStructureScreen on save as a hint — empty for
   /// manual entry or a scheme with no detected sections.
   final List<DerivedMarkingKeySection> aiDetectedSections;
+
+  /// Rules Engine (2026-09-08) — the AI's own detected front-page marking
+  /// conventions/exam-standard hint/grand total, carried through to
+  /// MarkingSchemePaperStructureScreen the same way [aiDetectedSections]
+  /// already is. Empty/null for manual entry.
+  final List<String> aiMarkConventions;
+  final MarkingExamStandard? aiExamStandardHint;
+  final double? aiDetectedTotalMarks;
 
   final MarkingSchemeRepository? repository;
 
@@ -168,6 +179,14 @@ class _MarkingSchemeBuilderScreenState extends State<MarkingSchemeBuilderScreen>
       ],
       createdAt: widget.existing?.createdAt ?? DateTime.now(),
       preserveScriptOrder: widget.existing?.preserveScriptOrder ?? false,
+      // Preserved when re-editing an already-saved scheme (see
+      // MarkingSchemePaperStructureScreen's own initState, which prefers
+      // these already-confirmed values over the widget.aiMarkConventions/
+      // aiExamStandardHint AI-draft params below) — otherwise a re-edit
+      // would silently reset a scheme's already-confirmed Rules Engine
+      // fields back to "unspecified"/empty every time it's opened.
+      examStandard: widget.existing?.examStandard ?? MarkingExamStandard.unspecified,
+      markConventions: widget.existing?.markConventions ?? const [],
     );
 
     if (!mounted) return;
@@ -176,7 +195,13 @@ class _MarkingSchemeBuilderScreenState extends State<MarkingSchemeBuilderScreen>
     // wrong total for a paper with an "answer N of M" structure.
     final confirmed = await Navigator.of(context).push<MarkingScheme>(
       MaterialPageRoute(
-        builder: (_) => MarkingSchemePaperStructureScreen(draft: draft, derivedSections: widget.aiDetectedSections),
+        builder: (_) => MarkingSchemePaperStructureScreen(
+          draft: draft,
+          derivedSections: widget.aiDetectedSections,
+          aiMarkConventions: widget.aiMarkConventions,
+          aiExamStandardHint: widget.aiExamStandardHint,
+          aiDetectedTotalMarks: widget.aiDetectedTotalMarks,
+        ),
       ),
     );
     if (confirmed == null) {

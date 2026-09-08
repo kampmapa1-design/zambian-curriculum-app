@@ -1,9 +1,11 @@
 import '../models/lesson_checkpoint.dart';
+import '../models/marking_scheme.dart';
 import '../models/report_class.dart';
 import '../models/scheme_of_work.dart';
 import '../models/syllabus_models.dart';
 import 'cdc_resources_service.dart';
 import 'lesson_checkpoint_repository.dart';
+import 'related_marking_key_finder.dart';
 import 'report_class_repository.dart';
 import 'scheme_of_work_calendar_pacing.dart';
 import 'template_repository.dart';
@@ -90,12 +92,19 @@ class ResumeLessonOutcome extends VoiceCommandOutcome {
 /// [VoiceCommandAction.openMarking] — purely a launcher: the marking
 /// assistant (`MarkingQueueScreen`) takes no subject/grade parameters to
 /// pre-scope to (it's a shared queue across every subject), so there's
-/// nothing to resolve beyond confirming the command was understood —
-/// [ParsedVoiceCommand.subjectName]/[gradeName] are shown back to the
-/// teacher as a reminder of which marking key to pick once inside, not
-/// used to filter anything.
+/// nothing to resolve beyond confirming the command was understood.
+/// [matchedScheme] (2026-09-08, Rules Engine follow-up — "improve voice
+/// command, don't scatter it") is real, best-effort help on top of that:
+/// when a spoken subject matches exactly one already-saved marking key
+/// (see [RelatedMarkingKeyFinder], the same lookup Lesson Plan/Scheme of
+/// Work already use to surface assessment content), its title AND real
+/// marking standard/conventions are shown back to the teacher so they
+/// know exactly which key to pick once inside Scan Marker — never
+/// auto-selected, since MarkingQueueScreen's own capture flow has no
+/// hook to pre-scope to one scheme yet.
 class MarkingOutcome extends VoiceCommandOutcome {
-  const MarkingOutcome({required super.parsed});
+  final MarkingScheme? matchedScheme;
+  const MarkingOutcome({required super.parsed, this.matchedScheme});
 }
 
 /// Turns a [ParsedVoiceCommand] (the Cloud Function's free-text
@@ -113,17 +122,20 @@ class VoiceCommandResolver {
     ReportClassRepository? classRepository,
     CdcResourcesService? cdcService,
     LessonCheckpointRepository? checkpointRepository,
+    RelatedMarkingKeyFinder? markingKeyFinder,
   })  : _repository = repository ?? TemplateRepository(),
         _topicSearchService = topicSearchService ?? TopicSearchService(),
         _classRepository = classRepository ?? ReportClassRepository(),
         _cdcService = cdcService ?? CdcResourcesService(),
-        _checkpointRepository = checkpointRepository ?? LessonCheckpointRepository();
+        _checkpointRepository = checkpointRepository ?? LessonCheckpointRepository(),
+        _markingKeyFinder = markingKeyFinder ?? RelatedMarkingKeyFinder();
 
   final TemplateRepository _repository;
   final TopicSearchService _topicSearchService;
   final ReportClassRepository _classRepository;
   final CdcResourcesService _cdcService;
   final LessonCheckpointRepository _checkpointRepository;
+  final RelatedMarkingKeyFinder _markingKeyFinder;
 
   Future<VoiceCommandOutcome> resolve(ParsedVoiceCommand parsed) async {
     switch (parsed.action) {
@@ -134,7 +146,7 @@ class VoiceCommandResolver {
       case VoiceCommandAction.checkCdcMaterials:
         return _resolveCdcCheck(parsed);
       case VoiceCommandAction.openMarking:
-        return MarkingOutcome(parsed: parsed);
+        return _resolveMarking(parsed);
       case VoiceCommandAction.generateLessonPlan:
       case VoiceCommandAction.generateSchemeOfWork:
       case VoiceCommandAction.generateRecordOfWork:
@@ -246,6 +258,23 @@ class VoiceCommandResolver {
   }
 
   String _normalizeClassName(String s) => s.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]'), '');
+
+  /// [MarkingOutcome.matchedScheme] — real, best-effort help (2026-09-08):
+  /// when the spoken subject matches exactly one already-saved marking key
+  /// (see [RelatedMarkingKeyFinder]), its title is surfaced back to the
+  /// teacher so they know exactly which one to pick once inside Scan
+  /// Marker. Two or more matches is genuinely ambiguous — showing the
+  /// wrong one as "the" match would be worse than showing none, so this
+  /// only ever surfaces a SINGLE confident match, never a guess among
+  /// several.
+  Future<MarkingOutcome> _resolveMarking(ParsedVoiceCommand parsed) async {
+    final subjectName = parsed.subjectName?.trim();
+    if (subjectName == null || subjectName.isEmpty) {
+      return MarkingOutcome(parsed: parsed);
+    }
+    final matches = await _markingKeyFinder.find(subjectName);
+    return MarkingOutcome(parsed: parsed, matchedScheme: matches.length == 1 ? matches.single : null);
+  }
 
   Future<CdcCheckOutcome> _resolveCdcCheck(ParsedVoiceCommand parsed) async {
     // Opportunistic — same throttled refresh every other CDC-catalog entry

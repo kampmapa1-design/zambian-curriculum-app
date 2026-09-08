@@ -503,7 +503,9 @@ class _VoiceCommandScreenState extends State<VoiceCommandScreen> {
             : o.template != null
                 ? '${o.template!.subject.name} — ${o.template!.grade.name}${o.entry != null ? ' — ${o.entry!.title}' : ''}'
                 : 'A paused lesson was found, but could not be reloaded',
-        MarkingOutcome o => [o.parsed.subjectName, o.parsed.gradeName].whereType<String>().join(' — '),
+        MarkingOutcome o => o.matchedScheme != null
+            ? 'Found your marking key: "${o.matchedScheme!.title}" — pick it when prompted inside Scan Marker.'
+            : [o.parsed.subjectName, o.parsed.gradeName].whereType<String>().join(' — '),
       };
 
   /// Builds the real, tappable buttons for whichever outcome this is —

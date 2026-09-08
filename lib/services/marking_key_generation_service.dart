@@ -59,11 +59,34 @@ class DerivedMarkingKey {
   /// intake form, not to auto-fill or override it.
   final String detectedTitle;
 
+  /// Rules Engine (2026-09-08) — the document's own explicitly stated
+  /// marking conventions (see deriveMarkingKeyFromQuestionPaper's own
+  /// `markConventions` field). Empty when nothing explicit was found —
+  /// never invented. A starting draft for MarkingSchemePaperStructureScreen,
+  /// always teacher-editable from there.
+  final List<String> markConventions;
+
+  /// A suggestion only (see [MarkingExamStandard]'s own doc comment) —
+  /// null when the document gave no clear signal either way. Never
+  /// auto-applied; the teacher confirms/overrides it on
+  /// MarkingSchemePaperStructureScreen.
+  final MarkingExamStandard? examStandardHint;
+
+  /// The document's own EXPLICITLY PRINTED grand total, when one is
+  /// genuinely stated (e.g. "Total: 100 marks") — null otherwise. Lets
+  /// MarkingSchemePaperStructureScreen warn when the teacher's own
+  /// confirmed section totals disagree with what the paper itself claims,
+  /// without ever silently overriding what the teacher enters.
+  final double? detectedTotalMarks;
+
   const DerivedMarkingKey({
     required this.questions,
     this.sections = const [],
     required this.notes,
     this.detectedTitle = '',
+    this.markConventions = const [],
+    this.examStandardHint,
+    this.detectedTotalMarks,
   });
 }
 
@@ -211,11 +234,28 @@ class MarkingKeyGenerationService {
 
     final notes = responseData['notes'];
     final detectedTitle = responseData['detectedTitle'];
+
+    final markConventionsRaw = responseData['markConventions'];
+    final markConventions = markConventionsRaw is List ? markConventionsRaw.whereType<String>().toList() : <String>[];
+
+    final examStandardHintRaw = responseData['examStandardHint'];
+    final examStandardHint = switch (examStandardHintRaw) {
+      'NATIONAL_MOCK' => MarkingExamStandard.nationalMock,
+      'SCHOOL_CA' => MarkingExamStandard.schoolCa,
+      _ => null,
+    };
+
+    final detectedTotalMarksRaw = responseData['detectedTotalMarks'];
+    final detectedTotalMarks = detectedTotalMarksRaw is num ? detectedTotalMarksRaw.toDouble() : null;
+
     return DerivedMarkingKey(
       questions: questions,
       sections: sections,
       notes: notes is String ? notes : '',
       detectedTitle: detectedTitle is String ? detectedTitle : '',
+      markConventions: markConventions,
+      examStandardHint: examStandardHint,
+      detectedTotalMarks: detectedTotalMarks,
     );
   }
 }

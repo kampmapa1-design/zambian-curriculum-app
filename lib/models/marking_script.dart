@@ -78,6 +78,47 @@ enum MarkingConfidence {
       };
 }
 
+/// Rules Engine confidence tagging (2026-09-08, per explicit request) —
+/// DISTINCT from [MarkingConfidence]: that's about handwriting/
+/// transcription legibility, this is about whether the mark itself came
+/// from an exact key match or required the AI's own subject-matter
+/// judgment. See [reviewSeverityFor], which combines both into one
+/// review-priority signal.
+enum MarkingBasis {
+  /// The mark came directly from a listed expected answer/alternative —
+  /// no judgment call.
+  exactMatch,
+
+  /// The mark was awarded for a point the AI judged relevant and accurate
+  /// but which was NOT explicitly listed in the expected answer — a real
+  /// judgment call, always worth a teacher's specific attention regardless
+  /// of how confident the AI reports being.
+  reasonableEquivalence,
+
+  /// No such judgment applies either way (no answer found, or a purely
+  /// objective item). The default for every answer graded before this
+  /// field existed.
+  notApplicable;
+
+  static MarkingBasis fromValue(String? value) => switch (value) {
+        'exact_match' => MarkingBasis.exactMatch,
+        'reasonable_equivalence' => MarkingBasis.reasonableEquivalence,
+        _ => MarkingBasis.notApplicable,
+      };
+
+  String get wireValue => switch (this) {
+        MarkingBasis.exactMatch => 'exact_match',
+        MarkingBasis.reasonableEquivalence => 'reasonable_equivalence',
+        MarkingBasis.notApplicable => 'not_applicable',
+      };
+
+  String get label => switch (this) {
+        MarkingBasis.exactMatch => 'Exact key match',
+        MarkingBasis.reasonableEquivalence => 'AI judgment call',
+        MarkingBasis.notApplicable => 'Not applicable',
+      };
+}
+
 /// One question's AI-graded result (Stage 4 output) — [marksAwarded] and
 /// [transcribedAnswer] start as whatever the AI returned, but both are
 /// mutable at review time (Stage 6): [teacherEdited] tracks whether a
@@ -89,6 +130,7 @@ class GradedAnswer {
   final String transcribedAnswer;
   final double marksAwarded;
   final MarkingConfidence confidence;
+  final MarkingBasis markingBasis;
   final bool teacherEdited;
 
   const GradedAnswer({
@@ -97,6 +139,7 @@ class GradedAnswer {
     required this.transcribedAnswer,
     required this.marksAwarded,
     required this.confidence,
+    this.markingBasis = MarkingBasis.notApplicable,
     this.teacherEdited = false,
   });
 
@@ -106,6 +149,7 @@ class GradedAnswer {
         transcribedAnswer: transcribedAnswer ?? this.transcribedAnswer,
         marksAwarded: marksAwarded ?? this.marksAwarded,
         confidence: confidence,
+        markingBasis: markingBasis,
         teacherEdited: teacherEdited ?? this.teacherEdited,
       );
 
@@ -115,6 +159,7 @@ class GradedAnswer {
         transcribedAnswer: json['transcribedAnswer'] as String,
         marksAwarded: (json['marksAwarded'] as num).toDouble(),
         confidence: MarkingConfidence.fromValue(json['confidence'] as String? ?? 'low'),
+        markingBasis: MarkingBasis.fromValue(json['markingBasis'] as String?),
         teacherEdited: json['teacherEdited'] as bool? ?? false,
       );
 
@@ -124,8 +169,27 @@ class GradedAnswer {
         'transcribedAnswer': transcribedAnswer,
         'marksAwarded': marksAwarded,
         'confidence': confidence.name,
+        'markingBasis': markingBasis.wireValue,
         'teacherEdited': teacherEdited,
       };
+}
+
+/// How urgently one [GradedAnswer] needs a teacher's attention on the
+/// Review Queue — Rules Engine (2026-09-08): combines [MarkingConfidence]
+/// (transcription/legibility uncertainty) with [MarkingBasis] (whether the
+/// mark required subject-matter judgment), per the user's own design doc
+/// Section 5. Red only ever comes from a real internal-consistency problem
+/// computed elsewhere (e.g. a script's marks not summing to the scheme's
+/// own total) — this function alone only ever returns green/amber, since
+/// a single answer's own confidence/basis can't by itself indicate that
+/// kind of structural failure.
+enum ReviewSeverity { green, amber }
+
+ReviewSeverity reviewSeverityFor(GradedAnswer answer) {
+  if (answer.confidence == MarkingConfidence.low) return ReviewSeverity.amber;
+  if (answer.confidence == MarkingConfidence.medium) return ReviewSeverity.amber;
+  if (answer.markingBasis == MarkingBasis.reasonableEquivalence) return ReviewSeverity.amber;
+  return ReviewSeverity.green;
 }
 
 /// One question-number-tagged answer segment, carried over from Test

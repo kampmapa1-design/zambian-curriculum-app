@@ -32,10 +32,16 @@ class CdcResourcesUnavailable implements Exception {
 /// OS-level background job.
 class CdcResourcesService {
   CdcResourcesService({FirebaseFunctions? functions, http.Client? httpClient})
-      : _functions = functions ?? FirebaseFunctions.instance,
+      : _providedFunctions = functions,
         _httpClient = httpClient ?? http.Client();
 
-  final FirebaseFunctions _functions;
+  // Lazy (2026-09-08, same fix as TopicSearchService's own — see that
+  // class's doc comment): FirebaseFunctions.instance needs
+  // Firebase.initializeApp() to have already run, which loadCached/
+  // unseenCount/markSeen (pure on-device reads) have no need for at all.
+  // Only refreshIfDue's real network call actually needs it.
+  final FirebaseFunctions? _providedFunctions;
+  FirebaseFunctions get _functions => _providedFunctions ?? FirebaseFunctions.instance;
   final http.Client _httpClient;
 
   static const _cacheFileName = 'cdc_resources_cache.json';
