@@ -1,5 +1,5 @@
 {
-  "_source": "A real, complete 'Hospitality Management Scheme of Work, Form 2, Term 1-3' (a real Zambian secondary school; the source's own teacher name and school name are not reproduced here per this app's standing sourcing policy) was shared with this project via Drive, citing 'Hospitality Management Syllabus 2024' throughout. Genuine gap fill -- this app previously had no Hospitality Management Form 2 content at all. All three terms are this document's own real content, in full, in its own real week order (weeks 1-6, 8-12 each term; week 7 mid-term and week 13 end-of-term test excluded, consistent with this app's standing rule). A real numbering irregularity is preserved as-is, not renumbered: Term 1's own '2.1 Advanced Housekeeping' and '2.1 Cosmetology Advanced' are two distinct real topics that the source itself numbers identically -- kept as two separate topic entries here rather than merged or renumbered. Its own Content/Concept, Learning Activities, Strategies/Methods and Materials/Resources columns are omitted, consistent with the approach used for every other bundled subject in this app.",
+  "_source": "Fully rebuilt (2026-09-08) against the real, official Curriculum Development Centre materials for Hospitality Management Form 2 -- replacing this file's own earlier same-day build, which had been sourced from a real school's own scheme of work whose topic numbering ('2.1' through '2.13') did not track the official curriculum at all (confirmed by direct comparison, not assumed). Two real, official CDC Teaching Modules were downloaded and read in full: 'Hospitality Management Form 2 Term 1 and 2' (CDC Digital Library, on the library since 03/04/2026, 191 pages) for Terms 1-2, and 'Hospitality Management Teaching Module Form 2 Term 3' (added 06/09/2026, 60 pages) for Term 3 -- both are genuine CDC publications, no individual/school name to strip. The real official structure for the whole year is exactly 6 topics: Term 1 (2.1 Introduction to Hospitality, 2.2 Front Office, 2.3 Housekeeping), Term 2 (2.4 Food and Beverage), Term 3 (2.5 Cosmetology, 2.6 Entrepreneurship) -- confirmed as a genuine mirror of Form 1's own real structure (also 6 topics: Introduction, Front Office, Food and Beverage, Housekeeping, Cosmetology, Entrepreneurship), which strengthens confidence this is the real intended curriculum shape rather than a coincidence.\n\nEvery topic/sub-topic name and Specific Competence below is the official module's own real wording, cross-checked against the real 'Hospitality Management Syllabus Form 1-4' (CDC Digital Library, 06/08/2026) where that document's own topic/sub-topic table was legible. A real irregularity is disclosed, not silently fixed: sub-topic 2.3.2 (Cleaning Areas and Processes) is the only one of the 14 real sub-topics in this file whose own source document never states an explicit 'Specific Competence:' line -- its own competency text here is a direct paraphrase of that sub-topic's own stated learning intent ('...learners will identify different cleaning areas and apply correct cleaning processes...'), not invented content. A second real irregularity: the Term 3 module's own sub-topic 2.5.1 misspells 'Competence' as 'Compentence' in its own text -- reproduced correctly here, not as evidence of anything changed about the content itself.\n\nIts own Content/Concept, Learning Activities, Strategies/Methods and Materials/Resources columns are condensed into each sub-topic's own real introduction text rather than reproduced verbatim in full, consistent with the approach used for every other bundled subject in this app.",
   "curriculum": {
     "code": "CBC_2023",
     "name": "2023 Competency-Based Curriculum",
@@ -22,175 +22,92 @@
       "sequence_number": 1,
       "topics": [
         {
-          "name": "2.1 Advanced Housekeeping",
+          "name": "2.1 Introduction to Hospitality",
           "sequence_number": 1,
           "sub_topics": [
             {
-              "name": "2.1.1 Advanced Laundry Processes",
+              "name": "2.1.1 Economic Effect in Hospitality Industry",
               "sequence_number": 1,
               "competencies": [
                 {
                   "sequence_number": 1,
-                  "description": "Practice advanced laundry techniques",
+                  "description": "Evaluate the effects of the hospitality industry on the economy",
                   "category": "Specific Competence"
                 }
               ],
-              "description": "Specialty fabrics, commercial laundry operations, stain removal, fabric treatment, linen inventory management.",
-              "week_number": 1
-            },
-            {
-              "name": "2.1.2 Advanced Room Management",
-              "sequence_number": 2,
-              "competencies": [
-                {
-                  "sequence_number": 1,
-                  "description": "Manage housekeeping operations professionally",
-                  "category": "Specific Competence"
-                }
-              ],
-              "description": "Deep cleaning, room inspection standards, preventive maintenance, staff supervision, quality control.",
-              "week_number": 2
+              "description": "The hospitality industry is a key driver of economic growth -- hotels, restaurants, travel services and recreational facilities generate income, create jobs and support entrepreneurship. It stimulates infrastructure development (roads, airports, amenities) and has a multiplier effect on agriculture, transport and retail."
             }
           ]
         },
         {
-          "name": "2.1 Cosmetology Advanced",
+          "name": "2.2 Front Office",
           "sequence_number": 2,
           "sub_topics": [
             {
-              "name": "2.1.3 Advanced Hair Care",
+              "name": "2.2.1 Front Office Operations",
               "sequence_number": 1,
               "competencies": [
                 {
                   "sequence_number": 1,
-                  "description": "Care of hair and scalp at professional level",
+                  "description": "Apply skills to deliver exceptional front office services",
                   "category": "Specific Competence"
                 }
               ],
-              "description": "Professional hair/scalp diagnosis, chemical treatment damage assessment, strengthening and conditioning systems.",
-              "week_number": 3
+              "description": "Front office as the 'face' of a hospitality organisation -- pre-arrival, arrival, occupancy and departure stages; balancing technical precision (reservations, registration, room assignment) with professional guest service."
             }
           ]
         },
         {
-          "name": "2.2 Cosmetology",
+          "name": "2.3 Housekeeping",
           "sequence_number": 3,
           "sub_topics": [
             {
-              "name": "2.2.1 Advanced Hair Coloring",
+              "name": "2.3.1 Record Keeping",
               "sequence_number": 1,
               "competencies": [
                 {
                   "sequence_number": 1,
-                  "description": "Apply professional hair colouring techniques",
+                  "description": "Make use of records in the housekeeping department",
                   "category": "Specific Competence"
                 }
               ],
-              "description": "Colour theory, corrective colour techniques, balayage/highlights/lowlights, colour maintenance, chemical safety.",
-              "week_number": 4
+              "description": "Records help a housekeeping department work in an organised, accountable way -- attendance book, handing-over report book, housekeepers' room report, lost-and-found book, room checklist, theft records."
             },
             {
-              "name": "2.2.2 Face Shape and Analysis",
+              "name": "2.3.2 Cleaning Areas and Processes",
               "sequence_number": 2,
               "competencies": [
                 {
                   "sequence_number": 1,
-                  "description": "Map and analyse faces professionally",
+                  "description": "Apply correct cleaning processes to different areas in a hospitality facility",
                   "category": "Specific Competence"
                 }
               ],
-              "description": "Professional face shape classification, facial feature analysis, contouring and highlighting.",
-              "week_number": 5
+              "description": "Different areas of a hospitality facility (guest rooms, corridors, public areas, conference rooms) each require the correct cleaning process -- sanitising, sterilising, disinfecting, decontaminating, polishing, mopping, vacuuming."
             },
             {
-              "name": "2.2.3 Skincare and Treatments",
+              "name": "2.3.3 Laundry in Hospitality Facility",
               "sequence_number": 3,
               "competencies": [
                 {
                   "sequence_number": 1,
-                  "description": "Provide customised skincare treatments",
+                  "description": "Perform Laundry procedures in hospitality facility",
                   "category": "Specific Competence"
                 }
               ],
-              "description": "Professional skin analysis, chemical peels, acne management, anti-ageing and condition-specific treatments.",
-              "week_number": 6
+              "description": "Real laundry procedures for guest linen (bed sheets, pillow cases, towels, tablecloths, staff uniforms) -- collecting, sorting, pre-treatment, washing, drying, ironing, storage, distribution."
             },
             {
-              "name": "2.2.4 Professional Makeup Artistry",
+              "name": "2.3.4 Maintenance",
               "sequence_number": 4,
               "competencies": [
                 {
                   "sequence_number": 1,
-                  "description": "Apply professional makeup techniques",
+                  "description": "Conduct routine housekeeping maintenance",
                   "category": "Specific Competence"
                 }
               ],
-              "description": "Foundation selection, eye makeup artistry, contouring/highlighting, special-occasion and corrective makeup.",
-              "week_number": 8
-            }
-          ]
-        },
-        {
-          "name": "2.3 Food and Beverage",
-          "sequence_number": 4,
-          "sub_topics": [
-            {
-              "name": "2.3.1 Advanced Food Preparation",
-              "sequence_number": 1,
-              "competencies": [
-                {
-                  "sequence_number": 1,
-                  "description": "Demonstrate advanced culinary skills",
-                  "category": "Specific Competence"
-                }
-              ],
-              "description": "Advanced knife techniques, sauce and stock preparation, garde manger, plating and presentation.",
-              "week_number": 9
-            },
-            {
-              "name": "2.3.2 Menu Design and Planning",
-              "sequence_number": 2,
-              "competencies": [
-                {
-                  "sequence_number": 1,
-                  "description": "Create professional menus",
-                  "category": "Specific Competence"
-                }
-              ],
-              "description": "Menu types/styles, planning principles, cost analysis and pricing, menu descriptions and design.",
-              "week_number": 10
-            },
-            {
-              "name": "2.3.3 Nutrition and Special Diets",
-              "sequence_number": 3,
-              "competencies": [
-                {
-                  "sequence_number": 1,
-                  "description": "Apply nutrition in specialised meal planning",
-                  "category": "Specific Competence"
-                }
-              ],
-              "description": "Advanced nutritional analysis, therapeutic diets, allergen management, cultural dietary considerations.",
-              "week_number": 11
-            }
-          ]
-        },
-        {
-          "name": "2.4 Front Office Advanced",
-          "sequence_number": 5,
-          "sub_topics": [
-            {
-              "name": "2.4.1 Advanced Front Office Operations",
-              "sequence_number": 1,
-              "competencies": [
-                {
-                  "sequence_number": 1,
-                  "description": "Deliver exceptional guest services",
-                  "category": "Specific Competence"
-                }
-              ],
-              "description": "Guest relationship management, service recovery, premium guest services, technology systems, revenue management basics.",
-              "week_number": 12
+              "description": "Routine and preventive housekeeping maintenance -- checking lights, restocking mini-bars, cleaning guest rooms, inspecting laundry facilities -- to keep a facility safe and in good condition."
             }
           ]
         }
@@ -201,175 +118,80 @@
       "sequence_number": 2,
       "topics": [
         {
-          "name": "2.5 Hospitality Economics",
+          "name": "2.4 Food and Beverage",
           "sequence_number": 1,
           "sub_topics": [
             {
-              "name": "2.5.1 Economic Effects of Hospitality",
+              "name": "2.4.1 Menu Planning",
               "sequence_number": 1,
               "competencies": [
                 {
                   "sequence_number": 1,
-                  "description": "Evaluate economic impact of hospitality",
+                  "description": "Create different menus",
                   "category": "Specific Competence"
                 }
               ],
-              "description": "Local economic development, employment creation, foreign exchange earning, infrastructure development, tourism growth.",
-              "week_number": 1
+              "description": "Menu planning as the structured process of deciding what food and beverages to offer, how to present them, and at what price -- a menu as a communication tool, marketing instrument and operational guide."
             },
             {
-              "name": "2.5.2 Industry Analysis",
+              "name": "2.4.2 Catering",
               "sequence_number": 2,
               "competencies": [
                 {
                   "sequence_number": 1,
-                  "description": "Analyse hospitality industry dynamics",
+                  "description": "Cater for different functions",
                   "category": "Specific Competence"
                 }
               ],
-              "description": "Market trends and forecasting, competitive analysis, sector performance, supply and demand, economic indicators.",
-              "week_number": 2
-            }
-          ]
-        },
-        {
-          "name": "2.6 Customer Service",
-          "sequence_number": 2,
-          "sub_topics": [
-            {
-              "name": "2.6.1 Guest Interaction Excellence",
-              "sequence_number": 1,
-              "competencies": [
-                {
-                  "sequence_number": 1,
-                  "description": "Deliver exceptional customer service",
-                  "category": "Specific Competence"
-                }
-              ],
-              "description": "Guest expectation management, cultural sensitivity, communication, problem resolution, loyalty building.",
-              "week_number": 3
+              "description": "Catering for different functions (social, business, national) -- a growing Zambian industry supporting tourism, cultural celebrations and entrepreneurship, requiring creativity, efficiency and teamwork."
             },
             {
-              "name": "2.6.2 Customer Experience Management",
-              "sequence_number": 2,
-              "competencies": [
-                {
-                  "sequence_number": 1,
-                  "description": "Create memorable guest experiences",
-                  "category": "Specific Competence"
-                }
-              ],
-              "description": "Experience design, personalisation, service moments of truth, guest feedback, loyalty programmes.",
-              "week_number": 4
-            }
-          ]
-        },
-        {
-          "name": "2.7 Professional Development",
-          "sequence_number": 3,
-          "sub_topics": [
-            {
-              "name": "2.7.1 Communication Skills",
-              "sequence_number": 1,
-              "competencies": [
-                {
-                  "sequence_number": 1,
-                  "description": "Apply professional communication",
-                  "category": "Specific Competence"
-                }
-              ],
-              "description": "Written, verbal, non-verbal, technology-based, and cross-cultural communication.",
-              "week_number": 5
-            },
-            {
-              "name": "2.7.2 Conflict Resolution",
-              "sequence_number": 2,
-              "competencies": [
-                {
-                  "sequence_number": 1,
-                  "description": "Resolve conflicts professionally",
-                  "category": "Specific Competence"
-                }
-              ],
-              "description": "Conflict identification, resolution techniques, mediation skills, stakeholder management, negotiation.",
-              "week_number": 6
-            }
-          ]
-        },
-        {
-          "name": "2.8 Security and Safety",
-          "sequence_number": 4,
-          "sub_topics": [
-            {
-              "name": "2.8.1 Workplace Safety Protocols",
-              "sequence_number": 1,
-              "competencies": [
-                {
-                  "sequence_number": 1,
-                  "description": "Implement safety procedures",
-                  "category": "Specific Competence"
-                }
-              ],
-              "description": "Safety standards and regulations, risk assessment, incident reporting, emergency procedures, staff training.",
-              "week_number": 8
-            },
-            {
-              "name": "2.8.2 Security Operations",
-              "sequence_number": 2,
-              "competencies": [
-                {
-                  "sequence_number": 1,
-                  "description": "Maintain security in facilities",
-                  "category": "Specific Competence"
-                }
-              ],
-              "description": "Access control, guest safety, asset protection, surveillance systems, crisis management.",
-              "week_number": 9
-            }
-          ]
-        },
-        {
-          "name": "2.9 Entrepreneurship II",
-          "sequence_number": 5,
-          "sub_topics": [
-            {
-              "name": "2.9.1 Business Planning",
-              "sequence_number": 1,
-              "competencies": [
-                {
-                  "sequence_number": 1,
-                  "description": "Develop comprehensive business plans",
-                  "category": "Specific Competence"
-                }
-              ],
-              "description": "Business concept development, market analysis, financial projections, marketing strategy, operations planning.",
-              "week_number": 10
-            },
-            {
-              "name": "2.9.2 Startup Operations",
-              "sequence_number": 2,
-              "competencies": [
-                {
-                  "sequence_number": 1,
-                  "description": "Launch hospitality business",
-                  "category": "Specific Competence"
-                }
-              ],
-              "description": "Legal structure selection, registration and licensing, initial setup, staffing and training, opening operations.",
-              "week_number": 11
-            },
-            {
-              "name": "2.9.3 Business Growth Strategies",
+              "name": "2.4.3 Basic Sequence of Service",
               "sequence_number": 3,
               "competencies": [
                 {
                   "sequence_number": 1,
-                  "description": "Plan business growth and expansion",
+                  "description": "Carry out the basic sequence in Food and Beverage services",
                   "category": "Specific Competence"
                 }
               ],
-              "description": "Growth opportunities, market expansion, diversification, partnership development, sustainability planning.",
-              "week_number": 12
+              "description": "The professional order in which food and beverages are served -- welcoming guests, taking orders, serving, clearing, presenting the bill -- ensuring consistency and guest satisfaction."
+            },
+            {
+              "name": "2.4.4 Serving of Food and Beverages",
+              "sequence_number": 4,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Show skillful serving of food and beverages",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "Practical serving technique across formal banquets, casual dining and cocktail receptions, including clearing and resetting a station."
+            },
+            {
+              "name": "2.4.5 Food Costing",
+              "sequence_number": 5,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Cost food and Beverage",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "Food costing as turning a recipe into a financial plan -- covering ingredient and overhead costs while leaving a margin for profit, essential for both business and household budgeting."
+            },
+            {
+              "name": "2.4.6 Food Commodities",
+              "sequence_number": 6,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Employ various food commodities in cookery",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "Classifying food commodities (animal foods, legumes and pulses, vegetables and fruits, fats and oils) and researching market trends to plan healthy, cost-effective menus."
             }
           ]
         }
@@ -380,169 +202,50 @@
       "sequence_number": 3,
       "topics": [
         {
-          "name": "2.10 Advanced Cosmetology",
+          "name": "2.5 Cosmetology",
           "sequence_number": 1,
           "sub_topics": [
             {
-              "name": "2.10.1 Nail Care Specialist",
+              "name": "2.5.1 Hair care",
               "sequence_number": 1,
               "competencies": [
                 {
                   "sequence_number": 1,
-                  "description": "Provide professional nail care services",
+                  "description": "Care of hair and scalp",
                   "category": "Specific Competence"
                 }
               ],
-              "description": "Nail anatomy and health, manicure/pedicure techniques, nail disorders, nail art, salon protocols.",
-              "week_number": 1
+              "description": "Practices and techniques to maintain the health, cleanliness, strength and appearance of hair and scalp -- understanding hair structure/properties, identifying common problems, and selecting suitable products and treatments."
             },
             {
-              "name": "2.10.2 Barbering Services",
+              "name": "2.5.2 Hair Dye and Colouring",
               "sequence_number": 2,
               "competencies": [
                 {
                   "sequence_number": 1,
-                  "description": "Provide professional barbering services",
+                  "description": "Apply hair dye and colouring techniques",
                   "category": "Specific Competence"
                 }
               ],
-              "description": "Hair cutting techniques, shaving and grooming, beard care, fade techniques, client consultation.",
-              "week_number": 2
-            },
-            {
-              "name": "2.10.3 Spa Services",
-              "sequence_number": 3,
-              "competencies": [
-                {
-                  "sequence_number": 1,
-                  "description": "Provide comprehensive spa services",
-                  "category": "Specific Competence"
-                }
-              ],
-              "description": "Massage therapy basics, body treatments, spa protocols, client comfort and safety.",
-              "week_number": 3
+              "description": "Changing hair colour using chemical or natural dyes -- differentiating hair colour and dye, applying hair colour, and streaking hair."
             }
           ]
         },
         {
-          "name": "2.11 Advanced Food Service",
+          "name": "2.6 Entrepreneurship",
           "sequence_number": 2,
           "sub_topics": [
             {
-              "name": "2.11.1 Catering Operations",
+              "name": "2.6.1 Types of Businesses",
               "sequence_number": 1,
               "competencies": [
                 {
                   "sequence_number": 1,
-                  "description": "Manage catering events",
+                  "description": "Set up a business venture",
                   "category": "Specific Competence"
                 }
               ],
-              "description": "Event planning, menu selection, logistics management, service coordination, quality control.",
-              "week_number": 4
-            },
-            {
-              "name": "2.11.2 Beverage Service",
-              "sequence_number": 2,
-              "competencies": [
-                {
-                  "sequence_number": 1,
-                  "description": "Provide professional beverage service",
-                  "category": "Specific Competence"
-                }
-              ],
-              "description": "Wine service and knowledge, cocktail preparation, soft beverage service, pairing recommendations, barista skills.",
-              "week_number": 5
-            }
-          ]
-        },
-        {
-          "name": "2.12 Advanced Management",
-          "sequence_number": 3,
-          "sub_topics": [
-            {
-              "name": "2.12.1 Hospitality Management Principles",
-              "sequence_number": 1,
-              "competencies": [
-                {
-                  "sequence_number": 1,
-                  "description": "Apply management principles",
-                  "category": "Specific Competence"
-                }
-              ],
-              "description": "Planning and organisation, staff management, operations management, financial management, strategic planning.",
-              "week_number": 6
-            },
-            {
-              "name": "2.12.2 Leadership and Motivation",
-              "sequence_number": 2,
-              "competencies": [
-                {
-                  "sequence_number": 1,
-                  "description": "Demonstrate leadership skills",
-                  "category": "Specific Competence"
-                }
-              ],
-              "description": "Leadership styles, team motivation, change management, decision making, performance management.",
-              "week_number": 8
-            },
-            {
-              "name": "2.12.3 Quality and Standards",
-              "sequence_number": 3,
-              "competencies": [
-                {
-                  "sequence_number": 1,
-                  "description": "Maintain quality standards",
-                  "category": "Specific Competence"
-                }
-              ],
-              "description": "Quality assurance systems, standard operating procedures, guest satisfaction metrics, continuous improvement.",
-              "week_number": 9
-            }
-          ]
-        },
-        {
-          "name": "2.13 Hospitality Industry",
-          "sequence_number": 4,
-          "sub_topics": [
-            {
-              "name": "2.13.1 Industry Structure",
-              "sequence_number": 1,
-              "competencies": [
-                {
-                  "sequence_number": 1,
-                  "description": "Understand hospitality industry",
-                  "category": "Specific Competence"
-                }
-              ],
-              "description": "Industry organisation, classification of establishments, stakeholders, supply chain, inter-departmental relationships.",
-              "week_number": 10
-            },
-            {
-              "name": "2.13.2 Career Development",
-              "sequence_number": 2,
-              "competencies": [
-                {
-                  "sequence_number": 1,
-                  "description": "Plan career development",
-                  "category": "Specific Competence"
-                }
-              ],
-              "description": "Career pathways, professional certifications, skill development, networking, industry opportunities.",
-              "week_number": 11
-            },
-            {
-              "name": "2.13.3 Industry Trends",
-              "sequence_number": 3,
-              "competencies": [
-                {
-                  "sequence_number": 1,
-                  "description": "Analyse current industry trends",
-                  "category": "Specific Competence"
-                }
-              ],
-              "description": "Technology trends, sustainability initiatives, guest preferences, marketing trends, future outlook.",
-              "week_number": 12
+              "description": "Types of businesses in the hospitality industry (sole trade, partnership, limited business) -- their characteristics, advantages and challenges, to identify a suitable type when planning a hospitality business venture."
             }
           ]
         }

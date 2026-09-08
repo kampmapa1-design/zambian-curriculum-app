@@ -1,5 +1,5 @@
 {
-  "_source": "Extracted from a real Google Drive document, 'Introduction to Hospitality, hospitality and Management Form 2 Lesson Plans.pdf', headed on every one of its 4 lessons with a real Zambian secondary school's name, a real individual teacher's name, and a real Teaching Service number -- none of which is reproduced anywhere below, per this app's standing sourcing policy. 4 real, complete lesson plans, citing the real '2024 Hospitality Management Syllabus, Ordinary Secondary Education Form 1-4' (pg. 30). REAL, DISCLOSED RENUMBERING, not silently hidden: this source document's own topic/sub-topic numbering ('2.1 Introduction to Hospitality' / '2.1.1 Economic Effect in Hospitality Industry') does not match ANY topic in this app's own hospitality_management_form2.json (which was built from a different real school's scheme of work, and numbers this exact same real content -- local economic development, job creation and foreign exchange, infrastructure/tourism growth, an educational tour reinforcing all of it -- as '2.5 Hospitality Economics' / '2.5.1 Economic Effects of Hospitality'). Matched here by real content, not by the source's own topic number, using this app's own already-bundled topic/sub-topic wording so these lessons correctly attach to the real sub-topic already in the syllabus -- the same content-over-numbering precedent already established for this app's commerce_grade11.json.",
+  "_source": "Extracted from a real Google Drive document, 'Introduction to Hospitality, hospitality and Management Form 2 Lesson Plans.pdf', headed on every one of its 4 lessons with a real Zambian secondary school's name, a real individual teacher's name, and a real Teaching Service number -- none of which is reproduced anywhere below, per this app's standing sourcing policy. 4 real, complete lesson plans, citing the real '2024 Hospitality Management Syllabus, Ordinary Secondary Education Form 1-4' (pg. 30).\n\nRE-MATCHED (2026-09-08, same day as originally built): this source document's own topic/sub-topic numbering ('2.1 Introduction to Hospitality' / '2.1.1 Economic Effect in Hospitality Industry') was matched, when this file was first built, against this app's own (differently-sourced, and as it turned out, non-official) syllabus numbering of the same day -- landing on '2.5 Hospitality Economics' / '2.5.1 Economic Effects of Hospitality'. Once hospitality_management_form2.json (the syllabus file) was rebuilt against the real official CDC curriculum the same day, it turned out this lesson-plan document's own numbering ('2.1'/'2.1.1') WAS the real official numbering all along -- so these 4 lessons are re-pointed here to that real official topic/sub-topic name, matching it exactly rather than a since-corrected placeholder.",
   "curriculum_code": "CBC_2023",
   "subject_code": "HM",
   "grade_levels": [
@@ -7,8 +7,8 @@
   ],
   "lesson_plans": [
     {
-      "topic_name": "2.5 Hospitality Economics",
-      "subtopic_name": "2.5.1 Economic Effects of Hospitality",
+      "topic_name": "2.1 Introduction to Hospitality",
+      "subtopic_name": "2.1.1 Economic Effect in Hospitality Industry",
       "sequence_label": "Lesson 1 of 4",
       "majorLearningPoint": "Local economic development (small and medium enterprises)",
       "lessonGoal": "By the end of the lesson, learners should be able to explain how the hospitality industry stimulates local economic development, with a focus on Small and Medium Enterprises (SMEs).",
@@ -52,8 +52,8 @@
       "grade_level": 2
     },
     {
-      "topic_name": "2.5 Hospitality Economics",
-      "subtopic_name": "2.5.1 Economic Effects of Hospitality",
+      "topic_name": "2.1 Introduction to Hospitality",
+      "subtopic_name": "2.1.1 Economic Effect in Hospitality Industry",
       "sequence_label": "Lesson 2 of 4",
       "majorLearningPoint": "Job creation (entrepreneurship, chef, receptionist, housekeeper) and foreign exchange earnings",
       "lessonGoal": "By the end of the lesson, learners should be able to analyse how the hospitality industry creates diverse employment opportunities and generates foreign exchange for Zambia.",
@@ -97,8 +97,8 @@
       "grade_level": 2
     },
     {
-      "topic_name": "2.5 Hospitality Economics",
-      "subtopic_name": "2.5.1 Economic Effects of Hospitality",
+      "topic_name": "2.1 Introduction to Hospitality",
+      "subtopic_name": "2.1.1 Economic Effect in Hospitality Industry",
       "sequence_label": "Lesson 3 of 4",
       "majorLearningPoint": "Infrastructure development and tourism growth",
       "lessonGoal": "By the end of the lesson, learners should be able to explain the cyclical relationship between tourism growth, infrastructure development, and further economic expansion.",
@@ -142,8 +142,8 @@
       "grade_level": 2
     },
     {
-      "topic_name": "2.5 Hospitality Economics",
-      "subtopic_name": "2.5.1 Economic Effects of Hospitality",
+      "topic_name": "2.1 Introduction to Hospitality",
+      "subtopic_name": "2.1.1 Economic Effect in Hospitality Industry",
       "sequence_label": "Lesson 4 of 4",
       "majorLearningPoint": "Undertaking an educational tour to appreciate the economic benefit of the hospitality industry",
       "lessonGoal": "By the end of the lesson, learners should be able to observe and document real-world examples of the hospitality industry's economic impact within their local community.",
