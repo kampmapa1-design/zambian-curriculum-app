@@ -462,6 +462,15 @@
     {
       "curriculum_code": "CBC_2023",
       "curriculum_name": "2023 Competency-Based Curriculum",
+      "subject_code": "PE",
+      "subject_name": "Physical Education",
+      "grade_level": 2,
+      "grade_name": "Form 2",
+      "file": "physical_education_form2.json"
+    },
+    {
+      "curriculum_code": "CBC_2023",
+      "curriculum_name": "2023 Competency-Based Curriculum",
       "subject_code": "LIT_ENG",
       "subject_name": "Literature in English",
       "grade_level": 1,

@@ -1,0 +1,275 @@
+{
+  "_source": "A real 'Physical Education Scheme of Work, Term 1' (a real Zambian secondary school's Physical Education Department; the source's own teacher name and school name are not reproduced here per this app's standing sourcing policy) and the real, official Curriculum Development Centre 'Physical Education and Sport Teaching Module, Form 2 Term 3' (a genuine CDC publication, Lusaka 2026 -- no individual/school name to strip) were both shared with this project via Drive. This is a genuine gap fill: this app previously had no Physical Education Form 2 (CBC) content at all, only Form 1 and the OBC Grade 10-12 files. Cites the real official '2024 Physical Education and Sport Syllabus, Ordinary Secondary Education Form 1-4' with real page citations (Term 1: pp.26-29).\n\nTERM 1 real week placement is from the school's own scheme (weeks 1-6, 8-11; week 7 mid-term and weeks 12-13 end-of-term exams excluded, consistent with this app's standing rule).\n\nTERM 3 is built from the official CDC Teaching Module's own 3 real topics (2.9, 2.10, 2.11, in its own table-of-contents order) rather than a school-specific scheme, since the module is the authoritative source for what's actually taught this term and covers strictly more real content than any one school's own scheme -- no real per-topic week data was available from this specific source, so none is invented. A separate real school's own Term 3 scheme was also checked: its own real week 1-2 cover exactly 2.11 Entrepreneurship in Sports (matching this file's own content), and its weeks 3-13 are confirmed pure revision/mock-exam/practical-assessment weeks naming no further new topic -- consistent with (not contradicting) building this term from the fuller official module instead.\n\nTERM 2 is deliberately not included -- no real source for it was available at the time this file was built.\n\nIts own Content/Concept, Learning Activities, Strategies/Methods and Materials/Resources columns are omitted, consistent with the approach used for every other bundled subject in this app.",
+  "curriculum": {
+    "code": "CBC_2023",
+    "name": "2023 Competency-Based Curriculum",
+    "description": "Zambia's current competency-based curriculum."
+  },
+  "subject": {
+    "name": "Physical Education",
+    "code": "PE",
+    "description": "Physical Education syllabus, Form 1-4 (Curriculum Development Centre)."
+  },
+  "grade": {
+    "name": "Form 2",
+    "code": "F2_CBC",
+    "level": 2,
+    "phase": "Secondary — the source scheme itself uses \"Form 2\" for this level under the 2023 CBC."
+  },
+  "terms": [
+    {
+      "name": "Term 1",
+      "sequence_number": 1,
+      "topics": [
+        {
+          "name": "2.1 History of Physical Education and Sport",
+          "sequence_number": 1,
+          "sub_topics": [
+            {
+              "name": "2.1.1 History of Physical Education in ancient Greece",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Exhibit knowledge of the history of Physical Education in ancient Greece",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "The origins and significance of P.E. in ancient Greece.",
+              "week_number": 1
+            },
+            {
+              "name": "2.1.2 Beliefs and origin of Olympic Games",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Demonstrate understanding of the beliefs and the origin of Olympic Games",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "The origin, beliefs, and symbols of the ancient Olympic Games.",
+              "week_number": 2
+            }
+          ]
+        },
+        {
+          "name": "2.2 Physical Education and Health",
+          "sequence_number": 2,
+          "sub_topics": [
+            {
+              "name": "2.2.1 First-aid",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Exhibit knowledge on the types of sports injuries",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Exhibit knowledge on causes and prevention of sports injuries",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "Types, causes, and prevention of sports injuries (chronic and acute).",
+              "week_number": 3
+            },
+            {
+              "name": "2.2.2 Reproductive Health",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Demonstrate knowledge of reproductive health",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Explore ways in which HIV and AIDS can be transmitted during sports and games",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "Basic reproductive health; HIV/AIDS transmission and prevention in sports.",
+              "week_number": 4
+            }
+          ]
+        },
+        {
+          "name": "2.3 Fitness Activities",
+          "sequence_number": 3,
+          "sub_topics": [
+            {
+              "name": "2.3.1 Skill-related components",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Perform skill related activities",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "Skill-related fitness components: speed, agility, reaction time, etc.",
+              "week_number": 5
+            }
+          ]
+        },
+        {
+          "name": "2.4 Gymnastics",
+          "sequence_number": 4,
+          "sub_topics": [
+            {
+              "name": "2.4.1 Complex gymnastics",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Perform stunts on apparatus",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "Performing basic stunts on gymnastics apparatus (e.g. vault).",
+              "week_number": 6
+            }
+          ]
+        },
+        {
+          "name": "2.5 Recreational Games and Activities",
+          "sequence_number": 5,
+          "sub_topics": [
+            {
+              "name": "2.5.1 Traditional games",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Perform traditional games",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "Performing more complex or regional traditional games.",
+              "week_number": 8
+            }
+          ]
+        },
+        {
+          "name": "2.6 Organisation and Management of Games and Sports Events",
+          "sequence_number": 6,
+          "sub_topics": [
+            {
+              "name": "2.6.1 The Sports Structure in Zambia",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Design a model of the sports structure in Zambia",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "The hierarchy and organisations in Zambian sports (MYS, NSCZ, NOCZ).",
+              "week_number": 9
+            },
+            {
+              "name": "2.6.2 Sports associations in Zambia",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Demonstrate understanding of Sports associations in Zambia",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "Key national sports associations (FAZ, ZAVA, ZTTA).",
+              "week_number": 10
+            },
+            {
+              "name": "2.6.3 International Sports bodies",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Demonstrate knowledge of International Sports Bodies",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "Major international sports bodies (FIFA, IOC, FIBA).",
+              "week_number": 11
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 3",
+      "sequence_number": 3,
+      "topics": [
+        {
+          "name": "2.9 Anatomy and Physiology",
+          "sequence_number": 1,
+          "sub_topics": [
+            {
+              "name": "2.9.1 Human Muscular System",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Demonstrate knowledge of the muscular system",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "The major skeletal muscles, the three types of muscle tissue (skeletal/smooth/cardiac), and agonist/antagonist muscle pairing."
+            }
+          ]
+        },
+        {
+          "name": "2.10 Sports Biomechanics",
+          "sequence_number": 2,
+          "sub_topics": [
+            {
+              "name": "2.10.1 Lever System",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Apply lever system in physical activities and sports appropriately",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "The three classes of levers, mechanical advantage, and the principle of moments as applied to sporting movement."
+            }
+          ]
+        },
+        {
+          "name": "2.11 Entrepreneurship in Sports",
+          "sequence_number": 3,
+          "sub_topics": [
+            {
+              "name": "2.11.1 Sport Marketing",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Apply sports marketing skills properly",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "The marketing mix (Product, Price, Place, Promotion) and target market, applied to a sports event."
+            },
+            {
+              "name": "2.11.2 Sport Branding",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Align specific features of branding in the sports industry correctly",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "Elements of brand identity (name, logo, colour palette, tagline) and brand consistency."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

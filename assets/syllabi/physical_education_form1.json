@@ -1,5 +1,5 @@
 {
-  "_source": "Curriculum Development Centre Teaching Module — \"Physical Education and Sport Teaching Module Form 1 - Term 2\" (https://library.cdcrepository.info/resource.php?id=307). Topic/sub-topic structure and competencies extracted with AI assistance (Gemini) directly from this module's own stated content — never invented; the extraction was instructed to use only what the module itself says, and to flag anything unclear rather than guess. Covers only the term this specific module addresses (Term 2) — other terms are not included since no source document for them was available at extraction time. AI-flagged completeness notes from extraction: The source text contains a minor heading numbering discrepancy: Topic 6 is titled 'TOPIC: 6 GYMNASTICS', but its corresponding sub-topic is numbered '1.6.1'. General competencies were listed at the topic level in the module text, but per schema rules, only specific competencies explicitly linked to sub-topics were included in the competencies arrays.",
+  "_source": "Curriculum Development Centre Teaching Module — \"Physical Education and Sport Teaching Module Form 1 - Term 2\" (https://library.cdcrepository.info/resource.php?id=307). Topic/sub-topic structure and competencies extracted with AI assistance (Gemini) directly from this module's own stated content — never invented; the extraction was instructed to use only what the module itself says, and to flag anything unclear rather than guess. Covers only the term this specific module addresses (Term 2) — other terms are not included since no source document for them was available at extraction time. AI-flagged completeness notes from extraction: The source text contains a minor heading numbering discrepancy: Topic 6 is titled 'TOPIC: 6 GYMNASTICS', but its corresponding sub-topic is numbered '1.6.1'. General competencies were listed at the topic level in the module text, but per schema rules, only specific competencies explicitly linked to sub-topics were included in the competencies arrays.\n\nADDED (2026-09-08): a real 'Physical Education Form 1 Scheme of Work, Term 2' (a real Zambian secondary school's Physical Education Department; the source's own teacher name and school name are not reproduced here per this app's standing sourcing policy) confirmed real week placement for 5 of this term's already-bundled sub-topics (1.5.2, 1.5.3, 1.6.1, 1.7.1, 1.7.2 -- now carrying real week_number values) and revealed two genuinely new Term 2 topics this app previously had no content for at all: 1.9 Sports Skills and Activity Development (Athletics/Ball games/Board games/Racquet games) and 1.10 Anatomy and Physiology (Human skeletal system), citing the same real '2024 Physical Education and Sport Syllabus, Ordinary Secondary Education Form 1-4' (pp.19-23). Real, disclosed discrepancy, not resolved by guessing: this same real document places 1.8 Swimming's own real teaching in TERM 3 instead (see this file's Term 3 _source note) -- the original CDC Teaching Module this file's Term 2 content was built from places 1.8 Swimming in Term 2, and that placement is left exactly as it was; 1.5.1 Health-Related Components of Fitness also has no real week data from this second source and is left without one.\n\nADDED (2026-09-08): Term 3 built from the same real school's own 'Physical Education Scheme of Work, Term 3' document, citing the same real syllabus (pp.17, 23-24). Real, disclosed exclusion: this real document's own week 6 and week 8 both re-teach 1.8 Swimming (1.8.1 Water Safety, 1.8.2 Pool) -- the exact same sub-topics, same competency wording, already bundled under this file's own Term 2 -- so those two weeks are NOT duplicated into Term 3 here; only 1.3 Sports Facilities and Equipment.., 1.11 Sports Biomechanics, and 1.12 Entrepreneurship in Sport (this document's genuinely new Term 3 content) are included. Weeks 9-13 of this same real document are confirmed pure revision/exam weeks (REVISION/PRACTICAL ASSESSMENTS/END OF TERM TESTS, no new topic named), consistent with this app's standing rule against encoding generic revision weeks as topics. A real numbering irregularity is preserved as-is, not renumbered: '1.3 Sports Facilities and Equipment' and the Term 2 topics it sits alongside in Term 3 (1.11, 1.12) carry lower topic numbers than several already-taught Term 2 topics (1.5-1.10) -- this specific school's own real teaching order, not an error to correct.",
   "curriculum": {
     "code": "CBC_2023",
     "name": "2023 Competency-Based Curriculum",
@@ -48,7 +48,8 @@
                   "description": "Demonstrate isotonic activities",
                   "category": "Specific Competence"
                 }
-              ]
+              ],
+              "week_number": 1
             },
             {
               "name": "Sub-Topic 1.5.3 Isometric Activities",
@@ -60,7 +61,8 @@
                   "description": "Perform isometric activities",
                   "category": "Specific Competence"
                 }
-              ]
+              ],
+              "week_number": 2
             }
           ]
         },
@@ -79,7 +81,8 @@
                   "description": "Perform Tumbling and stunts activities",
                   "category": "Specific Competence"
                 }
-              ]
+              ],
+              "week_number": 3
             }
           ]
         },
@@ -98,7 +101,8 @@
                   "description": "Perform step and rhythmic patterns of aerobics",
                   "category": "Specific Competence"
                 }
-              ]
+              ],
+              "week_number": 4
             },
             {
               "name": "Sub-topic: 1.7.2. Traditional games",
@@ -110,7 +114,8 @@
                   "description": "Perform traditional games",
                   "category": "Specific Competence"
                 }
-              ]
+              ],
+              "week_number": 5
             }
           ]
         },
@@ -142,6 +147,172 @@
                   "category": "Specific Competence"
                 }
               ]
+            }
+          ]
+        },
+        {
+          "name": "TOPIC: 1.9 SPORTS SKILLS AND ACTIVITY DEVELOPMENT",
+          "sequence_number": 5,
+          "sub_topics": [
+            {
+              "name": "Sub-topic: 1.9.1 Athletics",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Perform skills in track events",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "Basic skills for track events (sprints, relays).",
+              "week_number": 6
+            },
+            {
+              "name": "Sub-topic: 1.9.2 Ball games",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Perform skills in Football and Netball games",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "Basic skills in Football and Netball (dribbling, passing, catching).",
+              "week_number": 8
+            },
+            {
+              "name": "Sub-topic: 1.9.3 Board games",
+              "sequence_number": 3,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Perform skills in Chess and Draught",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "Basic rules and moves in Chess and Draughts.",
+              "week_number": 9
+            },
+            {
+              "name": "Sub-topic: 1.9.4 Racquet games",
+              "sequence_number": 4,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Perform skills in Badminton",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "Basic grip, strokes, and footwork in Badminton.",
+              "week_number": 10
+            }
+          ]
+        },
+        {
+          "name": "TOPIC: 1.10 ANATOMY AND PHYSIOLOGY",
+          "sequence_number": 6,
+          "sub_topics": [
+            {
+              "name": "Sub-topic: 1.10.1 Human skeletal system",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Analyse the human skeletal system",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "The human skeletal system: framework, functions, and types of joints.",
+              "week_number": 11
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 3",
+      "sequence_number": 3,
+      "topics": [
+        {
+          "name": "1.11 Sports Biomechanics",
+          "sequence_number": 1,
+          "sub_topics": [
+            {
+              "name": "1.11.1 Forces",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Illustrate forces in sporting activities",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "Types of forces (friction, gravity) in sports.",
+              "week_number": 1
+            },
+            {
+              "name": "1.11.2 Speed",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Illustrate speed in sporting activities",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "The concept of speed in sporting activities.",
+              "week_number": 2
+            }
+          ]
+        },
+        {
+          "name": "1.12 Entrepreneurship in Sport",
+          "sequence_number": 2,
+          "sub_topics": [
+            {
+              "name": "1.12.1 Sports Entrepreneurship",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Analyse entrepreneurship roles in sports",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "The role of entrepreneurship in the sports industry.",
+              "week_number": 3
+            },
+            {
+              "name": "1.12.2 Sports Industry",
+              "sequence_number": 2,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Exhibit knowledge of sectors in sports industry",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "Various sectors within the sports industry.",
+              "week_number": 4
+            }
+          ]
+        },
+        {
+          "name": "1.3 Sports Facilities and Equipment",
+          "sequence_number": 3,
+          "sub_topics": [
+            {
+              "name": "1.3.2 Management and Maintenance of Sports Facilities and Equipment",
+              "sequence_number": 1,
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Manage and maintain sports facilities and equipment",
+                  "category": "Specific Competence"
+                }
+              ],
+              "description": "Skills for managing and maintaining sports facilities/equipment.",
+              "week_number": 5
             }
           ]
         }
