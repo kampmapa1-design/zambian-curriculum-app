@@ -694,6 +694,12 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
   }
 
   Future<void> _captureNextPage() async {
+    // Real, reported gap (2026-09-10): on some devices the package's own
+    // post-capture "Use this photo"/"Retake" buttons sit low enough to be
+    // obscured — most likely by the system's own bottom gesture-navigation
+    // inset, which this call wasn't accounting for. Read before pushing
+    // the route (this screen's own context, not the camera route's).
+    final bottomInset = MediaQuery.of(context).padding.bottom;
     final result = await Navigator.of(context).push<DocumentCaptureData>(
       MaterialPageRoute(
         builder: (_) => DocumentCameraFrame(
@@ -706,6 +712,14 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
           bottomHintText: _pages.isEmpty
               ? 'Page 1 of this script (scripts typically run around 6 pages)'
               : 'Page ${_pages.length + 1} of this script',
+          // Explicit bottom clearance for "Use this photo"/"Retake" (see
+          // this method's own comment above) — the package's own default
+          // position doesn't reserve room for a device's bottom gesture
+          // inset on its own.
+          buttonStyle: DocumentCameraButtonStyle(
+            actionButtonAlignment: Alignment.bottomCenter,
+            actionButtonPadding: EdgeInsets.only(bottom: bottomInset + 28),
+          ),
           // No onDocumentSaved here — see the identical comment in
           // DocumentPagesCaptureScreen._captureNextPage for why: the
           // plugin already pops itself with the result, and also popping

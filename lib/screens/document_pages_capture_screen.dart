@@ -39,6 +39,11 @@ class _DocumentPagesCaptureScreenState extends State<DocumentPagesCaptureScreen>
   Future<void> _captureNextPage() async {
     if (widget.maxPages != null && _capturedPages.length >= widget.maxPages!) return;
     setState(() => _started = true);
+    // Same fix as ScriptBatchCaptureScreen._captureNextPage (2026-09-10) —
+    // see that method's own comment: explicit bottom clearance for "Use
+    // this photo"/"Retake" so a device's bottom gesture inset can't
+    // obscure them.
+    final bottomInset = MediaQuery.of(context).padding.bottom;
     final result = await Navigator.of(context).push<DocumentCaptureData>(
       MaterialPageRoute(
         builder: (_) => DocumentCameraFrame(
@@ -49,6 +54,10 @@ class _DocumentPagesCaptureScreenState extends State<DocumentPagesCaptureScreen>
           showCloseButton: true,
           imageQuality: 75,
           bottomHintText: 'Page ${_capturedPages.length + 1} — hold the document flat and steady',
+          buttonStyle: DocumentCameraButtonStyle(
+            actionButtonAlignment: Alignment.bottomCenter,
+            actionButtonPadding: EdgeInsets.only(bottom: bottomInset + 28),
+          ),
           // No onDocumentSaved here — DocumentCameraFrame's own handleSave()
           // already pops itself with the result (per its own changelog: the
           // package "always pops itself with the result", onDocumentSaved is

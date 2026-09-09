@@ -105,8 +105,26 @@ class _VoiceCommandScreenState extends State<VoiceCommandScreen> {
       onResult: (result) => setState(() => _transcript = result.recognizedWords),
       listenOptions: SpeechListenOptions(
         listenMode: ListenMode.confirmation,
-        listenFor: const Duration(seconds: 15),
-        pauseFor: const Duration(seconds: 3),
+        // Widened 2026-09-10, per explicit request ("the time allocated to
+        // record verbal instructions is proving to be rather short"): a
+        // real command can now name a subject, a content phrase, a class,
+        // and more — 15s/3s was tuned for the original short "generate a
+        // lesson plan for topic 2" style command and cut off longer,
+        // slower, or more considered speech. listenFor is the hard total
+        // cap for one command; pauseFor is how long a mid-sentence pause
+        // is tolerated before treating the command as finished.
+        listenFor: const Duration(seconds: 45),
+        pauseFor: const Duration(seconds: 6),
+        // Requests on-device (offline) recognition when the device
+        // supports it — per explicit request ("if possible, let the
+        // transcribing... be done offline if that capacity can be built
+        // in effectively and conveniently"). This is the real, supported
+        // mechanism for that: Android's own SpeechRecognizer, when told
+        // to prefer on-device, uses a downloaded offline language pack if
+        // present. Not a hard requirement — the plugin/OS falls back to
+        // online recognition automatically when no offline pack is
+        // available, same as before this was set, so this can only help.
+        onDevice: true,
       ),
     );
   }

@@ -491,8 +491,7 @@ class HomeScreen extends StatelessWidget {
                 FunctionButton(
                   icon: Icons.mic_none,
                   label: 'Voice Command',
-                  subtitle: 'Tap and speak a command — e.g. "make a lesson plan for topic 2 in week 8 of Civic '
-                      'Education grade 10"',
+                  subtitle: 'Tap and speak a command',
                   onTap: () => Navigator.of(context).push(
                     MaterialPageRoute(builder: (_) => const VoiceCommandScreen()),
                   ),
