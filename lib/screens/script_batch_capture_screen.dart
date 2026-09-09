@@ -9,6 +9,7 @@ import '../models/marking_script.dart';
 import '../models/marking_session.dart';
 import '../models/syllabus_models.dart';
 import '../services/batch_grading_runner.dart';
+import '../services/duplicate_page_detector.dart';
 import '../services/marking_grading_service.dart';
 import '../services/marking_key_generation_service.dart';
 import '../services/marking_scheme_key_picker.dart';
@@ -100,6 +101,15 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
   MarkingSession? _session;
 
   final List<File> _pages = [];
+
+  /// One entry per [_pages], same index, kept in sync by every place that
+  /// adds/removes a page — see [_flagIfDuplicatePage]. Null for a page
+  /// whose hash hasn't been computed yet, or failed to (never blocks
+  /// capture either way — a duplicate check is a nice-to-have, not a
+  /// precondition for capturing).
+  final List<BigInt?> _pageHashes = [];
+  final DuplicatePageDetector _duplicateDetector = DuplicatePageDetector();
+
   String _firstName = '';
   String _surname = '';
   CandidateGender _gender = CandidateGender.male;
@@ -735,7 +745,13 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
       return;
     }
 
-    setState(() => _pages.add(File(result.frontImagePath!)));
+    final newPage = File(result.frontImagePath!);
+    setState(() {
+      _pages.add(newPage);
+      _pageHashes.add(null);
+    });
+    await _flagIfDuplicatePage(newPage, _pages.length - 1);
+    if (!mounted) return;
 
     if (!_setupComplete) {
       // The camera opened before any of this was known (see this class's
@@ -872,7 +888,58 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
     Navigator.of(context).pop();
   }
 
-  void _removePage(int index) => setState(() => _pages.removeAt(index));
+  void _removePage(int index) => setState(() {
+        _pages.removeAt(index);
+        if (index < _pageHashes.length) _pageHashes.removeAt(index);
+      });
+
+  /// Duplicate-page flagging (2026-09-10, per explicit request): compares
+  /// the just-captured page at [newIndex] against the one right before
+  /// it — the real, easy mistake this catches is the camera (with
+  /// [DocumentCameraFrame.enableAutoCapture] on) firing again on the same
+  /// physical page before the teacher has turned to the next one, not two
+  /// genuinely different pages that happen to look similar. Only ever
+  /// flags for the TEACHER to decide — never removes anything on its own,
+  /// and a "Keep Both" choice (or this check failing/being inconclusive
+  /// for any reason) leaves capture free to continue exactly as normal;
+  /// this is a convenience, never a gate on the batch actually processing.
+  Future<void> _flagIfDuplicatePage(File newPage, int newIndex) async {
+    try {
+      final hash = await _duplicateDetector.computeHash(newPage);
+      if (!mounted || newIndex >= _pageHashes.length) return;
+      setState(() => _pageHashes[newIndex] = hash);
+
+      if (newIndex == 0) return; // Nothing before it to compare against.
+      var previousHash = _pageHashes[newIndex - 1];
+      previousHash ??= await _duplicateDetector.computeHash(_pages[newIndex - 1]);
+      if (!mounted || newIndex >= _pageHashes.length) return;
+      setState(() => _pageHashes[newIndex - 1] = previousHash);
+
+      if (!_duplicateDetector.looksLikeDuplicate(hash, previousHash)) return;
+
+      final remove = await showDialog<bool>(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
+          title: const Text('Same page again?'),
+          content: Text(
+            'Page ${newIndex + 1} looks like it might be the same page as Page $newIndex — the camera can '
+            'sometimes fire again before you\'ve turned to the next one. Remove the new copy, or keep both '
+            'if they\'re genuinely different pages?',
+          ),
+          actions: [
+            TextButton(onPressed: () => Navigator.of(dialogContext).pop(false), child: const Text('Keep Both')),
+            FilledButton(onPressed: () => Navigator.of(dialogContext).pop(true), child: const Text('Remove This One')),
+          ],
+        ),
+      );
+      if (remove == true && mounted && newIndex < _pages.length) {
+        _removePage(newIndex);
+      }
+    } catch (_) {
+      // Never lets a duplicate-check failure block real capture — see
+      // this method's own doc comment.
+    }
+  }
 
   Widget _buildScorePopOverlay() {
     if (_justGradedScript case final graded?) {
