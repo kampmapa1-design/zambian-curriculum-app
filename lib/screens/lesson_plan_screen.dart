@@ -97,14 +97,18 @@ class LessonPlanScreen extends StatefulWidget {
   final String? guidedNoteText;
 
   /// Restricts a freshly generated lesson plan to just this conceptual
-  /// stage's real progression rows (see [LessonStage.matchingIndices]) —
-  /// set by the "Generate Lesson Plan" entry flow when the teacher picked
-  /// which part of the lesson (Introduction/Main Body/Conclusion) this
-  /// specific 40-minute lesson plan should cover, rather than always
-  /// generating every stage from Introduction through Conclusion in one
-  /// document. Null shows every stage (e.g. opened directly from a Scheme
-  /// of Work entry card, with no stage question asked). Ignored when
-  /// resuming a checkpoint — that draft's progression is whatever was saved.
+  /// stage's real progression rows (see [LessonStage.matchingIndices]).
+  /// **Removed from the "Generate Lesson Plan" entry flow (2026-09-10, per
+  /// explicit request)** — generate_lesson_plan_flow.dart no longer asks
+  /// "which part of this lesson should the plan cover?" and never passes a
+  /// non-null value here anymore, so a freshly generated lesson plan always
+  /// covers every stage from Introduction through Conclusion in one
+  /// document. The parameter and its filtering logic are kept, unused, in
+  /// case a future entry point genuinely wants one-stage-only generation
+  /// again — not removed outright, to avoid touching this screen's own
+  /// checkpoint-resume logic for a behavior change that lives entirely in
+  /// the entry flow. Null shows every stage. Ignored when resuming a
+  /// checkpoint — that draft's progression is whatever was saved.
   final LessonStage? focusStage;
 
   /// The teacher's own name/school/(most recently used) class name — asked

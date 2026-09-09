@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../models/lesson_checkpoint.dart';
 import '../models/lesson_plan.dart';
-import '../models/lesson_stage.dart';
 import '../models/scheme_of_work.dart';
 import '../models/syllabus_models.dart';
 import '../services/lesson_checkpoint_repository.dart';
@@ -32,12 +31,17 @@ import 'term_topic_picker_screen.dart';
 ///   any class's tracked progress.
 ///
 /// Either way, the teacher then picks exactly which topic to teach (via
-/// [TermTopicPickerScreen] — Term, then that term's topics by week) and
-/// which of the three stages (Introduction/Main Body/Conclusion) this
-/// specific lesson plan should cover, before opening [LessonPlanScreen].
-/// Resuming reuses that screen's own checkpoint dialog (which already
-/// shows the real stage that was reached) rather than asking the stage
-/// question twice, and skips both the one-off and class-resume questions
+/// [TermTopicPickerScreen] — Term, then that term's topics by week) before
+/// opening [LessonPlanScreen], which generates the COMPLETE lesson plan —
+/// every progression stage from Introduction through Conclusion in one
+/// document (2026-09-10, per explicit request: the earlier "which part of
+/// this lesson should the plan cover?" question, and the
+/// Introduction/Main Body/Conclusion segmenting it drove via
+/// [LessonPlanScreen.focusStage], are both removed — a generated lesson
+/// plan is never restricted to one stage anymore, though the template's
+/// own three-stage structure is unchanged on the page itself). Resuming
+/// reuses that screen's own checkpoint dialog (which shows the real stage
+/// reached) and skips both the one-off and class-resume questions
 /// entirely — a paused lesson resumes by its own saved checkpoint
 /// (carrying forward whichever of the two it was originally started as,
 /// see [LessonCheckpoint.isOneOff]), not by asking either question again.
@@ -47,10 +51,10 @@ import 'term_topic_picker_screen.dart';
 /// teach — the "resume paused lesson?" question and the term/topic picker
 /// are both skipped entirely (there is nothing left to resume from or
 /// pick, the command already named it), going straight into a NEW lesson
-/// for that exact entry. Every other question (one-off vs class, which
-/// stage, teacher details) is still asked exactly as normal — voice only
-/// ever answers what it was actually told (subject/grade/topic/week), it
-/// never guesses the rest.
+/// for that exact entry. Every other question (one-off vs class, teacher
+/// details) is still asked exactly as normal — voice only ever answers
+/// what it was actually told (subject/grade/topic/week), it never guesses
+/// the rest.
 Future<void> startGenerateLessonPlanFlow(
   BuildContext context,
   SyllabusTemplate template, {
@@ -196,22 +200,6 @@ Future<void> startGenerateLessonPlanFlow(
       );
   if (entry == null || !context.mounted) return;
 
-  final stage = await showDialog<LessonStage>(
-    context: context,
-    builder: (dialogContext) => SimpleDialog(
-      title: const Text('Which part of this lesson should the plan cover?'),
-      children: [
-        for (final s in LessonStage.values)
-          SimpleDialogOption(
-            onPressed: () => Navigator.of(dialogContext).pop(s),
-            child: Text(s.label),
-          ),
-      ],
-    ),
-  );
-  if (!context.mounted) return;
-  final chosenStage = stage ?? LessonStage.introduction;
-
   // Asked right here — subject and topic are both chosen, this is the
   // "appropriate place" per explicit request — and remembered from then on
   // (see TeacherProfileRepository), so a teacher only ever types their own
@@ -235,7 +223,6 @@ Future<void> startGenerateLessonPlanFlow(
       isOneOff: isOneOff,
       template: activeTemplate,
       checkpointRepository: checkpoints,
-      focusStage: chosenStage,
       teacherProfile: profile,
     ),
   ));
