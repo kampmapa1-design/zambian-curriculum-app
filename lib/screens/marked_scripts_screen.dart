@@ -10,24 +10,30 @@ import 'marked_results_lists_screen.dart';
 import 'marking_review_screen.dart';
 
 /// AI-Assisted Marking — "View Marked Scripts" (2026-08-31), reachable
-/// from the capture screen (not just the queue hub) so a teacher can jump
-/// to a script that needs a closer look without fully backing out of a
-/// capture session first. Shows every [MarkingScriptStatus.graded] (AI
+/// from the capture screen AND (2026-09-10, per explicit request — a real
+/// reported gap: this screen's own select/consolidate/delete tools were
+/// only reachable from inside a capture session, not from Scan Marker's
+/// own home hub) a "Manage" button on MarkingQueueScreen's own "Marked
+/// Students" summary. Shows every [MarkingScriptStatus.graded] (AI
 /// marked, awaiting review) and [MarkingScriptStatus.reviewed] (already
 /// confirmed) script across every scheme — unlike MarkingQueueScreen's
 /// own per-scheme "next in queue" chaining, this is a flat, complete
 /// list, since the point here is finding one specific script, not
 /// working through a batch in order.
 ///
-/// Tapping a script offers three actions, matching what a teacher might
-/// need to do with one they want to check closely: review it again
-/// (open MarkingReviewScreen, editable either way), reprocess it (send
-/// back to AI grading), or mark it as reviewed directly without
-/// reopening the full review UI.
+/// Tapping a script offers review it again (open MarkingReviewScreen,
+/// editable either way), reprocess it (send back to AI grading), mark it
+/// as reviewed directly without reopening the full review UI, or delete
+/// it — always with a confirmation dialog first, naming the student and
+/// page count, since it's irreversible (2026-09-10, per explicit request:
+/// "the app ought to ask for confirmation before deleting a data entry of
+/// a marked student"). Long-pressing a row (or the AppBar's checklist
+/// icon) enters select mode, highlighting the row(s) ticked — from there,
+/// several can be deleted at once (one confirmation, whole batch) or
+/// moved into a manually-curated list.
 ///
-/// Manual results lists (added 2026-09-02): the AppBar's checkbox icon
-/// toggles select mode — ticking scripts and choosing "Create New List"
-/// moves them into a manually-curated, named list (see
+/// Manual results lists (added 2026-09-02): select mode, then "New List"
+/// moves the ticked scripts into a manually-curated, named list (see
 /// marked_results_list.dart). A script that belongs to any list stops
 /// appearing here, matching "gets moved to the new list" exactly; the
 /// folder icon opens [MarkedResultsListsScreen] to see every list
@@ -116,6 +122,70 @@ class _MarkedScriptsScreenState extends State<MarkedScriptsScreen> {
     });
   }
 
+  /// Delete-with-confirmation for one marked script (2026-09-10, per
+  /// explicit request: "highlightable, editable and even able to get
+  /// deleted with confirmation... the app ought to ask for confirmation
+  /// before deleting a data entry of a marked student"). Same dialog
+  /// wording/pattern MarkingQueueScreen's own `_deleteScript` already uses
+  /// for a captured-but-not-yet-marked script — irreversible, so the
+  /// captured pages are named explicitly rather than just "this script".
+  Future<void> _deleteScript(MarkingScript script) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Delete this script?'),
+        content: Text(
+          '${script.fullName} — Script ${script.scriptNumber} (${script.pageCount} page(s)) will be '
+          'permanently deleted, including its captured pages and marks.',
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(dialogContext).pop(false), child: const Text('Cancel')),
+          FilledButton(onPressed: () => Navigator.of(dialogContext).pop(true), child: const Text('Delete')),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+    await _repository.remove(script);
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Deleted ${script.fullName}\'s script.')),
+    );
+    _load();
+  }
+
+  /// Bulk version of [_deleteScript] for select mode — one confirmation
+  /// names how many, not each one individually.
+  Future<void> _deleteSelected() async {
+    if (_selectedIds.isEmpty) return;
+    final selected = _scripts.where((s) => _selectedIds.contains(s.id)).toList();
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text('Delete ${selected.length} script(s)?'),
+        content: const Text(
+          'These scripts will be permanently deleted, including their captured pages and marks.',
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(dialogContext).pop(false), child: const Text('Cancel')),
+          FilledButton(onPressed: () => Navigator.of(dialogContext).pop(true), child: const Text('Delete')),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+    for (final script in selected) {
+      await _repository.remove(script);
+    }
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Deleted ${selected.length} script(s).')),
+    );
+    setState(() {
+      _selectMode = false;
+      _selectedIds.clear();
+    });
+    _load();
+  }
+
   Future<void> _createNewList() async {
     if (_selectedIds.isEmpty) return;
     final nameController = TextEditingController();
@@ -182,6 +252,12 @@ class _MarkedScriptsScreenState extends State<MarkedScriptsScreen> {
                 subtitle: const Text('Confirm the current AI marks as final, without reopening the full review'),
                 onTap: () => Navigator.of(sheetContext).pop(_ScriptAction.markReviewed),
               ),
+            ListTile(
+              leading: Icon(Icons.delete_outline, color: Theme.of(sheetContext).colorScheme.error),
+              title: Text('Delete', style: TextStyle(color: Theme.of(sheetContext).colorScheme.error)),
+              subtitle: const Text('Permanently remove this script and its captured pages — asks to confirm first'),
+              onTap: () => Navigator.of(sheetContext).pop(_ScriptAction.delete),
+            ),
             const SizedBox(height: 8),
           ],
         ),
@@ -211,6 +287,8 @@ class _MarkedScriptsScreenState extends State<MarkedScriptsScreen> {
           const SnackBar(content: Text('Marked as reviewed.')),
         );
         _load();
+      case _ScriptAction.delete:
+        await _deleteScript(script);
     }
   }
 
@@ -220,12 +298,17 @@ class _MarkedScriptsScreenState extends State<MarkedScriptsScreen> {
       appBar: AppBar(
         title: Text(_selectMode ? '${_selectedIds.length} selected' : 'Marked Scripts'),
         actions: [
-          if (_selectMode)
+          if (_selectMode) ...[
+            IconButton(
+              onPressed: _selectedIds.isEmpty ? null : _deleteSelected,
+              icon: const Icon(Icons.delete_outline),
+              tooltip: 'Delete selected',
+            ),
             TextButton(
               onPressed: _selectedIds.isEmpty ? null : _createNewList,
               child: const Text('New List'),
-            )
-          else ...[
+            ),
+          ] else ...[
             IconButton(
               onPressed: () => Navigator.of(context).push(
                 MaterialPageRoute(builder: (_) => const ConsolidateMarkedScriptsScreen()),
@@ -292,7 +375,22 @@ class _MarkedScriptsScreenState extends State<MarkedScriptsScreen> {
                       ),
                       isThreeLine: true,
                       trailing: percent == null ? null : Text('${percent.toStringAsFixed(1)}%', style: const TextStyle(fontWeight: FontWeight.bold)),
+                      selected: selected,
+                      selectedTileColor: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.3),
                       onTap: _selectMode ? () => _toggleSelected(script.id) : () => _openActions(script),
+                      onLongPress: _selectMode
+                          ? null
+                          : () {
+                              // Long-press to enter select mode already
+                              // highlighted on this one entry (2026-09-10,
+                              // per explicit request: "highlightable") —
+                              // quicker than tapping the AppBar checklist
+                              // icon first, then finding this row again.
+                              setState(() {
+                                _selectMode = true;
+                                _selectedIds.add(script.id);
+                              });
+                            },
                     );
                   },
                 ),
@@ -300,4 +398,4 @@ class _MarkedScriptsScreenState extends State<MarkedScriptsScreen> {
   }
 }
 
-enum _ScriptAction { review, reprocess, markReviewed }
+enum _ScriptAction { review, reprocess, markReviewed, delete }

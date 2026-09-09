@@ -25,6 +25,7 @@ import 'burst_capture_screen.dart';
 import 'capture_manual_scores_screen.dart';
 import 'captured_list_analysis_intake_screen.dart';
 import 'cohort_completion_screen.dart';
+import 'marked_scripts_screen.dart';
 import 'marking_analysis_screen.dart';
 import 'marking_key_upload_flow.dart';
 import 'marking_review_screen.dart';
@@ -829,21 +830,6 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
                     ),
                   ],
                 ),
-                // "Completed Marking Cohort" — the final action for one
-                // class' scripts, anchored right side, vertically centered.
-                if (!_selecting)
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: Padding(
-                      padding: const EdgeInsets.only(right: 12),
-                      child: FloatingActionButton.extended(
-                        heroTag: 'completeCohort',
-                        onPressed: _completeMarkingCohort,
-                        icon: const Icon(Icons.flag_outlined),
-                        label: const Text('Completed Marking Cohort'),
-                      ),
-                    ),
-                  ),
                 // The "score just came in" pop-and-fade — see
                 // [ScorePopBadge]. Sits above everything else, ignores
                 // touches, and clears itself once its own animation ends.
@@ -953,6 +939,21 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
                     minimumSize: const Size.fromHeight(0),
                   ),
                 ),
+                // "Completed Marking Cohort" (2026-09-10, per explicit
+                // request) — moved here, directly under "Analyze Results",
+                // from its previous position as a floating action button
+                // hovering over the script list. Same handler
+                // (_completeMarkingCohort), unchanged.
+                const SizedBox(height: 8),
+                OutlinedButton.icon(
+                  onPressed: _completeMarkingCohort,
+                  icon: const Icon(Icons.flag_outlined),
+                  label: const Text('Completed Marking Cohort', textAlign: TextAlign.center),
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    minimumSize: const Size.fromHeight(0),
+                  ),
+                ),
               ],
             ),
           ),
@@ -1013,6 +1014,23 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text('Marked Students ($count)', style: Theme.of(context).textTheme.titleMedium),
+                ),
+                // Real, reported gap (2026-09-10): this inline summary has
+                // never offered selecting, consolidating into a list,
+                // editing, or deleting a marked script — that functionality
+                // already exists in full on MarkedScriptsScreen, but was
+                // only ever reachable from inside the capture flow
+                // (ScriptBatchCaptureScreen), not from Scan Marker's own
+                // home hub. This button is the fix: a direct way in.
+                TextButton.icon(
+                  onPressed: () async {
+                    await Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => MarkedScriptsScreen(repository: _repository, schemeRepository: _schemeRepository)),
+                    );
+                    _load();
+                  },
+                  icon: const Icon(Icons.checklist_outlined, size: 18),
+                  label: const Text('Manage'),
                 ),
               ],
             ),
