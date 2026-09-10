@@ -282,7 +282,10 @@ const generateLessonPlanSchema = {
           teacherRole: {
             type: "string",
             description:
-              "Specific to this lesson's real content — never generic filler with no subject content in it.",
+              "1-3 short sentences of REAL, specific action for the teacher at this stage — never generic " +
+              "filler with no subject content in it, but also never a restated list of the objectives or " +
+              "competencies themselves (those are already printed in full elsewhere in the document - " +
+              "referring back to them, e.g. 'covering the competencies above', is enough here).",
           },
           learnersRole: { type: "string" },
           assessmentCriteria: { type: "string" },
@@ -332,7 +335,11 @@ function buildLessonPlanPrompt(req: GenerateLessonPlanRequest): string {
     `Lesson stages, in order: ${req.progressionStages.join(", ")}. Produce exactly one progression ` +
       "entry per stage, in that order, with Teacher's Role, Learners' Role, and Assessment Criteria " +
       "specific to this lesson's actual content.",
-    "Keep every field concise — a working document a teacher reads in the classroom, not an essay.",
+    "Keep every field concise — a working document a teacher reads in the classroom, not an essay. This " +
+      "matters especially for Teacher's Role: every stage's entry appears together in ONE document (not " +
+      "just one stage on its own), so keep each one to 1-3 short sentences and never restate the full " +
+      "objectives/competencies list inside it — those already appear in full elsewhere in the document, " +
+      "so referring back to them briefly is enough.",
     "Write in plain text only — no Markdown formatting of any kind (no #, ##, ###, **, *, __, ---, or " +
       "backticks). This is a professional document a teacher will export and print, not a chat reply.",
     "If the syllabus context above is too thin to responsibly plan a full lesson, say so explicitly " +

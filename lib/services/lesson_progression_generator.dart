@@ -1,5 +1,6 @@
 import '../models/lesson_plan.dart';
 import '../models/scheme_of_work.dart';
+import 'text_excerpt_matching.dart';
 
 /// Fills every "Lesson Progression" row with default, syllabus-derived
 /// content for [entry]. Most topics have no curated Guided Planning
@@ -19,6 +20,33 @@ import '../models/scheme_of_work.dart';
 /// material rather than just a list of competencies to cover. Entirely
 /// optional: omit it (or pass null) and this behaves exactly as it
 /// always has.
+///
+/// Teacher's Role kept deliberately short (2026-09-10, per explicit
+/// request: "the new lesson plan has unnecessarily long details in the
+/// 'Teacher's Role' column... summarize... so the whole lesson plan does
+/// not exceed 2 pages" — a real consequence of every stage now generating
+/// in one document instead of just one picked stage, see
+/// generate_lesson_plan_flow.dart's own 2026-09-10 doc comment). The
+/// Introduction and Development stages used to repeat, in full, content
+/// that's already printed elsewhere in the same document — every
+/// objective again (already in Rationale, see
+/// LessonPlanScreen._rebuildForActiveTemplate's own syllabus auto-fill),
+/// every competency again (already in Specific Competences, same place)
+/// — so those repeats are dropped
+/// rather than merely shortened: no real information is lost, since it's
+/// still fully visible in its own dedicated field, just not duplicated
+/// here too. The one real piece of content that has nowhere else to live
+/// — Development's own [subjectContentExcerpt] background material — is
+/// capped much shorter ([_teacherRoleExcerptWordCap] words) rather than
+/// dropped outright, since summarizing it (not removing it) is what was
+/// actually asked for.
+/// How much of [SchemeOfWorkEntry]-independent `subjectContentExcerpt`
+/// background material Development's own Teacher's Role cell keeps — see
+/// this file's own doc comment on why this is capped rather than shown
+/// in full (it can otherwise run up to 350 words on its own — see
+/// SubjectContentRepository.findRelevantExcerpt's own default cap).
+const _teacherRoleExcerptWordCap = 60;
+
 List<LessonProgressionRow> generateDefaultProgression(
   List<String> progressionStages,
   SchemeOfWorkEntry entry, {
@@ -52,23 +80,29 @@ LessonProgressionRow _rowFor({
   final name = stage.toLowerCase();
 
   if (name.contains('introduction')) {
-    final headline = objectives.isNotEmpty ? objectives : competencies;
     return LessonProgressionRow(
       stage: stage,
-      teacherRole: 'Introduce "$topicLabel". Review related prior knowledge with the class, then state '
-          'what learners will be able to do by the end of the lesson:'
-          '${headline.isEmpty ? '' : '\n${_bulletList(headline)}'}',
+      // The objectives themselves are NOT repeated here — they're already
+      // printed in full in Rationale (see this file's own doc comment).
+      teacherRole: 'Introduce "$topicLabel". Review related prior knowledge with the class, then state the '
+          "lesson's objectives (see Rationale above).",
       learnersRole: "Respond to the teacher's review questions and note the lesson's objectives.",
       assessmentCriteria: 'Learners can restate the lesson objectives in their own words.',
     );
   }
 
   if (name.contains('development')) {
+    // The competencies themselves are NOT repeated here — they're already
+    // printed in full in Specific Competences (see this file's own doc
+    // comment). subjectContentExcerpt has nowhere else to live, so it's
+    // summarized (capped much shorter) rather than dropped outright.
+    final excerpt = subjectContentExcerpt == null || subjectContentExcerpt.isEmpty
+        ? ''
+        : '\n\nBackground: ${capExcerptWords(subjectContentExcerpt, _teacherRoleExcerptWordCap)}';
     return LessonProgressionRow(
       stage: stage,
-      teacherRole: 'Guide learners through activities covering each competency for this topic:'
-          '${competencies.isEmpty ? '' : '\n${_bulletList(competencies)}'}'
-          '${subjectContentExcerpt == null || subjectContentExcerpt.isEmpty ? '' : '\n\nBackground (from your downloaded Teaching Module):\n$subjectContentExcerpt'}',
+      teacherRole: 'Guide learners through activities covering each competency for this topic (see Specific '
+          'Competences above).$excerpt',
       learnersRole: 'Participate in activities (discussion, practice, demonstration) to develop each '
           'competency above.',
       assessmentCriteria: 'Observe learners demonstrating each competency during the activity.',
