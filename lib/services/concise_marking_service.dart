@@ -121,7 +121,7 @@ class ConciseMarkingService {
     try {
       return await _doGrade(pageFiles, scheme, referenceScheme, questionPaperFiles, subjectName, knownRubric)
           .timeout(
-        const Duration(seconds: 200),
+        const Duration(seconds: 330),
         onTimeout: () => throw const ConciseMarkingUnavailable(
           'Grading this script is taking too long and may be stuck. Check your connection and try again.',
         ),
@@ -170,7 +170,7 @@ class ConciseMarkingService {
 
     final callable = _functions.httpsCallable(
       'gradeMarkingScriptConcise',
-      options: HttpsCallableOptions(timeout: const Duration(seconds: 170)),
+      options: HttpsCallableOptions(timeout: const Duration(seconds: 300)),
     );
 
     Object? rawData;

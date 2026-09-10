@@ -1877,12 +1877,64 @@ const gradeMarkingScriptConciseSchema = {
       type: "array",
       items: { type: "string" },
       minItems: 3,
-      maxItems: 10,
+      maxItems: 8,
     },
   },
   required: ["answers", "rubric", "observations"],
   additionalProperties: false,
 };
+
+/// Best-effort recovery of a MAX_TOKENS-truncated JSON response: keep every
+/// complete `answers[]` entry we can, drop a half-written trailing one, and
+/// close the structure so the annotated marked script can still be
+/// produced from whatever the model did return. Returns null if nothing
+/// usable can be salvaged.
+function salvageTruncatedConciseJson(text: string): GradeMarkingScriptConciseResponse | null {
+  const start = text.indexOf('"answers"');
+  if (start < 0) return null;
+  const arrStart = text.indexOf("[", start);
+  if (arrStart < 0) return null;
+
+  const entries: string[] = [];
+  let depth = 0;
+  let entryStart = -1;
+  let inString = false;
+  let escaped = false;
+  for (let i = arrStart + 1; i < text.length; i++) {
+    const ch = text[i];
+    if (inString) {
+      if (escaped) escaped = false;
+      else if (ch === "\\") escaped = true;
+      else if (ch === '"') inString = false;
+      continue;
+    }
+    if (ch === '"') inString = true;
+    else if (ch === "{") {
+      if (depth === 0) entryStart = i;
+      depth++;
+    } else if (ch === "}") {
+      depth--;
+      if (depth === 0 && entryStart >= 0) {
+        entries.push(text.slice(entryStart, i + 1));
+        entryStart = -1;
+      }
+    } else if (ch === "]" && depth === 0) {
+      break;
+    }
+  }
+  if (entries.length === 0) return null;
+
+  const parsedAnswers: ConciseMarkingAnnotation[] = [];
+  for (const e of entries) {
+    try {
+      parsedAnswers.push(JSON.parse(e));
+    } catch {
+      /* skip an entry that itself won't parse */
+    }
+  }
+  if (parsedAnswers.length === 0) return null;
+  return { answers: parsedAnswers, rubric: null, observations: [] };
+}
 
 function buildConciseMarkingPrompt(
   questions: GradeMarkingScriptQuestion[],
@@ -2017,10 +2069,11 @@ function buildConciseMarkingPrompt(
       "and box to null when you are not confident of the exact location (and never point at a " +
       "question-paper image) - an inaccurate mark on a real scanned document is worse than none, and a " +
       "null still gets the answer marked, just placed on a separately generated document instead.",
-    "6. Separately, write 3 to 10 short, specific observations about this candidate's performance on " +
-      "THIS script. Cover EVERY section of the paper (at least one observation per section the " +
-      "candidate attempted). Keep to 10 or fewer — these are printed onto the marked script as a brief " +
-      "report.",
+    "6. Separately, write 3 to 8 short observations (one sentence each) about this candidate's " +
+      "performance on THIS script, spread across the sections they attempted. These are printed onto " +
+      "the marked script as a brief report.",
+    "Keep every transcribedAnswer SHORT — the gist of the student's answer in at most 20 words, not a " +
+      "full copy.",
     rubricSection,
     referenceText,
     pureAi ? "" : "\nMarking scheme:\n" + schemeText,
@@ -2033,14 +2086,23 @@ function buildConciseMarkingPrompt(
     (pureAi
       ? "Return one answer entry per question you identified, "
       : "Return exactly one answer per question in the marking scheme, using the same question label, ") +
-      "each with its maxMarks, plus the rubric (or null) and the 3-10 observations. Every mark you " +
+      "each with its maxMarks, plus the rubric (or null) and the 3-8 observations. Every mark you " +
       "award is a first-pass suggestion for a teacher to review, never a final grade — never fabricate " +
       "an answer that isn't genuinely visible in the images.",
+    "",
+    "Reply with ONLY this JSON object, nothing else:",
+    '{"answers":[{"questionLabel":"1","transcribedAnswer":"...","marksAwarded":2,"maxMarks":3,' +
+      '"confidence":"high|medium|low","markingBasis":"exact_match|reasonable_equivalence|not_applicable",' +
+      '"sectionName":"Section A"|null,"pageIndex":0|null,' +
+      '"box":{"yMin":0,"xMin":0,"yMax":0,"xMax":0}|null}],' +
+      '"rubric":{"sections":[{"name":"Section A","questionsToAnswer":1|null,"marksAllocated":20|null}],' +
+      '"paperTotalMarks":100|null,"instructionsSummary":"..."}|null,' +
+      '"observations":["...","..."]}',
   ].join("\n");
 }
 
 export const gradeMarkingScriptConcise = onCall<GradeMarkingScriptConciseRequest>(
-  { secrets: [geminiApiKey], region: "us-central1", timeoutSeconds: 180, memory: "1GiB", maxInstances: 5 },
+  { secrets: [geminiApiKey], region: "us-central1", timeoutSeconds: 300, memory: "1GiB", maxInstances: 5 },
   async (request): Promise<GradeMarkingScriptConciseResponse> => {
     if (!request.auth) {
       throw new HttpsError("unauthenticated", "Sign in is required to grade a script.");
@@ -2075,50 +2137,85 @@ export const gradeMarkingScriptConcise = onCall<GradeMarkingScriptConciseRequest
       inlineData: { mimeType: "image/jpeg", data: b64 },
     }));
 
-    let text: string | undefined;
-    try {
+    const promptText = buildConciseMarkingPrompt(
+      keyedQuestions ?? [],
+      subjectName,
+      cappedMarkConventions,
+      examStandard,
+      knownRubric ?? null,
+      { pureAi, referenceQuestions: refQuestions, hasQuestionPaper: questionPaperImages.length > 0 }
+    );
+
+    const callGemini = async (useSchema: boolean): Promise<{ text: string; finishReason?: string }> => {
       const response = await ai.models.generateContent({
         model: GEMINI_MODEL,
-        contents: [
-          {
-            role: "user",
-            parts: [
-              {
-                text: buildConciseMarkingPrompt(
-                  keyedQuestions ?? [],
-                  subjectName,
-                  cappedMarkConventions,
-                  examStandard,
-                  knownRubric ?? null,
-                  { pureAi, referenceQuestions: refQuestions, hasQuestionPaper: questionPaperImages.length > 0 }
-                ),
-              },
-              ...imageParts,
-            ],
-          },
-        ],
+        contents: [{ role: "user", parts: [{ text: promptText }, ...imageParts] }],
         config: {
           responseMimeType: "application/json",
-          responseJsonSchema: gradeMarkingScriptConciseSchema,
+          // Attempt 2 drops the JSON Schema and relies on the explicit
+          // shape spelled out in the prompt — covers the case where the
+          // structured-output schema itself is what the model chokes on.
+          ...(useSchema ? { responseJsonSchema: gradeMarkingScriptConciseSchema } : {}),
+          // Explicit, generous output budget — a full script's worth of
+          // per-question transcriptions + locations + the rubric + the
+          // observations is far more than a model's default cap, and a
+          // silent MAX_TOKENS truncation was producing unparseable JSON.
+          maxOutputTokens: 32768,
+          temperature: 0.15,
         },
       });
-      text = response.text;
-    } catch (err) {
-      console.error("gradeMarkingScriptConcise: Gemini call failed", err);
-      throw new HttpsError("internal", "Failed to grade this script. Please try again.");
+      return { text: response.text ?? "", finishReason: response.candidates?.[0]?.finishReason };
+    };
+
+    // Try up to twice — a transient truncation/format slip usually clears
+    // on a retry, and grading is expensive enough to be worth one.
+    let parsed: GradeMarkingScriptConciseResponse | undefined;
+    let lastText = "";
+    for (let attempt = 1; attempt <= 2 && !parsed; attempt++) {
+      let result: { text: string; finishReason?: string };
+      try {
+        result = await callGemini(attempt === 1);
+      } catch (err) {
+        console.error(`gradeMarkingScriptConcise: Gemini call failed (attempt ${attempt})`, err);
+        const msg = String((err as { message?: unknown })?.message ?? err);
+        // A depleted prepay balance / quota is not transient — surface it
+        // plainly instead of retrying and instead of a generic message.
+        if (/RESOURCE_EXHAUSTED|prepayment|credits are depleted|quota|\b429\b/i.test(msg)) {
+          throw new HttpsError(
+            "resource-exhausted",
+            "The app's AI service has run out of prepaid credit. Marking (and other AI features) will " +
+              "work again once the Gemini API billing balance is topped up.",
+          );
+        }
+        if (attempt === 2) throw new HttpsError("internal", "Failed to grade this script. Please try again.");
+        continue;
+      }
+      lastText = result.text;
+      if (result.finishReason && result.finishReason !== "STOP") {
+        console.warn(`gradeMarkingScriptConcise: finishReason=${result.finishReason} (attempt ${attempt}), len=${result.text.length}`);
+      }
+      if (!result.text) continue;
+      try {
+        parsed = JSON.parse(result.text);
+      } catch {
+        // fall through to retry / salvage
+      }
     }
 
-    if (!text) {
-      throw new HttpsError("internal", "The AI did not return any grading results.");
+    if (!parsed) {
+      const salvaged = salvageTruncatedConciseJson(lastText);
+      if (salvaged && salvaged.answers.length > 0) {
+        console.warn(`gradeMarkingScriptConcise: salvaged ${salvaged.answers.length} answer(s) from truncated response`);
+        parsed = salvaged;
+      } else {
+        console.error("gradeMarkingScriptConcise: response was not valid JSON", lastText.slice(0, 2000));
+        throw new HttpsError("internal", "The grading response could not be parsed.");
+      }
     }
 
-    let parsed: GradeMarkingScriptConciseResponse;
-    try {
-      parsed = JSON.parse(text);
-    } catch (err) {
-      console.error("gradeMarkingScriptConcise: response was not valid JSON", text);
-      throw new HttpsError("internal", "The grading response could not be parsed.");
-    }
+    if (!Array.isArray(parsed.answers)) parsed.answers = [];
+    if (!Array.isArray(parsed.observations)) parsed.observations = [];
+    if (parsed.rubric === undefined) parsed.rubric = null;
 
     // Defensive clamp — never trust the model's own marksAwarded to
     // respect the cap even though the prompt asks for it (same discipline
