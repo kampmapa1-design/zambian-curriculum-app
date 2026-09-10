@@ -275,6 +275,19 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
     );
   }
 
+  /// "Concise Marking" — opens the session screen straight onto one of its
+  /// three sources (device / camera / a queued unmarked list), per the
+  /// explicit request that tapping it "should open by giving a drop down
+  /// list of 'Upload from device', 'Upload from Camera', 'upload a list
+  /// from cued lists'".
+  Future<void> _openConcise(ConciseMarkingSource source) async {
+    await Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => ConciseMarkingScreen(initialSource: source)),
+    );
+    _load();
+    _loadRemainingFreeGradings();
+  }
+
   /// "Analyze Results" — the 4th hub action. First asks which source to
   /// analyze: a fresh photo of an already-completed results list (not
   /// tied to this app's own grading pipeline at all), or scripts already
@@ -398,11 +411,26 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
       return;
     }
 
-    final scheme = await showDialog<MarkingScheme>(
+    final selection = await showDialog<Object>(
       context: context,
       builder: (dialogContext) => SimpleDialog(
-        title: const Text('Which marking scheme is this batch for?'),
+        title: const Text('How should these scripts be marked?'),
         children: [
+          // "Concise Marker" listed on the same picker as the saved
+          // marking keys (2026-09-10, per explicit request) — picks it and
+          // the selected scripts go straight into Concise Marking with all
+          // its functions (real ticks/crosses + score out of 100 + report).
+          SimpleDialogOption(
+            onPressed: () => Navigator.of(dialogContext).pop('__concise__'),
+            child: const Row(
+              children: [
+                Icon(Icons.bolt_outlined),
+                SizedBox(width: 12),
+                Expanded(child: Text('Concise Marker — mark now (ticks + score out of 100)')),
+              ],
+            ),
+          ),
+          const Divider(),
           for (final s in _schemes.schemes)
             SimpleDialogOption(
               onPressed: () => Navigator.of(dialogContext).pop(s),
@@ -411,8 +439,22 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
         ],
       ),
     );
-    if (scheme == null) return;
+    if (selection == null || !mounted) return;
 
+    if (selection == '__concise__') {
+      final picked = _catalog.scripts.where((s) => _selectedIds.contains(s.id)).toList();
+      setState(() {
+        _selecting = false;
+        _selectedIds.clear();
+      });
+      await Navigator.of(context).push(
+        MaterialPageRoute(builder: (_) => ConciseMarkingScreen(pendingScripts: picked)),
+      );
+      await _load();
+      return;
+    }
+
+    final scheme = selection as MarkingScheme;
     final scripts = _catalog.scripts.where((s) => _selectedIds.contains(s.id));
     for (final script in scripts) {
       await _repository.update(script.copyWith(status: MarkingScriptStatus.queued, schemeId: scheme.id));
@@ -962,15 +1004,23 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
                 // own doc comment). A separate, additive entry point —
                 // every other marking flow here is unchanged.
                 const SizedBox(height: 8),
-                OutlinedButton.icon(
-                  onPressed: () => Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const ConciseMarkingScreen()),
-                  ),
-                  icon: const Icon(Icons.fact_check_outlined),
-                  label: const Text('Concise Marking', textAlign: TextAlign.center),
-                  style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    minimumSize: const Size.fromHeight(0),
+                PopupMenuButton<ConciseMarkingSource>(
+                  onSelected: _openConcise,
+                  itemBuilder: (context) => const [
+                    PopupMenuItem(value: ConciseMarkingSource.device, child: Text('Upload from device')),
+                    PopupMenuItem(value: ConciseMarkingSource.camera, child: Text('Upload from camera')),
+                    PopupMenuItem(value: ConciseMarkingSource.queue, child: Text('Upload a list from queued lists')),
+                  ],
+                  child: IgnorePointer(
+                    child: OutlinedButton.icon(
+                      onPressed: () {},
+                      icon: const Icon(Icons.fact_check_outlined),
+                      label: const Text('Concise Marking', textAlign: TextAlign.center),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        minimumSize: const Size.fromHeight(0),
+                      ),
+                    ),
                   ),
                 ),
               ],

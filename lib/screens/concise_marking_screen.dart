@@ -31,6 +31,14 @@ import 'burst_capture_screen.dart';
 /// ([ScriptAnnotationService]) and the fallback generated page for answers
 /// that couldn't be located are unchanged from the first version of this
 /// feature — this rework adds the session, the rubric, and the totals.
+///
+/// Reachable three ways (2026-09-10, per explicit request): its own
+/// dropdown on the Scan Marker hub ("Upload from device / camera / a
+/// queued list" — see [initialSource]); as a "Concise Marker" choice in
+/// the marking-key picker when queuing freshly-captured scripts (see
+/// [pendingScripts]); or opened bare, which shows the same three sources.
+enum ConciseMarkingSource { device, camera, queue }
+
 class ConciseMarkingScreen extends StatefulWidget {
   const ConciseMarkingScreen({
     super.key,
@@ -38,12 +46,23 @@ class ConciseMarkingScreen extends StatefulWidget {
     this.schemeRepository,
     this.gradingService,
     this.annotationService,
+    this.initialSource,
+    this.pendingScripts = const [],
   });
 
   final MarkingScriptRepository? repository;
   final MarkingSchemeRepository? schemeRepository;
   final ConciseMarkingService? gradingService;
   final ScriptAnnotationService? annotationService;
+
+  /// When set, the screen skips its setup card, asks only for the subject
+  /// name, and launches this source picker straight away.
+  final ConciseMarkingSource? initialSource;
+
+  /// Freshly-captured scripts routed here from the "Concise Marker" option
+  /// in the marking-key picker — the screen asks which saved key applies,
+  /// links them all to it, and adds them to the session on open.
+  final List<MarkingScript> pendingScripts;
 
   @override
   State<ConciseMarkingScreen> createState() => _ConciseMarkingScreenState();
@@ -100,9 +119,15 @@ class _ConciseMarkingScreenState extends State<ConciseMarkingScreen> {
   int _markDone = 0;
   int _markTotal = 0;
 
+  /// True until the deep-link flow ([initialSource] / [pendingScripts]) has
+  /// been kicked off once, right after the first load completes.
+  bool _pendingInitialFlow = false;
+
   @override
   void initState() {
     super.initState();
+    _pendingInitialFlow = widget.initialSource != null || widget.pendingScripts.isNotEmpty;
+    if (_pendingInitialFlow) _phase = _Phase.session;
     _load();
   }
 
@@ -121,7 +146,15 @@ class _ConciseMarkingScreenState extends State<ConciseMarkingScreen> {
     try {
       final catalog = await _repository.loadCatalog();
       final schemes = await _schemeRepository.loadCatalog();
-      final eligible = catalog.scripts.where((s) => s.schemeId != null && !s.photosDiscarded).toList()
+      // "Only make available for marking only unmarked lists" — a script
+      // that's already been graded or reviewed is not offered again here.
+      final eligible = catalog.scripts
+          .where((s) =>
+              s.schemeId != null &&
+              !s.photosDiscarded &&
+              s.status != MarkingScriptStatus.graded &&
+              s.status != MarkingScriptStatus.reviewed)
+          .toList()
         ..sort((a, b) => b.capturedAt.compareTo(a.capturedAt));
       if (!mounted) return;
       setState(() {
@@ -129,6 +162,10 @@ class _ConciseMarkingScreenState extends State<ConciseMarkingScreen> {
         _schemes = schemes;
         _loading = false;
       });
+      if (_pendingInitialFlow) {
+        _pendingInitialFlow = false;
+        WidgetsBinding.instance.addPostFrameCallback((_) => _runInitialFlow());
+      }
     } catch (error) {
       if (!mounted) return;
       setState(() {
@@ -146,28 +183,89 @@ class _ConciseMarkingScreenState extends State<ConciseMarkingScreen> {
   }
 
   // -------------------------------------------------------------------
-  // Setup
+  // Deep-link entry (dropdown source / "Concise Marker" in the key picker)
   // -------------------------------------------------------------------
-  void _startSession() {
-    final subject = _subjectController.text.trim();
-    if (subject.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Enter the subject or course name for this session.')),
-      );
+  Future<void> _runInitialFlow() async {
+    if (!await _ensureSubject()) {
+      if (mounted) Navigator.of(context).maybePop();
       return;
     }
-    final count = int.tryParse(_countController.text.trim());
-    setState(() {
-      _subject = subject;
-      _declaredCount = (count != null && count > 0) ? count : null;
-      _phase = _Phase.session;
-    });
+    if (widget.pendingScripts.isNotEmpty) {
+      await _addPendingScripts();
+    } else if (widget.initialSource case final source?) {
+      switch (source) {
+        case ConciseMarkingSource.device:
+          await _addFromCameraOrDevice(fromDevice: true);
+        case ConciseMarkingSource.camera:
+          await _addFromCameraOrDevice(fromDevice: false);
+        case ConciseMarkingSource.queue:
+          await _addFromQueue();
+      }
+    }
+  }
+
+  /// Concise Marking always needs a subject/course name on record (for the
+  /// marked report and the cohort score list). Asks once, up front, then
+  /// never again this session.
+  Future<bool> _ensureSubject() async {
+    if (_subject.trim().isNotEmpty) return true;
+    final seed = widget.pendingScripts.isNotEmpty
+        ? widget.pendingScripts.first.subjectName
+        : (_eligibleScripts.isNotEmpty ? _eligibleScripts.first.subjectName : '');
+    final controller = TextEditingController(text: seed.trim() == 'Unknown subject' ? '' : seed.trim());
+    final result = await showDialog<String>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Subject / course name'),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          textCapitalization: TextCapitalization.words,
+          decoration: const InputDecoration(hintText: 'e.g. History, Form 4'),
+          onSubmitted: (v) => Navigator.of(dialogContext).pop(v.trim()),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(dialogContext).pop(), child: const Text('Cancel')),
+          FilledButton(onPressed: () => Navigator.of(dialogContext).pop(controller.text.trim()), child: const Text('Continue')),
+        ],
+      ),
+    );
+    controller.dispose();
+    if (result == null || result.isEmpty) return false;
+    if (mounted) setState(() => _subject = result);
+    return true;
+  }
+
+  Future<void> _addPendingScripts() async {
+    if (widget.pendingScripts.isEmpty) return;
+    if (_schemes.schemes.isEmpty) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Build or upload a marking key first — Concise Marking scores against one.')),
+        );
+      }
+      return;
+    }
+    final scheme = await _pickScheme();
+    if (!mounted || scheme == null) return;
+    final added = {for (final i in _items) i.script.id};
+    for (final raw in widget.pendingScripts) {
+      if (added.contains(raw.id)) continue;
+      final linked = raw.copyWith(status: MarkingScriptStatus.queued, schemeId: scheme.id);
+      await _repository.update(linked);
+      if (!mounted) return;
+      setState(() => _items.add(
+            _SessionItem(id: _nextItemId++, script: linked, scheme: scheme, candidateName: linked.fullName),
+          ));
+    }
+    await _load();
   }
 
   // -------------------------------------------------------------------
   // Adding scripts to the session
   // -------------------------------------------------------------------
   Future<void> _showAddSources() async {
+    if (!await _ensureSubject() || !mounted) return;
     final choice = await showModalBottomSheet<String>(
       context: context,
       builder: (sheetContext) => SafeArea(
@@ -178,22 +276,22 @@ class _ConciseMarkingScreenState extends State<ConciseMarkingScreen> {
               title: Text('Add script(s) to this session', style: TextStyle(fontWeight: FontWeight.bold)),
             ),
             ListTile(
-              leading: const Icon(Icons.playlist_add_check_outlined),
-              title: const Text('From the marking queue'),
-              subtitle: const Text('Scripts already captured and linked to a marking key'),
-              onTap: () => Navigator.of(sheetContext).pop('queue'),
-            ),
-            ListTile(
               leading: const Icon(Icons.photo_library_outlined),
-              title: const Text('From device'),
+              title: const Text('Upload from device'),
               subtitle: const Text('Pick page images already on this phone'),
               onTap: () => Navigator.of(sheetContext).pop('device'),
             ),
             ListTile(
               leading: const Icon(Icons.photo_camera_outlined),
-              title: const Text('From camera'),
+              title: const Text('Upload from camera'),
               subtitle: const Text('Photograph a script now'),
               onTap: () => Navigator.of(sheetContext).pop('camera'),
+            ),
+            ListTile(
+              leading: const Icon(Icons.playlist_add_check_outlined),
+              title: const Text('Upload a list from queued lists'),
+              subtitle: const Text('Unmarked scripts already linked to a marking key'),
+              onTap: () => Navigator.of(sheetContext).pop('queue'),
             ),
           ],
         ),
@@ -211,33 +309,64 @@ class _ConciseMarkingScreenState extends State<ConciseMarkingScreen> {
   }
 
   Future<void> _addFromQueue() async {
+    if (!await _ensureSubject() || !mounted) return;
     final alreadyAdded = {for (final i in _items) i.script.id};
     final available = _eligibleScripts.where((s) => !alreadyAdded.contains(s.id)).toList();
     if (available.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No queued scripts left to add. Queue a script against a marking key first.')),
+        const SnackBar(
+          content: Text('No unmarked queued scripts to add. Queue a script against a marking key first, '
+              'or use "Upload from device / camera".'),
+        ),
       );
       return;
+    }
+    // Grouped by marking key — each key's queued batch is one "list".
+    final byScheme = <String, List<MarkingScript>>{};
+    for (final s in available) {
+      byScheme.putIfAbsent(_schemeFor(s)?.title ?? s.subjectName, () => []).add(s);
     }
     final selected = <String>{};
     final picked = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => StatefulBuilder(
         builder: (dialogContext, setSheet) => AlertDialog(
-          title: const Text('Add from marking queue'),
+          title: const Text('Add an unmarked list'),
           content: SizedBox(
             width: double.maxFinite,
             child: ListView(
               shrinkWrap: true,
               children: [
-                for (final s in available)
-                  CheckboxListTile(
-                    dense: true,
-                    value: selected.contains(s.id),
-                    title: Text(s.fullName),
-                    subtitle: Text('${_schemeFor(s)?.title ?? s.subjectName} · ${s.status.label}'),
-                    onChanged: (v) => setSheet(() => v == true ? selected.add(s.id) : selected.remove(s.id)),
+                for (final entry in byScheme.entries) ...[
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(4, 12, 4, 4),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Text(entry.key, style: Theme.of(dialogContext).textTheme.labelLarge),
+                        ),
+                        TextButton(
+                          onPressed: () => setSheet(() {
+                            final ids = entry.value.map((s) => s.id);
+                            final allIn = ids.every(selected.contains);
+                            for (final id in ids) {
+                              allIn ? selected.remove(id) : selected.add(id);
+                            }
+                          }),
+                          child: Text(entry.value.every((s) => selected.contains(s.id)) ? 'None' : 'All'),
+                        ),
+                      ],
+                    ),
                   ),
+                  for (final s in entry.value)
+                    CheckboxListTile(
+                      dense: true,
+                      value: selected.contains(s.id),
+                      title: Text(s.fullName),
+                      subtitle: Text(s.status.label),
+                      onChanged: (v) => setSheet(() => v == true ? selected.add(s.id) : selected.remove(s.id)),
+                    ),
+                ],
               ],
             ),
           ),
@@ -452,6 +581,19 @@ class _ConciseMarkingScreenState extends State<ConciseMarkingScreen> {
     if (!mounted) return;
     setState(() => _marking = false);
     await _load();
+    if (!mounted) return;
+
+    final markedNow = _items.where((i) => i.status == _ItemStatus.marked).length;
+    final stillPending = _items.where((i) => i.status == _ItemStatus.pending || i.status == _ItemStatus.failed).length;
+    if (markedNow > 0 && stillPending == 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('$markedNow script(s) marked. Ready to share the cohort score list.'),
+          duration: const Duration(seconds: 8),
+          action: SnackBarAction(label: 'Word / PDF', onPressed: _completeCohort),
+        ),
+      );
+    }
   }
 
   Future<void> _openItemResult(_SessionItem item) async {
@@ -552,15 +694,34 @@ class _ConciseMarkingScreenState extends State<ConciseMarkingScreen> {
         ),
       );
 
+  Future<void> _pickSourceAndStart(String source) async {
+    final typed = _subjectController.text.trim();
+    if (_subject.isEmpty && typed.isNotEmpty) _subject = typed;
+    final count = int.tryParse(_countController.text.trim());
+    if (count != null && count > 0) _declaredCount = count;
+    if (!await _ensureSubject()) return;
+    if (!mounted) return;
+    setState(() => _phase = _Phase.session);
+    switch (source) {
+      case 'device':
+        await _addFromCameraOrDevice(fromDevice: true);
+      case 'camera':
+        await _addFromCameraOrDevice(fromDevice: false);
+      case 'queue':
+        await _addFromQueue();
+    }
+  }
+
   Widget _buildSetup(BuildContext context) {
     return ListView(
       padding: const EdgeInsets.all(20),
       children: [
-        Text('Start a marking session', style: Theme.of(context).textTheme.titleLarge),
+        Text('Concise Marking', style: Theme.of(context).textTheme.titleLarge),
         const SizedBox(height: 8),
         Text(
-          'Concise Marking reads the marking rules off the first script\'s cover page, applies each '
-          'section\'s "answer N of M" rule, and scores every paper out of 100.',
+          'Reads the marking rules off the first script\'s cover page, applies each section\'s '
+          '"answer N of M" rule, scores every paper out of 100, stamps the score and a short report on '
+          'the script, and gives you a Word / PDF score list at the end.',
           style: Theme.of(context).textTheme.bodyMedium,
         ),
         const SizedBox(height: 20),
@@ -578,16 +739,33 @@ class _ConciseMarkingScreenState extends State<ConciseMarkingScreen> {
           controller: _countController,
           keyboardType: TextInputType.number,
           decoration: const InputDecoration(
-            labelText: 'How many scripts will you mark this session?',
-            hintText: 'Optional — you can still mark fewer or more',
+            labelText: 'How many scripts will you mark this session? (optional)',
+            hintText: 'You can still mark fewer or more',
             border: OutlineInputBorder(),
           ),
         ),
         const SizedBox(height: 24),
+        Text('Add scripts from…', style: Theme.of(context).textTheme.titleSmall),
+        const SizedBox(height: 8),
         FilledButton.icon(
-          onPressed: _startSession,
-          icon: const Icon(Icons.play_arrow),
-          label: const Text('Start session'),
+          onPressed: () => _pickSourceAndStart('device'),
+          icon: const Icon(Icons.photo_library_outlined),
+          label: const Text('Upload from device'),
+          style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(48)),
+        ),
+        const SizedBox(height: 8),
+        FilledButton.icon(
+          onPressed: () => _pickSourceAndStart('camera'),
+          icon: const Icon(Icons.photo_camera_outlined),
+          label: const Text('Upload from camera'),
+          style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(48)),
+        ),
+        const SizedBox(height: 8),
+        OutlinedButton.icon(
+          onPressed: () => _pickSourceAndStart('queue'),
+          icon: const Icon(Icons.playlist_add_check_outlined),
+          label: const Text('Upload a list from queued lists'),
+          style: OutlinedButton.styleFrom(minimumSize: const Size.fromHeight(48)),
         ),
       ],
     );
