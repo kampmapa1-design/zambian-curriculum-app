@@ -99,13 +99,28 @@ class ConciseMarkingService {
     return !result.contains(ConnectivityResult.none);
   }
 
+  /// Grades one script.
+  ///
+  /// Pure-AI is the default (2026-09-10, per explicit request): pass no
+  /// [scheme] and the AI reads the questions, their marks and the marking
+  /// guidance off the paper itself. [referenceScheme] — a saved key the
+  /// app auto-detected for this subject — is sent as *reference* only, to
+  /// blend the school's own onboarded content with the AI's judgment.
+  /// [questionPaperFiles] are optional extra images of the question paper
+  /// / official marking guide, for when the answer booklet doesn't carry
+  /// the questions. Pass [scheme] only when the teacher deliberately wants
+  /// strict key-based marking.
   Future<ConciseMarkingResult> grade({
     required List<File> pageFiles,
-    required MarkingScheme scheme,
+    MarkingScheme? scheme,
+    MarkingScheme? referenceScheme,
+    List<File> questionPaperFiles = const [],
+    String? subjectName,
     MarkingRubric? knownRubric,
   }) async {
     try {
-      return await _doGrade(pageFiles, scheme, knownRubric).timeout(
+      return await _doGrade(pageFiles, scheme, referenceScheme, questionPaperFiles, subjectName, knownRubric)
+          .timeout(
         const Duration(seconds: 200),
         onTimeout: () => throw const ConciseMarkingUnavailable(
           'Grading this script is taking too long and may be stuck. Check your connection and try again.',
@@ -118,7 +133,23 @@ class ConciseMarkingService {
     }
   }
 
-  Future<ConciseMarkingResult> _doGrade(List<File> pageFiles, MarkingScheme scheme, MarkingRubric? knownRubric) async {
+  List<Map<String, Object>> _questionsPayload(MarkingScheme s) => [
+        for (final q in s.questions)
+          {
+            'label': q.label,
+            'expectedAnswerOrKeywords': q.expectedAnswerOrKeywords,
+            'maxMarks': q.maxMarks,
+          },
+      ];
+
+  Future<ConciseMarkingResult> _doGrade(
+    List<File> pageFiles,
+    MarkingScheme? scheme,
+    MarkingScheme? referenceScheme,
+    List<File> questionPaperFiles,
+    String? subjectName,
+    MarkingRubric? knownRubric,
+  ) async {
     if (!await isOnline) {
       throw const ConciseMarkingUnavailable("You're offline. Connect to the internet to grade this script.");
     }
@@ -127,6 +158,15 @@ class ConciseMarkingService {
     final pageImagesBase64 = [
       for (final file in pageFiles) base64Encode(await file.readAsBytes()),
     ];
+    final questionPaperImagesBase64 = [
+      for (final file in questionPaperFiles) base64Encode(await file.readAsBytes()),
+    ];
+
+    final effectiveSubject = subjectName?.trim().isNotEmpty == true
+        ? subjectName!.trim()
+        : (scheme?.subjectName ?? referenceScheme?.subjectName);
+    final markConventions = scheme?.markConventions ?? referenceScheme?.markConventions ?? const <String>[];
+    final examStandardWire = scheme?.examStandard.wireValue ?? referenceScheme?.examStandard.wireValue;
 
     final callable = _functions.httpsCallable(
       'gradeMarkingScriptConcise',
@@ -137,17 +177,12 @@ class ConciseMarkingService {
     try {
       final result = await callable.call<Object?>({
         'pageImagesBase64': pageImagesBase64,
-        'questions': [
-          for (final q in scheme.questions)
-            {
-              'label': q.label,
-              'expectedAnswerOrKeywords': q.expectedAnswerOrKeywords,
-              'maxMarks': q.maxMarks,
-            },
-        ],
-        'subjectName': scheme.subjectName,
-        if (scheme.markConventions.isNotEmpty) 'markConventions': scheme.markConventions,
-        if (scheme.examStandard.wireValue != null) 'examStandard': scheme.examStandard.wireValue,
+        if (scheme != null) 'questions': _questionsPayload(scheme),
+        if (scheme == null && referenceScheme != null) 'referenceQuestions': _questionsPayload(referenceScheme),
+        if (questionPaperImagesBase64.isNotEmpty) 'questionPaperImagesBase64': questionPaperImagesBase64,
+        if (effectiveSubject != null && effectiveSubject.isNotEmpty) 'subjectName': effectiveSubject,
+        if (markConventions.isNotEmpty) 'markConventions': markConventions,
+        if (examStandardWire != null) 'examStandard': examStandardWire,
         if (knownRubric != null && !knownRubric.isEmpty) 'knownRubric': knownRubric.toJson(),
       });
       rawData = result.data;
@@ -165,22 +200,50 @@ class ConciseMarkingService {
     }
 
     final byLabel = <String, Map>{};
+    final aiOrder = <String>[];
     for (final a in answersRaw) {
       if (a is! Map) continue;
       final label = a['questionLabel'];
-      if (label is String) byLabel[label] = a;
+      if (label is String && label.trim().isNotEmpty && !byLabel.containsKey(label)) {
+        byLabel[label] = a;
+        aiOrder.add(label);
+      }
+    }
+
+    // The question set to build results over. Keyed mode: the scheme's own
+    // questions (authoritative marks). Pure-AI: whatever questions the AI
+    // itself identified on the paper, with the marks it read off it.
+    final questionSet = <({String label, double maxMarks, String? section})>[];
+    if (scheme != null) {
+      for (final q in scheme.questions) {
+        questionSet.add((label: q.label, maxMarks: q.maxMarks, section: q.sectionName));
+      }
+    } else {
+      for (final label in aiOrder) {
+        final a = byLabel[label]!;
+        final m = a['maxMarks'];
+        questionSet.add((
+          label: label,
+          maxMarks: (m is num && m > 0) ? m.toDouble() : 1.0,
+          section: null,
+        ));
+      }
+    }
+    if (questionSet.isEmpty) {
+      throw const ConciseMarkingUnavailable(
+        'The AI could not identify any questions to mark on this script. Try adding a photo of the '
+        'question paper, or check the pages are clear and right-way-up.',
+      );
     }
 
     final answers = <GradedAnswer>[];
     final annotations = <AnswerAnnotation>[];
     final sectionByLabel = <String, String?>{};
-    for (final q in scheme.questions) {
+    for (final q in questionSet) {
       final a = byLabel[q.label];
-      // Prefer the AI's read of the section off the actual paper; fall
-      // back to whatever the scheme itself recorded.
       final aiSection = a?['sectionName'];
       sectionByLabel[q.label] =
-          (aiSection is String && aiSection.trim().isNotEmpty) ? aiSection.trim() : q.sectionName;
+          (aiSection is String && aiSection.trim().isNotEmpty) ? aiSection.trim() : q.section;
       if (a == null) {
         answers.add(GradedAnswer(
           questionLabel: q.label,
@@ -196,7 +259,8 @@ class ConciseMarkingService {
         questionLabel: q.label,
         maxMarks: q.maxMarks,
         transcribedAnswer: a['transcribedAnswer'] is String ? a['transcribedAnswer'] as String : '',
-        marksAwarded: (a['marksAwarded'] is num ? (a['marksAwarded'] as num).toDouble() : 0.0).clamp(0, q.maxMarks).toDouble(),
+        marksAwarded:
+            (a['marksAwarded'] is num ? (a['marksAwarded'] as num).toDouble() : 0.0).clamp(0, q.maxMarks).toDouble(),
         confidence: MarkingConfidence.fromValue(a['confidence'] is String ? a['confidence'] as String : 'low'),
         markingBasis: MarkingBasis.fromValue(a['markingBasis'] is String ? a['markingBasis'] as String : null),
       ));

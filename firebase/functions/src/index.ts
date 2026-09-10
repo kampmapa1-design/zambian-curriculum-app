@@ -1690,6 +1690,12 @@ interface ConciseMarkingAnnotation {
   questionLabel: string;
   transcribedAnswer: string;
   marksAwarded: number;
+  // The marks this question carries. In keyed mode this echoes the
+  // scheme; in pure-AI mode (no marking key supplied) it is the mark
+  // allocation the model read off the paper — or a sensible default it
+  // chose when the paper shows none. The client's deterministic scorer
+  // works entirely off this value.
+  maxMarks: number;
   confidence: "high" | "medium" | "low";
   markingBasis: "exact_match" | "reasonable_equivalence" | "not_applicable";
   // Which section of the paper this question belongs to (verbatim from
@@ -1750,7 +1756,26 @@ interface GradeMarkingScriptConciseResponse {
   observations: string[];
 }
 
-interface GradeMarkingScriptConciseRequest extends GradeMarkingScriptRequest {
+interface GradeMarkingScriptConciseRequest {
+  pageImagesBase64: string[];
+  // The marking key, when the teacher has one saved and chose to use it as
+  // the AUTHORITY. Omitted for the normal pure-AI path (2026-09-10, per
+  // explicit request that "concise marker is supposed to be purely AI as a
+  // priority") — the model then reads the questions and their marks off
+  // the paper itself.
+  questions?: GradeMarkingScriptQuestion[];
+  // A saved marking key the app auto-detected as matching this subject —
+  // passed as REFERENCE only. The model uses its expected answers where a
+  // question clearly corresponds and its own subject expertise everywhere
+  // else. Never the authority; never blocks marking.
+  referenceQuestions?: GradeMarkingScriptQuestion[];
+  // Optional extra images of the question paper / official marking guide,
+  // for when the answer booklet doesn't carry the questions itself.
+  // Attached AFTER the answer-script pages.
+  questionPaperImagesBase64?: string[];
+  subjectName?: string;
+  markConventions?: string[];
+  examStandard?: "NATIONAL_MOCK" | "SCHOOL_CA" | null;
   // Supplied for every script AFTER the first in a cohort — the rubric
   // already extracted from the first script's cover page. When present,
   // the model is told to score against it and NOT re-derive section rules.
@@ -1768,6 +1793,13 @@ const gradeMarkingScriptConciseSchema = {
           questionLabel: { type: "string" },
           transcribedAnswer: { type: "string" },
           marksAwarded: { type: "number" },
+          maxMarks: {
+            type: "number",
+            description:
+              "The marks this question carries. Echo the marking scheme in keyed mode; read it off the " +
+              "paper's own mark allocation in pure-AI mode (choose a sensible value only if the paper " +
+              "shows none).",
+          },
           confidence: { type: "string", enum: ["high", "medium", "low"] },
           markingBasis: { type: "string", enum: ["exact_match", "reasonable_equivalence", "not_applicable"] },
           sectionName: {
@@ -1801,7 +1833,7 @@ const gradeMarkingScriptConciseSchema = {
           },
         },
         required: [
-          "questionLabel", "transcribedAnswer", "marksAwarded", "confidence", "markingBasis",
+          "questionLabel", "transcribedAnswer", "marksAwarded", "maxMarks", "confidence", "markingBasis",
           "sectionName", "pageIndex", "box",
         ],
         additionalProperties: false,
@@ -1857,11 +1889,36 @@ function buildConciseMarkingPrompt(
   subjectName?: string,
   markConventions?: string[],
   examStandard?: "NATIONAL_MOCK" | "SCHOOL_CA" | null,
-  knownRubric?: ConciseRubric | null
+  knownRubric?: ConciseRubric | null,
+  opts?: { pureAi?: boolean; referenceQuestions?: GradeMarkingScriptQuestion[]; hasQuestionPaper?: boolean }
 ): string {
+  const pureAi = opts?.pureAi === true;
+  const referenceQuestions = opts?.referenceQuestions ?? [];
+
   const schemeText = questions
     .map((q) => `${q.label} (max ${q.maxMarks} marks): expected answer/keywords — ${q.expectedAnswerOrKeywords}`)
     .join("\n");
+
+  const referenceText =
+    referenceQuestions.length > 0
+      ? [
+          "",
+          "REFERENCE ONLY — the school has a saved marking key for this subject. It was NOT written for " +
+            "this exact paper, so treat it as a helpful reference, not the authority: use an expected " +
+            "answer from it when a question on this paper clearly corresponds, and rely on your own " +
+            "subject expertise for everything else. Never withhold a deserved mark just because this " +
+            "reference doesn't list the point.",
+          referenceQuestions
+            .map((q) => `- ${q.label} (~${q.maxMarks} marks): ${q.expectedAnswerOrKeywords}`)
+            .join("\n"),
+        ].join("\n")
+      : "";
+
+  const questionPaperNote = opts?.hasQuestionPaper
+    ? "\nAfter the answer-script pages, extra images of the QUESTION PAPER / official marking guide are " +
+      "attached — use them to see the full questions and their mark allocations. They are not part of " +
+      "the student's script; nothing on them is the student's answer."
+    : "";
 
   // Cover-page rules. Either we already have them (script 2..n of a
   // cohort — reuse verbatim, do not re-derive), or this is script 1 and
@@ -1905,19 +1962,44 @@ function buildConciseMarkingPrompt(
   const examStandardText = examStandardGuidance(examStandard);
   const examStandardSection = examStandardText ? `\n${examStandardText}` : "";
 
-  return [
+  const intro =
     "The attached images are photos of one student's answer script, in page order (page 1 is the FIRST " +
-      "image attached, page 2 the second, and so on). Some scripts are entirely handwritten; others mix " +
-      "pre-printed material with the student's own handwritten answers. Distinguish the two: pre-printed " +
-      "question text is never the student's answer.",
-    "For EACH question in the marking scheme below:",
-    "1. Find the student's own answer (handwriting, or a handwritten mark/circle/tick on a printed " +
+    "image attached, page 2 the second, and so on). Some scripts are entirely handwritten; others mix " +
+    "pre-printed material with the student's own handwritten answers. Distinguish the two: pre-printed " +
+    "question text is never the student's answer." +
+    questionPaperNote;
+
+  const identifyStep = pureAi
+    ? "0. THERE IS NO MARKING KEY. You are the marking engine. First work out what the student had to do: " +
+      "from the questions printed on the script (and the attached question-paper images, if any), list " +
+      "every question the student was required to attempt. For each, choose a stable questionLabel " +
+      "(e.g. '1(a)', '3'), read the marks it carries from the paper's own allocation into maxMarks (use " +
+      "a sensible value only if the paper shows none), and note its section. Then mark each answer " +
+      "against your own expert subject knowledge AND any marking guidance printed on the paper itself."
+    : "For EACH question in the marking scheme below, set maxMarks to that question's own maximum:";
+
+  const step1 = pureAi
+    ? "1. For each question you identified: find the student's own answer (handwriting, or a handwritten " +
+      "mark/circle/tick on a printed option), transcribe it, and award marksAwarded out of maxMarks — " +
+      "partial credit is normal, not just full marks or zero."
+    : "1. Find the student's own answer (handwriting, or a handwritten mark/circle/tick on a printed " +
       "option), transcribe it, and award marks out of that question's maximum — partial credit is " +
-      "normal, not just full marks or zero.",
-    "2. Set markingBasis: 'exact_match' when the mark came from a listed expected answer/alternative with " +
-      "no judgment call; 'reasonable_equivalence' when you awarded a mark for a relevant, accurate point " +
-      "NOT explicitly listed; 'not_applicable' when no such judgment applies (no answer found, or purely " +
-      "objective).",
+      "normal, not just full marks or zero.";
+
+  const step2 = pureAi
+    ? "2. Set markingBasis: 'exact_match' for an objectively correct/incorrect answer (a fact, a " +
+      "calculation, a multiple-choice pick); 'reasonable_equivalence' when the mark rested on your own " +
+      "subject-matter judgment of an open response; 'not_applicable' when no answer was found."
+    : "2. Set markingBasis: 'exact_match' when the mark came from a listed expected answer/alternative " +
+      "with no judgment call; 'reasonable_equivalence' when you awarded a mark for a relevant, accurate " +
+      "point NOT explicitly listed; 'not_applicable' when no such judgment applies (no answer found, or " +
+      "purely objective).";
+
+  return [
+    intro,
+    identifyStep,
+    step1,
+    step2,
     "3. Give confidence: 'high' only when both legible AND you're confident the mark is right - NEVER " +
       "'high' when markingBasis is 'reasonable_equivalence'; 'low' when hard to read/ambiguous/unsure; " +
       "'medium' otherwise.",
@@ -1925,36 +2007,35 @@ function buildConciseMarkingPrompt(
       "or null only if the paper has no sections. When a candidate has answered MORE questions in a " +
       "section than the rules require, still mark every attempt you can find — the app keeps only the " +
       "best-scoring required number per section, so nothing is lost by marking them all.",
-    "5. THIS IS THE NEW PART: set pageIndex to which photographed page (0-based - the first image " +
-      "attached is page 0) the student's own handwritten answer for this exact question physically " +
-      "appears on, and box to a TIGHT bounding box around just that handwritten answer (not the whole " +
-      "page, not any printed text) as {yMin, xMin, yMax, xMax}, each an integer 0-1000 normalized across " +
-      "that page image's own real width/height (0,0 is the top-left corner of that page image, 1000,1000 " +
-      "the bottom-right). This is where a real tick or cross mark will be drawn directly onto the actual " +
-      "photographed page, right on/next to the student's own answer - it must be genuinely accurate, not " +
-      "a rough guess. Set BOTH pageIndex and box to null when you are not confident of the exact " +
-      "location, rather than giving your best guess - an inaccurate mark placed on the wrong part of a " +
-      "real scanned document is worse than no mark placement at all, and a null here still gets the " +
-      "answer marked correctly, just placed on a separately generated document instead of directly on " +
-      "this photo.",
+    "5. Set pageIndex to which photographed answer-script page (0-based - the first image attached is " +
+      "page 0) the student's own handwritten answer for this exact question physically appears on, and " +
+      "box to a TIGHT bounding box around just that handwritten answer (not the whole page, not any " +
+      "printed text) as {yMin, xMin, yMax, xMax}, each an integer 0-1000 normalized across that page " +
+      "image's own real width/height (0,0 is the top-left corner, 1000,1000 the bottom-right). This is " +
+      "where a real tick or cross is drawn directly onto the actual photographed page, right on/next to " +
+      "the student's own answer - it must be genuinely accurate, not a rough guess. Set BOTH pageIndex " +
+      "and box to null when you are not confident of the exact location (and never point at a " +
+      "question-paper image) - an inaccurate mark on a real scanned document is worse than none, and a " +
+      "null still gets the answer marked, just placed on a separately generated document instead.",
     "6. Separately, write 3 to 10 short, specific observations about this candidate's performance on " +
       "THIS script. Cover EVERY section of the paper (at least one observation per section the " +
-      "candidate attempted), grounded in what the marking scheme actually asked for. Keep to 10 or " +
-      "fewer — these are printed onto the marked script as a brief report.",
+      "candidate attempted). Keep to 10 or fewer — these are printed onto the marked script as a brief " +
+      "report.",
     rubricSection,
-    "",
-    "Marking scheme:",
-    schemeText,
+    referenceText,
+    pureAi ? "" : "\nMarking scheme:\n" + schemeText,
     schemeConventionsSection,
     subjectModuleSection,
     examStandardSection,
     "",
     UNIVERSAL_MARKING_CONVENTIONS,
     "",
-    "Return exactly one answer per question in the marking scheme, using the same question label, plus " +
-      "the rubric (or null) and the 3-10 observations. Every mark you award must be a first-pass " +
-      "suggestion for a teacher to review, never a final grade — never fabricate an answer that isn't " +
-      "genuinely visible in the images.",
+    (pureAi
+      ? "Return one answer entry per question you identified, "
+      : "Return exactly one answer per question in the marking scheme, using the same question label, ") +
+      "each with its maxMarks, plus the rubric (or null) and the 3-10 observations. Every mark you " +
+      "award is a first-pass suggestion for a teacher to review, never a final grade — never fabricate " +
+      "an answer that isn't genuinely visible in the images.",
   ].join("\n");
 }
 
@@ -1965,18 +2046,32 @@ export const gradeMarkingScriptConcise = onCall<GradeMarkingScriptConciseRequest
       throw new HttpsError("unauthenticated", "Sign in is required to grade a script.");
     }
 
-    const { pageImagesBase64, questions, subjectName, markConventions, examStandard, knownRubric } =
-      request.data ?? {};
+    const {
+      pageImagesBase64,
+      questions,
+      referenceQuestions,
+      questionPaperImagesBase64,
+      subjectName,
+      markConventions,
+      examStandard,
+      knownRubric,
+    } = request.data ?? {};
     if (!Array.isArray(pageImagesBase64) || pageImagesBase64.length === 0) {
       throw new HttpsError("invalid-argument", "'pageImagesBase64' must be a non-empty array.");
     }
-    if (!Array.isArray(questions) || questions.length === 0) {
-      throw new HttpsError("invalid-argument", "'questions' must be a non-empty array.");
-    }
+    const keyedQuestions = Array.isArray(questions) && questions.length > 0 ? questions : undefined;
+    const pureAi = keyedQuestions === undefined;
+    const refQuestions =
+      Array.isArray(referenceQuestions) && referenceQuestions.length > 0
+        ? referenceQuestions.slice(0, 200)
+        : [];
+    const questionPaperImages = Array.isArray(questionPaperImagesBase64)
+      ? questionPaperImagesBase64.slice(0, 10)
+      : [];
     const cappedMarkConventions = Array.isArray(markConventions) ? markConventions.slice(0, 20) : undefined;
 
     const ai = new GoogleGenAI({ apiKey: geminiApiKey.value() });
-    const imageParts = pageImagesBase64.map((b64) => ({
+    const imageParts = [...pageImagesBase64, ...questionPaperImages].map((b64) => ({
       inlineData: { mimeType: "image/jpeg", data: b64 },
     }));
 
@@ -1990,7 +2085,12 @@ export const gradeMarkingScriptConcise = onCall<GradeMarkingScriptConciseRequest
             parts: [
               {
                 text: buildConciseMarkingPrompt(
-                  questions, subjectName, cappedMarkConventions, examStandard, knownRubric ?? null
+                  keyedQuestions ?? [],
+                  subjectName,
+                  cappedMarkConventions,
+                  examStandard,
+                  knownRubric ?? null,
+                  { pureAi, referenceQuestions: refQuestions, hasQuestionPaper: questionPaperImages.length > 0 }
                 ),
               },
               ...imageParts,
@@ -2021,15 +2121,18 @@ export const gradeMarkingScriptConcise = onCall<GradeMarkingScriptConciseRequest
     }
 
     // Defensive clamp — never trust the model's own marksAwarded to
-    // respect the cap even though the prompt asks for it (same
-    // discipline the client already applies for gradeMarkingScript's own
-    // response, see marking_grading_service.dart).
-    const maxByLabel = new Map(questions.map((q) => [q.label, q.maxMarks]));
+    // respect the cap even though the prompt asks for it (same discipline
+    // the client already applies for gradeMarkingScript). In keyed mode
+    // the scheme's own maxMarks wins; in pure-AI mode the model's own
+    // per-answer maxMarks is the ceiling (and is itself floored to 0).
+    const maxByLabel = keyedQuestions
+      ? new Map(keyedQuestions.map((q) => [q.label, q.maxMarks]))
+      : undefined;
     for (const a of parsed.answers) {
-      const max = maxByLabel.get(a.questionLabel);
-      if (typeof max === "number") {
-        a.marksAwarded = Math.max(0, Math.min(a.marksAwarded, max));
-      }
+      const keyedMax = maxByLabel?.get(a.questionLabel);
+      if (typeof keyedMax === "number") a.maxMarks = keyedMax;
+      if (typeof a.maxMarks !== "number" || !(a.maxMarks > 0)) a.maxMarks = 1;
+      a.marksAwarded = Math.max(0, Math.min(a.marksAwarded, a.maxMarks));
     }
 
     return parsed;

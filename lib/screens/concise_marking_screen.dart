@@ -16,27 +16,30 @@ import '../services/marking_scheme_repository.dart';
 import '../services/marking_script_repository.dart';
 import '../services/script_annotation_service.dart';
 import 'burst_capture_screen.dart';
+import 'document_pages_capture_screen.dart';
 
-/// "Concise Marking" (Scan Marker) — a whole marking SESSION for one exam:
-/// the teacher says which subject and how many scripts, adds scripts from
-/// the marking queue / device / camera, then presses "Submit for marking"
-/// when ready. The engine reads the section rules off the FIRST script's
-/// cover page once and reuses them for the rest, scores every paper out of
-/// 100 with those "answer N of M per section" rules applied
-/// deterministically ([ConciseScoreCalculator]), stamps the score + a
-/// brief report onto each marked script, and on "Complete Marking Cohort"
-/// hands back an editable Word / PDF list of names and scores.
+/// "Concise Marking" (Scan Marker) — a whole marking SESSION for one exam,
+/// run as a PURE AI marking engine (2026-09-10, per explicit request:
+/// "concise marker is supposed to be purely AI as a priority").
+///
+/// No marking key is required or asked for. The AI reads the questions,
+/// their mark allocations and the marking guidance off the script (and an
+/// optional photo of the question paper), marks every answer from its own
+/// subject expertise, reads the section rules off the first script's cover
+/// page and reuses them, then the app scores every paper out of 100
+/// deterministically ([ConciseScoreCalculator]). Where the app finds a
+/// saved marking key matching the subject it is passed to the AI as
+/// REFERENCE only — blended, never the authority, never blocking.
 ///
 /// The real ticks/crosses on the actual photographed pages
-/// ([ScriptAnnotationService]) and the fallback generated page for answers
-/// that couldn't be located are unchanged from the first version of this
-/// feature — this rework adds the session, the rubric, and the totals.
+/// ([ScriptAnnotationService]), the fallback generated page, the on-script
+/// score stamp + report, and the Word/PDF cohort score list are all as
+/// before.
 ///
-/// Reachable three ways (2026-09-10, per explicit request): its own
-/// dropdown on the Scan Marker hub ("Upload from device / camera / a
-/// queued list" — see [initialSource]); as a "Concise Marker" choice in
-/// the marking-key picker when queuing freshly-captured scripts (see
-/// [pendingScripts]); or opened bare, which shows the same three sources.
+/// Reachable three ways: its own dropdown on the Scan Marker hub ("Upload
+/// from device / camera / a queued list" — see [initialSource]); as a
+/// "Concise Marker" choice in the marking-key picker when queuing
+/// freshly-captured scripts (see [pendingScripts]); or opened bare.
 enum ConciseMarkingSource { device, camera, queue }
 
 class ConciseMarkingScreen extends StatefulWidget {
@@ -60,8 +63,8 @@ class ConciseMarkingScreen extends StatefulWidget {
   final ConciseMarkingSource? initialSource;
 
   /// Freshly-captured scripts routed here from the "Concise Marker" option
-  /// in the marking-key picker — the screen asks which saved key applies,
-  /// links them all to it, and adds them to the session on open.
+  /// in the marking-key picker — added to the session on open and marked
+  /// by the AI directly.
   final List<MarkingScript> pendingScripts;
 
   @override
@@ -73,12 +76,25 @@ enum _Phase { setup, session }
 enum _ItemStatus { pending, marking, marked, failed }
 
 class _SessionItem {
-  _SessionItem({required this.id, required this.script, required this.scheme, required this.candidateName});
+  _SessionItem({
+    required this.id,
+    required this.script,
+    required this.candidateName,
+    this.referenceScheme,
+    this.questionPaperFiles = const [],
+  });
 
   final int id;
   MarkingScript script;
-  final MarkingScheme scheme;
   String candidateName;
+
+  /// A saved marking key the app auto-detected for this subject (or the
+  /// key a queued script was already linked to) — passed to the AI as
+  /// reference only, never as the authority.
+  MarkingScheme? referenceScheme;
+
+  /// Optional extra images of the question paper / marking guide.
+  List<File> questionPaperFiles;
 
   _ItemStatus status = _ItemStatus.pending;
   ConciseScore? score;
@@ -114,6 +130,12 @@ class _ConciseMarkingScreenState extends State<ConciseMarkingScreen> {
   /// session ("just pay attention to the marking instructions on the first
   /// page of the first script that you mark per cohort").
   MarkingRubric? _cohortRubric;
+
+  /// A saved marking key whose subject matches this session's subject —
+  /// auto-detected, sent to the AI as reference only, and shown to the
+  /// teacher as a notice. Null when nothing matches (the normal pure-AI
+  /// case).
+  MarkingScheme? _referenceScheme;
 
   bool _marking = false;
   int _markDone = 0;
@@ -160,6 +182,7 @@ class _ConciseMarkingScreenState extends State<ConciseMarkingScreen> {
       setState(() {
         _eligibleScripts = eligible;
         _schemes = schemes;
+        _recomputeReferenceScheme();
         _loading = false;
       });
       if (_pendingInitialFlow) {
@@ -232,33 +255,47 @@ class _ConciseMarkingScreenState extends State<ConciseMarkingScreen> {
     );
     controller.dispose();
     if (result == null || result.isEmpty) return false;
-    if (mounted) setState(() => _subject = result);
+    if (mounted) {
+      setState(() {
+        _subject = result;
+        _recomputeReferenceScheme();
+      });
+    }
     return true;
+  }
+
+  /// Finds a saved marking key whose subject matches this session's
+  /// subject — used only as AI reference, never as the authority.
+  void _recomputeReferenceScheme() {
+    final subj = _subject.trim().toLowerCase();
+    if (subj.isEmpty) {
+      _referenceScheme = null;
+      return;
+    }
+    MarkingScheme? best;
+    for (final s in _schemes.schemes) {
+      final ss = s.subjectName.trim().toLowerCase();
+      if (ss.isEmpty) continue;
+      if (ss == subj || ss.contains(subj) || subj.contains(ss)) {
+        best = s;
+        break;
+      }
+    }
+    _referenceScheme = best;
   }
 
   Future<void> _addPendingScripts() async {
     if (widget.pendingScripts.isEmpty) return;
-    if (_schemes.schemes.isEmpty) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Build or upload a marking key first — Concise Marking scores against one.')),
-        );
-      }
-      return;
-    }
-    final scheme = await _pickScheme();
-    if (!mounted || scheme == null) return;
     final added = {for (final i in _items) i.script.id};
     for (final raw in widget.pendingScripts) {
       if (added.contains(raw.id)) continue;
-      final linked = raw.copyWith(status: MarkingScriptStatus.queued, schemeId: scheme.id);
-      await _repository.update(linked);
-      if (!mounted) return;
-      setState(() => _items.add(
-            _SessionItem(id: _nextItemId++, script: linked, scheme: scheme, candidateName: linked.fullName),
-          ));
+      setState(() => _items.add(_SessionItem(
+            id: _nextItemId++,
+            script: raw,
+            candidateName: raw.fullName,
+            referenceScheme: _schemeFor(raw) ?? _referenceScheme,
+          )));
     }
-    await _load();
   }
 
   // -------------------------------------------------------------------
@@ -382,20 +419,16 @@ class _ConciseMarkingScreenState extends State<ConciseMarkingScreen> {
     );
     if (picked != true) return;
     for (final s in available.where((s) => selected.contains(s.id))) {
-      final scheme = _schemeFor(s);
-      if (scheme == null) continue;
-      setState(() => _items.add(_SessionItem(id: _nextItemId++, script: s, scheme: scheme, candidateName: s.fullName)));
+      setState(() => _items.add(_SessionItem(
+            id: _nextItemId++,
+            script: s,
+            candidateName: s.fullName,
+            referenceScheme: _schemeFor(s) ?? _referenceScheme,
+          )));
     }
   }
 
   Future<void> _addFromCameraOrDevice({required bool fromDevice}) async {
-    if (_schemes.schemes.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Build or upload a marking key first — Concise Marking needs one to score against.')),
-      );
-      return;
-    }
-
     List<File>? initialFiles;
     if (fromDevice) {
       final results = await FilePicker.pickFiles(type: FileType.custom, allowedExtensions: ['jpg', 'jpeg', 'png']);
@@ -415,33 +448,54 @@ class _ConciseMarkingScreenState extends State<ConciseMarkingScreen> {
     );
     if (!mounted || script == null) return;
 
-    final scheme = await _pickScheme();
-    if (!mounted || scheme == null) return;
+    final questionPaperFiles = await _maybeCaptureQuestionPaper(fromDevice: fromDevice);
+    if (!mounted) return;
 
-    final linked = script.copyWith(status: MarkingScriptStatus.queued, schemeId: scheme.id);
-    await _repository.update(linked);
     await _load();
     if (!mounted) return;
-    setState(() => _items.add(
-          _SessionItem(id: _nextItemId++, script: linked, scheme: scheme, candidateName: linked.fullName),
-        ));
+    setState(() => _items.add(_SessionItem(
+          id: _nextItemId++,
+          script: script,
+          candidateName: script.fullName,
+          referenceScheme: _referenceScheme,
+          questionPaperFiles: questionPaperFiles,
+        )));
   }
 
-  Future<MarkingScheme?> _pickScheme() async {
-    if (_schemes.schemes.length == 1) return _schemes.schemes.single;
-    return showDialog<MarkingScheme>(
+  /// Optional per the answer to the design question (2026-09-10): default
+  /// to script-only, but let the teacher attach the question paper /
+  /// marking guide when the answer booklet doesn't carry the questions.
+  Future<List<File>> _maybeCaptureQuestionPaper({required bool fromDevice}) async {
+    final add = await showDialog<bool>(
       context: context,
-      builder: (dialogContext) => SimpleDialog(
-        title: const Text('Which marking key is this script for?'),
-        children: [
-          for (final s in _schemes.schemes)
-            SimpleDialogOption(
-              onPressed: () => Navigator.of(dialogContext).pop(s),
-              child: Text('${s.title} (${s.questions.length} question(s))'),
-            ),
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Add the question paper? (optional)'),
+        content: const Text(
+          'Only needed if the answers are in a separate booklet with no questions on them. Skip it if '
+          'the script already shows the questions.',
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(dialogContext).pop(false), child: const Text('Skip')),
+          FilledButton(onPressed: () => Navigator.of(dialogContext).pop(true), child: const Text('Add it')),
         ],
       ),
     );
+    if (add != true || !mounted) return const [];
+
+    if (fromDevice) {
+      final results = await FilePicker.pickFiles(type: FileType.custom, allowedExtensions: ['jpg', 'jpeg', 'png']);
+      return [for (final f in results) if (f.path != null) File(f.path!)];
+    }
+    final captured = await Navigator.of(context).push<List<File>>(
+      MaterialPageRoute(
+        builder: (_) => const DocumentPagesCaptureScreen(
+          title: 'Question paper',
+          instructions: 'Photograph each page of the question paper / marking guide.',
+          maxPages: 8,
+        ),
+      ),
+    );
+    return captured ?? const [];
   }
 
   Future<void> _editItemName(_SessionItem item) async {
@@ -509,7 +563,11 @@ class _ConciseMarkingScreenState extends State<ConciseMarkingScreen> {
 
         final result = await _gradingService.grade(
           pageFiles: pageFiles,
-          scheme: item.scheme,
+          // Pure AI — never a strict key. Any saved key for this subject
+          // rides along as reference only.
+          referenceScheme: item.referenceScheme ?? _referenceScheme,
+          questionPaperFiles: item.questionPaperFiles,
+          subjectName: _subject,
           knownRubric: _cohortRubric,
         );
         await MarkingEntitlementService.instance.recordGradingUsed();
@@ -526,6 +584,7 @@ class _ConciseMarkingScreenState extends State<ConciseMarkingScreen> {
           status: MarkingScriptStatus.graded,
           gradedAnswers: result.answers,
           observations: result.observations,
+          schemeId: item.referenceScheme?.id,
         );
         await _repository.update(updated);
 
@@ -533,7 +592,8 @@ class _ConciseMarkingScreenState extends State<ConciseMarkingScreen> {
         final outputDir = Directory('${tempDir.path}/concise_marking_${item.script.id}');
         if (!await outputDir.exists()) await outputDir.create(recursive: true);
 
-        final title = '${item.candidateName} - ${item.scheme.title}';
+        final subjectLabel = _subject.isNotEmpty ? _subject : 'script';
+        final title = '${item.candidateName} - $subjectLabel';
         final annotated = await _annotationService.annotatePages(
           pageFiles: pageFiles,
           answers: result.answers,
@@ -545,7 +605,7 @@ class _ConciseMarkingScreenState extends State<ConciseMarkingScreen> {
           score: score,
           observations: result.observations,
           title: title,
-          subjectName: _subject.isNotEmpty ? _subject : item.scheme.subjectName,
+          subjectName: subjectLabel,
           studentName: item.candidateName,
           rubric: effectiveRubric,
           outputDir: outputDir,
@@ -633,7 +693,7 @@ class _ConciseMarkingScreenState extends State<ConciseMarkingScreen> {
 
     try {
       final service = ConciseCohortScoreListDocumentService();
-      final title = _subject.isNotEmpty ? _subject : scored.first.scheme.title;
+      final title = _subject.isNotEmpty ? _subject : 'Concise Marking cohort';
       final entries = [
         for (final i in scored)
           ConciseCohortEntry(
@@ -716,12 +776,14 @@ class _ConciseMarkingScreenState extends State<ConciseMarkingScreen> {
     return ListView(
       padding: const EdgeInsets.all(20),
       children: [
-        Text('Concise Marking', style: Theme.of(context).textTheme.titleLarge),
+        Text('Concise Marking — pure AI', style: Theme.of(context).textTheme.titleLarge),
         const SizedBox(height: 8),
         Text(
-          'Reads the marking rules off the first script\'s cover page, applies each section\'s '
-          '"answer N of M" rule, scores every paper out of 100, stamps the score and a short report on '
-          'the script, and gives you a Word / PDF score list at the end.',
+          'No marking key needed. The AI reads the questions, their marks and the marking rules off each '
+          'script (add a photo of the question paper if the answers are in a separate booklet), marks '
+          'every answer, scores each paper out of 100, stamps the score and a short report on the '
+          'script, and gives you a Word / PDF score list. If you have a saved key for this subject it is '
+          'used as extra reference automatically.',
           style: Theme.of(context).textTheme.bodyMedium,
         ),
         const SizedBox(height: 20),
@@ -791,6 +853,12 @@ class _ConciseMarkingScreenState extends State<ConciseMarkingScreen> {
                       ? 'Marked $marked of ${_declaredCount!} planned  ·  ${_items.length} in session'
                       : 'Marked $marked  ·  ${_items.length} in session',
                   style: Theme.of(context).textTheme.bodySmall,
+                ),
+                Text(
+                  _referenceScheme != null
+                      ? 'Pure AI marking · also using your saved key "${_referenceScheme!.title}" as reference'
+                      : 'Pure AI marking — the AI reads the questions and marking rules off each script',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).colorScheme.primary),
                 ),
                 if (_cohortRubric case final r? when r.instructionsSummary.isNotEmpty) ...[
                   const SizedBox(height: 6),
@@ -873,7 +941,12 @@ class _ConciseMarkingScreenState extends State<ConciseMarkingScreen> {
       _ItemStatus.marked => (Icons.check_circle, Colors.green),
       _ItemStatus.failed => (Icons.error_outline, Theme.of(context).colorScheme.error),
     };
-    final subtitleParts = <String>[item.scheme.title];
+    final refLabel = item.referenceScheme != null
+        ? 'AI + saved key "${item.referenceScheme!.title}"'
+        : 'Pure AI marking';
+    final subtitleParts = <String>[
+      item.questionPaperFiles.isNotEmpty ? '$refLabel · question paper attached' : refLabel,
+    ];
     if (item.status == _ItemStatus.marked && item.score != null) {
       subtitleParts.add('${item.score!.outOf100Label}  (${item.score!.rawFractionLabel} raw)');
     } else if (item.status == _ItemStatus.failed && item.error != null) {
