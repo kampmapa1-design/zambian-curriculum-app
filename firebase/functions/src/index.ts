@@ -46,12 +46,14 @@ const geminiApiKey = defineSecret("GEMINI_API_KEY");
 const GEMINI_MODEL = "gemini-3.6-flash";
 
 // The cheap tier — roughly 1/7 the input and 1/9 the output price of
-// GEMINI_MODEL. Used only by "Stable Marker" (gradeMarkingScriptConcise's
-// `lightweight` mode, 2026-09-10, per explicit request for "a more
-// affordable one that can be used to mark even simple class tests"):
-// plain marking + scoring, no answer-location / on-image annotation work.
+// GEMINI_MODEL, and noticeably faster. Used only by "Stable Marker"
+// (gradeMarkingScriptConcise's `lightweight` mode, 2026-09-10, per
+// explicit request for "a more affordable one that can be used to mark
+// even simple class tests"): plain marking + scoring, no answer-location
+// / on-image annotation work. Verified live 2026-09-10 (2.5-flash-lite is
+// "no longer available to new users" — Google's own error points here).
 // Bump if deprecated, same as GEMINI_MODEL.
-const GEMINI_MODEL_LITE = "gemini-2.5-flash-lite";
+const GEMINI_MODEL_LITE = "gemini-3.5-flash-lite";
 
 type NotesFormat = "bullet" | "paragraph";
 
