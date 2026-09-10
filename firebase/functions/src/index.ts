@@ -2983,6 +2983,59 @@ export const getSubmissionFileUrl = onCall<GetSubmissionFileUrlRequest>(
 );
 
 // ---------------------------------------------------------------------
+// getPhotoBatchUrl — "Share the Photo Batch" (Scan Marker, 2026-09-10,
+// per explicit request). The client uploads a composed PDF of one
+// cohort's captured script pages DIRECTLY to Storage under
+// photo_batches/{own uid}/{batchId}/batch.pdf (see storage.rules — a
+// real client-write rule, unlike teacher_submissions above, specifically
+// so a large multi-script PDF never has to pass through a Callable
+// Function's own payload-size ceiling as base64). This function's only
+// job is minting a real, sharable signed URL for that already-uploaded
+// file — reads stay denied in storage.rules, same "no client reads a
+// plain gs:// path directly" reasoning used everywhere else in this app.
+//
+// A real requirement this function's own 30-day expiry exists for: "a
+// link that can be pasted in any other AI platform to process the
+// marking from there if so desired" only works if the link outlives a
+// single app session — getSubmissionFileUrl's 15-minute expiry (a
+// download-on-demand pattern) would defeat that entirely.
+// ---------------------------------------------------------------------
+
+interface GetPhotoBatchUrlRequest {
+  storagePath: string;
+}
+
+export const getPhotoBatchUrl = onCall<GetPhotoBatchUrlRequest>(
+  { region: "us-central1", timeoutSeconds: 30, memory: "256MiB", maxInstances: 5 },
+  async (request): Promise<{ url: string }> => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "Sign in is required.");
+    }
+    const { storagePath } = request.data ?? {};
+    if (typeof storagePath !== "string" || storagePath.length === 0) {
+      throw new HttpsError("invalid-argument", "'storagePath' is required.");
+    }
+    // Ownership check mirrors storage.rules' own write rule: a teacher can
+    // only ever ask for a link to a file under their own uid segment.
+    if (!storagePath.startsWith(`photo_batches/${request.auth.uid}/`)) {
+      throw new HttpsError("permission-denied", "This file isn't yours.");
+    }
+
+    const file = admin.storage().bucket().file(storagePath);
+    const [exists] = await file.exists();
+    if (!exists) {
+      throw new HttpsError("not-found", "That photo batch could not be found — it may not have finished uploading.");
+    }
+
+    const [url] = await file.getSignedUrl({
+      action: "read",
+      expires: Date.now() + 30 * 24 * 60 * 60 * 1000,
+    });
+    return { url };
+  }
+);
+
+// ---------------------------------------------------------------------
 // matchTopicSearchQuery — Topic search, Method 2 of the three topic-
 // selection strategies (added 2026-09-02). The client already runs a
 // free local word-overlap search across every bundled subject/grade/

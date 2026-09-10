@@ -1,10 +1,14 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../models/marking_scheme.dart';
 import '../models/marking_script.dart';
 import '../services/marking_script_repository.dart';
 import '../services/marksheet_document_service.dart';
+import '../services/photo_batch_service.dart';
 import 'marking_review_screen.dart';
 
 /// What the teacher chose at the very end of a completed cohort — read by
@@ -28,6 +32,7 @@ class CohortCompletionScreen extends StatefulWidget {
     this.cohortName = '',
     this.repository,
     this.documentService,
+    this.photoBatchService,
   });
 
   final MarkingScheme scheme;
@@ -44,6 +49,7 @@ class CohortCompletionScreen extends StatefulWidget {
 
   final MarkingScriptRepository? repository;
   final MarksheetDocumentService? documentService;
+  final PhotoBatchService? photoBatchService;
 
   @override
   State<CohortCompletionScreen> createState() => _CohortCompletionScreenState();
@@ -52,11 +58,13 @@ class CohortCompletionScreen extends StatefulWidget {
 class _CohortCompletionScreenState extends State<CohortCompletionScreen> {
   late final MarkingScriptRepository _repository = widget.repository ?? MarkingScriptRepository();
   late final MarksheetDocumentService _documentService = widget.documentService ?? MarksheetDocumentService();
+  late final PhotoBatchService _photoBatchService = widget.photoBatchService ?? PhotoBatchService();
 
   bool _loading = true;
   List<MarkingScript> _cohortScripts = const [];
   bool _showingSummary = false;
   bool _sharing = false;
+  bool _sharingPhotoBatch = false;
 
   @override
   void initState() {
@@ -206,6 +214,107 @@ class _CohortCompletionScreenState extends State<CohortCompletionScreen> {
     }
   }
 
+  /// "Share the Photo Batch" (2026-09-10, per explicit request) — "the
+  /// finished processed pictures of a cohort... that was given when
+  /// starting to capture the scripts by camera": every real page actually
+  /// captured for this cohort, across every script regardless of its own
+  /// grading/review status (not just the "clean" ones [_shareList]'s own
+  /// results list is scoped to — the point here is what was SENT to AI
+  /// marking, not what came back clean from it), combined into one PDF.
+  /// Offers both real sharing means at once: the normal OS share sheet
+  /// (any app), and a real pasteable link — "so desired... to process the
+  /// marking from there" on another AI platform.
+  Future<void> _sharePhotoBatch() async {
+    setState(() => _sharingPhotoBatch = true);
+    try {
+      final imageFiles = <File>[];
+      for (final script in _cohortScripts) {
+        imageFiles.addAll(await _repository.pageFilesFor(script));
+      }
+      if (imageFiles.isEmpty) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('No captured pages are available for this cohort (photos may already have been discarded to free storage).')),
+        );
+        return;
+      }
+
+      final title = widget.cohortName.trim().isEmpty ? widget.scheme.title : '${widget.cohortName} ${widget.scheme.title}';
+      final pdf = await _photoBatchService.composePdf(imageFiles, title: title);
+      if (!mounted) return;
+
+      final choice = await showModalBottomSheet<_PhotoBatchAction>(
+        context: context,
+        builder: (sheetContext) => SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
+                child: Text(
+                  'Photo Batch — ${imageFiles.length} page(s) across ${_cohortScripts.length} script(s)',
+                  style: Theme.of(sheetContext).textTheme.titleMedium,
+                ),
+              ),
+              ListTile(
+                leading: const Icon(Icons.share_outlined),
+                title: const Text('Share via…'),
+                subtitle: const Text('The usual sharing means — WhatsApp, email, Drive, and anything else installed'),
+                onTap: () => Navigator.of(sheetContext).pop(_PhotoBatchAction.share),
+              ),
+              ListTile(
+                leading: const Icon(Icons.link),
+                title: const Text('Get a shareable link'),
+                subtitle: const Text('Paste it into another AI platform, or anywhere else — stays valid for 30 days'),
+                onTap: () => Navigator.of(sheetContext).pop(_PhotoBatchAction.link),
+              ),
+              const SizedBox(height: 8),
+            ],
+          ),
+        ),
+      );
+      if (choice == null || !mounted) return;
+
+      switch (choice) {
+        case _PhotoBatchAction.share:
+          await SharePlus.instance.share(
+            ShareParams(files: [XFile(pdf.path)], subject: '$title — Photo Batch'),
+          );
+        case _PhotoBatchAction.link:
+          await _shareLinkFor(pdf);
+      }
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Could not prepare the photo batch: $error')),
+      );
+    } finally {
+      if (mounted) setState(() => _sharingPhotoBatch = false);
+    }
+  }
+
+  Future<void> _shareLinkFor(File pdf) async {
+    try {
+      final url = await _photoBatchService.uploadAndGetLink(pdf);
+      if (!mounted) return;
+      await Clipboard.setData(ClipboardData(text: url));
+      if (!mounted) return;
+      await showDialog<void>(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
+          title: const Text('Link copied'),
+          content: SelectableText(url),
+          actions: [
+            FilledButton(onPressed: () => Navigator.of(dialogContext).pop(), child: const Text('Done')),
+          ],
+        ),
+      );
+    } on PhotoBatchUnavailable catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$error')));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -329,6 +438,15 @@ class _CohortCompletionScreenState extends State<CohortCompletionScreen> {
                 ],
               ),
               const SizedBox(height: 8),
+              OutlinedButton.icon(
+                onPressed: _sharingPhotoBatch ? null : _sharePhotoBatch,
+                icon: _sharingPhotoBatch
+                    ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
+                    : const Icon(Icons.photo_library_outlined),
+                label: const Text('Share the Photo Batch'),
+                style: OutlinedButton.styleFrom(minimumSize: const Size.fromHeight(0)),
+              ),
+              const SizedBox(height: 8),
               for (final script in scripts)
                 Card(
                   margin: const EdgeInsets.only(bottom: 6),
@@ -367,6 +485,8 @@ class _CohortCompletionScreenState extends State<CohortCompletionScreen> {
     );
   }
 }
+
+enum _PhotoBatchAction { share, link }
 
 /// A minimal, hand-drawn bar chart — one bar per student, height scaled to
 /// their percentage, horizontally scrollable for a large class. No chart

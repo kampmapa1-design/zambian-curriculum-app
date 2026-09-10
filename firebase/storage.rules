@@ -14,5 +14,26 @@ service firebase.storage {
     match /teacher_submissions/{allPaths=**} {
       allow read, write: if false;
     }
+
+    // "Share the Photo Batch" (Scan Marker, 2026-09-10, per explicit
+    // request) — unlike teacher_submissions above, the CLIENT itself
+    // uploads directly here (via the firebase_storage SDK — no Cloud
+    // Function payload-size ceiling to work around for what can be a
+    // large multi-script PDF), so this needs a real client-write rule,
+    // not admin-SDK-only. Scoped strictly to the uploader's own uid
+    // segment — a signed teacher can only write under their own
+    // photo_batches/{their uid}/ path, never another's, and reads stay
+    // denied here too: the app always opens a time-limited signed URL
+    // from getPhotoBatchUrl, same "no client reads a plain gs:// path
+    // directly" reasoning as teacher_submissions above. 25MB cap per
+    // file, PDF only — matches the one real use (one composed PDF per
+    // batch), not a general-purpose upload bucket.
+    match /photo_batches/{uid}/{allPaths=**} {
+      allow read: if false;
+      allow write: if request.auth != null
+        && request.auth.uid == uid
+        && request.resource.size < 25 * 1024 * 1024
+        && request.resource.contentType == 'application/pdf';
+    }
   }
 }
