@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../models/concise_marking_record.dart';
 import '../models/marking_rubric.dart';
 import '../models/marking_scheme.dart';
 import '../models/marking_script.dart';
@@ -597,11 +598,31 @@ class _ConciseMarkingScreenState extends State<ConciseMarkingScreen> {
           rubric: effectiveRubric,
         );
 
+        final markedAt = DateTime.now();
+        final record = ConciseMarkingRecord(
+          markedAt: markedAt,
+          engine: _stable ? 'stable' : 'concise',
+          annotations: [
+            for (final a in result.annotations)
+              ScriptAnnotationRecord(
+                questionLabel: a.questionLabel,
+                pageIndex: a.pageIndex,
+                yMin: a.yMin,
+                xMin: a.xMin,
+                yMax: a.yMax,
+                xMax: a.xMax,
+              ),
+          ],
+          scoreJson: score.toJson(),
+          sectionByLabel: result.sectionByLabel,
+        );
+
         final updated = item.script.copyWith(
           status: MarkingScriptStatus.graded,
           gradedAnswers: result.answers,
           observations: result.observations,
           schemeId: item.referenceScheme?.id,
+          conciseMarking: record,
         );
         await _repository.update(updated);
 
@@ -623,6 +644,7 @@ class _ConciseMarkingScreenState extends State<ConciseMarkingScreen> {
                 annotations: result.annotations,
                 outputDir: outputDir,
                 score: score,
+                markedAt: markedAt,
               );
         final report = await _annotationService.generateMarkedReportPdf(
           score: score,
@@ -631,6 +653,7 @@ class _ConciseMarkingScreenState extends State<ConciseMarkingScreen> {
           subjectName: subjectLabel,
           studentName: item.candidateName,
           rubric: effectiveRubric,
+          markedAt: markedAt,
           outputDir: outputDir,
         );
         final fallback = _stable
@@ -734,6 +757,26 @@ class _ConciseMarkingScreenState extends State<ConciseMarkingScreen> {
     );
     if (!mounted || format == null) return;
 
+    final markedItems = _items.where((i) => i.status == _ItemStatus.marked).toList();
+    final includeScripts = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(_stable ? 'Attach each performance report?' : 'Attach each marked script?'),
+        content: Text(
+          _stable
+              ? 'Also put every candidate\'s one-page performance report in the share, alongside the score list?'
+              : 'Also put every candidate\'s marked script (pages with the ticks/crosses and the dated '
+                  'score) and their performance report in the share, so you can hand each student their '
+                  'own back?',
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(dialogContext).pop(false), child: const Text('Score list only')),
+          FilledButton(onPressed: () => Navigator.of(dialogContext).pop(true), child: const Text('Attach them')),
+        ],
+      ),
+    );
+    if (!mounted || includeScripts == null) return;
+
     try {
       final service = ConciseCohortScoreListDocumentService();
       final title = _subject.isNotEmpty ? _subject : '$_engineName cohort';
@@ -755,6 +798,15 @@ class _ConciseMarkingScreenState extends State<ConciseMarkingScreen> {
         final f = await service.generatePdf(
             cohortTitle: title, subjectName: _subject, entries: entries, order: order, engineName: _engineName);
         files.add(XFile(f.path));
+      }
+      if (includeScripts == true) {
+        for (final i in markedItems) {
+          for (final p in i.annotatedPages) {
+            files.add(XFile(p.path));
+          }
+          if (i.reportPdf case final r?) files.add(XFile(r.path));
+          if (i.fallbackPdf case final fb?) files.add(XFile(fb.path));
+        }
       }
       if (!mounted || files.isEmpty) return;
       await SharePlus.instance.share(ShareParams(files: files, subject: '$title — cohort scores'));

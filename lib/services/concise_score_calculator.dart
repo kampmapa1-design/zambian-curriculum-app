@@ -37,6 +37,26 @@ class SectionScore {
   });
 
   double get percentage => possible <= 0 ? 0 : (awarded / possible) * 100;
+
+  Map<String, dynamic> toJson() => {
+        'name': name,
+        'awarded': awarded,
+        'possible': possible,
+        'countedQuestions': countedQuestions,
+        'ignoredExcessQuestions': ignoredExcessQuestions,
+        'countedLabels': countedLabels,
+        'ignoredLabels': ignoredLabels,
+      };
+
+  factory SectionScore.fromJson(Map<String, dynamic> json) => SectionScore(
+        name: json['name'] as String? ?? '',
+        awarded: (json['awarded'] as num?)?.toDouble() ?? 0,
+        possible: (json['possible'] as num?)?.toDouble() ?? 0,
+        countedQuestions: (json['countedQuestions'] as num?)?.toInt() ?? 0,
+        ignoredExcessQuestions: (json['ignoredExcessQuestions'] as num?)?.toInt() ?? 0,
+        countedLabels: (json['countedLabels'] as List?)?.cast<String>() ?? const [],
+        ignoredLabels: (json['ignoredLabels'] as List?)?.cast<String>() ?? const [],
+      );
 }
 
 /// The whole-script Concise Marking result — everything normalised so a
@@ -82,6 +102,26 @@ class ConciseScore {
   String get rawFractionLabel => '${fmt(awardedMarks)} / ${fmt(possibleMarks)}';
 
   int get roundedPercent => percentage.clamp(0, 100).round();
+
+  Map<String, dynamic> toJson() => {
+        'sections': [for (final s in sections) s.toJson()],
+        'awardedMarks': awardedMarks,
+        'possibleMarks': possibleMarks,
+        'percentage': percentage,
+        'rubricApplied': rubricApplied,
+      };
+
+  factory ConciseScore.fromJson(Map<String, dynamic> json) => ConciseScore(
+        sections: (json['sections'] as List?)
+                ?.whereType<Map>()
+                .map((m) => SectionScore.fromJson(m.cast<String, dynamic>()))
+                .toList() ??
+            const [],
+        awardedMarks: (json['awardedMarks'] as num?)?.toDouble() ?? 0,
+        possibleMarks: (json['possibleMarks'] as num?)?.toDouble() ?? 0,
+        percentage: (json['percentage'] as num?)?.toDouble() ?? 0,
+        rubricApplied: json['rubricApplied'] as bool? ?? false,
+      );
 }
 
 /// Deterministic, offline scoring for Concise Marking. The AI grades and

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../models/marking_scheme.dart';
@@ -10,6 +11,7 @@ import '../services/marked_results_list_repository.dart';
 import '../services/marking_scheme_repository.dart';
 import '../services/marking_script_repository.dart';
 import '../services/photo_batch_service.dart';
+import '../services/script_annotation_service.dart';
 import 'consolidate_marked_scripts_screen.dart';
 import 'marked_results_lists_screen.dart';
 import 'marking_review_screen.dart';
@@ -73,6 +75,7 @@ class _MarkedScriptsScreenState extends State<MarkedScriptsScreen> {
   late final MarkingSchemeRepository _schemeRepository = widget.schemeRepository ?? MarkingSchemeRepository();
   late final MarkedResultsListRepository _listRepository = widget.listRepository ?? MarkedResultsListRepository();
   late final PhotoBatchService _photoBatchService = widget.photoBatchService ?? PhotoBatchService();
+  final ScriptAnnotationService _annotationService = ScriptAnnotationService();
 
   bool _loading = true;
   List<MarkingScript> _scripts = [];
@@ -463,6 +466,49 @@ class _MarkedScriptsScreenState extends State<MarkedScriptsScreen> {
     }
   }
 
+  /// Regenerate a Concise Marking / Stable Marker script's shareable
+  /// artefacts from its saved record — no AI call — and open the share
+  /// sheet. Works any time after the marking session, unlike the in-app
+  /// session view which is lost once you leave it.
+  Future<void> _shareMarkedScript(MarkingScript script) async {
+    if (script.photosDiscarded && (script.conciseMarking?.isStable ?? false) == false) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('This script\'s photos were discarded, so the ticked pages can\'t be '
+            'rebuilt. The report can still be shared from the review screen.')),
+      );
+      return;
+    }
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Rebuilding the marked script…'), duration: Duration(seconds: 1)),
+    );
+    try {
+      final pageFiles = await _repository.pageFilesFor(script);
+      final tempDir = await getTemporaryDirectory();
+      final outDir = Directory('${tempDir.path}/marked_rebuild_${script.id}');
+      if (!await outDir.exists()) await outDir.create(recursive: true);
+
+      final built = await _annotationService.regenerateArtefacts(
+        script: script,
+        pageFiles: pageFiles,
+        outputDir: outDir,
+      );
+      final files = <XFile>[
+        for (final f in built.markedPages) XFile(f.path),
+        XFile(built.report.path),
+        if (built.fallbackPage case final fb?) XFile(fb.path),
+      ];
+      if (!mounted || files.isEmpty) return;
+      await SharePlus.instance.share(
+        ShareParams(files: files, subject: '${script.fullName} — marked ${script.subjectName}'),
+      );
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Could not rebuild the marked script: $error')),
+      );
+    }
+  }
+
   Future<void> _openActions(MarkingScript script) async {
     final scheme = _schemeFor(script);
     final action = await showModalBottomSheet<_ScriptAction>(
@@ -481,6 +527,17 @@ class _MarkedScriptsScreenState extends State<MarkedScriptsScreen> {
               subtitle: const Text('Open this script — every answer stays editable'),
               onTap: () => Navigator.of(sheetContext).pop(_ScriptAction.review),
             ),
+            if (script.conciseMarking != null)
+              ListTile(
+                leading: const Icon(Icons.fact_check_outlined),
+                title: Text(script.conciseMarking!.isStable
+                    ? 'Performance report + score list'
+                    : 'Marked script (ticks) + report'),
+                subtitle: Text(script.conciseMarking!.isStable
+                    ? 'Rebuild and share this candidate\'s report'
+                    : 'Rebuild and share the dated pages with ticks/crosses + the report'),
+                onTap: () => Navigator.of(sheetContext).pop(_ScriptAction.markedScript),
+              ),
             ListTile(
               leading: const Icon(Icons.refresh),
               title: const Text('Reprocess with AI'),
@@ -515,6 +572,8 @@ class _MarkedScriptsScreenState extends State<MarkedScriptsScreen> {
           ),
         );
         _load();
+      case _ScriptAction.markedScript:
+        await _shareMarkedScript(script);
       case _ScriptAction.reprocess:
         await _repository.update(script.copyWith(status: MarkingScriptStatus.queued, clearLastError: true));
         if (!mounted) return;
@@ -659,7 +718,7 @@ class _MarkedScriptsScreenState extends State<MarkedScriptsScreen> {
   }
 }
 
-enum _ScriptAction { review, reprocess, markReviewed, delete }
+enum _ScriptAction { review, markedScript, reprocess, markReviewed, delete }
 
 enum _BulkAction { newList, review, reprocess, photoBatch, delete }
 

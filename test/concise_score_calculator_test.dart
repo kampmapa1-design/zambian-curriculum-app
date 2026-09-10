@@ -112,4 +112,28 @@ void main() {
     expect(score.roundedPercent, 100);
     expect(score.outOf100Label, '100 / 100');
   });
+
+  test('ConciseScore survives a JSON round-trip (needed to regenerate marked scripts offline)', () {
+    const rubric = MarkingRubric(
+      sections: [
+        RubricSection(name: 'Section A', questionsToAnswer: null, marksAllocated: 40),
+        RubricSection(name: 'Section C', questionsToAnswer: 1, marksAllocated: 60),
+      ],
+      paperTotalMarks: 100,
+      instructionsSummary: 'x',
+    );
+    final original = calc.compute(
+      answers: [ans('A1', 15, 20), ans('A2', 20, 20), ans('C1', 40, 60), ans('C2', 10, 60)],
+      sectionByLabel: const {'A1': 'Section A', 'A2': 'Section A', 'C1': 'Section C', 'C2': 'Section C'},
+      rubric: rubric,
+    );
+    final restored = ConciseScore.fromJson(original.toJson());
+    expect(restored.percentage, closeTo(original.percentage, 0.0001));
+    expect(restored.awardedMarks, original.awardedMarks);
+    expect(restored.possibleMarks, original.possibleMarks);
+    expect(restored.rubricApplied, original.rubricApplied);
+    expect(restored.sections.length, original.sections.length);
+    expect(restored.sections.last.ignoredExcessQuestions, original.sections.last.ignoredExcessQuestions);
+    expect(restored.outOf100Label, original.outOf100Label);
+  });
 }

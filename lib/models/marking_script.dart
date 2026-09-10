@@ -1,3 +1,5 @@
+import 'concise_marking_record.dart';
+
 /// A candidate's gender, as recorded on the script — required for the
 /// Analysis screen's gender-segmented grade breakdown (male/female counts
 /// per grade band). Deliberately just these two: that's the whole of what
@@ -311,6 +313,12 @@ class MarkingScript {
   /// Submission bridge; never edited afterward (not in [copyWith]).
   final List<PreSegmentedAnswer>? preSegmentedAnswers;
 
+  /// Set when this script was marked by Concise Marking / Stable Marker —
+  /// everything needed to regenerate the timestamped marked script (with
+  /// ticks/crosses), the performance report, and the score, offline, with
+  /// no further AI call. Null for scripts marked the normal way.
+  final ConciseMarkingRecord? conciseMarking;
+
   const MarkingScript({
     required this.id,
     required this.firstName,
@@ -332,6 +340,7 @@ class MarkingScript {
     this.observations,
     this.lastError,
     this.preSegmentedAnswers,
+    this.conciseMarking,
   });
 
   int get pageCount => pageFileNames.length;
@@ -368,6 +377,7 @@ class MarkingScript {
     List<String>? observations,
     String? lastError,
     bool clearLastError = false,
+    ConciseMarkingRecord? conciseMarking,
   }) =>
       MarkingScript(
         id: id,
@@ -393,6 +403,7 @@ class MarkingScript {
         gradedAnswers: gradedAnswers ?? this.gradedAnswers,
         lastError: clearLastError ? null : (lastError ?? this.lastError),
         preSegmentedAnswers: preSegmentedAnswers,
+        conciseMarking: conciseMarking ?? this.conciseMarking,
       );
 
   factory MarkingScript.fromJson(Map<String, dynamic> json) {
@@ -449,6 +460,9 @@ class MarkingScript {
           ?.cast<Map<String, dynamic>>()
           .map(PreSegmentedAnswer.fromJson)
           .toList(),
+      conciseMarking: json['conciseMarking'] is Map
+          ? ConciseMarkingRecord.fromJson((json['conciseMarking'] as Map).cast<String, dynamic>())
+          : null,
     );
   }
 
@@ -473,6 +487,7 @@ class MarkingScript {
         'observations': observations,
         'lastError': lastError,
         'preSegmentedAnswers': preSegmentedAnswers?.map((s) => s.toJson()).toList(),
+        'conciseMarking': conciseMarking?.toJson(),
       };
 }
 

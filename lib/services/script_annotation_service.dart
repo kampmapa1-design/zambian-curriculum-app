@@ -7,6 +7,7 @@ import 'package:path/path.dart' as p;
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
+import '../models/concise_marking_record.dart';
 import '../models/marking_rubric.dart';
 import '../models/marking_script.dart';
 import 'concise_marking_service.dart';
@@ -36,6 +37,11 @@ class ScriptAnnotationService {
 
   String _formatMark(double m) => m == m.roundToDouble() ? m.toInt().toString() : m.toString();
 
+  static const _months = [
+    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+  ];
+  String _dateLabel(DateTime d) => '${d.day} ${_months[d.month - 1]} ${d.year}';
+
   /// Replaces characters the PDF's default font (Helvetica) has no glyph
   /// for — an em/en-dash being the one a real title string (built from a
   /// student name + scheme title elsewhere in this app) is most likely to
@@ -55,6 +61,7 @@ class ScriptAnnotationService {
     required List<AnswerAnnotation> annotations,
     required Directory outputDir,
     ConciseScore? score,
+    DateTime? markedAt,
   }) async {
     final answerByLabel = {for (final a in answers) a.questionLabel: a};
     final byPage = <int, List<(GradedAnswer, AnswerAnnotation)>>{};
@@ -81,6 +88,7 @@ class ScriptAnnotationService {
         original,
         byPage[pageIndex]!,
         scoreStamp: pageIndex == 0 ? score : null,
+        markedAt: pageIndex == 0 ? markedAt : null,
       );
       final outFile = File(p.join(outputDir.path, 'page_${(pageIndex + 1).toString().padLeft(2, '0')}_marked.png'));
       await outFile.writeAsBytes(pngBytes, flush: true);
@@ -93,6 +101,7 @@ class ScriptAnnotationService {
     File original,
     List<(GradedAnswer, AnswerAnnotation)> marks, {
     ConciseScore? scoreStamp,
+    DateTime? markedAt,
   }) async {
     final bytes = await original.readAsBytes();
     final codec = await ui.instantiateImageCodec(bytes);
@@ -139,7 +148,7 @@ class ScriptAnnotationService {
       }
 
       if (scoreStamp != null) {
-        _drawScoreStamp(canvas, scoreStamp, width, height);
+        _drawScoreStamp(canvas, scoreStamp, width, height, markedAt);
       }
 
       final picture = recorder.endRecording();
@@ -158,7 +167,7 @@ class ScriptAnnotationService {
   /// The out-of-100 score panel drawn onto page 1 of the marked script —
   /// "add the total number of marks when you are done marking... all final
   /// total marks for the paper must be calculated in percentage".
-  void _drawScoreStamp(ui.Canvas canvas, ConciseScore score, double width, double height) {
+  void _drawScoreStamp(ui.Canvas canvas, ConciseScore score, double width, double height, DateTime? markedAt) {
     final margin = width * 0.03;
     final panelW = (width * 0.46).clamp(260.0, width - margin * 2);
     final bigSize = (width * 0.05).clamp(22.0, 60.0);
@@ -167,7 +176,13 @@ class ScriptAnnotationService {
     const ink = ui.Color(0xFF1A1A1A);
 
     final spans = <InlineSpan>[
-      TextSpan(text: 'SCORE\n', style: TextStyle(color: red, fontSize: smallSize, fontWeight: FontWeight.w700, letterSpacing: 1.5)),
+      TextSpan(text: 'MARKED', style: TextStyle(color: red, fontSize: smallSize, fontWeight: FontWeight.w700, letterSpacing: 1.5)),
+      if (markedAt != null)
+        TextSpan(
+          text: '  ${_dateLabel(markedAt)}',
+          style: TextStyle(color: ink, fontSize: smallSize * 0.85, fontWeight: FontWeight.w600),
+        ),
+      TextSpan(text: '\n', style: TextStyle(fontSize: smallSize)),
       TextSpan(text: '${score.outOf100Label}\n', style: TextStyle(color: red, fontSize: bigSize, fontWeight: FontWeight.w900)),
       TextSpan(
         text: '${score.rawFractionLabel} raw  ·  ${score.roundedPercent}%'
@@ -219,6 +234,7 @@ class ScriptAnnotationService {
     String? subjectName,
     String? studentName,
     MarkingRubric? rubric,
+    DateTime? markedAt,
     required Directory outputDir,
   }) async {
     final doc = pw.Document();
@@ -233,6 +249,8 @@ class ScriptAnnotationService {
             pw.Text(_pdfSafe(subjectName), style: const pw.TextStyle(fontSize: 11)),
           if (studentName != null && studentName.trim().isNotEmpty)
             pw.Text(_pdfSafe('Candidate: $studentName'), style: const pw.TextStyle(fontSize: 11)),
+          if (markedAt != null)
+            pw.Text('Marked: ${_dateLabel(markedAt)}', style: const pw.TextStyle(fontSize: 10, color: PdfColors.grey700)),
           pw.SizedBox(height: 10),
           pw.Container(
             padding: const pw.EdgeInsets.all(10),
@@ -378,5 +396,66 @@ class ScriptAnnotationService {
     final file = File(p.join(outputDir.path, '${safeName.isEmpty ? 'script' : safeName}_unmarked_on_photo.pdf'));
     await file.writeAsBytes(bytes, flush: true);
     return file;
+  }
+
+  /// Regenerate a marked script's shareable files from its persisted
+  /// [ConciseMarkingRecord] — NO AI call (2026-09-10 fix: the timestamped
+  /// marked script used to be reachable only during the live session).
+  /// For a Concise-marked script this returns the ticked/crossed page
+  /// images + the report + (if any answers weren't locatable) the
+  /// generated page. For a Stable-marked script it returns just the report.
+  Future<({List<File> markedPages, File report, File? fallbackPage})> regenerateArtefacts({
+    required MarkingScript script,
+    required List<File> pageFiles,
+    required Directory outputDir,
+  }) async {
+    final record = script.conciseMarking;
+    if (record == null) {
+      throw StateError('This script was not marked by Concise Marking / Stable Marker.');
+    }
+    final answers = script.gradedAnswers ?? const <GradedAnswer>[];
+    final score = ConciseScore.fromJson(record.scoreJson);
+    final annotations = [
+      for (final a in record.annotations)
+        AnswerAnnotation(
+          questionLabel: a.questionLabel,
+          pageIndex: a.pageIndex,
+          yMin: a.yMin,
+          xMin: a.xMin,
+          yMax: a.yMax,
+          xMax: a.xMax,
+        ),
+    ];
+    final name = script.fullName.isEmpty ? 'Candidate' : script.fullName;
+    final title = '$name - ${script.subjectName}';
+
+    final markedPages = record.isStable
+        ? <File>[]
+        : await annotatePages(
+            pageFiles: pageFiles,
+            answers: answers,
+            annotations: annotations,
+            outputDir: outputDir,
+            score: score,
+            markedAt: record.markedAt,
+          );
+    final report = await generateMarkedReportPdf(
+      score: score,
+      observations: script.observations ?? const [],
+      title: title,
+      subjectName: script.subjectName,
+      studentName: name,
+      markedAt: record.markedAt,
+      outputDir: outputDir,
+    );
+    final fallback = record.isStable
+        ? null
+        : await generateFallbackReproduction(
+            answers: answers,
+            annotations: annotations,
+            outputDir: outputDir,
+            title: title,
+          );
+    return (markedPages: markedPages, report: report, fallbackPage: fallback);
   }
 }
