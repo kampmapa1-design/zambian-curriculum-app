@@ -43,7 +43,21 @@ class _MarkedResultsListsScreenState extends State<MarkedResultsListsScreen> {
       final catalog = await _listRepository.loadCatalog();
       if (!mounted) return;
       setState(() {
-        _lists = catalog.lists..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+        // Real, confirmed bug (2026-09-11 — this is what the try/catch
+        // above actually caught, surfacing as "Unsupported operation:
+        // Cannot modify an unmodifiable list"): sorting in place with
+        // `..sort()` mutates its receiver, but MarkedResultsListCatalog
+        // .empty()'s `lists` field is a `const []` — genuinely
+        // unmodifiable in Dart, not just conceptually. Every catalog in
+        // this app follows the identical `.empty()` pattern (see e.g.
+        // MarkingScriptCatalog/MarkingSchemeCatalog), so `catalog.lists`
+        // is const on a fresh install, or any time the catalog file
+        // legitimately doesn't exist yet. `.toList()` first makes a real,
+        // separate, growable copy — same fix already used correctly
+        // everywhere else in this app that sorts a repository's own
+        // returned list (verified via a full `..sort(` sweep across lib/
+        // — this was the only site missing it).
+        _lists = catalog.lists.toList()..sort((a, b) => b.createdAt.compareTo(a.createdAt));
         _loading = false;
       });
     } catch (error) {
