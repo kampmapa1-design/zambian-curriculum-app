@@ -25,6 +25,7 @@ import 'burst_capture_screen.dart';
 import 'capture_manual_scores_screen.dart';
 import 'captured_list_analysis_intake_screen.dart';
 import 'cohort_completion_screen.dart';
+import 'concise_marking_screen.dart';
 import 'marked_scripts_screen.dart';
 import 'marking_analysis_screen.dart';
 import 'marking_key_upload_flow.dart';
@@ -949,6 +950,24 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
                   onPressed: _completeMarkingCohort,
                   icon: const Icon(Icons.flag_outlined),
                   label: const Text('Completed Marking Cohort', textAlign: TextAlign.center),
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    minimumSize: const Size.fromHeight(0),
+                  ),
+                ),
+                // "Concise Marking" (2026-09-11, per explicit request) —
+                // AI marking that draws a real tick/cross directly onto a
+                // copy of the actual photographed script page, right at
+                // each answer's own location (see ConciseMarkingScreen's
+                // own doc comment). A separate, additive entry point —
+                // every other marking flow here is unchanged.
+                const SizedBox(height: 8),
+                OutlinedButton.icon(
+                  onPressed: () => Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const ConciseMarkingScreen()),
+                  ),
+                  icon: const Icon(Icons.fact_check_outlined),
+                  label: const Text('Concise Marking', textAlign: TextAlign.center),
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     minimumSize: const Size.fromHeight(0),

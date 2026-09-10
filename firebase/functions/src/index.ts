@@ -1658,6 +1658,254 @@ export const gradeMarkingScript = onCall<GradeMarkingScriptRequest>(
 );
 
 // ---------------------------------------------------------------------
+// gradeMarkingScriptConcise — "Concise Marking" (Scan Marker, 2026-09-11,
+// per explicit request): the same real grading gradeMarkingScript already
+// does, PLUS asking the model to point at exactly where on the original
+// photographed page each answer's own mark belongs, so the client can
+// draw a real tick/cross directly onto a copy of the actual script image
+// — "a tick on the correct answer on the image of the student's script
+// right on the correct question's answer being marked, or an x... if it
+// is a wrong one."
+//
+// A SEPARATE function from gradeMarkingScript, not a shared schema change
+// to it, per this app's standing "don't disrupt an established function"
+// principle — every teacher not using Concise Marking keeps the exact
+// same grading behaviour, unaffected by this. Shares buildGradingPrompt's
+// own Rules Engine building blocks (universal conventions, subject
+// module, exam-standard guidance) so the real marking judgment is
+// identical either way; only the extra location instructions are new.
+//
+// Real, disclosed limitation (per explicit request: "if there is no AI to
+// make a representation on the actual image... the computer should mark
+// [on] the computer generated version"): pageIndex/box are null whenever
+// the model isn't confident where an answer actually sits on the page —
+// never guessed just to fill the field, same "never guess, disclose
+// uncertainty" principle as every other AI feature in this app. The
+// CLIENT (see ScriptAnnotationService) is what actually falls back to a
+// generated digital reproduction for those specific answers; this
+// function's only job is grading + best-effort location.
+// ---------------------------------------------------------------------
+
+interface ConciseMarkingAnnotation {
+  questionLabel: string;
+  transcribedAnswer: string;
+  marksAwarded: number;
+  confidence: "high" | "medium" | "low";
+  markingBasis: "exact_match" | "reasonable_equivalence" | "not_applicable";
+  // 0-based index into the pageImagesBase64 array this request was sent
+  // with — which photographed page the student's own handwritten answer
+  // for this question actually appears on. Null when not confidently
+  // locatable.
+  pageIndex: number | null;
+  // A tight bounding box around JUST the student's own handwritten
+  // answer (not the whole page, not the printed question text) -
+  // [yMin, xMin, yMax, xMax], each normalized 0-1000 across the page
+  // image's own real width/height (Gemini's own standard object-
+  // detection coordinate convention). Null when not confidently
+  // locatable, or when pageIndex is null.
+  box: { yMin: number; xMin: number; yMax: number; xMax: number } | null;
+}
+
+interface GradeMarkingScriptConciseResponse {
+  answers: ConciseMarkingAnnotation[];
+  observations: string[];
+}
+
+const gradeMarkingScriptConciseSchema = {
+  type: "object",
+  properties: {
+    answers: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          questionLabel: { type: "string" },
+          transcribedAnswer: { type: "string" },
+          marksAwarded: { type: "number" },
+          confidence: { type: "string", enum: ["high", "medium", "low"] },
+          markingBasis: { type: "string", enum: ["exact_match", "reasonable_equivalence", "not_applicable"] },
+          pageIndex: {
+            type: ["integer", "null"],
+            description:
+              "0-based index into the images this request was sent with - which photographed page the " +
+              "student's own handwritten answer for this question actually appears on. Null if not " +
+              "confidently locatable - never guess.",
+          },
+          box: {
+            type: ["object", "null"],
+            description:
+              "A tight bounding box around JUST the student's own handwritten answer on that page (not " +
+              "the whole page, not the printed question text) - normalized 0-1000 across that page " +
+              "image's own real width/height. Null if not confidently locatable, or if pageIndex is null " +
+              "- never guess a location just to fill this field.",
+            properties: {
+              yMin: { type: "integer" },
+              xMin: { type: "integer" },
+              yMax: { type: "integer" },
+              xMax: { type: "integer" },
+            },
+            required: ["yMin", "xMin", "yMax", "xMax"],
+            additionalProperties: false,
+          },
+        },
+        required: ["questionLabel", "transcribedAnswer", "marksAwarded", "confidence", "markingBasis", "pageIndex", "box"],
+        additionalProperties: false,
+      },
+    },
+    observations: {
+      type: "array",
+      items: { type: "string" },
+      minItems: 3,
+      maxItems: 5,
+    },
+  },
+  required: ["answers", "observations"],
+  additionalProperties: false,
+};
+
+function buildConciseMarkingPrompt(
+  questions: GradeMarkingScriptQuestion[],
+  subjectName?: string,
+  markConventions?: string[],
+  examStandard?: "NATIONAL_MOCK" | "SCHOOL_CA" | null
+): string {
+  const schemeText = questions
+    .map((q) => `${q.label} (max ${q.maxMarks} marks): expected answer/keywords — ${q.expectedAnswerOrKeywords}`)
+    .join("\n");
+
+  const schemeConventionsSection =
+    markConventions && markConventions.length > 0
+      ? [
+          "",
+          "This marking scheme's own front page states these conventions — they take priority over " +
+            "everything below wherever they conflict:",
+          markConventions.map((c) => `- ${c}`).join("\n"),
+        ].join("\n")
+      : "";
+  const subjectModuleText = selectSubjectModule(subjectName);
+  const subjectModuleSection = subjectModuleText ? `\n${subjectModuleText}` : "";
+  const examStandardText = examStandardGuidance(examStandard);
+  const examStandardSection = examStandardText ? `\n${examStandardText}` : "";
+
+  return [
+    "The attached images are photos of one student's answer script, in page order (page 1 is the FIRST " +
+      "image attached, page 2 the second, and so on). Some scripts are entirely handwritten; others mix " +
+      "pre-printed material with the student's own handwritten answers. Distinguish the two: pre-printed " +
+      "question text is never the student's answer.",
+    "For EACH question in the marking scheme below:",
+    "1. Find the student's own answer (handwriting, or a handwritten mark/circle/tick on a printed " +
+      "option), transcribe it, and award marks out of that question's maximum — partial credit is " +
+      "normal, not just full marks or zero.",
+    "2. Set markingBasis: 'exact_match' when the mark came from a listed expected answer/alternative with " +
+      "no judgment call; 'reasonable_equivalence' when you awarded a mark for a relevant, accurate point " +
+      "NOT explicitly listed; 'not_applicable' when no such judgment applies (no answer found, or purely " +
+      "objective).",
+    "3. Give confidence: 'high' only when both legible AND you're confident the mark is right - NEVER " +
+      "'high' when markingBasis is 'reasonable_equivalence'; 'low' when hard to read/ambiguous/unsure; " +
+      "'medium' otherwise.",
+    "4. THIS IS THE NEW PART: set pageIndex to which photographed page (0-based - the first image " +
+      "attached is page 0) the student's own handwritten answer for this exact question physically " +
+      "appears on, and box to a TIGHT bounding box around just that handwritten answer (not the whole " +
+      "page, not any printed text) as {yMin, xMin, yMax, xMax}, each an integer 0-1000 normalized across " +
+      "that page image's own real width/height (0,0 is the top-left corner of that page image, 1000,1000 " +
+      "the bottom-right). This is where a real tick or cross mark will be drawn directly onto the actual " +
+      "photographed page, right on/next to the student's own answer - it must be genuinely accurate, not " +
+      "a rough guess. Set BOTH pageIndex and box to null when you are not confident of the exact " +
+      "location, rather than giving your best guess - an inaccurate mark placed on the wrong part of a " +
+      "real scanned document is worse than no mark placement at all, and a null here still gets the " +
+      "answer marked correctly, just placed on a separately generated document instead of directly on " +
+      "this photo.",
+    "5. Separately, write 3 to 5 short, specific observations about this candidate's performance on THIS " +
+      "script, grounded in what the marking scheme actually asked for.",
+    "",
+    "Marking scheme:",
+    schemeText,
+    schemeConventionsSection,
+    subjectModuleSection,
+    examStandardSection,
+    "",
+    UNIVERSAL_MARKING_CONVENTIONS,
+    "",
+    "Return exactly one answer per question in the marking scheme, using the same question label, plus " +
+      "the 3-5 observations. Every mark you award must be a first-pass suggestion for a teacher to " +
+      "review, never a final grade — never fabricate an answer that isn't genuinely visible in the images.",
+  ].join("\n");
+}
+
+export const gradeMarkingScriptConcise = onCall<GradeMarkingScriptRequest>(
+  { secrets: [geminiApiKey], region: "us-central1", timeoutSeconds: 180, memory: "1GiB", maxInstances: 5 },
+  async (request): Promise<GradeMarkingScriptConciseResponse> => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "Sign in is required to grade a script.");
+    }
+
+    const { pageImagesBase64, questions, subjectName, markConventions, examStandard } = request.data ?? {};
+    if (!Array.isArray(pageImagesBase64) || pageImagesBase64.length === 0) {
+      throw new HttpsError("invalid-argument", "'pageImagesBase64' must be a non-empty array.");
+    }
+    if (!Array.isArray(questions) || questions.length === 0) {
+      throw new HttpsError("invalid-argument", "'questions' must be a non-empty array.");
+    }
+    const cappedMarkConventions = Array.isArray(markConventions) ? markConventions.slice(0, 20) : undefined;
+
+    const ai = new GoogleGenAI({ apiKey: geminiApiKey.value() });
+    const imageParts = pageImagesBase64.map((b64) => ({
+      inlineData: { mimeType: "image/jpeg", data: b64 },
+    }));
+
+    let text: string | undefined;
+    try {
+      const response = await ai.models.generateContent({
+        model: GEMINI_MODEL,
+        contents: [
+          {
+            role: "user",
+            parts: [
+              { text: buildConciseMarkingPrompt(questions, subjectName, cappedMarkConventions, examStandard) },
+              ...imageParts,
+            ],
+          },
+        ],
+        config: {
+          responseMimeType: "application/json",
+          responseJsonSchema: gradeMarkingScriptConciseSchema,
+        },
+      });
+      text = response.text;
+    } catch (err) {
+      console.error("gradeMarkingScriptConcise: Gemini call failed", err);
+      throw new HttpsError("internal", "Failed to grade this script. Please try again.");
+    }
+
+    if (!text) {
+      throw new HttpsError("internal", "The AI did not return any grading results.");
+    }
+
+    let parsed: GradeMarkingScriptConciseResponse;
+    try {
+      parsed = JSON.parse(text);
+    } catch (err) {
+      console.error("gradeMarkingScriptConcise: response was not valid JSON", text);
+      throw new HttpsError("internal", "The grading response could not be parsed.");
+    }
+
+    // Defensive clamp — never trust the model's own marksAwarded to
+    // respect the cap even though the prompt asks for it (same
+    // discipline the client already applies for gradeMarkingScript's own
+    // response, see marking_grading_service.dart).
+    const maxByLabel = new Map(questions.map((q) => [q.label, q.maxMarks]));
+    for (const a of parsed.answers) {
+      const max = maxByLabel.get(a.questionLabel);
+      if (typeof max === "number") {
+        a.marksAwarded = Math.max(0, Math.min(a.marksAwarded, max));
+      }
+    }
+
+    return parsed;
+  }
+);
+
+// ---------------------------------------------------------------------
 // deriveMarkingKeyFromQuestionPaper — AI-Assisted Marking, Stage B (marking
 // key generation). Two source types, two very different risk profiles:
 // - "questionPaper": the paper does NOT contain its own answer key, so the
