@@ -48,6 +48,17 @@ class _MarkedResultsListDetailScreenState extends State<MarkedResultsListDetailS
   List<MarkingScript> _scripts = [];
   MarkingSchemeCatalog _schemes = MarkingSchemeCatalog.empty();
 
+  /// Real, reported bug (2026-09-11): opening a list could show a spinner
+  /// that never resolved — "it's coming up empty, and it keeps on
+  /// scrolling, like it is processing, but without putting up any list at
+  /// all." Both repositories' own `loadCatalog()` already catch a bad/
+  /// corrupt file internally, but nothing here caught anything UNEXPECTED
+  /// (a real bug elsewhere, a future change, a genuinely unreadable
+  /// device) — an uncaught exception left `_loading` true forever with no
+  /// way to tell "still working" from "silently broken." Now any failure
+  /// here surfaces as a real, retry-able error message instead.
+  String? _loadError;
+
   @override
   void initState() {
     super.initState();
@@ -55,20 +66,32 @@ class _MarkedResultsListDetailScreenState extends State<MarkedResultsListDetailS
   }
 
   Future<void> _load() async {
-    final catalog = await _scriptRepository.loadCatalog();
-    final schemes = await _schemeRepository.loadCatalog();
-    final byId = {for (final s in catalog.scripts) s.id: s};
-    final scripts = [for (final id in _list.scriptIds) if (byId[id] case final s?) s]
-      ..sort((a, b) {
-        final bySurname = a.surname.toLowerCase().compareTo(b.surname.toLowerCase());
-        return bySurname != 0 ? bySurname : a.firstName.toLowerCase().compareTo(b.firstName.toLowerCase());
-      });
-    if (!mounted) return;
     setState(() {
-      _scripts = scripts;
-      _schemes = schemes;
-      _loading = false;
+      _loading = true;
+      _loadError = null;
     });
+    try {
+      final catalog = await _scriptRepository.loadCatalog();
+      final schemes = await _schemeRepository.loadCatalog();
+      final byId = {for (final s in catalog.scripts) s.id: s};
+      final scripts = [for (final id in _list.scriptIds) if (byId[id] case final s?) s]
+        ..sort((a, b) {
+          final bySurname = a.surname.toLowerCase().compareTo(b.surname.toLowerCase());
+          return bySurname != 0 ? bySurname : a.firstName.toLowerCase().compareTo(b.firstName.toLowerCase());
+        });
+      if (!mounted) return;
+      setState(() {
+        _scripts = scripts;
+        _schemes = schemes;
+        _loading = false;
+      });
+    } catch (error) {
+      if (!mounted) return;
+      setState(() {
+        _loadError = 'Could not load this list: $error';
+        _loading = false;
+      });
+    }
   }
 
   MarkingScheme? _schemeFor(MarkingScript script) {
@@ -165,7 +188,43 @@ class _MarkedResultsListDetailScreenState extends State<MarkedResultsListDetailS
       appBar: AppBar(title: Text(_list.name)),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
-          : Column(
+          : _loadError != null
+              ? Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.error_outline, size: 48, color: Theme.of(context).colorScheme.error),
+                        const SizedBox(height: 12),
+                        Text(_loadError!, textAlign: TextAlign.center),
+                        const SizedBox(height: 16),
+                        FilledButton(onPressed: _load, child: const Text('Try Again')),
+                      ],
+                    ),
+                  ),
+                )
+              : _scripts.isEmpty
+                  ? Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(24),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.folder_off_outlined, size: 48, color: Theme.of(context).colorScheme.outline),
+                            const SizedBox(height: 12),
+                            Text(
+                              _list.scriptIds.isEmpty
+                                  ? 'This list has no scripts in it yet.'
+                                  : "The script(s) originally added to this list can't be found anymore — "
+                                      'they may have been deleted separately.',
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  : Column(
               children: [
                 if (_list.exported)
                   Container(

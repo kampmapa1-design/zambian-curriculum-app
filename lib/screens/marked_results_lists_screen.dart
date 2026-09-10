@@ -22,6 +22,12 @@ class _MarkedResultsListsScreenState extends State<MarkedResultsListsScreen> {
   bool _loading = true;
   List<MarkedResultsList> _lists = [];
 
+  /// See MarkedResultsListDetailScreen's own doc comment on why this
+  /// exists — same class of real, reported bug (an uncaught exception
+  /// leaving `_loading` true forever, indistinguishable from "still
+  /// working").
+  String? _loadError;
+
   @override
   void initState() {
     super.initState();
@@ -29,12 +35,24 @@ class _MarkedResultsListsScreenState extends State<MarkedResultsListsScreen> {
   }
 
   Future<void> _load() async {
-    final catalog = await _listRepository.loadCatalog();
-    if (!mounted) return;
     setState(() {
-      _lists = catalog.lists..sort((a, b) => b.createdAt.compareTo(a.createdAt));
-      _loading = false;
+      _loading = true;
+      _loadError = null;
     });
+    try {
+      final catalog = await _listRepository.loadCatalog();
+      if (!mounted) return;
+      setState(() {
+        _lists = catalog.lists..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+        _loading = false;
+      });
+    } catch (error) {
+      if (!mounted) return;
+      setState(() {
+        _loadError = 'Could not load your results lists: $error';
+        _loading = false;
+      });
+    }
   }
 
   Future<void> _openList(MarkedResultsList list) async {
@@ -50,7 +68,23 @@ class _MarkedResultsListsScreenState extends State<MarkedResultsListsScreen> {
       appBar: AppBar(title: const Text('My Results Lists')),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
-          : _lists.isEmpty
+          : _loadError != null
+              ? Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.error_outline, size: 48, color: Theme.of(context).colorScheme.error),
+                        const SizedBox(height: 12),
+                        Text(_loadError!, textAlign: TextAlign.center),
+                        const SizedBox(height: 16),
+                        FilledButton(onPressed: _load, child: const Text('Try Again')),
+                      ],
+                    ),
+                  ),
+                )
+              : _lists.isEmpty
               ? Center(
                   child: Padding(
                     padding: const EdgeInsets.all(24),
