@@ -1,7 +1,7 @@
 name: zambian_curriculum_app
 description: Offline Zambian curriculum syllabus companion for teachers.
 publish_to: 'none'
-version: 0.1.0
+version: 0.1.0+2
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
