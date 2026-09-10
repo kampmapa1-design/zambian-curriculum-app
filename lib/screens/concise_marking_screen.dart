@@ -42,6 +42,17 @@ import 'document_pages_capture_screen.dart';
 /// freshly-captured scripts (see [pendingScripts]); or opened bare.
 enum ConciseMarkingSource { device, camera, queue }
 
+/// Which AI marking engine this screen runs (2026-09-10, per explicit
+/// request for two options under Scan Marker):
+/// - [concise] — the premium engine: marks, scores AND draws real
+///   ticks/crosses + the score onto a copy of the actual script page.
+/// - [stable] — the affordable engine ("Stable Marker"): the exact same
+///   session, marking and out-of-100 scoring on a much cheaper model, but
+///   NOTHING is drawn on the script image — the deliverable is just the
+///   Word/PDF score list (plus a short per-candidate text report). For
+///   simple class tests that don't need heavy AI.
+enum MarkingEngine { concise, stable }
+
 class ConciseMarkingScreen extends StatefulWidget {
   const ConciseMarkingScreen({
     super.key,
@@ -51,12 +62,14 @@ class ConciseMarkingScreen extends StatefulWidget {
     this.annotationService,
     this.initialSource,
     this.pendingScripts = const [],
+    this.engine = MarkingEngine.concise,
   });
 
   final MarkingScriptRepository? repository;
   final MarkingSchemeRepository? schemeRepository;
   final ConciseMarkingService? gradingService;
   final ScriptAnnotationService? annotationService;
+  final MarkingEngine engine;
 
   /// When set, the screen skips its setup card, asks only for the subject
   /// name, and launches this source picker straight away.
@@ -110,6 +123,9 @@ class _ConciseMarkingScreenState extends State<ConciseMarkingScreen> {
   late final MarkingSchemeRepository _schemeRepository = widget.schemeRepository ?? MarkingSchemeRepository();
   late final ConciseMarkingService _gradingService = widget.gradingService ?? ConciseMarkingService();
   late final ScriptAnnotationService _annotationService = widget.annotationService ?? ScriptAnnotationService();
+
+  bool get _stable => widget.engine == MarkingEngine.stable;
+  String get _engineName => _stable ? 'Stable Marker' : 'Concise Marking';
 
   bool _loading = true;
   String? _loadError;
@@ -569,6 +585,7 @@ class _ConciseMarkingScreenState extends State<ConciseMarkingScreen> {
           questionPaperFiles: item.questionPaperFiles,
           subjectName: _subject,
           knownRubric: _cohortRubric,
+          lightweight: _stable,
         );
         await MarkingEntitlementService.instance.recordGradingUsed();
         _cohortRubric ??= result.rubric;
@@ -594,13 +611,19 @@ class _ConciseMarkingScreenState extends State<ConciseMarkingScreen> {
 
         final subjectLabel = _subject.isNotEmpty ? _subject : 'script';
         final title = '${item.candidateName} - $subjectLabel';
-        final annotated = await _annotationService.annotatePages(
-          pageFiles: pageFiles,
-          answers: result.answers,
-          annotations: result.annotations,
-          outputDir: outputDir,
-          score: score,
-        );
+
+        // Stable Marker does no on-image annotation at all (per explicit
+        // request) — its only artefacts are the text performance report
+        // and, at cohort completion, the Word/PDF score list.
+        final annotated = _stable
+            ? const <File>[]
+            : await _annotationService.annotatePages(
+                pageFiles: pageFiles,
+                answers: result.answers,
+                annotations: result.annotations,
+                outputDir: outputDir,
+                score: score,
+              );
         final report = await _annotationService.generateMarkedReportPdf(
           score: score,
           observations: result.observations,
@@ -610,12 +633,14 @@ class _ConciseMarkingScreenState extends State<ConciseMarkingScreen> {
           rubric: effectiveRubric,
           outputDir: outputDir,
         );
-        final fallback = await _annotationService.generateFallbackReproduction(
-          answers: result.answers,
-          annotations: result.annotations,
-          outputDir: outputDir,
-          title: title,
-        );
+        final fallback = _stable
+            ? null
+            : await _annotationService.generateFallbackReproduction(
+                answers: result.answers,
+                annotations: result.annotations,
+                outputDir: outputDir,
+                title: title,
+              );
 
         if (!mounted) return;
         setState(() {
@@ -659,7 +684,7 @@ class _ConciseMarkingScreenState extends State<ConciseMarkingScreen> {
   Future<void> _openItemResult(_SessionItem item) async {
     if (item.status != _ItemStatus.marked) return;
     await Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => _ConciseResultScreen(item: item, subject: _subject)),
+      MaterialPageRoute(builder: (_) => _ConciseResultScreen(item: item, subject: _subject, stable: _stable)),
     );
   }
 
@@ -675,10 +700,28 @@ class _ConciseMarkingScreenState extends State<ConciseMarkingScreen> {
       return;
     }
 
+    final order = await showDialog<ScoreListOrder>(
+      context: context,
+      builder: (dialogContext) => SimpleDialog(
+        title: const Text('Order the score list how?'),
+        children: [
+          SimpleDialogOption(
+            onPressed: () => Navigator.of(dialogContext).pop(ScoreListOrder.alphabetical),
+            child: const Text('Alphabetical order (A–Z)'),
+          ),
+          SimpleDialogOption(
+            onPressed: () => Navigator.of(dialogContext).pop(ScoreListOrder.highestFirst),
+            child: const Text('Highest-scoring to lowest-scoring'),
+          ),
+        ],
+      ),
+    );
+    if (!mounted || order == null) return;
+
     final format = await showDialog<String>(
       context: context,
       builder: (dialogContext) => SimpleDialog(
-        title: const Text('Cohort score list'),
+        title: const Text('Score list format'),
         children: [
           SimpleDialogOption(
             onPressed: () => Navigator.of(dialogContext).pop('docx'),
@@ -693,7 +736,7 @@ class _ConciseMarkingScreenState extends State<ConciseMarkingScreen> {
 
     try {
       final service = ConciseCohortScoreListDocumentService();
-      final title = _subject.isNotEmpty ? _subject : 'Concise Marking cohort';
+      final title = _subject.isNotEmpty ? _subject : '$_engineName cohort';
       final entries = [
         for (final i in scored)
           ConciseCohortEntry(
@@ -704,11 +747,13 @@ class _ConciseMarkingScreenState extends State<ConciseMarkingScreen> {
       ];
       final files = <XFile>[];
       if (format == 'docx' || format == 'both') {
-        final f = await service.generateDocx(cohortTitle: title, subjectName: _subject, entries: entries);
+        final f = await service.generateDocx(
+            cohortTitle: title, subjectName: _subject, entries: entries, order: order, engineName: _engineName);
         files.add(XFile(f.path));
       }
       if (format == 'pdf' || format == 'both') {
-        final f = await service.generatePdf(cohortTitle: title, subjectName: _subject, entries: entries);
+        final f = await service.generatePdf(
+            cohortTitle: title, subjectName: _subject, entries: entries, order: order, engineName: _engineName);
         files.add(XFile(f.path));
       }
       if (!mounted || files.isEmpty) return;
@@ -727,7 +772,7 @@ class _ConciseMarkingScreenState extends State<ConciseMarkingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Concise Marking')),
+      appBar: AppBar(title: Text(_engineName)),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : _loadError != null
@@ -776,14 +821,20 @@ class _ConciseMarkingScreenState extends State<ConciseMarkingScreen> {
     return ListView(
       padding: const EdgeInsets.all(20),
       children: [
-        Text('Concise Marking — pure AI', style: Theme.of(context).textTheme.titleLarge),
+        Text('$_engineName — pure AI', style: Theme.of(context).textTheme.titleLarge),
         const SizedBox(height: 8),
         Text(
-          'No marking key needed. The AI reads the questions, their marks and the marking rules off each '
-          'script (add a photo of the question paper if the answers are in a separate booklet), marks '
-          'every answer, scores each paper out of 100, stamps the score and a short report on the '
-          'script, and gives you a Word / PDF score list. If you have a saved key for this subject it is '
-          'used as extra reference automatically.',
+          _stable
+              ? 'No marking key needed. Runs on an affordable AI engine — for simple class tests. Marks '
+                  'every answer, scores each paper out of 100, and gives you a Word / PDF score list plus a '
+                  'short per-candidate report. Does NOT draw ticks/crosses on the script images (use '
+                  'Concise Marking for that). If you have a saved key for this subject it is used as extra '
+                  'reference automatically.'
+              : 'No marking key needed. The AI reads the questions, their marks and the marking rules off '
+                  'each script (add a photo of the question paper if the answers are in a separate '
+                  'booklet), marks every answer, scores each paper out of 100, stamps the score and a '
+                  'short report on the script, and gives you a Word / PDF score list. If you have a saved '
+                  'key for this subject it is used as extra reference automatically.',
           style: Theme.of(context).textTheme.bodyMedium,
         ),
         const SizedBox(height: 20),
@@ -855,9 +906,12 @@ class _ConciseMarkingScreenState extends State<ConciseMarkingScreen> {
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
                 Text(
-                  _referenceScheme != null
-                      ? 'Pure AI marking · also using your saved key "${_referenceScheme!.title}" as reference'
-                      : 'Pure AI marking — the AI reads the questions and marking rules off each script',
+                  () {
+                    final base = _stable ? 'Affordable AI marking (no on-image marks)' : 'Pure AI marking';
+                    return _referenceScheme != null
+                        ? '$base · also using your saved key "${_referenceScheme!.title}" as reference'
+                        : '$base — the AI reads the questions and marking rules off each script';
+                  }(),
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).colorScheme.primary),
                 ),
                 if (_cohortRubric case final r? when r.instructionsSummary.isNotEmpty) ...[
@@ -984,13 +1038,15 @@ class _ConciseMarkingScreenState extends State<ConciseMarkingScreen> {
   }
 }
 
-/// One marked script's result — the annotated pages, the brief report, and
-/// the fallback page for answers that couldn't be located on the photo.
+/// One marked script's result — the annotated pages (Concise only), the
+/// brief report, and the fallback page for answers that couldn't be
+/// located on the photo.
 class _ConciseResultScreen extends StatelessWidget {
-  const _ConciseResultScreen({required this.item, required this.subject});
+  const _ConciseResultScreen({required this.item, required this.subject, this.stable = false});
 
   final _SessionItem item;
   final String subject;
+  final bool stable;
 
   Future<void> _share() async {
     final files = <XFile>[
@@ -999,7 +1055,10 @@ class _ConciseResultScreen extends StatelessWidget {
       if (item.fallbackPdf case final f?) XFile(f.path),
     ];
     if (files.isEmpty) return;
-    await SharePlus.instance.share(ShareParams(files: files, subject: '${item.candidateName} — Concise Marking'));
+    await SharePlus.instance.share(ShareParams(
+      files: files,
+      subject: '${item.candidateName} — ${stable ? 'Stable Marker' : 'Concise Marking'}',
+    ));
   }
 
   @override
@@ -1021,9 +1080,12 @@ class _ConciseResultScreen extends StatelessWidget {
             const Divider(height: 24),
           ],
           Text(
-            item.annotatedPages.isEmpty
-                ? 'No answer could be confidently placed on the actual photo — see the generated page in the share bundle.'
-                : '${item.annotatedPages.length} page(s) marked directly on the real photographed script. The score is stamped on page 1.',
+            stable
+                ? 'Stable Marker records marks and scores only — nothing is drawn on the script images. '
+                    'Share the report below, or use "Complete Marking Cohort" for the Word / PDF score list.'
+                : item.annotatedPages.isEmpty
+                    ? 'No answer could be confidently placed on the actual photo — see the generated page in the share bundle.'
+                    : '${item.annotatedPages.length} page(s) marked directly on the real photographed script. The score is stamped on page 1.',
             style: Theme.of(context).textTheme.bodySmall,
           ),
           const SizedBox(height: 12),

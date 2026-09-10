@@ -9,6 +9,16 @@ import 'package:pdf/widgets.dart' as pw;
 
 import 'concise_score_calculator.dart';
 
+/// How the cohort score list is ordered — asked every time a list is
+/// generated (2026-09-10, per explicit request).
+enum ScoreListOrder {
+  /// A–Z by candidate name — a class register.
+  alphabetical,
+
+  /// Highest score first — a merit / ranking order.
+  highestFirst,
+}
+
 /// One row of a Concise Marking cohort score list.
 class ConciseCohortEntry {
   final String candidateName;
@@ -51,9 +61,21 @@ class ConciseCohortScoreListDocumentService {
 
   String _rawText(ConciseCohortEntry e) => e.marked ? e.score.rawFractionLabel : '-';
 
-  List<ConciseCohortEntry> _ordered(List<ConciseCohortEntry> entries) {
+  List<ConciseCohortEntry> _ordered(List<ConciseCohortEntry> entries, ScoreListOrder order) {
     final list = [...entries];
-    list.sort((a, b) => a.candidateName.toLowerCase().compareTo(b.candidateName.toLowerCase()));
+    switch (order) {
+      case ScoreListOrder.alphabetical:
+        list.sort((a, b) => a.candidateName.toLowerCase().compareTo(b.candidateName.toLowerCase()));
+      case ScoreListOrder.highestFirst:
+        list.sort((a, b) {
+          // Unmarked entries sink to the bottom; otherwise by percentage
+          // descending, then name for a stable tie-break.
+          if (a.marked != b.marked) return a.marked ? -1 : 1;
+          final byScore = b.score.percentage.compareTo(a.score.percentage);
+          if (byScore != 0) return byScore;
+          return a.candidateName.toLowerCase().compareTo(b.candidateName.toLowerCase());
+        });
+    }
     return list;
   }
 
@@ -64,8 +86,11 @@ class ConciseCohortScoreListDocumentService {
     required String cohortTitle,
     String? subjectName,
     required List<ConciseCohortEntry> entries,
+    ScoreListOrder order = ScoreListOrder.alphabetical,
+    String engineName = 'Concise Marking',
   }) async {
-    final ordered = _ordered(entries);
+    final ordered = _ordered(entries, order);
+    final rankCol = order == ScoreListOrder.highestFirst;
     final marked = ordered.where((e) => e.marked).toList();
     final classAvg = marked.isEmpty
         ? null
@@ -76,10 +101,14 @@ class ConciseCohortScoreListDocumentService {
       pw.MultiPage(
         pageFormat: PdfPageFormat.a4,
         build: (context) => [
-          pw.Header(level: 0, text: _pdfSafe('CONCISE MARKING - COHORT SCORES')),
+          pw.Header(level: 0, text: _pdfSafe('${engineName.toUpperCase()} - COHORT SCORES')),
           pw.Text(_pdfSafe(cohortTitle), style: pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold)),
           if (subjectName != null && subjectName.trim().isNotEmpty)
             pw.Text(_pdfSafe(subjectName), style: const pw.TextStyle(fontSize: 11)),
+          pw.Text(
+            rankCol ? 'Ordered: highest score first' : 'Ordered: alphabetical (A-Z)',
+            style: const pw.TextStyle(fontSize: 9, color: PdfColors.grey700),
+          ),
           pw.SizedBox(height: 10),
           pw.Table(
             border: pw.TableBorder.all(width: 0.5, color: PdfColors.grey500),
@@ -93,7 +122,7 @@ class ConciseCohortScoreListDocumentService {
               pw.TableRow(
                 decoration: const pw.BoxDecoration(color: PdfColors.grey300),
                 children: [
-                  _cell('#', bold: true),
+                  _cell(rankCol ? 'Rank' : '#', bold: true),
                   _cell('Candidate', bold: true),
                   _cell('Score', bold: true),
                   _cell('Raw marks', bold: true),
@@ -135,8 +164,10 @@ class ConciseCohortScoreListDocumentService {
     required String cohortTitle,
     String? subjectName,
     required List<ConciseCohortEntry> entries,
+    ScoreListOrder order = ScoreListOrder.alphabetical,
+    String engineName = 'Concise Marking',
   }) async {
-    final ordered = _ordered(entries);
+    final ordered = _ordered(entries, order);
     final marked = ordered.where((e) => e.marked).toList();
 
     final archive = Archive();
@@ -150,20 +181,30 @@ class ConciseCohortScoreListDocumentService {
     addXml('word/_rels/document.xml.rels', _documentRelsXml);
     addXml('docProps/core.xml', _corePropsXml);
     addXml('docProps/app.xml', _appPropsXml);
-    addXml('word/document.xml', _buildDocumentXml(cohortTitle, subjectName, ordered, marked.length));
+    addXml('word/document.xml',
+        _buildDocumentXml(cohortTitle, subjectName, ordered, marked.length, order, engineName));
 
     return _write(cohortTitle, 'docx', ZipEncoder().encode(archive));
   }
 
-  String _buildDocumentXml(String cohortTitle, String? subjectName, List<ConciseCohortEntry> ordered, int markedCount) {
+  String _buildDocumentXml(
+    String cohortTitle,
+    String? subjectName,
+    List<ConciseCohortEntry> ordered,
+    int markedCount,
+    ScoreListOrder order,
+    String engineName,
+  ) {
+    final rankCol = order == ScoreListOrder.highestFirst;
     final b = StringBuffer();
     b.write(
       '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
       '<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>',
     );
-    b.write(_heading('CONCISE MARKING - COHORT SCORES', size: 32, center: true));
+    b.write(_heading('${engineName.toUpperCase()} - COHORT SCORES', size: 32, center: true));
     b.write(_para(cohortTitle, bold: true));
     if (subjectName != null && subjectName.trim().isNotEmpty) b.write(_para(subjectName));
+    b.write(_para(rankCol ? 'Ordered: highest score first' : 'Ordered: alphabetical (A-Z)'));
     b.write('<w:tbl><w:tblPr><w:tblW w:w="0" w:type="auto"/><w:tblBorders>'
         '<w:top w:val="single" w:sz="4" w:space="0" w:color="auto"/>'
         '<w:left w:val="single" w:sz="4" w:space="0" w:color="auto"/>'
@@ -172,7 +213,7 @@ class ConciseCohortScoreListDocumentService {
         '<w:insideH w:val="single" w:sz="4" w:space="0" w:color="auto"/>'
         '<w:insideV w:val="single" w:sz="4" w:space="0" w:color="auto"/>'
         '</w:tblBorders></w:tblPr>');
-    b.write(_row(['#', 'Candidate', 'Score', 'Raw marks'], bold: true));
+    b.write(_row([rankCol ? 'Rank' : '#', 'Candidate', 'Score', 'Raw marks'], bold: true));
     for (var i = 0; i < ordered.length; i++) {
       b.write(_row([
         '${i + 1}',

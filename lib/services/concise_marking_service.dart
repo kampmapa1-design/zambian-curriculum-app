@@ -117,10 +117,18 @@ class ConciseMarkingService {
     List<File> questionPaperFiles = const [],
     String? subjectName,
     MarkingRubric? knownRubric,
+    bool lightweight = false,
   }) async {
     try {
-      return await _doGrade(pageFiles, scheme, referenceScheme, questionPaperFiles, subjectName, knownRubric)
-          .timeout(
+      return await _doGrade(
+        pageFiles,
+        scheme,
+        referenceScheme,
+        questionPaperFiles,
+        subjectName,
+        knownRubric,
+        lightweight,
+      ).timeout(
         const Duration(seconds: 330),
         onTimeout: () => throw const ConciseMarkingUnavailable(
           'Grading this script is taking too long and may be stuck. Check your connection and try again.',
@@ -149,6 +157,7 @@ class ConciseMarkingService {
     List<File> questionPaperFiles,
     String? subjectName,
     MarkingRubric? knownRubric,
+    bool lightweight,
   ) async {
     if (!await isOnline) {
       throw const ConciseMarkingUnavailable("You're offline. Connect to the internet to grade this script.");
@@ -184,6 +193,7 @@ class ConciseMarkingService {
         if (markConventions.isNotEmpty) 'markConventions': markConventions,
         if (examStandardWire != null) 'examStandard': examStandardWire,
         if (knownRubric != null && !knownRubric.isEmpty) 'knownRubric': knownRubric.toJson(),
+        if (lightweight) 'lightweight': true,
       });
       rawData = result.data;
     } on FirebaseFunctionsException catch (e) {

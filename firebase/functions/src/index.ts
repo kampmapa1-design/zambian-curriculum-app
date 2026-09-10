@@ -45,6 +45,14 @@ const geminiApiKey = defineSecret("GEMINI_API_KEY");
 // again if it's ever deprecated the same way.
 const GEMINI_MODEL = "gemini-3.6-flash";
 
+// The cheap tier — roughly 1/7 the input and 1/9 the output price of
+// GEMINI_MODEL. Used only by "Stable Marker" (gradeMarkingScriptConcise's
+// `lightweight` mode, 2026-09-10, per explicit request for "a more
+// affordable one that can be used to mark even simple class tests"):
+// plain marking + scoring, no answer-location / on-image annotation work.
+// Bump if deprecated, same as GEMINI_MODEL.
+const GEMINI_MODEL_LITE = "gemini-2.5-flash-lite";
+
 type NotesFormat = "bullet" | "paragraph";
 
 interface GenerateTeachingNotesRequest {
@@ -1780,6 +1788,10 @@ interface GradeMarkingScriptConciseRequest {
   // already extracted from the first script's cover page. When present,
   // the model is told to score against it and NOT re-derive section rules.
   knownRubric?: ConciseRubric | null;
+  // "Stable Marker" (2026-09-10): mark + score on the cheap model, with no
+  // answer-location work (pageIndex/box always null) and no on-image
+  // annotation downstream. Same scoring, same rubric, cheaper engine.
+  lightweight?: boolean;
 }
 
 const gradeMarkingScriptConciseSchema = {
@@ -1942,9 +1954,15 @@ function buildConciseMarkingPrompt(
   markConventions?: string[],
   examStandard?: "NATIONAL_MOCK" | "SCHOOL_CA" | null,
   knownRubric?: ConciseRubric | null,
-  opts?: { pureAi?: boolean; referenceQuestions?: GradeMarkingScriptQuestion[]; hasQuestionPaper?: boolean }
+  opts?: {
+    pureAi?: boolean;
+    referenceQuestions?: GradeMarkingScriptQuestion[];
+    hasQuestionPaper?: boolean;
+    lightweight?: boolean;
+  }
 ): string {
   const pureAi = opts?.pureAi === true;
+  const lightweight = opts?.lightweight === true;
   const referenceQuestions = opts?.referenceQuestions ?? [];
 
   const schemeText = questions
@@ -2059,16 +2077,19 @@ function buildConciseMarkingPrompt(
       "or null only if the paper has no sections. When a candidate has answered MORE questions in a " +
       "section than the rules require, still mark every attempt you can find — the app keeps only the " +
       "best-scoring required number per section, so nothing is lost by marking them all.",
-    "5. Set pageIndex to which photographed answer-script page (0-based - the first image attached is " +
-      "page 0) the student's own handwritten answer for this exact question physically appears on, and " +
-      "box to a TIGHT bounding box around just that handwritten answer (not the whole page, not any " +
-      "printed text) as {yMin, xMin, yMax, xMax}, each an integer 0-1000 normalized across that page " +
-      "image's own real width/height (0,0 is the top-left corner, 1000,1000 the bottom-right). This is " +
-      "where a real tick or cross is drawn directly onto the actual photographed page, right on/next to " +
-      "the student's own answer - it must be genuinely accurate, not a rough guess. Set BOTH pageIndex " +
-      "and box to null when you are not confident of the exact location (and never point at a " +
-      "question-paper image) - an inaccurate mark on a real scanned document is worse than none, and a " +
-      "null still gets the answer marked, just placed on a separately generated document instead.",
+    lightweight
+      ? "5. Set pageIndex and box to null for every answer — this marker only records marks and scores, " +
+        "it does not place anything on the page image."
+      : "5. Set pageIndex to which photographed answer-script page (0-based - the first image attached is " +
+        "page 0) the student's own handwritten answer for this exact question physically appears on, and " +
+        "box to a TIGHT bounding box around just that handwritten answer (not the whole page, not any " +
+        "printed text) as {yMin, xMin, yMax, xMax}, each an integer 0-1000 normalized across that page " +
+        "image's own real width/height (0,0 is the top-left corner, 1000,1000 the bottom-right). This is " +
+        "where a real tick or cross is drawn directly onto the actual photographed page, right on/next to " +
+        "the student's own answer - it must be genuinely accurate, not a rough guess. Set BOTH pageIndex " +
+        "and box to null when you are not confident of the exact location (and never point at a " +
+        "question-paper image) - an inaccurate mark on a real scanned document is worse than none, and a " +
+        "null still gets the answer marked, just placed on a separately generated document instead.",
     "6. Separately, write 3 to 8 short observations (one sentence each) about this candidate's " +
       "performance on THIS script, spread across the sections they attempted. These are printed onto " +
       "the marked script as a brief report.",
@@ -2117,10 +2138,13 @@ export const gradeMarkingScriptConcise = onCall<GradeMarkingScriptConciseRequest
       markConventions,
       examStandard,
       knownRubric,
+      lightweight,
     } = request.data ?? {};
     if (!Array.isArray(pageImagesBase64) || pageImagesBase64.length === 0) {
       throw new HttpsError("invalid-argument", "'pageImagesBase64' must be a non-empty array.");
     }
+    const isLightweight = lightweight === true;
+    const model = isLightweight ? GEMINI_MODEL_LITE : GEMINI_MODEL;
     const keyedQuestions = Array.isArray(questions) && questions.length > 0 ? questions : undefined;
     const pureAi = keyedQuestions === undefined;
     const refQuestions =
@@ -2143,12 +2167,17 @@ export const gradeMarkingScriptConcise = onCall<GradeMarkingScriptConciseRequest
       cappedMarkConventions,
       examStandard,
       knownRubric ?? null,
-      { pureAi, referenceQuestions: refQuestions, hasQuestionPaper: questionPaperImages.length > 0 }
+      {
+        pureAi,
+        referenceQuestions: refQuestions,
+        hasQuestionPaper: questionPaperImages.length > 0,
+        lightweight: isLightweight,
+      }
     );
 
     const callGemini = async (useSchema: boolean): Promise<{ text: string; finishReason?: string }> => {
       const response = await ai.models.generateContent({
-        model: GEMINI_MODEL,
+        model,
         contents: [{ role: "user", parts: [{ text: promptText }, ...imageParts] }],
         config: {
           responseMimeType: "application/json",

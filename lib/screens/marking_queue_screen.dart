@@ -280,9 +280,9 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
   /// explicit request that tapping it "should open by giving a drop down
   /// list of 'Upload from device', 'Upload from Camera', 'upload a list
   /// from cued lists'".
-  Future<void> _openConcise(ConciseMarkingSource source) async {
+  Future<void> _openConcise(ConciseMarkingSource source, MarkingEngine engine) async {
     await Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => ConciseMarkingScreen(initialSource: source)),
+      MaterialPageRoute(builder: (_) => ConciseMarkingScreen(initialSource: source, engine: engine)),
     );
     _load();
     _loadRemainingFreeGradings();
@@ -426,7 +426,17 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
               children: [
                 Icon(Icons.bolt_outlined),
                 SizedBox(width: 12),
-                Expanded(child: Text('Concise Marker — mark now (ticks + score out of 100)')),
+                Expanded(child: Text('Concise Marker — mark now (ticks on script + score out of 100)')),
+              ],
+            ),
+          ),
+          SimpleDialogOption(
+            onPressed: () => Navigator.of(dialogContext).pop('__stable__'),
+            child: const Row(
+              children: [
+                Icon(Icons.savings_outlined),
+                SizedBox(width: 12),
+                Expanded(child: Text('Stable Marker — affordable AI, score list only (no marks on script)')),
               ],
             ),
           ),
@@ -441,14 +451,19 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
     );
     if (selection == null || !mounted) return;
 
-    if (selection == '__concise__') {
+    if (selection == '__concise__' || selection == '__stable__') {
       final picked = _catalog.scripts.where((s) => _selectedIds.contains(s.id)).toList();
       setState(() {
         _selecting = false;
         _selectedIds.clear();
       });
       await Navigator.of(context).push(
-        MaterialPageRoute(builder: (_) => ConciseMarkingScreen(pendingScripts: picked)),
+        MaterialPageRoute(
+          builder: (_) => ConciseMarkingScreen(
+            pendingScripts: picked,
+            engine: selection == '__stable__' ? MarkingEngine.stable : MarkingEngine.concise,
+          ),
+        ),
       );
       await _load();
       return;
@@ -1005,7 +1020,7 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
                 // every other marking flow here is unchanged.
                 const SizedBox(height: 8),
                 PopupMenuButton<ConciseMarkingSource>(
-                  onSelected: _openConcise,
+                  onSelected: (s) => _openConcise(s, MarkingEngine.concise),
                   itemBuilder: (context) => const [
                     PopupMenuItem(value: ConciseMarkingSource.device, child: Text('Upload from device')),
                     PopupMenuItem(value: ConciseMarkingSource.camera, child: Text('Upload from camera')),
@@ -1016,6 +1031,31 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
                       onPressed: () {},
                       icon: const Icon(Icons.fact_check_outlined),
                       label: const Text('Concise Marking', textAlign: TextAlign.center),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        minimumSize: const Size.fromHeight(0),
+                      ),
+                    ),
+                  ),
+                ),
+                // "Stable Marker" (2026-09-10, per explicit request) — the
+                // same session and marking as Concise Marking but on a much
+                // cheaper AI model, and it never draws on the script image:
+                // the deliverable is just the Word/PDF score list. For
+                // simple class tests that don't need heavy AI.
+                const SizedBox(height: 8),
+                PopupMenuButton<ConciseMarkingSource>(
+                  onSelected: (s) => _openConcise(s, MarkingEngine.stable),
+                  itemBuilder: (context) => const [
+                    PopupMenuItem(value: ConciseMarkingSource.device, child: Text('Upload from device')),
+                    PopupMenuItem(value: ConciseMarkingSource.camera, child: Text('Upload from camera')),
+                    PopupMenuItem(value: ConciseMarkingSource.queue, child: Text('Upload a list from queued lists')),
+                  ],
+                  child: IgnorePointer(
+                    child: OutlinedButton.icon(
+                      onPressed: () {},
+                      icon: const Icon(Icons.savings_outlined),
+                      label: const Text('Stable Marker', textAlign: TextAlign.center),
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 12),
                         minimumSize: const Size.fromHeight(0),
