@@ -1692,6 +1692,11 @@ interface ConciseMarkingAnnotation {
   marksAwarded: number;
   confidence: "high" | "medium" | "low";
   markingBasis: "exact_match" | "reasonable_equivalence" | "not_applicable";
+  // Which section of the paper this question belongs to (verbatim from
+  // the paper — e.g. "Section A", "Section C"), or null for a paper with
+  // no section structure at all. Used CLIENT-side by ConciseScoreCalculator
+  // to apply each section's own "answer N of M" rule before totalling.
+  sectionName: string | null;
   // 0-based index into the pageImagesBase64 array this request was sent
   // with — which photographed page the student's own handwritten answer
   // for this question actually appears on. Null when not confidently
@@ -1706,9 +1711,50 @@ interface ConciseMarkingAnnotation {
   box: { yMin: number; xMin: number; yMax: number; xMax: number } | null;
 }
 
+// One section's own rules, as they are stated on the FIRST script's own
+// cover / instructions page (per explicit request: "always get the
+// marking instruction from the first cover page of any exam"). The client
+// extracts this once, from the first script of a cohort, then feeds it
+// back in as `knownRubric` for every following script so the same
+// examination is scored identically without re-deriving it each time.
+interface ConciseRubricSection {
+  // Verbatim section label, e.g. "Section A", "Section C".
+  name: string;
+  // How many questions the candidate is REQUIRED to answer from this
+  // section (e.g. "answer any ONE question" -> 1). Null when the paper
+  // does not restrict it (answer everything in the section).
+  questionsToAnswer: number | null;
+  // Total marks this section is worth on the paper, exactly as the paper
+  // allocates them. Null when the paper states no explicit section total.
+  marksAllocated: number | null;
+}
+
+interface ConciseRubric {
+  sections: ConciseRubricSection[];
+  // The paper's own stated grand total (e.g. "Total: 100 marks"). Null
+  // when the paper states none.
+  paperTotalMarks: number | null;
+  // A short plain-language digest of the cover-page instructions the
+  // marking actually depended on — shown to the teacher, never acted on
+  // blindly.
+  instructionsSummary: string;
+}
+
 interface GradeMarkingScriptConciseResponse {
   answers: ConciseMarkingAnnotation[];
+  // Populated ONLY when this request did not carry a `knownRubric` (i.e.
+  // this is the first script of a cohort and the model was asked to read
+  // the cover page). Null otherwise, or when the paper genuinely has no
+  // section/instruction structure to extract.
+  rubric: ConciseRubric | null;
   observations: string[];
+}
+
+interface GradeMarkingScriptConciseRequest extends GradeMarkingScriptRequest {
+  // Supplied for every script AFTER the first in a cohort — the rubric
+  // already extracted from the first script's cover page. When present,
+  // the model is told to score against it and NOT re-derive section rules.
+  knownRubric?: ConciseRubric | null;
 }
 
 const gradeMarkingScriptConciseSchema = {
@@ -1724,6 +1770,12 @@ const gradeMarkingScriptConciseSchema = {
           marksAwarded: { type: "number" },
           confidence: { type: "string", enum: ["high", "medium", "low"] },
           markingBasis: { type: "string", enum: ["exact_match", "reasonable_equivalence", "not_applicable"] },
+          sectionName: {
+            type: ["string", "null"],
+            description:
+              "Verbatim section label this question sits under on the paper (e.g. 'Section A', 'Section " +
+              "C'). Null only if the paper truly has no sections.",
+          },
           pageIndex: {
             type: ["integer", "null"],
             description:
@@ -1748,18 +1800,55 @@ const gradeMarkingScriptConciseSchema = {
             additionalProperties: false,
           },
         },
-        required: ["questionLabel", "transcribedAnswer", "marksAwarded", "confidence", "markingBasis", "pageIndex", "box"],
+        required: [
+          "questionLabel", "transcribedAnswer", "marksAwarded", "confidence", "markingBasis",
+          "sectionName", "pageIndex", "box",
+        ],
         additionalProperties: false,
       },
+    },
+    rubric: {
+      type: ["object", "null"],
+      description:
+        "The paper's own section/instruction structure, read from the FIRST attached page (the cover / " +
+        "instructions page) - ONLY when this request carried no knownRubric. Null if this request DID " +
+        "carry a knownRubric, or if the paper has no section structure at all.",
+      properties: {
+        sections: {
+          type: "array",
+          items: {
+            type: "object",
+            properties: {
+              name: { type: "string" },
+              questionsToAnswer: {
+                type: ["integer", "null"],
+                description:
+                  "How many questions the candidate MUST answer from this section (e.g. 'answer any " +
+                  "TWO' -> 2). Null if the section does not restrict it.",
+              },
+              marksAllocated: {
+                type: ["number", "null"],
+                description: "Marks this section is worth on the paper. Null if the paper states none.",
+              },
+            },
+            required: ["name", "questionsToAnswer", "marksAllocated"],
+            additionalProperties: false,
+          },
+        },
+        paperTotalMarks: { type: ["number", "null"] },
+        instructionsSummary: { type: "string" },
+      },
+      required: ["sections", "paperTotalMarks", "instructionsSummary"],
+      additionalProperties: false,
     },
     observations: {
       type: "array",
       items: { type: "string" },
       minItems: 3,
-      maxItems: 5,
+      maxItems: 10,
     },
   },
-  required: ["answers", "observations"],
+  required: ["answers", "rubric", "observations"],
   additionalProperties: false,
 };
 
@@ -1767,11 +1856,40 @@ function buildConciseMarkingPrompt(
   questions: GradeMarkingScriptQuestion[],
   subjectName?: string,
   markConventions?: string[],
-  examStandard?: "NATIONAL_MOCK" | "SCHOOL_CA" | null
+  examStandard?: "NATIONAL_MOCK" | "SCHOOL_CA" | null,
+  knownRubric?: ConciseRubric | null
 ): string {
   const schemeText = questions
     .map((q) => `${q.label} (max ${q.maxMarks} marks): expected answer/keywords — ${q.expectedAnswerOrKeywords}`)
     .join("\n");
+
+  // Cover-page rules. Either we already have them (script 2..n of a
+  // cohort — reuse verbatim, do not re-derive), or this is script 1 and
+  // the model must read them off the first attached page.
+  const rubricSection = knownRubric
+    ? [
+        "",
+        "SECTION RULES FOR THIS EXAMINATION (already read from the first script's cover page — apply " +
+          "these exactly, do NOT re-derive them, and set `rubric` to null in your response):",
+        ...knownRubric.sections.map(
+          (s) =>
+            `- ${s.name}: ` +
+            `${s.questionsToAnswer != null ? `answer ${s.questionsToAnswer} question(s)` : "answer all questions"}` +
+            `${s.marksAllocated != null ? `, worth ${s.marksAllocated} marks` : ""}`
+        ),
+        knownRubric.paperTotalMarks != null ? `- Paper total: ${knownRubric.paperTotalMarks} marks` : "",
+        knownRubric.instructionsSummary ? `- Notes: ${knownRubric.instructionsSummary}` : "",
+      ].join("\n")
+    : [
+        "",
+        "READ THE COVER / INSTRUCTIONS PAGE (normally the FIRST attached image) and populate `rubric` in " +
+          "your response: every section label, how many questions the candidate is required to answer " +
+          "from each section (e.g. \"answer any ONE question\" -> questionsToAnswer 1; if a section says " +
+          "nothing, questionsToAnswer null), each section's own allocated marks if the paper states " +
+          "them, the paper's stated grand total if any, and a short plain-language `instructionsSummary` " +
+          "of the marking rules that actually mattered. If the paper has no sections or instructions at " +
+          "all, set `rubric` to null.",
+      ].join("\n");
 
   const schemeConventionsSection =
     markConventions && markConventions.length > 0
@@ -1803,7 +1921,11 @@ function buildConciseMarkingPrompt(
     "3. Give confidence: 'high' only when both legible AND you're confident the mark is right - NEVER " +
       "'high' when markingBasis is 'reasonable_equivalence'; 'low' when hard to read/ambiguous/unsure; " +
       "'medium' otherwise.",
-    "4. THIS IS THE NEW PART: set pageIndex to which photographed page (0-based - the first image " +
+    "4. Set sectionName to the paper's own verbatim section label for this question (e.g. 'Section A'), " +
+      "or null only if the paper has no sections. When a candidate has answered MORE questions in a " +
+      "section than the rules require, still mark every attempt you can find — the app keeps only the " +
+      "best-scoring required number per section, so nothing is lost by marking them all.",
+    "5. THIS IS THE NEW PART: set pageIndex to which photographed page (0-based - the first image " +
       "attached is page 0) the student's own handwritten answer for this exact question physically " +
       "appears on, and box to a TIGHT bounding box around just that handwritten answer (not the whole " +
       "page, not any printed text) as {yMin, xMin, yMax, xMax}, each an integer 0-1000 normalized across " +
@@ -1815,8 +1937,11 @@ function buildConciseMarkingPrompt(
       "real scanned document is worse than no mark placement at all, and a null here still gets the " +
       "answer marked correctly, just placed on a separately generated document instead of directly on " +
       "this photo.",
-    "5. Separately, write 3 to 5 short, specific observations about this candidate's performance on THIS " +
-      "script, grounded in what the marking scheme actually asked for.",
+    "6. Separately, write 3 to 10 short, specific observations about this candidate's performance on " +
+      "THIS script. Cover EVERY section of the paper (at least one observation per section the " +
+      "candidate attempted), grounded in what the marking scheme actually asked for. Keep to 10 or " +
+      "fewer — these are printed onto the marked script as a brief report.",
+    rubricSection,
     "",
     "Marking scheme:",
     schemeText,
@@ -1827,19 +1952,21 @@ function buildConciseMarkingPrompt(
     UNIVERSAL_MARKING_CONVENTIONS,
     "",
     "Return exactly one answer per question in the marking scheme, using the same question label, plus " +
-      "the 3-5 observations. Every mark you award must be a first-pass suggestion for a teacher to " +
-      "review, never a final grade — never fabricate an answer that isn't genuinely visible in the images.",
+      "the rubric (or null) and the 3-10 observations. Every mark you award must be a first-pass " +
+      "suggestion for a teacher to review, never a final grade — never fabricate an answer that isn't " +
+      "genuinely visible in the images.",
   ].join("\n");
 }
 
-export const gradeMarkingScriptConcise = onCall<GradeMarkingScriptRequest>(
+export const gradeMarkingScriptConcise = onCall<GradeMarkingScriptConciseRequest>(
   { secrets: [geminiApiKey], region: "us-central1", timeoutSeconds: 180, memory: "1GiB", maxInstances: 5 },
   async (request): Promise<GradeMarkingScriptConciseResponse> => {
     if (!request.auth) {
       throw new HttpsError("unauthenticated", "Sign in is required to grade a script.");
     }
 
-    const { pageImagesBase64, questions, subjectName, markConventions, examStandard } = request.data ?? {};
+    const { pageImagesBase64, questions, subjectName, markConventions, examStandard, knownRubric } =
+      request.data ?? {};
     if (!Array.isArray(pageImagesBase64) || pageImagesBase64.length === 0) {
       throw new HttpsError("invalid-argument", "'pageImagesBase64' must be a non-empty array.");
     }
@@ -1861,7 +1988,11 @@ export const gradeMarkingScriptConcise = onCall<GradeMarkingScriptRequest>(
           {
             role: "user",
             parts: [
-              { text: buildConciseMarkingPrompt(questions, subjectName, cappedMarkConventions, examStandard) },
+              {
+                text: buildConciseMarkingPrompt(
+                  questions, subjectName, cappedMarkConventions, examStandard, knownRubric ?? null
+                ),
+              },
               ...imageParts,
             ],
           },

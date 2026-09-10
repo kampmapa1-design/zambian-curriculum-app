@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
+import '../models/marking_rubric.dart';
 import '../models/marking_scheme.dart';
 import '../models/marking_script.dart';
 import 'auth_service.dart';
@@ -49,7 +50,24 @@ class ConciseMarkingResult {
   final List<String> observations;
   final List<AnswerAnnotation> annotations;
 
-  const ConciseMarkingResult({required this.answers, required this.observations, required this.annotations});
+  /// Which section each answer belongs to (question label -> section
+  /// name, or null). Fed straight into [ConciseScoreCalculator] so the
+  /// "answer N of M per section" rules can be applied deterministically.
+  final Map<String, String?> sectionByLabel;
+
+  /// The examination's cover-page rules — populated only when this grade
+  /// call did NOT carry a knownRubric (i.e. the first script of a
+  /// cohort). Null for every following script, and for a paper with no
+  /// section structure at all.
+  final MarkingRubric? rubric;
+
+  const ConciseMarkingResult({
+    required this.answers,
+    required this.observations,
+    required this.annotations,
+    this.sectionByLabel = const {},
+    this.rubric,
+  });
 }
 
 class ConciseMarkingUnavailable implements Exception {
@@ -84,9 +102,10 @@ class ConciseMarkingService {
   Future<ConciseMarkingResult> grade({
     required List<File> pageFiles,
     required MarkingScheme scheme,
+    MarkingRubric? knownRubric,
   }) async {
     try {
-      return await _doGrade(pageFiles, scheme).timeout(
+      return await _doGrade(pageFiles, scheme, knownRubric).timeout(
         const Duration(seconds: 200),
         onTimeout: () => throw const ConciseMarkingUnavailable(
           'Grading this script is taking too long and may be stuck. Check your connection and try again.',
@@ -99,7 +118,7 @@ class ConciseMarkingService {
     }
   }
 
-  Future<ConciseMarkingResult> _doGrade(List<File> pageFiles, MarkingScheme scheme) async {
+  Future<ConciseMarkingResult> _doGrade(List<File> pageFiles, MarkingScheme scheme, MarkingRubric? knownRubric) async {
     if (!await isOnline) {
       throw const ConciseMarkingUnavailable("You're offline. Connect to the internet to grade this script.");
     }
@@ -129,6 +148,7 @@ class ConciseMarkingService {
         'subjectName': scheme.subjectName,
         if (scheme.markConventions.isNotEmpty) 'markConventions': scheme.markConventions,
         if (scheme.examStandard.wireValue != null) 'examStandard': scheme.examStandard.wireValue,
+        if (knownRubric != null && !knownRubric.isEmpty) 'knownRubric': knownRubric.toJson(),
       });
       rawData = result.data;
     } on FirebaseFunctionsException catch (e) {
@@ -153,8 +173,14 @@ class ConciseMarkingService {
 
     final answers = <GradedAnswer>[];
     final annotations = <AnswerAnnotation>[];
+    final sectionByLabel = <String, String?>{};
     for (final q in scheme.questions) {
       final a = byLabel[q.label];
+      // Prefer the AI's read of the section off the actual paper; fall
+      // back to whatever the scheme itself recorded.
+      final aiSection = a?['sectionName'];
+      sectionByLabel[q.label] =
+          (aiSection is String && aiSection.trim().isNotEmpty) ? aiSection.trim() : q.sectionName;
       if (a == null) {
         answers.add(GradedAnswer(
           questionLabel: q.label,
@@ -196,6 +222,20 @@ class ConciseMarkingService {
 
     final observationsRaw = responseData['observations'];
     final observations = observationsRaw is List ? observationsRaw.whereType<String>().toList() : <String>[];
-    return ConciseMarkingResult(answers: answers, observations: observations, annotations: annotations);
+
+    MarkingRubric? rubric;
+    final rubricRaw = responseData['rubric'];
+    if (rubricRaw is Map) {
+      final parsed = MarkingRubric.fromJson(rubricRaw.cast<String, dynamic>());
+      if (!parsed.isEmpty) rubric = parsed;
+    }
+
+    return ConciseMarkingResult(
+      answers: answers,
+      observations: observations,
+      annotations: annotations,
+      sectionByLabel: sectionByLabel,
+      rubric: rubric,
+    );
   }
 }
