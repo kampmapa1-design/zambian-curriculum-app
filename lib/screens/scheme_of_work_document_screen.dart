@@ -1,5 +1,6 @@
 import 'dart:async' show unawaited;
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -11,6 +12,8 @@ import '../models/syllabus_models.dart';
 import '../models/zambian_term_calendar.dart';
 import '../services/class_progress_repository.dart';
 import '../services/lesson_history_repository.dart';
+import '../services/required_core_topic_resolver.dart';
+import '../services/required_core_topic_service.dart' show RequiredCoreTopicUnavailable;
 import '../services/scheme_of_work_ai_content_service.dart';
 import '../services/scheme_of_work_document_service.dart';
 import '../services/subject_content_index.dart';
@@ -70,11 +73,28 @@ class _SchemeOfWorkDocumentScreenState extends State<SchemeOfWorkDocumentScreen>
   final _classProgressRepository = ClassProgressRepository();
   final SubjectContentIndex _contentIndex = SubjectContentIndex();
   final _aiContentService = SchemeOfWorkAiContentService();
+  late final RequiredCoreTopicResolver _requiredCoreTopicResolver = RequiredCoreTopicResolver();
   bool _exporting = false;
   bool _sharingSyllabus = false;
   bool _enrichingAi = false;
+  bool _addingRequiredTopics = false;
   final Set<int> _markedTaughtTopicIds = {};
   List<MarkingScheme> _relatedMarkingKeys = const [];
+
+  /// This term's real, current entry list — starts as [widget.entries] but
+  /// mutated by "Required Core Topics" (2026-09-12, per explicit request):
+  /// resolved topics are inserted, the same number of topics from the end
+  /// are pushed off to next term. [_export]/[_markTaught] use THIS, not
+  /// [widget.entries] directly, so a real class's tracked progress reflects
+  /// what the exported document actually ends up containing.
+  late List<SchemeOfWorkEntry> _currentEntries = List.of(widget.entries);
+
+  /// Every "Required Core Topics" result applied so far this session, and
+  /// every real entry pushed off the end to make room for them — shown to
+  /// the teacher in-app (never inside the exported document itself, which
+  /// would need its own layout work).
+  final List<RequiredCoreTopicResult> _appliedRequiredTopics = [];
+  final List<SchemeOfWorkEntry> _pushedOffEntries = [];
 
   Iterable<SchemeOfWorkColumnDef> get _manualColumns => _activeTemplate.columns.where((c) => c.manualEntry);
 
@@ -98,7 +118,7 @@ class _SchemeOfWorkDocumentScreenState extends State<SchemeOfWorkDocumentScreen>
   void initState() {
     super.initState();
     _draft = SchemeOfWorkDocumentDraft.fromEntries(
-      widget.entries,
+      _currentEntries,
       curriculumCode: widget.template.curriculum.code,
       subjectName: widget.template.subject.name,
     );
@@ -113,14 +133,30 @@ class _SchemeOfWorkDocumentScreenState extends State<SchemeOfWorkDocumentScreen>
     _controllers['philosophy'] = TextEditingController(text: _draft.header.curriculumPhilosophyAndGoals);
     _controllers['year']!.addListener(() => setState(() {}));
 
-    for (var i = 0; i < _draft.rows.length; i++) {
-      final row = _draft.rows[i];
-      for (final column in _manualColumns) {
-        _controllers['row_${i}_${column.id}'] = TextEditingController(text: row.value(column));
-      }
-    }
+    _rebuildRowControllers();
     _loadRelatedMarkingKeys();
     _enrichThinRows();
+  }
+
+  /// (Re)creates every `row_<i>_<columnId>` controller for the CURRENT
+  /// `_draft.rows` — split out of [initState] (2026-09-12) so "Required
+  /// Core Topics" can rebuild the whole row set after inserting/removing
+  /// rows, not just at first load. Disposes whichever row controllers no
+  /// longer correspond to any current row first, so nothing leaks.
+  void _rebuildRowControllers() {
+    final keep = <String>{'schoolName', 'teacherName', 'year', 'philosophy'};
+    for (var i = 0; i < _draft.rows.length; i++) {
+      final row = _draft.rows[i];
+      for (final column in _editableColumnsFor(row)) {
+        final key = 'row_${i}_${column.id}';
+        keep.add(key);
+        _controllers.putIfAbsent(key, () => TextEditingController(text: row.value(column)));
+      }
+    }
+    final stale = _controllers.keys.where((k) => !keep.contains(k)).toList();
+    for (final key in stale) {
+      _controllers.remove(key)?.dispose();
+    }
   }
 
   /// Fills real, common gaps left by [SchemeOfWorkDocumentDraft.fromEntries]
@@ -190,6 +226,132 @@ class _SchemeOfWorkDocumentScreenState extends State<SchemeOfWorkDocumentScreen>
   Future<void> _loadRelatedMarkingKeys() async {
     final matches = await _contentIndex.relatedMarkingKeys(widget.template.subject.name);
     if (mounted && matches.isNotEmpty) setState(() => _relatedMarkingKeys = matches);
+  }
+
+  // -------------------------------------------------------------------
+  // "Required Core Topics" (2026-09-12, per explicit request) — up to 3
+  // teacher-named topics that don't show up (or are buried inside a
+  // bigger topic) in the generated scheme. Resolved offline-first (this
+  // subject's whole syllabus, then the Subject Content Database) and only
+  // researched online as a last resort — see RequiredCoreTopicResolver.
+  // -------------------------------------------------------------------
+  Future<void> _openRequiredCoreTopics() async {
+    final online = !(await Connectivity().checkConnectivity()).contains(ConnectivityResult.none);
+    if (!mounted) return;
+    if (!online) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Required Core Topics needs an internet connection.')),
+      );
+      return;
+    }
+
+    final controller = TextEditingController();
+    final input = await showDialog<String>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Required Core Topics'),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'List up to 3 topics you consider necessary that this generated scheme doesn\'t directly '
+                'show — separated by commas. Wording doesn\'t need to be exact, just the keywords for what '
+                'you\'re looking for. Adding these pushes the same number of topics off to next term.',
+                style: TextStyle(fontSize: 13),
+              ),
+              const SizedBox(height: 10),
+              TextField(
+                controller: controller,
+                autofocus: true,
+                maxLines: 2,
+                decoration: const InputDecoration(
+                  hintText: 'e.g. Dingiswayo and the Zulu nation, Moshoeshoe and the Basotho, Mzilikazi and the Ndebele',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(dialogContext).pop(), child: const Text('Cancel')),
+          FilledButton(onPressed: () => Navigator.of(dialogContext).pop(controller.text), child: const Text('Add')),
+        ],
+      ),
+    );
+    controller.dispose();
+    if (input == null || !mounted) return;
+
+    final phrases = input
+        .split(',')
+        .map((p) => p.trim())
+        .where((p) => p.isNotEmpty)
+        .toList();
+    if (phrases.isEmpty) return;
+    final overflow = phrases.length > 3;
+    final capped = phrases.take(3).toList();
+
+    setState(() => _addingRequiredTopics = true);
+    try {
+      final results = await _requiredCoreTopicResolver.resolve(
+        phrases: capped,
+        template: widget.template,
+        existingEntries: _currentEntries,
+      );
+      if (!mounted) return;
+      if (results.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Could not find or research any of those topics — try different wording.')),
+        );
+        return;
+      }
+
+      // Insert the resolved topics at the front (this term's first weeks —
+      // "required"/"core" topics teach first) and push the same number of
+      // topics off the end of the current list to next term.
+      final pushCount = results.length.clamp(0, _currentEntries.length);
+      final pushedOff = pushCount == 0 ? <SchemeOfWorkEntry>[] : _currentEntries.sublist(_currentEntries.length - pushCount);
+      final kept = pushCount == 0 ? _currentEntries : _currentEntries.sublist(0, _currentEntries.length - pushCount);
+
+      setState(() {
+        _currentEntries = [for (final r in results) r.entry, ...kept];
+        _appliedRequiredTopics.addAll(results);
+        _pushedOffEntries.addAll(pushedOff);
+        _draft = SchemeOfWorkDocumentDraft.fromEntries(
+          _currentEntries,
+          curriculumCode: widget.template.curriculum.code,
+          subjectName: widget.template.subject.name,
+        );
+        _rebuildRowControllers();
+        _addingRequiredTopics = false;
+      });
+      unawaited(_enrichThinRows());
+
+      if (!mounted) return;
+      final addedNames = results.map((r) => r.entry.title).join('; ');
+      final pushedNames = pushedOff.map((e) => e.title).join('; ');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          duration: const Duration(seconds: 6),
+          content: Text(
+            'Added: $addedNames.'
+            '${pushedNames.isNotEmpty ? ' Moved to next term: $pushedNames.' : ''}'
+            '${overflow ? ' Only the first 3 topics were used.' : ''}',
+          ),
+        ),
+      );
+    } on RequiredCoreTopicUnavailable catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$error')));
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Could not add these topics: $error')),
+      );
+    } finally {
+      if (mounted) setState(() => _addingRequiredTopics = false);
+    }
   }
 
   @override
@@ -278,8 +440,15 @@ class _SchemeOfWorkDocumentScreenState extends State<SchemeOfWorkDocumentScreen>
       // of Work" for EVERY class of that subject+grade, exactly the
       // "affecting records the app collects" a one-off must not do. Gated
       // on the same classLabel signal markConcluded below already uses.
+      // Uses _currentEntries (this term's REAL, current topic list — see
+      // that field's own doc comment), not widget.entries, and skips any
+      // synthetic "Required Core Topics" entry (negative topic id — see
+      // RequiredCoreTopicResolver) — those aren't real database rows, so
+      // logging/advancing a class's progress against one would be
+      // meaningless at best and a crash at worst.
+      final realEntries = _currentEntries.where((e) => e.topic.id >= 0).toList();
       if (widget.classLabel != null) {
-        for (final entry in widget.entries) {
+        for (final entry in realEntries) {
           unawaited(_lessonHistoryRepository.logSchemeGenerated(
             curriculumCode: widget.template.curriculum.code,
             subjectCode: widget.template.subject.code,
@@ -296,9 +465,11 @@ class _SchemeOfWorkDocumentScreenState extends State<SchemeOfWorkDocumentScreen>
       // per-row "mark taught" below can later move this cursor BACK if the
       // class didn't actually get through everything shared here. Skipped
       // entirely when there's no real class attached (see classLabel's own
-      // doc comment).
-      if (widget.classLabel case final label? when widget.entries.isNotEmpty) {
-        final last = widget.entries.last;
+      // doc comment), or when Required Core Topics pushed every real entry
+      // off this document (realEntries empty — the whole term is now
+      // synthetic-only, extremely unlikely but guarded anyway).
+      if (widget.classLabel case final label? when realEntries.isNotEmpty) {
+        final last = realEntries.last;
         unawaited(_classProgressRepository.markConcluded(
           curriculumCode: widget.template.curriculum.code,
           subjectCode: widget.template.subject.code,
@@ -394,7 +565,31 @@ class _SchemeOfWorkDocumentScreenState extends State<SchemeOfWorkDocumentScreen>
           _textField('year', 'Year', helper: 'e.g. 2026'),
           _textField('philosophy', 'Curriculum Philosophy and Goals',
               maxLines: 3, helper: 'Optional — shown once at the top of the document, not per week.'),
-          const SizedBox(height: 16),
+          const SizedBox(height: 8),
+          // "Required Core Topics" (2026-09-12, per explicit request) —
+          // subtly placed here, alongside the document's own details,
+          // rather than as a prominent feature of its own.
+          Align(
+            alignment: Alignment.centerLeft,
+            child: TextButton.icon(
+              onPressed: _addingRequiredTopics ? null : _openRequiredCoreTopics,
+              icon: _addingRequiredTopics
+                  ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
+                  : const Icon(Icons.playlist_add_check_circle_outlined, size: 18),
+              label: Text(_addingRequiredTopics ? 'Adding required core topics…' : 'Required Core Topics'),
+              style: TextButton.styleFrom(visualDensity: VisualDensity.compact),
+            ),
+          ),
+          if (_appliedRequiredTopics.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 4),
+              child: Text(
+                'Added: ${_appliedRequiredTopics.map((r) => r.entry.title).join('; ')}.'
+                '${_pushedOffEntries.isNotEmpty ? ' Moved to next term: ${_pushedOffEntries.map((e) => e.title).join('; ')}.' : ''}',
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+            ),
+          const SizedBox(height: 8),
           for (var i = 0; i < _draft.rows.length; i++) _buildRowCard(i),
         ],
       ),
@@ -451,7 +646,9 @@ class _SchemeOfWorkDocumentScreenState extends State<SchemeOfWorkDocumentScreen>
   Future<void> _markTaught(List<SchemeOfWorkEntry> entries) async {
     final label = widget.classLabel;
     if (label == null) return;
-    for (final entry in entries) {
+    // Skip a "Required Core Topics" synthetic entry (negative topic id,
+    // not a real database row) — see RequiredCoreTopicResolver.
+    for (final entry in entries.where((e) => e.topic.id >= 0)) {
       await _classProgressRepository.markConcluded(
         curriculumCode: widget.template.curriculum.code,
         subjectCode: widget.template.subject.code,
@@ -502,6 +699,24 @@ class _SchemeOfWorkDocumentScreenState extends State<SchemeOfWorkDocumentScreen>
               ),
         childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
         children: [
+          if (!isSpecialRow && entries.any((e) => e.topic.id < 0)) ...[
+            Row(
+              children: [
+                Icon(Icons.playlist_add_check_circle_outlined, size: 14, color: Theme.of(context).colorScheme.tertiary),
+                const SizedBox(width: 4),
+                Expanded(
+                  child: Text(
+                    'Added via Required Core Topics.',
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodySmall
+                        ?.copyWith(color: Theme.of(context).colorScheme.tertiary, fontStyle: FontStyle.italic),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+          ],
           if (competencies.isNotEmpty) ...[
             _readOnlyBlock('Specific Competence / Outcomes', competencies),
             const SizedBox(height: 8),

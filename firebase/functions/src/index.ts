@@ -565,6 +565,175 @@ export const generateLessonPlan = onCall<GenerateLessonPlanRequest>(
 );
 
 // ---------------------------------------------------------------------
+// generateRequiredCoreTopics — "Required Core Topics" on Scheme of Work
+// (2026-09-12, per explicit request): a teacher names up to 3 topics they
+// consider necessary that don't show up (or are buried inside a bigger
+// topic, e.g. "rise and fall of Shaka Zulu" hidden inside "The Mfecane")
+// in the generated scheme, and the app adds real, sourced content for
+// them. This function is ONLY called for phrases the CLIENT found nothing
+// for on-device (RequiredCoreTopicResolver already tried: the current
+// term's own topics, the whole subject syllabus, and the Subject Content
+// Database — all free and offline). Same two-step googleSearch+urlContext
+// -> schema pattern as listCdcResources (tools and strict JSON schema
+// output aren't reliably combinable in one Gemini call).
+// ---------------------------------------------------------------------
+
+interface GenerateRequiredCoreTopicsRequest {
+  phrases: string[];
+  subjectName: string;
+  gradeName?: string;
+  curriculumName?: string;
+  // Real, on-device context (e.g. a sample of this syllabus's own topic
+  // names/objectives) so the research stays inside what this subject/level
+  // actually covers, rather than answering the phrase in a vacuum.
+  syllabusContext?: string;
+}
+
+interface RequiredCoreTopicResult {
+  phrase: string;
+  name: string;
+  description: string;
+  competencies: string[];
+  objectives: string[];
+}
+
+interface GenerateRequiredCoreTopicsResponse {
+  topics: RequiredCoreTopicResult[];
+}
+
+const requiredCoreTopicsSchema = {
+  type: "object",
+  properties: {
+    topics: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          phrase: { type: "string", description: "Echo the exact phrase this entry answers, verbatim." },
+          name: { type: "string", description: "A clean, short topic name fit for a scheme-of-work row." },
+          description: { type: "string", description: "1-2 sentences, plain text, no Markdown." },
+          competencies: {
+            type: "array",
+            items: { type: "string" },
+            minItems: 2,
+            maxItems: 4,
+            description: "Specific-competence-style statements, in the syllabus's own action-statement style.",
+          },
+          objectives: {
+            type: "array",
+            items: { type: "string" },
+            minItems: 2,
+            maxItems: 4,
+            description: "Learning-objective-style statements a learner should achieve.",
+          },
+        },
+        required: ["phrase", "name", "description", "competencies", "objectives"],
+        additionalProperties: false,
+      },
+    },
+  },
+  required: ["topics"],
+  additionalProperties: false,
+};
+
+export const generateRequiredCoreTopics = onCall<GenerateRequiredCoreTopicsRequest>(
+  { secrets: [geminiApiKey], region: "us-central1", timeoutSeconds: 180, memory: "512MiB", maxInstances: 5 },
+  async (request): Promise<GenerateRequiredCoreTopicsResponse> => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "Sign in is required to add required core topics.");
+    }
+    const { phrases, subjectName, gradeName, curriculumName, syllabusContext } = request.data ?? {};
+    if (!Array.isArray(phrases) || phrases.length === 0 || !phrases.every((p) => typeof p === "string")) {
+      throw new HttpsError("invalid-argument", "'phrases' must be a non-empty string array.");
+    }
+    if (typeof subjectName !== "string" || subjectName.trim().length === 0) {
+      throw new HttpsError("invalid-argument", "'subjectName' is required.");
+    }
+    const cappedPhrases = phrases.slice(0, 3);
+
+    const ai = new GoogleGenAI({ apiKey: geminiApiKey.value() });
+    const levelText = [subjectName, gradeName, curriculumName ? `(${curriculumName})` : null]
+      .filter((s) => s)
+      .join(" ");
+
+    let researchText: string | undefined;
+    try {
+      const researchResponse = await ai.models.generateContent({
+        model: GEMINI_MODEL,
+        contents: [
+          `A teacher wants these specific topics added to a ${levelText} scheme of work, because the ` +
+            "generated scheme doesn't directly show them (they may be real content buried inside a " +
+            "bigger topic, or genuinely missing):",
+          ...cappedPhrases.map((p, i) => `${i + 1}. "${p}"`),
+          syllabusContext
+            ? `This syllabus's own real scope/level, for context (stay within this level of depth and ` +
+              `region/period relevance, don't drift into unrelated territory):\n${syllabusContext}`
+            : "",
+          "For EACH topic above, research real, accurate facts from credible educational sources " +
+            "(standard history/subject textbooks, established encyclopedic sources, official curriculum " +
+            "material) appropriate for this level. Write 4-8 factual sentences per topic, plain text, no " +
+            "citations/URLs in the text itself. If you genuinely can't find anything credible and specific " +
+            "for a topic, say so in one sentence for that topic rather than guessing.",
+        ]
+          .filter((s) => s)
+          .join("\n"),
+        config: { tools: [{ urlContext: {} }, { googleSearch: {} }] },
+      });
+      researchText = researchResponse.text;
+    } catch (err) {
+      console.error("generateRequiredCoreTopics: research call failed", err);
+      throw new HttpsError("internal", "Could not research these topics. Please try again.");
+    }
+    if (!researchText) {
+      throw new HttpsError("internal", "No research notes were returned.");
+    }
+
+    let text: string | undefined;
+    try {
+      const structureResponse = await ai.models.generateContent({
+        model: GEMINI_MODEL,
+        contents: [
+          `Turn the research notes below into ${levelText} scheme-of-work entries — one per topic, in ` +
+            "the same order as the original phrases, each phrase echoed back verbatim in its own entry. " +
+            "Write competencies/objectives in the same competency-based action-statement style a real " +
+            "Zambian syllabus uses (e.g. 'Explain...', 'Describe...', 'Analyse...'). Never fabricate a " +
+            "specific fact, date, or figure the notes don't support — if the notes found nothing credible " +
+            "for a topic, keep that entry general/introductory rather than inventing specifics. Never " +
+            "mention where this content came from (a search, a curriculum name, a source website) " +
+            "anywhere in the output — write it as ordinary syllabus content.",
+          "",
+          `Original phrases, in order: ${cappedPhrases.map((p) => `"${p}"`).join(", ")}`,
+          "",
+          "Research notes:",
+          researchText,
+        ].join("\n"),
+        config: {
+          responseMimeType: "application/json",
+          responseJsonSchema: requiredCoreTopicsSchema,
+        },
+      });
+      text = structureResponse.text;
+    } catch (err) {
+      console.error("generateRequiredCoreTopics: structuring call failed", err);
+      throw new HttpsError("internal", "Could not prepare these topics. Please try again.");
+    }
+    if (!text) {
+      throw new HttpsError("internal", "No topics were returned.");
+    }
+
+    let parsed: GenerateRequiredCoreTopicsResponse;
+    try {
+      parsed = JSON.parse(text);
+    } catch (err) {
+      console.error("generateRequiredCoreTopics: response was not valid JSON", text);
+      throw new HttpsError("internal", "The response could not be parsed.");
+    }
+    if (!Array.isArray(parsed.topics)) parsed.topics = [];
+    return parsed;
+  }
+);
+
+// ---------------------------------------------------------------------
 // listCdcResources — catalogs teaching modules published on the Curriculum
 // Development Centre's digital library (library.cdcrepository.info), so the
 // app can show teachers what's available without bundling every PDF (the
