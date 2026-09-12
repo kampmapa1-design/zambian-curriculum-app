@@ -43,16 +43,24 @@ import 'document_pages_capture_screen.dart';
 /// freshly-captured scripts (see [pendingScripts]); or opened bare.
 enum ConciseMarkingSource { device, camera, queue }
 
-/// Which AI marking engine this screen runs (2026-09-10, per explicit
-/// request for two options under Scan Marker):
+/// Which AI marking engine this screen runs — three options under Scan
+/// Marker (2026-09-10/12, per explicit request):
 /// - [concise] — the premium engine: marks, scores AND draws real
-///   ticks/crosses + the score onto a copy of the actual script page.
+///   ticks/crosses + the score onto a copy of the actual script page. No
+///   marking key required; one may be attached as reference (see
+///   [_ConciseMarkingScreenState._ensureEngineSetup]).
 /// - [stable] — the affordable engine ("Stable Marker"): the exact same
 ///   session, marking and out-of-100 scoring on a much cheaper model, but
 ///   NOTHING is drawn on the script image — the deliverable is just the
 ///   Word/PDF score list (plus a short per-candidate text report). For
-///   simple class tests that don't need heavy AI.
-enum MarkingEngine { concise, stable }
+///   simple class tests that don't need heavy AI. Never asks about a
+///   marking key — stays purely affordable AI.
+/// - [keyed] — "Uploaded Marking Key Based Marking": strictly bound to
+///   ONE marking key the teacher picks from those already uploaded — the
+///   AI only interprets that key's own front-page rules against the
+///   script, never blending in outside judgment the way [concise]/[stable]
+///   do. Same ticks/score/report pipeline as [concise].
+enum MarkingEngine { concise, stable, keyed }
 
 class ConciseMarkingScreen extends StatefulWidget {
   const ConciseMarkingScreen({
@@ -126,7 +134,18 @@ class _ConciseMarkingScreenState extends State<ConciseMarkingScreen> {
   late final ScriptAnnotationService _annotationService = widget.annotationService ?? ScriptAnnotationService();
 
   bool get _stable => widget.engine == MarkingEngine.stable;
-  String get _engineName => _stable ? 'Stable Marker' : 'Concise Marking';
+  bool get _keyed => widget.engine == MarkingEngine.keyed;
+  String get _engineName => switch (widget.engine) {
+        MarkingEngine.stable => 'Stable Marker',
+        MarkingEngine.keyed => 'Key-Based Marking',
+        MarkingEngine.concise => 'Concise Marking',
+      };
+
+  /// Set once per session — see [_ensureEngineSetup]: for [MarkingEngine
+  /// .keyed] this gates the mandatory single-key pick; for
+  /// [MarkingEngine.concise] it gates the one-time "attach a marking key
+  /// for reference?" question. Never asked for [MarkingEngine.stable].
+  bool _engineSetupDone = false;
 
   bool _loading = true;
   String? _loadError;
@@ -226,7 +245,7 @@ class _ConciseMarkingScreenState extends State<ConciseMarkingScreen> {
   // Deep-link entry (dropdown source / "Concise Marker" in the key picker)
   // -------------------------------------------------------------------
   Future<void> _runInitialFlow() async {
-    if (!await _ensureSubject()) {
+    if (!await _ensureSubject() || !await _ensureEngineSetup()) {
       if (mounted) Navigator.of(context).maybePop();
       return;
     }
@@ -301,8 +320,89 @@ class _ConciseMarkingScreenState extends State<ConciseMarkingScreen> {
     _referenceScheme = best;
   }
 
+  /// Once per session, after the subject is known: for [MarkingEngine.keyed]
+  /// ("Uploaded Marking Key Based Marking"), makes the teacher pick exactly
+  /// ONE saved key — mandatory, becomes the authority for every script this
+  /// session. For [MarkingEngine.concise], asks "Attach any marking key for
+  /// reference?" (2026-09-12, per explicit request): Yes shows every saved
+  /// key (not just subject-matched ones) and pins the pick as reference for
+  /// the rest of the session; No leaves the existing silent by-subject
+  /// auto-detection ([_recomputeReferenceScheme]) exactly as it was — "the
+  /// app goes on to use pure AI and only add something from the app if it
+  /// detects clearly relevant data". Never asked for [MarkingEngine.stable].
+  /// Returns false if the teacher backs out of a step that can't be skipped.
+  Future<bool> _ensureEngineSetup() async {
+    if (_engineSetupDone) return true;
+    if (!mounted) return false;
+    if (_stable) {
+      _engineSetupDone = true;
+      return true;
+    }
+
+    if (_keyed) {
+      if (_schemes.schemes.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('No marking keys uploaded yet — upload one first (Marking Schemes → New Scheme).')),
+        );
+        return false;
+      }
+      final picked = await _pickAnyScheme(title: 'Which marking key should this session use?');
+      if (!mounted || picked == null) return false;
+      setState(() {
+        _referenceScheme = picked;
+        _engineSetupDone = true;
+      });
+      return true;
+    }
+
+    // MarkingEngine.concise
+    final attach = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Attach any marking key for reference?'),
+        content: const Text(
+          'Pick one of your uploaded marking keys and the AI will use it as a reference alongside its own '
+          'judgment. Choose "No" to mark purely with AI, only drawing on this app\'s own saved content when '
+          'it clearly applies to a question on the paper.',
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(dialogContext).pop(false), child: const Text('No, pure AI')),
+          FilledButton(onPressed: () => Navigator.of(dialogContext).pop(true), child: const Text('Yes, attach a key')),
+        ],
+      ),
+    );
+    if (!mounted || attach == null) return false;
+    if (attach) {
+      if (_schemes.schemes.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('No marking keys uploaded yet — continuing with pure AI instead.')),
+        );
+      } else {
+        final picked = await _pickAnyScheme(title: 'Attach which marking key?');
+        if (!mounted) return false;
+        if (picked != null) setState(() => _referenceScheme = picked);
+      }
+    }
+    setState(() => _engineSetupDone = true);
+    return true;
+  }
+
+  Future<MarkingScheme?> _pickAnyScheme({required String title}) => showDialog<MarkingScheme>(
+        context: context,
+        builder: (dialogContext) => SimpleDialog(
+          title: Text(title),
+          children: [
+            for (final s in _schemes.schemes)
+              SimpleDialogOption(
+                onPressed: () => Navigator.of(dialogContext).pop(s),
+                child: Text('${s.title} (${s.questions.length} question(s))'),
+              ),
+          ],
+        ),
+      );
+
   Future<void> _addPendingScripts() async {
-    if (widget.pendingScripts.isEmpty) return;
+    if (widget.pendingScripts.isEmpty || !await _ensureEngineSetup() || !mounted) return;
     final added = {for (final i in _items) i.script.id};
     for (final raw in widget.pendingScripts) {
       if (added.contains(raw.id)) continue;
@@ -310,7 +410,7 @@ class _ConciseMarkingScreenState extends State<ConciseMarkingScreen> {
             id: _nextItemId++,
             script: raw,
             candidateName: raw.fullName,
-            referenceScheme: _schemeFor(raw) ?? _referenceScheme,
+            referenceScheme: _keyed ? _referenceScheme : (_schemeFor(raw) ?? _referenceScheme),
           )));
     }
   }
@@ -319,7 +419,7 @@ class _ConciseMarkingScreenState extends State<ConciseMarkingScreen> {
   // Adding scripts to the session
   // -------------------------------------------------------------------
   Future<void> _showAddSources() async {
-    if (!await _ensureSubject() || !mounted) return;
+    if (!await _ensureSubject() || !await _ensureEngineSetup() || !mounted) return;
     final choice = await showModalBottomSheet<String>(
       context: context,
       builder: (sheetContext) => SafeArea(
@@ -363,7 +463,7 @@ class _ConciseMarkingScreenState extends State<ConciseMarkingScreen> {
   }
 
   Future<void> _addFromQueue() async {
-    if (!await _ensureSubject() || !mounted) return;
+    if (!await _ensureSubject() || !await _ensureEngineSetup() || !mounted) return;
     final alreadyAdded = {for (final i in _items) i.script.id};
     final available = _eligibleScripts.where((s) => !alreadyAdded.contains(s.id)).toList();
     if (available.isEmpty) {
@@ -440,12 +540,13 @@ class _ConciseMarkingScreenState extends State<ConciseMarkingScreen> {
             id: _nextItemId++,
             script: s,
             candidateName: s.fullName,
-            referenceScheme: _schemeFor(s) ?? _referenceScheme,
+            referenceScheme: _keyed ? _referenceScheme : (_schemeFor(s) ?? _referenceScheme),
           )));
     }
   }
 
   Future<void> _addFromCameraOrDevice({required bool fromDevice}) async {
+    if (!await _ensureEngineSetup() || !mounted) return;
     List<File>? initialFiles;
     if (fromDevice) {
       final results = await FilePicker.pickFiles(type: FileType.custom, allowedExtensions: ['jpg', 'jpeg', 'png']);
@@ -578,11 +679,14 @@ class _ConciseMarkingScreenState extends State<ConciseMarkingScreen> {
           );
         }
 
+        final linkedScheme = item.referenceScheme ?? _referenceScheme;
         final result = await _gradingService.grade(
           pageFiles: pageFiles,
-          // Pure AI — never a strict key. Any saved key for this subject
-          // rides along as reference only.
-          referenceScheme: item.referenceScheme ?? _referenceScheme,
+          // Key-Based Marking: the one picked key is the AUTHORITY. Every
+          // other engine treats a linked key (if any) as reference only —
+          // pure AI stays primary, per explicit request.
+          scheme: _keyed ? linkedScheme : null,
+          referenceScheme: _keyed ? null : linkedScheme,
           questionPaperFiles: item.questionPaperFiles,
           subjectName: _subject,
           knownRubric: _cohortRubric,
@@ -873,20 +977,24 @@ class _ConciseMarkingScreenState extends State<ConciseMarkingScreen> {
     return ListView(
       padding: const EdgeInsets.all(20),
       children: [
-        Text('$_engineName — pure AI', style: Theme.of(context).textTheme.titleLarge),
+        Text(_engineName, style: Theme.of(context).textTheme.titleLarge),
         const SizedBox(height: 8),
         Text(
-          _stable
-              ? 'No marking key needed. Runs on an affordable AI engine — for simple class tests. Marks '
-                  'every answer, scores each paper out of 100, and gives you a Word / PDF score list plus a '
-                  'short per-candidate report. Does NOT draw ticks/crosses on the script images (use '
-                  'Concise Marking for that). If you have a saved key for this subject it is used as extra '
-                  'reference automatically.'
-              : 'No marking key needed. The AI reads the questions, their marks and the marking rules off '
-                  'each script (add a photo of the question paper if the answers are in a separate '
-                  'booklet), marks every answer, scores each paper out of 100, stamps the score and a '
-                  'short report on the script, and gives you a Word / PDF score list. If you have a saved '
-                  'key for this subject it is used as extra reference automatically.',
+          _keyed
+              ? 'Strictly bound to ONE marking key you pick from those already uploaded — the AI only '
+                  'interprets that key\'s own front-page rules against each script, no outside judgment. '
+                  'Marks every answer, scores each paper out of 100, stamps the score and a short report '
+                  'on the script, and gives you a Word / PDF score list.'
+              : _stable
+                  ? 'No marking key required. Runs on an affordable AI engine — for simple class tests. '
+                      'Marks every answer, scores each paper out of 100, and gives you a Word / PDF score '
+                      'list plus a short per-candidate report. Does NOT draw ticks/crosses on the script '
+                      'images (use Concise Marking for that).'
+                  : 'No marking key required — attach one as reference if you like, or let the AI read the '
+                      'questions, their marks and the marking rules off each script itself (add a photo of '
+                      'the question paper if the answers are in a separate booklet). Marks every answer, '
+                      'scores each paper out of 100, stamps the score and a short report on the script, and '
+                      'gives you a Word / PDF score list.',
           style: Theme.of(context).textTheme.bodyMedium,
         ),
         const SizedBox(height: 20),
@@ -959,6 +1067,10 @@ class _ConciseMarkingScreenState extends State<ConciseMarkingScreen> {
                 ),
                 Text(
                   () {
+                    if (_keyed) {
+                      return 'Strictly marked against "${_referenceScheme?.title ?? 'the selected key'}" — '
+                          'the AI only interprets that key\'s own rules.';
+                    }
                     final base = _stable ? 'Affordable AI marking (no on-image marks)' : 'Pure AI marking';
                     return _referenceScheme != null
                         ? '$base · also using your saved key "${_referenceScheme!.title}" as reference'
@@ -1047,9 +1159,11 @@ class _ConciseMarkingScreenState extends State<ConciseMarkingScreen> {
       _ItemStatus.marked => (Icons.check_circle, Colors.green),
       _ItemStatus.failed => (Icons.error_outline, Theme.of(context).colorScheme.error),
     };
-    final refLabel = item.referenceScheme != null
-        ? 'AI + saved key "${item.referenceScheme!.title}"'
-        : 'Pure AI marking';
+    final refLabel = _keyed
+        ? 'Key: "${item.referenceScheme?.title ?? 'none picked'}"'
+        : item.referenceScheme != null
+            ? 'AI + saved key "${item.referenceScheme!.title}"'
+            : 'Pure AI marking';
     final subtitleParts = <String>[
       item.questionPaperFiles.isNotEmpty ? '$refLabel · question paper attached' : refLabel,
     ];

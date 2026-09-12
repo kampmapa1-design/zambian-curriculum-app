@@ -1,3 +1,4 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 
 import '../models/lesson_checkpoint.dart';
@@ -210,7 +211,7 @@ Future<void> startGenerateLessonPlanFlow(
   // known to be for THAT class specifically. For a one-off, the Class
   // field is left blank instead (see _askTeacherProfile's own doc comment)
   // and never persisted back to the remembered profile.
-  final profile = await _askTeacherProfile(context, defaultClassLabel: defaultClassLabel, isOneOff: isOneOff);
+  final profileResult = await _askTeacherProfile(context, defaultClassLabel: defaultClassLabel, isOneOff: isOneOff);
   if (!context.mounted) return;
 
   await Navigator.of(context).push(MaterialPageRoute(
@@ -223,7 +224,8 @@ Future<void> startGenerateLessonPlanFlow(
       isOneOff: isOneOff,
       template: activeTemplate,
       checkpointRepository: checkpoints,
-      teacherProfile: profile,
+      teacherProfile: profileResult.profile,
+      priorityPhrase: profileResult.priorityPhrase,
     ),
   ));
 }
@@ -252,14 +254,14 @@ Future<void> startGenerateLessonPlanFlow(
 /// it empty, don't affect the app's records" principle would otherwise be
 /// undermined by silently overwriting the teacher's own regular
 /// class-name default the very next time this dialog opens.
-Future<TeacherProfile?> _askTeacherProfile(
+Future<({TeacherProfile profile, String? priorityPhrase})> _askTeacherProfile(
   BuildContext context, {
   String? defaultClassLabel,
   bool isOneOff = false,
 }) async {
   final repository = TeacherProfileRepository();
   final saved = await repository.load();
-  if (!context.mounted) return saved;
+  if (!context.mounted) return (profile: saved, priorityPhrase: null);
 
   final resolvedClassName = isOneOff
       ? ''
@@ -270,64 +272,129 @@ Future<TeacherProfile?> _askTeacherProfile(
   final nameController = TextEditingController(text: saved.name);
   final schoolController = TextEditingController(text: saved.school);
   final classController = TextEditingController(text: resolvedClassName);
+  final priorityController = TextEditingController();
+  var showPriority = false;
 
-  final result = await showDialog<TeacherProfile>(
+  // "Priority Content Area" (2026-09-12, per explicit request) — AI-driven,
+  // so it stays disabled while offline rather than silently accepting a
+  // phrase it can't act on. Checked once, up front, same connectivity
+  // pattern as LessonPlanAiService.isOnline.
+  final online = !(await Connectivity().checkConnectivity()).contains(ConnectivityResult.none);
+  if (!context.mounted) return (profile: saved, priorityPhrase: null);
+
+  final result = await showDialog<({TeacherProfile profile, String? priorityPhrase})>(
     context: context,
-    builder: (dialogContext) => AlertDialog(
-      title: const Text('Your details'),
-      content: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('Shown at the top of the lesson plan, alongside Subject/Topic. Remembered for next '
-                'time — edit any time from the lesson plan itself.'),
-            const SizedBox(height: 12),
-            TextField(
-              controller: nameController,
-              decoration: const InputDecoration(labelText: 'Your name', border: OutlineInputBorder()),
-              textCapitalization: TextCapitalization.words,
+    builder: (dialogContext) => StatefulBuilder(
+      builder: (dialogContext, setSheet) {
+        return AlertDialog(
+          title: const Text('Your details'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('Shown at the top of the lesson plan, alongside Subject/Topic. Remembered for '
+                    'next time — edit any time from the lesson plan itself.'),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: nameController,
+                  decoration: const InputDecoration(labelText: 'Your name', border: OutlineInputBorder()),
+                  textCapitalization: TextCapitalization.words,
+                ),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: schoolController,
+                  decoration: const InputDecoration(labelText: 'School name', border: OutlineInputBorder()),
+                  textCapitalization: TextCapitalization.words,
+                ),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: classController,
+                  decoration:
+                      const InputDecoration(labelText: 'Class (e.g. "10A")', border: OutlineInputBorder()),
+                  textCapitalization: TextCapitalization.words,
+                ),
+                const SizedBox(height: 12),
+                // Subtly placed — a small text button, not a prominent
+                // field, per explicit request. Surfaces specific content
+                // buried inside the main topic (e.g. "rise and fall of
+                // Shaka Zulu" within "The Mfecane") that would otherwise
+                // stay hidden.
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: TextButton.icon(
+                    onPressed: !online
+                        ? null
+                        : () => setSheet(() => showPriority = !showPriority),
+                    icon: const Icon(Icons.center_focus_strong_outlined, size: 18),
+                    label: Text(online ? 'Priority Content Area' : 'Priority Content Area (needs internet)'),
+                    style: TextButton.styleFrom(visualDensity: VisualDensity.compact),
+                  ),
+                ),
+                if (showPriority) ...[
+                  const Text(
+                    'Name a specific thing within this topic to emphasize (up to 5 words) — the lesson '
+                    'will make about half its content this, woven together with the rest. Uses AI; '
+                    'needs internet.',
+                    style: TextStyle(fontSize: 12),
+                  ),
+                  const SizedBox(height: 6),
+                  TextField(
+                    controller: priorityController,
+                    autofocus: true,
+                    decoration: const InputDecoration(
+                      hintText: 'e.g. rise and fall of Shaka Zulu',
+                      border: OutlineInputBorder(),
+                    ),
+                    textCapitalization: TextCapitalization.sentences,
+                    onChanged: (v) {
+                      final words = v.trim().split(RegExp(r'\s+')).where((w) => w.isNotEmpty).toList();
+                      if (words.length > 5) {
+                        final trimmed = words.take(5).join(' ');
+                        priorityController.value = TextEditingValue(
+                          text: trimmed,
+                          selection: TextSelection.collapsed(offset: trimmed.length),
+                        );
+                      }
+                    },
+                  ),
+                ],
+              ],
             ),
-            const SizedBox(height: 8),
-            TextField(
-              controller: schoolController,
-              decoration: const InputDecoration(labelText: 'School name', border: OutlineInputBorder()),
-              textCapitalization: TextCapitalization.words,
+          ),
+          actions: [
+            TextButton(
+              // One-off: Skip must still leave the Class field blank for
+              // THIS document (see isOneOff's own doc comment) — popping
+              // `saved` verbatim here would silently bring back whatever
+              // class name was remembered from a previous, non-one-off
+              // lesson.
+              onPressed: () => Navigator.of(dialogContext)
+                  .pop((profile: isOneOff ? saved.copyWith(className: '') : saved, priorityPhrase: null)),
+              child: const Text('Skip'),
             ),
-            const SizedBox(height: 8),
-            TextField(
-              controller: classController,
-              decoration: const InputDecoration(labelText: 'Class (e.g. "10A")', border: OutlineInputBorder()),
-              textCapitalization: TextCapitalization.words,
+            FilledButton(
+              onPressed: () => Navigator.of(dialogContext).pop((
+                profile: TeacherProfile(
+                  name: nameController.text.trim(),
+                  school: schoolController.text.trim(),
+                  className: classController.text.trim(),
+                ),
+                priorityPhrase: priorityController.text.trim().isEmpty ? null : priorityController.text.trim(),
+              )),
+              child: const Text('Continue'),
             ),
           ],
-        ),
-      ),
-      actions: [
-        TextButton(
-          // One-off: Skip must still leave the Class field blank for THIS
-          // document (see isOneOff's own doc comment) — popping `saved`
-          // verbatim here would silently bring back whatever class name
-          // was remembered from a previous, non-one-off lesson.
-          onPressed: () => Navigator.of(dialogContext).pop(isOneOff ? saved.copyWith(className: '') : saved),
-          child: const Text('Skip'),
-        ),
-        FilledButton(
-          onPressed: () => Navigator.of(dialogContext).pop(TeacherProfile(
-            name: nameController.text.trim(),
-            school: schoolController.text.trim(),
-            className: classController.text.trim(),
-          )),
-          child: const Text('Continue'),
-        ),
-      ],
+        );
+      },
     ),
   );
   nameController.dispose();
   schoolController.dispose();
   classController.dispose();
+  priorityController.dispose();
 
-  final profile = result ?? saved;
+  final profile = result?.profile ?? saved;
   if (result != null) {
     // One-off: name/school are still the teacher's own real, persistent
     // details, worth remembering as always — but the class text (even
@@ -336,7 +403,7 @@ Future<TeacherProfile?> _askTeacherProfile(
     // isOneOff's own doc comment above.
     await repository.save(isOneOff ? profile.copyWith(className: saved.className) : profile);
   }
-  return profile;
+  return (profile: profile, priorityPhrase: result?.priorityPhrase);
 }
 
 enum _LessonPlanStart { next, resume }

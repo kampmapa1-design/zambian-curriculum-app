@@ -45,12 +45,12 @@ class SchemeOfWorkTemplate {
 /// from a real submitted Form 2 English scheme of work (2026) — Week /
 /// Stage (which lesson within the week, e.g. "Lesson 3") / Topic / Sub-topic
 /// / Key Competences / Specific Competence / Learning Activities (Content)
-/// / Expected Standards / Strategies & Methodologies / TL Aids & Materials
-/// / References. Only the column structure was kept — any teacher-identifying
+/// / Expected Standards / Strategies & Methodologies / TL Aids & Materials.
+/// Only the column structure was kept — any teacher-identifying
 /// or vendor-branding details in the source document were left out, per
 /// this project's sourcing rules (see feedback-sourcing-rules memory).
 ///
-/// **2026-08-29**: previously only 6-7 of these 11 columns ever got real
+/// **2026-08-29**: previously only 6-7 of these columns ever got real
 /// content — Key Competences, Strategies & Methodologies, and TL Aids &
 /// Materials have no corresponding field anywhere in this app's bundled
 /// syllabus data, so they rendered blank on every generated scheme
@@ -65,14 +65,12 @@ class SchemeOfWorkTemplate {
 /// (true for ~43% of bundled CBC sub-topics) — previously that column
 /// went blank in exactly those cases too.
 ///
-/// **2026-08-30**: References was the last column that could still render
-/// completely blank — no field for it existed anywhere in the syllabus
-/// data model at all (not specific to any one subject). Fixed the same
-/// way as [SubTopic.weekNumber]: a real, sourced `references` field
-/// (populated where a genuine scheme of work exists — see
-/// religious_education_grade10.json for the first real example), with a
-/// safe, never-fabricated fallback (just naming the syllabus itself) for
-/// everything not yet sourced — see [SchemeOfWorkRowDraft.build].
+/// **2026-09-12**: the References column (present on both this template
+/// and OBC's below through 2026-09-10) was removed entirely, per explicit
+/// request — it only ever duplicated what TL Aids & Materials/Resources
+/// already named. [SchemeOfWorkEntry.references]/[SubTopic.references] are
+/// kept as real, sourced fields (still used elsewhere, e.g. lesson plan
+/// generation's grounding) even though no column renders them here anymore.
 const defaultCbcSchemeOfWorkTemplate = SchemeOfWorkTemplate(
   id: 'cbc_scheme_of_work_v1',
   name: 'CBC Scheme of Work',
@@ -90,18 +88,18 @@ const defaultCbcSchemeOfWorkTemplate = SchemeOfWorkTemplate(
     SchemeOfWorkColumnDef(id: 'expectedStandards', label: 'Expected Standards', suggested: true),
     SchemeOfWorkColumnDef(id: 'strategiesMethodologies', label: 'Strategies & Methodologies', suggested: true),
     SchemeOfWorkColumnDef(id: 'tlAidsMaterials', label: 'TL Aids & Materials', suggested: true),
-    SchemeOfWorkColumnDef(id: 'references', label: 'References', suggested: true),
   ],
 );
 
 /// The real OBC (2013) scheme-of-work column layout, reverse-engineered
 /// from a real, genuinely blank Ministry of Education Grade 10-12 Civic
-/// Education scheme-of-work template (2026) — a much simpler 6-column
-/// layout than CBC's, and structured **one row per week** rather than one
-/// row per topic: Week / Topic/Content / Specific Outcomes / Methods /
-/// Resources / References. When a week covers more than one topic or
-/// sub-topic, they merge into the same Topic/Content and Specific Outcomes
-/// cells (see [SchemeOfWorkRowDraft] — OBC rows can hold several entries).
+/// Education scheme-of-work template (2026) — a simpler layout than CBC's,
+/// and structured **one row per week** rather than one row per topic:
+/// Week / Topic/Content / Specific Outcomes / Methods / Resources. When a
+/// week covers more than one topic or sub-topic, they merge into the same
+/// Topic/Content and Specific Outcomes cells (see [SchemeOfWorkRowDraft] —
+/// OBC rows can hold several entries). See [defaultCbcSchemeOfWorkTemplate]
+/// on the removed References column, same reasoning here.
 const defaultObcSchemeOfWorkTemplate = SchemeOfWorkTemplate(
   id: 'obc_scheme_of_work_v2',
   name: 'OBC Scheme of Work',
@@ -115,7 +113,6 @@ const defaultObcSchemeOfWorkTemplate = SchemeOfWorkTemplate(
     SchemeOfWorkColumnDef(id: 'specificOutcomes', label: 'Specific Outcomes', autoFilled: true),
     SchemeOfWorkColumnDef(id: 'methods', label: 'Methods', suggested: true),
     SchemeOfWorkColumnDef(id: 'resources', label: 'Resources', suggested: true),
-    SchemeOfWorkColumnDef(id: 'references', label: 'References', suggested: true),
   ],
 );
 

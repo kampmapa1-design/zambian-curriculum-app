@@ -114,6 +114,15 @@ class LessonPlanAiService {
     String? references,
     required List<String> progressionStages,
     String? subjectContentExcerpt,
+    // "Priority Content Area" (2026-09-12, per explicit request): a short
+    // teacher-typed phrase naming specific content buried inside this
+    // topic (e.g. "rise and fall of Shaka Zulu" within "The Mfecane") that
+    // should make up roughly half of this lesson's real content.
+    // [priorityContext] is whatever this app already found on-device about
+    // it (see PriorityContentResolver) — null tells the server nothing
+    // local was found, so it does one real online search instead.
+    String? priorityPhrase,
+    String? priorityContext,
   }) async {
     if (!await isOnline) {
       throw const LessonPlanAiUnavailable(
@@ -136,6 +145,8 @@ class LessonPlanAiService {
         'progressionStages': progressionStages,
         if (subjectContentExcerpt != null && subjectContentExcerpt.trim().isNotEmpty)
           'subjectContentExcerpt': subjectContentExcerpt,
+        if (priorityPhrase != null && priorityPhrase.trim().isNotEmpty) 'priorityPhrase': priorityPhrase.trim(),
+        if (priorityContext != null && priorityContext.trim().isNotEmpty) 'priorityContext': priorityContext,
       });
       return LessonPlanAiResult.fromMap(result.data);
     } on FirebaseFunctionsException catch (e) {

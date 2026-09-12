@@ -15,7 +15,6 @@ import '../services/marking_gap_report_document_service.dart';
 import '../services/marking_gap_report_service.dart';
 import '../services/marking_grading_service.dart';
 import '../services/marked_results_list_repository.dart';
-import '../services/marking_key_generation_service.dart';
 import '../services/marking_scheme_repository.dart';
 import '../services/marking_session_repository.dart';
 import '../services/pending_marking_key_draft_repository.dart';
@@ -98,7 +97,6 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
   int _batchTotal = 0;
 
   int? _remainingFreeGradings;
-  bool _generatingKey = false;
 
   // The "score just came in" pop-and-fade — see [_ScorePopBadge]. Keyed so
   // a fresh score restarts the animation even if it fires again before the
@@ -177,23 +175,11 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
     });
   }
 
-  /// "Upload Marking Key" — reveals the device/camera choice directly
-  /// (skipping "what do you have" — this button is explicitly for an
-  /// already-answered marking key, sourceType always
-  /// [MarkingKeySourceType.markingKey]) then runs the shared upload flow
-  /// (also used by MarkingSchemeListScreen's "New Scheme").
-  Future<void> _uploadMarkingKey(MarkingKeyUploadMethod method) async {
-    final saved = await runMarkingKeyUploadFlow(
-      context: context,
-      sourceType: MarkingKeySourceType.markingKey,
-      method: method,
-      schemeRepository: _schemeRepository,
-      onLoadingChanged: (loading) {
-        if (mounted) setState(() => _generatingKey = loading);
-      },
-    );
-    if (saved != null) _load();
-  }
+  // "Upload Marking Key" (device/camera -> AI extraction of a NEW key) was
+  // removed from this hub 2026-09-12, per explicit request — repurposed
+  // into "Uploaded Marking Key Based Marking" (see _buildActionButtons),
+  // a marking engine, not an upload action. Uploading a new key is still
+  // available via the "Marking Schemes" AppBar icon -> "New Scheme".
 
   /// "Upload Script" → "Upload from device" — one or more page images
   /// already on the device (a script scanned/photographed elsewhere and
@@ -935,17 +921,30 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
           Expanded(
             child: Column(
               children: [
+                // "Uploaded Marking Key Based Marking" (2026-09-12, per
+                // explicit request — renamed and repurposed from the old
+                // "Upload Marking Key" button, which only ever uploaded a
+                // NEW key; that's still available via "Marking Schemes" ->
+                // "New Scheme"). Now a third marking engine alongside
+                // Concise/Stable: strictly bound to one key the teacher
+                // picks from those already uploaded — see
+                // ConciseMarkingScreen's MarkingEngine.keyed.
                 _buildDropdownActionButton(
                   context,
-                  label: 'Upload Marking Key',
+                  label: 'Uploaded Marking Key Based Marking',
                   icon: Icons.fact_check_outlined,
-                  busy: _generatingKey,
                   items: const [
                     PopupMenuItem(value: 'device', child: Text('Upload from device')),
                     PopupMenuItem(value: 'camera', child: Text('Upload through camera')),
+                    PopupMenuItem(value: 'queue', child: Text('Upload a list from queued lists')),
                   ],
-                  onSelected: (value) => _uploadMarkingKey(
-                    value == 'device' ? MarkingKeyUploadMethod.uploadFromDevice : MarkingKeyUploadMethod.camera,
+                  onSelected: (value) => _openConcise(
+                    switch (value) {
+                      'device' => ConciseMarkingSource.device,
+                      'camera' => ConciseMarkingSource.camera,
+                      _ => ConciseMarkingSource.queue,
+                    },
+                    MarkingEngine.keyed,
                   ),
                 ),
                 const SizedBox(height: 8),

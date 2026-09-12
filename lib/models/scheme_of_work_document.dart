@@ -129,21 +129,13 @@ class SchemeOfWorkRowDraft {
       if (description != null) values['expectedStandards'] = description;
     }
 
-    // References: real sourced values (from a genuine scheme of work — see
-    // SubTopic.references) whenever any entry on this row has one, merged
-    // if several entries genuinely differ. When nothing was ever sourced,
-    // fall back to naming the syllabus itself — always true and never
-    // fabricated, unlike inventing a specific textbook title/citation with
-    // no real source behind it (see feedback-sourcing-rules). This means
-    // References is never blank on a generated scheme, but a fallback
-    // citation is visually distinguishable from a real one by content, not
-    // by any special formatting — it's still real, just less specific.
-    final realReferences = entries.map((e) => e.references).whereType<String>().toSet();
-    if (realReferences.isNotEmpty) {
-      values['references'] = realReferences.join('; ');
-    } else if (subjectName != null && curriculumCode != null) {
-      values['references'] = '$subjectName Syllabus ($curriculumCode)';
-    }
+    // A References column used to be filled here (real sourced values from
+    // SubTopic.references, or a syllabus-name fallback) — removed
+    // 2026-09-12, per explicit request, along with the column itself (see
+    // scheme_of_work_template.dart). [curriculumCode]/[subjectName] stay as
+    // parameters (still passed by every caller) in case a future column
+    // wants them again; SchemeOfWorkEntry.references itself is untouched
+    // and still real/sourced where lesson plan generation reads it directly.
 
     // Key Competences / Strategies & Methodologies / TL Aids & Materials
     // have no source data anywhere in this app's bundled syllabi — these

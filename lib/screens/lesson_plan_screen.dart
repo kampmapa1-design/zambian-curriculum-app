@@ -17,6 +17,7 @@ import '../services/lesson_history_repository.dart';
 import '../services/lesson_plan_ai_service.dart';
 import '../services/lesson_plan_document_service.dart';
 import '../services/lesson_progression_generator.dart';
+import '../services/priority_content_resolver.dart';
 import '../services/subject_content_index.dart';
 import '../services/teacher_profile_repository.dart';
 import '../services/teaching_notes_document_service.dart';
@@ -62,6 +63,7 @@ class LessonPlanScreen extends StatefulWidget {
     this.focusStage,
     this.teacherProfile,
     this.isOneOff = false,
+    this.priorityPhrase,
   });
 
   final String subjectName;
@@ -132,6 +134,14 @@ class LessonPlanScreen extends StatefulWidget {
   /// silently count toward every class's record for that subject+grade.
   final bool isOneOff;
 
+  /// "Priority Content Area" (2026-09-12, per explicit request) — a short
+  /// (<=5 word) phrase naming specific content within this topic to
+  /// emphasize, typed on the same screen as the teacher's own
+  /// name/school/class (see generate_lesson_plan_flow.dart's
+  /// `_askTeacherProfile`). When set, this screen automatically runs the
+  /// AI-enhanced generation with it as soon as it opens — see [initState].
+  final String? priorityPhrase;
+
   @override
   State<LessonPlanScreen> createState() => _LessonPlanScreenState();
 }
@@ -170,7 +180,16 @@ class _LessonPlanScreenState extends State<LessonPlanScreen> {
     _availableTemplates = [widget.template];
     _rebuildForActiveTemplate();
     _loadCustomTemplates();
-    _loadSubjectContentIndex();
+    // Priority Content Area (2026-09-12, per explicit request): a phrase
+    // was typed right when this lesson was set up, so run the AI-enhanced
+    // generation for it automatically — the teacher shouldn't also have to
+    // remember to tap "AI-enhanced lesson plan" afterward. Waits for
+    // _loadSubjectContentIndex so this app's own on-device material is
+    // already available to fold in alongside the priority phrase.
+    _loadSubjectContentIndex().then((_) {
+      final phrase = widget.priorityPhrase?.trim();
+      if (phrase != null && phrase.isNotEmpty && mounted) _generateWithAi(priorityPhrase: phrase);
+    });
     WidgetsBinding.instance.addPostFrameCallback((_) => _checkForCheckpoint());
   }
 
@@ -289,12 +308,31 @@ class _LessonPlanScreenState extends State<LessonPlanScreen> {
   /// fields the AI wasn't asked about (header details, evaluation) are
   /// untouched — same "enrich, don't discard" principle as
   /// [_applyEmbedded] and [_mergeExcerptIntoDevelopmentRow].
-  Future<void> _generateWithAi() async {
+  Future<void> _generateWithAi({String? priorityPhrase}) async {
     _syncDraftFromControllers();
     setState(() => _generatingAi = true);
     try {
       final competencies = widget.entry.competencies.map((c) => c.description).toList();
       final objectives = widget.entry.objectives.map((o) => o.description).toList();
+
+      // Priority Content Area: search this app's own real data FIRST
+      // (this topic, the rest of the syllabus, the Subject Content
+      // Database) — entirely offline and free — before the server ever
+      // considers a real online search, and only when none of these find
+      // anything (see PriorityContentResolver / resolvePriorityContentOnline).
+      String? priorityContext;
+      if (priorityPhrase != null && priorityPhrase.isNotEmpty) {
+        final findings = await PriorityContentResolver().resolve(
+          phrase: priorityPhrase,
+          subjectName: widget.subjectName,
+          curriculumCode: widget.curriculumCode,
+          subjectCode: widget.subjectCode,
+          gradeLevel: widget.gradeLevel,
+          currentEntry: widget.entry,
+        );
+        priorityContext = findings.combinedContext;
+      }
+
       final result = await _aiService.generate(
         topic: widget.entry.topic.name,
         subtopic: widget.entry.subTopic?.name,
@@ -304,6 +342,8 @@ class _LessonPlanScreenState extends State<LessonPlanScreen> {
         objectives: objectives,
         references: widget.entry.references,
         progressionStages: _activeTemplate.progressionStages,
+        priorityPhrase: priorityPhrase,
+        priorityContext: priorityContext,
       );
       if (!mounted) return;
 
@@ -326,12 +366,20 @@ class _LessonPlanScreenState extends State<LessonPlanScreen> {
         );
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('AI-enhanced lesson plan applied — review and edit as needed.')),
+        SnackBar(
+          content: Text(priorityPhrase != null
+              ? 'AI-enhanced lesson plan applied, emphasizing "$priorityPhrase" — review and edit as needed.'
+              : 'AI-enhanced lesson plan applied — review and edit as needed.'),
+        ),
       );
     } catch (error) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Could not generate an AI-enhanced lesson plan: $error')),
+        SnackBar(
+          content: Text(priorityPhrase != null
+              ? 'Could not generate the priority-content lesson plan: $error'
+              : 'Could not generate an AI-enhanced lesson plan: $error'),
+        ),
       );
     } finally {
       if (mounted) setState(() => _generatingAi = false);

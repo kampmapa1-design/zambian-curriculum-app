@@ -242,6 +242,18 @@ interface GenerateLessonPlanRequest {
   // lesson_plan_screen.dart's _loadSubjectContentIndex for where it comes
   // from client-side. Optional: most topics don't have anything saved yet.
   subjectContentExcerpt?: string;
+  // "Priority Content Area" (2026-09-12, per explicit request) — a short
+  // (<=5 word) teacher-typed phrase naming specific content the lesson
+  // should make roughly HALF its real substance about, e.g. "rise and
+  // fall of Shaka Zulu" within a wider "Mfecane" topic. See
+  // buildLessonPlanPrompt's own use of this and priorityContext below.
+  priorityPhrase?: string;
+  // Real, on-device findings the CLIENT already gathered about
+  // priorityPhrase (from this topic, the rest of the syllabus, or the
+  // Subject Content Database — see PriorityContentResolver, Flutter
+  // side). When absent (nothing found on-device), this function does one
+  // real online search of its own instead — see resolvePriorityContent.
+  priorityContext?: string;
 }
 
 interface LessonPlanProgressionRow {
@@ -309,6 +321,35 @@ const generateLessonPlanSchema = {
   additionalProperties: false,
 };
 
+// "Priority Content Area" (2026-09-12, per explicit request): the teacher
+// directly asked for this specific content to make up roughly half the
+// lesson — a much stronger, deliberate signal than the general
+// subjectContentExcerpt grounding above, which is why it gets its own,
+// more forceful instruction block rather than being folded into that one.
+function buildPriorityContentSection(req: GenerateLessonPlanRequest): string {
+  if (!req.priorityPhrase || req.priorityPhrase.trim().length === 0) return "";
+  const phrase = req.priorityPhrase.trim();
+  const context = req.priorityContext?.trim();
+  return [
+    "",
+    `PRIORITY CONTENT AREA — the teacher has specifically asked to emphasize: "${phrase}".`,
+    "Roughly HALF of this lesson's real substance — especially the Teacher's Role across the " +
+      "progression stages, and the rationale — must be genuinely about this specific content, not just " +
+      "a passing mention. The other half stays the normal topic content above. Weave the two together " +
+      "so the lesson reads as ONE coherent whole (e.g. use the priority content as a worked example, a " +
+      "case study, or the concrete instance of the wider topic's concept) — never as two disconnected " +
+      "halves bolted together.",
+    context
+      ? `Real, sourced notes on "${phrase}" to ground this in:\n${context}`
+      : `No sourced notes on "${phrase}" were found in this app's own syllabus/content data or online. ` +
+        "Cover it at a genuinely accurate, general/introductory level from your own subject knowledge " +
+        "rather than inventing specific facts, dates, or figures you're not confident of.",
+    "Never mention where any of this content came from (this app's own data, a search, or general " +
+      "knowledge) — write it as an ordinary part of the lesson, with no source labels or citations " +
+      "naming any curriculum, module, or search process.",
+  ].join("\n");
+}
+
 function buildLessonPlanPrompt(req: GenerateLessonPlanRequest): string {
   return [
     "Write a lesson plan for a Zambian secondary-school teacher, for exactly one lesson period, " +
@@ -339,9 +380,14 @@ function buildLessonPlanPrompt(req: GenerateLessonPlanRequest): string {
       ? "Real material already saved on this teacher's own device for this exact topic (from their " +
         "downloaded CDC materials or a real embedded lesson plan) - ground the lesson in this FIRST, " +
         "before anything else. Only bring in your own general knowledge to fill gaps this material " +
-        "doesn't cover, and never contradict what's given here:\n" +
+        "doesn't cover, and never contradict what's given here. This material may have been saved " +
+        "under a different curriculum revision than this exact lesson's own (e.g. CBC vs OBC) - use it " +
+        "freely for real subject content, but NEVER name or reference which curriculum/module/revision " +
+        "it came from anywhere in your output; write as if it's simply this subject's own established " +
+        "content:\n" +
         `${req.subjectContentExcerpt}\n`
       : null,
+    buildPriorityContentSection(req),
     `Lesson stages, in order: ${req.progressionStages.join(", ")}. Produce exactly one progression ` +
       "entry per stage, in that order, with Teacher's Role, Learners' Role, and Assessment Criteria " +
       "specific to this lesson's actual content.",
@@ -357,6 +403,41 @@ function buildLessonPlanPrompt(req: GenerateLessonPlanRequest): string {
   ]
     .filter((line): line is string => line !== null)
     .join("\n");
+}
+
+// Last resort for "Priority Content Area" — only called when the client
+// found NOTHING on-device (this topic, the rest of the syllabus, the
+// Subject Content Database — see PriorityContentResolver, Flutter side).
+// One real, grounded web search, scoped tightly to the phrase + subject +
+// topic so it doesn't wander into an unrelated meaning of the same words.
+// Same googleSearch+urlContext pattern as listCdcResources. Returns
+// null (never throws) on any failure — a failed priority search still
+// lets the main lesson plan generate normally, just without that extra
+// grounding (buildPriorityContentSection covers the "nothing found" case).
+async function resolvePriorityContentOnline(
+  ai: GoogleGenAI,
+  phrase: string,
+  subject: string,
+  topic: string,
+  grade?: string
+): Promise<string | null> {
+  try {
+    const response = await ai.models.generateContent({
+      model: GEMINI_MODEL,
+      contents: [
+        `Find real, accurate facts about "${phrase}" as it relates to the ${subject} topic "${topic}"` +
+          `${grade ? ` (${grade} level)` : ""}, for a Zambian secondary-school lesson. 4-8 short factual ` +
+          "sentences, plain text, no headings or citations in the text itself. If you cannot find " +
+          "anything genuinely relevant, say so in one sentence instead of guessing.",
+      ],
+      config: { tools: [{ urlContext: {} }, { googleSearch: {} }] },
+    });
+    const research = response.text?.trim();
+    return research && research.length > 0 ? research : null;
+  } catch (err) {
+    console.error("generateLessonPlan: priority content online search failed", err);
+    return null;
+  }
 }
 
 export const generateLessonPlan = onCall<GenerateLessonPlanRequest>(
@@ -376,6 +457,8 @@ export const generateLessonPlan = onCall<GenerateLessonPlanRequest>(
       references,
       progressionStages,
       subjectContentExcerpt,
+      priorityPhrase,
+      priorityContext,
     } = request.data ?? {};
 
     if (typeof topic !== "string" || topic.trim().length === 0) {
@@ -411,6 +494,12 @@ export const generateLessonPlan = onCall<GenerateLessonPlanRequest>(
     if (subjectContentExcerpt !== undefined && typeof subjectContentExcerpt !== "string") {
       throw new HttpsError("invalid-argument", "'subjectContentExcerpt' must be a string if provided.");
     }
+    if (priorityPhrase !== undefined && typeof priorityPhrase !== "string") {
+      throw new HttpsError("invalid-argument", "'priorityPhrase' must be a string if provided.");
+    }
+    if (priorityContext !== undefined && typeof priorityContext !== "string") {
+      throw new HttpsError("invalid-argument", "'priorityContext' must be a string if provided.");
+    }
     if (competencies.length === 0 && objectives.length === 0) {
       throw new HttpsError(
         "invalid-argument",
@@ -419,6 +508,16 @@ export const generateLessonPlan = onCall<GenerateLessonPlanRequest>(
     }
 
     const ai = new GoogleGenAI({ apiKey: geminiApiKey.value() });
+
+    // Priority Content Area: only reach for a real online search when the
+    // client found nothing on-device at all (priorityPhrase set,
+    // priorityContext absent) — the client already tried the topic, the
+    // rest of the syllabus, and the Subject Content Database first.
+    let resolvedPriorityContext = priorityContext;
+    if (priorityPhrase && priorityPhrase.trim().length > 0 && (!priorityContext || priorityContext.trim().length === 0)) {
+      resolvedPriorityContext = (await resolvePriorityContentOnline(ai, priorityPhrase, subject, topic, grade)) ?? undefined;
+    }
+
     const req: GenerateLessonPlanRequest = {
       topic,
       subtopic,
@@ -429,6 +528,8 @@ export const generateLessonPlan = onCall<GenerateLessonPlanRequest>(
       references,
       progressionStages,
       subjectContentExcerpt,
+      priorityPhrase,
+      priorityContext: resolvedPriorityContext,
     };
 
     let text: string | undefined;
