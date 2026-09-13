@@ -49,6 +49,14 @@ class RequiredCoreTopicService {
     String? gradeName,
     String? curriculumName,
     String? syllabusContext,
+    // Real, on-device material found for each phrase (same order,
+    // parallel to [phrases]) — null/empty for a phrase with nothing
+    // found locally, in which case the server researches it online
+    // instead. Grounds the AI's writing either way; never a shortcut
+    // that skips actually writing a proper outcome statement — see
+    // RequiredCoreTopicResolver's own doc comment on the real bug this
+    // fixes (a generic filler sentence instead of real content).
+    List<String?>? localContexts,
   }) async {
     if (!await isOnline) {
       throw const RequiredCoreTopicUnavailable("You're offline. Connect to the internet to add required core topics.");
@@ -63,6 +71,7 @@ class RequiredCoreTopicService {
     try {
       final result = await callable.call<Object?>({
         'phrases': phrases,
+        if (localContexts != null) 'localContexts': localContexts,
         'subjectName': subjectName,
         if (gradeName != null) 'gradeName': gradeName,
         if (curriculumName != null) 'curriculumName': curriculumName,

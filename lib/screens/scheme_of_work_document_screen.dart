@@ -4,7 +4,6 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 
-import '../models/marking_scheme.dart';
 import '../models/scheme_of_work.dart';
 import '../models/scheme_of_work_document.dart';
 import '../models/scheme_of_work_template.dart';
@@ -16,7 +15,6 @@ import '../services/required_core_topic_resolver.dart';
 import '../services/required_core_topic_service.dart' show RequiredCoreTopicUnavailable;
 import '../services/scheme_of_work_ai_content_service.dart';
 import '../services/scheme_of_work_document_service.dart';
-import '../services/subject_content_index.dart';
 import '../services/syllabus_document_service.dart';
 
 /// Lets a teacher fill in whichever scheme-of-work columns aren't part of
@@ -71,7 +69,6 @@ class _SchemeOfWorkDocumentScreenState extends State<SchemeOfWorkDocumentScreen>
   final LessonHistoryRepository _lessonHistoryRepository = LessonHistoryRepository();
   final _syllabusDocumentService = SyllabusDocumentService();
   final _classProgressRepository = ClassProgressRepository();
-  final SubjectContentIndex _contentIndex = SubjectContentIndex();
   final _aiContentService = SchemeOfWorkAiContentService();
   late final RequiredCoreTopicResolver _requiredCoreTopicResolver = RequiredCoreTopicResolver();
   bool _exporting = false;
@@ -79,7 +76,6 @@ class _SchemeOfWorkDocumentScreenState extends State<SchemeOfWorkDocumentScreen>
   bool _enrichingAi = false;
   bool _addingRequiredTopics = false;
   final Set<int> _markedTaughtTopicIds = {};
-  List<MarkingScheme> _relatedMarkingKeys = const [];
 
   /// This term's real, current entry list — starts as [widget.entries] but
   /// mutated by "Required Core Topics" (2026-09-12, per explicit request):
@@ -134,7 +130,6 @@ class _SchemeOfWorkDocumentScreenState extends State<SchemeOfWorkDocumentScreen>
     _controllers['year']!.addListener(() => setState(() {}));
 
     _rebuildRowControllers();
-    _loadRelatedMarkingKeys();
     _enrichThinRows();
   }
 
@@ -217,15 +212,6 @@ class _SchemeOfWorkDocumentScreenState extends State<SchemeOfWorkDocumentScreen>
         }
       }
     });
-  }
-
-  /// Marking keys uploaded through AI-Assisted Marking, for this same
-  /// subject — appended to the exported scheme as a real "Reference:
-  /// Assessment Content" section, entirely offline. See the identical
-  /// pattern/reasoning in lesson_plan_screen.dart.
-  Future<void> _loadRelatedMarkingKeys() async {
-    final matches = await _contentIndex.relatedMarkingKeys(widget.template.subject.name);
-    if (mounted && matches.isNotEmpty) setState(() => _relatedMarkingKeys = matches);
   }
 
   // -------------------------------------------------------------------
@@ -425,8 +411,8 @@ class _SchemeOfWorkDocumentScreenState extends State<SchemeOfWorkDocumentScreen>
     setState(() => _exporting = true);
     try {
       final file = asPdf
-          ? await _documentService.generatePdf(_context, _draft, relatedMarkingKeys: _relatedMarkingKeys)
-          : await _documentService.generateDocx(_context, _draft, relatedMarkingKeys: _relatedMarkingKeys);
+          ? await _documentService.generatePdf(_context, _draft)
+          : await _documentService.generateDocx(_context, _draft);
       if (!mounted) return;
       // The OS share sheet is what actually surfaces WhatsApp, email,
       // Bluetooth, and every other installed share target — one call here

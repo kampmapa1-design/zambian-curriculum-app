@@ -580,6 +580,15 @@ export const generateLessonPlan = onCall<GenerateLessonPlanRequest>(
 
 interface GenerateRequiredCoreTopicsRequest {
   phrases: string[];
+  // Real, on-device material already found for each phrase (same order,
+  // parallel to `phrases`) — null/absent for a phrase nothing was found
+  // for, in which case THAT phrase gets a real online search below.
+  // 2026-09-13, per explicit request: content generation must always
+  // happen properly, whether grounded in local material or fresh
+  // research — this used to be skipped (a generic filler sentence used
+  // instead) whenever local material existed. Never skip actually
+  // writing a real outcome statement.
+  localContexts?: (string | null)[];
   subjectName: string;
   gradeName?: string;
   curriculumName?: string;
@@ -642,7 +651,7 @@ export const generateRequiredCoreTopics = onCall<GenerateRequiredCoreTopicsReque
     if (!request.auth) {
       throw new HttpsError("unauthenticated", "Sign in is required to add required core topics.");
     }
-    const { phrases, subjectName, gradeName, curriculumName, syllabusContext } = request.data ?? {};
+    const { phrases, localContexts, subjectName, gradeName, curriculumName, syllabusContext } = request.data ?? {};
     if (!Array.isArray(phrases) || phrases.length === 0 || !phrases.every((p) => typeof p === "string")) {
       throw new HttpsError("invalid-argument", "'phrases' must be a non-empty string array.");
     }
@@ -650,6 +659,11 @@ export const generateRequiredCoreTopics = onCall<GenerateRequiredCoreTopicsReque
       throw new HttpsError("invalid-argument", "'subjectName' is required.");
     }
     const cappedPhrases = phrases.slice(0, 3);
+    const cappedLocalContexts: (string | null)[] = cappedPhrases.map((_, i) =>
+      Array.isArray(localContexts) && typeof localContexts[i] === "string" && (localContexts[i] as string).trim().length > 0
+        ? (localContexts[i] as string)
+        : null
+    );
 
     const ai = new GoogleGenAI({ apiKey: geminiApiKey.value() });
     const levelText = [subjectName, gradeName, curriculumName ? `(${curriculumName})` : null]
@@ -664,16 +678,24 @@ export const generateRequiredCoreTopics = onCall<GenerateRequiredCoreTopicsReque
           `A teacher wants these specific topics added to a ${levelText} scheme of work, because the ` +
             "generated scheme doesn't directly show them (they may be real content buried inside a " +
             "bigger topic, or genuinely missing):",
-          ...cappedPhrases.map((p, i) => `${i + 1}. "${p}"`),
+          ...cappedPhrases.map((p, i) => {
+            const local = cappedLocalContexts[i];
+            return local
+              ? `${i + 1}. "${p}" — real material already saved on this teacher's own device for this ` +
+                  `topic (use THIS as the primary source, don't research it online):\n${local}`
+              : `${i + 1}. "${p}" — nothing was found on-device for this one; research it below.`;
+          }),
           syllabusContext
             ? `This syllabus's own real scope/level, for context (stay within this level of depth and ` +
               `region/period relevance, don't drift into unrelated territory):\n${syllabusContext}`
             : "",
-          "For EACH topic above, research real, accurate facts from credible educational sources " +
-            "(standard history/subject textbooks, established encyclopedic sources, official curriculum " +
-            "material) appropriate for this level. Write 4-8 factual sentences per topic, plain text, no " +
-            "citations/URLs in the text itself. If you genuinely can't find anything credible and specific " +
-            "for a topic, say so in one sentence for that topic rather than guessing.",
+          "For each topic marked 'research it below', find real, accurate facts from credible " +
+            "educational sources (standard history/subject textbooks, established encyclopedic sources, " +
+            "official curriculum material) appropriate for this level. For every topic (whether grounded " +
+            "in the device material given above or freshly researched), write 4-8 factual sentences, " +
+            "plain text, no citations/URLs in the text itself. If you genuinely can't find anything " +
+            "credible and specific for a researched topic, say so in one sentence for that topic rather " +
+            "than guessing.",
         ]
           .filter((s) => s)
           .join("\n"),
