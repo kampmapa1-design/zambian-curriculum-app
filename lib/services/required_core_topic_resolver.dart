@@ -35,6 +35,23 @@ class RequiredCoreTopicResult {
 
 enum RequiredCoreTopicSource { syllabus, contentDatabase, aiResearch }
 
+/// How many of the CURRENT scheme's own entries "Required Core Topics"
+/// should push off to next term, given [requestedCount] newly-resolved
+/// topics and [currentEntryCount] entries already in the scheme. Normally
+/// equal to [requestedCount] (1:1, per explicit request), but NEVER more
+/// than [currentEntryCount] - 1 — a real, reported bug: a term with few
+/// entries left (a class resumed near the end of term, a short "Select
+/// Own Topics" pick) could have fewer entries than requested topics, so
+/// requesting 3 emptied the WHOLE scheme down to just those 3, reported as
+/// "only the topics added by the button, everything else gone". Always
+/// leaves at least one of the scheme's own entries (0 only when the
+/// scheme was already empty).
+int requiredCoreTopicPushCount(int requestedCount, int currentEntryCount) {
+  if (currentEntryCount <= 0 || requestedCount <= 0) return 0;
+  final maxPushable = currentEntryCount - 1;
+  return requestedCount.clamp(0, maxPushable);
+}
+
 /// Searches, for each phrase, in order — cheapest and most trustworthy
 /// first: this subject's WHOLE syllabus (every term, not just the one
 /// being scheduled — the whole point is surfacing content "hidden" inside
@@ -97,15 +114,34 @@ class RequiredCoreTopicResolver {
         final hits = await _subjectContent.searchContent(phrase, maxResults: 3);
         if (hits.isNotEmpty) {
           final best = hits.first;
+          final name = _titleCase(phrase);
+          // Real content was found, but a raw excerpt alone isn't a
+          // competency/objective statement — synthesize one real,
+          // non-blank one directly from it rather than leaving
+          // competencies/objectives empty and hoping a LATER, separate AI
+          // enrichment pass fills them in (that dependency was the real
+          // cause of a reported bug: the "Specific Competence/Outcomes"
+          // column came back blank whenever that second pass didn't run
+          // or finish before the row was shown/exported).
           final topic = Topic(
             id: _nextSyntheticId(),
             sequenceNumber: 0,
-            name: _titleCase(phrase),
+            name: name,
             description: best.excerpt,
+            competencies: [
+              Competency(
+                id: _nextSyntheticId(),
+                sequenceNumber: 1,
+                description: 'Explain $name, drawing on the material already saved on this device.',
+              ),
+            ],
+            objectives: [
+              LearningObjective(id: _nextSyntheticId(), sequenceNumber: 1, description: 'Describe $name.'),
+            ],
           );
           results[i] = RequiredCoreTopicResult(
             phrase: phrase,
-            entry: SchemeOfWorkEntry(weekNumber: 0, topic: topic, objectives: const [], competencies: const []),
+            entry: SchemeOfWorkEntry(weekNumber: 0, topic: topic, objectives: topic.objectives, competencies: topic.competencies),
             isRealSyllabusTopic: false,
             source: RequiredCoreTopicSource.contentDatabase,
           );
@@ -126,23 +162,46 @@ class RequiredCoreTopicResolver {
         curriculumName: template.curriculum.name,
         syllabusContext: _buildSyllabusContext(template),
       );
-      for (final i in needsAi) {
+      // Match each requested phrase back to its AI result primarily by
+      // POSITION (the function is asked to answer in order and normally
+      // does) — real, reported bug fixed here: matching by the AI's own
+      // echoed `phrase` text first, falling back to position ONLY when
+      // the whole array happened to be the same length, silently dropped
+      // a topic entirely (not even a blank row) whenever the model
+      // paraphrased a phrase slightly or returned fewer entries than
+      // asked. Position-first with a phrase-text fallback is more
+      // forgiving of exactly that.
+      for (var pos = 0; pos < needsAi.length; pos++) {
+        final i = needsAi[pos];
         final phrase = phrases[i];
-        final match = aiResults.where((r) => r.phrase.trim().toLowerCase() == phrase.trim().toLowerCase());
-        final ai = match.isNotEmpty ? match.first : (aiResults.length == needsAi.length ? aiResults[needsAi.indexOf(i)] : null);
+        RequiredCoreTopicAiResult? ai;
+        if (pos < aiResults.length) ai = aiResults[pos];
+        if (ai == null || ai.name.trim().isEmpty) {
+          final byPhrase = aiResults.where((r) => r.phrase.trim().toLowerCase() == phrase.trim().toLowerCase());
+          if (byPhrase.isNotEmpty) ai = byPhrase.first;
+        }
         if (ai == null || ai.name.trim().isEmpty) continue;
+        final name = ai.name.trim();
+        // Defensive: the schema requires >=2 competencies/objectives, but
+        // never trust that blindly — fall back the same way the Subject
+        // Content Database branch above does if the model ever returns
+        // an empty list anyway, rather than risking a blank column again.
+        final competencies = ai.competencies.isNotEmpty
+            ? ai.competencies
+            : ['Explain $name, drawing on real, credible sources.'];
+        final objectives = ai.objectives.isNotEmpty ? ai.objectives : ['Describe $name.'];
         final topic = Topic(
           id: _nextSyntheticId(),
           sequenceNumber: 0,
-          name: ai.name.trim(),
+          name: name,
           description: ai.description,
           competencies: [
-            for (var c = 0; c < ai.competencies.length; c++)
-              Competency(id: _nextSyntheticId(), sequenceNumber: c + 1, description: ai.competencies[c]),
+            for (var c = 0; c < competencies.length; c++)
+              Competency(id: _nextSyntheticId(), sequenceNumber: c + 1, description: competencies[c]),
           ],
           objectives: [
-            for (var o = 0; o < ai.objectives.length; o++)
-              LearningObjective(id: _nextSyntheticId(), sequenceNumber: o + 1, description: ai.objectives[o]),
+            for (var o = 0; o < objectives.length; o++)
+              LearningObjective(id: _nextSyntheticId(), sequenceNumber: o + 1, description: objectives[o]),
           ],
         );
         results[i] = RequiredCoreTopicResult(

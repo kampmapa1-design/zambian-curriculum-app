@@ -309,8 +309,11 @@ class _SchemeOfWorkDocumentScreenState extends State<SchemeOfWorkDocumentScreen>
 
       // Insert the resolved topics at the front (this term's first weeks —
       // "required"/"core" topics teach first) and push the same number of
-      // topics off the end of the current list to next term.
-      final pushCount = results.length.clamp(0, _currentEntries.length);
+      // topics off the end of the current list to next term — see
+      // requiredCoreTopicPushCount's own doc comment for why this is
+      // capped rather than a blind 1:1.
+      final pushCount = requiredCoreTopicPushCount(results.length, _currentEntries.length);
+      final floorApplied = pushCount < results.length && _currentEntries.isNotEmpty;
       final pushedOff = pushCount == 0 ? <SchemeOfWorkEntry>[] : _currentEntries.sublist(_currentEntries.length - pushCount);
       final kept = pushCount == 0 ? _currentEntries : _currentEntries.sublist(0, _currentEntries.length - pushCount);
 
@@ -337,7 +340,8 @@ class _SchemeOfWorkDocumentScreenState extends State<SchemeOfWorkDocumentScreen>
           content: Text(
             'Added: $addedNames.'
             '${pushedNames.isNotEmpty ? ' Moved to next term: $pushedNames.' : ''}'
-            '${overflow ? ' Only the first 3 topics were used.' : ''}',
+            '${overflow ? ' Only the first 3 topics were used.' : ''}'
+            '${floorApplied ? ' Only $pushCount topic(s) could be moved — not enough remained to move them all, so this term now has a few extra.' : ''}',
           ),
         ),
       );
