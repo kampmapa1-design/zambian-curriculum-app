@@ -1,0 +1,329 @@
+{
+  "_source": "A real 'Fashion and Fabrics Form 2 Scheme of Work' (a real Zambian secondary school's department; the source's own teacher name and school name are not reproduced here per this app's standing sourcing policy) was shared with this project via Drive, across separate Term 1 and Term 2 documents. This is a genuine gap fill — this app previously had no Fashion and Fabrics Form 2 content at all (only Form 1). Cites the real official '2024 Fashion and Fabrics Syllabus Ordinary Secondary Education Form 1-4' with real page citations (Term 1: pg. 28-31; Term 2: pg. 31-34).\n\nOnly Term 1 and Term 2 source material was found in the Drive folder for this subject at Form 2 — no Term 3 document exists there. This is a genuine, honestly-disclosed gap, not a fabrication: Term 3 is simply not included in this file.\n\nEach term document's own 'MID-TERM TESTS' and 'END OF TERM TESTS' weeks are excluded, since they name no new specific competences. Term 2's closing three weeks ('Revision of All Term 2 Topics' and the two-week 'Practical Project / Application of Skills') are also excluded — they carry no real topic/sub-topic number of their own (unlike, e.g., 2.11 or 2.12) and consist of recap and a capstone project applying previously-learned skills rather than naming new content.\n\nA real structural feature of the source scheme, preserved rather than 'corrected': Topic 2.8 'Construction Processes' genuinely spans both terms — its first sub-topic (2.8.1 Crossway Strips) falls in the last week of Term 1, while its remaining four sub-topics (2.8.2 Openings, 2.8.3 Fastenings, 2.8.4 Neckline Finishes, 2.8.5 Armhole Finishes) open Term 2. This file represents Topic 2.8 twice, once per term, with only the sub-topics that term's own document actually covers under it.\n\nContent/Concept column text is summarised into each sub-topic's own description; the scheme's own Strategies/Methods and Materials/Resources columns are omitted, consistent with the approach used for every other bundled subject in this app.",
+  "curriculum": {
+    "code": "CBC_2023",
+    "name": "2023 Competency-Based Curriculum",
+    "description": "Zambia's current competency-based curriculum."
+  },
+  "subject": {
+    "name": "Fashion and Fabrics",
+    "code": "FF",
+    "description": "Fashion and Fabrics syllabus, Form 1-4 (Curriculum Development Centre)."
+  },
+  "grade": {
+    "name": "Form 2",
+    "code": "F2_CBC",
+    "level": 2,
+    "phase": "Secondary — the source scheme itself uses \"Form 2\" for this level under the 2023 CBC."
+  },
+  "terms": [
+    {
+      "name": "Term 1",
+      "sequence_number": 1,
+      "topics": [
+        {
+          "name": "2.1 Safety and Environmental Impact of Textile Production",
+          "sequence_number": 1,
+          "sub_topics": [
+            {
+              "name": "2.1.1 Environmental Impact of Textile Production",
+              "sequence_number": 1,
+              "description": "Environmental issues in textile production; sustainable practices; upcycling old clothing into new items.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Employ sustainable practices that can help mitigate environmental impacts of textile production",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "2.2 Grooming",
+          "sequence_number": 2,
+          "sub_topics": [
+            {
+              "name": "2.2.1 Cosmetology in the Fashion Industry",
+              "sequence_number": 1,
+              "description": "Relationship between cosmetology and fashion; basic hair and facial makeup techniques.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Apply techniques of hair and facial makeup",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "2.3 Wardrobe Planning",
+          "sequence_number": 3,
+          "sub_topics": [
+            {
+              "name": "2.3.1 Millinery",
+              "sequence_number": 1,
+              "description": "Importance of millinery; headwear-making techniques and materials.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Make various Headwear",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "2.4 Tools and Equipment",
+          "sequence_number": 4,
+          "sub_topics": [
+            {
+              "name": "2.4.1 The Sewing Machine",
+              "sequence_number": 1,
+              "description": "Sewing stitches; common sewing machine faults and their correction.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use a sewing machine",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "2.5 Fibres, Yarns and Fabrics",
+          "sequence_number": 5,
+          "sub_topics": [
+            {
+              "name": "2.5.1 Production of Yarns and Fabrics",
+              "sequence_number": 1,
+              "description": "Stages of yarn production from natural fibres; texture, thickness, colour.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Apply techniques in yarns production",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "2.6 Colour Application",
+          "sequence_number": 6,
+          "sub_topics": [
+            {
+              "name": "2.6.1 Colour Combination",
+              "sequence_number": 1,
+              "description": "Colour combinations; dyeing and printing on fabric.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Create different desired artwork on fabric",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "2.7 Textile Design",
+          "sequence_number": 7,
+          "sub_topics": [
+            {
+              "name": "2.7.1 Forms of Design",
+              "sequence_number": 1,
+              "description": "Fashion versus interior design; practical application of forms of interior design.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Make forms of interior design",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "2.7.2 Principles of Design",
+              "sequence_number": 2,
+              "description": "Principles of design (balance, harmony, emphasis) and their practical application.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Apply different principles of design",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "2.7.3 Culture and Design",
+              "sequence_number": 3,
+              "description": "Cultural costumes, norms and values; how culture influences the design process.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Show culture into the design processes",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "2.8 Construction Processes",
+          "sequence_number": 8,
+          "description": "This topic spans Term 1 and Term 2 in the real source scheme; this term's document covers only its first sub-topic (2.8.2-2.8.5 continue in Term 2).",
+          "sub_topics": [
+            {
+              "name": "2.8.1 Crossway Strips",
+              "sequence_number": 1,
+              "description": "Definition and uses of crossway strips; cutting and joining a crossway strip to finish off articles.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use crossway strips",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 2",
+      "sequence_number": 2,
+      "topics": [
+        {
+          "name": "2.8 Construction Processes",
+          "sequence_number": 1,
+          "description": "This topic spans Term 1 and Term 2 in the real source scheme; this term's document continues from Term 1's 2.8.1 with these remaining sub-topics.",
+          "sub_topics": [
+            {
+              "name": "2.8.2 Openings",
+              "sequence_number": 1,
+              "description": "Types of openings and classes; practical application of working out different openings.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Work out openings",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "2.8.3 Fastenings",
+              "sequence_number": 2,
+              "description": "Types of fastenings; factors to consider; attaching a zip, button and loop.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Work out Fastenings",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "2.8.4 Neckline Finishes",
+              "sequence_number": 3,
+              "description": "Types of neckline finishes: binding, facing, piping.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Work out neckline finishes",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "2.8.5 Armhole Finishes",
+              "sequence_number": 4,
+              "description": "Methods of armhole finishing: binding, facing, sleeve; reasons for finishing.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Work out armhole finishes",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "2.9 Crafts",
+          "sequence_number": 2,
+          "sub_topics": [
+            {
+              "name": "2.9.1 Basketry",
+              "sequence_number": 1,
+              "description": "Materials and techniques for basketry: coiling, twining, plaiting.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Make items using basketry",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "2.10 Clothings Care and Maintenance",
+          "sequence_number": 3,
+          "sub_topics": [
+            {
+              "name": "2.10.1 Care and Maintenance of Clothes",
+              "sequence_number": 1,
+              "description": "Importance of care; characteristics of fabrics; care labels; practising using eco-friendly detergents.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Launder different types of clothes",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "2.11 Consumer Education",
+          "sequence_number": 4,
+          "sub_topics": [
+            {
+              "name": "2.11.1 Consumer Rights and Responsibilities",
+              "sequence_number": 1,
+              "description": "Consumer rights; sources of consumer education; methods of redress.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Apply consumer rights and responsibilities",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "2.12 Entrepreneurship",
+          "sequence_number": 5,
+          "sub_topics": [
+            {
+              "name": "2.12.1 Entrepreneurial Projects in Fashion and Fabrics",
+              "sequence_number": 1,
+              "description": "Business opportunities; project development, from developing a simple business idea to undertaking it.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Develop various projects in fashion and fabric",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

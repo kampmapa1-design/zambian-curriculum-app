@@ -728,6 +728,15 @@
       "grade_level": 2,
       "grade_name": "Form 2",
       "file": "commerce_form2.json"
+    },
+    {
+      "curriculum_code": "CBC_2023",
+      "curriculum_name": "2023 Competency-Based Curriculum",
+      "subject_code": "FF",
+      "subject_name": "Fashion and Fabrics",
+      "grade_level": 2,
+      "grade_name": "Form 2",
+      "file": "fashion_and_fabrics_form2.json"
     }
   ]
 }
