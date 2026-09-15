@@ -21,6 +21,7 @@ import 'subject_grade_topic_picker_screen.dart';
 import 'teaching_notes_sheet.dart';
 import 'teaching_resources_menu_screen.dart';
 import 'term_topic_picker_screen.dart';
+import 'timetable_home_screen.dart';
 import 'topic_picker_flow.dart';
 import 'topic_search_screen.dart';
 import 'voice_command_screen.dart';
@@ -430,6 +431,14 @@ class HomeScreen extends StatelessWidget {
                   subtitle: 'Send a handwritten assignment or test to your teacher',
                   onTap: () => Navigator.of(context).push(
                     MaterialPageRoute(builder: (_) => const AssignmentsTestsMenuScreen()),
+                  ),
+                ),
+                FunctionButton(
+                  icon: Icons.calendar_view_week_outlined,
+                  label: 'Timetable',
+                  subtitle: 'Your schedule, browse by teacher, or manage School Network setup',
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const TimetableHomeScreen()),
                   ),
                 ),
                 FunctionButton(

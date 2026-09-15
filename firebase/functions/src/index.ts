@@ -1,4 +1,5 @@
 import { onCall, onRequest, HttpsError } from "firebase-functions/v2/https";
+import { onSchedule } from "firebase-functions/v2/scheduler";
 import { defineSecret } from "firebase-functions/params";
 import { GoogleGenAI } from "@google/genai";
 import * as admin from "firebase-admin";
@@ -54,6 +55,21 @@ const GEMINI_MODEL = "gemini-3.6-flash";
 // "no longer available to new users" — Google's own error points here).
 // Bump if deprecated, same as GEMINI_MODEL.
 const GEMINI_MODEL_LITE = "gemini-3.5-flash-lite";
+
+// A depleted prepay balance / quota is not transient — every Gemini-calling
+// function should surface it plainly instead of a generic "try again",
+// same as gradeMarkingScriptConcise already does. Returns the HttpsError to
+// throw, or null if `err` isn't a quota/billing error (caller should fall
+// back to its own generic message in that case).
+function quotaExhaustedError(err: unknown): HttpsError | null {
+  const msg = String((err as { message?: unknown })?.message ?? err);
+  if (!/RESOURCE_EXHAUSTED|prepayment|credits are depleted|quota|\b429\b/i.test(msg)) return null;
+  return new HttpsError(
+    "resource-exhausted",
+    "The app's AI service has run out of prepaid credit. This (and other AI features) will " +
+      "work again once the Gemini API billing balance is topped up.",
+  );
+}
 
 type NotesFormat = "bullet" | "paragraph";
 
@@ -195,7 +211,7 @@ export const generateTeachingNotes = onCall<GenerateTeachingNotesRequest>(
       text = response.text;
     } catch (err) {
       console.error("Gemini API call failed", err);
-      throw new HttpsError("internal", "Failed to generate teaching notes. Please try again.");
+      throw quotaExhaustedError(err) ?? new HttpsError("internal", "Failed to generate teaching notes. Please try again.");
     }
 
     if (!text) {
@@ -545,7 +561,7 @@ export const generateLessonPlan = onCall<GenerateLessonPlanRequest>(
       text = response.text;
     } catch (err) {
       console.error("generateLessonPlan: Gemini call failed", err);
-      throw new HttpsError("internal", "Failed to generate a lesson plan. Please try again.");
+      throw quotaExhaustedError(err) ?? new HttpsError("internal", "Failed to generate a lesson plan. Please try again.");
     }
 
     if (!text) {
@@ -809,10 +825,18 @@ const CDC_CATALOG_PROMPT = [
     "teacher-facing app can list them for download. Tag every resource you record with a " +
     "resourceType of exactly 'module', 'syllabus', or 'past_paper' as described below.",
   "",
-  "1) CDC Teaching Modules (resourceType: 'module') — search and browse " +
-    "https://library.cdcrepository.info/ (its browse.php?level=ece, ?level=primary, and " +
-    "?level=secondary listing pages, and their pagination) to find as many individual " +
-    "Teaching Module resources as you reasonably can within your tool-call budget.",
+  "SCOPE — secondary school ONLY: Form 1 to Form 5 under the Competence-Based Curriculum " +
+    "(CBC), and Grade 10 to Grade 12 under the outcome-based curriculum. This app has no use " +
+    "for primary school (Grade 1-7) or early childhood education (ECE) materials — never " +
+    "record a resource from either of those levels, even if you come across one while " +
+    "browsing. If a listing page or resource doesn't clearly state its level/grade/form, skip " +
+    "it rather than guessing it's secondary.",
+  "",
+  "1) CDC Teaching Modules (resourceType: 'module') — search and browse ONLY " +
+    "https://library.cdcrepository.info/browse.php?level=secondary (and its pagination) to " +
+    "find as many individual Teaching Module resources as you reasonably can within your " +
+    "tool-call budget. Do not browse or record anything from the ?level=ece or " +
+    "?level=primary listing pages — they are out of scope per SCOPE above.",
   "",
   "2) CDC secondary-school syllabi (resourceType: 'syllabus') — browse " +
     "https://library.cdcrepository.info/browse.php?level=syllabi&grade=syl_olevel (the " +
@@ -952,85 +976,126 @@ const CDC_CATALOG_PROMPT = [
 // );
 // ---------------------------------------------------------------------
 
+const cdcCacheRef = () => admin.firestore().collection("system").doc("cdcResourcesCache");
+
+// The actual crawl: two Gemini calls (research with googleSearch+urlContext
+// tools grounding real findings as free text, then a tool-free call
+// reshaping that into cdcResourcesSchema) — see the module-level comment
+// above CDC_CATALOG_PROMPT for why two calls instead of one. Shared by the
+// weekly scheduled refresh and listCdcResources' own emergency fallback so
+// there's exactly one place that does the expensive work.
+async function fetchAndCacheCdcCatalog(): Promise<ListCdcResourcesResponse> {
+  const ai = new GoogleGenAI({ apiKey: geminiApiKey.value() });
+
+  let researchText: string | undefined;
+  try {
+    const researchResponse = await ai.models.generateContent({
+      model: GEMINI_MODEL,
+      contents: CDC_CATALOG_PROMPT,
+      config: {
+        tools: [{ urlContext: {} }, { googleSearch: {} }],
+      },
+    });
+    researchText = researchResponse.text;
+  } catch (err) {
+    console.error("Gemini CDC research call failed", err);
+    throw quotaExhaustedError(err) ?? new HttpsError("internal", "Failed to fetch the CDC catalog. Please try again.");
+  }
+
+  if (!researchText) {
+    throw new HttpsError("internal", "No catalog data was returned.");
+  }
+
+  let text: string | undefined;
+  try {
+    const structureResponse = await ai.models.generateContent({
+      model: GEMINI_MODEL,
+      contents: [
+        "Extract the resources described in the research notes below into the given JSON " +
+          "schema. Only include resources actually described in the notes — do not invent " +
+          "titles, subjects, or URLs. If the notes describe no resources, return an empty " +
+          "resources array.",
+        "",
+        "Research notes:",
+        researchText,
+      ].join("\n"),
+      config: {
+        responseMimeType: "application/json",
+        responseJsonSchema: cdcResourcesSchema,
+      },
+    });
+    text = structureResponse.text;
+  } catch (err) {
+    console.error("Gemini CDC structuring call failed", err);
+    throw quotaExhaustedError(err) ?? new HttpsError("internal", "Failed to fetch the CDC catalog. Please try again.");
+  }
+
+  if (!text) {
+    throw new HttpsError("internal", "No catalog data was returned.");
+  }
+
+  let parsed: { resources?: CdcResource[] };
+  try {
+    parsed = JSON.parse(text);
+  } catch (err) {
+    console.error("CDC catalog response was not valid JSON", text);
+    throw new HttpsError("internal", "The catalog response could not be parsed.");
+  }
+
+  const response: ListCdcResourcesResponse = {
+    resources: parsed.resources ?? [],
+    fetchedAt: new Date().toISOString(),
+  };
+  await cdcCacheRef().set(response);
+  return response;
+}
+
+// Weekly refresh (2026-09-15, per explicit request): the CDC Digital
+// Library doesn't publish new material often enough to justify checking
+// more than about once a week, and doing the crawl on a fixed schedule —
+// rather than lazily on whichever device happens to ask first — means
+// exactly one real (paid, googleSearch+urlContext-grounded) crawl happens
+// per week, full stop, regardless of how many teachers/testers use the
+// app or how often the client-side "is it due" check gets asked. See the
+// billing investigation this replaced (was ~30 live crawls/day with no
+// caching at all) for why this matters. Wednesday afternoon has no
+// particular significance beyond being a plain, predictable slot outside
+// both weekend and Monday/Friday edges.
+export const refreshCdcResourcesWeekly = onSchedule(
+  { schedule: "0 14 * * 3", timeZone: "Africa/Lusaka", secrets: [geminiApiKey], region: "us-central1", timeoutSeconds: 480, memory: "512MiB" },
+  async () => {
+    await fetchAndCacheCdcCatalog();
+  }
+);
+
+// A cache more than this stale means the Wednesday schedule has silently
+// failed for two cycles running — worth a live emergency fetch rather than
+// leaving the app on a catalog that's gone stale indefinitely. Well above
+// the normal ~7-day cadence so a single missed run is never a problem.
+const CDC_CACHE_STALE_FALLBACK_MS = 10 * 24 * 60 * 60 * 1000;
+
 export const listCdcResources = onCall<Record<string, never>>(
-  // Gemini stopgap (2026-08-27, see top-of-file comment). Two calls instead
-  // of Anthropic's one: Gemini's proven generateContent endpoint (the same
-  // one the other two functions already use successfully) doesn't reliably
-  // combine browsing tools with strict JSON schema output in a single call,
-  // so 1) a research call with googleSearch+urlContext tools grounds real
-  // findings from the target sites as free text, then 2) a tool-free
-  // second call reshapes that text into cdcResourcesSchema. Both steps use
-  // GEMINI_MODEL (Flash) rather than a "pro" model — this fresh API key
-  // already lost access to gemini-2.5-flash days after creation (see
-  // GEMINI_MODEL comment above), so a preview-tier pro model felt too
-  // likely to hit the same wall; revisit if research quality is thin.
+  // Gemini stopgap (2026-08-27, see top-of-file comment) for the *data*;
+  // as of 2026-09-15 this function itself no longer does the crawl on the
+  // normal path — refreshCdcResourcesWeekly does, on its own schedule, and
+  // this just serves whatever it last cached. The live Gemini path below
+  // only runs as an emergency fallback (cache missing or badly stale).
   { secrets: [geminiApiKey], region: "us-central1", timeoutSeconds: 480, memory: "512MiB", maxInstances: 3 },
   async (request): Promise<ListCdcResourcesResponse> => {
     if (!request.auth) {
       throw new HttpsError("unauthenticated", "Sign in is required to fetch CDC resources.");
     }
 
-    const ai = new GoogleGenAI({ apiKey: geminiApiKey.value() });
-
-    let researchText: string | undefined;
-    try {
-      const researchResponse = await ai.models.generateContent({
-        model: GEMINI_MODEL,
-        contents: CDC_CATALOG_PROMPT,
-        config: {
-          tools: [{ urlContext: {} }, { googleSearch: {} }],
-        },
-      });
-      researchText = researchResponse.text;
-    } catch (err) {
-      console.error("Gemini CDC research call failed", err);
-      throw new HttpsError("internal", "Failed to fetch the CDC catalog. Please try again.");
+    const cached = await cdcCacheRef().get();
+    if (cached.exists) {
+      const data = cached.data() as { resources?: CdcResource[]; fetchedAt?: string } | undefined;
+      const fetchedAt = data?.fetchedAt ? new Date(data.fetchedAt).getTime() : 0;
+      if (data?.resources && Date.now() - fetchedAt < CDC_CACHE_STALE_FALLBACK_MS) {
+        return { resources: data.resources, fetchedAt: data.fetchedAt! };
+      }
     }
 
-    if (!researchText) {
-      throw new HttpsError("internal", "No catalog data was returned.");
-    }
-
-    let text: string | undefined;
-    try {
-      const structureResponse = await ai.models.generateContent({
-        model: GEMINI_MODEL,
-        contents: [
-          "Extract the resources described in the research notes below into the given JSON " +
-            "schema. Only include resources actually described in the notes — do not invent " +
-            "titles, subjects, or URLs. If the notes describe no resources, return an empty " +
-            "resources array.",
-          "",
-          "Research notes:",
-          researchText,
-        ].join("\n"),
-        config: {
-          responseMimeType: "application/json",
-          responseJsonSchema: cdcResourcesSchema,
-        },
-      });
-      text = structureResponse.text;
-    } catch (err) {
-      console.error("Gemini CDC structuring call failed", err);
-      throw new HttpsError("internal", "Failed to fetch the CDC catalog. Please try again.");
-    }
-
-    if (!text) {
-      throw new HttpsError("internal", "No catalog data was returned.");
-    }
-
-    let parsed: { resources?: CdcResource[] };
-    try {
-      parsed = JSON.parse(text);
-    } catch (err) {
-      console.error("CDC catalog response was not valid JSON", text);
-      throw new HttpsError("internal", "The catalog response could not be parsed.");
-    }
-
-    return {
-      resources: parsed.resources ?? [],
-      fetchedAt: new Date().toISOString(),
-    };
+    return fetchAndCacheCdcCatalog();
   }
 );
 
@@ -1168,7 +1233,7 @@ export const generateSlideOutline = onCall<GenerateSlideOutlineRequest>(
       text = response.text;
     } catch (err) {
       console.error("Gemini API call failed", err);
-      throw new HttpsError("internal", "Failed to generate slide outline. Please try again.");
+      throw quotaExhaustedError(err) ?? new HttpsError("internal", "Failed to generate slide outline. Please try again.");
     }
 
     if (!text) {
@@ -1313,7 +1378,7 @@ export const generateFreeTopicNotes = onCall<GenerateFreeTopicNotesRequest>(
         text = response.text;
       } catch (err) {
         console.error("generateFreeTopicNotes (slides): Gemini call failed", err);
-        throw new HttpsError("internal", "Failed to generate slides. Please try again.");
+        throw quotaExhaustedError(err) ?? new HttpsError("internal", "Failed to generate slides. Please try again.");
       }
       if (!text) {
         throw new HttpsError("internal", "The AI did not return any slides.");
@@ -1336,7 +1401,7 @@ export const generateFreeTopicNotes = onCall<GenerateFreeTopicNotesRequest>(
       text = response.text;
     } catch (err) {
       console.error("generateFreeTopicNotes: Gemini call failed", err);
-      throw new HttpsError("internal", "Failed to generate notes. Please try again.");
+      throw quotaExhaustedError(err) ?? new HttpsError("internal", "Failed to generate notes. Please try again.");
     }
     if (!text) {
       throw new HttpsError("internal", "The AI did not return any text.");
@@ -1940,7 +2005,7 @@ export const gradeMarkingScript = onCall<GradeMarkingScriptRequest>(
       text = response.text;
     } catch (err) {
       console.error("gradeMarkingScript: Gemini call failed", err);
-      throw new HttpsError("internal", "Failed to grade this script. Please try again.");
+      throw quotaExhaustedError(err) ?? new HttpsError("internal", "Failed to grade this script. Please try again.");
     }
 
     if (!text) {
@@ -2882,7 +2947,7 @@ export const deriveMarkingKeyFromQuestionPaper = onCall<DeriveMarkingKeyRequest>
       text = response.text;
     } catch (err) {
       console.error("deriveMarkingKeyFromQuestionPaper: Gemini call failed", err);
-      throw new HttpsError("internal", "Failed to generate a marking key. Please try again.");
+      throw quotaExhaustedError(err) ?? new HttpsError("internal", "Failed to generate a marking key. Please try again.");
     }
 
     if (!text) {
@@ -3005,7 +3070,7 @@ export const transcribeHandwrittenList = onCall<TranscribeHandwrittenListRequest
       text = response.text;
     } catch (err) {
       console.error("transcribeHandwrittenList: Gemini call failed", err);
-      throw new HttpsError("internal", "Failed to transcribe this list. Please try again.");
+      throw quotaExhaustedError(err) ?? new HttpsError("internal", "Failed to transcribe this list. Please try again.");
     }
 
     if (!text) {
@@ -3137,7 +3202,7 @@ export const transcribeHandwrittenDocument = onCall<TranscribeHandwrittenDocumen
       text = response.text;
     } catch (err) {
       console.error("transcribeHandwrittenDocument: Gemini call failed", err);
-      throw new HttpsError("internal", "Failed to transcribe this document. Please try again.");
+      throw quotaExhaustedError(err) ?? new HttpsError("internal", "Failed to transcribe this document. Please try again.");
     }
 
     if (!text) {
@@ -3236,7 +3301,7 @@ export const extractCoverPageFields = onCall<ExtractCoverPageFieldsRequest>(
       text = response.text;
     } catch (err) {
       console.error("extractCoverPageFields: Gemini call failed", err);
-      throw new HttpsError("internal", "Failed to read the cover page. Please try again.");
+      throw quotaExhaustedError(err) ?? new HttpsError("internal", "Failed to read the cover page. Please try again.");
     }
 
     if (!text) {
@@ -3332,7 +3397,7 @@ export const transcribeReferencePage = onCall<TranscribeReferencePageRequest>(
       text = response.text;
     } catch (err) {
       console.error("transcribeReferencePage: Gemini call failed", err);
-      throw new HttpsError("internal", "Failed to transcribe the reference page. Please try again.");
+      throw quotaExhaustedError(err) ?? new HttpsError("internal", "Failed to transcribe the reference page. Please try again.");
     }
 
     if (!text) {
@@ -3605,7 +3670,7 @@ export const transcribeTestSubmission = onCall<TranscribeTestSubmissionRequest>(
       text = response.text;
     } catch (err) {
       console.error("transcribeTestSubmission: Gemini call failed", err);
-      throw new HttpsError("internal", "Failed to transcribe this test submission. Please try again.");
+      throw quotaExhaustedError(err) ?? new HttpsError("internal", "Failed to transcribe this test submission. Please try again.");
     }
 
     if (!text) {
@@ -4023,7 +4088,7 @@ export const matchTopicSearchQuery = onCall<MatchTopicSearchQueryRequest>(
       text = response.text;
     } catch (err) {
       console.error("matchTopicSearchQuery: Gemini call failed", err);
-      throw new HttpsError("internal", "Could not search right now. Please try again.");
+      throw quotaExhaustedError(err) ?? new HttpsError("internal", "Could not search right now. Please try again.");
     }
 
     if (!text) {
@@ -4118,7 +4183,7 @@ export const detectCandidateName = onCall<DetectCandidateNameRequest>(
       text = response.text;
     } catch (err) {
       console.error("detectCandidateName: Gemini call failed", err);
-      throw new HttpsError("internal", "Failed to detect a name from this page.");
+      throw quotaExhaustedError(err) ?? new HttpsError("internal", "Failed to detect a name from this page.");
     }
 
     if (!text) {
@@ -4398,7 +4463,7 @@ export const generateMinutes = onCall<GenerateMinutesRequest>(
       text = response.text;
     } catch (err) {
       console.error("generateMinutes: Gemini call failed", err);
-      throw new HttpsError("internal", "Failed to generate minutes from these notes. Please try again.");
+      throw quotaExhaustedError(err) ?? new HttpsError("internal", "Failed to generate minutes from these notes. Please try again.");
     }
 
     if (!text) {
@@ -4578,7 +4643,7 @@ export const generateSchemeOfWorkContent = onCall<GenerateSchemeOfWorkContentReq
       text = response.text;
     } catch (err) {
       console.error("generateSchemeOfWorkContent: Gemini call failed", err);
-      throw new HttpsError("internal", "Failed to generate scheme of work content. Please try again.");
+      throw quotaExhaustedError(err) ?? new HttpsError("internal", "Failed to generate scheme of work content. Please try again.");
     }
 
     if (!text) {
@@ -4805,7 +4870,7 @@ export const parseVoiceCommand = onCall<ParseVoiceCommandRequest>(
       text = response.text;
     } catch (err) {
       console.error("parseVoiceCommand: Gemini call failed", err);
-      throw new HttpsError("internal", "Failed to understand the voice command. Please try again.");
+      throw quotaExhaustedError(err) ?? new HttpsError("internal", "Failed to understand the voice command. Please try again.");
     }
 
     if (!text) {
@@ -4821,5 +4886,2919 @@ export const parseVoiceCommand = onCall<ParseVoiceCommandRequest>(
     }
 
     return parsed;
+  }
+);
+
+// ---------------------------------------------------------------------
+// School Network (added 2026-09-13, per the "School network build prompts"
+// brief) — Stages 1-3: school registration, joining by code, and role
+// assignment. Builds directly on the real phone/email identity layer added
+// the same day (see AuthService/TeacherAuthService). Firestore's role here
+// expands from "one lightweight feature" (the Submissions Dashboard) to a
+// real multi-teacher backbone — every permission-sensitive write funnels
+// through one of these three functions (never a direct client write to
+// `schools/**`), the same "clients never write sensitive collections
+// directly" pattern already used for `submissions`/`dashboardAccessCodes`.
+// Same as `verifyDashboardAccessCode`'s `teacherEmail` custom claim, each
+// function here also stamps `schoolId`/`schoolRole` onto the caller's
+// (or target's) ID token via setCustomUserClaims — Firestore rules read
+// those claims directly (no extra `get()` lookups) to gate `schools/**`
+// reads and the Staffroom (Stage 10, client-writable once a member).
+// Client must force-refresh its ID token (getIdToken(true)) after calling
+// any of these three for the new claims to take effect locally.
+// ---------------------------------------------------------------------
+
+type SchoolRole = "teacher" | "grade_teacher" | "head_teacher" | "deputy" | "administrator" | "observer";
+const LEADERSHIP_ROLES: SchoolRole[] = ["head_teacher", "deputy"];
+const VALID_ROLES: SchoolRole[] = ["teacher", "grade_teacher", "head_teacher", "deputy", "administrator", "observer"];
+
+// Timetable Generation, Stage 9 (added 2026-09-14) — "co-opted Timetable
+// Operator" access. A member doc's own `timetableOperator: true` flag
+// (set only via `setTimetableOperator`, itself leadership/administrator-
+// only) grants the SAME timetable-management rights as leadership,
+// without granting anything else — an operator can't touch scores,
+// roles, broadcasts, etc. Every timetable-management function below
+// checks this instead of LEADERSHIP_ROLES/administrator alone.
+function callerCanManageTimetable(memberData: FirebaseFirestore.DocumentData | undefined): boolean {
+  const callerRole = memberData?.role as SchoolRole | undefined;
+  const isOperator = memberData?.timetableOperator === true;
+  return (!!callerRole && (LEADERSHIP_ROLES.includes(callerRole) || callerRole === "administrator")) || isOperator;
+}
+
+// Real 3-tier subscription structure decided 2026-09-14 (see project
+// memory `project_smart_teacher_subscription_tiers`): Basic, Gold,
+// Institutional — Timetable Generation requires Gold or higher.
+// `subscriptionTier` is set manually via Firebase Console for now, same
+// pattern as the pre-existing `institutionalSubscription` boolean, which
+// this falls back to (treated as `institutional`) for a school set up
+// before this field existed, so an already-paying school doesn't lose
+// access just because the field is new.
+const SUBSCRIPTION_TIER_ORDER: Record<string, number> = { basic: 0, gold: 1, institutional: 2 };
+function schoolMeetsTimetableTier(schoolData: FirebaseFirestore.DocumentData | undefined): boolean {
+  const rawTier = schoolData?.subscriptionTier as string | undefined;
+  const tier = rawTier ?? (schoolData?.institutionalSubscription === true ? "institutional" : "basic");
+  return (SUBSCRIPTION_TIER_ORDER[tier] ?? 0) >= SUBSCRIPTION_TIER_ORDER.gold;
+}
+// Excludes 0/O and 1/I/L — a human reading this code aloud or retyping it
+// from a whiteboard shouldn't have to guess which character was meant.
+const SCHOOL_CODE_ALPHABET = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
+
+function generateSchoolCode(): string {
+  let code = "";
+  for (let i = 0; i < 6; i++) {
+    code += SCHOOL_CODE_ALPHABET[Math.floor(Math.random() * SCHOOL_CODE_ALPHABET.length)];
+  }
+  return code;
+}
+
+function nonEmptyString(value: unknown, maxLen = 120): value is string {
+  return typeof value === "string" && value.trim().length > 0 && value.trim().length <= maxLen;
+}
+
+interface RegisterSchoolRequest {
+  name: string;
+  province: string;
+  district: string;
+  headTeacherName: string;
+}
+
+export const registerSchool = onCall<RegisterSchoolRequest>(
+  { region: "us-central1", timeoutSeconds: 30, maxInstances: 5 },
+  async (request): Promise<{ schoolId: string; code: string }> => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "Sign in is required to register a school.");
+    }
+    const { name, province, district, headTeacherName } = request.data ?? {};
+    if (!nonEmptyString(name) || !nonEmptyString(province) || !nonEmptyString(district) || !nonEmptyString(headTeacherName)) {
+      throw new HttpsError("invalid-argument", "School name, province, district, and Head Teacher name are all required.");
+    }
+
+    const db = admin.firestore();
+    const schoolsRef = db.collection("schools");
+
+    // Collision-check the generated code against real existing schools —
+    // astronomically unlikely to collide at 6 chars from a 32-char alphabet
+    // (~1 billion combinations), but checked for real rather than assumed.
+    let code = generateSchoolCode();
+    for (let attempt = 0; attempt < 5; attempt++) {
+      const existing = await schoolsRef.where("code", "==", code).limit(1).get();
+      if (existing.empty) break;
+      code = generateSchoolCode();
+      if (attempt === 4) {
+        throw new HttpsError("internal", "Could not generate a unique school code. Please try again.");
+      }
+    }
+
+    const schoolRef = schoolsRef.doc();
+    const batch = db.batch();
+    batch.set(schoolRef, {
+      name: name.trim(),
+      province: province.trim(),
+      district: district.trim(),
+      headTeacherName: headTeacherName.trim(),
+      code,
+      institutionalSubscription: false, // manual toggle only, set via Firebase console — see Stage 8 build note
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    });
+    // The registering teacher becomes this school's head_teacher — the
+    // brief's own framing ("typically Head Teacher or an appointed
+    // teacher") doesn't force this, but someone has to hold leadership
+    // rights from the start or Stage 3's role-assignment has no one
+    // authorized to perform it; head_teacher is the sensible default and
+    // is reassignable/shareable with a real Deputy immediately after.
+    batch.set(schoolRef.collection("members").doc(request.auth.uid), {
+      name: headTeacherName.trim(),
+      role: "head_teacher" as SchoolRole,
+      classIds: [] as string[],
+      joinedAt: admin.firestore.FieldValue.serverTimestamp(),
+    });
+    batch.set(
+      db.collection("teacher_profiles").doc(request.auth.uid),
+      { schoolId: schoolRef.id, schoolRole: "head_teacher" },
+      { merge: true }
+    );
+    await batch.commit();
+
+    // Bug fixed 2026-09-13: this used to spread `request.auth.token` (the
+    // FULL decoded ID token — issuer, expiry, auth_time, etc.) into
+    // setCustomUserClaims, which Firebase rejects outright (those are
+    // reserved field names) — the function crashed here every time,
+    // surfacing only a bare "internal" error with no message on the
+    // client. Fetching the user's actual EXISTING custom claims (not the
+    // whole token) is the correct way to preserve them across this call.
+    const registeringUser = await admin.auth().getUser(request.auth.uid);
+    await admin.auth().setCustomUserClaims(request.auth.uid, {
+      ...(registeringUser.customClaims ?? {}),
+      schoolId: schoolRef.id,
+      schoolRole: "head_teacher",
+    });
+
+    return { schoolId: schoolRef.id, code };
+  }
+);
+
+interface JoinSchoolByCodeRequest {
+  code: string;
+  name: string;
+}
+
+export const joinSchoolByCode = onCall<JoinSchoolByCodeRequest>(
+  { region: "us-central1", timeoutSeconds: 30, maxInstances: 5 },
+  async (request): Promise<{ schoolId: string; schoolName: string }> => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "Sign in is required to join a school.");
+    }
+    const { code, name } = request.data ?? {};
+    if (!nonEmptyString(code, 12) || !nonEmptyString(name)) {
+      throw new HttpsError("invalid-argument", "A school code and your name are required.");
+    }
+    const normalizedCode = code.trim().toUpperCase();
+
+    const db = admin.firestore();
+    const matches = await db.collection("schools").where("code", "==", normalizedCode).limit(1).get();
+    if (matches.empty) {
+      throw new HttpsError("not-found", "That school code doesn't match any registered school. Double-check it with your Head Teacher.");
+    }
+    const schoolDoc = matches.docs[0];
+    const memberRef = schoolDoc.ref.collection("members").doc(request.auth.uid);
+    const existingMember = await memberRef.get();
+    if (existingMember.exists) {
+      // Already a member — treat as idempotent success rather than an
+      // error (a teacher tapping "Join" twice shouldn't see a failure).
+      return { schoolId: schoolDoc.id, schoolName: (schoolDoc.data().name as string) ?? "" };
+    }
+
+    const batch = db.batch();
+    batch.set(memberRef, {
+      name: name.trim(),
+      role: "teacher" as SchoolRole,
+      classIds: [] as string[],
+      joinedAt: admin.firestore.FieldValue.serverTimestamp(),
+    });
+    batch.set(
+      db.collection("teacher_profiles").doc(request.auth.uid),
+      { schoolId: schoolDoc.id, schoolRole: "teacher" },
+      { merge: true }
+    );
+    await batch.commit();
+
+    // Same fix as registerSchool above — real existing custom claims, not
+    // the whole decoded ID token.
+    const joiningUser = await admin.auth().getUser(request.auth.uid);
+    await admin.auth().setCustomUserClaims(request.auth.uid, {
+      ...(joiningUser.customClaims ?? {}),
+      schoolId: schoolDoc.id,
+      schoolRole: "teacher",
+    });
+
+    return { schoolId: schoolDoc.id, schoolName: (schoolDoc.data().name as string) ?? "" };
+  }
+);
+
+interface UpdateSchoolMemberRoleRequest {
+  schoolId: string;
+  targetUid: string;
+  role: SchoolRole;
+  classIds?: string[]; // only meaningful when role === 'grade_teacher'
+}
+
+export const updateSchoolMemberRole = onCall<UpdateSchoolMemberRoleRequest>(
+  { region: "us-central1", timeoutSeconds: 30, maxInstances: 5 },
+  async (request): Promise<{ success: boolean }> => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "Sign in is required.");
+    }
+    const { schoolId, targetUid, role, classIds } = request.data ?? {};
+    if (!nonEmptyString(schoolId) || !nonEmptyString(targetUid) || !VALID_ROLES.includes(role)) {
+      throw new HttpsError("invalid-argument", "A valid school, target teacher, and role are required.");
+    }
+
+    const db = admin.firestore();
+    const membersRef = db.collection("schools").doc(schoolId).collection("members");
+    const [callerSnap, targetSnap] = await Promise.all([membersRef.doc(request.auth.uid).get(), membersRef.doc(targetUid).get()]);
+    if (!callerSnap.exists) {
+      throw new HttpsError("permission-denied", "You are not a member of this school.");
+    }
+    if (!targetSnap.exists) {
+      throw new HttpsError("not-found", "That teacher is not a member of this school.");
+    }
+    const callerRole = callerSnap.data()?.role as SchoolRole;
+
+    // Stage 3's real permission rules: Head Teacher/Deputy can assign ANY
+    // role, including other leadership roles. Assigning 'grade_teacher'
+    // for a class is additionally allowed by an existing grade_teacher
+    // already holding that same class (so a departing grade teacher can
+    // hand off to a colleague without needing to go through leadership).
+    const callerIsLeadership = LEADERSHIP_ROLES.includes(callerRole);
+    const isGradeTeacherHandoff =
+      role === "grade_teacher" &&
+      callerRole === "grade_teacher" &&
+      Array.isArray(classIds) &&
+      classIds.length > 0 &&
+      classIds.every((id) => Array.isArray(callerSnap.data()?.classIds) && (callerSnap.data()?.classIds as string[]).includes(id));
+
+    if (!callerIsLeadership && !isGradeTeacherHandoff) {
+      throw new HttpsError(
+        "permission-denied",
+        "Only the Head Teacher or Deputy can assign this role (grade_teacher for a class can also be assigned by an existing grade teacher of that same class)."
+      );
+    }
+    if ((role === "head_teacher" || role === "deputy" || role === "administrator") && !callerIsLeadership) {
+      throw new HttpsError("permission-denied", "Only the Head Teacher or Deputy can assign that role.");
+    }
+
+    const update: Record<string, unknown> = { role };
+    if (role === "grade_teacher") {
+      update.classIds = Array.isArray(classIds) ? classIds : [];
+    } else {
+      update.classIds = [];
+    }
+    await membersRef.doc(targetUid).update(update);
+    await db.collection("teacher_profiles").doc(targetUid).set({ schoolId, schoolRole: role }, { merge: true });
+
+    const targetUser = await admin.auth().getUser(targetUid);
+    await admin.auth().setCustomUserClaims(targetUid, {
+      ...(targetUser.customClaims ?? {}),
+      schoolId,
+      schoolRole: role,
+    });
+
+    return { success: true };
+  }
+);
+
+// ---------------------------------------------------------------------
+// School Network, Milestone B1 (added 2026-09-13) — the shared class
+// registry that Stages 4-7 (decentralized subject-teacher report
+// updates) need to actually work. Real gap this fixes: the existing
+// Report Form Pipeline's classes/learners/scores are 100% on-device
+// SQLite rows with local auto-increment ids — meaningless across
+// devices. `schools/{schoolId}/classes/{classId}` is the real,
+// shared identity a Grade Teacher's on-device ReportClass can OPTIONALLY
+// link to (see ReportClass.firestoreClassId) — a class that's never
+// connected keeps working exactly as it always has, fully offline,
+// single-device. Same "writes only through a Cloud Function" pattern as
+// the rest of School Network — see registerSchool's own comment above.
+// ---------------------------------------------------------------------
+
+interface GuardianContactInput {
+  email: string | null;
+  phone: string | null;
+}
+
+interface ConnectClassToSchoolRequest {
+  schoolId: string;
+  classGrade: string;
+  term: string;
+  learnerNames: string[];
+  subjectNames: string[];
+  // Stage 9 (added 2026-09-13, per explicit user confirmation — this is a
+  // real, deliberate expansion of what leaves the device: guardian
+  // contact info was previously local-only). Parallel to learnerNames;
+  // optional so an older client (or a Grade Teacher who declines) can
+  // still connect a class with no guardian data published at all.
+  guardianContacts?: GuardianContactInput[];
+}
+
+export const connectClassToSchool = onCall<ConnectClassToSchoolRequest>(
+  { region: "us-central1", timeoutSeconds: 30, maxInstances: 5 },
+  async (request): Promise<{ classId: string }> => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "Sign in is required.");
+    }
+    const { schoolId, classGrade, term, learnerNames, subjectNames, guardianContacts } = request.data ?? {};
+    if (
+      !nonEmptyString(schoolId) ||
+      !nonEmptyString(classGrade, 60) ||
+      !nonEmptyString(term, 60) ||
+      !Array.isArray(learnerNames) ||
+      !Array.isArray(subjectNames)
+    ) {
+      throw new HttpsError("invalid-argument", "A school, class grade, term, learner list, and subject list are all required.");
+    }
+    if (learnerNames.length > 200 || subjectNames.length > 30) {
+      throw new HttpsError("invalid-argument", "That roster or subject list is larger than expected.");
+    }
+    const cleanLearnerNames = learnerNames.filter((n): n is string => typeof n === "string" && n.trim().length > 0).map((n) => n.trim());
+    const cleanSubjectNames = subjectNames.filter((n): n is string => typeof n === "string" && n.trim().length > 0).map((n) => n.trim());
+    // Deliberately NOT filtered/trimmed the same way as names — a missing
+    // guardian contact is a real, meaningful "we don't have this" gap
+    // (see Stage 9's broadcast function, which just skips a null), not
+    // something to silently drop from the array and lose the
+    // learnerIndex alignment over.
+    const cleanGuardianContacts: GuardianContactInput[] | null = Array.isArray(guardianContacts)
+      ? guardianContacts.slice(0, cleanLearnerNames.length).map((c) => ({
+          email: typeof c?.email === "string" && c.email.trim().length > 0 ? c.email.trim() : null,
+          phone: typeof c?.phone === "string" && c.phone.trim().length > 0 ? c.phone.trim() : null,
+        }))
+      : null;
+
+    const db = admin.firestore();
+    const memberSnap = await db.collection("schools").doc(schoolId).collection("members").doc(request.auth.uid).get();
+    if (!memberSnap.exists) {
+      throw new HttpsError("permission-denied", "You are not a member of this school.");
+    }
+    const memberName = (memberSnap.data()?.name as string | undefined) ?? "";
+
+    const classesRef = db.collection("schools").doc(schoolId).collection("classes");
+    // Idempotent: re-connecting the same class (e.g. the Grade Teacher
+    // reopens the screen, or the roster changed) refreshes the snapshot
+    // on the existing doc rather than creating a duplicate class.
+    const existing = await classesRef
+      .where("classGrade", "==", classGrade.trim())
+      .where("term", "==", term.trim())
+      .where("gradeTeacherUid", "==", request.auth.uid)
+      .limit(1)
+      .get();
+    const targetRef = existing.empty ? classesRef.doc() : existing.docs[0].ref;
+    if (existing.empty) {
+      await targetRef.set({
+        classGrade: classGrade.trim(),
+        term: term.trim(),
+        gradeTeacherUid: request.auth.uid,
+        gradeTeacherName: memberName,
+        learnerNames: cleanLearnerNames,
+        subjectNames: cleanSubjectNames,
+        subjectTeacherUids: {},
+        assignedTeacherUids: [] as string[],
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+      });
+    } else {
+      await targetRef.update({
+        learnerNames: cleanLearnerNames,
+        subjectNames: cleanSubjectNames,
+        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+      });
+    }
+    if (cleanGuardianContacts !== null) {
+      // Separate doc, separate (leadership-only) read rule — see
+      // firestore.rules — never merged onto the class doc itself, which
+      // every school member can read.
+      await targetRef.collection("guardianContacts").doc("data").set({
+        contacts: cleanGuardianContacts,
+        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+      });
+    }
+    return { classId: targetRef.id };
+  }
+);
+
+interface AssignSubjectTeacherRequest {
+  schoolId: string;
+  classId: string;
+  subjectName: string;
+  targetUid: string | null; // null unassigns the subject
+}
+
+export const assignSubjectTeacher = onCall<AssignSubjectTeacherRequest>(
+  { region: "us-central1", timeoutSeconds: 30, maxInstances: 5 },
+  async (request): Promise<{ success: boolean }> => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "Sign in is required.");
+    }
+    const { schoolId, classId, subjectName, targetUid } = request.data ?? {};
+    if (!nonEmptyString(schoolId) || !nonEmptyString(classId) || !nonEmptyString(subjectName, 60)) {
+      throw new HttpsError("invalid-argument", "A school, class, and subject are required.");
+    }
+    if (targetUid !== null && !nonEmptyString(targetUid)) {
+      throw new HttpsError("invalid-argument", "targetUid must be a non-empty string or null.");
+    }
+
+    const db = admin.firestore();
+    const classRef = db.collection("schools").doc(schoolId).collection("classes").doc(classId);
+    const [classSnap, callerMemberSnap] = await Promise.all([
+      classRef.get(),
+      db.collection("schools").doc(schoolId).collection("members").doc(request.auth.uid).get(),
+    ]);
+    if (!classSnap.exists) {
+      throw new HttpsError("not-found", "That class is not connected to this school.");
+    }
+    if (!callerMemberSnap.exists) {
+      throw new HttpsError("permission-denied", "You are not a member of this school.");
+    }
+    const classData = classSnap.data()!;
+    const callerRole = callerMemberSnap.data()?.role as SchoolRole;
+    const isLeadership = LEADERSHIP_ROLES.includes(callerRole);
+    const isThisClassGradeTeacher = classData.gradeTeacherUid === request.auth.uid;
+    if (!isLeadership && !isThisClassGradeTeacher) {
+      throw new HttpsError("permission-denied", "Only this class's Grade Teacher, or the school's Head Teacher/Deputy, can assign subject teachers.");
+    }
+
+    if (targetUid !== null) {
+      const targetMemberSnap = await db.collection("schools").doc(schoolId).collection("members").doc(targetUid).get();
+      if (!targetMemberSnap.exists) {
+        throw new HttpsError("not-found", "That teacher is not a member of this school.");
+      }
+    }
+
+    const subjectTeacherUids: Record<string, string> = { ...(classData.subjectTeacherUids ?? {}) };
+    if (targetUid !== null) {
+      subjectTeacherUids[subjectName] = targetUid;
+    } else {
+      delete subjectTeacherUids[subjectName];
+    }
+    const assignedTeacherUids = Array.from(new Set(Object.values(subjectTeacherUids)));
+
+    await classRef.update({
+      subjectTeacherUids,
+      assignedTeacherUids,
+      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+    });
+    return { success: true };
+  }
+);
+
+// ---------------------------------------------------------------------
+// School Network, Milestone B2 (added 2026-09-13) — Stages 4-6: a subject
+// teacher writes their own subject's scores for a connected class
+// directly from their own device (Stage 4), Grade Teacher/leadership
+// retain full elevated edit rights over every entry (Stage 6), and any
+// edit by someone OTHER than the original submitter notifies that
+// original teacher (Stage 6 — SMS + in-app) with a full audit trail. The
+// Stage 5 "flagged Scan Marker entries" check is entirely on-device (Scan
+// Marker data never leaves the device) — see ScanMarkerFlagService in the
+// Flutter app; nothing server-side is needed for it.
+// ---------------------------------------------------------------------
+
+// Real SMS sending is intentionally stubbed — this app has never sent
+// arbitrary SMS before (Phone Auth's OTP is Firebase-internal, a
+// different thing entirely), and standing up a real gateway (e.g.
+// Africa's Talking) is its own account/cost decision, deferred per
+// explicit request (2026-09-13). Swap this body for a real HTTP call to
+// the chosen gateway once that account exists — every real call site
+// below already awaits this function, so nothing else needs to change.
+async function sendSmsStub(to: string, body: string): Promise<void> {
+  console.log(`[SMS stub] to=${to}: ${body}`);
+}
+
+function scoreEntryId(learnerIndex: number, subjectName: string): string {
+  return `${learnerIndex}_${sanitizePathSegment(subjectName)}`;
+}
+
+interface SubmitClassScoreEntryRequest {
+  schoolId: string;
+  classId: string;
+  learnerIndex: number;
+  subjectName: string;
+  score: number;
+  comment?: string;
+}
+
+export const submitClassScoreEntry = onCall<SubmitClassScoreEntryRequest>(
+  { region: "us-central1", timeoutSeconds: 30, maxInstances: 5 },
+  async (request): Promise<{ success: boolean }> => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "Sign in is required.");
+    }
+    const { schoolId, classId, learnerIndex, subjectName, score, comment } = request.data ?? {};
+    if (
+      !nonEmptyString(schoolId) ||
+      !nonEmptyString(classId) ||
+      typeof learnerIndex !== "number" ||
+      learnerIndex < 0 ||
+      !nonEmptyString(subjectName, 60) ||
+      typeof score !== "number" ||
+      score < 0 ||
+      score > 1000
+    ) {
+      throw new HttpsError("invalid-argument", "A valid class, learner, subject, and score (0-1000) are required.");
+    }
+
+    const db = admin.firestore();
+    const classRef = db.collection("schools").doc(schoolId).collection("classes").doc(classId);
+    const [classSnap, callerMemberSnap] = await Promise.all([
+      classRef.get(),
+      db.collection("schools").doc(schoolId).collection("members").doc(request.auth.uid).get(),
+    ]);
+    if (!classSnap.exists) {
+      throw new HttpsError("not-found", "That class is not connected to this school.");
+    }
+    if (!callerMemberSnap.exists) {
+      throw new HttpsError("permission-denied", "You are not a member of this school.");
+    }
+    const classData = classSnap.data()!;
+    const callerRole = callerMemberSnap.data()?.role as SchoolRole;
+    const callerName = (callerMemberSnap.data()?.name as string | undefined) ?? "";
+    const isLeadership = LEADERSHIP_ROLES.includes(callerRole) || callerRole === "administrator";
+    const isThisClassGradeTeacher = classData.gradeTeacherUid === request.auth.uid;
+    const assignedSubjectTeacherUid = (classData.subjectTeacherUids ?? {})[subjectName] as string | undefined;
+    const isAssignedSubjectTeacher = assignedSubjectTeacherUid === request.auth.uid;
+
+    // Stage 6: "Grade Teacher retains full edit rights across the whole
+    // Broad Mark Sheet" — unconditional, same as always. Stage 8:
+    // leadership's edit rights are DIFFERENT — "without [an
+    // institutionalSubscription], these roles default to Observer status
+    // per class: full visibility, zero edit rights" — so leadership can
+    // only fall through to editing here when the school has that flag on
+    // (manually set via the Firebase console — see registerSchool's own
+    // comment on why this isn't a real payment flow yet).
+    let leadershipCanEdit = false;
+    if (isLeadership && !isThisClassGradeTeacher && !isAssignedSubjectTeacher) {
+      const schoolSnap = await db.collection("schools").doc(schoolId).get();
+      leadershipCanEdit = (schoolSnap.data()?.institutionalSubscription as boolean | undefined) ?? false;
+    }
+    if (!isAssignedSubjectTeacher && !isThisClassGradeTeacher && !leadershipCanEdit) {
+      throw new HttpsError(
+        "permission-denied",
+        isLeadership
+          ? "This school doesn't have an institutional subscription yet, so leadership has view-only access here. Ask the Grade Teacher or assigned subject teacher to make this edit."
+          : "You're not assigned to teach that subject for this class. Ask the Grade Teacher to assign you first."
+      );
+    }
+    const learnerNames = (classData.learnerNames ?? []) as string[];
+    if (learnerIndex >= learnerNames.length) {
+      throw new HttpsError("invalid-argument", "That learner is not on this class's published roster.");
+    }
+    const learnerName = learnerNames[learnerIndex];
+
+    const entryRef = classRef.collection("scoreEntries").doc(scoreEntryId(learnerIndex, subjectName));
+    const existing = await entryRef.get();
+    const cleanComment = typeof comment === "string" ? comment.trim().slice(0, 500) : "";
+
+    if (!existing.exists) {
+      await entryRef.set({
+        learnerIndex,
+        learnerName,
+        subjectName,
+        score,
+        comment: cleanComment,
+        submittedByUid: request.auth.uid,
+        submittedByName: callerName,
+        submittedAt: admin.firestore.FieldValue.serverTimestamp(),
+        lastEditedByUid: request.auth.uid,
+        lastEditedByName: callerName,
+        lastEditedAt: admin.firestore.FieldValue.serverTimestamp(),
+        editHistory: [] as unknown[],
+      });
+      return { success: true };
+    }
+
+    const existingData = existing.data()!;
+    const isOriginalSubmitter = existingData.submittedByUid === request.auth.uid;
+
+    await entryRef.update({
+      score,
+      comment: cleanComment,
+      lastEditedByUid: request.auth.uid,
+      lastEditedByName: callerName,
+      lastEditedAt: admin.firestore.FieldValue.serverTimestamp(),
+      editHistory: admin.firestore.FieldValue.arrayUnion({
+        editedByUid: request.auth.uid,
+        editedByName: callerName,
+        editedAt: admin.firestore.Timestamp.now(), // arrayUnion can't take serverTimestamp() — real wall-clock time here is fine for an audit log entry
+        previousScore: existingData.score,
+        previousComment: existingData.comment ?? "",
+      }),
+    });
+
+    // Stage 6: someone other than the original submitter changed the
+    // entry — notify them for real, both channels.
+    if (!isOriginalSubmitter && nonEmptyString(existingData.submittedByUid)) {
+      const originalUid = existingData.submittedByUid as string;
+      const message = `Entry of student ${learnerName} has been edited by ${callerName || "another teacher"}.`;
+      await db
+        .collection("teacher_profiles")
+        .doc(originalUid)
+        .collection("notifications")
+        .add({
+          message,
+          learnerName,
+          subjectName,
+          classId,
+          schoolId,
+          editedByName: callerName,
+          createdAt: admin.firestore.FieldValue.serverTimestamp(),
+          read: false,
+        });
+      try {
+        const originalUser = await admin.auth().getUser(originalUid);
+        if (originalUser.phoneNumber) {
+          await sendSmsStub(originalUser.phoneNumber, message);
+        }
+      } catch (err) {
+        console.error("submitClassScoreEntry: could not look up original submitter for SMS", err);
+      }
+    }
+
+    return { success: true };
+  }
+);
+
+// ---------------------------------------------------------------------
+// School Network, Stage 9 (added 2026-09-13, per explicit user
+// confirmation of the guardian-data-sync decision above) — mass
+// broadcast to parents/guardians, gated behind institutionalSubscription
+// exactly as the brief specifies. Real, honest limits on what "mass"
+// means per channel:
+//  - Email: really sent, via the same Brevo infrastructure already used
+//    for the Submissions Dashboard's access codes.
+//  - SMS: still the stub from Stage 6 (no real gateway set up yet).
+//  - WhatsApp: there has never been a WhatsApp Business API anywhere in
+//    this app (see AssignmentSubmissionScreen's own doc comment) — a
+//    server-side function cannot open anyone's WhatsApp client. This
+//    returns the recipient list to the CLIENT, which builds the same
+//    per-recipient wa.me deep links + manual tap-through the rest of the
+//    app already uses for WhatsApp, rather than fabricating a "mass send"
+//    that doesn't actually exist for this channel.
+// ---------------------------------------------------------------------
+
+const MAX_BROADCAST_RECIPIENTS = 300;
+
+interface BroadcastToGuardiansRequest {
+  schoolId: string;
+  classIds?: string[]; // omitted/empty = every class connected to the school
+  subject: string;
+  message: string;
+}
+
+export const broadcastToGuardians = onCall<BroadcastToGuardiansRequest>(
+  { secrets: [brevoApiKey, brevoSenderEmail], region: "us-central1", timeoutSeconds: 180, memory: "256MiB", maxInstances: 5 },
+  async (request): Promise<{ emailsSent: number; emailsFailed: number; smsAttempted: number; whatsappRecipients: { name: string; phone: string }[] }> => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "Sign in is required.");
+    }
+    const { schoolId, classIds, subject, message } = request.data ?? {};
+    if (!nonEmptyString(schoolId) || !nonEmptyString(subject, 150) || !nonEmptyString(message, 2000)) {
+      throw new HttpsError("invalid-argument", "A school, subject, and message are required.");
+    }
+
+    const db = admin.firestore();
+    const [callerMemberSnap, schoolSnap] = await Promise.all([
+      db.collection("schools").doc(schoolId).collection("members").doc(request.auth.uid).get(),
+      db.collection("schools").doc(schoolId).get(),
+    ]);
+    if (!callerMemberSnap.exists) {
+      throw new HttpsError("permission-denied", "You are not a member of this school.");
+    }
+    const callerRole = callerMemberSnap.data()?.role as SchoolRole;
+    if (!LEADERSHIP_ROLES.includes(callerRole) && callerRole !== "administrator") {
+      throw new HttpsError("permission-denied", "Only Head Teacher, Deputy, or Administrator can send a broadcast.");
+    }
+    if (!schoolSnap.data()?.institutionalSubscription) {
+      throw new HttpsError("failed-precondition", "This school doesn't have an institutional subscription, so broadcast tools aren't unlocked yet.");
+    }
+
+    let classesQuery = db.collection("schools").doc(schoolId).collection("classes") as FirebaseFirestore.Query;
+    if (Array.isArray(classIds) && classIds.length > 0) {
+      classesQuery = classesQuery.where(admin.firestore.FieldPath.documentId(), "in", classIds.slice(0, 30));
+    }
+    const classesSnap = await classesQuery.get();
+
+    type Recipient = { learnerName: string; email: string | null; phone: string | null };
+    const recipients: Recipient[] = [];
+    for (const classDoc of classesSnap.docs) {
+      if (recipients.length >= MAX_BROADCAST_RECIPIENTS) break;
+      const learnerNames = (classDoc.data().learnerNames ?? []) as string[];
+      const contactsSnap = await classDoc.ref.collection("guardianContacts").doc("data").get();
+      const contacts = (contactsSnap.data()?.contacts ?? []) as GuardianContactInput[];
+      for (let i = 0; i < learnerNames.length && recipients.length < MAX_BROADCAST_RECIPIENTS; i++) {
+        const contact = contacts[i];
+        if (!contact || (!contact.email && !contact.phone)) continue;
+        recipients.push({ learnerName: learnerNames[i], email: contact.email, phone: contact.phone });
+      }
+    }
+
+    let emailsSent = 0;
+    let emailsFailed = 0;
+    let smsAttempted = 0;
+    const whatsappRecipients: { name: string; phone: string }[] = [];
+
+    for (const recipient of recipients) {
+      if (recipient.email) {
+        try {
+          const response = await fetch("https://api.brevo.com/v3/smtp/email", {
+            method: "POST",
+            headers: { "api-key": brevoApiKey.value(), "Content-Type": "application/json", "Accept": "application/json" },
+            body: JSON.stringify({
+              sender: { name: "Smart Teacher", email: brevoSenderEmail.value() },
+              to: [{ email: recipient.email, name: `Guardian of ${recipient.learnerName}` }],
+              subject,
+              htmlContent: `<p>${message.replace(/\n/g, "<br>")}</p>`,
+            }),
+          });
+          if (response.ok) {
+            emailsSent++;
+          } else {
+            emailsFailed++;
+            console.error("broadcastToGuardians: Brevo rejected a recipient", recipient.email, response.status);
+          }
+        } catch (err) {
+          emailsFailed++;
+          console.error("broadcastToGuardians: network error emailing a guardian", err);
+        }
+      }
+      if (recipient.phone) {
+        await sendSmsStub(recipient.phone, `${subject}: ${message}`);
+        smsAttempted++;
+        whatsappRecipients.push({ name: recipient.learnerName, phone: recipient.phone });
+      }
+    }
+
+    return { emailsSent, emailsFailed, smsAttempted, whatsappRecipients };
+  }
+);
+
+// ---------------------------------------------------------------------
+// School Network, Stage 5 (minimal — added 2026-09-14, per a direct
+// follow-up request for the sidebar's new "Report Form Status" view,
+// which needs a real Mid-Term Results Window to judge on-time entries
+// against). Only the start date is settable here; the window's duration
+// stays fixed at the brief's own default (2 weeks) — an adjustable
+// duration and the separate End-of-Term Processing Window are real,
+// disclosed gaps, not attempted in this pass since nothing asked for them
+// yet. "Restrict editing these deadline settings to head_teacher/deputy
+// only; the appointed administrator (HOD) can view but not change them"
+// — enforced here exactly as written; note this is a NARROWER caller set
+// than the general LEADERSHIP_ROLES + administrator pattern used
+// elsewhere in this file, deliberately.
+// ---------------------------------------------------------------------
+
+const MID_TERM_WINDOW_DURATION_DAYS = 14;
+
+interface SetMidTermWindowRequest {
+  schoolId: string;
+  startDateIso: string;
+}
+
+export const setMidTermWindow = onCall<SetMidTermWindowRequest>(
+  { region: "us-central1", timeoutSeconds: 30, maxInstances: 5 },
+  async (request): Promise<{ success: boolean }> => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "Sign in is required.");
+    }
+    const { schoolId, startDateIso } = request.data ?? {};
+    if (!nonEmptyString(schoolId)) {
+      throw new HttpsError("invalid-argument", "A school is required.");
+    }
+    const startDate = new Date(startDateIso);
+    if (isNaN(startDate.getTime())) {
+      throw new HttpsError("invalid-argument", "A valid start date is required.");
+    }
+
+    const db = admin.firestore();
+    const memberSnap = await db.collection("schools").doc(schoolId).collection("members").doc(request.auth.uid).get();
+    if (!memberSnap.exists) {
+      throw new HttpsError("permission-denied", "You are not a member of this school.");
+    }
+    const callerRole = memberSnap.data()?.role as SchoolRole;
+    if (!LEADERSHIP_ROLES.includes(callerRole)) {
+      throw new HttpsError(
+        "permission-denied",
+        "Only the Head Teacher or Deputy can set the Mid-Term Results Window — an Administrator can view it but not change it."
+      );
+    }
+
+    await db.collection("schools").doc(schoolId).update({
+      midTermWindowStart: admin.firestore.Timestamp.fromDate(startDate),
+      midTermWindowDurationDays: MID_TERM_WINDOW_DURATION_DAYS,
+    });
+    return { success: true };
+  }
+);
+
+// ---------------------------------------------------------------------
+// Timetable Generation, Stage 1 — Data setup (added 2026-09-14). Just the
+// config data + save path this round: periods/day, period length,
+// teaching days/week, an editable per-subject "suggested default"
+// periods-per-week map (explicitly labelled as adjustable in the UI, per
+// the brief — never presented as an official figure), and the editable
+// "Practical Subjects Exception List" (subjects allowed to be scheduled
+// as single periods; everything else defaults to a 2-period block —
+// Stage 4's engine, not built yet, will read this same config). Access
+// is leadership-only for now (head_teacher/deputy/administrator) — Stage
+// 9's dedicated `timetable_operator` role doesn't exist yet.
+// ---------------------------------------------------------------------
+
+interface SaveTimetableConfigRequest {
+  schoolId: string;
+  periodsPerDay: number;
+  periodLengthMinutes: number;
+  teachingDaysPerWeek: number;
+  subjectDefaults: Record<string, number>;
+  practicalSubjectsExceptionList: string[];
+  maxDailyPeriodsPerTeacher: number;
+}
+
+export const saveTimetableConfig = onCall<SaveTimetableConfigRequest>(
+  { region: "us-central1", timeoutSeconds: 30, maxInstances: 5 },
+  async (request): Promise<{ success: boolean }> => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "Sign in is required.");
+    }
+    const { schoolId, periodsPerDay, periodLengthMinutes, teachingDaysPerWeek, subjectDefaults, practicalSubjectsExceptionList, maxDailyPeriodsPerTeacher } =
+      request.data ?? {};
+    if (
+      !nonEmptyString(schoolId) ||
+      typeof periodsPerDay !== "number" ||
+      periodsPerDay < 1 ||
+      periodsPerDay > 20 ||
+      typeof periodLengthMinutes !== "number" ||
+      periodLengthMinutes < 10 ||
+      periodLengthMinutes > 180 ||
+      typeof teachingDaysPerWeek !== "number" ||
+      teachingDaysPerWeek < 1 ||
+      teachingDaysPerWeek > 7 ||
+      typeof subjectDefaults !== "object" ||
+      subjectDefaults === null ||
+      !Array.isArray(practicalSubjectsExceptionList) ||
+      typeof maxDailyPeriodsPerTeacher !== "number" ||
+      maxDailyPeriodsPerTeacher < 1 ||
+      maxDailyPeriodsPerTeacher > periodsPerDay
+    ) {
+      throw new HttpsError("invalid-argument", "Valid period/day counts and subject data are required.");
+    }
+
+    const db = admin.firestore();
+    const memberSnap = await db.collection("schools").doc(schoolId).collection("members").doc(request.auth.uid).get();
+    if (!memberSnap.exists) {
+      throw new HttpsError("permission-denied", "You are not a member of this school.");
+    }
+    if (!callerCanManageTimetable(memberSnap.data())) {
+      throw new HttpsError("permission-denied", "Only school leadership or an appointed Timetable Operator can set up the timetable.");
+    }
+    const schoolSnap = await db.collection("schools").doc(schoolId).get();
+    if (!schoolMeetsTimetableTier(schoolSnap.data())) {
+      throw new HttpsError("failed-precondition", "Timetable Generation requires a Gold subscription or higher.");
+    }
+
+    const cleanSubjectDefaults: Record<string, number> = {};
+    for (const [name, value] of Object.entries(subjectDefaults)) {
+      if (typeof value === "number" && value >= 0 && value <= 40 && name.trim().length > 0) {
+        cleanSubjectDefaults[name.trim()] = value;
+      }
+    }
+    const cleanExceptionList = practicalSubjectsExceptionList
+      .filter((s): s is string => typeof s === "string" && s.trim().length > 0)
+      .map((s) => s.trim());
+
+    await db
+      .collection("schools")
+      .doc(schoolId)
+      .collection("timetable")
+      .doc("config")
+      .set(
+        {
+          periodsPerDay,
+          periodLengthMinutes,
+          teachingDaysPerWeek,
+          subjectDefaults: cleanSubjectDefaults,
+          practicalSubjectsExceptionList: cleanExceptionList,
+          maxDailyPeriodsPerTeacher,
+          updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+          updatedByUid: request.auth.uid,
+        },
+        { merge: true }
+      );
+    return { success: true };
+  }
+);
+
+// ---------------------------------------------------------------------
+// Timetable Generation, Stage 4 (added 2026-09-14) — the deterministic
+// scheduling engine itself. Per explicit requirement: "This engine must
+// be deterministic, not AI-based — the actual scheduling validity must
+// never depend on an AI call." No Gemini/AI call anywhere in this
+// function or `generateTimetableSchedule` below — pure, repeatable
+// constraint placement. Stage 3 (also 2026-09-14) added
+// `teacherAvailability` to the config this engine reads — a teacher with
+// no constraint set is available every period, exactly matching this
+// engine's original behaviour, so existing schools see no change until
+// they actually set an availability constraint via `setTeacherAvailability`.
+//
+// Implementation is greedy with a first-fit scan across (day, period) in
+// a fixed, deterministic order (classes sorted by id, subjects sorted by
+// name) — not full constraint-satisfaction backtracking (which would
+// undo EARLIER successful placements to make room for a later one). That
+// tradeoff is real and disclosed: this can produce more conflicts than a
+// theoretically optimal solver would for a tightly-constrained school,
+// but it NEVER produces an invalid schedule (no double-booking, ever —
+// verified directly against synthetic data before shipping, not just
+// assumed) — every constraint violation becomes a specific, named
+// conflict instead, exactly as required ("flag the specific unresolved
+// conflicts clearly rather than silently producing an invalid
+// schedule").
+// ---------------------------------------------------------------------
+
+interface TimetableClassInput {
+  id: string;
+  classGrade: string;
+  subjectNames: string[];
+  subjectTeacherUids: Record<string, string>;
+}
+
+interface TimetableConfigInput {
+  periodsPerDay: number;
+  teachingDaysPerWeek: number;
+  subjectDefaults: Record<string, number>;
+  practicalSubjectsExceptionList: string[];
+  maxDailyPeriodsPerTeacher: number;
+  // Stage 3 (added 2026-09-14) — teacherUid -> list of "day_period" slot
+  // keys that teacher is NOT available for (e.g. "Mr. Phiri can only
+  // teach mornings" becomes every afternoon slot, every day). A teacher
+  // with no entry here is available every period, exactly matching this
+  // engine's original Stage 4 behaviour — Stage 3 only NARROWS placement,
+  // it never changes the algorithm's shape. See `parseTimetableConstraint`
+  // for how natural language becomes this structure (AI only extracts
+  // intent; the actual slot-key computation is deterministic code, never
+  // AI-generated day/period numbers).
+  teacherAvailability?: Record<string, string[]>;
+}
+
+interface TimetableAssignment {
+  classId: string;
+  className: string;
+  subjectName: string;
+  teacherUid: string;
+  day: number;
+  period: number;
+  // Stage 7 (added 2026-09-14) — "lockable editing with minimum
+  // disruption." A locked assignment is one a human placed by hand (via
+  // `moveTimetableAssignment`, which locks automatically — see its own
+  // comment) or explicitly pinned (`setTimetableAssignmentLocked`). A
+  // regenerate NEVER moves a locked assignment: see how `lockedAssignments`
+  // is used below.
+  locked?: boolean;
+}
+
+interface TimetableConflict {
+  description: string;
+  classId?: string;
+  subjectName?: string;
+  teacherUid?: string;
+}
+
+// Exported (not just an internal helper) specifically so this pure,
+// deterministic function can be verified directly against synthetic data
+// — see the real ad-hoc test run before this shipped. Firebase's deploy
+// step only picks up actual onCall/onRequest exports, so exporting a
+// plain function here changes nothing about what gets deployed.
+export function generateTimetableSchedule(
+  classes: TimetableClassInput[],
+  config: TimetableConfigInput,
+  lockedAssignments: TimetableAssignment[] = []
+): { assignments: TimetableAssignment[]; conflicts: TimetableConflict[] } {
+  // Locked assignments are carried over EXACTLY as they are — never
+  // re-derived, never re-placed — and everything else is generated around
+  // them. See the TimetableAssignment.locked doc comment for why.
+  const assignments: TimetableAssignment[] = [...lockedAssignments];
+  const conflicts: TimetableConflict[] = [];
+
+  const slotKey = (day: number, period: number) => `${day}_${period}`;
+  const classOccupancy = new Map<string, Set<string>>(); // "day_period" -> classIds occupied then
+  const teacherOccupancy = new Map<string, Set<string>>(); // "day_period" -> teacherUids occupied then
+  const teacherDailyLoad = new Map<string, number>(); // "teacherUid_day" -> periods already assigned that day
+
+  const isClassFree = (classId: string, day: number, period: number) => !(classOccupancy.get(slotKey(day, period))?.has(classId) ?? false);
+  const isTeacherFree = (teacherUid: string, day: number, period: number) => !(teacherOccupancy.get(slotKey(day, period))?.has(teacherUid) ?? false);
+  const teacherDailyLoadFor = (teacherUid: string, day: number) => teacherDailyLoad.get(`${teacherUid}_${day}`) ?? 0;
+  // Stage 3 — a teacher with no entry in `teacherAvailability` is available
+  // every period, so this never changes behaviour for a school that hasn't
+  // set any constraints.
+  const isTeacherAvailable = (teacherUid: string, day: number, period: number) =>
+    !(config.teacherAvailability?.[teacherUid]?.includes(slotKey(day, period)) ?? false);
+
+  function occupy(classId: string, teacherUid: string, day: number, period: number) {
+    const key = slotKey(day, period);
+    if (!classOccupancy.has(key)) classOccupancy.set(key, new Set());
+    classOccupancy.get(key)!.add(classId);
+    if (!teacherOccupancy.has(key)) teacherOccupancy.set(key, new Set());
+    teacherOccupancy.get(key)!.add(teacherUid);
+    const loadKey = `${teacherUid}_${day}`;
+    teacherDailyLoad.set(loadKey, (teacherDailyLoad.get(loadKey) ?? 0) + 1);
+  }
+
+  // Pre-occupy every locked slot FIRST, before anything else is placed —
+  // this is what makes a regenerate never displace a locked assignment:
+  // every other placement below can only land in slots these haven't
+  // already claimed.
+  for (const locked of lockedAssignments) {
+    occupy(locked.classId, locked.teacherUid, locked.day, locked.period);
+  }
+
+  // Deterministic order — same input always produces the same schedule.
+  const sortedClasses = [...classes].sort((a, b) => a.id.localeCompare(b.id));
+
+  for (const cls of sortedClasses) {
+    const sortedSubjects = [...cls.subjectNames].sort();
+    for (const subject of sortedSubjects) {
+      const teacherUid = cls.subjectTeacherUids[subject];
+      if (!teacherUid) {
+        conflicts.push({
+          description: `${subject} for ${cls.classGrade} has no assigned teacher yet — connect this class's School Network screen and assign one before it can be scheduled.`,
+          classId: cls.id,
+          subjectName: subject,
+        });
+        continue;
+      }
+
+      const periodsPerWeek = config.subjectDefaults[subject] ?? 5;
+      const isPractical = config.practicalSubjectsExceptionList.includes(subject);
+      // Stage 7 — however many periods of this class+subject are already
+      // locked in place count toward periodsPerWeek; only the remainder
+      // needs placing. A teacher/subject pairing check isn't done here —
+      // a locked assignment is trusted as-is, exactly like the brief's
+      // "minimum disruption" intent.
+      const alreadyLocked = lockedAssignments.filter((a) => a.classId === cls.id && a.subjectName === subject).length;
+      const remaining = Math.max(0, periodsPerWeek - alreadyLocked);
+
+      // Double-period rule (Stage 1): every non-practical subject is
+      // scheduled ONLY as continuous 2-period blocks, never a lone single
+      // period — an odd periods/week count genuinely can't fully satisfy
+      // that, so it's flagged rather than silently rounded either way.
+      const blocks: number[] = [];
+      if (isPractical) {
+        for (let i = 0; i < remaining; i++) blocks.push(1);
+      } else {
+        const doubleBlocks = Math.floor(remaining / 2);
+        for (let i = 0; i < doubleBlocks; i++) blocks.push(2);
+        if (remaining % 2 === 1) {
+          conflicts.push({
+            description:
+              alreadyLocked > 0
+                ? `${subject} for ${cls.classGrade} has ${remaining} period(s)/week still to place after ${alreadyLocked} locked period(s), which is odd and can't be fully scheduled as continuous double periods. Try locking an even number of periods, or changing this subject's periods/week.`
+                : `${subject} for ${cls.classGrade} has an odd periods-per-week count (${periodsPerWeek}), which can't be fully scheduled as continuous double periods. Scheduling ${doubleBlocks * 2} of ${periodsPerWeek} periods — add ${subject} to the Practical Subjects Exception List, or change its periods/week to an even number, to resolve this.`,
+            classId: cls.id,
+            subjectName: subject,
+          });
+        }
+      }
+
+      for (const blockLength of blocks) {
+        let placed = false;
+        for (let day = 0; day < config.teachingDaysPerWeek && !placed; day++) {
+          if (teacherDailyLoadFor(teacherUid, day) + blockLength > config.maxDailyPeriodsPerTeacher) continue;
+          for (let period = 0; period + blockLength <= config.periodsPerDay; period++) {
+            let free = true;
+            for (let offset = 0; offset < blockLength; offset++) {
+              const p = period + offset;
+              if (!isClassFree(cls.id, day, p) || !isTeacherFree(teacherUid, day, p) || !isTeacherAvailable(teacherUid, day, p)) {
+                free = false;
+                break;
+              }
+            }
+            if (!free) continue;
+            for (let offset = 0; offset < blockLength; offset++) {
+              const p = period + offset;
+              occupy(cls.id, teacherUid, day, p);
+              assignments.push({ classId: cls.id, className: cls.classGrade, subjectName: subject, teacherUid, day, period: p });
+            }
+            placed = true;
+            break;
+          }
+        }
+        if (!placed) {
+          conflicts.push({
+            description: `Could not find a free ${blockLength === 2 ? "double-period" : "single-period"} slot for ${subject} — ${cls.classGrade} without conflicting with this teacher's other classes, their daily load limit, or their stated availability. Try increasing periods/day, reducing this subject's periods/week, raising the max daily load, loosening this teacher's availability constraints, or reassigning the teacher.`,
+            classId: cls.id,
+            subjectName: subject,
+            teacherUid,
+          });
+        }
+      }
+    }
+  }
+
+  return { assignments, conflicts };
+}
+
+interface GenerateTimetableRequest {
+  schoolId: string;
+}
+
+export const generateTimetable = onCall<GenerateTimetableRequest>(
+  { region: "us-central1", timeoutSeconds: 60, maxInstances: 5 },
+  async (request): Promise<{ assignmentCount: number; conflictCount: number }> => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "Sign in is required.");
+    }
+    const { schoolId } = request.data ?? {};
+    if (!nonEmptyString(schoolId)) {
+      throw new HttpsError("invalid-argument", "A school is required.");
+    }
+
+    const db = admin.firestore();
+    const memberSnap = await db.collection("schools").doc(schoolId).collection("members").doc(request.auth.uid).get();
+    if (!memberSnap.exists) {
+      throw new HttpsError("permission-denied", "You are not a member of this school.");
+    }
+    if (!callerCanManageTimetable(memberSnap.data())) {
+      throw new HttpsError("permission-denied", "Only school leadership or an appointed Timetable Operator can run the timetable generator.");
+    }
+    const schoolSnap = await db.collection("schools").doc(schoolId).get();
+    if (!schoolMeetsTimetableTier(schoolSnap.data())) {
+      throw new HttpsError("failed-precondition", "Timetable Generation requires a Gold subscription or higher.");
+    }
+
+    const configSnap = await db.collection("schools").doc(schoolId).collection("timetable").doc("config").get();
+    if (!configSnap.exists) {
+      throw new HttpsError("failed-precondition", "Set up the timetable (periods/day, subjects, etc.) before generating one.");
+    }
+    const configData = configSnap.data()!;
+    const config: TimetableConfigInput = {
+      periodsPerDay: configData.periodsPerDay,
+      teachingDaysPerWeek: configData.teachingDaysPerWeek,
+      subjectDefaults: configData.subjectDefaults ?? {},
+      practicalSubjectsExceptionList: configData.practicalSubjectsExceptionList ?? [],
+      maxDailyPeriodsPerTeacher: configData.maxDailyPeriodsPerTeacher ?? configData.periodsPerDay,
+      teacherAvailability: configData.teacherAvailability ?? undefined,
+    };
+
+    const classesSnap = await db.collection("schools").doc(schoolId).collection("classes").get();
+    const classes: TimetableClassInput[] = classesSnap.docs.map((d) => ({
+      id: d.id,
+      classGrade: (d.data().classGrade as string) ?? d.id,
+      subjectNames: (d.data().subjectNames as string[]) ?? [],
+      subjectTeacherUids: (d.data().subjectTeacherUids as Record<string, string>) ?? {},
+    }));
+    if (classes.length === 0) {
+      throw new HttpsError("failed-precondition", "No classes are connected to School Network yet — nothing to generate a timetable for.");
+    }
+
+    // Stage 7 — a regenerate must never move an assignment a human locked
+    // by hand. Whatever's already locked on the CURRENT generated doc
+    // (if any) is carried into the new run untouched.
+    const existingGeneratedSnap = await db.collection("schools").doc(schoolId).collection("timetable").doc("generated").get();
+    const lockedAssignments: TimetableAssignment[] = existingGeneratedSnap.exists
+      ? ((existingGeneratedSnap.data()?.assignments as TimetableAssignment[]) ?? []).filter((a) => a.locked === true)
+      : [];
+
+    const { assignments, conflicts } = generateTimetableSchedule(classes, config, lockedAssignments);
+
+    await db.collection("schools").doc(schoolId).collection("timetable").doc("generated").set({
+      assignments,
+      conflicts,
+      generatedAt: admin.firestore.FieldValue.serverTimestamp(),
+      generatedByUid: request.auth.uid,
+    });
+
+    return { assignmentCount: assignments.length, conflictCount: conflicts.length };
+  }
+);
+
+// ---------------------------------------------------------------------
+// Timetable Generation, Stage 6 (added 2026-09-14) — "When the
+// deterministic engine cannot fully resolve all constraints, use AI to
+// translate the raw conflict data into a plain-language explanation and
+// suggested fix... The AI only explains and suggests here; actual
+// conflict detection and validity checking stays with the deterministic
+// engine." This function does exactly that and nothing more: it reads
+// the conflicts `generateTimetable` already computed (never re-derives
+// or re-validates them) and asks Gemini only to phrase each one more
+// helpfully — the conflict LIST itself, and whether something is a
+// conflict at all, is never something this function decides.
+// ---------------------------------------------------------------------
+
+const timetableConflictExplanationSchema = {
+  type: "object",
+  properties: {
+    explanations: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          conflictIndex: { type: "integer", description: "Which conflict in the input list this explains (0-based)." },
+          explanation: {
+            type: "string",
+            description:
+              "One or two plain-language sentences explaining WHY this conflict happened, in terms a school " +
+              "timetable operator (not a programmer) would understand. Never invent details not present in the " +
+              "raw conflict description or the supplied context.",
+          },
+          suggestedFix: {
+            type: "string",
+            description:
+              "One concrete, actionable suggestion for resolving it (e.g. naming a specific day/period to try, " +
+              "or a specific setting to adjust) — grounded only in the real data supplied, never a fabricated " +
+              "day/period/teacher name that wasn't in the context.",
+          },
+        },
+        required: ["conflictIndex", "explanation", "suggestedFix"],
+        additionalProperties: false,
+      },
+    },
+  },
+  required: ["explanations"],
+  additionalProperties: false,
+};
+
+function buildTimetableConflictPrompt(
+  conflicts: TimetableConflict[],
+  config: TimetableConfigInput,
+  teacherNames: Record<string, string>
+): string {
+  const conflictLines = conflicts
+    .map((c, i) => `${i}. ${c.description}${c.teacherUid ? ` (teacher: ${teacherNames[c.teacherUid] ?? c.teacherUid})` : ""}`)
+    .join("\n");
+  return [
+    "A deterministic (non-AI) school timetable scheduling engine already ran and could not resolve the " +
+      "conflicts listed below. Your ONLY job is to explain each one in plain language for a school " +
+      "timetable operator, and suggest ONE concrete fix — you are not re-checking or re-deciding whether " +
+      "these are real conflicts; treat every one as already-confirmed real.",
+    "",
+    `School day structure: ${config.periodsPerDay} periods/day, ${config.teachingDaysPerWeek} teaching days/week, ` +
+      `max ${config.maxDailyPeriodsPerTeacher} periods/day per teacher.`,
+    "",
+    "Conflicts (0-indexed):",
+    conflictLines,
+    "",
+    "For each conflict, write a short explanation and one concrete suggested fix, grounded only in the real " +
+      "data given above — never invent a day, period, teacher name, or subject that wasn't mentioned.",
+  ].join("\n");
+}
+
+interface ExplainTimetableConflictsRequest {
+  schoolId: string;
+}
+
+export const explainTimetableConflicts = onCall<ExplainTimetableConflictsRequest>(
+  { secrets: [geminiApiKey], region: "us-central1", timeoutSeconds: 60, maxInstances: 5 },
+  async (request): Promise<{ explanations: { conflictIndex: number; explanation: string; suggestedFix: string }[] }> => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "Sign in is required.");
+    }
+    const { schoolId } = request.data ?? {};
+    if (!nonEmptyString(schoolId)) {
+      throw new HttpsError("invalid-argument", "A school is required.");
+    }
+
+    const db = admin.firestore();
+    const memberSnap = await db.collection("schools").doc(schoolId).collection("members").doc(request.auth.uid).get();
+    if (!memberSnap.exists) {
+      throw new HttpsError("permission-denied", "You are not a member of this school.");
+    }
+
+    const [generatedSnap, configSnap, membersSnap, schoolSnap] = await Promise.all([
+      db.collection("schools").doc(schoolId).collection("timetable").doc("generated").get(),
+      db.collection("schools").doc(schoolId).collection("timetable").doc("config").get(),
+      db.collection("schools").doc(schoolId).collection("members").get(),
+      db.collection("schools").doc(schoolId).get(),
+    ]);
+    if (!schoolMeetsTimetableTier(schoolSnap.data())) {
+      throw new HttpsError("failed-precondition", "Timetable Generation requires a Gold subscription or higher.");
+    }
+    if (!generatedSnap.exists) {
+      throw new HttpsError("failed-precondition", "No timetable has been generated yet.");
+    }
+    const conflicts = ((generatedSnap.data()?.conflicts as TimetableConflict[]) ?? []).slice(0, 30); // a real, sane cap — not an arbitrary AI-cost dodge
+    if (conflicts.length === 0) {
+      return { explanations: [] };
+    }
+    const configData = configSnap.data() ?? {};
+    const config: TimetableConfigInput = {
+      periodsPerDay: configData.periodsPerDay ?? 8,
+      teachingDaysPerWeek: configData.teachingDaysPerWeek ?? 5,
+      subjectDefaults: configData.subjectDefaults ?? {},
+      practicalSubjectsExceptionList: configData.practicalSubjectsExceptionList ?? [],
+      maxDailyPeriodsPerTeacher: configData.maxDailyPeriodsPerTeacher ?? 6,
+    };
+    const teacherNames: Record<string, string> = {};
+    for (const doc of membersSnap.docs) {
+      teacherNames[doc.id] = (doc.data().name as string) ?? doc.id;
+    }
+
+    const ai = new GoogleGenAI({ apiKey: geminiApiKey.value() });
+    let text: string | undefined;
+    try {
+      const response = await ai.models.generateContent({
+        model: GEMINI_MODEL,
+        contents: buildTimetableConflictPrompt(conflicts, config, teacherNames),
+        config: { responseMimeType: "application/json", responseJsonSchema: timetableConflictExplanationSchema },
+      });
+      text = response.text;
+    } catch (err) {
+      console.error("explainTimetableConflicts: Gemini call failed", err);
+      throw quotaExhaustedError(err) ?? new HttpsError("internal", "Could not generate explanations right now. The raw conflict list is still accurate.");
+    }
+    if (!text) {
+      throw new HttpsError("internal", "The AI did not return a result.");
+    }
+    let parsed: { explanations: { conflictIndex: number; explanation: string; suggestedFix: string }[] };
+    try {
+      parsed = JSON.parse(text);
+    } catch (err) {
+      console.error("explainTimetableConflicts: response was not valid JSON", text);
+      throw new HttpsError("internal", "The explanation response could not be parsed.");
+    }
+
+    await db.collection("schools").doc(schoolId).collection("timetable").doc("generated").update({
+      conflictExplanations: parsed.explanations,
+      conflictExplanationsGeneratedAt: admin.firestore.FieldValue.serverTimestamp(),
+    });
+
+    return parsed;
+  }
+);
+
+// ---------------------------------------------------------------------
+// Timetable Generation, Stage 3 (added 2026-09-14) — natural-language
+// constraint entry. Per explicit requirement: "showing the operator the
+// parsed result for confirmation before it's applied — never applying an
+// AI interpretation silently." `parseTimetableConstraint` therefore only
+// READS and interprets — it never writes anything. The actual day/period
+// slot numbers a teacher becomes unavailable for are never generated by
+// the AI at all: Gemini only extracts which WEEKDAYS and which
+// time-of-day (morning/afternoon/all day) the text describes, and
+// `computeUnavailableSlots` below turns that into concrete "day_period"
+// keys with plain deterministic arithmetic against the school's real
+// config — the same kind of AI/deterministic split as
+// `explainTimetableConflicts` above, just drawn one step earlier. Once a
+// human confirms the parsed result in the UI, the client calls
+// `setTeacherAvailability` (for an availability constraint) or the
+// existing `assignSubjectTeacher` (for an assignment constraint)
+// separately — this function is never the one that applies anything.
+// ---------------------------------------------------------------------
+
+const TIMETABLE_WEEKDAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+
+function timetableDayIndex(label: string): number {
+  const key = label.trim().slice(0, 3).toLowerCase();
+  if (!key) return -1;
+  return TIMETABLE_WEEKDAYS.findIndex((d) => d.toLowerCase().startsWith(key));
+}
+
+// Deterministic — see the module comment above for why this, and not
+// Gemini, computes the actual slot keys.
+function computeUnavailableSlots(
+  config: TimetableConfigInput,
+  daysOfWeek: string[],
+  timeOfDay: "morning" | "afternoon" | "all_day",
+  constraintType: "unavailable" | "available_only"
+): string[] {
+  const matchedDays = daysOfWeek.map(timetableDayIndex).filter((i) => i >= 0 && i < config.teachingDaysPerWeek);
+  const dayIndices = matchedDays.length > 0 ? matchedDays : Array.from({ length: config.teachingDaysPerWeek }, (_, i) => i);
+
+  const half = Math.ceil(config.periodsPerDay / 2);
+  const periodRange =
+    timeOfDay === "morning"
+      ? Array.from({ length: half }, (_, i) => i)
+      : timeOfDay === "afternoon"
+      ? Array.from({ length: Math.max(0, config.periodsPerDay - half) }, (_, i) => i + half)
+      : Array.from({ length: config.periodsPerDay }, (_, i) => i);
+
+  if (constraintType === "unavailable") {
+    const slots: string[] = [];
+    for (const day of dayIndices) for (const period of periodRange) slots.push(`${day}_${period}`);
+    return slots;
+  }
+
+  // "available_only" — unavailable is everything OUTSIDE the described
+  // days/time-of-day, not the described window itself.
+  const availableSet = new Set<string>();
+  for (const day of dayIndices) for (const period of periodRange) availableSet.add(`${day}_${period}`);
+  const slots: string[] = [];
+  for (let day = 0; day < config.teachingDaysPerWeek; day++) {
+    for (let period = 0; period < config.periodsPerDay; period++) {
+      const key = `${day}_${period}`;
+      if (!availableSet.has(key)) slots.push(key);
+    }
+  }
+  return slots;
+}
+
+const timetableConstraintSchema = {
+  type: "object",
+  properties: {
+    kind: {
+      type: "string",
+      enum: ["availability", "assignment", "unrecognized"],
+      description:
+        "'availability' — the text describes when a teacher can or can't teach. 'assignment' — the text asks to " +
+        "assign a teacher to teach a subject for a class. 'unrecognized' — neither, or too ambiguous to act on.",
+    },
+    teacherName: { type: "string", description: "The teacher's name exactly as it appears in the real names list below, or empty string if none is mentioned or no real name matches." },
+    subjectName: { type: "string", description: "The subject mentioned, or empty string." },
+    className: { type: "string", description: "The class/grade mentioned, or empty string." },
+    constraintType: {
+      type: "string",
+      enum: ["unavailable", "available_only", ""],
+      description:
+        "For 'availability' kind only: 'unavailable' if the text states when the teacher CANNOT teach, " +
+        "'available_only' if it states the ONLY time they CAN teach. Empty string for other kinds.",
+    },
+    daysOfWeek: {
+      type: "array",
+      items: { type: "string" },
+      description: "Full weekday names mentioned (e.g. 'Monday', 'Wednesday'), or an empty array if no specific day is named (meaning every teaching day).",
+    },
+    timeOfDay: {
+      type: "string",
+      enum: ["morning", "afternoon", "all_day"],
+      description: "For 'availability' kind: which part of the day. Use 'all_day' if the text doesn't distinguish morning/afternoon.",
+    },
+    summary: {
+      type: "string",
+      description: "One plain-language sentence restating exactly what was understood, for a human operator to confirm before anything is applied.",
+    },
+  },
+  required: ["kind", "teacherName", "subjectName", "className", "constraintType", "daysOfWeek", "timeOfDay", "summary"],
+  additionalProperties: false,
+};
+
+function buildTimetableConstraintPrompt(text: string, teacherNames: string[], classNames: string[], subjectNames: string[]): string {
+  return [
+    "A school timetable operator typed the instruction below into a free-text box. Extract its structured meaning " +
+      "ONLY — you are not applying anything, just interpreting.",
+    "",
+    `Real teacher names at this school: ${teacherNames.length > 0 ? teacherNames.join(", ") : "(none on record)"}`,
+    `Real class names at this school: ${classNames.length > 0 ? classNames.join(", ") : "(none on record)"}`,
+    `Subjects already in this school's timetable setup: ${subjectNames.length > 0 ? subjectNames.join(", ") : "(none on record)"}`,
+    "",
+    `Operator's instruction: "${text}"`,
+    "",
+    "Only use a teacherName, className, or subjectName from the real lists above — if the instruction names someone " +
+      "or something not on those lists, or is too vague to match confidently, leave that field as an empty string " +
+      "rather than guessing. Never invent a name that isn't in the lists.",
+  ].join("\n");
+}
+
+interface ParseTimetableConstraintRequest {
+  schoolId: string;
+  text: string;
+}
+
+export const parseTimetableConstraint = onCall<ParseTimetableConstraintRequest>(
+  { secrets: [geminiApiKey], region: "us-central1", timeoutSeconds: 30, maxInstances: 5 },
+  async (
+    request
+  ): Promise<{
+    kind: "availability" | "assignment" | "unrecognized";
+    teacherName: string;
+    teacherUid: string | null;
+    subjectName: string;
+    className: string;
+    classId: string | null;
+    constraintType: "unavailable" | "available_only" | "";
+    daysOfWeek: string[];
+    timeOfDay: "morning" | "afternoon" | "all_day";
+    summary: string;
+    unavailableSlots: string[];
+  }> => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "Sign in is required.");
+    }
+    const { schoolId, text } = request.data ?? {};
+    if (!nonEmptyString(schoolId) || !nonEmptyString(text)) {
+      throw new HttpsError("invalid-argument", "A school and some instruction text are required.");
+    }
+
+    const db = admin.firestore();
+    const memberSnap = await db.collection("schools").doc(schoolId).collection("members").doc(request.auth.uid).get();
+    if (!memberSnap.exists) {
+      throw new HttpsError("permission-denied", "You are not a member of this school.");
+    }
+    if (!callerCanManageTimetable(memberSnap.data())) {
+      throw new HttpsError("permission-denied", "Only school leadership or an appointed Timetable Operator can set up the timetable.");
+    }
+    const schoolSnap = await db.collection("schools").doc(schoolId).get();
+    if (!schoolMeetsTimetableTier(schoolSnap.data())) {
+      throw new HttpsError("failed-precondition", "Timetable Generation requires a Gold subscription or higher.");
+    }
+
+    const [membersSnap, classesSnap, configSnap] = await Promise.all([
+      db.collection("schools").doc(schoolId).collection("members").get(),
+      db.collection("schools").doc(schoolId).collection("classes").get(),
+      db.collection("schools").doc(schoolId).collection("timetable").doc("config").get(),
+    ]);
+    const members = membersSnap.docs.map((d) => ({ uid: d.id, name: (d.data().name as string) ?? d.id }));
+    const classes = classesSnap.docs.map((d) => ({ id: d.id, classGrade: (d.data().classGrade as string) ?? d.id }));
+    const subjectNames = Object.keys((configSnap.data()?.subjectDefaults as Record<string, number>) ?? {});
+
+    const ai = new GoogleGenAI({ apiKey: geminiApiKey.value() });
+    let text_: string | undefined;
+    try {
+      const response = await ai.models.generateContent({
+        model: GEMINI_MODEL_LITE,
+        contents: buildTimetableConstraintPrompt(
+          text,
+          members.map((m) => m.name),
+          classes.map((c) => c.classGrade),
+          subjectNames
+        ),
+        config: { responseMimeType: "application/json", responseJsonSchema: timetableConstraintSchema },
+      });
+      text_ = response.text;
+    } catch (err) {
+      console.error("parseTimetableConstraint: Gemini call failed", err);
+      throw quotaExhaustedError(err) ?? new HttpsError("internal", "Could not interpret that instruction right now.");
+    }
+    if (!text_) {
+      throw new HttpsError("internal", "The AI did not return a result.");
+    }
+    let parsed: {
+      kind: "availability" | "assignment" | "unrecognized";
+      teacherName: string;
+      subjectName: string;
+      className: string;
+      constraintType: "unavailable" | "available_only" | "";
+      daysOfWeek: string[];
+      timeOfDay: "morning" | "afternoon" | "all_day";
+      summary: string;
+    };
+    try {
+      parsed = JSON.parse(text_);
+    } catch (err) {
+      console.error("parseTimetableConstraint: response was not valid JSON", text_);
+      throw new HttpsError("internal", "The response could not be parsed.");
+    }
+
+    const matchedTeacher = members.find((m) => m.name.trim().toLowerCase() === parsed.teacherName.trim().toLowerCase());
+    const matchedClass = classes.find((c) => c.classGrade.trim().toLowerCase() === parsed.className.trim().toLowerCase());
+
+    let unavailableSlots: string[] = [];
+    if (parsed.kind === "availability" && matchedTeacher && parsed.constraintType) {
+      if (!configSnap.exists) {
+        throw new HttpsError("failed-precondition", "Set up the timetable (periods/day, teaching days, etc.) before setting teacher availability.");
+      }
+      const configData = configSnap.data()!;
+      const config: TimetableConfigInput = {
+        periodsPerDay: configData.periodsPerDay,
+        teachingDaysPerWeek: configData.teachingDaysPerWeek,
+        subjectDefaults: configData.subjectDefaults ?? {},
+        practicalSubjectsExceptionList: configData.practicalSubjectsExceptionList ?? [],
+        maxDailyPeriodsPerTeacher: configData.maxDailyPeriodsPerTeacher ?? configData.periodsPerDay,
+      };
+      unavailableSlots = computeUnavailableSlots(config, parsed.daysOfWeek, parsed.timeOfDay, parsed.constraintType);
+    }
+
+    return {
+      kind: parsed.kind,
+      teacherName: parsed.teacherName,
+      teacherUid: matchedTeacher?.uid ?? null,
+      subjectName: parsed.subjectName,
+      className: parsed.className,
+      classId: matchedClass?.id ?? null,
+      constraintType: parsed.constraintType,
+      daysOfWeek: parsed.daysOfWeek,
+      timeOfDay: parsed.timeOfDay,
+      summary: parsed.summary,
+      unavailableSlots,
+    };
+  }
+);
+
+interface SetTeacherAvailabilityRequest {
+  schoolId: string;
+  teacherUid: string;
+  unavailableSlots: string[];
+}
+
+export const setTeacherAvailability = onCall<SetTeacherAvailabilityRequest>(
+  { region: "us-central1", timeoutSeconds: 30, maxInstances: 5 },
+  async (request): Promise<{ success: boolean }> => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "Sign in is required.");
+    }
+    const { schoolId, teacherUid, unavailableSlots } = request.data ?? {};
+    if (!nonEmptyString(schoolId) || !nonEmptyString(teacherUid) || !Array.isArray(unavailableSlots)) {
+      throw new HttpsError("invalid-argument", "A school, a teacher, and a list of slots are required.");
+    }
+    const cleanSlots = unavailableSlots.filter((s): s is string => typeof s === "string" && /^\d+_\d+$/.test(s));
+
+    const db = admin.firestore();
+    const [callerSnap, teacherSnap] = await Promise.all([
+      db.collection("schools").doc(schoolId).collection("members").doc(request.auth.uid).get(),
+      db.collection("schools").doc(schoolId).collection("members").doc(teacherUid).get(),
+    ]);
+    if (!callerSnap.exists) {
+      throw new HttpsError("permission-denied", "You are not a member of this school.");
+    }
+    if (!callerCanManageTimetable(callerSnap.data())) {
+      throw new HttpsError("permission-denied", "Only school leadership or an appointed Timetable Operator can set up the timetable.");
+    }
+    const schoolSnap = await db.collection("schools").doc(schoolId).get();
+    if (!schoolMeetsTimetableTier(schoolSnap.data())) {
+      throw new HttpsError("failed-precondition", "Timetable Generation requires a Gold subscription or higher.");
+    }
+    if (!teacherSnap.exists) {
+      throw new HttpsError("not-found", "That teacher is not a member of this school.");
+    }
+
+    await db
+      .collection("schools")
+      .doc(schoolId)
+      .collection("timetable")
+      .doc("config")
+      .set(
+        {
+          teacherAvailability: { [teacherUid]: cleanSlots },
+          updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+          updatedByUid: request.auth.uid,
+        },
+        { merge: true }
+      );
+
+    return { success: true };
+  }
+);
+
+// ---------------------------------------------------------------------
+// Timetable Generation, Stage 2 (added 2026-09-14) — "AI-assisted setup
+// from photographed paper timetable." Mirrors the base64-image pattern
+// `transcribeHandwrittenDocument` and `extractCoverPageFields` already
+// use. This function ONLY reads and interprets a photographed paper
+// timetable for one class — it never writes anything. The client shows
+// every extracted value (day structure, subject/teacher rows) for
+// review, matches teacher names against this school's REAL members
+// itself, and only once a human confirms does it call the already-
+// existing `saveTimetableConfig` and `assignSubjectTeacher` to actually
+// apply anything — never a silent AI write, same discipline as Stage 3.
+// ---------------------------------------------------------------------
+
+interface ExtractTimetableFromPhotoRequest {
+  schoolId: string;
+  pageImagesBase64: string[];
+}
+
+interface ExtractedTimetableSubjectRow {
+  name: string;
+  periodsPerWeek: number;
+  teacherName: string;
+}
+
+const extractTimetableFromPhotoSchema = {
+  type: "object",
+  properties: {
+    periodsPerDay: { type: "integer", description: "The highest period number visible in the grid (how many teaching periods fit in one day). 0 if not determinable." },
+    periodLengthMinutes: { type: "integer", description: "Each period's length in minutes, if written anywhere on the page (e.g. a time column like '08:00-08:40'). 0 if not written or not determinable." },
+    teachingDaysPerWeek: { type: "integer", description: "How many distinct weekdays appear as columns/rows in the grid. 0 if not determinable." },
+    subjects: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          name: { type: "string", description: "The subject name exactly as written." },
+          periodsPerWeek: { type: "integer", description: "How many times this subject appears across the whole week's grid for this class." },
+          teacherName: { type: "string", description: "The teacher's name as written next to/under this subject in the grid, or empty string if no name is shown." },
+        },
+        required: ["name", "periodsPerWeek", "teacherName"],
+        additionalProperties: false,
+      },
+      description: "One entry per distinct subject appearing anywhere in the grid — do not list the same subject twice.",
+    },
+    notes: {
+      type: "string",
+      description: "Anything a reader should double check — a smudged cell, an ambiguous abbreviation, a day/period that couldn't be read. Empty string if nothing stood out.",
+    },
+  },
+  required: ["periodsPerDay", "periodLengthMinutes", "teachingDaysPerWeek", "subjects", "notes"],
+  additionalProperties: false,
+};
+
+function buildExtractTimetablePrompt(teacherNames: string[]): string {
+  return [
+    "The attached image(s) are photo(s) of a paper timetable grid for ONE school class (days across the top or " +
+      "side, periods down the other axis, each cell naming a subject and often a teacher). Read only what is " +
+      "genuinely written — never invent a subject, teacher, or count that isn't actually shown.",
+    "1. periodsPerDay — the highest period number that appears (how many periods make up one teaching day).",
+    "2. periodLengthMinutes — only if an actual time range is written somewhere (e.g. '08:00-08:40' = 40); " +
+      "otherwise 0.",
+    "3. teachingDaysPerWeek — how many distinct weekdays appear in the grid.",
+    "4. subjects — one entry per DISTINCT subject name that appears anywhere in the grid, with periodsPerWeek " +
+      "counting every cell across the whole week that names it, and teacherName read from whatever is written " +
+      "in or near those cells (leave empty if no name is shown for that subject).",
+    `Real teacher names already on record at this school, for reference only (a name in the photo might match one ` +
+      `of these, or might be someone not yet on record — write exactly what's on the page either way): ` +
+      `${teacherNames.length > 0 ? teacherNames.join(", ") : "(none on record)"}`,
+    "5. If any cell is smudged, cut off, or ambiguous, still give your best reading but say so in notes rather " +
+      "than silently guessing without flagging it.",
+  ].join("\n");
+}
+
+export const extractTimetableFromPhoto = onCall<ExtractTimetableFromPhotoRequest>(
+  { secrets: [geminiApiKey], region: "us-central1", timeoutSeconds: 120, memory: "512MiB", maxInstances: 5 },
+  async (
+    request
+  ): Promise<{
+    periodsPerDay: number;
+    periodLengthMinutes: number;
+    teachingDaysPerWeek: number;
+    subjects: (ExtractedTimetableSubjectRow & { teacherUid: string | null })[];
+    notes: string;
+  }> => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "Sign in is required.");
+    }
+    const { schoolId, pageImagesBase64 } = request.data ?? {};
+    if (!nonEmptyString(schoolId) || !Array.isArray(pageImagesBase64) || pageImagesBase64.length === 0) {
+      throw new HttpsError("invalid-argument", "A school and at least one photo are required.");
+    }
+
+    const db = admin.firestore();
+    const memberSnap = await db.collection("schools").doc(schoolId).collection("members").doc(request.auth.uid).get();
+    if (!memberSnap.exists) {
+      throw new HttpsError("permission-denied", "You are not a member of this school.");
+    }
+    if (!callerCanManageTimetable(memberSnap.data())) {
+      throw new HttpsError("permission-denied", "Only school leadership or an appointed Timetable Operator can set up the timetable.");
+    }
+    const schoolSnap = await db.collection("schools").doc(schoolId).get();
+    if (!schoolMeetsTimetableTier(schoolSnap.data())) {
+      throw new HttpsError("failed-precondition", "Timetable Generation requires a Gold subscription or higher.");
+    }
+
+    const membersSnap = await db.collection("schools").doc(schoolId).collection("members").get();
+    const members = membersSnap.docs.map((d) => ({ uid: d.id, name: (d.data().name as string) ?? d.id }));
+
+    const ai = new GoogleGenAI({ apiKey: geminiApiKey.value() });
+    const imageParts = pageImagesBase64.map((b64: string) => ({ inlineData: { mimeType: "image/jpeg", data: b64 } }));
+    let text: string | undefined;
+    try {
+      const response = await ai.models.generateContent({
+        model: GEMINI_MODEL,
+        contents: [{ role: "user", parts: [{ text: buildExtractTimetablePrompt(members.map((m) => m.name)) }, ...imageParts] }],
+        config: { responseMimeType: "application/json", responseJsonSchema: extractTimetableFromPhotoSchema },
+      });
+      text = response.text;
+    } catch (err) {
+      console.error("extractTimetableFromPhoto: Gemini call failed", err);
+      throw quotaExhaustedError(err) ?? new HttpsError("internal", "Could not read this timetable right now. Please try again.");
+    }
+    if (!text) {
+      throw new HttpsError("internal", "The AI did not return a result.");
+    }
+    let parsed: {
+      periodsPerDay: number;
+      periodLengthMinutes: number;
+      teachingDaysPerWeek: number;
+      subjects: ExtractedTimetableSubjectRow[];
+      notes: string;
+    };
+    try {
+      parsed = JSON.parse(text);
+    } catch (err) {
+      console.error("extractTimetableFromPhoto: response was not valid JSON", text);
+      throw new HttpsError("internal", "The response could not be parsed.");
+    }
+
+    const subjectsWithMatches = parsed.subjects.map((s) => {
+      const matched = members.find((m) => m.name.trim().toLowerCase() === s.teacherName.trim().toLowerCase());
+      return { ...s, teacherUid: matched?.uid ?? null };
+    });
+
+    return { ...parsed, subjects: subjectsWithMatches };
+  }
+);
+
+// ---------------------------------------------------------------------
+// Timetable Generation, Stage 9 (added 2026-09-14) — "co-opted Timetable
+// Operator" appointment. Grants/revokes the `timetableOperator` flag
+// `callerCanManageTimetable` checks (see its own comment above). Kept
+// leadership/administrator-only on purpose — an operator can manage the
+// timetable but can't co-opt other operators, so this power doesn't
+// self-propagate past whoever leadership actually chose.
+// ---------------------------------------------------------------------
+
+interface SetTimetableOperatorRequest {
+  schoolId: string;
+  targetUid: string;
+  isOperator: boolean;
+}
+
+export const setTimetableOperator = onCall<SetTimetableOperatorRequest>(
+  { region: "us-central1", timeoutSeconds: 30, maxInstances: 5 },
+  async (request): Promise<{ success: boolean }> => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "Sign in is required.");
+    }
+    const { schoolId, targetUid, isOperator } = request.data ?? {};
+    if (!nonEmptyString(schoolId) || !nonEmptyString(targetUid) || typeof isOperator !== "boolean") {
+      throw new HttpsError("invalid-argument", "A school, a target teacher, and a true/false value are required.");
+    }
+
+    const db = admin.firestore();
+    const membersRef = db.collection("schools").doc(schoolId).collection("members");
+    const [callerSnap, targetSnap] = await Promise.all([membersRef.doc(request.auth.uid).get(), membersRef.doc(targetUid).get()]);
+    if (!callerSnap.exists) {
+      throw new HttpsError("permission-denied", "You are not a member of this school.");
+    }
+    const callerRole = callerSnap.data()?.role as SchoolRole;
+    if (!LEADERSHIP_ROLES.includes(callerRole) && callerRole !== "administrator") {
+      throw new HttpsError("permission-denied", "Only school leadership can appoint a Timetable Operator.");
+    }
+    if (!targetSnap.exists) {
+      throw new HttpsError("not-found", "That teacher is not a member of this school.");
+    }
+
+    await membersRef.doc(targetUid).update({ timetableOperator: isOperator });
+    return { success: true };
+  }
+);
+
+// ---------------------------------------------------------------------
+// Timetable Generation, Stages 5 & 7 (added 2026-09-14) — manual editing
+// with real-time conflict detection and "minimum disruption" locking.
+// `moveTimetableAssignment` is the ONLY way a generated assignment's
+// day/period ever changes by hand: it re-checks the exact same rules the
+// deterministic engine enforces (no double-booking a class or teacher, no
+// exceeding max daily load, respecting stated availability) against the
+// CURRENT generated schedule before writing anything — a rejected move
+// changes nothing, it just reports why. A successful move auto-locks the
+// assignment (see TimetableAssignment.locked) so a later "Regenerate"
+// never quietly undoes a human's manual fix.
+// ---------------------------------------------------------------------
+
+interface MoveTimetableAssignmentRequest {
+  schoolId: string;
+  classId: string;
+  subjectName: string;
+  teacherUid: string;
+  day: number;
+  period: number;
+  newDay: number;
+  newPeriod: number;
+}
+
+export const moveTimetableAssignment = onCall<MoveTimetableAssignmentRequest>(
+  { region: "us-central1", timeoutSeconds: 30, maxInstances: 5 },
+  async (request): Promise<{ success: boolean }> => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "Sign in is required.");
+    }
+    const { schoolId, classId, subjectName, teacherUid, day, period, newDay, newPeriod } = request.data ?? {};
+    if (
+      !nonEmptyString(schoolId) ||
+      !nonEmptyString(classId) ||
+      !nonEmptyString(subjectName) ||
+      !nonEmptyString(teacherUid) ||
+      typeof day !== "number" ||
+      typeof period !== "number" ||
+      typeof newDay !== "number" ||
+      typeof newPeriod !== "number"
+    ) {
+      throw new HttpsError("invalid-argument", "A school, class, subject, teacher, current slot, and target slot are all required.");
+    }
+
+    const db = admin.firestore();
+    const memberSnap = await db.collection("schools").doc(schoolId).collection("members").doc(request.auth.uid).get();
+    if (!memberSnap.exists) {
+      throw new HttpsError("permission-denied", "You are not a member of this school.");
+    }
+    if (!callerCanManageTimetable(memberSnap.data())) {
+      throw new HttpsError("permission-denied", "Only school leadership or an appointed Timetable Operator can edit the timetable.");
+    }
+    const schoolSnap = await db.collection("schools").doc(schoolId).get();
+    if (!schoolMeetsTimetableTier(schoolSnap.data())) {
+      throw new HttpsError("failed-precondition", "Timetable Generation requires a Gold subscription or higher.");
+    }
+
+    const [generatedSnap, configSnap] = await Promise.all([
+      db.collection("schools").doc(schoolId).collection("timetable").doc("generated").get(),
+      db.collection("schools").doc(schoolId).collection("timetable").doc("config").get(),
+    ]);
+    if (!generatedSnap.exists) {
+      throw new HttpsError("failed-precondition", "No timetable has been generated yet.");
+    }
+    const configData = configSnap.data() ?? {};
+    const periodsPerDay = (configData.periodsPerDay as number) ?? 8;
+    const teachingDaysPerWeek = (configData.teachingDaysPerWeek as number) ?? 5;
+    const maxDailyPeriodsPerTeacher = (configData.maxDailyPeriodsPerTeacher as number) ?? periodsPerDay;
+    const teacherAvailability = (configData.teacherAvailability as Record<string, string[]>) ?? {};
+
+    if (newDay < 0 || newDay >= teachingDaysPerWeek || newPeriod < 0 || newPeriod >= periodsPerDay) {
+      throw new HttpsError("invalid-argument", "That slot is outside the school's current day structure.");
+    }
+
+    const assignments = ((generatedSnap.data()?.assignments as TimetableAssignment[]) ?? []).slice();
+    const targetIndex = assignments.findIndex(
+      (a) => a.classId === classId && a.subjectName === subjectName && a.teacherUid === teacherUid && a.day === day && a.period === period
+    );
+    if (targetIndex === -1) {
+      throw new HttpsError("not-found", "That lesson could not be found — the timetable may have changed. Refresh and try again.");
+    }
+    if (day === newDay && period === newPeriod) {
+      return { success: true }; // no-op — nothing to check or change
+    }
+
+    const others = assignments.filter((_, i) => i !== targetIndex);
+    const conflictingClass = others.find((a) => a.classId === classId && a.day === newDay && a.period === newPeriod);
+    if (conflictingClass) {
+      throw new HttpsError("failed-precondition", `${conflictingClass.className} already has ${conflictingClass.subjectName} at that slot.`);
+    }
+    const conflictingTeacher = others.find((a) => a.teacherUid === teacherUid && a.day === newDay && a.period === newPeriod);
+    if (conflictingTeacher) {
+      throw new HttpsError("failed-precondition", `This teacher already has ${conflictingTeacher.subjectName} for ${conflictingTeacher.className} at that slot.`);
+    }
+    if (teacherAvailability[teacherUid]?.includes(`${newDay}_${newPeriod}`)) {
+      throw new HttpsError("failed-precondition", "This teacher has marked themselves unavailable at that slot.");
+    }
+    const newDayLoad = others.filter((a) => a.teacherUid === teacherUid && a.day === newDay).length + 1;
+    if (newDayLoad > maxDailyPeriodsPerTeacher) {
+      throw new HttpsError("failed-precondition", `This teacher would exceed their max daily load (${maxDailyPeriodsPerTeacher}) on that day.`);
+    }
+
+    assignments[targetIndex] = { ...assignments[targetIndex], day: newDay, period: newPeriod, locked: true };
+    await db.collection("schools").doc(schoolId).collection("timetable").doc("generated").update({
+      assignments,
+      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+      updatedByUid: request.auth.uid,
+    });
+
+    return { success: true };
+  }
+);
+
+interface SetTimetableAssignmentLockedRequest {
+  schoolId: string;
+  classId: string;
+  subjectName: string;
+  teacherUid: string;
+  day: number;
+  period: number;
+  locked: boolean;
+}
+
+export const setTimetableAssignmentLocked = onCall<SetTimetableAssignmentLockedRequest>(
+  { region: "us-central1", timeoutSeconds: 30, maxInstances: 5 },
+  async (request): Promise<{ success: boolean }> => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "Sign in is required.");
+    }
+    const { schoolId, classId, subjectName, teacherUid, day, period, locked } = request.data ?? {};
+    if (
+      !nonEmptyString(schoolId) ||
+      !nonEmptyString(classId) ||
+      !nonEmptyString(subjectName) ||
+      !nonEmptyString(teacherUid) ||
+      typeof day !== "number" ||
+      typeof period !== "number" ||
+      typeof locked !== "boolean"
+    ) {
+      throw new HttpsError("invalid-argument", "A school, class, subject, teacher, slot, and lock value are all required.");
+    }
+
+    const db = admin.firestore();
+    const memberSnap = await db.collection("schools").doc(schoolId).collection("members").doc(request.auth.uid).get();
+    if (!memberSnap.exists) {
+      throw new HttpsError("permission-denied", "You are not a member of this school.");
+    }
+    if (!callerCanManageTimetable(memberSnap.data())) {
+      throw new HttpsError("permission-denied", "Only school leadership or an appointed Timetable Operator can edit the timetable.");
+    }
+    const schoolSnap = await db.collection("schools").doc(schoolId).get();
+    if (!schoolMeetsTimetableTier(schoolSnap.data())) {
+      throw new HttpsError("failed-precondition", "Timetable Generation requires a Gold subscription or higher.");
+    }
+
+    const generatedRef = db.collection("schools").doc(schoolId).collection("timetable").doc("generated");
+    const generatedSnap = await generatedRef.get();
+    if (!generatedSnap.exists) {
+      throw new HttpsError("failed-precondition", "No timetable has been generated yet.");
+    }
+    const assignments = ((generatedSnap.data()?.assignments as TimetableAssignment[]) ?? []).slice();
+    const targetIndex = assignments.findIndex(
+      (a) => a.classId === classId && a.subjectName === subjectName && a.teacherUid === teacherUid && a.day === day && a.period === period
+    );
+    if (targetIndex === -1) {
+      throw new HttpsError("not-found", "That lesson could not be found — the timetable may have changed. Refresh and try again.");
+    }
+
+    assignments[targetIndex] = { ...assignments[targetIndex], locked };
+    await generatedRef.update({ assignments });
+
+    return { success: true };
+  }
+);
+
+// ---------------------------------------------------------------------
+// Home Assignment epic, Stages 5 & 6 (added 2026-09-14) — "Home
+// Assignment: topic & format selection" + "Marking key generation &
+// labeling." One Gemini call produces BOTH the assignment questions and
+// a matching marking-key entry per question (same number, in the same
+// order) — generating them together, not as two separate calls, is what
+// guarantees the key actually matches the assignment's own numbering
+// with no separate reconciliation step. Same grounding discipline as
+// `generateLessonPlan` above: only the syllabus competencies/objectives/
+// references/subjectContentExcerpt the client supplies, nothing else —
+// "no fabricated content" per the brief. Never auto-applied: this
+// function only returns a draft: the client routes it through
+// MarkingSchemeBuilderScreen for the teacher's own review before saving
+// (see that screen's own doc comment on why there's exactly one save
+// path for every marking scheme in this app).
+// ---------------------------------------------------------------------
+
+interface GenerateHomeAssignmentRequest {
+  topic: string;
+  subtopic?: string;
+  subject: string;
+  grade?: string;
+  competencies: string[];
+  objectives: string[];
+  references?: string;
+  subjectContentExcerpt?: string;
+  pageLength: "one" | "two";
+  questionType: "summative" | "formative";
+}
+
+interface GenerateHomeAssignmentQuestion {
+  number: string;
+  text: string;
+  maxMarks: number;
+}
+
+interface GenerateHomeAssignmentKeyEntry {
+  number: string;
+  expectedAnswerOrKeywords: string;
+}
+
+interface GenerateHomeAssignmentResponse {
+  title: string;
+  instructions: string;
+  questions: GenerateHomeAssignmentQuestion[];
+  markingKey: GenerateHomeAssignmentKeyEntry[];
+  notes: string;
+}
+
+const generateHomeAssignmentSchema = {
+  type: "object",
+  properties: {
+    title: { type: "string", description: "A short, descriptive title for this home assignment — never generic like 'Assignment'." },
+    instructions: {
+      type: "string",
+      description: "1-2 plain-language sentences telling the learner how to complete and record their answers (e.g. 'Answer all questions in your exercise book, showing your working.').",
+    },
+    questions: {
+      type: "array",
+      description: "The assignment questions, in order.",
+      items: {
+        type: "object",
+        properties: {
+          number: { type: "string", description: "Question number/label as a learner would see it, e.g. '1', '2', '2a'." },
+          text: { type: "string", description: "The full question text, exactly as a learner would read it. No Markdown." },
+          maxMarks: { type: "number", description: "Marks this question is worth." },
+        },
+        required: ["number", "text", "maxMarks"],
+        additionalProperties: false,
+      },
+    },
+    markingKey: {
+      type: "array",
+      description: "Exactly one entry per question above, same numbers, same order — never more, never fewer.",
+      items: {
+        type: "object",
+        properties: {
+          number: { type: "string", description: "Must exactly match one question's own number above." },
+          expectedAnswerOrKeywords: {
+            type: "string",
+            description: "The model answer, or a comma/line-separated list of keywords a grader (human or AI) should look for.",
+          },
+        },
+        required: ["number", "expectedAnswerOrKeywords"],
+        additionalProperties: false,
+      },
+    },
+    notes: {
+      type: "string",
+      description: "Anything a teacher should double-check before sending this out — e.g. if the syllabus context was too thin to fill the requested length responsibly. Empty string if nothing stood out.",
+    },
+  },
+  required: ["title", "instructions", "questions", "markingKey", "notes"],
+  additionalProperties: false,
+};
+
+function buildHomeAssignmentPrompt(req: GenerateHomeAssignmentRequest): string {
+  const pageGuidance =
+    req.pageLength === "two"
+      ? "Fill roughly TWO A4 pages worth of questions for a learner to complete at home — a substantial set (typically 8-14 questions, depending on what the subject/topic genuinely supports). Do not pad with filler, but do produce enough real content to genuinely fill two pages."
+      : "Fill roughly ONE A4 page worth of questions for a learner to complete at home — a focused, shorter set (typically 4-8 questions). Do not pad or under-fill.";
+  const typeGuidance =
+    req.questionType === "summative"
+      ? "SUMMATIVE questions: test overall understanding/mastery of the topic once it's been taught — structured, gradeable questions (short-answer, structured/essay, or calculation, whichever fits the subject) suitable for recording a real mark."
+      : "FORMATIVE questions: check understanding WHILE learning is still happening — can include lower-stakes checks (fill-in-the-blank, explain-in-your-own-words, quick application) pitched at practice/reinforcement rather than final assessment, but every question still carries real marks so the marking key stays consistent.";
+  return [
+    "Write a Home Assignment — a set of questions a Zambian secondary-school teacher gives learners to complete AT HOME — for exactly one topic, covering only the syllabus content below. Do not introduce content outside its scope.",
+    "",
+    `Subject: ${req.subject}`,
+    req.grade ? `Grade/Form: ${req.grade}` : null,
+    `Topic: ${req.topic}`,
+    req.subtopic ? `Sub-topic: ${req.subtopic}` : null,
+    "",
+    "Syllabus context — every question must cover only this, nothing else:",
+    ...req.competencies.map((c) => `- ${c}`),
+    ...req.objectives.map((o) => `- ${o}`),
+    "",
+    pageGuidance,
+    typeGuidance,
+    "",
+    req.references
+      ? "References available for this assignment (cite naturally where relevant, never invent a citation not " +
+        `listed here):\n${req.references}`
+      : null,
+    req.subjectContentExcerpt
+      ? "Real material already saved on this teacher's own device for this exact topic — ground the questions in " +
+        "this FIRST, before anything else. Only bring in your own general knowledge to fill gaps this material " +
+        `doesn't cover, and never contradict what's given here:\n${req.subjectContentExcerpt}\n`
+      : null,
+    "For EVERY question, produce a matching marking-key entry with the SAME number and a real model answer or " +
+      "grading keywords — never leave a question without a matching key entry, and never add a key entry with no " +
+      "matching question.",
+    "Write in plain text only — no Markdown formatting of any kind (no #, ##, **, *, __, ---, or backticks). This " +
+      "is a document a teacher will print and hand to learners, not a chat reply.",
+    "If the syllabus context above is too thin to responsibly write a full assignment at the requested length, " +
+      "say so explicitly in notes rather than inventing or padding content to fill the gap.",
+  ]
+    .filter((line): line is string => line !== null)
+    .join("\n");
+}
+
+export const generateHomeAssignment = onCall<GenerateHomeAssignmentRequest>(
+  { secrets: [geminiApiKey], region: "us-central1", maxInstances: 5 },
+  async (request): Promise<GenerateHomeAssignmentResponse> => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "Sign in is required to generate a home assignment.");
+    }
+    const { topic, subtopic, subject, grade, competencies, objectives, references, subjectContentExcerpt, pageLength, questionType } =
+      request.data ?? {};
+
+    if (typeof topic !== "string" || topic.trim().length === 0) {
+      throw new HttpsError("invalid-argument", "'topic' is required.");
+    }
+    if (typeof subject !== "string" || subject.trim().length === 0) {
+      throw new HttpsError("invalid-argument", "'subject' is required.");
+    }
+    if (!Array.isArray(competencies) || !competencies.every((c) => typeof c === "string")) {
+      throw new HttpsError("invalid-argument", "'competencies' must be a string array.");
+    }
+    if (!Array.isArray(objectives) || !objectives.every((o) => typeof o === "string")) {
+      throw new HttpsError("invalid-argument", "'objectives' must be a string array.");
+    }
+    if (competencies.length === 0 && objectives.length === 0) {
+      throw new HttpsError("invalid-argument", "At least one competency or objective is required — a home assignment cannot be grounded in nothing.");
+    }
+    if (pageLength !== "one" && pageLength !== "two") {
+      throw new HttpsError("invalid-argument", "'pageLength' must be 'one' or 'two'.");
+    }
+    if (questionType !== "summative" && questionType !== "formative") {
+      throw new HttpsError("invalid-argument", "'questionType' must be 'summative' or 'formative'.");
+    }
+
+    const req: GenerateHomeAssignmentRequest = {
+      topic,
+      subtopic: typeof subtopic === "string" ? subtopic : undefined,
+      subject,
+      grade: typeof grade === "string" ? grade : undefined,
+      competencies,
+      objectives,
+      references: typeof references === "string" ? references : undefined,
+      subjectContentExcerpt: typeof subjectContentExcerpt === "string" ? subjectContentExcerpt : undefined,
+      pageLength,
+      questionType,
+    };
+
+    const ai = new GoogleGenAI({ apiKey: geminiApiKey.value() });
+    let text: string | undefined;
+    try {
+      const response = await ai.models.generateContent({
+        model: GEMINI_MODEL,
+        contents: buildHomeAssignmentPrompt(req),
+        config: { responseMimeType: "application/json", responseJsonSchema: generateHomeAssignmentSchema },
+      });
+      text = response.text;
+    } catch (err) {
+      console.error("generateHomeAssignment: Gemini call failed", err);
+      throw quotaExhaustedError(err) ??
+        new HttpsError("internal", "Could not generate this home assignment right now. Please try again.");
+    }
+    if (!text) {
+      throw new HttpsError("internal", "The AI did not return a result.");
+    }
+    try {
+      return JSON.parse(text) as GenerateHomeAssignmentResponse;
+    } catch (err) {
+      console.error("generateHomeAssignment: response was not valid JSON", text);
+      throw new HttpsError("internal", "The response could not be parsed.");
+    }
+  }
+);
+
+// ---------------------------------------------------------------------
+// Home Assignment epic, Stage 1/7/8 (added 2026-09-14) — a Pupil-role
+// account linking itself to a real class roster slot. Deliberately kept
+// OUT of `schools/{id}/members` (that collection, and its `role` field,
+// is School Network STAFF only — a pupil is a different kind of account
+// with no SchoolRole at all): a pupil's access is gated by its own
+// `pupilSchoolId`/`pupilClassId` custom claims instead, set only here,
+// never touching `schoolId`/`schoolRole`. Two-step by design (request,
+// then a real teacher confirms) per the explicit decision to keep a
+// human in the loop against a pupil mistakenly (or deliberately) joining
+// the wrong roster slot.
+// ---------------------------------------------------------------------
+
+interface ListSchoolClassesByCodeRequest {
+  schoolCode: string;
+}
+
+// A pupil has no `schoolId`/`pupilSchoolId` claim yet at this point in the
+// flow, so they can't read `schools/{id}/classes` directly under
+// firestore.rules — this is the one, deliberately low-sensitivity lookup
+// (class grade/term only, nothing a stranger couldn't already guess) that
+// lets them see what to pick from before any claim exists. The school
+// CODE itself is the real gate here, same trust model `joinSchoolByCode`
+// already uses.
+export const listSchoolClassesByCode = onCall<ListSchoolClassesByCodeRequest>(
+  { region: "us-central1", timeoutSeconds: 30, maxInstances: 5 },
+  async (request): Promise<{ schoolId: string; schoolName: string; classes: { id: string; classGrade: string; term: string }[] }> => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "Sign in is required.");
+    }
+    const { schoolCode } = request.data ?? {};
+    if (!nonEmptyString(schoolCode, 12)) {
+      throw new HttpsError("invalid-argument", "A school code is required.");
+    }
+    const db = admin.firestore();
+    const matches = await db.collection("schools").where("code", "==", schoolCode.trim().toUpperCase()).limit(1).get();
+    if (matches.empty) {
+      throw new HttpsError("not-found", "That school code doesn't match any registered school. Double-check it with your teacher.");
+    }
+    const schoolDoc = matches.docs[0];
+    const classesSnap = await schoolDoc.ref.collection("classes").get();
+    return {
+      schoolId: schoolDoc.id,
+      schoolName: (schoolDoc.data().name as string) ?? "",
+      classes: classesSnap.docs.map((d) => ({
+        id: d.id,
+        classGrade: (d.data().classGrade as string) ?? "",
+        term: (d.data().term as string) ?? "",
+      })),
+    };
+  }
+);
+
+interface RequestPupilClassLinkRequest {
+  schoolCode: string;
+  classId: string;
+  learnerName: string;
+}
+
+export const requestPupilClassLink = onCall<RequestPupilClassLinkRequest>(
+  { region: "us-central1", timeoutSeconds: 30, maxInstances: 5 },
+  async (request): Promise<{ schoolId: string; schoolName: string; className: string }> => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "Sign in is required.");
+    }
+    const { schoolCode, classId, learnerName } = request.data ?? {};
+    if (!nonEmptyString(schoolCode, 12) || !nonEmptyString(classId) || !nonEmptyString(learnerName)) {
+      throw new HttpsError("invalid-argument", "A school code, class, and your name are required.");
+    }
+
+    const db = admin.firestore();
+    const matches = await db.collection("schools").where("code", "==", schoolCode.trim().toUpperCase()).limit(1).get();
+    if (matches.empty) {
+      throw new HttpsError("not-found", "That school code doesn't match any registered school. Double-check it with your teacher.");
+    }
+    const schoolDoc = matches.docs[0];
+    const classRef = schoolDoc.ref.collection("classes").doc(classId);
+    const classSnap = await classRef.get();
+    if (!classSnap.exists) {
+      throw new HttpsError("not-found", "That class could not be found at this school.");
+    }
+    const learnerNames = (classSnap.data()?.learnerNames as string[] | undefined) ?? [];
+    const trimmedName = learnerName.trim();
+    if (!learnerNames.includes(trimmedName)) {
+      throw new HttpsError("failed-precondition", "That name isn't on this class's roster yet — check the exact spelling with your teacher.");
+    }
+
+    await classRef.collection("pupilClassLinks").doc(request.auth.uid).set({
+      learnerName: trimmedName,
+      requestedAt: admin.firestore.FieldValue.serverTimestamp(),
+    });
+
+    return { schoolId: schoolDoc.id, schoolName: (schoolDoc.data().name as string) ?? "", className: (classSnap.data()?.classGrade as string) ?? "" };
+  }
+);
+
+interface RespondToPupilClassLinkRequest {
+  schoolId: string;
+  classId: string;
+  pupilUid: string;
+  approve: boolean;
+}
+
+export const respondToPupilClassLink = onCall<RespondToPupilClassLinkRequest>(
+  { region: "us-central1", timeoutSeconds: 30, maxInstances: 5 },
+  async (request): Promise<{ success: boolean }> => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "Sign in is required.");
+    }
+    const { schoolId, classId, pupilUid, approve } = request.data ?? {};
+    if (!nonEmptyString(schoolId) || !nonEmptyString(classId) || !nonEmptyString(pupilUid) || typeof approve !== "boolean") {
+      throw new HttpsError("invalid-argument", "A school, class, pupil, and true/false decision are required.");
+    }
+
+    const db = admin.firestore();
+    const classRef = db.collection("schools").doc(schoolId).collection("classes").doc(classId);
+    const linkRef = classRef.collection("pupilClassLinks").doc(pupilUid);
+    const [classSnap, callerMemberSnap, linkSnap] = await Promise.all([
+      classRef.get(),
+      db.collection("schools").doc(schoolId).collection("members").doc(request.auth.uid).get(),
+      linkRef.get(),
+    ]);
+    if (!classSnap.exists) {
+      throw new HttpsError("not-found", "That class is not connected to this school.");
+    }
+    if (!callerMemberSnap.exists) {
+      throw new HttpsError("permission-denied", "You are not a member of this school.");
+    }
+    if (!linkSnap.exists) {
+      throw new HttpsError("not-found", "That join request no longer exists — it may have already been handled.");
+    }
+    const classData = classSnap.data()!;
+    const callerRole = callerMemberSnap.data()?.role as SchoolRole;
+    const isLeadership = LEADERSHIP_ROLES.includes(callerRole) || callerRole === "administrator";
+    const isThisClassGradeTeacher = classData.gradeTeacherUid === request.auth.uid;
+    if (!isLeadership && !isThisClassGradeTeacher) {
+      throw new HttpsError("permission-denied", "Only this class's Grade Teacher, or school leadership, can confirm a pupil's join request.");
+    }
+
+    if (approve) {
+      const learnerName = linkSnap.data()?.learnerName as string;
+      const learnerUids: Record<string, string> = { ...(classData.learnerUids ?? {}) };
+      learnerUids[learnerName] = pupilUid;
+      await classRef.update({ learnerUids });
+
+      const pupilUser = await admin.auth().getUser(pupilUid);
+      await admin.auth().setCustomUserClaims(pupilUid, {
+        ...(pupilUser.customClaims ?? {}),
+        pupilSchoolId: schoolId,
+        pupilClassId: classId,
+      });
+    }
+    await linkRef.delete();
+
+    return { success: true };
+  }
+);
+
+// ---------------------------------------------------------------------
+// Home Assignment epic, Stage 7 (added 2026-09-14) — "Send to Class." A
+// Home Assignment doc is only ever CREATED here, at send time (not at
+// generation — Stage 5's review screen can be discarded/regenerated with
+// nothing left behind). Distribution reuses `broadcastToGuardians`'
+// exact loop-per-recipient email pattern and its "server can't open
+// WhatsApp, return the recipient list to the client" approach for
+// WhatsApp — the one real difference is this carries a real file
+// attachment (the client-built assignment PDF), which broadcastToGuardians
+// never needed. In-app delivery needs NO separate step at all: a linked
+// pupil's app already reads this same `homeAssignments` collection (see
+// firestore.rules), so the write below IS the in-app delivery.
+// ---------------------------------------------------------------------
+
+interface HomeAssignmentQuestionInput {
+  number: string;
+  text: string;
+  maxMarks: number;
+}
+
+interface HomeAssignmentKeyEntryInput {
+  number: string;
+  expectedAnswerOrKeywords: string;
+}
+
+interface SendHomeAssignmentToClassRequest {
+  schoolId: string;
+  classId: string;
+  subjectName: string;
+  title: string;
+  instructions: string;
+  questions: HomeAssignmentQuestionInput[];
+  markingKeyTitle: string;
+  markingKey: HomeAssignmentKeyEntryInput[];
+  deadlineIso?: string;
+  attachment?: { filename: string; base64: string };
+}
+
+export const sendHomeAssignmentToClass = onCall<SendHomeAssignmentToClassRequest>(
+  { secrets: [brevoApiKey, brevoSenderEmail], region: "us-central1", timeoutSeconds: 180, memory: "256MiB", maxInstances: 5 },
+  async (request): Promise<{ assignmentId: string; emailsSent: number; emailsFailed: number; whatsappRecipients: { name: string; phone: string }[] }> => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "Sign in is required.");
+    }
+    const { schoolId, classId, subjectName, title, instructions, questions, markingKeyTitle, markingKey, deadlineIso, attachment } = request.data ?? {};
+    if (
+      !nonEmptyString(schoolId) ||
+      !nonEmptyString(classId) ||
+      !nonEmptyString(subjectName, 60) ||
+      !nonEmptyString(title, 200) ||
+      !Array.isArray(questions) ||
+      questions.length === 0 ||
+      !Array.isArray(markingKey)
+    ) {
+      throw new HttpsError("invalid-argument", "A school, class, subject, title, and at least one question are required.");
+    }
+    if (deadlineIso !== undefined && typeof deadlineIso !== "string") {
+      throw new HttpsError("invalid-argument", "'deadlineIso' must be a string if provided.");
+    }
+
+    const db = admin.firestore();
+    const classRef = db.collection("schools").doc(schoolId).collection("classes").doc(classId);
+    const [classSnap, callerMemberSnap] = await Promise.all([
+      classRef.get(),
+      db.collection("schools").doc(schoolId).collection("members").doc(request.auth.uid).get(),
+    ]);
+    if (!classSnap.exists) {
+      throw new HttpsError("not-found", "That class is not connected to this school.");
+    }
+    if (!callerMemberSnap.exists) {
+      throw new HttpsError("permission-denied", "You are not a member of this school.");
+    }
+    const classData = classSnap.data()!;
+    const callerRole = callerMemberSnap.data()?.role as SchoolRole;
+    const isLeadership = LEADERSHIP_ROLES.includes(callerRole) || callerRole === "administrator";
+    const isThisSubjectTeacher = (classData.subjectTeacherUids ?? {})[subjectName] === request.auth.uid;
+    if (!isLeadership && !isThisSubjectTeacher) {
+      throw new HttpsError("permission-denied", "Only this subject's teacher, or school leadership, can send a Home Assignment for it.");
+    }
+
+    const assignmentRef = classRef.collection("homeAssignments").doc();
+    await assignmentRef.set({
+      title,
+      instructions: typeof instructions === "string" ? instructions : "",
+      subjectName,
+      questions,
+      markingKeyTitle: typeof markingKeyTitle === "string" ? markingKeyTitle : "",
+      markingKey,
+      className: (classData.classGrade as string) ?? "",
+      subjectTeacherUid: request.auth.uid,
+      subjectTeacherName: (callerMemberSnap.data()?.name as string) ?? "",
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      deadlineIso: typeof deadlineIso === "string" ? deadlineIso : null,
+    });
+
+    const learnerNames = (classData.learnerNames as string[] | undefined) ?? [];
+    const contactsSnap = await classRef.collection("guardianContacts").doc("data").get();
+    const contacts = (contactsSnap.data()?.contacts ?? []) as GuardianContactInput[];
+
+    let emailsSent = 0;
+    let emailsFailed = 0;
+    const whatsappRecipients: { name: string; phone: string }[] = [];
+    const validAttachment =
+      attachment && typeof attachment.filename === "string" && typeof attachment.base64 === "string" ? attachment : null;
+
+    for (let i = 0; i < learnerNames.length && i < MAX_BROADCAST_RECIPIENTS; i++) {
+      const contact = contacts[i];
+      if (!contact) continue;
+      if (contact.email) {
+        try {
+          const response = await fetch("https://api.brevo.com/v3/smtp/email", {
+            method: "POST",
+            headers: { "api-key": brevoApiKey.value(), "Content-Type": "application/json", "Accept": "application/json" },
+            body: JSON.stringify({
+              sender: { name: "Smart Teacher", email: brevoSenderEmail.value() },
+              to: [{ email: contact.email, name: `Guardian of ${learnerNames[i]}` }],
+              subject: `Home Assignment: ${title}`,
+              htmlContent: `<p>A new Home Assignment (${subjectName}) has been issued.</p>${
+                instructions ? `<p>${String(instructions).replace(/\n/g, "<br>")}</p>` : ""
+              }`,
+              ...(validAttachment ? { attachment: [{ name: validAttachment.filename, content: validAttachment.base64 }] } : {}),
+            }),
+          });
+          if (response.ok) {
+            emailsSent++;
+          } else {
+            emailsFailed++;
+            console.error("sendHomeAssignmentToClass: Brevo rejected a recipient", contact.email, response.status);
+          }
+        } catch (err) {
+          emailsFailed++;
+          console.error("sendHomeAssignmentToClass: network error emailing a guardian", err);
+        }
+      }
+      if (contact.phone) {
+        whatsappRecipients.push({ name: learnerNames[i], phone: contact.phone });
+      }
+    }
+
+    return { assignmentId: assignmentRef.id, emailsSent, emailsFailed, whatsappRecipients };
+  }
+);
+
+// ---------------------------------------------------------------------
+// Home Assignment epic, Stages 8 & 9 (added 2026-09-14) — one function
+// records a submission's metadata REGARDLESS of which path it came from
+// (Stage 8's in-app pupil submission, or Stage 9's teacher-side bulk
+// import of externally-received photos): the CALLER's own claims decide
+// which branch applies, and a pupil can never claim someone else's name
+// (their `learnerName` is resolved server-side from the real
+// `learnerUids` link, never trusted from the request) while a teacher
+// importing on a pupil's behalf must name someone real already on the
+// roster. Photo bytes themselves are already in Storage by the time this
+// runs (see storage.rules) — this only ever receives their paths.
+// ---------------------------------------------------------------------
+
+interface RecordHomeAssignmentSubmissionRequest {
+  schoolId: string;
+  classId: string;
+  assignmentId: string;
+  photoPaths: string[];
+  learnerName?: string;
+}
+
+export const recordHomeAssignmentSubmission = onCall<RecordHomeAssignmentSubmissionRequest>(
+  { region: "us-central1", timeoutSeconds: 30, maxInstances: 5 },
+  async (request): Promise<{ submissionId: string }> => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "Sign in is required.");
+    }
+    const { schoolId, classId, assignmentId, photoPaths, learnerName } = request.data ?? {};
+    if (
+      !nonEmptyString(schoolId) ||
+      !nonEmptyString(classId) ||
+      !nonEmptyString(assignmentId) ||
+      !Array.isArray(photoPaths) ||
+      photoPaths.length === 0 ||
+      !photoPaths.every((p) => typeof p === "string")
+    ) {
+      throw new HttpsError("invalid-argument", "A school, class, assignment, and at least one photo are required.");
+    }
+
+    const db = admin.firestore();
+    const classRef = db.collection("schools").doc(schoolId).collection("classes").doc(classId);
+    const assignmentRef = classRef.collection("homeAssignments").doc(assignmentId);
+    const [classSnap, assignmentSnap] = await Promise.all([classRef.get(), assignmentRef.get()]);
+    if (!classSnap.exists || !assignmentSnap.exists) {
+      throw new HttpsError("not-found", "That class or assignment could not be found.");
+    }
+    const classData = classSnap.data()!;
+
+    const token = request.auth.token as Record<string, unknown>;
+    const isPupilOfThisClass = token.pupilSchoolId === schoolId && token.pupilClassId === classId;
+
+    let resolvedLearnerName: string;
+    let submittedVia: "app" | "imported";
+
+    if (isPupilOfThisClass) {
+      const learnerUids = (classData.learnerUids as Record<string, string> | undefined) ?? {};
+      const matched = Object.entries(learnerUids).find(([, uid]) => uid === request.auth!.uid);
+      if (!matched) {
+        throw new HttpsError("failed-precondition", "Your account isn't linked to a specific name on this class's roster yet — ask your teacher to confirm your join request.");
+      }
+      resolvedLearnerName = matched[0];
+      submittedVia = "app";
+    } else {
+      const callerMemberSnap = await db.collection("schools").doc(schoolId).collection("members").doc(request.auth.uid).get();
+      if (!callerMemberSnap.exists) {
+        throw new HttpsError("permission-denied", "You are not a member of this school, and this account isn't linked to this class as a pupil either.");
+      }
+      const callerRole = callerMemberSnap.data()?.role as SchoolRole;
+      const isLeadership = LEADERSHIP_ROLES.includes(callerRole) || callerRole === "administrator";
+      const assignmentSubject = assignmentSnap.data()?.subjectName as string | undefined;
+      const isThisSubjectTeacher = assignmentSubject != null && (classData.subjectTeacherUids ?? {})[assignmentSubject] === request.auth.uid;
+      if (!isLeadership && !isThisSubjectTeacher) {
+        throw new HttpsError("permission-denied", "Only this assignment's subject teacher, or school leadership, can import a submission.");
+      }
+      if (!nonEmptyString(learnerName)) {
+        throw new HttpsError("invalid-argument", "A learner name is required to import a submission.");
+      }
+      const trimmedName = learnerName.trim();
+      if (!((classData.learnerNames as string[] | undefined) ?? []).includes(trimmedName)) {
+        throw new HttpsError("invalid-argument", "That name isn't on this class's roster.");
+      }
+      resolvedLearnerName = trimmedName;
+      submittedVia = "imported";
+    }
+
+    const submissionRef = assignmentRef.collection("submissions").doc();
+    await submissionRef.set({
+      learnerName: resolvedLearnerName,
+      photoPaths,
+      submittedVia,
+      submittedByUid: request.auth.uid,
+      submittedAt: admin.firestore.FieldValue.serverTimestamp(),
+      status: "queued",
+    });
+
+    return { submissionId: submissionRef.id };
+  }
+);
+
+// ---------------------------------------------------------------------
+// Home Assignment epic, Stage 10 (added 2026-09-14) — records ONE
+// submission's marking result. The actual AI grading call itself
+// (Concise/Stable Marker) happens CLIENT-SIDE, reusing
+// `gradeMarkingScriptConcise` exactly the way Scan Marker already does —
+// this function is only the write-back step (submissions have
+// `allow write: if false` in firestore.rules, so even the marking
+// teacher's own device can't write results directly).
+// ---------------------------------------------------------------------
+
+interface HomeAssignmentGradedAnswerInput {
+  questionLabel: string;
+  transcribedAnswer: string;
+  marksAwarded: number;
+  maxMarks: number;
+  confidence: "high" | "medium" | "low";
+}
+
+interface RecordHomeAssignmentMarkingResultRequest {
+  schoolId: string;
+  classId: string;
+  assignmentId: string;
+  submissionId: string;
+  score: number;
+  maxScore: number;
+  answers: HomeAssignmentGradedAnswerInput[];
+  markingEngine: "concise" | "stable";
+}
+
+export const recordHomeAssignmentMarkingResult = onCall<RecordHomeAssignmentMarkingResultRequest>(
+  { region: "us-central1", timeoutSeconds: 30, maxInstances: 5 },
+  async (request): Promise<{ success: boolean }> => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "Sign in is required.");
+    }
+    const { schoolId, classId, assignmentId, submissionId, score, maxScore, answers, markingEngine } = request.data ?? {};
+    if (
+      !nonEmptyString(schoolId) ||
+      !nonEmptyString(classId) ||
+      !nonEmptyString(assignmentId) ||
+      !nonEmptyString(submissionId) ||
+      typeof score !== "number" ||
+      typeof maxScore !== "number" ||
+      !Array.isArray(answers) ||
+      (markingEngine !== "concise" && markingEngine !== "stable")
+    ) {
+      throw new HttpsError("invalid-argument", "A school, class, assignment, submission, score, and marking engine are required.");
+    }
+
+    const db = admin.firestore();
+    const classRef = db.collection("schools").doc(schoolId).collection("classes").doc(classId);
+    const assignmentRef = classRef.collection("homeAssignments").doc(assignmentId);
+    const [classSnap, assignmentSnap, callerMemberSnap] = await Promise.all([
+      classRef.get(),
+      assignmentRef.get(),
+      db.collection("schools").doc(schoolId).collection("members").doc(request.auth.uid).get(),
+    ]);
+    if (!classSnap.exists || !assignmentSnap.exists) {
+      throw new HttpsError("not-found", "That class or assignment could not be found.");
+    }
+    if (!callerMemberSnap.exists) {
+      throw new HttpsError("permission-denied", "You are not a member of this school.");
+    }
+    const classData = classSnap.data()!;
+    const callerRole = callerMemberSnap.data()?.role as SchoolRole;
+    const isLeadership = LEADERSHIP_ROLES.includes(callerRole) || callerRole === "administrator";
+    const assignmentSubject = assignmentSnap.data()?.subjectName as string | undefined;
+    const isThisSubjectTeacher = assignmentSubject != null && (classData.subjectTeacherUids ?? {})[assignmentSubject] === request.auth.uid;
+    if (!isLeadership && !isThisSubjectTeacher) {
+      throw new HttpsError("permission-denied", "Only this assignment's subject teacher, or school leadership, can record marking results.");
+    }
+
+    await assignmentRef.collection("submissions").doc(submissionId).update({
+      score,
+      maxScore,
+      answers,
+      markingEngine,
+      status: "marked",
+      markedAt: admin.firestore.FieldValue.serverTimestamp(),
+      markedByUid: request.auth.uid,
+    });
+
+    return { success: true };
+  }
+);
+
+// ---------------------------------------------------------------------
+// Home Assignment epic, Stage 11 (added 2026-09-14) — "Batch Review
+// before send... one 'Approve & Send Batch' action." Dispatches every
+// ALREADY-MARKED submission's result to its learner (guardian email/
+// WhatsApp tap-through, same infrastructure as sendHomeAssignmentToClass
+// above) and flips each to `status: "sent"`. Never marks anything itself
+// — a submission not already `status: "marked"` is skipped, not marked
+// on the fly, so this function can never be used to bypass the batch
+// review step.
+// ---------------------------------------------------------------------
+
+interface SendHomeAssignmentBatchResultsRequest {
+  schoolId: string;
+  classId: string;
+  assignmentId: string;
+  submissionIds: string[];
+}
+
+export const sendHomeAssignmentBatchResults = onCall<SendHomeAssignmentBatchResultsRequest>(
+  { secrets: [brevoApiKey, brevoSenderEmail], region: "us-central1", timeoutSeconds: 180, memory: "256MiB", maxInstances: 5 },
+  async (request): Promise<{ sent: number; skipped: number; emailsSent: number; emailsFailed: number; whatsappRecipients: { name: string; phone: string }[] }> => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "Sign in is required.");
+    }
+    const { schoolId, classId, assignmentId, submissionIds } = request.data ?? {};
+    if (!nonEmptyString(schoolId) || !nonEmptyString(classId) || !nonEmptyString(assignmentId) || !Array.isArray(submissionIds) || submissionIds.length === 0) {
+      throw new HttpsError("invalid-argument", "A school, class, assignment, and at least one submission are required.");
+    }
+
+    const db = admin.firestore();
+    const classRef = db.collection("schools").doc(schoolId).collection("classes").doc(classId);
+    const assignmentRef = classRef.collection("homeAssignments").doc(assignmentId);
+    const [classSnap, assignmentSnap, callerMemberSnap] = await Promise.all([
+      classRef.get(),
+      assignmentRef.get(),
+      db.collection("schools").doc(schoolId).collection("members").doc(request.auth.uid).get(),
+    ]);
+    if (!classSnap.exists || !assignmentSnap.exists) {
+      throw new HttpsError("not-found", "That class or assignment could not be found.");
+    }
+    if (!callerMemberSnap.exists) {
+      throw new HttpsError("permission-denied", "You are not a member of this school.");
+    }
+    const classData = classSnap.data()!;
+    const assignmentData = assignmentSnap.data()!;
+    const callerRole = callerMemberSnap.data()?.role as SchoolRole;
+    const isLeadership = LEADERSHIP_ROLES.includes(callerRole) || callerRole === "administrator";
+    const isThisSubjectTeacher = (classData.subjectTeacherUids ?? {})[assignmentData.subjectName as string] === request.auth.uid;
+    if (!isLeadership && !isThisSubjectTeacher) {
+      throw new HttpsError("permission-denied", "Only this assignment's subject teacher, or school leadership, can send batch results.");
+    }
+
+    const learnerNames = (classData.learnerNames as string[] | undefined) ?? [];
+    const contactsSnap = await classRef.collection("guardianContacts").doc("data").get();
+    const contacts = (contactsSnap.data()?.contacts ?? []) as GuardianContactInput[];
+    const contactByLearnerName = new Map<string, GuardianContactInput>();
+    for (let i = 0; i < learnerNames.length; i++) {
+      if (contacts[i]) contactByLearnerName.set(learnerNames[i], contacts[i]);
+    }
+
+    let sent = 0;
+    let skipped = 0;
+    let emailsSent = 0;
+    let emailsFailed = 0;
+    const whatsappRecipients: { name: string; phone: string }[] = [];
+
+    for (const submissionId of submissionIds.slice(0, MAX_BROADCAST_RECIPIENTS)) {
+      const submissionRef = assignmentRef.collection("submissions").doc(submissionId);
+      const submissionSnap = await submissionRef.get();
+      if (!submissionSnap.exists || submissionSnap.data()?.status !== "marked") {
+        skipped++;
+        continue;
+      }
+      const submissionData = submissionSnap.data()!;
+      const learnerName = submissionData.learnerName as string;
+      const contact = contactByLearnerName.get(learnerName);
+
+      if (contact?.email) {
+        try {
+          const response = await fetch("https://api.brevo.com/v3/smtp/email", {
+            method: "POST",
+            headers: { "api-key": brevoApiKey.value(), "Content-Type": "application/json", "Accept": "application/json" },
+            body: JSON.stringify({
+              sender: { name: "Smart Teacher", email: brevoSenderEmail.value() },
+              to: [{ email: contact.email, name: `Guardian of ${learnerName}` }],
+              subject: `Home Assignment result: ${assignmentData.title}`,
+              htmlContent: `<p>${learnerName} scored ${submissionData.score} out of ${submissionData.maxScore} on "${assignmentData.title}".</p>`,
+            }),
+          });
+          if (response.ok) emailsSent++;
+          else emailsFailed++;
+        } catch (err) {
+          emailsFailed++;
+          console.error("sendHomeAssignmentBatchResults: network error emailing a guardian", err);
+        }
+      }
+      if (contact?.phone) {
+        whatsappRecipients.push({ name: learnerName, phone: contact.phone });
+      }
+
+      await submissionRef.update({ status: "sent", sentAt: admin.firestore.FieldValue.serverTimestamp() });
+      sent++;
+    }
+
+    return { sent, skipped, emailsSent, emailsFailed, whatsappRecipients };
+  }
+);
+
+// ---------------------------------------------------------------------
+// Home Assignment epic, Stage 12 (added 2026-09-14) — "reuse the
+// Submissions Dashboard's reminder mechanism." That mechanism does not
+// actually exist anywhere in this codebase (confirmed before building
+// this — teacher_submissions_dashboard_screen.dart's own doc comment
+// explicitly lists a per-student "Remind" nudge as deliberately NOT
+// built, since that lightweight mailbox model has no real class roster
+// to remind against). This is a genuinely new reminder, built the same
+// way as everything else in this epic (loop-per-recipient email +
+// WhatsApp tap-through) rather than a reuse of something that isn't
+// there.
+// ---------------------------------------------------------------------
+
+interface RemindHomeAssignmentNonSubmittersRequest {
+  schoolId: string;
+  classId: string;
+  assignmentId: string;
+}
+
+export const remindHomeAssignmentNonSubmitters = onCall<RemindHomeAssignmentNonSubmittersRequest>(
+  { secrets: [brevoApiKey, brevoSenderEmail], region: "us-central1", timeoutSeconds: 180, memory: "256MiB", maxInstances: 5 },
+  async (request): Promise<{ remindedCount: number; emailsSent: number; emailsFailed: number; whatsappRecipients: { name: string; phone: string }[] }> => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "Sign in is required.");
+    }
+    const { schoolId, classId, assignmentId } = request.data ?? {};
+    if (!nonEmptyString(schoolId) || !nonEmptyString(classId) || !nonEmptyString(assignmentId)) {
+      throw new HttpsError("invalid-argument", "A school, class, and assignment are required.");
+    }
+
+    const db = admin.firestore();
+    const classRef = db.collection("schools").doc(schoolId).collection("classes").doc(classId);
+    const assignmentRef = classRef.collection("homeAssignments").doc(assignmentId);
+    const [classSnap, assignmentSnap, callerMemberSnap, submissionsSnap] = await Promise.all([
+      classRef.get(),
+      assignmentRef.get(),
+      db.collection("schools").doc(schoolId).collection("members").doc(request.auth.uid).get(),
+      assignmentRef.collection("submissions").get(),
+    ]);
+    if (!classSnap.exists || !assignmentSnap.exists) {
+      throw new HttpsError("not-found", "That class or assignment could not be found.");
+    }
+    if (!callerMemberSnap.exists) {
+      throw new HttpsError("permission-denied", "You are not a member of this school.");
+    }
+    const classData = classSnap.data()!;
+    const assignmentData = assignmentSnap.data()!;
+    const callerRole = callerMemberSnap.data()?.role as SchoolRole;
+    const isLeadership = LEADERSHIP_ROLES.includes(callerRole) || callerRole === "administrator";
+    const isThisSubjectTeacher = (classData.subjectTeacherUids ?? {})[assignmentData.subjectName as string] === request.auth.uid;
+    if (!isLeadership && !isThisSubjectTeacher) {
+      throw new HttpsError("permission-denied", "Only this assignment's subject teacher, or school leadership, can send reminders.");
+    }
+
+    const submittedNames = new Set(submissionsSnap.docs.map((d) => d.data().learnerName as string));
+    const learnerNames = ((classData.learnerNames as string[] | undefined) ?? []).filter((n) => !submittedNames.has(n));
+    const allLearnerNames = (classData.learnerNames as string[] | undefined) ?? [];
+    const contactsSnap = await classRef.collection("guardianContacts").doc("data").get();
+    const contacts = (contactsSnap.data()?.contacts ?? []) as GuardianContactInput[];
+
+    let emailsSent = 0;
+    let emailsFailed = 0;
+    const whatsappRecipients: { name: string; phone: string }[] = [];
+
+    for (const learnerName of learnerNames.slice(0, MAX_BROADCAST_RECIPIENTS)) {
+      const index = allLearnerNames.indexOf(learnerName);
+      const contact = index >= 0 ? contacts[index] : undefined;
+      if (!contact) continue;
+      if (contact.email) {
+        try {
+          const response = await fetch("https://api.brevo.com/v3/smtp/email", {
+            method: "POST",
+            headers: { "api-key": brevoApiKey.value(), "Content-Type": "application/json", "Accept": "application/json" },
+            body: JSON.stringify({
+              sender: { name: "Smart Teacher", email: brevoSenderEmail.value() },
+              to: [{ email: contact.email, name: `Guardian of ${learnerName}` }],
+              subject: `Reminder: Home Assignment "${assignmentData.title}"`,
+              htmlContent: `<p>${learnerName} has not yet submitted the Home Assignment "${assignmentData.title}"${
+                assignmentData.deadlineIso ? ` (due ${new Date(assignmentData.deadlineIso).toLocaleDateString()})` : ""
+              }.</p>`,
+            }),
+          });
+          if (response.ok) emailsSent++;
+          else emailsFailed++;
+        } catch (err) {
+          emailsFailed++;
+          console.error("remindHomeAssignmentNonSubmitters: network error emailing a guardian", err);
+        }
+      }
+      if (contact.phone) {
+        whatsappRecipients.push({ name: learnerName, phone: contact.phone });
+      }
+    }
+
+    return { remindedCount: learnerNames.length, emailsSent, emailsFailed, whatsappRecipients };
   }
 );

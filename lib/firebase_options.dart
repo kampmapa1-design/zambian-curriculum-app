@@ -17,10 +17,7 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -57,6 +54,20 @@ class DefaultFirebaseOptions {
     appId: '1:377253758104:android:f42389b2e8f9a024d17ced',
     messagingSenderId: '377253758104',
     projectId: 'zambian-curriculum-app',
+    storageBucket: 'zambian-curriculum-app.firebasestorage.app',
+  );
+
+  // Registered 2026-09-14 for the new web admin dashboard (School Network
+  // Milestone D) — a separate Firebase "app" registration from the
+  // Android one above, same underlying project, so both share the same
+  // Auth users/Firestore data (Stage 1's "same account, same school data
+  // on either platform" requirement — no separate registration step).
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyAYa7JAIbz0pHHwoKEKOsJWf0Drtk39PPw',
+    appId: '1:377253758104:web:2e0acae01c3fe908d17ced',
+    messagingSenderId: '377253758104',
+    projectId: 'zambian-curriculum-app',
+    authDomain: 'zambian-curriculum-app.firebaseapp.com',
     storageBucket: 'zambian-curriculum-app.firebasestorage.app',
   );
 }

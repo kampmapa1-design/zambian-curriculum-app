@@ -126,12 +126,34 @@ class CdcResourcesService {
 
     await AuthService.instance.ensureSignedIn();
 
-    final callable = _functions.httpsCallable('listCdcResources');
+    // Explicit timeout (2026-09-15): this callable chains two Gemini calls
+    // server-side (research with search/browsing tools, then structuring),
+    // which can plausibly run past the client's 70s default — leaving the
+    // function still running and billing Gemini server-side after the app
+    // has already shown the teacher a failure, inviting a retry that pays
+    // for a second live crawl on top of the first. Match the server's own
+    // timeoutSeconds (480) so a genuinely slow crawl surfaces as itself
+    // finishing, not as a premature client-side timeout.
+    final callable = _functions.httpsCallable(
+      'listCdcResources',
+      options: HttpsCallableOptions(timeout: const Duration(seconds: 480)),
+    );
     Map<Object?, Object?> data;
     try {
       final result = await callable.call<Map<Object?, Object?>>();
       data = result.data;
     } on FirebaseFunctionsException catch (e) {
+      // Record the attempt even on failure (2026-09-15 fix): this used to
+      // only persist _lastCheckedKey on success, so once the backend
+      // starts failing (e.g. the Gemini prepay balance running out), every
+      // subsequent app/home-screen load saw refreshIfDue as still "due"
+      // and retried immediately — an unthrottled retry storm visible in
+      // Cloud Logging as dozens of failed calls a day. A failed check now
+      // still counts as "checked" for a full refreshInterval, same as a
+      // successful one; a teacher who wants to retry sooner already has
+      // the manual force-refresh in CdcResourcesScreen for that.
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_lastCheckedKey, DateTime.now().toIso8601String());
       // 'not-found'/'internal' here almost always means the function hasn't
       // been deployed yet — most likely because the Firebase project is
       // still on the free Spark plan (Cloud Functions can't make outbound

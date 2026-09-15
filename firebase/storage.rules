@@ -35,5 +35,42 @@ service firebase.storage {
         && request.resource.size < 25 * 1024 * 1024
         && request.resource.contentType == 'application/pdf';
     }
+
+    // Timetable Generation, Stage 12 (added 2026-09-14) — a school's
+    // logo, embedded as a header on branded exports (see
+    // SchoolBrandingService). Fixed single path per school, no
+    // per-uid segment: any member of that school can READ it (a logo
+    // isn't sensitive — the whole point is putting it on shared
+    // exports), gated the same cheap way as Firestore's own
+    // `schools/{schoolId}` rules (the caller's own custom claims, no
+    // extra lookup). Only leadership/administrator can WRITE it —
+    // same roles allowed to pin a Staffroom post.
+    // Home Assignment epic, Stage 8/9 (added 2026-09-14) — a submission's
+    // answer photos. `{uploaderUid}` is whoever's device actually
+    // uploaded them: the pupil themselves for an in-app submission
+    // (Stage 8), or the subject teacher's own uid for a bulk-imported one
+    // (Stage 9, external photos with no pupil account behind them at
+    // all) — either way, only that same signed-in uid may write there,
+    // and only when they genuinely belong to this school/class one way or
+    // the other. Read is any staff member of the school (to mark/review)
+    // — mirrors every other read gate in this app's School Network data.
+    match /schools/{schoolId}/classes/{classId}/homeAssignments/{assignmentId}/submissions/{uploaderUid}/{fileName} {
+      allow read: if request.auth != null && request.auth.token.schoolId == schoolId;
+      allow write: if request.auth != null
+        && request.auth.uid == uploaderUid
+        && (request.auth.token.schoolId == schoolId ||
+            (request.auth.token.pupilSchoolId == schoolId && request.auth.token.pupilClassId == classId))
+        && request.resource.size < 10 * 1024 * 1024
+        && request.resource.contentType.matches('image/.*');
+    }
+
+    match /schools/{schoolId}/logo {
+      allow read: if request.auth != null && request.auth.token.schoolId == schoolId;
+      allow write: if request.auth != null
+        && request.auth.token.schoolId == schoolId
+        && request.auth.token.schoolRole in ["head_teacher", "deputy", "administrator"]
+        && request.resource.size < 2 * 1024 * 1024
+        && request.resource.contentType.matches('image/.*');
+    }
   }
 }
