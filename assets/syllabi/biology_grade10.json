@@ -1,5 +1,5 @@
 {
-  "_source": "Ministry of Education / Curriculum Development Centre, Zambia. 'Biology Syllabus, Grade 10-12' (2013, published by CDC) — Grade 10, Topics 10.1-10.9. Topic, sub-topic and Specific Outcome statements only; the 'Content' (Knowledge/Skills/Values) columns are omitted, consistent with the approach used for the other 2013 OBC subjects in this app. The syllabus's own front-matter Table of Contents lists 12 separate 'Units' for Grade 10 (Organisms and life processes; Animal and plant cells; Cells and water; Nutrients; Enzymes; Dentition in mammals; Nutrition in animals; The Soil; Photosynthesis; Saprophytic nutrition; Respiration; Gaseous exchange), but the actual instructional table body groups and orders this content differently under 9 Topics (10.1-10.9) — for example, body Topic 10.2 merges what the front matter calls 'Animal and plant cells' and 'Cells and water' into one topic, and 'The Soil' does not appear anywhere in the Grade 10 body table at all; it is taught instead as Topic 12.6 in Grade 12, per the body. This file follows the instructional table body throughout, since it is the actual outcome content, not the front-matter listing. The syllabus organizes content by Grade only, not by Term, so all of Grade 10 is modeled as a single term here. STRUCTURAL TERM SPLIT (2026-08-31, not sourced): this file's topics were previously modeled as a single undivided 'Year' block (no real per-topic term/week data exists for this subject/grade). At the user's own explicit request and choice among alternatives offered, the SAME real topics above have now been divided into three roughly-equal-by-content-volume groups, in their original curriculum order, labelled 'Term 1'/'Term 2'/'Term 3' purely so the app can generate and share one term at a time. This division of which topic falls in which term is NOT sourced from any real scheme of work - it is an organizational split only. No topic, sub-topic, competency, or objective was added, removed, or altered; only the grouping changed. Each term's own topics still have no real week_number of their own, so within a term the app's existing calendar-pacing engine spreads them algorithmically across that term's real teaching weeks, exactly as it already did for the whole undivided Year block before this split.",
+  "_source": "Ministry of Education / Curriculum Development Centre, Zambia. 'Biology Syllabus, Grade 10-12' (2013, published by CDC) — Grade 10, Topics 10.1-10.9. Topic, sub-topic and Specific Outcome statements only; the 'Content' (Knowledge/Skills/Values) columns are omitted, consistent with the approach used for the other 2013 OBC subjects in this app. The syllabus's own front-matter Table of Contents lists 12 separate 'Units' for Grade 10 (Organisms and life processes; Animal and plant cells; Cells and water; Nutrients; Enzymes; Dentition in mammals; Nutrition in animals; The Soil; Photosynthesis; Saprophytic nutrition; Respiration; Gaseous exchange), but the actual instructional table body groups and orders this content differently under 9 Topics (10.1-10.9) — for example, body Topic 10.2 merges what the front matter calls 'Animal and plant cells' and 'Cells and water' into one topic, and 'The Soil' does not appear anywhere in the Grade 10 body table at all; it is taught instead as Topic 12.6 in Grade 12, per the body. This file follows the instructional table body throughout, since it is the actual outcome content, not the front-matter listing. The syllabus organizes content by Grade only, not by Term, so all of Grade 10 is modeled as a single term here. STRUCTURAL TERM SPLIT (2026-08-31, not sourced): this file's topics were previously modeled as a single undivided 'Year' block (no real per-topic term/week data exists for this subject/grade). At the user's own explicit request and choice among alternatives offered, the SAME real topics above have now been divided into three roughly-equal-by-content-volume groups, in their original curriculum order, labelled 'Term 1'/'Term 2'/'Term 3' purely so the app can generate and share one term at a time. This division of which topic falls in which term is NOT sourced from any real scheme of work - it is an organizational split only. No topic, sub-topic, competency, or objective was added, removed, or altered; only the grouping changed. Each term's own topics still have no real week_number of their own, so within a term the app's existing calendar-pacing engine spreads them algorithmically across that term's real teaching weeks, exactly as it already did for the whole undivided Year block before this split.\n\nREAL PER-TERM CROSS-CHECK (2026-09-16): a genuine 'MINISTRY OF EDUCATION SCHEME OF WORK, GRADE 10 SUBJECT: BIOLOGY TERM: TWO YEAR: 2024' from a real Zambian secondary school's biology department was shared with this project via Drive (the source filename itself carried a real individual's name and phone number, neither of which is reproduced anywhere in this app -- only 'a real Zambian secondary school's biology department' is credited). It gives genuine real per-term placement for four of this file's nine topics: its own Term 2 runs Enzymes -> Nutrients -> Nutrition in Plants (external/internal leaf structure, photosynthesis) -> Saprophytic Nutrition (Rhizopus), in that order, over its own 14 real teaching weeks including end-of-term tests. That contradicts this file's own previous non-sourced structural split, which had put Enzymes and Nutrients in 'Term 1' and Nutrition in Plants/Saprophytic Nutrition in 'Term 2' -- an even four-topics-per-term division chosen only for volume balance, not because of any real term data. This real source's Term 2 grouping is now used instead: Term 1 keeps only 10.1 Living Organisms and 10.2 Cell Structure and Organisation; Term 2 becomes 10.3 Enzymes, 10.4 Nutrients, 10.5 Nutrition in Plants, 10.6 Saprophytic Nutrition (now a real, sourced grouping, no longer a volume-balanced guess); Term 3 gains 10.7 Nutrition in Animals and 10.8 Respiratory System ahead of 10.9 Health (this part still not sourced from any real Term 1/Term 3 document -- the real source only covers Term 2 for this grade). No topic, sub-topic, competency, or objective text was added, removed, or altered; only which term each topic sits in changed, and only where real data justified the change.",
   "curriculum": {
     "code": "OBC_2013",
     "name": "2013 Outcome-Based Curriculum",
@@ -159,10 +159,16 @@
               ]
             }
           ]
-        },
+        }
+      ]
+    },
+    {
+      "name": "Term 2",
+      "sequence_number": 2,
+      "topics": [
         {
           "name": "10.3 Enzymes",
-          "sequence_number": 3,
+          "sequence_number": 1,
           "sub_topics": [
             {
               "name": "10.3.1 Characteristics of Enzymes",
@@ -189,7 +195,7 @@
         },
         {
           "name": "10.4 Nutrients",
-          "sequence_number": 4,
+          "sequence_number": 2,
           "sub_topics": [
             {
               "name": "10.4.1 Classes of Nutrients",
@@ -251,16 +257,10 @@
               ]
             }
           ]
-        }
-      ]
-    },
-    {
-      "name": "Term 2",
-      "sequence_number": 2,
-      "topics": [
+        },
         {
           "name": "10.5 Nutrition in Plants",
-          "sequence_number": 1,
+          "sequence_number": 3,
           "sub_topics": [
             {
               "name": "10.5.1 External and Internal Structure of a Leaf",
@@ -307,7 +307,7 @@
         },
         {
           "name": "10.6 Saprophytic Nutrition",
-          "sequence_number": 2,
+          "sequence_number": 4,
           "sub_topics": [
             {
               "name": "10.6.1 Rhizopus",
@@ -341,10 +341,16 @@
               ]
             }
           ]
-        },
+        }
+      ]
+    },
+    {
+      "name": "Term 3",
+      "sequence_number": 3,
+      "topics": [
         {
           "name": "10.7 Nutrition in Animals",
-          "sequence_number": 3,
+          "sequence_number": 1,
           "sub_topics": [
             {
               "name": "10.7.1 Dentition in Mammals",
@@ -417,7 +423,7 @@
         },
         {
           "name": "10.8 Respiratory System",
-          "sequence_number": 4,
+          "sequence_number": 2,
           "sub_topics": [
             {
               "name": "10.8.1 Gaseous Exchange",
@@ -482,16 +488,10 @@
               ]
             }
           ]
-        }
-      ]
-    },
-    {
-      "name": "Term 3",
-      "sequence_number": 3,
-      "topics": [
+        },
         {
           "name": "10.9 Health",
-          "sequence_number": 1,
+          "sequence_number": 3,
           "sub_topics": [
             {
               "name": "10.9.1 Diseases",
