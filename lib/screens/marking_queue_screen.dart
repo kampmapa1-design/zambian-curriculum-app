@@ -206,18 +206,31 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
     // session only stores enough to do exactly this, not a full template
     // object (see MarkingSession's own doc comment).
     SyllabusTemplate? carriedTemplate;
-    if (_activeSession case final session?) {
+    if (_activeSession case final session?
+        when session.curriculumCode != null && session.subjectCode != null && session.gradeLevel != null) {
       carriedTemplate = await _templateRepository.loadSyllabus(
-        curriculumCode: session.curriculumCode,
-        subjectCode: session.subjectCode,
-        gradeLevel: session.gradeLevel,
+        curriculumCode: session.curriculumCode!,
+        subjectCode: session.subjectCode!,
+        gradeLevel: session.gradeLevel!,
       );
       if (!mounted) return;
     }
 
+    // A tertiary session has no SyllabusTemplate to carry forward — pass
+    // its free-text subject name through instead so BurstCaptureScreen can
+    // pre-fill the same "Subject / course" field a fresh tertiary setup
+    // would ask for, same convenience the secondary path already had.
+    final carriedTertiarySubjectName =
+        _activeSession != null && _activeSession!.curriculumCode == null ? _activeSession!.subjectName : null;
+
     final result = await Navigator.of(context).push<MarkingScript>(
       MaterialPageRoute(
-        builder: (_) => BurstCaptureScreen(repository: _repository, initialPageFiles: files, initialTemplate: carriedTemplate),
+        builder: (_) => BurstCaptureScreen(
+          repository: _repository,
+          initialPageFiles: files,
+          initialTemplate: carriedTemplate,
+          initialTertiarySubjectName: carriedTertiarySubjectName,
+        ),
       ),
     );
     if (result != null) _load();

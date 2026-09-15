@@ -26,6 +26,10 @@ import '../widgets/score_pop_badge.dart';
 /// cohort — see [_ScriptBatchCaptureScreenState._resolveMarkingKeyForNewCohort].
 enum _KeySourceChoice { useSaved, uploadNew }
 
+/// Which of the two real options a teacher picked for who this script
+/// belongs to — see [_ScriptBatchCaptureScreenState._askCandidateLevel].
+enum _CandidateLevel { secondary, tertiary }
+
 /// AI-Assisted Marking — "Upload Script" → "Upload through camera". One
 /// script (its whole batch of pages — typically around 6) per screen visit,
 /// but many scripts across one continuous *session* — see [MarkingSession].
@@ -44,7 +48,14 @@ enum _KeySourceChoice { useSaved, uploadNew }
 /// Subject/grade, the marking scheme, how many scripts this session plans
 /// to capture, and the candidate's name/gender/ID/class are all asked in
 /// [_completeSetup] right after the *first* page is captured, not before —
-/// see [_captureNextPage]. This screen used to auto-detect the name from
+/// see [_captureNextPage]. The very first question (2026-09-15, per
+/// explicit request) is whether this is a secondary or tertiary student:
+/// a marking key for a university/tertiary course was never for a bundled
+/// Form/Grade subject, so being forced through SubjectGradeTopicPickerScreen
+/// anyway was a real glitch, not a missing nice-to-have — the tertiary
+/// branch skips that picker entirely for a free-text subject/course name,
+/// asked after the student's own name rather than before it. See
+/// [_askCandidateLevel]/[_askTertiarySubject]. This screen used to auto-detect the name from
 /// the first captured page (a Gemini call, see CandidateNameDetectionService),
 /// but that turned out to be a significant, avoidable share of this app's
 /// AI cost at real scale (2026-08-30) for something a teacher can type in a
@@ -91,7 +102,11 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
   /// treats a newly captured page as "the first page, still need setup"
   /// rather than just adding it to an already-configured script.
   bool _setupComplete = false;
-  SyllabusTemplate? _subjectGrade;
+  /// The two strings _saveOrUpdateScript actually needs — set once setup
+  /// completes, for both the secondary (from a real SyllabusTemplate) and
+  /// tertiary (free-typed) branches. See [_completeSetup].
+  String? _resolvedSubjectName;
+  String? _resolvedGradeName;
   MarkingScheme? _scheme;
   int _scriptNumber = 1;
 
@@ -170,24 +185,28 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
   /// attempt and returns to the hub.
   Future<bool> _completeSetup() async {
     setState(() => _settingUp = true);
-    SyllabusTemplate template;
-    MarkingScheme scheme;
 
     if (_session case final session?) {
       // Resuming an already-active session (the very common case: this is
       // the 2nd+ script of the same sitting, or the teacher left the app
       // entirely and came back) — never re-ask subject/grade/scheme/count,
       // see MarkingSession's own doc comment on why this is persisted.
-      final reloadedTemplate = await _templateRepository.loadSyllabus(
-        curriculumCode: session.curriculumCode,
-        subjectCode: session.subjectCode,
-        gradeLevel: session.gradeLevel,
-      );
+      // A tertiary session (curriculumCode null) has no SyllabusTemplate
+      // to reload at all — its free-text subjectName/gradeName already
+      // are its whole identity.
+      final isTertiarySession = session.curriculumCode == null;
+      final reloadedTemplate = isTertiarySession
+          ? null
+          : await _templateRepository.loadSyllabus(
+              curriculumCode: session.curriculumCode!,
+              subjectCode: session.subjectCode!,
+              gradeLevel: session.gradeLevel!,
+            );
       final schemeCatalog = await _schemeRepository.loadCatalog();
       final reloadedScheme = schemeCatalog.schemes.where((s) => s.id == session.schemeId).firstOrNull;
       if (!mounted) return false;
 
-      if (reloadedTemplate == null || reloadedScheme == null) {
+      if ((!isTertiarySession && reloadedTemplate == null) || reloadedScheme == null) {
         // What this session pointed to no longer exists (e.g. the marking
         // key was deleted mid-session) — can't silently resume against
         // nothing. End the stale session and fall through to asking fresh,
@@ -195,16 +214,15 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
         await _sessionRepository.end();
         _session = null;
       } else {
-        template = reloadedTemplate;
-        scheme = reloadedScheme;
         final details = await _askScriptDetails();
         if (!mounted) return false;
         if (details == null) return false;
         final nextNumber = await _repository.nextScriptNumber();
         if (!mounted) return false;
         setState(() {
-          _subjectGrade = template;
-          _scheme = scheme;
+          _resolvedSubjectName = session.subjectName;
+          _resolvedGradeName = session.gradeName;
+          _scheme = reloadedScheme;
           _scriptNumber = nextNumber;
           _firstName = details.firstName;
           _surname = details.surname;
@@ -218,24 +236,51 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
       }
     }
 
-    // No active session — the real first-time setup: subject & grade, the
-    // marking key, and (new, per explicit request) how many scripts this
-    // session plans to capture, so none of it needs re-asking for every
-    // script in the same sitting.
+    // No active session — the real first-time setup. First, which kind of
+    // student (2026-09-15, per explicit request): a marking key uploaded
+    // for a tertiary/university student was never for a Form/Grade subject
+    // in the first place, so forcing that picker on a teacher marking one
+    // was a real glitch, not a missing nice-to-have. Secondary keeps its
+    // existing order (Subject & Grade, then the marking key); tertiary
+    // skips the picker entirely and asks the student's name BEFORE which
+    // subject/course, per the same explicit request.
     if (!mounted) return false;
-    final pickedTemplate = await Navigator.of(context).push<SyllabusTemplate>(
-      MaterialPageRoute(
-        builder: (_) => const SubjectGradeTopicPickerScreen(title: 'Subject & Grade'),
-      ),
-    );
+    final level = await _askCandidateLevel();
     if (!mounted) return false;
-    if (pickedTemplate == null) return false;
+    if (level == null) return false;
 
-    final pickedScheme = await _resolveMarkingKeyForNewCohort(pickedTemplate);
+    SyllabusTemplate? pickedTemplate;
+    String subjectName;
+    String gradeName;
+    _ScriptDetails? tertiaryDetails;
+
+    if (level == _CandidateLevel.tertiary) {
+      tertiaryDetails = await _askScriptDetails();
+      if (!mounted) return false;
+      if (tertiaryDetails == null) return false;
+
+      final subject = await _askTertiarySubject();
+      if (!mounted) return false;
+      if (subject == null) return false;
+      subjectName = subject;
+      gradeName = 'Tertiary';
+    } else {
+      final picked = await Navigator.of(context).push<SyllabusTemplate>(
+        MaterialPageRoute(
+          builder: (_) => const SubjectGradeTopicPickerScreen(title: 'Subject & Grade'),
+        ),
+      );
+      if (!mounted) return false;
+      if (picked == null) return false;
+      pickedTemplate = picked;
+      subjectName = picked.subject.name;
+      gradeName = picked.grade.name;
+    }
+
+    final pickedScheme = await _resolveMarkingKeyForNewCohort(subjectName);
     if (!mounted) return false;
     if (pickedScheme == null) return false;
-    template = pickedTemplate;
-    scheme = pickedScheme;
+    final scheme = pickedScheme;
 
     final cohortDetails = await _askCohortDetails();
     if (!mounted) return false;
@@ -245,7 +290,9 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
     if (!mounted) return false;
     if (targetCount == null) return false;
 
-    final details = await _askScriptDetails(initialClassLevel: cohortDetails.className);
+    // Secondary still asks for the student's details here, same order as
+    // before; tertiary already asked (and has) them, above.
+    final details = tertiaryDetails ?? await _askScriptDetails(initialClassLevel: cohortDetails.className);
     if (!mounted) return false;
     if (details == null) return false;
 
@@ -253,11 +300,11 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
     if (!mounted) return false;
 
     final newSession = MarkingSession(
-      curriculumCode: template.curriculum.code,
-      subjectCode: template.subject.code,
-      gradeLevel: template.grade.level,
-      subjectName: template.subject.name,
-      gradeName: template.grade.name,
+      curriculumCode: pickedTemplate?.curriculum.code,
+      subjectCode: pickedTemplate?.subject.code,
+      gradeLevel: pickedTemplate?.grade.level,
+      subjectName: subjectName,
+      gradeName: gradeName,
       schemeId: scheme.id,
       schemeTitle: scheme.title,
       cohortName: cohortDetails.cohortName,
@@ -272,7 +319,8 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
 
     setState(() {
       _session = newSession;
-      _subjectGrade = template;
+      _resolvedSubjectName = subjectName;
+      _resolvedGradeName = gradeName;
       _scheme = scheme;
       _scriptNumber = startNumber;
       _firstName = details.firstName;
@@ -284,6 +332,71 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
       _setupComplete = true;
     });
     return true;
+  }
+
+  /// "Tertiary education student or secondary school learner?" — asked
+  /// once, before anything else, at the very start of a new session
+  /// (2026-09-15, per explicit request). Returns null if the teacher backs
+  /// out, same convention as every other setup step here.
+  Future<_CandidateLevel?> _askCandidateLevel() {
+    return showDialog<_CandidateLevel>(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) => SimpleDialog(
+        title: const Text('Tertiary education student or secondary school learner?'),
+        children: [
+          SimpleDialogOption(
+            onPressed: () => Navigator.of(dialogContext).pop(_CandidateLevel.secondary),
+            child: const Text('Secondary school learner'),
+          ),
+          SimpleDialogOption(
+            onPressed: () => Navigator.of(dialogContext).pop(_CandidateLevel.tertiary),
+            child: const Text('Tertiary education student'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// The tertiary-branch replacement for SubjectGradeTopicPickerScreen — a
+  /// plain free-text subject/course name, since there's no bundled
+  /// secondary-curriculum Form/Grade to pick from for a university-level
+  /// marking key. Asked AFTER the student's name (2026-09-15, per explicit
+  /// request) — see the caller in [_completeSetup].
+  Future<String?> _askTertiarySubject() {
+    final controller = TextEditingController();
+    final formKey = GlobalKey<FormState>();
+    return showDialog<String>(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Which subject / course?'),
+        content: Form(
+          key: formKey,
+          child: TextFormField(
+            controller: controller,
+            autofocus: true,
+            decoration: const InputDecoration(
+              labelText: 'Subject / course name',
+              hintText: 'e.g. "Introduction to Economics", "BIO 201"',
+              border: OutlineInputBorder(),
+            ),
+            textCapitalization: TextCapitalization.words,
+            validator: (v) => (v == null || v.trim().isEmpty) ? 'Required' : null,
+          ),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(dialogContext).pop(), child: const Text('Cancel')),
+          FilledButton(
+            onPressed: () {
+              if (!(formKey.currentState?.validate() ?? false)) return;
+              Navigator.of(dialogContext).pop(controller.text.trim());
+            },
+            child: const Text('Continue'),
+          ),
+        ],
+      ),
+    );
   }
 
   /// Asked once, right after a marking key is chosen/uploaded for a new
@@ -518,7 +631,7 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
                 TextFormField(
                   controller: classLevelController,
                   decoration: const InputDecoration(
-                    labelText: 'Class / Level (e.g. "10A", "Form 2 Blue")',
+                    labelText: 'Class / Level / Year (e.g. "10A", "Form 2 Blue", "Year 2")',
                     border: OutlineInputBorder(),
                   ),
                   textCapitalization: TextCapitalization.words,
@@ -573,7 +686,7 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
   /// silently fail. Loops back to this same choice if either path is
   /// backed out of, rather than dead-ending the whole "start a cohort"
   /// attempt on a single misstep.
-  Future<MarkingScheme?> _resolveMarkingKeyForNewCohort(SyllabusTemplate pickedTemplate) async {
+  Future<MarkingScheme?> _resolveMarkingKeyForNewCohort(String subjectName) async {
     while (true) {
       if (!mounted) return null;
       final choice = await showDialog<_KeySourceChoice>(
@@ -596,7 +709,7 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
       if (!mounted || choice == null) return null;
 
       if (choice == _KeySourceChoice.useSaved) {
-        final picked = await _pickAnyMarkingScheme(pickedTemplate);
+        final picked = await _pickAnyMarkingScheme(subjectName);
         if (!mounted) return null;
         if (picked != null) return picked;
         continue; // backed out of the list, or nothing saved yet — ask again
@@ -612,12 +725,14 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
   /// Every saved marking key, regardless of subject — see
   /// [_resolveMarkingKeyForNewCohort]'s own doc comment on why this no
   /// longer filters by an exact subject-name match. Keys whose own
-  /// subject name matches [pickedTemplate]'s real syllabus subject are
+  /// subject name matches [subjectName] (a real bundled syllabus subject
+  /// for a secondary session, or a tertiary teacher's own free-typed
+  /// course name) are
   /// listed first under their own heading (still the common, convenient
   /// case), everything else follows under "Other saved keys" — labeled
   /// with its own subject name so a different subject's key is never
   /// mistaken for this one — rather than being hidden entirely.
-  Future<MarkingScheme?> _pickAnyMarkingScheme(SyllabusTemplate pickedTemplate) async {
+  Future<MarkingScheme?> _pickAnyMarkingScheme(String subjectName) async {
     final schemes = await _schemeRepository.loadCatalog();
     if (!mounted) return null;
     if (schemes.schemes.isEmpty) {
@@ -632,7 +747,7 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
       return null;
     }
 
-    final (:matching, :other) = splitMarkingSchemesBySubjectMatch(schemes.schemes, pickedTemplate.subject.name);
+    final (:matching, :other) = splitMarkingSchemesBySubjectMatch(schemes.schemes, subjectName);
 
     if (!mounted) return null;
     return showDialog<MarkingScheme>(
@@ -643,7 +758,7 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
           if (matching.isNotEmpty) ...[
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-              child: Text(pickedTemplate.subject.name, style: Theme.of(dialogContext).textTheme.labelMedium),
+              child: Text(subjectName, style: Theme.of(dialogContext).textTheme.labelMedium),
             ),
             for (final s in matching)
               SimpleDialogOption(
@@ -789,8 +904,8 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
       gender: _gender,
       studentIdNumber: _studentId.isEmpty ? null : _studentId,
       scriptNumber: _scriptNumber,
-      subjectName: _subjectGrade!.subject.name,
-      gradeName: _subjectGrade!.grade.name,
+      subjectName: _resolvedSubjectName!,
+      gradeName: _resolvedGradeName!,
       classLevel: _classLevel,
       cohortName: _session?.cohortName ?? '',
       capturedPageFiles: _pages,

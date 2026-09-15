@@ -18,10 +18,16 @@
 class MarkingSession {
   /// Together with [subjectCode]/[gradeLevel], enough to reload the exact
   /// same SyllabusTemplate via TemplateRepository.loadSyllabus — see
-  /// Curriculum.code/Subject.code/Grade.level.
-  final String curriculumCode;
-  final String subjectCode;
-  final int gradeLevel;
+  /// Curriculum.code/Subject.code/Grade.level. Null for a tertiary/
+  /// university-student session (2026-09-15, per explicit request): there
+  /// is no bundled secondary-curriculum SyllabusTemplate to reload for a
+  /// marking key that was never for a Form/Grade subject in the first
+  /// place — [subjectName]/[gradeName] (the latter a fixed 'Tertiary'
+  /// label) are the only identity such a session has, and are already
+  /// everything downstream (MarkingScheme, MarkingScript) actually stores.
+  final String? curriculumCode;
+  final String? subjectCode;
+  final int? gradeLevel;
 
   /// Display-only — avoids reloading the template just to show a label
   /// while resuming.
@@ -67,9 +73,9 @@ class MarkingSession {
   final DateTime startedAt;
 
   const MarkingSession({
-    required this.curriculumCode,
-    required this.subjectCode,
-    required this.gradeLevel,
+    this.curriculumCode,
+    this.subjectCode,
+    this.gradeLevel,
     required this.subjectName,
     required this.gradeName,
     required this.schemeId,
@@ -109,9 +115,9 @@ class MarkingSession {
       };
 
   factory MarkingSession.fromJson(Map<String, dynamic> json) => MarkingSession(
-        curriculumCode: json['curriculumCode'] as String,
-        subjectCode: json['subjectCode'] as String,
-        gradeLevel: json['gradeLevel'] as int,
+        curriculumCode: json['curriculumCode'] as String?,
+        subjectCode: json['subjectCode'] as String?,
+        gradeLevel: json['gradeLevel'] as int?,
         subjectName: json['subjectName'] as String,
         gradeName: json['gradeName'] as String,
         schemeId: json['schemeId'] as String,

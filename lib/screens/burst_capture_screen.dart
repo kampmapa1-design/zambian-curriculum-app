@@ -31,7 +31,13 @@ import 'subject_grade_topic_picker_screen.dart';
 /// than a custom motion-detection pipeline, at the cost of a tap per page
 /// instead of true hands-free capture.
 class BurstCaptureScreen extends StatefulWidget {
-  const BurstCaptureScreen({super.key, this.repository, this.initialPageFiles, this.initialTemplate});
+  const BurstCaptureScreen({
+    super.key,
+    this.repository,
+    this.initialPageFiles,
+    this.initialTemplate,
+    this.initialTertiarySubjectName,
+  });
 
   final MarkingScriptRepository? repository;
 
@@ -49,6 +55,14 @@ class BurstCaptureScreen extends StatefulWidget {
   /// list when it's almost always the same as last time.
   final SyllabusTemplate? initialTemplate;
 
+  /// The tertiary-session equivalent of [initialTemplate] (2026-09-15,
+  /// per explicit request that a marking key for a university/tertiary
+  /// student never force a Form/Grade pick) — set instead of
+  /// [initialTemplate], never both. Pre-fills and pre-selects the
+  /// "Tertiary education student" branch with this free-text subject/
+  /// course name, same carry-forward convenience the secondary path has.
+  final String? initialTertiarySubjectName;
+
   @override
   State<BurstCaptureScreen> createState() => _BurstCaptureScreenState();
 }
@@ -62,9 +76,16 @@ class _BurstCaptureScreenState extends State<BurstCaptureScreen> {
   final _idController = TextEditingController();
   final _classLevelController = TextEditingController();
   final _scriptNumberController = TextEditingController();
+  final _tertiarySubjectController = TextEditingController();
 
   CandidateGender? _gender;
   SyllabusTemplate? _subjectGrade;
+
+  /// Tertiary/university student (2026-09-15, per explicit request) — a
+  /// marking key uploaded for a university-level course has no real
+  /// Form/Grade to select, so this branch skips SubjectGradeTopicPickerScreen
+  /// entirely in favor of the plain free-text field below.
+  bool _isTertiary = false;
 
   bool _sessionStarted = false;
   bool _loadingNextNumber = true;
@@ -75,6 +96,10 @@ class _BurstCaptureScreenState extends State<BurstCaptureScreen> {
   void initState() {
     super.initState();
     _subjectGrade = widget.initialTemplate;
+    if (widget.initialTertiarySubjectName case final name?) {
+      _isTertiary = true;
+      _tertiarySubjectController.text = name;
+    }
     _prefillScriptNumber();
   }
 
@@ -94,6 +119,7 @@ class _BurstCaptureScreenState extends State<BurstCaptureScreen> {
     _idController.dispose();
     _classLevelController.dispose();
     _scriptNumberController.dispose();
+    _tertiarySubjectController.dispose();
     super.dispose();
   }
 
@@ -117,9 +143,13 @@ class _BurstCaptureScreenState extends State<BurstCaptureScreen> {
       );
       return;
     }
-    if (_subjectGrade == null) {
+    if (_isTertiary ? _tertiarySubjectController.text.trim().isEmpty : _subjectGrade == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Select the subject and grade this script is for.')),
+        SnackBar(
+          content: Text(_isTertiary
+              ? 'Enter the subject or course this script is for.'
+              : 'Select the subject and grade this script is for.'),
+        ),
       );
       return;
     }
@@ -183,8 +213,8 @@ class _BurstCaptureScreenState extends State<BurstCaptureScreen> {
         gender: _gender!,
         studentIdNumber: _idController.text.trim().isEmpty ? null : _idController.text.trim(),
         scriptNumber: int.parse(_scriptNumberController.text.trim()),
-        subjectName: _subjectGrade!.subject.name,
-        gradeName: _subjectGrade!.grade.name,
+        subjectName: _isTertiary ? _tertiarySubjectController.text.trim() : _subjectGrade!.subject.name,
+        gradeName: _isTertiary ? 'Tertiary' : _subjectGrade!.grade.name,
         classLevel: _classLevelController.text.trim(),
         capturedPageFiles: _capturedPages,
       );
@@ -261,20 +291,43 @@ class _BurstCaptureScreenState extends State<BurstCaptureScreen> {
               onSelectionChanged: (selection) => setState(() => _gender = selection.firstOrNull),
             ),
             const SizedBox(height: 12),
-            InkWell(
-              onTap: _pickSubjectGrade,
-              child: InputDecorator(
-                decoration: const InputDecoration(labelText: 'Subject & grade', border: OutlineInputBorder()),
-                child: Text(
-                  _subjectGrade == null
-                      ? 'Tap to select'
-                      : '${_subjectGrade!.subject.name} · ${_subjectGrade!.grade.name}',
-                  style: _subjectGrade == null
-                      ? TextStyle(color: Theme.of(context).colorScheme.outline)
-                      : null,
+            Text('Tertiary education student or secondary school learner?',
+                style: Theme.of(context).textTheme.labelLarge),
+            const SizedBox(height: 4),
+            SegmentedButton<bool>(
+              segments: const [
+                ButtonSegment(value: false, label: Text('Secondary')),
+                ButtonSegment(value: true, label: Text('Tertiary')),
+              ],
+              selected: {_isTertiary},
+              onSelectionChanged: (selection) => setState(() => _isTertiary = selection.first),
+            ),
+            const SizedBox(height: 12),
+            if (_isTertiary)
+              TextFormField(
+                controller: _tertiarySubjectController,
+                decoration: const InputDecoration(
+                  labelText: 'Subject / course',
+                  hintText: 'e.g. "Introduction to Economics", "BIO 201"',
+                  border: OutlineInputBorder(),
+                ),
+                textCapitalization: TextCapitalization.words,
+              )
+            else
+              InkWell(
+                onTap: _pickSubjectGrade,
+                child: InputDecorator(
+                  decoration: const InputDecoration(labelText: 'Subject & grade', border: OutlineInputBorder()),
+                  child: Text(
+                    _subjectGrade == null
+                        ? 'Tap to select'
+                        : '${_subjectGrade!.subject.name} · ${_subjectGrade!.grade.name}',
+                    style: _subjectGrade == null
+                        ? TextStyle(color: Theme.of(context).colorScheme.outline)
+                        : null,
+                  ),
                 ),
               ),
-            ),
             const SizedBox(height: 12),
             TextFormField(
               controller: _idController,
@@ -287,7 +340,7 @@ class _BurstCaptureScreenState extends State<BurstCaptureScreen> {
             TextFormField(
               controller: _classLevelController,
               decoration: const InputDecoration(
-                labelText: 'Class / Level (e.g. "10A", "Form 2 Blue")',
+                labelText: 'Class / Level / Year (e.g. "10A", "Form 2 Blue", "Year 2")',
                 border: OutlineInputBorder(),
               ),
               textCapitalization: TextCapitalization.words,
