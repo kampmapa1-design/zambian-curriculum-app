@@ -10,6 +10,7 @@ import '../models/scheme_of_work_template.dart';
 import '../models/syllabus_models.dart';
 import '../models/zambian_term_calendar.dart';
 import '../services/class_progress_repository.dart';
+import '../services/free_tier_entitlement_service.dart';
 import '../services/lesson_history_repository.dart';
 import '../services/required_core_topic_resolver.dart';
 import '../services/required_core_topic_service.dart' show RequiredCoreTopicUnavailable;
@@ -190,6 +191,12 @@ class _SchemeOfWorkDocumentScreenState extends State<SchemeOfWorkDocumentScreen>
       curriculumName: widget.template.curriculum.name,
     );
     if (!mounted) return;
+    // Free Tier tracking (Stage 3) — hooked here rather than at the
+    // picker/home-screen entry point, since that can't distinguish "a
+    // genuinely new scheme" from "reopening one already fully enriched"
+    // as cleanly as `thin.isEmpty` above already does for free.
+    unawaited(FreeTierEntitlementService.instance.recordUsed(FreeTierFeature.schemeOfWork));
+    unawaited(FreeTierEntitlementService.instance.lockSchemeSubject(widget.template.subject.name));
     setState(() {
       _enrichingAi = false;
       for (final MapEntry(key: rowIndex, value: request) in thin.entries) {

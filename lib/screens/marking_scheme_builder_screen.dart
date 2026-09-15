@@ -33,12 +33,21 @@ class MarkingSchemeBuilderScreen extends StatefulWidget {
     this.aiExamStandardHint,
     this.aiDetectedTotalMarks,
     this.repository,
+    this.initialTitle,
   });
 
   final String subjectName;
   final String gradeName;
   final String topicName;
   final String? subTopicName;
+
+  /// Overrides the computed "{Subject} — {Topic} Assessment" default title
+  /// for a NEW scheme (ignored when [existing] is set, same as
+  /// [initialQuestions]) — added for Home Assignment's own labeling
+  /// convention ("Marking Key — Home Assignment — [Subject] — [Topic] —
+  /// [Date], [Day], [Time issued]"), still fully editable here like every
+  /// other title.
+  final String? initialTitle;
 
   /// Non-null when editing an already-saved scheme.
   final MarkingScheme? existing;
@@ -105,6 +114,7 @@ class _MarkingSchemeBuilderScreenState extends State<MarkingSchemeBuilderScreen>
     final existing = widget.existing;
     _titleController = TextEditingController(
       text: existing?.title ??
+          widget.initialTitle ??
           '${widget.subjectName} — ${widget.subTopicName ?? widget.topicName} Assessment',
     );
     if (existing != null && existing.questions.isNotEmpty) {

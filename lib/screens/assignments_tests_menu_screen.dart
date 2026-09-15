@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../widgets/function_button.dart';
 import 'assignment_submission_screen.dart';
+import 'generate_home_assignment_flow.dart';
+import 'home_assignment_teacher_class_picker_screen.dart';
 import 'teacher_submissions_dashboard_screen.dart';
 import 'test_submission_screen.dart';
 
@@ -42,6 +44,20 @@ class AssignmentsTestsMenuScreen extends StatelessWidget {
             subtitle: 'Review assignments and tests your students have sent you',
             onTap: () => Navigator.of(context).push(
               MaterialPageRoute(builder: (_) => const TeacherSubmissionsDashboardScreen()),
+            ),
+          ),
+          FunctionButton(
+            icon: Icons.home_work_outlined,
+            label: 'Home Assignment (For Subject Teachers)',
+            subtitle: 'Generate a home assignment with a matching marking key for one topic',
+            onTap: () => startGenerateHomeAssignmentFlow(context),
+          ),
+          FunctionButton(
+            icon: Icons.inbox_outlined,
+            label: 'Home Assignment Marking Queue (For Subject Teachers)',
+            subtitle: 'Import submissions, mark in batches, and review before sending results',
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const HomeAssignmentTeacherClassPickerScreen()),
             ),
           ),
         ],

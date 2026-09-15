@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 import 'firebase_options.dart';
+import 'screens/first_launch_screen.dart';
 import 'screens/home_screen.dart';
+import 'screens/pupil_home_screen.dart';
+import 'services/teacher_profile_repository.dart';
 import 'theme/app_theme.dart';
 
 void main() async {
@@ -58,7 +61,55 @@ class CurriculumApp extends StatelessWidget {
       theme: AppTheme.light(),
       darkTheme: AppTheme.dark(),
       themeMode: ThemeMode.system,
-      home: const HomeScreen(),
+      home: const _RoleGate(),
     );
+  }
+}
+
+/// Home Assignment epic, Stage 1 (added 2026-09-14) — "On first app
+/// launch, for any user without an existing account, require phone
+/// number entry and a role selection." Gated on the on-device
+/// [TeacherProfile.role] rather than FirebaseAuth state: this app has
+/// always worked fully offline with only an anonymous session (see
+/// AuthService), so "does this install have a role yet" is the real
+/// question, not "is this a real account yet" — an account created
+/// before this field existed also reads `role: null` and sees the
+/// capture flow once, exactly like a brand-new install.
+class _RoleGate extends StatefulWidget {
+  const _RoleGate();
+
+  @override
+  State<_RoleGate> createState() => _RoleGateState();
+}
+
+class _RoleGateState extends State<_RoleGate> {
+  bool _loading = true;
+  AccountRole? _role;
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  Future<void> _load() async {
+    final profile = await TeacherProfileRepository().load();
+    if (!mounted) return;
+    setState(() {
+      _role = profile.role;
+      _loading = false;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_loading) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    final role = _role;
+    if (role == null) {
+      return FirstLaunchScreen(onDone: (chosen) => setState(() => _role = chosen));
+    }
+    return role == AccountRole.pupil ? const PupilHomeScreen() : const HomeScreen();
   }
 }

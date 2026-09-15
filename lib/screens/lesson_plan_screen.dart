@@ -12,6 +12,7 @@ import '../models/scheme_of_work.dart';
 import '../models/subject_content_item.dart';
 import '../services/custom_template_repository.dart';
 import '../services/embedded_lesson_plan_repository.dart';
+import '../services/free_tier_entitlement_service.dart';
 import '../services/lesson_checkpoint_repository.dart';
 import '../services/lesson_history_repository.dart';
 import '../services/lesson_plan_ai_service.dart';
@@ -346,6 +347,7 @@ class _LessonPlanScreenState extends State<LessonPlanScreen> {
         priorityContext: priorityContext,
       );
       if (!mounted) return;
+      unawaited(FreeTierEntitlementService.instance.recordUsed(FreeTierFeature.lessonPlan));
 
       var values = Map<String, String>.from(_draft.values);
       void set(String id, String value) {
