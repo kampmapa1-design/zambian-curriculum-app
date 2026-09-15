@@ -1,7 +1,7 @@
 name: zambian_curriculum_app
 description: Offline Zambian curriculum syllabus companion for teachers.
 publish_to: 'none'
-version: 0.1.0+2
+version: 0.1.0+8
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
@@ -43,6 +43,9 @@ dev_dependencies:
   flutter_lints: ^4.0.0
   flutter_launcher_icons: ^0.14.1
   flutter_native_splash: ^2.4.8
+  sqflite_common_ffi: ^2.3.4
+  path_provider_platform_interface: ^2.1.3
+  plugin_platform_interface: ^2.0.0
 
 flutter:
   uses-material-design: true
