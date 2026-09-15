@@ -219,9 +219,18 @@ class _LessonPlanScreenState extends State<LessonPlanScreen> {
         if (resolution.relatedMaterials.isNotEmpty) _relatedMaterials = resolution.relatedMaterials;
         if (resolution.relatedMarkingKeys.isNotEmpty) _relatedMarkingKeys = resolution.relatedMarkingKeys;
       });
-      if (resolution.contentExcerpt != null) {
-        _subjectContentExcerpt = resolution.contentExcerpt;
-        _mergeExcerptIntoDevelopmentRow(resolution.contentExcerpt!);
+      // Pamphlet-derived grounding (2026-09-15) is folded into the same
+      // excerpt string rather than threaded through as a whole separate
+      // parameter — from the AI generation call's own perspective it's
+      // just more real on-device subject context, same as a Subject
+      // Content Database excerpt.
+      final combinedExcerpt = [
+        if (resolution.contentExcerpt != null) resolution.contentExcerpt!,
+        if (resolution.pamphletExcerpt != null) resolution.pamphletExcerpt!,
+      ].join('\n\n');
+      if (combinedExcerpt.isNotEmpty) {
+        _subjectContentExcerpt = combinedExcerpt;
+        _mergeExcerptIntoDevelopmentRow(combinedExcerpt);
       }
     } catch (_) {
       // Best-effort enrichment only.

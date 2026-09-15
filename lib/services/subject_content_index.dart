@@ -4,6 +4,7 @@ import '../models/embedded_lesson_plan.dart';
 import '../models/marking_scheme.dart';
 import '../models/subject_content_item.dart';
 import 'embedded_lesson_plan_repository.dart';
+import 'pamphlet_repository.dart';
 import 'related_marking_key_finder.dart';
 import 'subject_content_repository.dart';
 
@@ -15,6 +16,7 @@ class SubjectContentResolution {
     this.relatedMaterials = const [],
     this.contentExcerpt,
     this.relatedMarkingKeys = const [],
+    this.pamphletExcerpt,
   });
 
   /// Real, sanitized lesson plans matching this exact topic/sub-topic —
@@ -34,6 +36,12 @@ class SubjectContentResolution {
   /// Marking keys uploaded through AI-Assisted Marking for this subject —
   /// see [RelatedMarkingKeyFinder].
   final List<MarkingScheme> relatedMarkingKeys;
+
+  /// The best-matching excerpt from a bundled reference pamphlet for this
+  /// subject/topic (2026-09-15) — see [PamphletRepository]. Never surfaced
+  /// directly to a teacher; only ever folded into whatever prompt context
+  /// a caller builds for AI generation, same as [contentExcerpt].
+  final String? pamphletExcerpt;
 }
 
 /// The single canonical entry point for "what does this app already have
@@ -59,16 +67,19 @@ class SubjectContentIndex {
     EmbeddedLessonPlanRepository? embeddedLessonPlanRepository,
     SubjectContentRepository? subjectContentRepository,
     RelatedMarkingKeyFinder? markingKeyFinder,
+    PamphletRepository? pamphletRepository,
   })  : _embedded = embeddedLessonPlanRepository ?? EmbeddedLessonPlanRepository(),
         _subjectContent = subjectContentRepository ?? SubjectContentRepository(),
-        _markingKeys = markingKeyFinder ?? RelatedMarkingKeyFinder();
+        _markingKeys = markingKeyFinder ?? RelatedMarkingKeyFinder(),
+        _pamphlets = pamphletRepository ?? PamphletRepository();
 
   final EmbeddedLessonPlanRepository _embedded;
   final SubjectContentRepository _subjectContent;
   final RelatedMarkingKeyFinder _markingKeys;
+  final PamphletRepository _pamphlets;
 
   /// Full topic-scoped resolution — everything a lesson/notes generator for
-  /// one specific topic/sub-topic can draw on. Runs all four underlying
+  /// one specific topic/sub-topic can draw on. Runs all five underlying
   /// lookups concurrently.
   Future<SubjectContentResolution> resolve({
     required String subjectName,
@@ -92,11 +103,18 @@ class SubjectContentIndex {
       subTopicName: subTopicName,
     );
     final markingKeyFuture = _markingKeys.find(subjectName, topicName: topicName, subTopicName: subTopicName);
+    final pamphletFuture = _pamphlets.findRelevantExcerpt(
+      subjectName: subjectName,
+      gradeLevel: gradeLevel,
+      topicName: topicName,
+      subTopicName: subTopicName,
+    );
 
     final embeddedMatches = await embeddedFuture;
     final catalog = await catalogFuture;
     final excerpt = await excerptFuture;
     final markingKeys = await markingKeyFuture;
+    final pamphletExcerpt = await pamphletFuture;
 
     final relatedMaterials =
         catalog.items.where((i) => i.subjectName.toLowerCase() == subjectName.toLowerCase()).toList();
@@ -106,6 +124,7 @@ class SubjectContentIndex {
       relatedMaterials: relatedMaterials,
       contentExcerpt: excerpt,
       relatedMarkingKeys: markingKeys,
+      pamphletExcerpt: pamphletExcerpt,
     );
   }
 
@@ -113,6 +132,12 @@ class SubjectContentIndex {
   /// (e.g. a whole Scheme of Work spanning a term) — just the marking-key
   /// enrichment, without the topic-specific pieces of [resolve].
   Future<List<MarkingScheme>> relatedMarkingKeys(String subjectName) => _markingKeys.find(subjectName);
+
+  /// Subject-only pamphlet excerpt, same "no single topic" case as
+  /// [relatedMarkingKeys] — e.g. Scheme of Work content fill grounding an
+  /// entire thin subject rather than one topic.
+  Future<String?> pamphletExcerpt(String subjectName, {int? gradeLevel}) =>
+      _pamphlets.findRelevantExcerpt(subjectName: subjectName, gradeLevel: gradeLevel);
 
   /// The full local path to a stored Subject Content item's file — for
   /// opening/sharing it. Delegates to [SubjectContentRepository.fileFor] so

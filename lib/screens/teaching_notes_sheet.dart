@@ -8,6 +8,7 @@ import '../services/offline_slide_outline_service.dart';
 import '../services/offline_teaching_notes_service.dart';
 import '../services/pptx_document_service.dart';
 import '../services/slide_outline_ai_service.dart';
+import '../services/pamphlet_repository.dart';
 import '../services/subject_content_repository.dart';
 import '../services/teaching_notes_document_service.dart';
 import '../services/teaching_notes_service.dart';
@@ -89,6 +90,7 @@ class _TeachingNotesSheetState extends State<_TeachingNotesSheet> {
   final _pptxService = PptxDocumentService();
   final _notesDocumentService = TeachingNotesDocumentService();
   final _subjectContentRepository = SubjectContentRepository();
+  final _pamphletRepository = PamphletRepository();
   String? _subjectContentExcerpt;
   bool _excerptLoadAttempted = false;
 
@@ -141,13 +143,25 @@ class _TeachingNotesSheetState extends State<_TeachingNotesSheet> {
   Future<void> _loadSubjectContentExcerpt() async {
     _excerptLoadAttempted = true;
     try {
-      final excerpt = await _subjectContentRepository.findRelevantExcerpt(
+      final excerptFuture = _subjectContentRepository.findRelevantExcerpt(
         subjectName: widget.template.subject.name,
         topicName: widget.entry.topic.name,
         subTopicName: widget.entry.subTopic?.name,
       );
-      if (excerpt == null || !mounted || _isAiGenerated) return;
-      setState(() => _subjectContentExcerpt = excerpt);
+      // Bundled reference pamphlets (2026-09-15) — same grounding role as
+      // the Subject Content Database excerpt above, just sourced from
+      // shipped assets instead of something a teacher downloaded.
+      final pamphletFuture = _pamphletRepository.findRelevantExcerpt(
+        subjectName: widget.template.subject.name,
+        gradeLevel: widget.template.grade.level,
+        topicName: widget.entry.topic.name,
+        subTopicName: widget.entry.subTopic?.name,
+      );
+      final excerpt = await excerptFuture;
+      final pamphletExcerpt = await pamphletFuture;
+      final combined = [if (excerpt != null) excerpt, if (pamphletExcerpt != null) pamphletExcerpt].join('\n\n');
+      if (combined.isEmpty || !mounted || _isAiGenerated) return;
+      setState(() => _subjectContentExcerpt = combined);
       if (!_isAiGenerated) _regenerateOffline();
     } catch (_) {
       // Best-effort enrichment — the syllabus-only notes already shown

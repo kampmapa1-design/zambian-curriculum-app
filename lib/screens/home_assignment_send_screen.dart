@@ -1,10 +1,16 @@
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:path/path.dart' as p;
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../models/home_assignment.dart';
 import '../models/school.dart';
 import '../services/home_assignment_document_service.dart';
+import '../services/home_assignment_marking_key_document_service.dart';
 import '../services/home_assignment_service.dart';
 import '../services/school_score_entry_service.dart';
 import '../services/school_service.dart';
@@ -32,9 +38,11 @@ class _HomeAssignmentSendScreenState extends State<HomeAssignmentSendScreen> {
   final _scoreEntryService = SchoolScoreEntryService();
   final _homeAssignmentService = HomeAssignmentService();
   final _documentService = HomeAssignmentDocumentService();
+  final _markingKeyDocumentService = HomeAssignmentMarkingKeyDocumentService();
 
   bool _loading = true;
   bool _sending = false;
+  bool _sharingMarkingKey = false;
   School? _school;
   List<SchoolClass> _eligibleClasses = const [];
   String? _selectedClassId;
@@ -113,6 +121,35 @@ class _HomeAssignmentSendScreenState extends State<HomeAssignmentSendScreen> {
     }
   }
 
+  /// "Share out that marking key through the app's sharing means"
+  /// (2026-09-16, per explicit request) — the marking key never went to a
+  /// pupil either way (it's not part of `sendToClass`'s attachment), so
+  /// this is a deliberately separate action from "Send to Class": a
+  /// subject teacher shares it with themselves or a co-marker, via
+  /// whatever the OS share sheet offers (same `share_plus` pattern used
+  /// for marksheets and assignment submissions elsewhere in this app).
+  Future<void> _shareMarkingKey() async {
+    setState(() => _sharingMarkingKey = true);
+    try {
+      final bytes = await _markingKeyDocumentService.buildPdf(
+        markingKeyTitle: widget.markingKeyTitle,
+        subjectName: widget.subjectName,
+        result: widget.result,
+      );
+      final dir = await getTemporaryDirectory();
+      final safeName = widget.markingKeyTitle.replaceAll(RegExp(r'[^A-Za-z0-9 _-]+'), '').trim();
+      final file = File(p.join(dir.path, '${safeName.isEmpty ? 'marking_key' : safeName}.pdf'));
+      await file.writeAsBytes(bytes, flush: true);
+      if (!mounted) return;
+      await SharePlus.instance.share(ShareParams(files: [XFile(file.path)], subject: widget.markingKeyTitle));
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Could not share the marking key: $error')));
+    } finally {
+      if (mounted) setState(() => _sharingMarkingKey = false);
+    }
+  }
+
   Future<void> _openWhatsApp(String phone) async {
     final digits = phone.replaceAll(RegExp(r'[^0-9+]'), '').replaceAll('+', '');
     final uri = Uri.parse('https://wa.me/$digits?text=${Uri.encodeComponent('${widget.result.title} — attaching the assignment next.')}');
@@ -159,6 +196,19 @@ class _HomeAssignmentSendScreenState extends State<HomeAssignmentSendScreen> {
           label: Text(_sending ? 'Sending...' : 'Send to Class'),
           onPressed: _sending ? null : _send,
         ),
+        const SizedBox(height: 8),
+        OutlinedButton.icon(
+          icon: _sharingMarkingKey ? const SizedBox(height: 16, width: 16, child: CircularProgressIndicator(strokeWidth: 2.4)) : const Icon(Icons.share_outlined),
+          label: Text(_sharingMarkingKey ? 'Preparing…' : 'Share Marking Key'),
+          onPressed: _sharingMarkingKey ? null : _shareMarkingKey,
+        ),
+        const Padding(
+          padding: EdgeInsets.only(top: 4),
+          child: Text(
+            "For you or a co-marker — the marking key is never sent to pupils, only the assignment itself.",
+            style: TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
+          ),
+        ),
       ],
     );
   }
@@ -178,6 +228,12 @@ class _HomeAssignmentSendScreenState extends State<HomeAssignmentSendScreen> {
             ListTile(leading: const Icon(Icons.chat_bubble_outline), title: Text(r.name), subtitle: Text(r.phone), onTap: () => _openWhatsApp(r.phone)),
         ],
         const SizedBox(height: 20),
+        OutlinedButton.icon(
+          icon: _sharingMarkingKey ? const SizedBox(height: 16, width: 16, child: CircularProgressIndicator(strokeWidth: 2.4)) : const Icon(Icons.share_outlined),
+          label: Text(_sharingMarkingKey ? 'Preparing…' : 'Share Marking Key'),
+          onPressed: _sharingMarkingKey ? null : _shareMarkingKey,
+        ),
+        const SizedBox(height: 12),
         FilledButton(onPressed: () => Navigator.of(context).popUntil((r) => r.isFirst), child: const Text('Done')),
       ],
     );
