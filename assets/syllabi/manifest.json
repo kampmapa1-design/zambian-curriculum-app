@@ -784,6 +784,15 @@
       "file": "fashion_and_fabrics_form2.json"
     },
     {
+      "curriculum_code": "CBC_2023",
+      "curriculum_name": "2023 Competency-Based Curriculum",
+      "subject_code": "CHEM",
+      "subject_name": "Chemistry",
+      "grade_level": 2,
+      "grade_name": "Form 2",
+      "file": "chemistry_form2.json"
+    },
+    {
       "curriculum_code": "OBC_2013",
       "curriculum_name": "2013 Outcome-Based Curriculum",
       "subject_code": "AGR",

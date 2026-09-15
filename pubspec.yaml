@@ -134,6 +134,7 @@ flutter:
     - assets/subject_content/principles_of_accounts/form_1_principles_of_accounts_teaching_module.txt
     - assets/subject_content/travel_and_tourism/form1_travel_and_tourism_teaching_module_form_1_term_2.txt
     - assets/syllabi/travel_and_tourism_form1.json
+    - assets/syllabi/travel_and_tourism_form2.json
     - assets/subject_content/food_and_nutrition/form1_food_and_nutrition_teaching_module_form_1_term_2.txt
     - assets/syllabi/food_and_nutrition_form1.json
     - assets/subject_content/french/form1_french_language_teaching_module_form_1_term_2.txt
@@ -165,6 +166,7 @@ flutter:
     - assets/subject_content/chemistry/form1_chemestry_teaching_module_term2.txt
     - assets/subject_content/chemistry/form1_chemestry_teaching_module_term3.txt
     - assets/syllabi/chemistry_form1.json
+    - assets/syllabi/chemistry_form2.json
     - assets/subject_content/agricultural_science/form1_agricultural_science_teaching_module_form_1_term_2.txt
     - assets/syllabi/agricultural_science_form1.json
     - assets/subject_content/biology/form1_biology_teaching_module_form_1_term_2.txt
