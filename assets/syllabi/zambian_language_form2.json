@@ -1,0 +1,613 @@
+{
+  "_source": "A real 'Zambian Language Form 2 Scheme of Work' (a real Zambian secondary school's Languages Department) was shared with this project via Drive, in two overlapping forms: (a) a combined document covering Terms 1, 2 and 3 in one file, and (b) separate standalone Term 1 and Term 3 documents. A teacher's name and school name were found in the header/footer of every one of these documents and are not reproduced here per this app's standing sourcing policy. This is a genuine gap fill -- this app previously had no Zambian Language Form 2 content at all (only Form 1 Term 3).\n\nThe combined Terms 1-3 document is the more complete and internally consistent of the two real sources: it carries a fuller, consistently-numbered set of sub-topics (e.g. Term 1 runs through 2.1.1-2.1.4, 2.2.1-2.2.3, 2.3.1-2.3.3) than the standalone Term 1 file, which stops short at 2.1.1-2.1.3 and 2.3.1.1-2.3.1.2 with several rows missing their own specific-competence codes -- an apparent earlier or rougher draft of the same real scheme. The standalone Term 3 file matches the combined document's own Term 3 content almost verbatim (same real competences, same real weeks), confirming it is the same underlying source rather than independent content; it is treated as a rougher duplicate and not used to add anything beyond the combined document. A third variant, re-exported under a 'Languages Department' filename, was also checked and its content matches the same Term 3 material again -- also excluded as non-independent.\n\nTwo literal duplicate re-uploads were identified and skipped: the combined Terms 1-3 document was uploaded twice (identical file size), and the standalone Term 3 document was uploaded twice (identical file size).\n\nA genuine structural irregularity in the source is preserved rather than silently fixed: Topic 2.4 (Language Structure) begins with sub-topic 2.4.1 (Nouns) in the very last week of the Term 1 scheme, before its main development across Term 2 -- this file places 2.4.1 Nouns under Term 2 (where the bulk of the topic's own content and the syllabus's own Term 2 heading sit) and notes the Term 1 bridge in its own description, rather than duplicating or inventing a separate Term 1 placement. Term 3 genuinely revisits several Term 1/2 topic numbers (2.1 through 2.5) at a more advanced, consolidating level with their own new real sub-topics and competences (e.g. 2.1.5 Story Telling, 2.1.6 Public Speaking, 2.2.4 Study Skills, 2.3.1.7-2.3.1.8) -- this spiral structure is real in the source and is preserved as-is rather than merged into the earlier terms.\n\nIts own Content/Concept, Learning Activities, Strategies/Methods and Materials/Resources columns are omitted, consistent with the approach used for every other bundled subject in this app.",
+  "curriculum": {
+    "code": "CBC_2023",
+    "name": "2023 Competency-Based Curriculum",
+    "description": "Zambia's current competency-based curriculum."
+  },
+  "subject": {
+    "name": "Zambian Language",
+    "code": "ZAMLANG",
+    "description": "Zambian Language syllabus, Form 1-4 (Curriculum Development Centre, 2024)."
+  },
+  "grade": {
+    "name": "Form 2",
+    "code": "F2_CBC",
+    "level": 2,
+    "phase": "Secondary — the source scheme itself uses \"Form 2\" for this level under the 2023 CBC."
+  },
+  "terms": [
+    {
+      "name": "Term 1",
+      "sequence_number": 1,
+      "topics": [
+        {
+          "sequence_number": 1,
+          "name": "2.1 Listening and Speaking",
+          "sub_topics": [
+            {
+              "sequence_number": 1,
+              "name": "2.1.1 Conversations",
+              "description": "Conversational listening and speaking skills built around national values, debate, cultural values, and distinguishing fact from opinion.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Discuss national values and principles (patriotism, respect, hard work) using appropriate language",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Gather information on a given topic and debate it (introducing motion, proposing, opposing, interjecting, rebutting)",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Discuss cultural values (respect, hospitality, dressing, responsibility) using appropriate language",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Distinguish facts from opinions in conversations, speeches or meetings",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "sequence_number": 2,
+              "name": "2.1.2 Drama",
+              "description": "Acting out plays built on cross-cutting themes.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Act out plays on cross-cutting themes (human rights, mental health, social and emotional issues) using appropriate language",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "sequence_number": 3,
+              "name": "2.1.3 Songs",
+              "description": "Listening to, singing, and analysing traditional and contemporary songs.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Listen to, sing, and discuss the meaning of traditional and contemporary songs",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "sequence_number": 4,
+              "name": "2.1.4 Riddles and Puzzles",
+              "description": "Initiating puzzles and analysing them.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Initiate puzzles and provide/analyse answers to them",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "sequence_number": 2,
+          "name": "2.2 Reading",
+          "sub_topics": [
+            {
+              "sequence_number": 1,
+              "name": "2.2.1 Intensive Reading",
+              "description": "Reading form-level texts with understanding, then summarising and paraphrasing them.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Read a variety of form-level texts with understanding, answer questions, discuss vocabulary, summarise and paraphrase them",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "sequence_number": 2,
+              "name": "2.2.2 Reading Aloud",
+              "description": "Reading form-level texts aloud with accuracy, pace, and expression.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Read form-level texts aloud with accuracy, pace and expression",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "sequence_number": 3,
+              "name": "2.2.3 Extensive Reading",
+              "description": "Reading a variety of texts and summarising them orally or in writing.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Read a variety of texts and summarise them orally or in writing",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "sequence_number": 3,
+          "name": "2.3 Writing",
+          "sub_topics": [
+            {
+              "sequence_number": 1,
+              "name": "2.3.1 Composition",
+              "description": "Discussing the features of different composition types and writing them: biography, expository writing, application letters, descriptive writing, report writing, and minutes.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Discuss the features of a biography and write one",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Discuss the features of an expository composition and write one",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Discuss the structure of a formal letter and write an application letter",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Discuss the structure of a descriptive composition (places, objects) and write one",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 5,
+                  "description": "Discuss the features of a report and write a report about a given event",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 6,
+                  "description": "Discuss the features of minutes and write minutes of a recorded meeting",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "sequence_number": 2,
+              "name": "2.3.2 Summary",
+              "description": "Summarising a given text into a paragraph.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Discuss prose summary features and summarise a given text into a paragraph",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "sequence_number": 3,
+              "name": "2.3.3 Dictation",
+              "description": "Writing dictated passages correctly.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Write dictated passages correctly",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 2",
+      "sequence_number": 2,
+      "topics": [
+        {
+          "sequence_number": 1,
+          "name": "2.4 Language Structure",
+          "sub_topics": [
+            {
+              "sequence_number": 1,
+              "name": "2.4.1 Nouns",
+              "description": "Noun classes and grammatical agreement. Introduced in Term 1's final week (as the bridge into Term 2's grammar focus) and consolidated here.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Identify grammatical agreement in sentences and categorise nouns into noun classes, expressing agreement accordingly",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "sequence_number": 2,
+              "name": "2.4.2 Pronouns",
+              "description": "Types of pronouns and subject-object concord.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Construct sentences expressing subject-object concord; identify and classify pronouns (possessive, demonstrative)",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "sequence_number": 3,
+              "name": "2.4.3 Adjectives",
+              "description": "Types of adjectives.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Discuss adjectives (number, colour, quality) and sort and use them correctly",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "sequence_number": 4,
+              "name": "2.4.4 Conjunctions",
+              "description": "Types of conjunctions and their role in sentences.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Identify coordinating, correlative, and contrastive conjunctions and classify them",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Discuss the role of conjunctions (contrast, reason, condition) and use them in sentences",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "sequence_number": 5,
+              "name": "2.4.5 Interjections",
+              "description": "Meaning and use of interjections.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Identify and use interjections in sentences",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "sequence_number": 6,
+              "name": "2.4.6 Punctuation",
+              "description": "Use of punctuation marks in texts.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Discuss and apply punctuation marks (capital letters, comma, full stop) in texts",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "sequence_number": 7,
+              "name": "2.4.7 Word Building",
+              "description": "Building words using affixation and derivation.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Build words from stems and roots using affixes",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Form nouns from verbs and verbs from nouns (derivation) and use the derived words in sentences",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "sequence_number": 8,
+              "name": "2.4.8 Onomatopoeia",
+              "description": "Identifying and using onomatopoeic words.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Identify onomatopoeic words and construct sentences using them",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "sequence_number": 9,
+              "name": "2.4.9 Tenses",
+              "description": "Forms of the future tense.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Identify future tense markers and construct positive, negative, and interrogative sentences in the future tense",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "sequence_number": 10,
+              "name": "2.4.10 Active and Passive Voice",
+              "description": "Constructing and transforming active and passive sentences.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Identify active and passive sentences, and change active to passive voice and vice-versa",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "sequence_number": 11,
+              "name": "2.4.11 Figurative Language",
+              "description": "Proverbs and sayings.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Discuss the meaning and use of proverbs; categorise and apply them",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Discuss the meaning and use of sayings in specific situations",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "sequence_number": 12,
+              "name": "2.4.12 Vocabulary",
+              "description": "Word meaning at form level.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Discuss the meaning of vocabulary and use it correctly in sentences",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "sequence_number": 2,
+          "name": "2.5 Translation",
+          "sub_topics": [
+            {
+              "sequence_number": 1,
+              "name": "2.5.1 Translation Techniques",
+              "description": "Applying translation techniques (adaptation, amplification, compensation) to translate text between English and the Zambian language.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Apply various translation techniques to translate text from English to a Zambian language and vice-versa",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 3",
+      "sequence_number": 3,
+      "topics": [
+        {
+          "sequence_number": 1,
+          "name": "2.1 Listening and Speaking",
+          "sub_topics": [
+            {
+              "sequence_number": 1,
+              "name": "2.1.5 Story Telling",
+              "description": "Narrating fiction stories and analysing their moral lessons.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Narrate fiction stories coherently and analyse their moral lessons",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "sequence_number": 2,
+              "name": "2.1.6 Public Speaking",
+              "description": "Delivering a speech on a given topic.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Deliver a speech using appropriate language on a given topic",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "sequence_number": 2,
+          "name": "2.2 Reading",
+          "sub_topics": [
+            {
+              "sequence_number": 1,
+              "name": "2.2.1 Intensive Reading",
+              "description": "Reading a variety of form-level texts with understanding, at a more advanced level than Term 1.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Read a variety of form-level texts with understanding and answer comprehension questions, discussing vocabulary",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "sequence_number": 2,
+              "name": "2.2.2 Reading Aloud",
+              "description": "Reading form-level texts aloud with accuracy, pace, and expression.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Read form-level texts aloud with accuracy, pace and expression",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "sequence_number": 3,
+              "name": "2.2.3 Extensive Reading",
+              "description": "Reading diverse texts and summarising them.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Read diverse texts and summarise them orally or in writing",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "sequence_number": 4,
+              "name": "2.2.4 Study Skills",
+              "description": "Locating information from reference resources.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Locate information from reference materials (dictionaries, magazines)",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "sequence_number": 3,
+          "name": "2.3 Writing",
+          "sub_topics": [
+            {
+              "sequence_number": 1,
+              "name": "2.3.1 Composition",
+              "description": "Writing articles and argumentative compositions.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Discuss the features of articles and write one for a magazine or newspaper",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Discuss the features and structure of an argumentative composition and draft and write one on a given topic",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "sequence_number": 2,
+              "name": "2.3.2 Summary",
+              "description": "Summarising a given text into a paragraph, at a more advanced level.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Discuss prose summary features and summarise a given text into a paragraph",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "sequence_number": 4,
+          "name": "2.4 Language Structure",
+          "sub_topics": [
+            {
+              "sequence_number": 1,
+              "name": "2.4.3 Adjectives",
+              "description": "Reviewing adjectives.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Review adjectives and construct sentences using them correctly",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "sequence_number": 2,
+              "name": "2.4.4 Conjunctions and 2.4.5 Interjections",
+              "description": "Consolidating conjunction usage and interjections in complex sentences.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Consolidate conjunction usage (contrast, condition, reason) in sentences",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Use interjections effectively in complex sentences",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "sequence_number": 3,
+              "name": "2.4.9 Tenses and 2.4.10 Active/Passive Voice",
+              "description": "Mastering future tense constructions and consolidating active/passive voice transformation.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Master future tense constructions (positive, negative, interrogative)",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Consolidate active and passive voice transformation",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "sequence_number": 4,
+              "name": "2.4.11 Figurative Language",
+              "description": "Applying proverbs and sayings to specific situations.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Identify and categorise proverbs and sayings appropriate to specific situations and functions",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "sequence_number": 5,
+              "name": "2.4.12 Vocabulary",
+              "description": "Advanced form-level vocabulary.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Discuss the meaning of advanced form-level vocabulary and use selected vocabulary correctly in sentences",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "sequence_number": 5,
+          "name": "2.5 Translation",
+          "sub_topics": [
+            {
+              "sequence_number": 1,
+              "name": "2.5.1 Translation Techniques",
+              "description": "Translating complex texts between English and the Zambian language.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Apply various translation techniques to translate complex texts between English and a Zambian language",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

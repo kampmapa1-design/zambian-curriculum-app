@@ -140,6 +140,7 @@ flutter:
     - assets/subject_content/french/form1_french_language_teaching_module_form_1_term_2.txt
     - assets/syllabi/french_form1.json
     - assets/syllabi/zambian_language_form1.json
+    - assets/syllabi/zambian_language_form2.json
     - assets/subject_content/fashion_and_fabrics/form1_fashion_and_fabrics_teaching_module_form_1_term_2.txt
     - assets/syllabi/fashion_and_fabrics_form1.json
     - assets/syllabi/fashion_and_fabrics_form2.json
