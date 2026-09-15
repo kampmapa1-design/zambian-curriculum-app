@@ -1,0 +1,131 @@
+{
+  "_source": "A real 'ICT Form 2 Scheme of Work' (a real Zambian secondary school's own department) was shared with this project via Drive, as a standalone Term 1 document and a standalone Term 3 document, each carrying real calendar week-dates (e.g. 12/01/26 - 16/01/26). A teacher's name and two different department/organisation labels found in these documents' headers are not reproduced here per this app's standing sourcing policy. This is a genuine gap fill -- this app previously had no ICT Form 2 content at all (only Form 1 Term 2). Cites the real official 'ICT Syllabus 2024 Form 1-4'.\n\nThree literal duplicate re-uploads of the Term 1 document were identified and skipped (identical file size), and two literal duplicate re-uploads of the Term 3 document were identified and skipped (identical file size).\n\nTerm 2 is a genuine, confirmed content gap, not fabricated: two independent Drive searches (by filename keyword and by folder listing) turned up no ICT Form 2 Term 2 document at all, only Term 1 and Term 3. The real Term 3 document's own revision recap (week 1: 'Reviewing compression/encryption, word processing, spreadsheets, presentations, publishing, email, instant messaging, business applications') confirms that real Term 2 content existed and covered digital communication and ICT-for-business topics (e-commerce, digital marketing, entrepreneurship) -- but the source document itself was never found in this Drive folder, so no Term 2 topic is invented here to fill that real gap.\n\nTerm 3 itself contributes no new numbered syllabus topic: its own Topic column names only 'Revision & Consolidation', 'Project Work' (an integrated project applying file-management, spreadsheet, publishing and email skills already covered), 'Presentation of Projects', and a further run of Revision blocks (terminology, weak-area remediation, practical-skills consolidation, digital citizenship and copyright ethics, ICT for entrepreneurship, safe file practices, final review) -- none of these carry their own new '2.x' topic/sub-topic code in the source, consistent with the exclusion approach used elsewhere in this app for pure revision and application blocks. No separate Term 3 topic is invented here either.\n\nIts own Content/Concept, Learning Activities, Strategies/Methods and Materials/Resources columns are omitted, consistent with the approach used for every other bundled subject in this app.",
+  "curriculum": {
+    "code": "CBC_2023",
+    "name": "2023 Competency-Based Curriculum",
+    "description": "Zambia's current competency-based curriculum."
+  },
+  "subject": {
+    "name": "ICT",
+    "code": "ICT",
+    "description": "ICT syllabus, Form 1-4 (Curriculum Development Centre, 2024)."
+  },
+  "grade": {
+    "name": "Form 2",
+    "code": "F2_CBC",
+    "level": 2,
+    "phase": "Secondary — the source scheme itself uses \"Form 2\" for this level under the 2023 CBC."
+  },
+  "terms": [
+    {
+      "name": "Term 1",
+      "sequence_number": 1,
+      "topics": [
+        {
+          "sequence_number": 1,
+          "name": "2.1 File Management",
+          "sub_topics": [
+            {
+              "sequence_number": 1,
+              "name": "2.1.1 File Compression",
+              "description": "Discussing the need for file compression (saving space, faster transfer), using software (e.g. WinRAR, 7-Zip) to compress files and folders, and comparing original and compressed file sizes.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Compress files and folders",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "sequence_number": 2,
+              "name": "2.1.2 File Encryption",
+              "description": "Discussing the need for encryption (data security, privacy), using built-in OS tools or third-party tools to encrypt a file or folder, and discussing the ethical use of encryption.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Encrypt files and folders",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "sequence_number": 2,
+          "name": "2.2 Productivity Tools",
+          "sub_topics": [
+            {
+              "sequence_number": 1,
+              "name": "2.2.1 Word Processing (Advanced)",
+              "description": "Advanced word processing features (tables, images, headers/footers, page numbering), creating a formatted document, and using mail merge and styles for consistent formatting.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Manage data using advanced word processing features",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Use mail merge and styles",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "sequence_number": 2,
+              "name": "2.2.2 Spreadsheets",
+              "description": "Spreadsheet basics (cells, rows, columns, sheets), basic formulas (SUM, AVERAGE, MIN, MAX, COUNT), creating a budget sheet, creating charts (bar, line, pie) from data, and using functions (IF, COUNTIF, SUMIF) to sort and filter data.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Manage data using spreadsheets, entering data and applying basic formulas",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Manage data using spreadsheets, creating charts and applying functions",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "sequence_number": 3,
+              "name": "2.2.3 Presentations",
+              "description": "Discussing effective presentations (purpose, audience, design), creating a presentation with text, images, transitions and animations, inserting charts/tables/multimedia, using a slide master, and practising delivery (voice, eye contact, timing).",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Create presentations",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Create and deliver presentations effectively",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "sequence_number": 4,
+              "name": "2.2.4 Publishing",
+              "description": "Discussing desktop publishing (DTP) and its uses (flyers, brochures, posters), using DTP software (MS Publisher, Canva, LibreOffice Draw) to design a poster, and designing a multi-page publication (brochure or newsletter) using columns, text boxes and graphics.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Design publications",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Design a multi-page publication",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
