@@ -11,7 +11,8 @@
     "serve": "npm run build && firebase emulators:start --only functions",
     "shell": "npm run build && firebase functions:shell",
     "deploy": "firebase deploy --only functions",
-    "logs": "firebase functions:log"
+    "logs": "firebase functions:log",
+    "verify:timetable": "npm run build && node scripts/verify_timetable_engine.js"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.119.0",
