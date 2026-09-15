@@ -802,6 +802,15 @@
       "file": "computer_science_form2.json"
     },
     {
+      "curriculum_code": "CBC_2023",
+      "curriculum_name": "2023 Competency-Based Curriculum",
+      "subject_code": "GEO",
+      "subject_name": "Geography",
+      "grade_level": 2,
+      "grade_name": "Form 2",
+      "file": "geography_form2.json"
+    },
+    {
       "curriculum_code": "OBC_2013",
       "curriculum_name": "2013 Outcome-Based Curriculum",
       "subject_code": "AGR",

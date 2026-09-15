@@ -226,3 +226,4 @@ flutter_native_splash:
     image: assets/icon/icon_foreground.png
     color_dark: "#0D1F33"
     image_dark: assets/icon/icon_foreground.png
+    - assets/syllabi/geography_form2.json

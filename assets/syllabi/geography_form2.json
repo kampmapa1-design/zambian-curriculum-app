@@ -1,0 +1,159 @@
+{
+  "_source": "A real 'Geography Form 2 Scheme of Work' (a real Zambian secondary school's Social Science Department; the source's own teacher name and school name are not reproduced here per this app's standing sourcing policy) was shared with this project via Drive, as a single document titled 'Term 2-3'. This is a genuine gap fill — this app previously had no CBC Geography Form 2 content at all (only Form 1; this file is distinct from the separate OBC 'GEOG' Grade 10-12 Geography subject already bundled). Cites the real official '2024 Geography Syllabus Ordinary Secondary Education Form 1-4' with real page citations (pg. 20-24).\n\nOnly the Term 2 portion of this document has real, filled-in week-by-week content. Its Term 3 portion is a real page of its own (same header, 'TERM: 3') but contains no scheme table at all — every cell is blank, and the page's own body text reads only 'REVISIONS'. This is a genuine, honestly-disclosed gap, not a fabrication: Term 3 is not represented in this file's 'terms' array because the source document itself carries no actual Term 3 content to extract.\n\nA real irregularity in the Term 2 content, preserved rather than 'corrected': Topic 2.2 'Basic Research Skills' begins mid-sequence at sub-topic 2.2.3 — sub-topics 2.2.1 and 2.2.2 are not present in this document (they most likely belong to Term 1, for which no source document was available). This file starts at 2.2.3 exactly as the source does, rather than inventing the missing earlier sub-topics.\n\nThe term document's own 'MID-TERM TESTS' week and its closing 'REVISION AND END OF YEAR EXAMINATIONS' block are excluded, since they name no new specific competences.\n\nContent/Concept column text is summarised into each sub-topic's own description; the scheme's own Strategies/Methods and Materials/Resources columns are omitted, consistent with the approach used for every other bundled subject in this app.",
+  "curriculum": {
+    "code": "CBC_2023",
+    "name": "2023 Competency-Based Curriculum",
+    "description": "Zambia's current competency-based curriculum."
+  },
+  "subject": {
+    "name": "Geography",
+    "code": "GEO",
+    "description": "Geography syllabus, Form 1-4 (Curriculum Development Centre)."
+  },
+  "grade": {
+    "name": "Form 2",
+    "code": "F2_CBC",
+    "level": 2,
+    "phase": "Secondary — the source scheme itself uses \"Form 2\" for this level under the 2023 CBC."
+  },
+  "terms": [
+    {
+      "name": "Term 2",
+      "sequence_number": 2,
+      "topics": [
+        {
+          "name": "2.2 Basic Research Skills",
+          "sequence_number": 1,
+          "description": "This document begins mid-sequence at sub-topic 2.2.3 — sub-topics 2.2.1 and 2.2.2 are not present in the available source (likely Term 1 content).",
+          "sub_topics": [
+            {
+              "name": "2.2.3 Data Collection/Fieldwork",
+              "sequence_number": 1,
+              "description": "Sampling methods; types of data (primary and secondary); data collection tools; accurate recording of features.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Collect data in the field",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "2.2.4 Data Processing",
+              "sequence_number": 2,
+              "description": "Organising, analysing, interpreting and discussing collected data.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Process Data",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "2.2.5 Presenting Findings",
+              "sequence_number": 3,
+              "description": "Writing a geography fieldwork report; creating visual presentations (maps, infographics); communicating results.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use findings to address local challenges",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "2.3 Environment",
+          "sequence_number": 2,
+          "sub_topics": [
+            {
+              "name": "2.3.1 Environment Degradation",
+              "sequence_number": 1,
+              "description": "Meaning of environmental degradation; its causes and impacts.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Demonstrate understanding of environmental degradation",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "2.3.2 Environmental Protection",
+              "sequence_number": 2,
+              "description": "Sustainable management practices for waste, soil, water and biodiversity.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Conduct sustainable management practices",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "2.3.3 Environmental Hazards and Disasters",
+              "sequence_number": 3,
+              "description": "Types of hazards and disasters (floods, drought, etc.); their impacts; response and mitigation.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Analyse environmental hazards and disasters",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Respond to natural hazards and disasters",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "2.4 Agro-Ecological Regions in Zambia",
+          "sequence_number": 3,
+          "sub_topics": [
+            {
+              "name": "2.4.1 Zambia's Agro-Ecological Regions",
+              "sequence_number": 1,
+              "description": "Zambia's soil types and their coverage; Zambia's Agro-Ecological Regions (AER).",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Analyse Zambia's Agro-Ecological Regions",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "2.4.2 Climate and Agro-Ecological Regions",
+              "sequence_number": 2,
+              "description": "Relationship between rainfall and AER (rainfall ranges for AER I, II, III); practical applications in farming.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Establish relationship between climate and Agro-Ecological Regions",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "2.4.3 Agriculture and Agro-Ecological Regions",
+              "sequence_number": 3,
+              "description": "Dominant agricultural activities in each AER; applying knowledge to local conditions.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Show a relationship between Agriculture and Agro-Ecological Regions",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
