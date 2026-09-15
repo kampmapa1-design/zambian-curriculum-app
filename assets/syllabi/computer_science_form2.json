@@ -1,0 +1,183 @@
+{
+  "_source": "A real 'Computer Science Form 2 Scheme of Work' (a real Zambian secondary school's Mathematics Department; the source's own teacher name and school name are not reproduced here per this app's standing sourcing policy) was shared with this project via Drive. This is a genuine gap fill — this app previously had no Computer Science Form 2 content at all (only Form 1). Cites the real official '2024 Computer Science Syllabus Ordinary Secondary Education Form 1-4' with real page citations (pg. 40-44).\n\nOnly a Term 2 document was found in the Drive folder for this subject at Form 2 — no Term 1 or Term 3 document exists there. This is a genuine, honestly-disclosed gap, not a fabrication: only Term 2 is included in this file.\n\nA real irregularity in the source scheme, documented rather than silently merged away: Topic 3.10 'Mobile Application' is given the identical sub-topic number (3.10.1 'Introduction to Mobile Applications') and identical Specific Competence code and wording (3.10.1.1 'Create Mobile Applications') across two separate weeks (week 9 and week 10) — the first week's content covers mobile application types/features/tools, the second week's covers mobile app security risks and data protection strategies. Rather than inventing a distinct 3.10.2 the source itself never used, this file merges both weeks' real content into the one sub-topic the source actually numbered them under.\n\nThe term document's own 'MID-TERM TESTS' and 'END OF TERM TESTS' weeks are excluded, since they name no new specific competences.\n\nContent/Concept column text is summarised into each sub-topic's own description; the scheme's own Strategies/Methods and Materials/Resources columns are omitted, consistent with the approach used for every other bundled subject in this app.",
+  "curriculum": {
+    "code": "CBC_2023",
+    "name": "2023 Competency-Based Curriculum",
+    "description": "Zambia's current competency-based curriculum."
+  },
+  "subject": {
+    "name": "Computer Science",
+    "code": "CS",
+    "description": "Computer Science syllabus, Form 1-4 (Curriculum Development Centre)."
+  },
+  "grade": {
+    "name": "Form 2",
+    "code": "F2_CBC",
+    "level": 2,
+    "phase": "Secondary — the source scheme itself uses \"Form 2\" for this level under the 2023 CBC."
+  },
+  "terms": [
+    {
+      "name": "Term 2",
+      "sequence_number": 2,
+      "topics": [
+        {
+          "name": "3.4 Cybersecurity",
+          "sequence_number": 1,
+          "sub_topics": [
+            {
+              "name": "3.4.1 Data Protection and Privacy",
+              "sequence_number": 1,
+              "description": "Data protection laws (e.g. GDPR); the impact of online actions; encryption; VPNs; security policies.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Mitigate and Respond to Cyber Threats",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "3.5 Programming",
+          "sequence_number": 2,
+          "sub_topics": [
+            {
+              "name": "3.5.1 Python Programming",
+              "sequence_number": 1,
+              "description": "Integrated Development Environments (IDEs); Python syntax and control structures; creating simple programs.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use Python to Code programs",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "3.5.2 Coding in Python",
+              "sequence_number": 2,
+              "description": "Installing and configuring Python and IDEs; conditional statements (if, else); building Python projects.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Develop Practical Python Applications",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "3.6 Web Development",
+          "sequence_number": 3,
+          "sub_topics": [
+            {
+              "name": "3.6.1 Web Interactivity",
+              "sequence_number": 1,
+              "description": "Concepts of JavaScript; its role in web development; Object-Oriented Programming (OOP) principles in JavaScript; creating animations using JavaScript and CSS.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Develop Dynamic Interactive Web Pages",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "3.7 Database",
+          "sequence_number": 4,
+          "sub_topics": [
+            {
+              "name": "3.7.1 Database Management",
+              "sequence_number": 1,
+              "description": "Database management key components; user roles/permissions; upgrading and migrating databases; normalisation (1NF, 2NF, 3NF).",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Manage Databases",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "3.8 Artificial Intelligence",
+          "sequence_number": 5,
+          "sub_topics": [
+            {
+              "name": "3.8.1 AI Models",
+              "sequence_number": 1,
+              "description": "Deployment tools; training and testing AI models.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Deploy AI Models",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "3.9 Internet of Things",
+          "sequence_number": 6,
+          "sub_topics": [
+            {
+              "name": "3.9.1 Application of IoT",
+              "sequence_number": 1,
+              "description": "IoT dashboards; real-world IoT applications; developing sector-specific IoT solutions.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Create IoT solutions",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "3.10 Mobile Application",
+          "sequence_number": 7,
+          "sub_topics": [
+            {
+              "name": "3.10.1 Introduction to Mobile Applications",
+              "sequence_number": 1,
+              "description": "Mobile application uses and types (native, web, hybrid); core features; tools and languages; common mobile app security risks; data protection strategies for personal data.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Create Mobile Applications",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "3.11 Cloud Computing",
+          "sequence_number": 8,
+          "sub_topics": [
+            {
+              "name": "3.11.1 Fundamentals of Cloud Computing",
+              "sequence_number": 1,
+              "description": "Key concepts of cloud computing; benefits and challenges; designing and managing cloud computing models and services (e.g. AWS, Azure).",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Develop and Manage cloud computing models",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
