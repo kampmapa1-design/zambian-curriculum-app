@@ -1,0 +1,487 @@
+{
+  "_source": "A real 'Commerce Form 2 Scheme of Work' (a real Zambian secondary school's department; the source's own teacher name and school name are not reproduced here per this app's standing sourcing policy) was shared with this project via Drive, across three separate Term 1, Term 2 and Term 3 documents. This is a genuine gap fill — this app previously had no Commerce Form 2 content at all (only Form 1). Cites the real official '2024 Commerce Syllabus Ordinary Secondary Education Form 1-4' with real page citations throughout (Term 1: pg. 15-18; Term 2: pg. 18-22; Term 3: pg. 22-25).\n\nAll three terms have genuine, distinct source coverage — no gaps. Each term document's own 'MID-TERM TESTS', 'END OF TERM TESTS', 'FINAL EXAMINATION' and 'REVISION' weeks are excluded, since they name no new specific competences of their own — only real topic/sub-topic weeks are included here.\n\nA real structural feature of the source scheme, preserved rather than 'corrected': Topic 4.2 'Transport' genuinely spans two terms — its first two sub-topics (4.2.1 Importance of Transport, 4.2.2 Modes of Transport) fall in the last two weeks of Term 2, while its remaining three sub-topics (4.2.3 Documents used in Transportation, 4.2.4 Containerisation, 4.2.5 Trends in Transport) open Term 3. This file represents Topic 4.2 twice, once per term, with only the sub-topics that term's own document actually covers under it, matching the real scheme rather than merging or reassigning them.\n\nContent/Concept column text is summarised into each sub-topic's own description; the scheme's own Strategies/Methods and Materials/Resources columns are omitted, consistent with the approach used for every other bundled subject in this app.",
+  "curriculum": {
+    "code": "CBC_2023",
+    "name": "2023 Competency-Based Curriculum",
+    "description": "Zambia's current competency-based curriculum."
+  },
+  "subject": {
+    "name": "Commerce",
+    "code": "COMM",
+    "description": "Commerce syllabus, Form 1-4 (Curriculum Development Centre)."
+  },
+  "grade": {
+    "name": "Form 2",
+    "code": "F2_CBC",
+    "level": 2,
+    "phase": "Secondary — the source scheme itself uses \"Form 2\" for this level under the 2023 CBC."
+  },
+  "terms": [
+    {
+      "name": "Term 1",
+      "sequence_number": 1,
+      "topics": [
+        {
+          "name": "3.1 Business Units",
+          "sequence_number": 1,
+          "sub_topics": [
+            {
+              "name": "3.1.1 Types of Business Units",
+              "sequence_number": 1,
+              "description": "Types of business units (private and public sector) — their formation, characteristics, ownership and management; steps and institutions (PACRA, ZRA, etc.) involved in registering a business; roles of statutory bodies (PACRA, NAPSA, ZRA, ZEMA, ZABS) in running business units.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Demonstrate knowledge of Business Units",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Demonstrate knowledge of procedures for registering a business",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Describe the roles of statutory bodies in running Business Units",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "3.2 Capital Markets",
+          "sequence_number": 2,
+          "sub_topics": [
+            {
+              "name": "3.2.1 Capital Market Securities",
+              "sequence_number": 1,
+              "description": "Meaning of capital markets; instruments (shares, bonds); players; functions of the Securities and Exchange Commission (SEC); trading procedure.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Practise investing in securities",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "3.2.2 Regulation of Capital Market",
+              "sequence_number": 2,
+              "description": "Description and functions of the Securities and Exchange Commission (SEC).",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Demonstrate knowledge on the functions of the Securities and Exchange Commission (SEC)",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "3.3 Banking and Finance",
+          "sequence_number": 3,
+          "sub_topics": [
+            {
+              "name": "3.3.1 Banking and non-Banking Institutions",
+              "sequence_number": 1,
+              "description": "Types of Banking and Non-Banking Institutions.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Demonstrate knowledge of Banking and non-Banking Institutions",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "3.3.2 Services offered by Banking Institutions",
+              "sequence_number": 2,
+              "description": "Services offered by banks; means of payment; types of bank accounts; customer rights.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use services offered by Banking institutions",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "3.3.3 Documents used in Banking",
+              "sequence_number": 3,
+              "description": "Documents used in banking (deposit slip, withdrawal slip, cheque).",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Demonstrate knowledge of filling in documents used in Banking",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "3.3.4 Digital Trends in Banking",
+              "sequence_number": 4,
+              "description": "Modern trends in banking; digital finance; challenges of digital banking.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use modern trends in Banking",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "3.3.5 Central Bank (Bank of Zambia)",
+              "sequence_number": 5,
+              "description": "Functions of the Central Bank; its role in electronic payment systems.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Demonstrate knowledge on functions of the Central Bank",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 2",
+      "sequence_number": 2,
+      "topics": [
+        {
+          "name": "3.4 Insurance",
+          "sequence_number": 1,
+          "sub_topics": [
+            {
+              "name": "3.4.1 Purpose of Insurance",
+              "sequence_number": 1,
+              "description": "Meaning of insurance; its importance; insurable versus non-insurable risks.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Justify the importance of Insurance",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Exhibit knowledge on Insurable and Non-Insurable Risks",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "3.4.2 Principles of Insurance",
+              "sequence_number": 2,
+              "description": "Principles of insurance (insurable interest, utmost good faith, etc.).",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Exhibit knowledge on Principles of Insurance",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "3.4.3 Insurance Covers",
+              "sequence_number": 3,
+              "description": "Types of insurance covers; functions of insurance brokers; procedure for taking out a cover; procedure for making an insurance claim.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Take out an Insurance Policy",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Exhibit knowledge on the procedure of making an insurance claim",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "3.4.4 Insurance Regulator (PIA)",
+              "sequence_number": 4,
+              "description": "Functions of the Pensions and Insurance Authority (PIA).",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Demonstrate knowledge of the functions of the Insurance Regulator",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "4.1 Communication",
+          "sequence_number": 2,
+          "sub_topics": [
+            {
+              "name": "4.1.1 Importance of Communication",
+              "sequence_number": 1,
+              "description": "Meaning of communication; its importance to trade.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Analyse the importance of Communication to trade",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "4.1.2 Postal Services",
+              "sequence_number": 2,
+              "description": "Postal services and their use.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use Postal Services",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "4.1.3 Telecommunication Services",
+              "sequence_number": 3,
+              "description": "Telecommunication services and their use.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use Telecommunication Services",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "4.1.4 Regulators of Communication Services (ZICTA)",
+              "sequence_number": 4,
+              "description": "The Zambia Information and Communications Technology Authority (ZICTA); its functions; regulations on communication.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Practise compliance to Communication Regulations",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "4.1.5 Trends in Communication",
+              "sequence_number": 5,
+              "description": "Trends in communication (social media, hardware) and how they facilitate business transactions.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use trends in Communication",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "4.2 Transport",
+          "sequence_number": 3,
+          "description": "This topic spans Term 2 and Term 3 in the real source scheme; this term's document covers only its first two sub-topics (4.2.3-4.2.5 continue in Term 3).",
+          "sub_topics": [
+            {
+              "name": "4.2.1 Importance of Transport",
+              "sequence_number": 1,
+              "description": "Meaning of transport; its importance to trade.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Exhibit knowledge on importance of Transport to trade",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "4.2.2 Modes of Transport",
+              "sequence_number": 2,
+              "description": "Modes of transport; factors for choosing a mode; advantages and disadvantages of each mode for various trade activities.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Justify modes of Transport to use in trade",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 3",
+      "sequence_number": 3,
+      "topics": [
+        {
+          "name": "4.2 Transport",
+          "sequence_number": 1,
+          "description": "This topic spans Term 2 and Term 3 in the real source scheme; this term's document continues from Term 2's 4.2.1-4.2.2 with these remaining sub-topics.",
+          "sub_topics": [
+            {
+              "name": "4.2.3 Documents used in Transportation",
+              "sequence_number": 1,
+              "description": "Documents used in transport (ticket, bill of lading, etc.).",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Utilise documents used in Transportation",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "4.2.4 Containerisation",
+              "sequence_number": 2,
+              "description": "Features of containerisation and its importance to the transportation of goods.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Justify the use of containerisation in the Transportation of goods",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "4.2.5 Trends in Transport",
+              "sequence_number": 3,
+              "description": "Trends in transport (e.g. e-vehicles, drones, One-Stop Border Posts) and their use for trade activities.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Utilise trends in Transportation for trade activities",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "4.3 Warehousing",
+          "sequence_number": 2,
+          "sub_topics": [
+            {
+              "name": "4.3.1 Importance of Warehousing",
+              "sequence_number": 1,
+              "description": "Meaning of warehousing; types of warehouses; importance of warehousing in trade.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Show understanding of the importance of Warehousing in trade",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "4.3.2 Trends in Warehousing",
+              "sequence_number": 2,
+              "description": "Trends in warehousing (automation, inventory tracking) and their use for trade activities.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use trends in Warehousing for trade activities",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "4.4 Advertising",
+          "sequence_number": 3,
+          "sub_topics": [
+            {
+              "name": "4.4.1 Importance of Advertising",
+              "sequence_number": 1,
+              "description": "Meaning of advertising; its importance in trade.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Show importance of Advertising in trade activities",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "4.4.2 Modes of Advertising",
+              "sequence_number": 2,
+              "description": "Modes of advertising (print, electronic); factors for choice.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Choose suitable modes of Advertising",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "4.4.3 Types of Advertising",
+              "sequence_number": 3,
+              "description": "Types of advertising (informative, persuasive).",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Apply different types of Advertising in trade",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "4.4.4 Methods of Appeal",
+              "sequence_number": 4,
+              "description": "Methods of appeal in advertising (romance, personality, etc.); factors in advertisement design.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Design an advertisement using different methods of appeal",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "4.4.5 Ethics in Advertising",
+              "sequence_number": 5,
+              "description": "Ethics in advertising and sales promotion techniques.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Practise ethics in Advertising",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "4.4.6 Sales Promotion",
+              "sequence_number": 6,
+              "description": "Sales promotion techniques and how to create sales promotions for trade activities.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Create sales promotions",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "name": "4.4.7 Trends in Advertising",
+              "sequence_number": 7,
+              "description": "Trends in advertising and their use for trade activities.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Use trends in Advertising for trade activities",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

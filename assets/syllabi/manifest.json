@@ -719,6 +719,15 @@
       "grade_level": 3,
       "grade_name": "Form 3",
       "file": "principles_of_accounts_form3.json"
+    },
+    {
+      "curriculum_code": "CBC_2023",
+      "curriculum_name": "2023 Competency-Based Curriculum",
+      "subject_code": "COMM",
+      "subject_name": "Commerce",
+      "grade_level": 2,
+      "grade_name": "Form 2",
+      "file": "commerce_form2.json"
     }
   ]
 }

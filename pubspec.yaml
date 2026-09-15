@@ -153,6 +153,7 @@ flutter:
     - assets/syllabi/hospitality_management_form2.json
     - assets/subject_content/commerce/form1_commerce_teaching_module_form_1_term_2.txt
     - assets/syllabi/commerce_form1.json
+    - assets/syllabi/commerce_form2.json
     - assets/subject_content/ict/form1_information_and_communication_technology_teaching_module_form_1_term_2.txt
     - assets/syllabi/ict_form1.json
     - assets/subject_content/computer_science/form1_computer_science_teaching_module_form_1_term_2.txt
