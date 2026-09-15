@@ -4,6 +4,7 @@ import '../models/report_class.dart';
 import '../services/report_class_repository.dart';
 import '../services/roster_upload_session_repository.dart';
 import 'class_overview_screen.dart';
+import 'class_report_preview_screen.dart';
 import 'class_setup_screen.dart';
 
 /// Report Form Pipeline, Stage 1 — the "Grade Teacher" home screen. Lists
@@ -83,6 +84,16 @@ class _GradeTeacherHomeScreenState extends State<GradeTeacherHomeScreen> {
     if (mounted) _load();
   }
 
+  /// Stage 7 of School Network (added 2026-09-13) — "tapping a class shows
+  /// a sample report form... as a live preview of current progress."
+  /// Long-press rather than the primary tap, so existing navigation into
+  /// [ClassOverviewScreen] stays exactly as it was.
+  Future<void> _previewReport(ReportClass reportClass) async {
+    await Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => ClassReportPreviewScreen(reportClass: reportClass, repository: _repository)),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -135,6 +146,7 @@ class _GradeTeacherHomeScreenState extends State<GradeTeacherHomeScreen> {
                         isThreeLine: true,
                         trailing: const Icon(Icons.chevron_right),
                         onTap: () => _openClass(reportClass),
+                        onLongPress: () => _previewReport(reportClass),
                       ),
                     );
                   },

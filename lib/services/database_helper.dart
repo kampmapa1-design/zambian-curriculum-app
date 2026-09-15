@@ -35,7 +35,7 @@ class DatabaseHelper {
   DatabaseHelper._internal();
   static final DatabaseHelper instance = DatabaseHelper._internal();
 
-  static const _schemaVersion = 9;
+  static const _schemaVersion = 10;
 
   Database? _db;
 
@@ -53,12 +53,28 @@ class DatabaseHelper {
       onConfigure: (db) => db.execute('PRAGMA foreign_keys = ON'),
       onCreate: (db, version) => _createSchema(db),
       onUpgrade: (db, oldVersion, newVersion) async {
-        // This app has no released user base yet, and the only local state
-        // worth preserving (which topic a teacher last marked concluded) is
-        // trivial to re-enter. Rather than hand-write incremental ALTER
-        // TABLE migrations against SQLite's limited support for them
-        // (can't add a UNIQUE constraint or a FK after the fact), just
-        // rebuild the schema from scratch on every version bump.
+        // v9 -> v10 (School Network, 2026-09-13) is deliberately NOT the
+        // wipe below: a real teacher may already have real report/roster/
+        // score data on-device by this point, and this migration only
+        // needs one new nullable column — exactly what a plain ALTER
+        // TABLE ADD COLUMN can do safely, no rebuild required.
+        if (oldVersion == 9 && newVersion == 10) {
+          try {
+            await db.execute('ALTER TABLE report_classes ADD COLUMN firestore_class_id TEXT');
+          } catch (_) {
+            // Already has the column (re-run on an already-migrated
+            // device) — nothing to do.
+          }
+          return;
+        }
+        // Every other transition: this app had no released user base as
+        // of schema v9, and the only local state worth preserving (which
+        // topic a teacher last marked concluded) is trivial to re-enter.
+        // Rather than hand-write incremental ALTER TABLE migrations
+        // against SQLite's limited support for them (can't add a UNIQUE
+        // constraint or a FK after the fact), rebuild the schema from
+        // scratch. Revisit this default once more of the app's tables
+        // hold real user data worth preserving across an upgrade.
         for (final table in _tableNamesNewestFirst) {
           await db.execute('DROP TABLE IF EXISTS $table');
         }
@@ -246,7 +262,8 @@ class DatabaseHelper {
         ca_exam_weight_percent INTEGER,
         report_forms_completed_at TEXT,
         backup_email TEXT,
-        created_at TEXT NOT NULL
+        created_at TEXT NOT NULL,
+        firestore_class_id TEXT
       )
     ''');
     await db.execute('''

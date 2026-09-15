@@ -7,13 +7,18 @@ import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../models/report_class.dart';
+import '../models/school.dart';
 import '../services/report_class_backup_service.dart';
 import '../services/report_class_repository.dart';
 import '../services/report_form_document_service.dart';
+import '../services/school_class_link_service.dart';
+import '../services/school_score_entry_service.dart';
+import '../services/school_service.dart';
 import 'consolidate_classes_screen.dart';
 import 'learner_edit_screen.dart';
 import 'omitted_entry_screen.dart';
 import 'report_form_list_screen.dart';
+import 'school_class_link_screen.dart';
 import 'subject_analysis_screen.dart';
 
 /// Report Form Pipeline — the Broad Mark Sheet itself: every learner ×
@@ -87,6 +92,11 @@ class _BroadMarkSheetScreenState extends State<BroadMarkSheetScreen> {
               onTap: () => Navigator.of(sheetContext).pop('edit'),
             ),
             ListTile(
+              leading: const Icon(Icons.fact_check_outlined),
+              title: const Text('View Report Form Progress'),
+              onTap: () => Navigator.of(sheetContext).pop('progress'),
+            ),
+            ListTile(
               leading: Icon(Icons.delete_outline, color: Theme.of(context).colorScheme.error),
               title: Text('Delete ${learner.fullName}', style: TextStyle(color: Theme.of(context).colorScheme.error)),
               onTap: () => Navigator.of(sheetContext).pop('delete'),
@@ -99,7 +109,84 @@ class _BroadMarkSheetScreenState extends State<BroadMarkSheetScreen> {
       await _editLearner(learner);
     } else if (choice == 'delete') {
       await _deleteLearner(learner);
+    } else if (choice == 'progress') {
+      await _viewProgress(learner);
     }
+  }
+
+  /// Stage 7 of School Network (added 2026-09-13) — per-subject completion
+  /// status for one learner, cross-referencing who's assigned to each
+  /// subject (if this class is connected — see [ReportClass.firestoreClassId])
+  /// against what's actually landed in this device's own resolved scores.
+  Future<void> _viewProgress(ReportLearner learner) async {
+    final sheet = _sheet;
+    if (sheet == null) return;
+    final learnerIndex = sheet.learners.indexOf(learner);
+    SchoolClass? schoolClass;
+    List<ScoreEntry> remoteEntries = const [];
+    final firestoreClassId = _reportClass.firestoreClassId;
+    if (firestoreClassId != null) {
+      final claim = await SchoolService().currentSchoolClaim();
+      if (claim.schoolId != null) {
+        final linkService = SchoolClassLinkService();
+        schoolClass = await linkService.getClass(claim.schoolId!, firestoreClassId);
+        remoteEntries = await SchoolScoreEntryService().watchEntries(claim.schoolId!, firestoreClassId).first;
+      }
+    }
+    if (!mounted) return;
+
+    await showDialog<void>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text('${learner.fullName} — Progress'),
+        content: SizedBox(
+          width: double.maxFinite,
+          child: ListView(
+            shrinkWrap: true,
+            children: [
+              for (final subject in sheet.subjects)
+                _progressRow(subject, learnerIndex, schoolClass, remoteEntries),
+            ],
+          ),
+        ),
+        actions: [FilledButton(onPressed: () => Navigator.of(dialogContext).pop(), child: const Text('Close'))],
+      ),
+    );
+  }
+
+  Widget _progressRow(ReportSubject subject, int learnerIndex, SchoolClass? schoolClass, List<ScoreEntry> remoteEntries) {
+    final localScore = _resolvedScores[_sheet!.learners[learnerIndex].id]?[subject.id];
+    String status;
+    Color? color;
+    if (localScore != null) {
+      status = 'Recorded';
+      color = Colors.green;
+    } else {
+      ScoreEntry? remote;
+      for (final e in remoteEntries) {
+        if (e.learnerIndex == learnerIndex && e.subjectName == subject.name) {
+          remote = e;
+          break;
+        }
+      }
+      if (remote != null) {
+        status = 'Submitted, not yet synced';
+        color = Colors.amber.shade800;
+      } else {
+        final assignedUid = schoolClass?.subjectTeacherUids[subject.name];
+        status = assignedUid == null ? (schoolClass == null ? 'Pending' : 'Not assigned') : 'Pending (assigned)';
+        color = Colors.grey;
+      }
+    }
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        children: [
+          Expanded(child: Text(subject.name)),
+          Text(status, style: TextStyle(color: color, fontWeight: FontWeight.w600, fontSize: 12)),
+        ],
+      ),
+    );
   }
 
   Future<void> _editLearner(ReportLearner learner) async {
@@ -266,6 +353,23 @@ class _BroadMarkSheetScreenState extends State<BroadMarkSheetScreen> {
       appBar: AppBar(
         title: const Text('Broad Mark Sheet'),
         actions: [
+          if (sheet != null)
+            IconButton(
+              icon: Icon(_reportClass.firestoreClassId == null ? Icons.cloud_off_outlined : Icons.cloud_done_outlined),
+              tooltip: 'School Network',
+              onPressed: () async {
+                await Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => SchoolClassLinkScreen(
+                      reportClass: _reportClass,
+                      learners: sheet.learners,
+                      subjects: sheet.subjects,
+                    ),
+                  ),
+                );
+                if (mounted) _load();
+              },
+            ),
           IconButton(
             icon: const Icon(Icons.call_merge),
             tooltip: 'Consolidate with another list',

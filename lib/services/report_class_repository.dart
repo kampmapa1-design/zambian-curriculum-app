@@ -143,7 +143,22 @@ class ReportClassRepository {
         reportFormsCompletedAt:
             r['report_forms_completed_at'] == null ? null : DateTime.parse(r['report_forms_completed_at'] as String),
         createdAt: DateTime.parse(r['created_at'] as String),
+        firestoreClassId: r['firestore_class_id'] as String?,
       );
+
+  /// Links this class to `schools/{schoolId}/classes/{firestoreClassId}`
+  /// once it's connected to the School Network — see
+  /// SchoolClassLinkService.connectClass. Never required for any existing
+  /// single-device workflow to keep working.
+  Future<void> setFirestoreClassId(int classId, String firestoreClassId) async {
+    final db = await _db;
+    await db.update(
+      'report_classes',
+      {'firestore_class_id': firestoreClassId},
+      where: 'id = ?',
+      whereArgs: [classId],
+    );
+  }
 
   /// Marks this class's report-form preparation as complete — unlocks the
   /// consolidated Analysis table (see ReportFormAnalysisScreen). Scores

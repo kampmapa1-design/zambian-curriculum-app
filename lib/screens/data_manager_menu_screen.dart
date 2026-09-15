@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 
 import '../widgets/function_button.dart';
+import 'account_settings_screen.dart';
 import 'grade_teacher_home_screen.dart';
+import 'notifications_screen.dart';
+import 'school_home_screen.dart';
+import 'subject_teacher_screen.dart';
 
 /// "Data Manager" — a home-screen entry point for administrative/record-
 /// keeping functions, starting with Grade Teacher (class roster, Broad
@@ -27,6 +31,38 @@ class DataManagerMenuScreen extends StatelessWidget {
             subtitle: 'Class roster, Broad Mark Sheet, and report forms',
             onTap: () => Navigator.of(context).push(
               MaterialPageRoute(builder: (_) => const GradeTeacherHomeScreen()),
+            ),
+          ),
+          FunctionButton(
+            icon: Icons.account_circle_outlined,
+            label: 'My Account',
+            subtitle: 'Sign up with phone or email, or manage an existing account',
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const AccountSettingsScreen()),
+            ),
+          ),
+          FunctionButton(
+            icon: Icons.apartment_outlined,
+            label: 'My School',
+            subtitle: 'Register or join your school, view staff and roles',
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const SchoolHomeScreen()),
+            ),
+          ),
+          FunctionButton(
+            icon: Icons.edit_note_outlined,
+            label: 'Subject Teacher',
+            subtitle: 'Update report form scores for classes assigned to you',
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const SubjectTeacherScreen()),
+            ),
+          ),
+          FunctionButton(
+            icon: Icons.notifications_none,
+            label: 'Notifications',
+            subtitle: "See when someone edits an entry you submitted",
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const NotificationsScreen()),
             ),
           ),
         ],

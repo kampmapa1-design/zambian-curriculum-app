@@ -39,6 +39,16 @@ class ReportClass {
   /// class hasn't been marked complete yet.
   final DateTime? reportFormsCompletedAt;
 
+  /// Set once this class is connected to the School Network's shared
+  /// class registry (`schools/{schoolId}/classes/{firestoreClassId}` —
+  /// see SchoolClassLinkService), which is what makes decentralized
+  /// subject-teacher report updates possible at all: a purely local
+  /// [id] (this device's own SQLite auto-increment row) means nothing to
+  /// another teacher's device. Null means this class has never been
+  /// connected — every existing single-device workflow keeps working
+  /// exactly as before regardless of this field.
+  final String? firestoreClassId;
+
   const ReportClass({
     required this.id,
     required this.schoolName,
@@ -50,6 +60,7 @@ class ReportClass {
     this.caExamWeightPercent,
     this.backupEmail,
     this.reportFormsCompletedAt,
+    this.firestoreClassId,
   });
 
   String get label => '$classGrade — $schoolName ($term)';
@@ -69,6 +80,7 @@ class ReportClass {
     int? caExamWeightPercent,
     String? backupEmail,
     DateTime? reportFormsCompletedAt,
+    String? firestoreClassId,
   }) =>
       ReportClass(
         id: id,
@@ -83,6 +95,7 @@ class ReportClass {
         // Preserved unless explicitly overridden — dropping this silently on
         // any unrelated copyWith() would un-flag an already-completed class.
         reportFormsCompletedAt: reportFormsCompletedAt ?? this.reportFormsCompletedAt,
+        firestoreClassId: firestoreClassId ?? this.firestoreClassId,
       );
 }
 

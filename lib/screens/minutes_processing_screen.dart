@@ -9,6 +9,9 @@ import '../services/minutes_document_service.dart';
 import '../services/minutes_reconstruction_service.dart';
 import '../services/minutes_session_repository.dart';
 import '../services/rewarded_ad_service.dart';
+import '../services/school_service.dart';
+import '../services/staffroom_service.dart';
+import '../services/teacher_profile_repository.dart';
 
 /// Minutes Maker, Stages 6-8 — the ad-gate, the unified ad+processing
 /// progress experience, and export. Kept as one screen (not three)
@@ -48,6 +51,8 @@ class _MinutesProcessingScreenState extends State<MinutesProcessingScreen> {
   int _adsCompleted = 0;
   bool _processingDone = false;
   ReconstructedMinutes? _result;
+  String? _schoolId;
+  bool _postedToStaffroom = false;
 
   @override
   void initState() {
@@ -61,6 +66,36 @@ class _MinutesProcessingScreenState extends State<MinutesProcessingScreen> {
     } else {
       _stage = _Stage.intro;
     }
+    _loadSchool();
+  }
+
+  Future<void> _loadSchool() async {
+    final claim = await SchoolService().currentSchoolClaim();
+    if (mounted) setState(() => _schoolId = claim.schoolId);
+  }
+
+  /// Stage 11 of School Network (added 2026-09-13) — "an optional 'Post to
+  /// Staffroom' action when a Minutes Maker document... is finished." A
+  /// text summary card, not a clickable file link — the generated DOCX/PDF
+  /// only ever exists on this device (there's no existing feature that
+  /// uploads it anywhere shareable-by-URL), so a real "link" would need
+  /// inventing file hosting this app doesn't have; posting the meeting's
+  /// own title/date is the honest version of "summary card" available
+  /// with what already exists.
+  Future<void> _postToStaffroom() async {
+    final schoolId = _schoolId;
+    final result = _result;
+    if (schoolId == null || result == null) return;
+    final profile = await TeacherProfileRepository().load();
+    await StaffroomService().post(
+      schoolId: schoolId,
+      topic: 'General',
+      authorName: profile.name,
+      text: '📋 Minutes ready: "${result.meetingTitle}" (${widget.session.meetingDate.toLocal().toString().split(' ').first}) — generated via Minutes Maker.',
+    );
+    if (!mounted) return;
+    setState(() => _postedToStaffroom = true);
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Posted to Staffroom.')));
   }
 
   bool get _entitled => EntitlementService.instance.adGateBypassed;
@@ -242,6 +277,14 @@ class _MinutesProcessingScreenState extends State<MinutesProcessingScreen> {
               icon: const Icon(Icons.description_outlined),
               label: const Text('Download as Word'),
             ),
+            if (_schoolId != null) ...[
+              const SizedBox(height: 8),
+              OutlinedButton.icon(
+                onPressed: _postedToStaffroom ? null : _postToStaffroom,
+                icon: const Icon(Icons.forum_outlined),
+                label: Text(_postedToStaffroom ? 'Posted to Staffroom' : 'Post to Staffroom'),
+              ),
+            ],
           ],
         );
       case _Stage.error:
