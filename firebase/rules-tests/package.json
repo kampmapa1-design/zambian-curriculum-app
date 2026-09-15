@@ -1,0 +1,13 @@
+{
+  "name": "rules-tests",
+  "description": "Automated security-rules test suite for firestore.rules / storage.rules, run against the Firebase Local Emulator Suite. Not deployed anywhere — dev-only.",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "cd .. && npx firebase-tools@13 emulators:exec --only firestore,storage \"node --test rules-tests/*.test.mjs\""
+  },
+  "devDependencies": {
+    "@firebase/rules-unit-testing": "^3.0.4",
+    "firebase": "^10.14.1"
+  }
+}
