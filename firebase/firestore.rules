@@ -28,5 +28,192 @@ service cloud.firestore {
     match /dashboardAccessCodes/{codeId} {
       allow read, write: if false;
     }
+
+    // Teacher Profile record (Stage 5 of real phone/email sign-in, added
+    // 2026-09-13) — the identity the School Network feature (below)
+    // attaches `schoolId`/`schoolRole` onto. Unlike the dashboard above, a
+    // teacher's own client writes this directly: the document id IS their
+    // Firebase Auth uid, so "only the signed-in owner may touch their own
+    // doc" is the entire access model — no secret to protect, nothing a
+    // malicious client gains by writing garbage into their own record.
+    // `schoolId`/`schoolRole` on this doc are ALSO written by the School
+    // Network Cloud Functions (Admin SDK, bypasses this rule) — a client
+    // could locally overwrite its own copy of those two fields, but that
+    // gains nothing: real access is gated by the ID token's custom claims
+    // below, not by anything read from this document.
+    match /teacher_profiles/{uid} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+
+      // Stage 6's in-app edit notifications (School Network Milestone B2,
+      // added 2026-09-13) — written only by `submitClassScoreEntry`
+      // (Admin SDK). The owner may mark one read (an update) but never
+      // create/delete one themselves — that would let a client fabricate
+      // or destroy its own notification history.
+      match /notifications/{itemId} {
+        allow read, update: if request.auth != null && request.auth.uid == uid;
+        allow create, delete: if false;
+      }
+    }
+
+    // School Network (Stages 1-3, added 2026-09-13) — `schoolId`/
+    // `schoolRole` are custom claims on the caller's ID token, stamped
+    // there ONLY by the `registerSchool`/`joinSchoolByCode`/
+    // `updateSchoolMemberRole` Cloud Functions (see index.ts for the real
+    // permission logic — who's allowed to assign which role to whom).
+    // Every write below goes through one of those three functions (Admin
+    // SDK, bypasses these rules) — no client, however legitimate, ever
+    // writes a school or membership document directly. Reads are gated
+    // purely by "does your token's schoolId match this school" — cheap
+    // (no extra `get()` lookup) and consistent with the `teacherEmail`
+    // claim pattern the Dashboard already uses above.
+    match /schools/{schoolId} {
+      allow read: if request.auth != null && request.auth.token.schoolId == schoolId;
+      allow write: if false;
+
+      match /members/{uid} {
+        allow read: if request.auth != null && request.auth.token.schoolId == schoolId;
+        allow write: if false;
+      }
+
+      // School Network, Milestone B1 (added 2026-09-13) — the shared
+      // class registry Stages 4-7 build on. Same model as above: written
+      // only by `connectClassToSchool`/`assignSubjectTeacher` (Admin SDK),
+      // read-gated by the same `schoolId` claim.
+      match /classes/{classId} {
+        // Home Assignment epic, Stage 1/7/8 (added 2026-09-14) — a linked
+        // pupil (distinct `pupilSchoolId`/`pupilClassId` claims, set only
+        // by `respondToPupilClassLink`, never the staff `schoolId`/
+        // `schoolRole` claims) can also read their OWN class doc — needed
+        // so their app knows the class's real name/subjects, same as any
+        // staff member already could.
+        allow read: if request.auth != null && (
+          request.auth.token.schoolId == schoolId ||
+          (request.auth.token.pupilSchoolId == schoolId && request.auth.token.pupilClassId == classId)
+        );
+        allow write: if false;
+
+        // Pending pupil→class join requests (Stage 1/7/8) — a pupil
+        // creates their OWN request doc directly (keyed by their own uid,
+        // so "only the requester may write it" is the whole model, same
+        // as teacher_profiles/{uid} above); only
+        // `respondToPupilClassLink` (Admin SDK) ever deletes/resolves one,
+        // so a pupil can't fake their own approval by deleting and
+        // re-reading. Readable by staff of this school (to review/
+        // approve) and by the requesting pupil themselves (to see their
+        // own pending status).
+        match /pupilClassLinks/{pupilUid} {
+          allow read: if request.auth != null && (request.auth.token.schoolId == schoolId || request.auth.uid == pupilUid);
+          allow create: if request.auth != null
+            && request.auth.uid == pupilUid
+            && request.resource.data.learnerName is string
+            && request.resource.data.learnerName.size() > 0;
+          allow update, delete: if false;
+        }
+
+        // Home Assignment epic, Stages 5-12 (added 2026-09-14) — one
+        // issued assignment per doc, written only by
+        // `sendHomeAssignmentToClass` (Admin SDK — real subject-teacher-
+        // of-this-class permission check, see its own comment). Readable
+        // by any staff member of the school (same as classes/scoreEntries
+        // above) or the ONE linked pupil this class belongs to — a pupil
+        // in a DIFFERENT class can't read another class's assignments,
+        // since their own `pupilClassId` claim only ever matches their
+        // own class.
+        match /homeAssignments/{assignmentId} {
+          allow read: if request.auth != null && (
+            request.auth.token.schoolId == schoolId ||
+            (request.auth.token.pupilSchoolId == schoolId && request.auth.token.pupilClassId == classId)
+          );
+          allow write: if false;
+
+          // A submission's own photo paths already live in Storage
+          // (write-gated there — see storage.rules); this doc is just the
+          // metadata + marking result, written only by
+          // `recordHomeAssignmentSubmission`/
+          // `recordHomeAssignmentMarkingResult` (Admin SDK, real
+          // permission checks). Same read gate as the assignment itself —
+          // a pupil can read every submission for their own class's
+          // assignment (not just their own), same visibility staff
+          // already have, since nothing here is more sensitive than the
+          // assignment/marking-key content itself.
+          match /submissions/{submissionId} {
+            allow read: if request.auth != null && (
+              request.auth.token.schoolId == schoolId ||
+              (request.auth.token.pupilSchoolId == schoolId && request.auth.token.pupilClassId == classId)
+            );
+            allow write: if false;
+          }
+        }
+
+        // Milestone B2 (added 2026-09-13) — a subject teacher's own score
+        // entries for this class. Written only by `submitClassScoreEntry`
+        // (Admin SDK, real permission/notification/audit-trail logic —
+        // see its own comment in index.ts); read-gated the same as
+        // everything else here.
+        match /scoreEntries/{entryId} {
+          allow read: if request.auth != null && request.auth.token.schoolId == schoolId;
+          allow write: if false;
+        }
+
+        // Stage 9 (added 2026-09-13, per explicit user confirmation) —
+        // guardian contact info. Deliberately a SEPARATE doc from the
+        // class doc above (which every school member can read): this one
+        // is real children's-family PII, so it's readable ONLY by
+        // leadership, not every member — the whole reason this isn't
+        // just another field on `classes/{classId}`. Written only by
+        // `connectClassToSchool` (Admin SDK).
+        match /guardianContacts/{docId} {
+          allow read: if request.auth != null
+            && request.auth.token.schoolId == schoolId
+            && request.auth.token.schoolRole in ["head_teacher", "deputy", "administrator"];
+          allow write: if false;
+        }
+      }
+
+      // Staffroom (Stage 10, added 2026-09-13) — unlike everything else in
+      // School Network, this one IS a direct client write: posting a
+      // message doesn't need the kind of real business-rule enforcement
+      // (who's assigned what, audit trails) the score-entry/class-registry
+      // functions above exist for — "is this a member of the school" and
+      // "is this their own post, or are they leadership" are both things
+      // the caller's OWN token claims + the post's own `authorUid` field
+      // already answer, no extra `get()` lookup needed.
+      match /staffroom/{postId} {
+        allow read: if request.auth != null && request.auth.token.schoolId == schoolId;
+        // Posting is for teaching staff — Observer is a read-only role by
+        // design (2026-09-15, per explicit confirmation) and must never be
+        // able to post, regardless of institutional subscription status.
+        // Every other role (including Administrator) may post.
+        allow create: if request.auth != null
+          && request.auth.token.schoolId == schoolId
+          && request.auth.token.schoolRole != "observer"
+          && request.resource.data.authorUid == request.auth.uid
+          && request.resource.data.pinned == false;
+        // A non-leadership author may edit their own post's content but
+        // never flip `pinned` themselves — only Head Teacher/Deputy/
+        // Administrator can pin/unpin (still true even when editing their
+        // OWN post as leadership, since the second half of this OR always
+        // covers them regardless of authorship).
+        allow update: if request.auth != null && request.auth.token.schoolId == schoolId && (
+          (resource.data.authorUid == request.auth.uid && request.resource.data.pinned == resource.data.pinned) ||
+          request.auth.token.schoolRole in ["head_teacher", "deputy", "administrator"]
+        );
+        allow delete: if request.auth != null && request.auth.token.schoolId == schoolId && (
+          resource.data.authorUid == request.auth.uid ||
+          request.auth.token.schoolRole in ["head_teacher", "deputy", "administrator"]
+        );
+      }
+
+      // Timetable Generation, Stage 1 (added 2026-09-14) — the school's
+      // period/day config, subject-defaults, and exception list. Written
+      // only by `saveTimetableConfig` (Admin SDK, leadership-only check);
+      // read-gated the same as everything else here (any member can VIEW
+      // the timetable config once Stage 4's engine exists to use it, even
+      // though only leadership can currently change it).
+      match /timetable/{docId} {
+        allow read: if request.auth != null && request.auth.token.schoolId == schoolId;
+        allow write: if false;
+      }
+    }
   }
 }

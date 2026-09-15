@@ -1,10 +1,6 @@
 // Within-school role-boundary coverage: the handful of things
-// firestore.rules actually gates on schoolRole (staffroom pin/unpin,
-// guardianContacts read) — plus one real, deliberately-NOT-fixed gap
-// this task was asked to document rather than patch: staffroom writes
-// have no schoolRole restriction beyond the pin/leadership distinction,
-// so an `observer` can create/edit/delete their own posts exactly like
-// a `teacher` can.
+// firestore.rules actually gates on schoolRole (staffroom posting,
+// staffroom pin/unpin, guardianContacts read).
 //
 // Everything else that might sound like a role check (who can override
 // a score entry, who can sign a report form, administrator's deadline-
@@ -96,36 +92,70 @@ describe('guardianContacts read — only head_teacher/deputy/administrator, conf
   }
 });
 
-describe('FINDING (not a bug being fixed here — real current behavior): Staffroom write has no schoolRole restriction beyond pin/leadership', () => {
-  // firestore.rules' staffroom create/update/delete rules check
-  // "is this a school member" and "is this their own post, or are they
-  // leadership" — nothing else. There is no role allowlist/denylist for
-  // who may post at all. An `observer` — whose name suggests read-only
-  // participation — can create, edit, and delete their own posts exactly
-  // like a `teacher` can. lib/screens/staffroom_screen.dart has no
-  // client-side restriction either (confirmed absent by inspection).
-  // Flagging for the project owner to decide on; firestore.rules is left
-  // unchanged per this task's scope.
-  it('an observer CAN create their own Staffroom post', async () => {
+describe('Staffroom posting — every teaching role CAN, observer CANNOT (2026-09-15, per explicit confirmation)', () => {
+  // Was a real, documented gap (no schoolRole check on create at all —
+  // an observer could post exactly like a teacher) until this same date,
+  // when the project owner confirmed the intended policy: every teacher
+  // posts, administrators moderate. Fixed directly in firestore.rules'
+  // staffroom `allow create` (added `schoolRole != "observer"`), not
+  // left as a documented-but-unfixed finding this time.
+  const postingRoles = SCHOOL_ROLES.filter((r) => r !== 'observer');
+
+  for (const role of postingRoles) {
+    it(`${role} CAN create their own Staffroom post`, async () => {
+      const db = staffContext(testEnv, `post-${role}`, 'school-A', role);
+      await assertSucceeds(
+        setDoc(doc(db, `schools/school-A/staffroom/post-by-${role}`), {
+          authorUid: `post-${role}`,
+          pinned: false,
+          text: `posted by ${role}`,
+        })
+      );
+    });
+  }
+
+  it('observer CANNOT create a Staffroom post', async () => {
     const db = staffContext(testEnv, 'observer-1', 'school-A', 'observer');
-    await assertSucceeds(
+    await assertFails(
       setDoc(doc(db, 'schools/school-A/staffroom/observer-post'), {
         authorUid: 'observer-1',
         pinned: false,
-        text: 'an observer posting, currently allowed',
+        text: 'an observer trying to post',
       })
     );
   });
 
-  it('an observer CAN edit their own Staffroom post text', async () => {
+  it('observer CANNOT edit or delete an existing post either (never an author, never leadership)', async () => {
     const db = staffContext(testEnv, 'observer-1', 'school-A', 'observer');
-    await assertSucceeds(
-      updateDoc(doc(db, 'schools/school-A/staffroom/observer-post'), { text: 'edited by the observer' })
-    );
+    await assertFails(updateDoc(doc(db, 'schools/school-A/staffroom/post-1'), { text: 'observer edit attempt' }));
+    await assertFails(deleteDoc(doc(db, 'schools/school-A/staffroom/post-1')));
   });
+});
 
-  it('an observer CAN delete their own Staffroom post', async () => {
-    const db = staffContext(testEnv, 'observer-1', 'school-A', 'observer');
-    await assertSucceeds(deleteDoc(doc(db, 'schools/school-A/staffroom/observer-post')));
+describe('Staffroom moderation — administrator (and head_teacher/deputy) CAN delete a teacher\'s post', () => {
+  for (const role of LEADERSHIP_ROLES) {
+    it(`${role} CAN delete a post authored by a teacher`, async () => {
+      await testEnv.withSecurityRulesDisabled(async (ctx) => {
+        await setDoc(doc(ctx.firestore(), 'schools/school-A/staffroom/teacher-post-for-mod'), {
+          authorUid: 'some-teacher',
+          pinned: false,
+          text: 'a teacher comment',
+        });
+      });
+      const db = staffContext(testEnv, `mod-${role}`, 'school-A', role);
+      await assertSucceeds(deleteDoc(doc(db, 'schools/school-A/staffroom/teacher-post-for-mod')));
+    });
+  }
+
+  it('a plain teacher CANNOT delete another teacher\'s post', async () => {
+    await testEnv.withSecurityRulesDisabled(async (ctx) => {
+      await setDoc(doc(ctx.firestore(), 'schools/school-A/staffroom/teacher-post-for-mod-2'), {
+        authorUid: 'some-other-teacher',
+        pinned: false,
+        text: 'a teacher comment',
+      });
+    });
+    const db = staffContext(testEnv, 'rank-file-teacher', 'school-A', 'teacher');
+    await assertFails(deleteDoc(doc(db, 'schools/school-A/staffroom/teacher-post-for-mod-2')));
   });
 });

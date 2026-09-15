@@ -37,7 +37,7 @@ no role-gating to test on writes).
 | `.../homeAssignments/{id}/submissions/{id}` | ✅ | ✅ (always false) | ✅ cross-school (staff + pupil) | — | core, cross-school |
 | `.../scoreEntries/{id}` | ✅ | ✅ (always false) | ✅ cross-school | — (schoolId-only, no role check) | cross-school, namespace-separation |
 | `.../guardianContacts/{id}` | ✅ | ✅ (always false) | ✅ cross-school (leadership role alone isn't enough) | ✅ all 6 roles (3 leadership yes / 3 non-leadership no) | core, cross-school, role-boundaries |
-| `schools/{id}/staffroom/{id}` | ✅ | ✅ create/update/delete | ✅ cross-school (read AND write, incl. stale-token-with-matching-authorUid case) | ✅ pin/unpin across all 6 roles; authorUid-spoofing blocked; **observer-write finding** (see below) | core, cross-school, impersonation, role-boundaries |
+| `schools/{id}/staffroom/{id}` | ✅ | ✅ create/update/delete | ✅ cross-school (read AND write, incl. stale-token-with-matching-authorUid case) | ✅ pin/unpin across all 6 roles; posting restricted to non-observer roles (fixed 2026-09-15, see below); authorUid-spoofing blocked; leadership delete-moderation verified | core, cross-school, impersonation, role-boundaries |
 | `schools/{id}/timetable/{id}` | ✅ | ✅ (always false) | ✅ cross-school | — (schoolId-only, no role check) | core, namespace-separation |
 
 Pupil/staff claim-namespace separation (pupilSchoolId/pupilClassId vs.
@@ -50,15 +50,14 @@ timetable, and the schools doc.
 ## Findings for the project owner (not fixed here — this task tests
 ## current behavior, it doesn't change `firestore.rules`)
 
-1. **Staffroom write has no schoolRole restriction beyond pin/leadership.**
-   `schools/{id}/staffroom/{postId}`'s create/update/delete rules check
-   only "is this a member of the school" and "is this their own post, or
-   are they leadership" — there is no allowlist/denylist of which roles
-   may post at all. An `observer` — whose name implies read-only
-   participation — can create, edit, and delete their own posts exactly
-   like a `teacher` can. `lib/screens/staffroom_screen.dart` has no
-   client-side restriction either (confirmed absent by inspection).
-   Proven in `firestore.rules.role-boundaries.test.mjs`.
+1. ~~**Staffroom write has no schoolRole restriction beyond pin/leadership.**~~
+   **FIXED 2026-09-15**, same day this was found, per explicit confirmation
+   of the intended policy: every teaching role may post, `observer` may
+   not (`firestore.rules`' staffroom `allow create` now checks
+   `schoolRole != "observer"`), and leadership (head_teacher/deputy/
+   administrator) retains its existing power to delete anyone's post —
+   already true before this fix, now also explicitly tested per-role in
+   `firestore.rules.role-boundaries.test.mjs`.
 
 2. **`teacher_profiles/{uid}` self-tamper is harmless, by design — proven,
    not assumed.** The owner can write any fields, including a fake
