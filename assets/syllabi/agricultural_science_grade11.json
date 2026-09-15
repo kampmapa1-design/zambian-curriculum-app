@@ -1,0 +1,413 @@
+{
+  "_source": "Ministry of Education, Science, Vocational Training and Early Education / Curriculum Development Centre, Zambia. 'Agricultural Science Syllabus, Grades 10-12' (2013, published by CDC, ISBN 9982-00-548-X) — Grade 11, Topics 11.1-11.9. Genuine gap fill, part of the same real syllabus as this app's new Grade 10 and Grade 12 Agricultural Science files; this app previously had no OBC Grade 10-12 Agricultural Science content at all. Topic, sub-topic and Specific Outcome statements only; Content (Knowledge/Skills/Values) columns omitted, consistent with every other bundled OBC subject in this app.\n\nSTRUCTURAL TERM SPLIT (not sourced, same convention as this app's Biology Grade 10-12 files): the 9 real topics are divided into three equal groups of 3 topics each, in original curriculum order (11.1-11.3, 11.4-11.6, 11.7-11.9), labelled 'Term 1'/'Term 2'/'Term 3' purely so the app can generate and share one term at a time. No topic, sub-topic, or competency was added, removed, or altered.\n\nReal irregularity documented, not silently corrected: under sub-topic '11.3.5 Pests and Diseases of Crops', the raw source table numbers its outcomes '11.3.5.1', then jumps to '11.3.14' and '11.3.15' for the next two outcomes (a real printed numbering slip, almost certainly meant to read 11.3.5.2/11.3.5.3, but reproduced here only as the plain outcome text — this file does not encode source numbering codes at all, only outcome descriptions, so the slip has no visible effect on the file's own content beyond this disclosure). No individual person's name is cited in this note, consistent with how this app cites every other CDC syllabus.",
+  "curriculum": {
+    "code": "OBC_2013",
+    "name": "2013 Outcome-Based Curriculum",
+    "description": "Zambia's 2013 outcome-based curriculum for Grades 10-12 (Senior Secondary)."
+  },
+  "subject": {
+    "name": "Agricultural Science",
+    "code": "AGR",
+    "description": "Senior Secondary Agricultural Science syllabus, Grade 10-12 (Curriculum Development Centre, 2013)."
+  },
+  "grade": {
+    "name": "Grade 11",
+    "code": "G11_OBC",
+    "level": 11,
+    "phase": "Senior Secondary"
+  },
+  "terms": [
+    {
+      "name": "Term 1",
+      "sequence_number": 1,
+      "topics": [
+        {
+          "name": "11.1 Agriculture in Zambia",
+          "sequence_number": 1,
+          "sub_topics": [
+            {
+              "name": "11.1.1 Land Use",
+              "sequence_number": 1,
+              "competencies": [
+                { "sequence_number": 1, "description": "Explain ways in which some factors limit the use of land in different areas of Zambia", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Describe different forms of land use, including different agricultural systems and farming practices", "category": "Specific Outcome" },
+                { "sequence_number": 3, "description": "State land classification", "category": "Specific Outcome" }
+              ]
+            },
+            {
+              "name": "11.1.2 Development of Agriculture",
+              "sequence_number": 2,
+              "competencies": [
+                { "sequence_number": 1, "description": "Explain some factors that affect agricultural development in a nation", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Explain the effects of land tenure on agriculture", "category": "Specific Outcome" }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "11.2 Soil Science",
+          "sequence_number": 2,
+          "sub_topics": [
+            {
+              "name": "11.2.1 Soil Profiles and Classification",
+              "sequence_number": 1,
+              "competencies": [
+                { "sequence_number": 1, "description": "Compare and contrast the various layers of a soil profile in the school garden", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Explain the importance of a soil profile", "category": "Specific Outcome" },
+                { "sequence_number": 3, "description": "Classify soil samples", "category": "Specific Outcome" }
+              ]
+            },
+            {
+              "name": "11.2.2 Composition and Properties of Soil",
+              "sequence_number": 2,
+              "competencies": [
+                { "sequence_number": 1, "description": "Determine the constituents of soil", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Explain the importance of constituents of soil", "category": "Specific Outcome" },
+                { "sequence_number": 3, "description": "Determine physical and chemical characteristics of different soils", "category": "Specific Outcome" }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "11.3 Crop Production",
+          "sequence_number": 3,
+          "sub_topics": [
+            {
+              "name": "11.3.1 Site for a Crop",
+              "sequence_number": 1,
+              "competencies": [
+                { "sequence_number": 1, "description": "Prepare a site for growing a crop studied", "category": "Specific Outcome" }
+              ]
+            },
+            {
+              "name": "11.3.2 Seedbed Preparation and Sowing/Planting",
+              "sequence_number": 2,
+              "competencies": [
+                { "sequence_number": 1, "description": "Describe the process of land preparation for crop rotation", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "State the advantages and disadvantages of various forms of land preparation", "category": "Specific Outcome" },
+                { "sequence_number": 3, "description": "Prepare seedbeds suitable for germination of seeds", "category": "Specific Outcome" },
+                { "sequence_number": 4, "description": "Practice sowing/planting of crops studied", "category": "Specific Outcome" }
+              ]
+            },
+            {
+              "name": "11.3.3 Fertiliser Application",
+              "sequence_number": 3,
+              "competencies": [
+                { "sequence_number": 1, "description": "Describe the different methods of applying fertilisers for the crops studied", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Calculate the quantity of fertiliser for the crop studied", "category": "Specific Outcome" },
+                { "sequence_number": 3, "description": "Explain why particular types of fertiliser are recommended for the crop studied", "category": "Specific Outcome" }
+              ]
+            },
+            {
+              "name": "11.3.4 Weed Control",
+              "sequence_number": 4,
+              "competencies": [
+                { "sequence_number": 1, "description": "State various methods of weed control in the crops studied", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Describe ways in which different chemicals control weeds in the crops studied", "category": "Specific Outcome" }
+              ]
+            },
+            {
+              "name": "11.3.5 Pests and Diseases of Crops",
+              "sequence_number": 5,
+              "competencies": [
+                { "sequence_number": 1, "description": "State the characteristics of common pests of crops", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Describe symptoms of common diseases of crops studied", "category": "Specific Outcome" },
+                { "sequence_number": 3, "description": "Identify crops that have been attacked by diseases", "category": "Specific Outcome" }
+              ]
+            },
+            {
+              "name": "11.3.6 Prevention and Control of Pests and Diseases of Crops",
+              "sequence_number": 6,
+              "competencies": [
+                { "sequence_number": 1, "description": "Describe various methods of preventing and controlling pests and diseases on crops", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Carry out preventive measures of pests on crops studied", "category": "Specific Outcome" }
+              ]
+            },
+            {
+              "name": "11.3.7 Harvesting",
+              "sequence_number": 7,
+              "competencies": [
+                { "sequence_number": 1, "description": "Identify crops that are ready for harvesting", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Harvest the crop studied correctly", "category": "Specific Outcome" }
+              ]
+            },
+            {
+              "name": "11.3.8 Storage",
+              "sequence_number": 8,
+              "competencies": [
+                { "sequence_number": 1, "description": "Describe various methods of storing crops studied", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Explain the advantages and disadvantages of various methods of crop storage", "category": "Specific Outcome" }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 2",
+      "sequence_number": 2,
+      "topics": [
+        {
+          "name": "11.4 Forestry",
+          "sequence_number": 1,
+          "sub_topics": [
+            {
+              "name": "11.4.1 Deforestation",
+              "sequence_number": 1,
+              "competencies": [
+                { "sequence_number": 1, "description": "Identify causes of deforestation", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "State effects of deforestation", "category": "Specific Outcome" }
+              ]
+            },
+            {
+              "name": "11.4.2 Measures to Control Deforestation",
+              "sequence_number": 2,
+              "competencies": [
+                { "sequence_number": 1, "description": "Formulate measures of preventing and controlling deforestation", "category": "Specific Outcome" }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "11.5 Conservation Farming",
+          "sequence_number": 2,
+          "sub_topics": [
+            {
+              "name": "11.5.1 Organic Matter and Fertiliser",
+              "sequence_number": 1,
+              "competencies": [
+                { "sequence_number": 1, "description": "State the advantages and disadvantages of using organic matter and artificial fertiliser to supply nutrients to crops", "category": "Specific Outcome" }
+              ]
+            },
+            {
+              "name": "11.5.2 Compost",
+              "sequence_number": 2,
+              "competencies": [
+                { "sequence_number": 1, "description": "Investigate the importance of compost to a crop", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Prepare a compost heap", "category": "Specific Outcome" }
+              ]
+            },
+            {
+              "name": "11.5.3 Animal Manure",
+              "sequence_number": 3,
+              "competencies": [
+                { "sequence_number": 1, "description": "Explain the importance of using animal manure", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Identify the crop nutrients provided by various types of animal manure", "category": "Specific Outcome" },
+                { "sequence_number": 3, "description": "Describe the harvesting, handling and storage of animal manure", "category": "Specific Outcome" }
+              ]
+            },
+            {
+              "name": "11.5.4 Soil Preparation",
+              "sequence_number": 4,
+              "competencies": [
+                { "sequence_number": 1, "description": "Prepare soil for growing a crop under organic farming", "category": "Specific Outcome" }
+              ]
+            },
+            {
+              "name": "11.5.5 Pests and Diseases",
+              "sequence_number": 5,
+              "competencies": [
+                { "sequence_number": 1, "description": "Prepare appropriate natural pesticides to control pests", "category": "Specific Outcome" }
+              ]
+            },
+            {
+              "name": "11.5.6 Role of Crop Rotation in Pest and Disease Control",
+              "sequence_number": 6,
+              "competencies": [
+                { "sequence_number": 1, "description": "Explain the role of crop rotation in preventing pests and diseases in organic production", "category": "Specific Outcome" }
+              ]
+            },
+            {
+              "name": "11.5.7 Cropping Systems and Pest and Disease Control",
+              "sequence_number": 7,
+              "competencies": [
+                { "sequence_number": 1, "description": "Describe companion planting", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Demonstrate companion planting when growing crops", "category": "Specific Outcome" },
+                { "sequence_number": 3, "description": "Use plants to attract predators and parasites", "category": "Specific Outcome" }
+              ]
+            },
+            {
+              "name": "11.5.8 Barriers and Traps for Pests",
+              "sequence_number": 8,
+              "competencies": [
+                { "sequence_number": 1, "description": "Use barriers and traps to control crop pests", "category": "Specific Outcome" }
+              ]
+            },
+            {
+              "name": "11.5.9 Timing of Planting",
+              "sequence_number": 9,
+              "competencies": [
+                { "sequence_number": 1, "description": "Explain the importance of timing of planting in the reduction of pest attack", "category": "Specific Outcome" }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "11.6 Livestock Production",
+          "sequence_number": 3,
+          "sub_topics": [
+            {
+              "name": "11.6.1 Importance of Livestock",
+              "sequence_number": 1,
+              "competencies": [
+                { "sequence_number": 1, "description": "State the economic importance of the types of livestock studied", "category": "Specific Outcome" }
+              ]
+            },
+            {
+              "name": "11.6.2 Health in Livestock",
+              "sequence_number": 2,
+              "competencies": [
+                { "sequence_number": 1, "description": "Identify signs of good and poor health in livestock", "category": "Specific Outcome" }
+              ]
+            },
+            {
+              "name": "11.6.3 Livestock Feed",
+              "sequence_number": 3,
+              "competencies": [
+                { "sequence_number": 1, "description": "Describe the nutritive value of the livestock feed for the animals studied", "category": "Specific Outcome" }
+              ]
+            },
+            {
+              "name": "11.6.4 Nutritional Deficiencies",
+              "sequence_number": 4,
+              "competencies": [
+                { "sequence_number": 1, "description": "Describe symptoms of nutritional deficiencies in livestock studied", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Identify suitable species of pasture for livestock studied", "category": "Specific Outcome" }
+              ]
+            },
+            {
+              "name": "11.6.5 Pests of Livestock",
+              "sequence_number": 5,
+              "competencies": [
+                { "sequence_number": 1, "description": "State the effects of pests on livestock", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Investigate methods of preventing and controlling pests that attack animals studied", "category": "Specific Outcome" }
+              ]
+            },
+            {
+              "name": "11.6.6 Diseases",
+              "sequence_number": 6,
+              "competencies": [
+                { "sequence_number": 1, "description": "State methods of preventing and controlling diseases on animals studied", "category": "Specific Outcome" }
+              ]
+            },
+            {
+              "name": "11.6.7 Housing",
+              "sequence_number": 7,
+              "competencies": [
+                { "sequence_number": 1, "description": "Describe the suitability and maintenance of various types of livestock housing", "category": "Specific Outcome" }
+              ]
+            },
+            {
+              "name": "11.6.8 Marketing",
+              "sequence_number": 8,
+              "competencies": [
+                { "sequence_number": 1, "description": "Describe the preparation of livestock and livestock products for marketing", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Identify organisations in Zambia that process and market livestock products", "category": "Specific Outcome" }
+              ]
+            },
+            {
+              "name": "11.6.9 Bee Farming",
+              "sequence_number": 9,
+              "competencies": [
+                { "sequence_number": 1, "description": "Describe common methods of bee farming", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Construct a framed bee hive", "category": "Specific Outcome" },
+                { "sequence_number": 3, "description": "Establish and manage an apiary", "category": "Specific Outcome" },
+                { "sequence_number": 4, "description": "State methods of harvesting honey", "category": "Specific Outcome" },
+                { "sequence_number": 5, "description": "Process and grade honey and honey products for marketing", "category": "Specific Outcome" }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 3",
+      "sequence_number": 3,
+      "topics": [
+        {
+          "name": "11.7 Farm Structures",
+          "sequence_number": 1,
+          "sub_topics": [
+            {
+              "name": "11.7.1 Fencing",
+              "sequence_number": 1,
+              "competencies": [
+                { "sequence_number": 1, "description": "Describe the different types and uses of fences", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Fence an area on the farm", "category": "Specific Outcome" },
+                { "sequence_number": 3, "description": "Explain advantages and disadvantages of fences on a farm", "category": "Specific Outcome" }
+              ]
+            },
+            {
+              "name": "11.7.2 Hedges",
+              "sequence_number": 2,
+              "competencies": [
+                { "sequence_number": 1, "description": "Explain uses of hedges", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Establish and maintain a hedge", "category": "Specific Outcome" },
+                { "sequence_number": 3, "description": "State advantages and disadvantages of hedges on a farm", "category": "Specific Outcome" }
+              ]
+            },
+            {
+              "name": "11.7.3 Green Houses",
+              "sequence_number": 3,
+              "competencies": [
+                { "sequence_number": 1, "description": "Describe a green house", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Explain the advantages and disadvantages of a green house", "category": "Specific Outcome" },
+                { "sequence_number": 3, "description": "Make a green house", "category": "Specific Outcome" }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "11.8 Machinery",
+          "sequence_number": 2,
+          "sub_topics": [
+            {
+              "name": "11.8.1 Friction",
+              "sequence_number": 1,
+              "competencies": [
+                { "sequence_number": 1, "description": "State the meaning of machine", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Explain the effects of friction on farm machinery", "category": "Specific Outcome" },
+                { "sequence_number": 3, "description": "State ways of increasing and overcoming friction", "category": "Specific Outcome" }
+              ]
+            },
+            {
+              "name": "11.8.2 Rusting",
+              "sequence_number": 2,
+              "competencies": [
+                { "sequence_number": 1, "description": "Identify conditions that encourage rusting", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Explain what happens during rusting", "category": "Specific Outcome" },
+                { "sequence_number": 3, "description": "Prevent rusting on farm machines", "category": "Specific Outcome" }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "11.9 Farm Management",
+          "sequence_number": 3,
+          "sub_topics": [
+            {
+              "name": "11.9.1 Budgeting",
+              "sequence_number": 1,
+              "competencies": [
+                { "sequence_number": 1, "description": "Explain budgeting", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "Prepare a budget for an enterprise", "category": "Specific Outcome" },
+                { "sequence_number": 3, "description": "Prepare a cash flow budget for an enterprise", "category": "Specific Outcome" }
+              ]
+            },
+            {
+              "name": "11.9.2 Costing and Accounting",
+              "sequence_number": 2,
+              "competencies": [
+                { "sequence_number": 1, "description": "Distinguish between direct enterprise costs and overhead costs", "category": "Specific Outcome" },
+                { "sequence_number": 2, "description": "State factors that determine prices of commodities", "category": "Specific Outcome" },
+                { "sequence_number": 3, "description": "Calculate gross margins of an enterprise", "category": "Specific Outcome" },
+                { "sequence_number": 4, "description": "Suggest ways of increasing gross margin of an enterprise", "category": "Specific Outcome" },
+                { "sequence_number": 5, "description": "Calculate profit of an enterprise", "category": "Specific Outcome" }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

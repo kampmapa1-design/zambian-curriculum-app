@@ -417,6 +417,15 @@
     {
       "curriculum_code": "CBC_2023",
       "curriculum_name": "2023 Competency-Based Curriculum",
+      "subject_code": "TT",
+      "subject_name": "Travel and Tourism",
+      "grade_level": 2,
+      "grade_name": "Form 2",
+      "file": "travel_and_tourism_form2.json"
+    },
+    {
+      "curriculum_code": "CBC_2023",
+      "curriculum_name": "2023 Competency-Based Curriculum",
       "subject_code": "FN",
       "subject_name": "Food and Nutrition",
       "grade_level": 1,
@@ -440,6 +449,15 @@
       "grade_level": 1,
       "grade_name": "Form 1",
       "file": "zambian_language_form1.json"
+    },
+    {
+      "curriculum_code": "CBC_2023",
+      "curriculum_name": "2023 Competency-Based Curriculum",
+      "subject_code": "ZAMLANG",
+      "subject_name": "Zambian Language",
+      "grade_level": 2,
+      "grade_name": "Form 2",
+      "file": "zambian_language_form2.json"
     },
     {
       "curriculum_code": "CBC_2023",
@@ -476,6 +494,15 @@
       "grade_level": 1,
       "grade_name": "Form 1",
       "file": "literature_in_english_form1.json"
+    },
+    {
+      "curriculum_code": "CBC_2023",
+      "curriculum_name": "2023 Competency-Based Curriculum",
+      "subject_code": "LIT_ENG",
+      "subject_name": "Literature in English",
+      "grade_level": 2,
+      "grade_name": "Form 2",
+      "file": "literature_in_english_form2.json"
     },
     {
       "curriculum_code": "CBC_2023",
@@ -521,6 +548,15 @@
       "grade_level": 1,
       "grade_name": "Form 1",
       "file": "ict_form1.json"
+    },
+    {
+      "curriculum_code": "CBC_2023",
+      "curriculum_name": "2023 Competency-Based Curriculum",
+      "subject_code": "ICT",
+      "subject_name": "ICT",
+      "grade_level": 2,
+      "grade_name": "Form 2",
+      "file": "ict_form2.json"
     },
     {
       "curriculum_code": "CBC_2023",
@@ -611,6 +647,15 @@
       "grade_level": 1,
       "grade_name": "Form 1",
       "file": "music_form1.json"
+    },
+    {
+      "curriculum_code": "CBC_2023",
+      "curriculum_name": "2023 Competency-Based Curriculum",
+      "subject_code": "MUS",
+      "subject_name": "Music",
+      "grade_level": 2,
+      "grade_name": "Form 2",
+      "file": "music_form2.json"
     },
     {
       "curriculum_code": "CBC_2023",
@@ -737,6 +782,33 @@
       "grade_level": 2,
       "grade_name": "Form 2",
       "file": "fashion_and_fabrics_form2.json"
+    },
+    {
+      "curriculum_code": "OBC_2013",
+      "curriculum_name": "2013 Outcome-Based Curriculum",
+      "subject_code": "AGR",
+      "subject_name": "Agricultural Science",
+      "grade_level": 10,
+      "grade_name": "Grade 10",
+      "file": "agricultural_science_grade10.json"
+    },
+    {
+      "curriculum_code": "OBC_2013",
+      "curriculum_name": "2013 Outcome-Based Curriculum",
+      "subject_code": "AGR",
+      "subject_name": "Agricultural Science",
+      "grade_level": 11,
+      "grade_name": "Grade 11",
+      "file": "agricultural_science_grade11.json"
+    },
+    {
+      "curriculum_code": "OBC_2013",
+      "curriculum_name": "2013 Outcome-Based Curriculum",
+      "subject_code": "AGR",
+      "subject_name": "Agricultural Science",
+      "grade_level": 12,
+      "grade_name": "Grade 12",
+      "file": "agricultural_science_grade12.json"
     }
   ]
 }
