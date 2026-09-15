@@ -1,0 +1,308 @@
+{
+  "_source": "A real 'Literature in English Form 2 Scheme of Work' (a real Zambian secondary school's own department) was shared with this project via Drive, as three separate real documents -- one per term (Term 1, Term 2, Term 3), each carrying real calendar week-dates (e.g. 12/01/26 - 16/01/26). A teacher's name and two different department/organisation labels found in these documents' headers are not reproduced here per this app's standing sourcing policy. This is a genuine gap fill -- this app previously had no Literature in English Form 2 content at all (only Form 1 Terms 2-3). Cites the real official 'Literature Syllabus 2024 Form 1-4'.\n\nA second, parallel real three-term document set (titled simply 'LITERATURE' rather than 'Literature in English', from the same real school and teacher but a differently-labelled department) was also found and read in full. It covers much of the same real ground (Topics 2.1 Zambian Literature and 2.2 Genres of Literature, the same real specific-competence numbering family) but is a rougher, less complete draft of the same underlying scheme -- e.g. its own Term 3 never reaches the Poetry genre at all (it stays entirely within Drama analysis and dramatisation before moving to revision), where the dated 'Literature in English' set used here does cover Poetry in full (types, elements, themes, verses, recitation, analysis, composition). Because it is superseded in coverage rather than independent, it was not used as an additional source and is not counted as a separate duplicate re-upload.\n\nThe source's own author list at 2.1.1.3 names real, published Zambian writers and their real published works (e.g. Kenneth Kaunda's 'Zambia Shall Be Free', Dominic Mulaisho's 'The Tongue of the Dumb') as literary-syllabus content -- these are public literary figures being taught as curriculum content, not personal/private information, so they are retained in the competency content itself (not in this _source field).\n\nA genuine numbering irregularity in the source is preserved rather than silently fixed: the code '2.2.1.2' is used twice for two different things -- once as a stand-alone specific competence ('Draw Inferences from read texts') in Term 1 week 9, and again as the prefix for an entirely separate, deeper 'Elements of Prose' strand (2.2.1.2.1 through 2.2.1.2.8) spanning the rest of Term 1 and into Term 2. Both are kept here under their own sub-topic entries rather than merged or renumbered. Topic 2.2 (Genres of Literature) itself spans all three terms in the real source, moving from Prose (Term 1-2) through Drama (Term 2) to Poetry (Term 2-3); it is placed under whichever term the source actually teaches each strand in.\n\nThe back half of Term 3 (real scheme weeks 5-13) is a genuine, honestly-documented gap rather than fabricated content: after poetry composition, the source's own remaining weeks are comprehensive revision blocks (Zambian Literature, Prose, Drama, Poetry, cross-genre comparison, examination techniques, and a final review), each carrying no new specific-competence code of its own in the source -- consistent with the exclusion approach used elsewhere in this app for pure revision blocks. No separate Term 3 topic is invented here to fill that real gap.\n\nIts own Content/Concept, Learning Activities, Strategies/Methods and Materials/Resources columns are omitted, consistent with the approach used for every other bundled subject in this app.",
+  "curriculum": {
+    "code": "CBC_2023",
+    "name": "2023 Competency-Based Curriculum",
+    "description": "Zambia's current competency-based curriculum."
+  },
+  "subject": {
+    "name": "Literature in English",
+    "code": "LIT_ENG",
+    "description": "Literature in English syllabus, Form 1-4 (Curriculum Development Centre, 2024)."
+  },
+  "grade": {
+    "name": "Form 2",
+    "code": "F2_CBC",
+    "level": 2,
+    "phase": "Secondary — the source scheme itself uses \"Form 2\" for this level under the 2023 CBC."
+  },
+  "terms": [
+    {
+      "name": "Term 1",
+      "sequence_number": 1,
+      "topics": [
+        {
+          "sequence_number": 1,
+          "name": "2.1 Zambian Literature",
+          "sub_topics": [
+            {
+              "sequence_number": 1,
+              "name": "2.1.1.1 Development of Zambian Literature and Oral Traditions",
+              "description": "The development of Zambian Literature (pre-independence and post-independence contexts) and Zambian oral traditions (folktales, myths, proverbs, songs) across ethnic groups (e.g. Bemba, Tonga, Lozi, Nyanja) and their role in preserving culture.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Explore the development of Zambian Literature, comparing pre-independence and post-independence works",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Show understanding of different Zambian oral traditions and discuss their role in preserving culture",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Analyse a Zambian oral tradition (folktale or proverb) critically for message, values and significance",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "sequence_number": 2,
+              "name": "2.1.1.2 Themes in Zambian Literature",
+              "description": "Themes of social issues (poverty, HIV/AIDS), identity and culture, colonialism and independence, and corruption, related to contemporary Zambian society.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Apply themes from Zambian Literature to real-life situations",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "sequence_number": 3,
+              "name": "2.1.1.3 Zambian Authors, Playwrights and Poets",
+              "description": "Prominent Zambian authors and their major works, and reading short excerpts from them.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Explore prominent Zambian authors, playwrights and poets and their contributions",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "sequence_number": 2,
+          "name": "2.2 Genres of Literature",
+          "sub_topics": [
+            {
+              "sequence_number": 1,
+              "name": "2.2.1.1 Fiction and Non-Fiction",
+              "description": "Defining fiction (imaginary) and non-fiction (real events, people, setting) and distinguishing between them with examples.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Demonstrate understanding of fiction and non-fiction",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "sequence_number": 2,
+              "name": "2.2.1.2 Draw Inferences from Prose",
+              "description": "Drawing inferences (moral lessons, values, attitudes) from read stories and applying them to real-life situations (e.g. honesty, perseverance).",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Draw inferences from read stories accordingly",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "sequence_number": 3,
+              "name": "2.2.1.3 Compose Fiction and Non-Fiction Stories",
+              "description": "Composing a short story or personal narrative on cross-cutting themes (environmental health, entrepreneurship, corruption), with peer editing.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Compose fiction and non-fiction stories correctly",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "sequence_number": 4,
+              "name": "2.2.1.2 Elements of Prose",
+              "description": "Elements of prose (setting, plot, character, theme, point of view); creating own settings and composing own plots; demonstrating understanding of character types (protagonist, antagonist, major, minor, flat, round, dynamic, static, hero, villain). The source scheme reuses the code '2.2.1.2' both for the stand-alone 'Draw Inferences' competency above and as a prefix for this separate, deeper Elements-of-Prose strand (2.2.1.2.1-2.2.1.2.4 here); this real numbering collision is preserved rather than silently renumbered.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Demonstrate understanding of the elements of prose",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Create own settings for a story",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Compose own plots for a story",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Demonstrate understanding of character in prose",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 2",
+      "sequence_number": 2,
+      "topics": [
+        {
+          "sequence_number": 1,
+          "name": "2.2 Genres of Literature",
+          "sub_topics": [
+            {
+              "sequence_number": 1,
+              "name": "2.2.1.2 Elements of Prose (continued)",
+              "description": "Interpreting themes from different prose texts, analysing point of view, intensive analysis of a full prose passage, and composing a complete prose story incorporating all elements.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Interpret themes from different texts",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Analyse text for point of view",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Analyse prose intensively",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Compose prose stories creatively",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "sequence_number": 2,
+              "name": "2.2.2.1 Types of Drama",
+              "description": "Tragedy (hero fails/dies), comedy (happy ending), tragicomedy (mix), with examples from known plays or films.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Demonstrate understanding of different types of drama",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "sequence_number": 3,
+              "name": "2.2.2.2 Elements of Drama",
+              "description": "Plot, character, theme, dialogue, setting, act, and staging; plot structure (exposition, rising action, climax, falling action, resolution); character types; theme and characteristics of effective dialogue.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Demonstrate understanding of the elements of drama",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Analyse plot in drama",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 3,
+                  "description": "Demonstrate understanding of character in drama and analyse characters",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 4,
+                  "description": "Analyse theme in drama and demonstrate understanding of dialogue",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "sequence_number": 4,
+              "name": "2.2.2.3 Analysis and Dramatisation of Drama",
+              "description": "Analysing a one-act play for plot, characters, theme, dialogue and setting (cross-cutting themes: climate change, corruption); rehearsing and performing it.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Analyse drama and dramatise plays skilfully",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "sequence_number": 5,
+              "name": "2.2.3.1 Types of Poetry",
+              "description": "Lyric (personal feelings), narrative (tells a story), ode (praise), elegy (mourning), ballad (song-like), sonnet (14 lines).",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Demonstrate understanding of different types of poetry",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "sequence_number": 6,
+              "name": "2.2.3.2 Elements of Poetry",
+              "description": "Stanza, verse, rhyme, rhythm, imagery, and figurative language (simile, metaphor, personification), introduced here and continued into Term 3.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Demonstrate understanding of the elements of poetry",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 3",
+      "sequence_number": 3,
+      "topics": [
+        {
+          "sequence_number": 1,
+          "name": "2.2 Genres of Literature",
+          "sub_topics": [
+            {
+              "sequence_number": 1,
+              "name": "2.2.3.2 Poetry: Themes, Verses and Recitation",
+              "description": "Interpreting themes conveyed through imagery and figurative language, writing own stanzas, writing own verses, and reciting poems (praise, ode, lyric, elegy).",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Interpret themes in poetry and write own stanzas",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Write own verses and recite poems skilfully",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "sequence_number": 2,
+              "name": "2.2.3.2 Analysis and Composition of Poetry",
+              "description": "Analysing poems for sound devices (alliteration, assonance, onomatopoeia), imagery, figures of speech and structure; composing poems (praise, ode, lyric, elegy) on cross-cutting themes (climate change, financial education, corruption, HIV/AIDS, drug abuse) and exhibiting them.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Analyse poems accordingly",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Compose poems accordingly",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

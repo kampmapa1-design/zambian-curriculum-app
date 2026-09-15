@@ -149,6 +149,7 @@ flutter:
     - assets/syllabi/physical_education_form2.json
     - assets/subject_content/literature_in_english/form1_literature_in_english_teaching_module_form_1_term_2.txt
     - assets/syllabi/literature_in_english_form1.json
+    - assets/syllabi/literature_in_english_form2.json
     - assets/subject_content/design_and_technology/form1_design_and_technology_teaching_module_form_1_term_2.txt
     - assets/syllabi/design_and_technology_form1.json
     - assets/subject_content/hospitality_management/form1_hospitality_management_teaching_module_form1_term_2.txt
