@@ -167,6 +167,7 @@ flutter:
     - assets/subject_content/geography/form1_geography_teaching_module_form_1_term_2.txt
     - assets/subject_content/geography/form1_geography_teaching_module_term3.txt
     - assets/syllabi/geography_form1.json
+    - assets/syllabi/geography_form2.json
     - assets/subject_content/chemistry/form1_chemestry_teaching_module_term2.txt
     - assets/subject_content/chemistry/form1_chemestry_teaching_module_term3.txt
     - assets/syllabi/chemistry_form1.json
@@ -226,4 +227,3 @@ flutter_native_splash:
     image: assets/icon/icon_foreground.png
     color_dark: "#0D1F33"
     image_dark: assets/icon/icon_foreground.png
-    - assets/syllabi/geography_form2.json
