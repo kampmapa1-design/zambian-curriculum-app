@@ -1,0 +1,145 @@
+{
+  "_source": "A real 'Travel and Tourism Form 2 Scheme of Work' (a real Zambian secondary school's own department) was shared with this project via Drive, across a standalone Term 1 document, a standalone Term 2 document, and a combined Term 1-3 document. A teacher's name and school name were found in the header of every one of these documents and are not reproduced here per this app's standing sourcing policy. This is a genuine gap fill -- this app previously had no Travel and Tourism Form 2 content at all (only Form 1 Terms 2-3). Cites the real official '2024 Travel and Tourism Syllabus, Ordinary Secondary Education Form 1-4' with real page citations (pp.21-28).\n\nThe standalone Term 1 and Term 2 documents and the combined Term 1-3 document carry the same real content for Terms 1 and 2 (the combined document is simply a re-export of the same two standalone documents plus a real Term 3 section, so no separate Term 1/Term 2 duplicate count applies beyond the file-level re-upload itself).\n\nA genuine structural feature of the source is preserved rather than silently corrected: sub-topic 2.3.1 'Intermediaries in the Tourism Industry' is introduced in the final week of Term 1 and its skill-demonstration practice continues into the first week of Term 2 -- this file places the whole of Topic 2.3 under Term 1 (matching the source's own Term 1 revision block, which explicitly names its scope as 'Topics 2.1 - 2.3'), with the Term 2 week 1 continuation folded into the same sub-topic's competencies rather than duplicated as a separate topic entry.\n\nTerm 3 is a genuine content gap, not fabricated: the real combined Term 1-3 document's own Term 3 section (all 9 teaching weeks) is headed 'DEEPENING & APPLICATION' and consists entirely of mastery/application activities applying Topics 2.1-2.5 already covered in Terms 1-2 (comparing Zambian destinations with the SADC region, developing a business plan for a tourism intermediary), plus revision and End of Year Examinations -- it introduces no new numbered syllabus topic of its own, consistent with the official syllabus's own Topics 2.1-2.5 being the full scope of new Form 2 content. No separate Term 3 topic is invented here to fill that real gap.\n\nIts own Content/Concept, Learning Activities, Strategies/Methods and Materials/Resources columns are omitted, consistent with the approach used for every other bundled subject in this app.",
+  "curriculum": {
+    "code": "CBC_2023",
+    "name": "2023 Competency-Based Curriculum",
+    "description": "Zambia's current competency-based curriculum."
+  },
+  "subject": {
+    "name": "Travel and Tourism",
+    "code": "TT",
+    "description": "Travel and Tourism syllabus, Form 1-4 (Curriculum Development Centre, 2024)."
+  },
+  "grade": {
+    "name": "Form 2",
+    "code": "F2_CBC",
+    "level": 2,
+    "phase": "Secondary — the source scheme itself uses \"Form 2\" for this level under the 2023 CBC."
+  },
+  "terms": [
+    {
+      "name": "Term 1",
+      "sequence_number": 1,
+      "topics": [
+        {
+          "sequence_number": 1,
+          "name": "2.1 Tourism Destination - Zambia",
+          "sub_topics": [
+            {
+              "sequence_number": 1,
+              "name": "2.1.1 Tourism Destination and Attractions in Zambia",
+              "description": "Locating Zambia's tourism regions and analysing natural and man-made attraction centres and their economic contribution.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Locate tourism regions (South West/Lusaka/Central/Eastern, Copperbelt/North-Western, Northern/Muchinga/Luapula) and the factors that make a destination attractive",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Analyse natural and man-made attraction centres and their contribution to the local and national economy",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "sequence_number": 2,
+          "name": "2.2 Tourism Destination Planning",
+          "sub_topics": [
+            {
+              "sequence_number": 1,
+              "name": "2.2.1 Destination Planning",
+              "description": "Tourism destination planning: key components, steps, and creating a marketing campaign for a destination.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Plan tourism destination packages, including their key components, the steps involved, and a marketing campaign (branding, promotional materials, strategy)",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "sequence_number": 2,
+              "name": "2.2.2 Carrying Capacity",
+              "description": "The concept, types, and factors affecting carrying capacity; the dangers of exceeding it, and how to manage it sustainably.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Assess the carrying capacity of tourism destinations, and design a sustainable tourism management plan to manage it (visitor limits, off-season travel, infrastructure)",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "sequence_number": 3,
+          "name": "2.3 Intermediaries in Tourism",
+          "sub_topics": [
+            {
+              "sequence_number": 1,
+              "name": "2.3.1 Intermediaries in the Tourism Industry",
+              "description": "Identifying intermediaries (travel agents, tour operators), their functions and drawbacks, and demonstrating the skills used in travel agency operations, job opportunities, and the tourism value chain. This sub-topic's practice continues from its introduction in the final week of Term 1 into the first week of Term 2 in the source scheme.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Identify intermediaries in the tourism industry (travel agents, tour operators), analyse their functions, and discuss their drawbacks",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Demonstrate skills used in travel agency operations (guidance, itinerary, package, reservations), explore related job opportunities, and draw the tourism value chain",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 2",
+      "sequence_number": 2,
+      "topics": [
+        {
+          "sequence_number": 1,
+          "name": "2.4 Seasonality in Tourism",
+          "sub_topics": [
+            {
+              "sequence_number": 1,
+              "name": "2.4.1 Seasonality in Tourism",
+              "description": "Concepts, functions, causes and types of seasonality (peak, off, shoulder season); measures to overcome it and planning events and tours accordingly.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Plan events and tours according to seasons, applying measures to overcome seasonality (creating seasonal tour packages, off-season or shoulder-season events)",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "sequence_number": 2,
+          "name": "2.5 Impacts of Tourism",
+          "sub_topics": [
+            {
+              "sequence_number": 1,
+              "name": "2.5.1 Impacts of Tourism",
+              "description": "Positive impacts (economic benefits, cultural exchange) and negative impacts (environmental degradation, overcrowding, cultural commodification) of tourism, and measures to mitigate the negative impacts.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Manage the impacts of tourism by applying measures to mitigate negative impacts (responsible travel behaviour, community-based tourism, environmental conservation)",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
