@@ -1,0 +1,30 @@
+name: Firestore rules tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  rules-tests:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: firebase/rules-tests
+    steps:
+      - uses: actions/checkout@v4
+
+      # firebase-tools@13 (pinned deliberately — see rules-tests/package.json)
+      # needs a JDK for the Firestore/Storage emulators. 17 matches the
+      # Temurin build used for local development.
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - run: npm ci
+
+      - run: npm test
