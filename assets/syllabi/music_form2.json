@@ -1,0 +1,373 @@
+{
+  "_source": "A real 'Music Arts (Musical Arts) Form 2 Scheme of Work' (a real Zambian secondary school's own department) was shared with this project via Drive, as three separate real documents -- one per term (Term 1, Term 2, Term 3), with no duplicate re-uploads identified among them. A teacher's name and school name were found in the header of every one of these documents and are not reproduced here per this app's standing sourcing policy. This is a genuine gap fill -- this app previously had no Music Form 2 content at all (only Form 1 Term 3). The source PDFs are titled 'MUSICAL ARTS' / 'MUSIC ARTS' throughout; this is the same subject as this app's existing 'Music' (code MUS) entries. Cites the real official '2024 Music Arts Syllabus, Ordinary Secondary Education Form 1-4' with real page citations (pp.8-11).\n\nA genuine structural feature of the source is preserved rather than silently corrected: sub-topic 2.1.1 (Zambian Music Styles) is taught across two consecutive weeks under two different specific-competence rows (Zambian styles, then foreign influences on Zambian music) both carrying the same 2.1.1 code -- these are combined into one sub-topic entry here rather than duplicated. Likewise Topic 2.13 (Musical Arts and Technology) spans the Term 2/Term 3 boundary: its first sub-topic (2.13.1 Music Writing) is taught in Term 2, and its second (2.13.2 Music Recording) in the first week of Term 3 -- each is placed in the term where the source actually teaches it, under the same real topic number.\n\nThe remainder of Term 3 (weeks 2-11 of the real scheme) is a genuine, honestly-documented gap rather than fabricated content: after week 1's Music Recording sub-topic, the source's own remaining Term 3 weeks are 'PRACTICAL PROJECT' (composition, recording and a conducted group performance), 'REVISION', 'THEORY ASSESSMENT', 'PRACTICAL ASSESSMENT', 'PROJECT SUBMISSION & REVIEW', 'CAREER EXPLORATION' (music industry careers), and 'SYLLABUS OVERVIEW' (a preview of Form 3 topics) -- the source's own Prescribed Competences column is marked 'N/A' for every one of these rows, meaning they apply or assess the topics already covered rather than introduce any new numbered syllabus topic of their own. No separate Term 3 topic is invented here to fill that real gap.\n\nIts own Content/Concept, Learning Activities, Strategies/Methods and Materials/Resources columns are omitted, consistent with the approach used for every other bundled subject in this app.",
+  "curriculum": {
+    "code": "CBC_2023",
+    "name": "2023 Competency-Based Curriculum",
+    "description": "Zambia's current competency-based curriculum."
+  },
+  "subject": {
+    "name": "Music",
+    "code": "MUS",
+    "description": "Music (Musical Arts) syllabus, Form 1-4 (Curriculum Development Centre, 2024)."
+  },
+  "grade": {
+    "name": "Form 2",
+    "code": "F2_CBC",
+    "level": 2,
+    "phase": "Secondary — the source scheme itself uses \"Form 2\" for this level under the 2023 CBC."
+  },
+  "terms": [
+    {
+      "name": "Term 1",
+      "sequence_number": 1,
+      "topics": [
+        {
+          "sequence_number": 1,
+          "name": "2.1 World Music",
+          "sub_topics": [
+            {
+              "sequence_number": 1,
+              "name": "2.1.1 Zambian Music Styles",
+              "description": "Identifying Zambian music styles (traditional, Kalindula, Zamrock, contemporary) and foreign influences (instruments, attire, technology) on Zambian music.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Identify different Zambian music styles (traditional, Kalindula, Zamrock, contemporary) and select Zambian music for performance",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Discuss foreign influences on Zambian music (instruments, attire, technology) and perform Zambian musical styles",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "sequence_number": 2,
+          "name": "2.2 Rhythm",
+          "sub_topics": [
+            {
+              "sequence_number": 1,
+              "name": "2.2.1 Compound Metre",
+              "description": "Identifying compound time signatures (e.g. 6/8, 9/8, 12/8) and demonstrating compound time in a composition.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Apply compound time (compound duple, compound triple, compound quadruple) in a composition",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "sequence_number": 3,
+          "name": "2.3 Pitch",
+          "sub_topics": [
+            {
+              "sequence_number": 1,
+              "name": "2.3.1 C Clefs",
+              "description": "Relating letter names to pitch levels on the alto and tenor (C) clefs, and relating the C clefs to instruments such as viola.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Relate pitch to the C clefs (alto and tenor)",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "sequence_number": 2,
+              "name": "2.3.2 Double Sharps and Double Flats",
+              "description": "The function and effect of double accidentals in a music composition.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Apply double sharps and double flats in a music composition",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "sequence_number": 4,
+          "name": "2.4 Intervals",
+          "sub_topics": [
+            {
+              "sequence_number": 1,
+              "name": "2.4.1 Compound Intervals",
+              "description": "Intervals larger than an octave, described by numerical value.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Apply compound intervals in a music composition",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "sequence_number": 5,
+          "name": "2.5 Melody",
+          "sub_topics": [
+            {
+              "sequence_number": 1,
+              "name": "2.5.1 Melody Writing",
+              "description": "Techniques for composing a longer melody (motif, phrasing, starting and ending).",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Construct an eight-bar melody",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "sequence_number": 2,
+              "name": "2.5.2 Transposing",
+              "description": "Transposing a melody to a new key (by key, interval or clef).",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Transpose a diatonic melody",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "sequence_number": 3,
+              "name": "2.5.3 Translating",
+              "description": "Translating between staff notation and tonic sol-fa, and punctuating rhythmic expressions (full-stop, comma, colon, semicolon).",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Translate a diatonic melody from staff notation to tonic sol-fa notation and vice versa",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "sequence_number": 4,
+              "name": "2.5.4 Sight Reading",
+              "description": "Sight-reading skills in treble, bass, alto, and tenor clefs.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Perform music written in any clef (C clef, G clef, F clef) using voice or instrument",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 2",
+      "sequence_number": 2,
+      "topics": [
+        {
+          "sequence_number": 1,
+          "name": "2.6 Form",
+          "sub_topics": [
+            {
+              "sequence_number": 1,
+              "name": "2.6.1 Structure of Rondo",
+              "description": "Detecting rhythmic and melodic contrast in rondo form (ABACA).",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Construct melody in rondo form, including sections of equal and unequal length in rondo design",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "sequence_number": 2,
+          "name": "2.7 Musical Terms",
+          "sub_topics": [
+            {
+              "sequence_number": 1,
+              "name": "2.7.1 Advanced Musical Signs",
+              "description": "Interpreting advanced musical signs (D.C. al fine, fermata, accent, slur).",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Interpret advanced musical signs (D.C. al fine, fermata, accent, slur) in a score",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "sequence_number": 3,
+          "name": "2.8 Harmony",
+          "sub_topics": [
+            {
+              "sequence_number": 1,
+              "name": "2.8.1 Chord Progression",
+              "description": "Identifying common chord progressions (e.g. I-IV-V-I) using Roman numeral analysis.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Identify chord progressions",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "sequence_number": 2,
+              "name": "2.8.2 Types of Cadences",
+              "description": "Detecting harmonic cadences in major keys: perfect, imperfect, plagal, interrupted.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Detect harmonic cadences in major keys",
+                  "category": "Specific Competence"
+                }
+              ]
+            },
+            {
+              "sequence_number": 3,
+              "name": "2.8.3 Part Singing",
+              "description": "Singing in harmony with others.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Perform two-, three- and four-part scores in group singing",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "sequence_number": 4,
+          "name": "2.9 Texture",
+          "sub_topics": [
+            {
+              "sequence_number": 1,
+              "name": "2.9.1 Density",
+              "description": "Textural types: monophonic, polyphonic, homophonic.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Identify density for a given piece of music",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "sequence_number": 5,
+          "name": "2.10 Conducting",
+          "sub_topics": [
+            {
+              "sequence_number": 1,
+              "name": "2.10.1 Conducting Figures",
+              "description": "Conducting patterns for duple, triple, and quadruple time, and relating music accentuation to hand movements (downbeat, upbeat, syncopation, dynamic changes, subtle accent).",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Recognise types of conducting figures (duple, triple, quadruple)",
+                  "category": "Specific Competence"
+                },
+                {
+                  "sequence_number": 2,
+                  "description": "Relate music accentuation to hand movements in conducting",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "sequence_number": 6,
+          "name": "2.11 Voice",
+          "sub_topics": [
+            {
+              "sequence_number": 1,
+              "name": "2.11.1 Singing",
+              "description": "Advanced singing techniques: breath control, posture, articulation, diction, projection.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Apply singing techniques",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "sequence_number": 7,
+          "name": "2.12 Musical Instruments",
+          "sub_topics": [
+            {
+              "sequence_number": 1,
+              "name": "2.12.1 Instrument Playing Techniques",
+              "description": "Developing technique on a chosen instrument, through individual practice and group ensemble playing.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Apply instrument playing techniques on a chosen instrument",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "sequence_number": 8,
+          "name": "2.13 Musical Arts and Technology",
+          "sub_topics": [
+            {
+              "sequence_number": 1,
+              "name": "2.13.1 Music Writing",
+              "description": "Identifying available music notation software (e.g. MuseScore), discussing its features, determining the kind of software to use, and writing music using it.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Write music using software",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Term 3",
+      "sequence_number": 3,
+      "topics": [
+        {
+          "sequence_number": 1,
+          "name": "2.13 Musical Arts and Technology",
+          "sub_topics": [
+            {
+              "sequence_number": 1,
+              "name": "2.13.2 Music Recording",
+              "description": "Basic principles of audio recording: identifying available recording devices (phones, recorders, microphones) and discussing their features.",
+              "competencies": [
+                {
+                  "sequence_number": 1,
+                  "description": "Record music",
+                  "category": "Specific Competence"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
