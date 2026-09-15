@@ -160,8 +160,10 @@ flutter:
     - assets/syllabi/commerce_form2.json
     - assets/subject_content/ict/form1_information_and_communication_technology_teaching_module_form_1_term_2.txt
     - assets/syllabi/ict_form1.json
+    - assets/syllabi/ict_form2.json
     - assets/subject_content/computer_science/form1_computer_science_teaching_module_form_1_term_2.txt
     - assets/syllabi/computer_science_form1.json
+    - assets/syllabi/computer_science_form2.json
     - assets/subject_content/geography/form1_geography_teaching_module_form_1_term_2.txt
     - assets/subject_content/geography/form1_geography_teaching_module_term3.txt
     - assets/syllabi/geography_form1.json
@@ -171,6 +173,9 @@ flutter:
     - assets/syllabi/chemistry_form2.json
     - assets/subject_content/agricultural_science/form1_agricultural_science_teaching_module_form_1_term_2.txt
     - assets/syllabi/agricultural_science_form1.json
+    - assets/syllabi/agricultural_science_grade10.json
+    - assets/syllabi/agricultural_science_grade11.json
+    - assets/syllabi/agricultural_science_grade12.json
     - assets/subject_content/biology/form1_biology_teaching_module_form_1_term_2.txt
     - assets/syllabi/biology_form1.json
     - assets/syllabi/biology_form2.json
@@ -181,8 +186,13 @@ flutter:
     - assets/syllabi/physics_form1.json
     - assets/subject_content/music/form1_musical_art_education_teaching_module.txt
     - assets/syllabi/music_form1.json
+    - assets/syllabi/music_form2.json
     - assets/subject_content/art_and_design/form1_art_and_design_module.txt
     - assets/syllabi/art_and_design_form1.json
+    - assets/pamphlets/manifest.json
+    - assets/pamphlets/geography_pamphlet_grade10-12.json
+    - assets/pamphlets/civic_education_pamphlet_grade10-12.json
+    - assets/pamphlets/mathematical_geography_pamphlet_grade10-12.json
     - assets/lesson_plans/manifest.json
     - assets/lesson_plans/civic_education_grade10-12.json
     - assets/lesson_plans/history_form1.json
