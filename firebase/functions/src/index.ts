@@ -7986,19 +7986,18 @@ async function recordUnmatchedHomeAssignmentSubmission(record: UnmatchedHomeAssi
 export const pollGmailForHomeAssignmentReplies = onSchedule(
   { schedule: "every 10 minutes", secrets: [gmailClientId, gmailClientSecret, gmailRefreshToken], region: "us-central1", timeoutSeconds: 300, memory: "256MiB" },
   async () => {
-    let clientId: string, clientSecret: string, refreshToken: string;
-    try {
-      clientId = gmailClientId.value();
-      clientSecret = gmailClientSecret.value();
-      refreshToken = gmailRefreshToken.value();
-    } catch {
-      clientId = clientSecret = refreshToken = "";
-    }
-    if (!clientId || !clientSecret || !refreshToken) {
-      // Not configured yet — the dedicated Gmail account doesn't exist
-      // yet, or its credentials haven't been set. Deliberately a no-op,
-      // not an error: this function is meant to deploy and sit idle
-      // until real values exist, per this epic's own Stage 2b framing.
+    // Cloud Functions v2 requires a bound secret to have SOME version at
+    // deploy time — there's no such thing as deploying with "no value"
+    // at all. `NOT_CONFIGURED_YET` is the literal placeholder value set
+    // for all three Gmail secrets until the project owner creates the
+    // real account and provides real OAuth credentials (see this
+    // function's own header comment) — checked for explicitly rather
+    // than an empty-string check, which a bound secret can never
+    // actually produce.
+    const clientId = gmailClientId.value();
+    const clientSecret = gmailClientSecret.value();
+    const refreshToken = gmailRefreshToken.value();
+    if (clientId === "NOT_CONFIGURED_YET" || clientSecret === "NOT_CONFIGURED_YET" || refreshToken === "NOT_CONFIGURED_YET") {
       console.log("pollGmailForHomeAssignmentReplies: Gmail credentials not configured yet — skipping this run.");
       return;
     }
