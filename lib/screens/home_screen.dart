@@ -435,7 +435,7 @@ class HomeScreen extends StatelessWidget {
                 ),
                 FunctionButton(
                   icon: Icons.calendar_view_week_outlined,
-                  label: 'Timetable',
+                  label: 'School Timetable Maker',
                   subtitle: 'Your schedule, browse by teacher, or manage School Network setup',
                   onTap: () => Navigator.of(context).push(
                     MaterialPageRoute(builder: (_) => const TimetableHomeScreen()),
