@@ -7526,19 +7526,37 @@ export const recordHomeAssignmentSubmission = onCall<RecordHomeAssignmentSubmiss
       submittedVia = "imported";
     }
 
-    const submissionRef = assignmentRef.collection("submissions").doc();
-    await submissionRef.set({
+    const submissionId = await writeHomeAssignmentSubmission(assignmentRef, {
       learnerName: resolvedLearnerName,
       photoPaths,
       submittedVia,
       submittedByUid: request.auth.uid,
-      submittedAt: admin.firestore.FieldValue.serverTimestamp(),
-      status: "queued",
     });
 
-    return { submissionId: submissionRef.id };
+    return { submissionId };
   }
 );
+
+// Shared by recordHomeAssignmentSubmission (a real signed-in caller — pupil
+// or teacher-import) and pollGmailForHomeAssignmentReplies (Stage 2b, no
+// caller at all — a scheduled function reading a shared inbox) so both
+// ingestion paths write the exact same submission shape. Permission
+// checks stay in each caller, not here — this is pure persistence.
+async function writeHomeAssignmentSubmission(
+  assignmentRef: admin.firestore.DocumentReference,
+  data: { learnerName: string; photoPaths: string[]; submittedVia: "app" | "imported" | "email"; submittedByUid: string }
+): Promise<string> {
+  const submissionRef = assignmentRef.collection("submissions").doc();
+  await submissionRef.set({
+    learnerName: data.learnerName,
+    photoPaths: data.photoPaths,
+    submittedVia: data.submittedVia,
+    submittedByUid: data.submittedByUid,
+    submittedAt: admin.firestore.FieldValue.serverTimestamp(),
+    status: "queued",
+  });
+  return submissionRef.id;
+}
 
 // ---------------------------------------------------------------------
 // Home Assignment epic, Stage 10 (added 2026-09-14) — records ONE
@@ -7829,5 +7847,262 @@ export const remindHomeAssignmentNonSubmitters = onCall<RemindHomeAssignmentNonS
     }
 
     return { remindedCount: learnerNames.length, emailsSent, emailsFailed, whatsappRecipients };
+  }
+);
+
+// ---------------------------------------------------------------------
+// Home Assignment reply-ingestion epic, Stage 2b (added 2026-09-16, per
+// explicit request) — "Gmail-based polling fallback (zero domain cost)":
+// a dedicated Gmail inbox (not yet created — see the three secrets
+// below, all deliberately unset until the project owner creates that
+// account and provides real OAuth credentials for it) receives replies
+// to Home Assignments the same way any other reply-to email would.
+// Every 10 minutes, this scheduled function reads its unread mail,
+// extracts each message's Stage 1 reference code, matches the sender
+// against the matching class's own `guardianContacts` (the ONLY email
+// address this app has on file for any learner — see this function's
+// own note on why "match the sender against the roster" really means
+// "match against a guardian's email", not a pupil's own, since no pupil
+// email field exists anywhere in this app), downloads image attachments,
+// and queues them into the exact same `submissions` shape Stage 3's
+// real-time webhook (or any other future ingestion path) would produce
+// — `writeHomeAssignmentSubmission` is the single shared write path.
+// Anything that can't be resolved (no reference code, an unrecognized
+// code, or a sender email not on file for that class) is written to
+// `unmatchedHomeAssignmentSubmissions` for manual review rather than
+// silently dropped, per the brief's own explicit fallback requirement.
+//
+// This function deploys safely with these secrets unset — it simply logs
+// and returns early every run until real values exist. Once the project
+// owner creates the Gmail account, enables the Gmail API on it, and
+// completes Google's OAuth consent flow for it (a real sign-in action
+// only they can do), set the three secrets below via
+// `firebase functions:secrets:set GMAIL_CLIENT_ID` etc. — no code change
+// needed at that point.
+// ---------------------------------------------------------------------
+
+const gmailClientId = defineSecret("GMAIL_CLIENT_ID");
+const gmailClientSecret = defineSecret("GMAIL_CLIENT_SECRET");
+const gmailRefreshToken = defineSecret("GMAIL_REFRESH_TOKEN");
+
+const HOME_ASSIGNMENT_REFERENCE_CODE_PATTERN = /HA-[A-Z]+-\d{6}-[A-Z0-9]{2}/;
+
+function extractHomeAssignmentReferenceCode(text: string): string | null {
+  const match = text.match(HOME_ASSIGNMENT_REFERENCE_CODE_PATTERN);
+  return match ? match[0] : null;
+}
+
+// "Name <email@example.com>" or a bare address — Gmail's own `From`
+// header format varies by client, this covers both.
+function extractSenderEmailAddress(fromHeader: string): string | null {
+  const angleMatch = fromHeader.match(/<([^>]+)>/);
+  const candidate = (angleMatch ? angleMatch[1] : fromHeader).trim();
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(candidate) ? candidate.toLowerCase() : null;
+}
+
+interface GmailAttachmentPart {
+  filename: string;
+  mimeType: string;
+  attachmentId: string;
+}
+
+// Gmail's MIME structure is a recursive `parts` tree (a multipart/mixed
+// message has multipart/alternative + attachment parts as siblings, and
+// so on) — this walks the whole tree once, collecting only real image
+// attachments (a signature image, an emoji, or a forwarded logo isn't a
+// scanned assignment page).
+function collectImageAttachmentParts(part: Record<string, unknown> | undefined, out: GmailAttachmentPart[] = []): GmailAttachmentPart[] {
+  if (!part) return out;
+  const filename = part.filename as string | undefined;
+  const mimeType = part.mimeType as string | undefined;
+  const body = part.body as Record<string, unknown> | undefined;
+  const attachmentId = body?.attachmentId as string | undefined;
+  if (filename && attachmentId && mimeType?.startsWith("image/")) {
+    out.push({ filename, mimeType, attachmentId });
+  }
+  const children = part.parts as Record<string, unknown>[] | undefined;
+  if (Array.isArray(children)) {
+    for (const child of children) collectImageAttachmentParts(child, out);
+  }
+  return out;
+}
+
+async function getGmailAccessToken(): Promise<string> {
+  const response = await fetch("https://oauth2.googleapis.com/token", {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({
+      client_id: gmailClientId.value(),
+      client_secret: gmailClientSecret.value(),
+      refresh_token: gmailRefreshToken.value(),
+      grant_type: "refresh_token",
+    }).toString(),
+  });
+  if (!response.ok) {
+    throw new Error(`Gmail OAuth token refresh failed: ${response.status} ${await response.text()}`);
+  }
+  const json = (await response.json()) as { access_token: string };
+  return json.access_token;
+}
+
+async function gmailApiGet(path: string, accessToken: string): Promise<any> {
+  const response = await fetch(`https://www.googleapis.com/gmail/v1${path}`, {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+  if (!response.ok) {
+    throw new Error(`Gmail API GET ${path} failed: ${response.status} ${await response.text()}`);
+  }
+  return response.json();
+}
+
+async function markGmailMessageRead(messageId: string, accessToken: string): Promise<void> {
+  await fetch(`https://www.googleapis.com/gmail/v1/users/me/messages/${messageId}/modify`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": "application/json" },
+    body: JSON.stringify({ removeLabelIds: ["UNREAD"] }),
+  });
+}
+
+interface UnmatchedHomeAssignmentSubmissionRecord {
+  reason: "no-reference-code" | "unknown-reference-code" | "sender-not-on-roster" | "no-attachments";
+  gmailMessageId: string;
+  subject: string;
+  senderEmail: string | null;
+  referenceCode?: string;
+  schoolId?: string;
+  classId?: string;
+  assignmentId?: string;
+  learnerName?: string;
+}
+
+async function recordUnmatchedHomeAssignmentSubmission(record: UnmatchedHomeAssignmentSubmissionRecord): Promise<void> {
+  await admin.firestore().collection("unmatchedHomeAssignmentSubmissions").add({
+    ...record,
+    receivedAt: admin.firestore.FieldValue.serverTimestamp(),
+    resolved: false,
+  });
+}
+
+export const pollGmailForHomeAssignmentReplies = onSchedule(
+  { schedule: "every 10 minutes", secrets: [gmailClientId, gmailClientSecret, gmailRefreshToken], region: "us-central1", timeoutSeconds: 300, memory: "256MiB" },
+  async () => {
+    let clientId: string, clientSecret: string, refreshToken: string;
+    try {
+      clientId = gmailClientId.value();
+      clientSecret = gmailClientSecret.value();
+      refreshToken = gmailRefreshToken.value();
+    } catch {
+      clientId = clientSecret = refreshToken = "";
+    }
+    if (!clientId || !clientSecret || !refreshToken) {
+      // Not configured yet — the dedicated Gmail account doesn't exist
+      // yet, or its credentials haven't been set. Deliberately a no-op,
+      // not an error: this function is meant to deploy and sit idle
+      // until real values exist, per this epic's own Stage 2b framing.
+      console.log("pollGmailForHomeAssignmentReplies: Gmail credentials not configured yet — skipping this run.");
+      return;
+    }
+
+    const accessToken = await getGmailAccessToken();
+    const listing = await gmailApiGet("/users/me/messages?q=is:unread&maxResults=25", accessToken);
+    const messageRefs = (listing.messages as { id: string }[] | undefined) ?? [];
+
+    for (const { id: messageId } of messageRefs) {
+      try {
+        const message = await gmailApiGet(`/users/me/messages/${messageId}?format=full`, accessToken);
+        const headers = (message.payload?.headers as { name: string; value: string }[] | undefined) ?? [];
+        const subject = headers.find((h) => h.name.toLowerCase() === "subject")?.value ?? "";
+        const fromHeader = headers.find((h) => h.name.toLowerCase() === "from")?.value ?? "";
+        const senderEmail = extractSenderEmailAddress(fromHeader);
+        const referenceCode = extractHomeAssignmentReferenceCode(subject) ?? extractHomeAssignmentReferenceCode((message.snippet as string | undefined) ?? "");
+
+        if (!referenceCode) {
+          await recordUnmatchedHomeAssignmentSubmission({ reason: "no-reference-code", gmailMessageId: messageId, subject, senderEmail });
+          await markGmailMessageRead(messageId, accessToken);
+          continue;
+        }
+
+        const assignmentQuery = await admin
+          .firestore()
+          .collectionGroup("homeAssignments")
+          .where("referenceCode", "==", referenceCode)
+          .limit(1)
+          .get();
+        if (assignmentQuery.empty) {
+          await recordUnmatchedHomeAssignmentSubmission({ reason: "unknown-reference-code", gmailMessageId: messageId, subject, senderEmail, referenceCode });
+          await markGmailMessageRead(messageId, accessToken);
+          continue;
+        }
+
+        const assignmentRef = assignmentQuery.docs[0].ref;
+        const classRef = assignmentRef.parent.parent!;
+        const schoolRef = classRef.parent.parent!;
+        const classSnap = await classRef.get();
+        const classData = classSnap.data() ?? {};
+        const learnerNames = (classData.learnerNames as string[] | undefined) ?? [];
+        const contactsSnap = await classRef.collection("guardianContacts").doc("data").get();
+        const contacts = (contactsSnap.data()?.contacts ?? []) as GuardianContactInput[];
+        const matchedIndex = senderEmail
+          ? contacts.findIndex((c) => c?.email && c.email.toLowerCase() === senderEmail)
+          : -1;
+
+        if (matchedIndex === -1 || !learnerNames[matchedIndex]) {
+          await recordUnmatchedHomeAssignmentSubmission({
+            reason: "sender-not-on-roster",
+            gmailMessageId: messageId,
+            subject,
+            senderEmail,
+            referenceCode,
+            schoolId: schoolRef.id,
+            classId: classRef.id,
+            assignmentId: assignmentRef.id,
+          });
+          await markGmailMessageRead(messageId, accessToken);
+          continue;
+        }
+        const learnerName = learnerNames[matchedIndex];
+
+        const attachmentParts = collectImageAttachmentParts(message.payload as Record<string, unknown> | undefined);
+        if (attachmentParts.length === 0) {
+          await recordUnmatchedHomeAssignmentSubmission({
+            reason: "no-attachments",
+            gmailMessageId: messageId,
+            subject,
+            senderEmail,
+            referenceCode,
+            schoolId: schoolRef.id,
+            classId: classRef.id,
+            assignmentId: assignmentRef.id,
+            learnerName,
+          });
+          await markGmailMessageRead(messageId, accessToken);
+          continue;
+        }
+
+        const bucket = admin.storage().bucket();
+        const photoPaths: string[] = [];
+        for (let i = 0; i < attachmentParts.length; i++) {
+          const part = attachmentParts[i];
+          const attachment = await gmailApiGet(`/users/me/messages/${messageId}/attachments/${part.attachmentId}`, accessToken);
+          const buffer = Buffer.from(attachment.data as string, "base64url");
+          const storagePath = `schools/${schoolRef.id}/classes/${classRef.id}/homeAssignments/${assignmentRef.id}/submissions/email-${messageId}/page_${i}.jpg`;
+          await bucket.file(storagePath).save(buffer, { contentType: part.mimeType });
+          photoPaths.push(storagePath);
+        }
+
+        await writeHomeAssignmentSubmission(assignmentRef, {
+          learnerName,
+          photoPaths,
+          submittedVia: "email",
+          submittedByUid: "system:gmail-poll",
+        });
+        await markGmailMessageRead(messageId, accessToken);
+      } catch (err) {
+        // One malformed/unusual message should never abort the whole
+        // poll — log it and move on to the next; it stays unread, so
+        // it's retried next run rather than silently lost.
+        console.error(`pollGmailForHomeAssignmentReplies: failed to process message ${messageId}`, err);
+      }
+    }
   }
 );

@@ -29,6 +29,21 @@ service cloud.firestore {
       allow read, write: if false;
     }
 
+    // Home Assignment reply-ingestion epic, Stage 2b/3 (added 2026-09-16)
+    // — replies the Gmail-polling function (or any future real-time
+    // webhook) couldn't confidently match to a roster entry, held for a
+    // human to resolve rather than silently dropped. Written only by the
+    // Admin SDK. A doc only ever becomes readable once a schoolId is
+    // known (i.e. the reference code itself matched, even if the sender
+    // didn't) — a message that couldn't be tied to any school at all
+    // (no reference code, or an unrecognized one) has no schoolId and so
+    // is deliberately not exposed to any app client; it's still stored,
+    // reviewable directly in the Firebase console.
+    match /unmatchedHomeAssignmentSubmissions/{id} {
+      allow read: if request.auth != null && request.auth.token.schoolId == resource.data.schoolId;
+      allow write: if false;
+    }
+
     // Teacher Profile record (Stage 5 of real phone/email sign-in, added
     // 2026-09-13) — the identity the School Network feature (below)
     // attaches `schoolId`/`schoolRole` onto. Unlike the dashboard above, a

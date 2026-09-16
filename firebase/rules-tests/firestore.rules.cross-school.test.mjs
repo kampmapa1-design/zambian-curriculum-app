@@ -71,6 +71,10 @@ before(async () => {
       ['submissions/sub-teacher-b', { teacherEmail: 'teacher-b@example.com', text: 'y' }],
 
       ['dashboardAccessCodes/code-1', { code: '123456' }],
+
+      ['unmatchedHomeAssignmentSubmissions/unmatched-a', { schoolId: 'school-A', reason: 'sender-not-on-roster' }],
+      ['unmatchedHomeAssignmentSubmissions/unmatched-b', { schoolId: 'school-B', reason: 'sender-not-on-roster' }],
+      ['unmatchedHomeAssignmentSubmissions/unmatched-no-school', { reason: 'no-reference-code' }],
     ];
     for (const [path, data] of seeds) {
       await setDoc(doc(db, path), data);
@@ -150,6 +154,25 @@ describe('Cross-school isolation — homeAssignments submissions', () => {
   it('direct client write to a submission always fails, even matching-school staff', async () => {
     const db = staffContext(testEnv, 'staff-a', 'school-A', 'teacher');
     await assertFails(setDoc(doc(db, 'schools/school-A/classes/class-1/homeAssignments/hw-1/submissions/sub-new'), { score: 1 }));
+  });
+});
+
+describe('Cross-school isolation — unmatchedHomeAssignmentSubmissions (Stage 2b/3)', () => {
+  it('staff CAN read their own school\'s unmatched item, CANNOT read the other school\'s', async () => {
+    const db = staffContext(testEnv, 'staff-a', 'school-A', 'teacher');
+    await assertSucceeds(getDoc(doc(db, 'unmatchedHomeAssignmentSubmissions/unmatched-a')));
+    await assertFails(getDoc(doc(db, 'unmatchedHomeAssignmentSubmissions/unmatched-b')));
+  });
+
+  it('an item with no resolved schoolId is readable by nobody via the app', async () => {
+    await assertFails(getDoc(doc(staffContext(testEnv, 'staff-a', 'school-A', 'teacher'), 'unmatchedHomeAssignmentSubmissions/unmatched-no-school')));
+    await assertFails(getDoc(doc(headTeacherContext(testEnv, 'lead-a', 'school-A'), 'unmatchedHomeAssignmentSubmissions/unmatched-no-school')));
+  });
+
+  it('direct client write always fails, even matching-school staff', async () => {
+    const db = staffContext(testEnv, 'staff-a', 'school-A', 'teacher');
+    await assertFails(setDoc(doc(db, 'unmatchedHomeAssignmentSubmissions/unmatched-a'), { resolved: true }));
+    await assertFails(setDoc(doc(db, 'unmatchedHomeAssignmentSubmissions/new-one'), { schoolId: 'school-A' }));
   });
 });
 

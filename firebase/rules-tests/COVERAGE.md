@@ -39,6 +39,7 @@ no role-gating to test on writes).
 | `.../guardianContacts/{id}` | ✅ | ✅ (always false) | ✅ cross-school (leadership role alone isn't enough) | ✅ all 6 roles (3 leadership yes / 3 non-leadership no) | core, cross-school, role-boundaries |
 | `schools/{id}/staffroom/{id}` | ✅ | ✅ create/update/delete | ✅ cross-school (read AND write, incl. stale-token-with-matching-authorUid case) | ✅ pin/unpin across all 6 roles; posting restricted to non-observer roles (fixed 2026-09-15, see below); authorUid-spoofing blocked; leadership delete-moderation verified | core, cross-school, impersonation, role-boundaries |
 | `schools/{id}/timetable/{id}` | ✅ | ✅ (always false) | ✅ cross-school | — (schoolId-only, no role check) | core, namespace-separation |
+| `unmatchedHomeAssignmentSubmissions/{id}` | ✅ | ✅ (always false) | ✅ cross-school (readable only once `schoolId` is resolved); an unresolved item (`schoolId` absent) confirmed readable by nobody via the app | — (schoolId-only, no role check) | cross-school |
 
 Pupil/staff claim-namespace separation (pupilSchoolId/pupilClassId vs.
 schoolId/schoolRole never cross-satisfying each other, including string
