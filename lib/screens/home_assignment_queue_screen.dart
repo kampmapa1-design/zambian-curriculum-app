@@ -60,7 +60,7 @@ class _HomeAssignmentQueueScreenState extends State<HomeAssignmentQueueScreen> {
         title: const Text('Import from'),
         children: [
           SimpleDialogOption(onPressed: () => Navigator.of(dialogContext).pop(_ImportSource.camera), child: const Text('Camera')),
-          SimpleDialogOption(onPressed: () => Navigator.of(dialogContext).pop(_ImportSource.device), child: const Text('Device (already received via WhatsApp/email)')),
+          SimpleDialogOption(onPressed: () => Navigator.of(dialogContext).pop(_ImportSource.device), child: const Text('Device (photo already received via WhatsApp/email)')),
         ],
       ),
     );
@@ -195,6 +195,7 @@ class _HomeAssignmentQueueScreenState extends State<HomeAssignmentQueueScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final code = widget.assignment.referenceCode;
     return Scaffold(
       appBar: AppBar(title: Text(widget.assignment.title)),
       body: StreamBuilder<List<HomeAssignmentSubmission>>(
@@ -209,9 +210,23 @@ class _HomeAssignmentQueueScreenState extends State<HomeAssignmentQueueScreen> {
           return ListView(
             padding: const EdgeInsets.all(16),
             children: [
+              // Reference code is how a teacher cross-checks a WhatsApp
+              // message against the right assignment — the whole reason
+              // this field exists (2026-09-16). Only null for an
+              // assignment sent before the field did.
+              if (code != null) ...[
+                Chip(avatar: const Icon(Icons.tag, size: 16), label: Text('Reference code: $code', style: const TextStyle(fontWeight: FontWeight.bold))),
+                const SizedBox(height: 12),
+              ],
               Row(
                 children: [
-                  Expanded(child: OutlinedButton.icon(icon: const Icon(Icons.upload_file_outlined), label: Text(_importing ? 'Importing...' : 'Import Submission'), onPressed: _importing ? null : _importSubmission)),
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      icon: const Icon(Icons.upload_file_outlined),
+                      label: Text(_importing ? 'Importing...' : 'Import Submission (camera/WhatsApp/device)'),
+                      onPressed: _importing ? null : _importSubmission,
+                    ),
+                  ),
                 ],
               ),
               const SizedBox(height: 16),
@@ -237,12 +252,34 @@ class _HomeAssignmentQueueScreenState extends State<HomeAssignmentQueueScreen> {
     );
   }
 
+  // 'app' = pupil's own in-app submission, 'imported' = teacher manually
+  // imported a photo (camera or device — the device pick IS the WhatsApp
+  // path, since that's exactly how a WhatsApp-received photo gets in),
+  // 'email' = auto-ingested by the Gmail-polling Cloud Function
+  // (2026-09-16). Unknown values fall back to the 'app' look rather than
+  // erroring, matching HomeAssignmentSubmission.fromMap's own default.
+  IconData _sourceIcon(String submittedVia) => switch (submittedVia) {
+        'imported' => Icons.upload_file_outlined,
+        'email' => Icons.email_outlined,
+        _ => Icons.smartphone,
+      };
+
+  String _sourceLabel(String submittedVia) => switch (submittedVia) {
+        'imported' => 'Imported (camera/WhatsApp)',
+        'email' => 'Emailed in',
+        _ => 'Submitted via app',
+      };
+
   Widget _submissionTile(HomeAssignmentSubmission s) {
     return Card(
       child: ListTile(
-        leading: Icon(s.submittedVia == 'app' ? Icons.smartphone : Icons.upload_file_outlined),
+        leading: Icon(_sourceIcon(s.submittedVia)),
         title: Text(s.learnerName),
-        subtitle: s.score != null ? Text('${s.score!.toStringAsFixed(0)} / ${s.maxScore!.toStringAsFixed(0)}${s.hasLowConfidence ? ' · needs review' : ''}') : Text(s.submittedVia == 'app' ? 'Submitted via app' : 'Imported'),
+        subtitle: Text(
+          s.score != null
+              ? '${s.score!.toStringAsFixed(0)} / ${s.maxScore!.toStringAsFixed(0)} · ${_sourceLabel(s.submittedVia)}${s.hasLowConfidence ? ' · needs review' : ''}'
+              : _sourceLabel(s.submittedVia),
+        ),
         trailing: s.hasLowConfidence && s.status != HomeAssignmentSubmissionStatus.queued ? const Icon(Icons.flag_outlined, color: Colors.orange) : null,
       ),
     );
