@@ -129,6 +129,13 @@ class IssuedHomeAssignment {
   final DateTime? createdAt;
   final DateTime? deadline;
 
+  /// The short "HA-MATH-240912-A3"-style code embedded in every email
+  /// subject/WhatsApp message for this assignment (2026-09-16, per
+  /// explicit request) — how a reply gets matched back to it, whichever
+  /// ingestion path the reply eventually arrives through. Null only for
+  /// an assignment sent before this field existed.
+  final String? referenceCode;
+
   const IssuedHomeAssignment({
     required this.id,
     required this.title,
@@ -142,6 +149,7 @@ class IssuedHomeAssignment {
     required this.subjectTeacherName,
     required this.createdAt,
     required this.deadline,
+    this.referenceCode,
   });
 
   factory IssuedHomeAssignment.fromMap(String id, Map<String, dynamic> data) => IssuedHomeAssignment(
@@ -161,6 +169,7 @@ class IssuedHomeAssignment {
         subjectTeacherName: data['subjectTeacherName'] as String? ?? '',
         createdAt: (data['createdAt'] as Timestamp?)?.toDate(),
         deadline: data['deadlineIso'] != null ? DateTime.tryParse(data['deadlineIso'] as String) : null,
+        referenceCode: data['referenceCode'] as String?,
       );
 
   double get totalMarks => questions.fold(0, (sum, q) => sum + q.maxMarks);

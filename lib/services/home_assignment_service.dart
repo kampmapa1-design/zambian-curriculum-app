@@ -47,7 +47,14 @@ class HomeAssignmentService {
         );
   }
 
-  Future<({String assignmentId, int emailsSent, int emailsFailed, List<({String name, String phone})> whatsappRecipients})> sendToClass({
+  Future<
+      ({
+        String assignmentId,
+        String referenceCode,
+        int emailsSent,
+        int emailsFailed,
+        List<({String name, String phone})> whatsappRecipients
+      })> sendToClass({
     required String schoolId,
     required String classId,
     required String subjectName,
@@ -78,6 +85,7 @@ class HomeAssignmentService {
       final data = result.data;
       return (
         assignmentId: data['assignmentId'] as String,
+        referenceCode: data['referenceCode'] as String,
         emailsSent: (data['emailsSent'] as num).toInt(),
         emailsFailed: (data['emailsFailed'] as num).toInt(),
         whatsappRecipients: ((data['whatsappRecipients'] as List?) ?? const [])

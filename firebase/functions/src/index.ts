@@ -7294,6 +7294,25 @@ interface HomeAssignmentKeyEntryInput {
   expectedAnswerOrKeywords: string;
 }
 
+// Home Assignment reply-ingestion epic, Stage 1 (added 2026-09-16, per
+// explicit request) — a short, human-typeable reference code embedded
+// in every assignment's email subject and WhatsApp message, so a
+// pupil/guardian's reply (however it eventually reaches the teacher —
+// an inbound email webhook, or a manually-imported photo) can be tied
+// back to the exact assignment/marking-key/roster it belongs to. Not a
+// security token — collision risk across one school's own assignments
+// is negligible for this "which assignment is this a reply to" purpose,
+// not for anything access-control-relevant.
+function generateHomeAssignmentReferenceCode(subjectName: string): string {
+  const abbr = subjectName.replace(/[^A-Za-z]/g, "").toUpperCase().slice(0, 4) || "HMWK";
+  const now = new Date();
+  const yy = String(now.getFullYear() % 100).padStart(2, "0");
+  const mm = String(now.getMonth() + 1).padStart(2, "0");
+  const dd = String(now.getDate()).padStart(2, "0");
+  const suffix = Math.random().toString(36).slice(2, 4).toUpperCase().padEnd(2, "0");
+  return `HA-${abbr}-${yy}${mm}${dd}-${suffix}`;
+}
+
 interface SendHomeAssignmentToClassRequest {
   schoolId: string;
   classId: string;
@@ -7309,7 +7328,15 @@ interface SendHomeAssignmentToClassRequest {
 
 export const sendHomeAssignmentToClass = onCall<SendHomeAssignmentToClassRequest>(
   { secrets: [brevoApiKey, brevoSenderEmail], region: "us-central1", timeoutSeconds: 180, memory: "256MiB", maxInstances: 5 },
-  async (request): Promise<{ assignmentId: string; emailsSent: number; emailsFailed: number; whatsappRecipients: { name: string; phone: string }[] }> => {
+  async (
+    request
+  ): Promise<{
+    assignmentId: string;
+    referenceCode: string;
+    emailsSent: number;
+    emailsFailed: number;
+    whatsappRecipients: { name: string; phone: string }[];
+  }> => {
     if (!request.auth) {
       throw new HttpsError("unauthenticated", "Sign in is required.");
     }
@@ -7349,6 +7376,7 @@ export const sendHomeAssignmentToClass = onCall<SendHomeAssignmentToClassRequest
       throw new HttpsError("permission-denied", "Only this subject's teacher, or school leadership, can send a Home Assignment for it.");
     }
 
+    const referenceCode = generateHomeAssignmentReferenceCode(subjectName);
     const assignmentRef = classRef.collection("homeAssignments").doc();
     await assignmentRef.set({
       title,
@@ -7362,6 +7390,7 @@ export const sendHomeAssignmentToClass = onCall<SendHomeAssignmentToClassRequest
       subjectTeacherName: (callerMemberSnap.data()?.name as string) ?? "",
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
       deadlineIso: typeof deadlineIso === "string" ? deadlineIso : null,
+      referenceCode,
     });
 
     const learnerNames = (classData.learnerNames as string[] | undefined) ?? [];
@@ -7385,10 +7414,10 @@ export const sendHomeAssignmentToClass = onCall<SendHomeAssignmentToClassRequest
             body: JSON.stringify({
               sender: { name: "Smart Teacher", email: brevoSenderEmail.value() },
               to: [{ email: contact.email, name: `Guardian of ${learnerNames[i]}` }],
-              subject: `Home Assignment: ${title}`,
+              subject: `Home Assignment: ${title} [${referenceCode}]`,
               htmlContent: `<p>A new Home Assignment (${subjectName}) has been issued.</p>${
                 instructions ? `<p>${String(instructions).replace(/\n/g, "<br>")}</p>` : ""
-              }`,
+              }<p><strong>Reference code: ${referenceCode}</strong><br>Please keep this reference code in your reply — it's how we match your reply back to this assignment.</p>`,
               ...(validAttachment ? { attachment: [{ name: validAttachment.filename, content: validAttachment.base64 }] } : {}),
             }),
           });
@@ -7408,7 +7437,7 @@ export const sendHomeAssignmentToClass = onCall<SendHomeAssignmentToClassRequest
       }
     }
 
-    return { assignmentId: assignmentRef.id, emailsSent, emailsFailed, whatsappRecipients };
+    return { assignmentId: assignmentRef.id, referenceCode, emailsSent, emailsFailed, whatsappRecipients };
   }
 );
 

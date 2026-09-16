@@ -48,6 +48,7 @@ class _HomeAssignmentSendScreenState extends State<HomeAssignmentSendScreen> {
   String? _selectedClassId;
   DateTime? _deadline;
   bool _sent = false;
+  String? _referenceCode;
   int _emailsSent = 0;
   int _emailsFailed = 0;
   List<({String name, String phone})> _whatsappRecipients = const [];
@@ -109,6 +110,7 @@ class _HomeAssignmentSendScreenState extends State<HomeAssignmentSendScreen> {
       if (!mounted) return;
       setState(() {
         _sent = true;
+        _referenceCode = outcome.referenceCode;
         _emailsSent = outcome.emailsSent;
         _emailsFailed = outcome.emailsFailed;
         _whatsappRecipients = outcome.whatsappRecipients;
@@ -152,7 +154,10 @@ class _HomeAssignmentSendScreenState extends State<HomeAssignmentSendScreen> {
 
   Future<void> _openWhatsApp(String phone) async {
     final digits = phone.replaceAll(RegExp(r'[^0-9+]'), '').replaceAll('+', '');
-    final uri = Uri.parse('https://wa.me/$digits?text=${Uri.encodeComponent('${widget.result.title} — attaching the assignment next.')}');
+    final code = _referenceCode;
+    final message = '${widget.result.title} — attaching the assignment next.'
+        '${code != null ? '\n\nReference code: $code\nPlease keep this reference code in your reply.' : ''}';
+    final uri = Uri.parse('https://wa.me/$digits?text=${Uri.encodeComponent(message)}');
     await launchUrl(uri, mode: LaunchMode.externalApplication);
   }
 
@@ -221,6 +226,10 @@ class _HomeAssignmentSendScreenState extends State<HomeAssignmentSendScreen> {
         const SizedBox(height: 12),
         Text('Sent — $_emailsSent email(s) delivered${_emailsFailed > 0 ? ', $_emailsFailed failed' : ''}.', textAlign: TextAlign.center),
         const Text('Linked pupils will also see this in their app automatically.', textAlign: TextAlign.center, style: TextStyle(fontSize: 12)),
+        if (_referenceCode != null) ...[
+          const SizedBox(height: 8),
+          Chip(label: Text('Reference code: $_referenceCode', style: const TextStyle(fontWeight: FontWeight.bold))),
+        ],
         if (_whatsappRecipients.isNotEmpty) ...[
           const SizedBox(height: 20),
           Text('WhatsApp — tap each to open a chat (attach the PDF you just downloaded):', style: Theme.of(context).textTheme.titleSmall),
