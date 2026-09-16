@@ -1,7 +1,13 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:path/path.dart' as p;
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../models/home_assignment.dart';
 import '../models/school.dart';
+import '../services/home_assignment_score_list_document_service.dart';
 import '../services/home_assignment_service.dart';
 
 /// Home Assignment epic, Stage 11 — "Before any marked batch is sent
@@ -23,8 +29,31 @@ class HomeAssignmentBatchReviewScreen extends StatefulWidget {
 
 class _HomeAssignmentBatchReviewScreenState extends State<HomeAssignmentBatchReviewScreen> {
   final _service = HomeAssignmentService();
+  final _scoreListDocumentService = HomeAssignmentScoreListDocumentService();
   bool _sending = false;
   bool _sent = false;
+  bool _sharingScoreList = false;
+
+  /// For the teacher's own distribution (email/WhatsApp/download) — never
+  /// sent to pupils, unlike [_approveAndSend] which delivers individual
+  /// results via the Cloud Function (2026-09-16, per explicit request).
+  Future<void> _shareScoreList(List<HomeAssignmentSubmission> batch) async {
+    setState(() => _sharingScoreList = true);
+    try {
+      final bytes = await _scoreListDocumentService.buildPdf(assignment: widget.assignment, submissions: batch);
+      final dir = await getTemporaryDirectory();
+      final safeName = widget.assignment.title.replaceAll(RegExp(r'[^A-Za-z0-9 _-]+'), '').trim();
+      final file = File(p.join(dir.path, '${safeName.isEmpty ? 'home_assignment' : safeName}_score_list.pdf'));
+      await file.writeAsBytes(bytes, flush: true);
+      if (!mounted) return;
+      await SharePlus.instance.share(ShareParams(files: [XFile(file.path)], subject: '${widget.assignment.title} — Score List'));
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Could not share the score list: $error')));
+    } finally {
+      if (mounted) setState(() => _sharingScoreList = false);
+    }
+  }
 
   Future<void> _approveAndSend() async {
     setState(() => _sending = true);
@@ -108,6 +137,12 @@ class _HomeAssignmentBatchReviewScreenState extends State<HomeAssignmentBatchRev
                   subtitle: Text('${s.score?.toStringAsFixed(0) ?? '—'} / ${s.maxScore?.toStringAsFixed(0) ?? '—'} · ${s.markingEngine ?? ''}'),
                   trailing: s.hasLowConfidence ? const Icon(Icons.flag_outlined, color: Colors.orange) : const Icon(Icons.check_circle_outline, color: Colors.green),
                 ),
+              const SizedBox(height: 16),
+              OutlinedButton.icon(
+                icon: _sharingScoreList ? const SizedBox(height: 16, width: 16, child: CircularProgressIndicator(strokeWidth: 2.4)) : const Icon(Icons.share_outlined),
+                label: Text(_sharingScoreList ? 'Preparing…' : 'Share Score List'),
+                onPressed: _sharingScoreList ? null : () => _shareScoreList(batch),
+              ),
               const SizedBox(height: 24),
               if (_sent)
                 const Card(
