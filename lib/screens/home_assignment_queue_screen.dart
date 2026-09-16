@@ -1,9 +1,11 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/home_assignment.dart';
 import '../models/marking_scheme.dart';
@@ -40,6 +42,63 @@ class _HomeAssignmentQueueScreenState extends State<HomeAssignmentQueueScreen> {
   bool _importing = false;
   bool _marking = false;
   String _markingStatus = '';
+
+  // "Once new items exist in an assignment's queue, show the teacher:
+  // 'Mark received home assignments using their marking key?'" (2026-09-16,
+  // per explicit request). Last-seen queued count is per-assignment,
+  // on-device only (SharedPreferences) — no server round-trip needed for
+  // what's purely a "did this screen already tell you about these" flag.
+  // `_askedThisOpen` guards against the dialog re-firing on every
+  // `watchSubmissions` tick; it resets only by reopening the screen.
+  static const _lastSeenQueuedCountPrefsPrefix = 'home_assignment_last_seen_queued_';
+  bool _askedThisOpen = false;
+  int? _lastSeenQueuedCount;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadLastSeenQueuedCount();
+  }
+
+  Future<void> _loadLastSeenQueuedCount() async {
+    final prefs = await SharedPreferences.getInstance();
+    final count = prefs.getInt('$_lastSeenQueuedCountPrefsPrefix${widget.assignment.id}') ?? 0;
+    if (mounted) setState(() => _lastSeenQueuedCount = count);
+  }
+
+  Future<void> _storeLastSeenQueuedCount(int count) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('$_lastSeenQueuedCountPrefsPrefix${widget.assignment.id}', count);
+  }
+
+  /// Fires the "mark now?" prompt at most once per screen-open, only when
+  /// the live queue has grown past what this screen last recorded. Runs
+  /// from the `StreamBuilder`'s builder, so the store-and-dialog happens
+  /// after the frame (`addPostFrameCallback`) rather than mid-build.
+  void _maybeOfferBatchMarking(List<HomeAssignmentSubmission> queued) {
+    final lastSeen = _lastSeenQueuedCount;
+    if (lastSeen == null || _askedThisOpen) return; // not loaded yet, or already asked
+    if (queued.isEmpty || queued.length <= lastSeen) return;
+    _askedThisOpen = true;
+    unawaited(_storeLastSeenQueuedCount(queued.length));
+    WidgetsBinding.instance.addPostFrameCallback((_) => _offerBatchMarking(queued));
+  }
+
+  Future<void> _offerBatchMarking(List<HomeAssignmentSubmission> queued) async {
+    if (!mounted) return;
+    final markNow = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('New submissions'),
+        content: const Text('Mark received home assignments using their marking key?'),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(dialogContext).pop(false), child: const Text('No')),
+          FilledButton(onPressed: () => Navigator.of(dialogContext).pop(true), child: const Text('Yes')),
+        ],
+      ),
+    );
+    if (markNow == true && mounted) await _startBatchMarking(queued);
+  }
 
   Future<void> _importSubmission() async {
     final learnerName = await showDialog<String>(
@@ -206,6 +265,7 @@ class _HomeAssignmentQueueScreenState extends State<HomeAssignmentQueueScreen> {
           final queued = submissions.where((s) => s.status == HomeAssignmentSubmissionStatus.queued).toList();
           final marked = submissions.where((s) => s.status == HomeAssignmentSubmissionStatus.marked).toList();
           final sent = submissions.where((s) => s.status == HomeAssignmentSubmissionStatus.sent).toList();
+          _maybeOfferBatchMarking(queued);
 
           return ListView(
             padding: const EdgeInsets.all(16),
