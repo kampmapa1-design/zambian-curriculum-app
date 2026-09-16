@@ -40,6 +40,7 @@ no role-gating to test on writes).
 | `schools/{id}/staffroom/{id}` | ✅ | ✅ create/update/delete | ✅ cross-school (read AND write, incl. stale-token-with-matching-authorUid case) | ✅ pin/unpin across all 6 roles; posting restricted to non-observer roles (fixed 2026-09-15, see below); authorUid-spoofing blocked; leadership delete-moderation verified | core, cross-school, impersonation, role-boundaries |
 | `schools/{id}/timetable/{id}` | ✅ | ✅ (always false) | ✅ cross-school | — (schoolId-only, no role check) | core, namespace-separation |
 | `unmatchedHomeAssignmentSubmissions/{id}` | ✅ | ✅ (always false) | ✅ cross-school (readable only once `schoolId` is resolved); an unresolved item (`schoolId` absent) confirmed readable by nobody via the app | — (schoolId-only, no role check) | cross-school |
+| `independentTimetableProjects/{id}` (+ `classes`, `timetable`) | ✅ | ✅ (always false) | ✅ cross-user (`ownerUid` field equality, not the `schoolId` claim — confirmed a real staff token gains no extra access) | — (ownerUid-only, no role check; never gated on School Network membership by design) | cross-school |
 
 Pupil/staff claim-namespace separation (pupilSchoolId/pupilClassId vs.
 schoolId/schoolRole never cross-satisfying each other, including string

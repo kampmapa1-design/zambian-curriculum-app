@@ -44,6 +44,33 @@ service cloud.firestore {
       allow write: if false;
     }
 
+    // "Build Timetable for Another School" (added 2026-09-16) — a fully
+    // independent timetable-building project, never gated by the
+    // `schoolId` custom claim above since it's deliberately NOT
+    // connected to the caller's own subscribed school. `ownerUid` is
+    // denormalized onto every doc at every level (project, class,
+    // config, generated) specifically so every rule here stays a cheap
+    // field-equality check, no `get()` lookup, consistent with the rest
+    // of this file. Written only by the matching Cloud Functions
+    // (Admin SDK, see `assertOwnsIndependentTimetableProject` in
+    // index.ts), which independently verify `ownerUid` server-side on
+    // every call — these `allow read` rules are this collection's only
+    // real access boundary.
+    match /independentTimetableProjects/{projectId} {
+      allow read: if request.auth != null && request.auth.uid == resource.data.ownerUid;
+      allow write: if false;
+
+      match /classes/{classId} {
+        allow read: if request.auth != null && request.auth.uid == resource.data.ownerUid;
+        allow write: if false;
+      }
+
+      match /timetable/{docId} {
+        allow read: if request.auth != null && request.auth.uid == resource.data.ownerUid;
+        allow write: if false;
+      }
+    }
+
     // Teacher Profile record (Stage 5 of real phone/email sign-in, added
     // 2026-09-13) — the identity the School Network feature (below)
     // attaches `schoolId`/`schoolRole` onto. Unlike the dashboard above, a

@@ -6901,6 +6901,769 @@ export const setTimetableAssignmentLocked = onCall<SetTimetableAssignmentLockedR
 );
 
 // ---------------------------------------------------------------------
+// Timetable Generation — "Build Timetable for Another School" (added
+// 2026-09-16, per explicit request: "build a timetable from the scratch
+// for a different institution altogether... not in any way connected to
+// the subscribed school... using the same simplified tools and ways").
+// A fully independent counterpart to everything above: same
+// deterministic `generateTimetableSchedule` engine (called unchanged —
+// zero duplication of the actual algorithm), same config/assignment
+// shapes, but against a separate `independentTimetableProjects/{id}`
+// collection where every doc is owned solely by the creating uid
+// (checked on every call below via `assertOwnsIndependentTimetableProject`)
+// — no School Network membership, no real registered teacher roster, no
+// subscription-tier gate. A "teacher" here is just a typed name string
+// used directly as the engine's opaque double-booking key, stored under
+// the same `subjectTeacherUids` field name the engine already expects,
+// since there's no real registered account behind an institution's staff
+// this app has never met.
+// ---------------------------------------------------------------------
+
+async function assertOwnsIndependentTimetableProject(
+  db: FirebaseFirestore.Firestore,
+  projectId: string,
+  uid: string
+): Promise<FirebaseFirestore.DocumentSnapshot> {
+  const snap = await db.collection("independentTimetableProjects").doc(projectId).get();
+  if (!snap.exists) {
+    throw new HttpsError("not-found", "That timetable project no longer exists.");
+  }
+  if (snap.data()?.ownerUid !== uid) {
+    throw new HttpsError("permission-denied", "You don't own this timetable project.");
+  }
+  return snap;
+}
+
+interface CreateIndependentTimetableProjectRequest {
+  institutionName: string;
+}
+
+export const createIndependentTimetableProject = onCall<CreateIndependentTimetableProjectRequest>(
+  { region: "us-central1", timeoutSeconds: 30, maxInstances: 5 },
+  async (request): Promise<{ projectId: string }> => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "Sign in is required.");
+    }
+    const { institutionName } = request.data ?? {};
+    if (!nonEmptyString(institutionName)) {
+      throw new HttpsError("invalid-argument", "An institution name is required.");
+    }
+    const db = admin.firestore();
+    const ref = db.collection("independentTimetableProjects").doc();
+    await ref.set({
+      ownerUid: request.auth.uid,
+      institutionName: institutionName.trim(),
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+    });
+    return { projectId: ref.id };
+  }
+);
+
+interface DeleteIndependentTimetableProjectRequest {
+  projectId: string;
+}
+
+export const deleteIndependentTimetableProject = onCall<DeleteIndependentTimetableProjectRequest>(
+  { region: "us-central1", timeoutSeconds: 30, maxInstances: 5 },
+  async (request): Promise<{ success: boolean }> => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "Sign in is required.");
+    }
+    const { projectId } = request.data ?? {};
+    if (!nonEmptyString(projectId)) {
+      throw new HttpsError("invalid-argument", "A project is required.");
+    }
+    const db = admin.firestore();
+    await assertOwnsIndependentTimetableProject(db, projectId, request.auth.uid);
+
+    const projectRef = db.collection("independentTimetableProjects").doc(projectId);
+    const classesSnap = await projectRef.collection("classes").get();
+    const batch = db.batch();
+    for (const doc of classesSnap.docs) batch.delete(doc.ref);
+    batch.delete(projectRef.collection("timetable").doc("config"));
+    batch.delete(projectRef.collection("timetable").doc("generated"));
+    batch.delete(projectRef);
+    await batch.commit();
+
+    return { success: true };
+  }
+);
+
+interface SaveIndependentTimetableConfigRequest {
+  projectId: string;
+  periodsPerDay: number;
+  periodLengthMinutes: number;
+  teachingDaysPerWeek: number;
+  subjectDefaults: Record<string, number>;
+  practicalSubjectsExceptionList: string[];
+  maxDailyPeriodsPerTeacher: number;
+}
+
+export const saveIndependentTimetableConfig = onCall<SaveIndependentTimetableConfigRequest>(
+  { region: "us-central1", timeoutSeconds: 30, maxInstances: 5 },
+  async (request): Promise<{ success: boolean }> => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "Sign in is required.");
+    }
+    const { projectId, periodsPerDay, periodLengthMinutes, teachingDaysPerWeek, subjectDefaults, practicalSubjectsExceptionList, maxDailyPeriodsPerTeacher } =
+      request.data ?? {};
+    if (
+      !nonEmptyString(projectId) ||
+      typeof periodsPerDay !== "number" ||
+      periodsPerDay < 1 ||
+      periodsPerDay > 20 ||
+      typeof periodLengthMinutes !== "number" ||
+      periodLengthMinutes < 10 ||
+      periodLengthMinutes > 180 ||
+      typeof teachingDaysPerWeek !== "number" ||
+      teachingDaysPerWeek < 1 ||
+      teachingDaysPerWeek > 7 ||
+      typeof subjectDefaults !== "object" ||
+      subjectDefaults === null ||
+      !Array.isArray(practicalSubjectsExceptionList) ||
+      typeof maxDailyPeriodsPerTeacher !== "number" ||
+      maxDailyPeriodsPerTeacher < 1 ||
+      maxDailyPeriodsPerTeacher > periodsPerDay
+    ) {
+      throw new HttpsError("invalid-argument", "Valid period/day counts and subject data are required.");
+    }
+    const db = admin.firestore();
+    await assertOwnsIndependentTimetableProject(db, projectId, request.auth.uid);
+
+    const cleanSubjectDefaults: Record<string, number> = {};
+    for (const [name, value] of Object.entries(subjectDefaults)) {
+      if (typeof value === "number" && value >= 0 && value <= 40 && name.trim().length > 0) {
+        cleanSubjectDefaults[name.trim()] = value;
+      }
+    }
+    const cleanExceptionList = practicalSubjectsExceptionList
+      .filter((s): s is string => typeof s === "string" && s.trim().length > 0)
+      .map((s) => s.trim());
+
+    const projectRef = db.collection("independentTimetableProjects").doc(projectId);
+    await projectRef.collection("timetable").doc("config").set(
+      {
+        ownerUid: request.auth.uid,
+        periodsPerDay,
+        periodLengthMinutes,
+        teachingDaysPerWeek,
+        subjectDefaults: cleanSubjectDefaults,
+        practicalSubjectsExceptionList: cleanExceptionList,
+        maxDailyPeriodsPerTeacher,
+        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+      },
+      { merge: true }
+    );
+    await projectRef.set({ updatedAt: admin.firestore.FieldValue.serverTimestamp() }, { merge: true });
+    return { success: true };
+  }
+);
+
+interface SaveIndependentTimetableClassRequest {
+  projectId: string;
+  classId?: string;
+  classGrade: string;
+  subjectNames: string[];
+  subjectTeacherNames: Record<string, string>;
+}
+
+export const saveIndependentTimetableClass = onCall<SaveIndependentTimetableClassRequest>(
+  { region: "us-central1", timeoutSeconds: 30, maxInstances: 5 },
+  async (request): Promise<{ classId: string }> => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "Sign in is required.");
+    }
+    const { projectId, classId, classGrade, subjectNames, subjectTeacherNames } = request.data ?? {};
+    if (
+      !nonEmptyString(projectId) ||
+      !nonEmptyString(classGrade) ||
+      !Array.isArray(subjectNames) ||
+      typeof subjectTeacherNames !== "object" ||
+      subjectTeacherNames === null
+    ) {
+      throw new HttpsError("invalid-argument", "A class name and subject list are required.");
+    }
+    const db = admin.firestore();
+    await assertOwnsIndependentTimetableProject(db, projectId, request.auth.uid);
+
+    const cleanSubjects = subjectNames.filter((s): s is string => typeof s === "string" && s.trim().length > 0).map((s) => s.trim());
+    const cleanTeachers: Record<string, string> = {};
+    for (const subject of cleanSubjects) {
+      const teacherName = subjectTeacherNames[subject];
+      if (typeof teacherName === "string" && teacherName.trim().length > 0) {
+        cleanTeachers[subject] = teacherName.trim();
+      }
+    }
+
+    const classesRef = db.collection("independentTimetableProjects").doc(projectId).collection("classes");
+    const ref = nonEmptyString(classId) ? classesRef.doc(classId) : classesRef.doc();
+    await ref.set({
+      ownerUid: request.auth.uid,
+      classGrade: classGrade.trim(),
+      subjectNames: cleanSubjects,
+      // Kept as `subjectTeacherUids` (not `subjectTeacherNames`) so
+      // `generateTimetableSchedule` — the exact same imported engine
+      // School Network's real Timetable Generation uses — needs zero
+      // changes: it reads this field as an opaque subject->key map
+      // either way, and here that "key" is simply the teacher's typed
+      // name.
+      subjectTeacherUids: cleanTeachers,
+    });
+    await db.collection("independentTimetableProjects").doc(projectId).set({ updatedAt: admin.firestore.FieldValue.serverTimestamp() }, { merge: true });
+    return { classId: ref.id };
+  }
+);
+
+interface DeleteIndependentTimetableClassRequest {
+  projectId: string;
+  classId: string;
+}
+
+export const deleteIndependentTimetableClass = onCall<DeleteIndependentTimetableClassRequest>(
+  { region: "us-central1", timeoutSeconds: 30, maxInstances: 5 },
+  async (request): Promise<{ success: boolean }> => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "Sign in is required.");
+    }
+    const { projectId, classId } = request.data ?? {};
+    if (!nonEmptyString(projectId) || !nonEmptyString(classId)) {
+      throw new HttpsError("invalid-argument", "A project and class are required.");
+    }
+    const db = admin.firestore();
+    await assertOwnsIndependentTimetableProject(db, projectId, request.auth.uid);
+    await db.collection("independentTimetableProjects").doc(projectId).collection("classes").doc(classId).delete();
+    return { success: true };
+  }
+);
+
+interface GenerateIndependentTimetableRequest {
+  projectId: string;
+}
+
+export const generateIndependentTimetable = onCall<GenerateIndependentTimetableRequest>(
+  { region: "us-central1", timeoutSeconds: 60, maxInstances: 5 },
+  async (request): Promise<{ assignmentCount: number; conflictCount: number }> => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "Sign in is required.");
+    }
+    const { projectId } = request.data ?? {};
+    if (!nonEmptyString(projectId)) {
+      throw new HttpsError("invalid-argument", "A project is required.");
+    }
+    const db = admin.firestore();
+    await assertOwnsIndependentTimetableProject(db, projectId, request.auth.uid);
+
+    const projectRef = db.collection("independentTimetableProjects").doc(projectId);
+    const configSnap = await projectRef.collection("timetable").doc("config").get();
+    if (!configSnap.exists) {
+      throw new HttpsError("failed-precondition", "Set up the timetable (periods/day, subjects, etc.) before generating one.");
+    }
+    const configData = configSnap.data()!;
+    const config: TimetableConfigInput = {
+      periodsPerDay: configData.periodsPerDay,
+      teachingDaysPerWeek: configData.teachingDaysPerWeek,
+      subjectDefaults: configData.subjectDefaults ?? {},
+      practicalSubjectsExceptionList: configData.practicalSubjectsExceptionList ?? [],
+      maxDailyPeriodsPerTeacher: configData.maxDailyPeriodsPerTeacher ?? configData.periodsPerDay,
+    };
+
+    const classesSnap = await projectRef.collection("classes").get();
+    const classes: TimetableClassInput[] = classesSnap.docs.map((d) => ({
+      id: d.id,
+      classGrade: (d.data().classGrade as string) ?? d.id,
+      subjectNames: (d.data().subjectNames as string[]) ?? [],
+      subjectTeacherUids: (d.data().subjectTeacherUids as Record<string, string>) ?? {},
+    }));
+    if (classes.length === 0) {
+      throw new HttpsError("failed-precondition", "Add at least one class before generating a timetable.");
+    }
+
+    const existingGeneratedSnap = await projectRef.collection("timetable").doc("generated").get();
+    const lockedAssignments: TimetableAssignment[] = existingGeneratedSnap.exists
+      ? ((existingGeneratedSnap.data()?.assignments as TimetableAssignment[]) ?? []).filter((a) => a.locked === true)
+      : [];
+
+    const { assignments, conflicts } = generateTimetableSchedule(classes, config, lockedAssignments);
+
+    await projectRef.collection("timetable").doc("generated").set({
+      ownerUid: request.auth.uid,
+      assignments,
+      conflicts,
+      generatedAt: admin.firestore.FieldValue.serverTimestamp(),
+      generatedByUid: request.auth.uid,
+    });
+
+    return { assignmentCount: assignments.length, conflictCount: conflicts.length };
+  }
+);
+
+// Small local helper — every class's subjectTeacherUids values, deduped.
+// "teacherUid" here is always a typed name (see the module comment
+// above this whole independent-timetable section), so this is genuinely
+// just the project's distinct roster of names typed in so far.
+function distinctIndependentTeacherNames(classes: TimetableClassInput[]): string[] {
+  const names = new Set<string>();
+  for (const cls of classes) {
+    for (const name of Object.values(cls.subjectTeacherUids)) {
+      if (name) names.add(name);
+    }
+  }
+  return [...names].sort();
+}
+
+interface ExplainIndependentTimetableConflictsRequest {
+  projectId: string;
+}
+
+export const explainIndependentTimetableConflicts = onCall<ExplainIndependentTimetableConflictsRequest>(
+  { secrets: [geminiApiKey], region: "us-central1", timeoutSeconds: 60, maxInstances: 5 },
+  async (request): Promise<{ explanations: { conflictIndex: number; explanation: string; suggestedFix: string }[] }> => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "Sign in is required.");
+    }
+    const { projectId } = request.data ?? {};
+    if (!nonEmptyString(projectId)) {
+      throw new HttpsError("invalid-argument", "A project is required.");
+    }
+    const db = admin.firestore();
+    await assertOwnsIndependentTimetableProject(db, projectId, request.auth.uid);
+    const projectRef = db.collection("independentTimetableProjects").doc(projectId);
+
+    const [generatedSnap, configSnap] = await Promise.all([
+      projectRef.collection("timetable").doc("generated").get(),
+      projectRef.collection("timetable").doc("config").get(),
+    ]);
+    if (!generatedSnap.exists) {
+      throw new HttpsError("failed-precondition", "No timetable has been generated yet.");
+    }
+    const conflicts = ((generatedSnap.data()?.conflicts as TimetableConflict[]) ?? []).slice(0, 30);
+    if (conflicts.length === 0) {
+      return { explanations: [] };
+    }
+    const configData = configSnap.data() ?? {};
+    const config: TimetableConfigInput = {
+      periodsPerDay: configData.periodsPerDay ?? 8,
+      teachingDaysPerWeek: configData.teachingDaysPerWeek ?? 5,
+      subjectDefaults: configData.subjectDefaults ?? {},
+      practicalSubjectsExceptionList: configData.practicalSubjectsExceptionList ?? [],
+      maxDailyPeriodsPerTeacher: configData.maxDailyPeriodsPerTeacher ?? 6,
+    };
+    // A "teacherUid" here already IS the display name (see module
+    // comment) — the real function's `teacherNames` uid->name lookup is
+    // simply the identity map in this version.
+    const teacherNames: Record<string, string> = {};
+    for (const c of (conflicts.map((c) => c.teacherUid).filter(Boolean) as string[])) teacherNames[c] = c;
+
+    const ai = new GoogleGenAI({ apiKey: geminiApiKey.value() });
+    let text: string | undefined;
+    try {
+      const response = await ai.models.generateContent({
+        model: GEMINI_MODEL,
+        contents: buildTimetableConflictPrompt(conflicts, config, teacherNames),
+        config: { responseMimeType: "application/json", responseJsonSchema: timetableConflictExplanationSchema },
+      });
+      text = response.text;
+    } catch (err) {
+      console.error("explainIndependentTimetableConflicts: Gemini call failed", err);
+      throw quotaExhaustedError(err) ?? new HttpsError("internal", "Could not generate explanations right now. The raw conflict list is still accurate.");
+    }
+    if (!text) {
+      throw new HttpsError("internal", "The AI did not return a result.");
+    }
+    let parsed: { explanations: { conflictIndex: number; explanation: string; suggestedFix: string }[] };
+    try {
+      parsed = JSON.parse(text);
+    } catch (err) {
+      console.error("explainIndependentTimetableConflicts: response was not valid JSON", text);
+      throw new HttpsError("internal", "The explanation response could not be parsed.");
+    }
+
+    await projectRef.collection("timetable").doc("generated").update({
+      conflictExplanations: parsed.explanations,
+      conflictExplanationsGeneratedAt: admin.firestore.FieldValue.serverTimestamp(),
+    });
+
+    return parsed;
+  }
+);
+
+interface ParseIndependentTimetableConstraintRequest {
+  projectId: string;
+  text: string;
+}
+
+export const parseIndependentTimetableConstraint = onCall<ParseIndependentTimetableConstraintRequest>(
+  { secrets: [geminiApiKey], region: "us-central1", timeoutSeconds: 30, maxInstances: 5 },
+  async (
+    request
+  ): Promise<{
+    kind: "availability" | "assignment" | "unrecognized";
+    teacherName: string;
+    teacherUid: string | null;
+    subjectName: string;
+    className: string;
+    classId: string | null;
+    constraintType: "unavailable" | "available_only" | "";
+    daysOfWeek: string[];
+    timeOfDay: "morning" | "afternoon" | "all_day";
+    summary: string;
+    unavailableSlots: string[];
+  }> => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "Sign in is required.");
+    }
+    const { projectId, text } = request.data ?? {};
+    if (!nonEmptyString(projectId) || !nonEmptyString(text)) {
+      throw new HttpsError("invalid-argument", "A project and some instruction text are required.");
+    }
+    const db = admin.firestore();
+    await assertOwnsIndependentTimetableProject(db, projectId, request.auth.uid);
+    const projectRef = db.collection("independentTimetableProjects").doc(projectId);
+
+    const [classesSnap, configSnap] = await Promise.all([
+      projectRef.collection("classes").get(),
+      projectRef.collection("timetable").doc("config").get(),
+    ]);
+    const classes = classesSnap.docs.map((d) => ({
+      id: d.id,
+      classGrade: (d.data().classGrade as string) ?? d.id,
+      subjectNames: (d.data().subjectNames as string[]) ?? [],
+      subjectTeacherUids: (d.data().subjectTeacherUids as Record<string, string>) ?? {},
+    }));
+    const teacherNames = distinctIndependentTeacherNames(classes);
+    const subjectNames = Object.keys((configSnap.data()?.subjectDefaults as Record<string, number>) ?? {});
+
+    const ai = new GoogleGenAI({ apiKey: geminiApiKey.value() });
+    let text_: string | undefined;
+    try {
+      const response = await ai.models.generateContent({
+        model: GEMINI_MODEL_LITE,
+        contents: buildTimetableConstraintPrompt(text, teacherNames, classes.map((c) => c.classGrade), subjectNames),
+        config: { responseMimeType: "application/json", responseJsonSchema: timetableConstraintSchema },
+      });
+      text_ = response.text;
+    } catch (err) {
+      console.error("parseIndependentTimetableConstraint: Gemini call failed", err);
+      throw quotaExhaustedError(err) ?? new HttpsError("internal", "Could not interpret that instruction right now.");
+    }
+    if (!text_) {
+      throw new HttpsError("internal", "The AI did not return a result.");
+    }
+    let parsed: {
+      kind: "availability" | "assignment" | "unrecognized";
+      teacherName: string;
+      subjectName: string;
+      className: string;
+      constraintType: "unavailable" | "available_only" | "";
+      daysOfWeek: string[];
+      timeOfDay: "morning" | "afternoon" | "all_day";
+      summary: string;
+    };
+    try {
+      parsed = JSON.parse(text_);
+    } catch (err) {
+      console.error("parseIndependentTimetableConstraint: response was not valid JSON", text_);
+      throw new HttpsError("internal", "The response could not be parsed.");
+    }
+
+    // A matched teacher's "uid" is simply their own name — see module
+    // comment — confirmed only when it exactly matches a name already
+    // typed into this project's classes, never guessed.
+    const matchedTeacherName = teacherNames.find((n) => n.trim().toLowerCase() === parsed.teacherName.trim().toLowerCase()) ?? null;
+    const matchedClass = classes.find((c) => c.classGrade.trim().toLowerCase() === parsed.className.trim().toLowerCase());
+
+    let unavailableSlots: string[] = [];
+    if (parsed.kind === "availability" && matchedTeacherName && parsed.constraintType) {
+      if (!configSnap.exists) {
+        throw new HttpsError("failed-precondition", "Set up the timetable (periods/day, teaching days, etc.) before setting teacher availability.");
+      }
+      const configData = configSnap.data()!;
+      const config: TimetableConfigInput = {
+        periodsPerDay: configData.periodsPerDay,
+        teachingDaysPerWeek: configData.teachingDaysPerWeek,
+        subjectDefaults: configData.subjectDefaults ?? {},
+        practicalSubjectsExceptionList: configData.practicalSubjectsExceptionList ?? [],
+        maxDailyPeriodsPerTeacher: configData.maxDailyPeriodsPerTeacher ?? configData.periodsPerDay,
+      };
+      unavailableSlots = computeUnavailableSlots(config, parsed.daysOfWeek, parsed.timeOfDay, parsed.constraintType);
+    }
+
+    return {
+      kind: parsed.kind,
+      teacherName: parsed.teacherName,
+      teacherUid: matchedTeacherName,
+      subjectName: parsed.subjectName,
+      className: parsed.className,
+      classId: matchedClass?.id ?? null,
+      constraintType: parsed.constraintType,
+      daysOfWeek: parsed.daysOfWeek,
+      timeOfDay: parsed.timeOfDay,
+      summary: parsed.summary,
+      unavailableSlots,
+    };
+  }
+);
+
+interface SetIndependentTeacherAvailabilityRequest {
+  projectId: string;
+  teacherUid: string;
+  unavailableSlots: string[];
+}
+
+export const setIndependentTeacherAvailability = onCall<SetIndependentTeacherAvailabilityRequest>(
+  { region: "us-central1", timeoutSeconds: 30, maxInstances: 5 },
+  async (request): Promise<{ success: boolean }> => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "Sign in is required.");
+    }
+    const { projectId, teacherUid, unavailableSlots } = request.data ?? {};
+    if (!nonEmptyString(projectId) || !nonEmptyString(teacherUid) || !Array.isArray(unavailableSlots)) {
+      throw new HttpsError("invalid-argument", "A project, a teacher, and a list of slots are required.");
+    }
+    const cleanSlots = unavailableSlots.filter((s): s is string => typeof s === "string" && /^\d+_\d+$/.test(s));
+    const db = admin.firestore();
+    await assertOwnsIndependentTimetableProject(db, projectId, request.auth.uid);
+
+    await db
+      .collection("independentTimetableProjects")
+      .doc(projectId)
+      .collection("timetable")
+      .doc("config")
+      .set(
+        {
+          ownerUid: request.auth.uid,
+          teacherAvailability: { [teacherUid]: cleanSlots },
+          updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+        },
+        { merge: true }
+      );
+
+    return { success: true };
+  }
+);
+
+interface ExtractIndependentTimetableFromPhotoRequest {
+  projectId: string;
+  pageImagesBase64: string[];
+}
+
+export const extractIndependentTimetableFromPhoto = onCall<ExtractIndependentTimetableFromPhotoRequest>(
+  { secrets: [geminiApiKey], region: "us-central1", timeoutSeconds: 120, memory: "512MiB", maxInstances: 5 },
+  async (
+    request
+  ): Promise<{
+    periodsPerDay: number;
+    periodLengthMinutes: number;
+    teachingDaysPerWeek: number;
+    subjects: (ExtractedTimetableSubjectRow & { teacherUid: string | null })[];
+    notes: string;
+  }> => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "Sign in is required.");
+    }
+    const { projectId, pageImagesBase64 } = request.data ?? {};
+    if (!nonEmptyString(projectId) || !Array.isArray(pageImagesBase64) || pageImagesBase64.length === 0) {
+      throw new HttpsError("invalid-argument", "A project and at least one photo are required.");
+    }
+    const db = admin.firestore();
+    await assertOwnsIndependentTimetableProject(db, projectId, request.auth.uid);
+    const projectRef = db.collection("independentTimetableProjects").doc(projectId);
+
+    const classesSnap = await projectRef.collection("classes").get();
+    const classes = classesSnap.docs.map((d) => ({
+      id: d.id,
+      classGrade: (d.data().classGrade as string) ?? d.id,
+      subjectNames: (d.data().subjectNames as string[]) ?? [],
+      subjectTeacherUids: (d.data().subjectTeacherUids as Record<string, string>) ?? {},
+    }));
+    const teacherNames = distinctIndependentTeacherNames(classes);
+
+    const ai = new GoogleGenAI({ apiKey: geminiApiKey.value() });
+    const imageParts = pageImagesBase64.map((b64: string) => ({ inlineData: { mimeType: "image/jpeg", data: b64 } }));
+    let text: string | undefined;
+    try {
+      const response = await ai.models.generateContent({
+        model: GEMINI_MODEL,
+        contents: [{ role: "user", parts: [{ text: buildExtractTimetablePrompt(teacherNames) }, ...imageParts] }],
+        config: { responseMimeType: "application/json", responseJsonSchema: extractTimetableFromPhotoSchema },
+      });
+      text = response.text;
+    } catch (err) {
+      console.error("extractIndependentTimetableFromPhoto: Gemini call failed", err);
+      throw quotaExhaustedError(err) ?? new HttpsError("internal", "Could not read this timetable right now. Please try again.");
+    }
+    if (!text) {
+      throw new HttpsError("internal", "The AI did not return a result.");
+    }
+    let parsed: {
+      periodsPerDay: number;
+      periodLengthMinutes: number;
+      teachingDaysPerWeek: number;
+      subjects: ExtractedTimetableSubjectRow[];
+      notes: string;
+    };
+    try {
+      parsed = JSON.parse(text);
+    } catch (err) {
+      console.error("extractIndependentTimetableFromPhoto: response was not valid JSON", text);
+      throw new HttpsError("internal", "The response could not be parsed.");
+    }
+
+    // A matched teacher's "uid" is simply their own already-typed name —
+    // see module comment — never a real Firebase Auth account here.
+    const subjectsWithMatches = parsed.subjects.map((s) => {
+      const matched = teacherNames.find((n) => n.trim().toLowerCase() === s.teacherName.trim().toLowerCase());
+      return { ...s, teacherUid: matched ?? null };
+    });
+
+    return { ...parsed, subjects: subjectsWithMatches };
+  }
+);
+
+interface MoveIndependentTimetableAssignmentRequest {
+  projectId: string;
+  classId: string;
+  subjectName: string;
+  teacherUid: string;
+  day: number;
+  period: number;
+  newDay: number;
+  newPeriod: number;
+}
+
+export const moveIndependentTimetableAssignment = onCall<MoveIndependentTimetableAssignmentRequest>(
+  { region: "us-central1", timeoutSeconds: 30, maxInstances: 5 },
+  async (request): Promise<{ success: boolean }> => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "Sign in is required.");
+    }
+    const { projectId, classId, subjectName, teacherUid, day, period, newDay, newPeriod } = request.data ?? {};
+    if (
+      !nonEmptyString(projectId) ||
+      !nonEmptyString(classId) ||
+      !nonEmptyString(subjectName) ||
+      !nonEmptyString(teacherUid) ||
+      typeof day !== "number" ||
+      typeof period !== "number" ||
+      typeof newDay !== "number" ||
+      typeof newPeriod !== "number"
+    ) {
+      throw new HttpsError("invalid-argument", "A project, class, subject, teacher, current slot, and target slot are all required.");
+    }
+    const db = admin.firestore();
+    await assertOwnsIndependentTimetableProject(db, projectId, request.auth.uid);
+    const projectRef = db.collection("independentTimetableProjects").doc(projectId);
+
+    const [generatedSnap, configSnap] = await Promise.all([
+      projectRef.collection("timetable").doc("generated").get(),
+      projectRef.collection("timetable").doc("config").get(),
+    ]);
+    if (!generatedSnap.exists) {
+      throw new HttpsError("failed-precondition", "No timetable has been generated yet.");
+    }
+    const configData = configSnap.data() ?? {};
+    const periodsPerDay = (configData.periodsPerDay as number) ?? 8;
+    const teachingDaysPerWeek = (configData.teachingDaysPerWeek as number) ?? 5;
+    const maxDailyPeriodsPerTeacher = (configData.maxDailyPeriodsPerTeacher as number) ?? periodsPerDay;
+    const teacherAvailability = (configData.teacherAvailability as Record<string, string[]>) ?? {};
+
+    if (newDay < 0 || newDay >= teachingDaysPerWeek || newPeriod < 0 || newPeriod >= periodsPerDay) {
+      throw new HttpsError("invalid-argument", "That slot is outside this project's current day structure.");
+    }
+
+    const assignments = ((generatedSnap.data()?.assignments as TimetableAssignment[]) ?? []).slice();
+    const targetIndex = assignments.findIndex(
+      (a) => a.classId === classId && a.subjectName === subjectName && a.teacherUid === teacherUid && a.day === day && a.period === period
+    );
+    if (targetIndex === -1) {
+      throw new HttpsError("not-found", "That lesson could not be found — the timetable may have changed. Refresh and try again.");
+    }
+    if (day === newDay && period === newPeriod) {
+      return { success: true };
+    }
+
+    const others = assignments.filter((_, i) => i !== targetIndex);
+    const conflictingClass = others.find((a) => a.classId === classId && a.day === newDay && a.period === newPeriod);
+    if (conflictingClass) {
+      throw new HttpsError("failed-precondition", `${conflictingClass.className} already has ${conflictingClass.subjectName} at that slot.`);
+    }
+    const conflictingTeacher = others.find((a) => a.teacherUid === teacherUid && a.day === newDay && a.period === newPeriod);
+    if (conflictingTeacher) {
+      throw new HttpsError("failed-precondition", `This teacher already has ${conflictingTeacher.subjectName} for ${conflictingTeacher.className} at that slot.`);
+    }
+    if (teacherAvailability[teacherUid]?.includes(`${newDay}_${newPeriod}`)) {
+      throw new HttpsError("failed-precondition", "This teacher has marked themselves unavailable at that slot.");
+    }
+    const newDayLoad = others.filter((a) => a.teacherUid === teacherUid && a.day === newDay).length + 1;
+    if (newDayLoad > maxDailyPeriodsPerTeacher) {
+      throw new HttpsError("failed-precondition", `This teacher would exceed their max daily load (${maxDailyPeriodsPerTeacher}) on that day.`);
+    }
+
+    assignments[targetIndex] = { ...assignments[targetIndex], day: newDay, period: newPeriod, locked: true };
+    await projectRef.collection("timetable").doc("generated").update({
+      assignments,
+      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+      updatedByUid: request.auth.uid,
+    });
+
+    return { success: true };
+  }
+);
+
+interface SetIndependentTimetableAssignmentLockedRequest {
+  projectId: string;
+  classId: string;
+  subjectName: string;
+  teacherUid: string;
+  day: number;
+  period: number;
+  locked: boolean;
+}
+
+export const setIndependentTimetableAssignmentLocked = onCall<SetIndependentTimetableAssignmentLockedRequest>(
+  { region: "us-central1", timeoutSeconds: 30, maxInstances: 5 },
+  async (request): Promise<{ success: boolean }> => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "Sign in is required.");
+    }
+    const { projectId, classId, subjectName, teacherUid, day, period, locked } = request.data ?? {};
+    if (
+      !nonEmptyString(projectId) ||
+      !nonEmptyString(classId) ||
+      !nonEmptyString(subjectName) ||
+      !nonEmptyString(teacherUid) ||
+      typeof day !== "number" ||
+      typeof period !== "number" ||
+      typeof locked !== "boolean"
+    ) {
+      throw new HttpsError("invalid-argument", "A project, class, subject, teacher, slot, and lock value are all required.");
+    }
+    const db = admin.firestore();
+    await assertOwnsIndependentTimetableProject(db, projectId, request.auth.uid);
+    const projectRef = db.collection("independentTimetableProjects").doc(projectId);
+
+    const generatedRef = projectRef.collection("timetable").doc("generated");
+    const generatedSnap = await generatedRef.get();
+    if (!generatedSnap.exists) {
+      throw new HttpsError("failed-precondition", "No timetable has been generated yet.");
+    }
+    const assignments = ((generatedSnap.data()?.assignments as TimetableAssignment[]) ?? []).slice();
+    const targetIndex = assignments.findIndex(
+      (a) => a.classId === classId && a.subjectName === subjectName && a.teacherUid === teacherUid && a.day === day && a.period === period
+    );
+    if (targetIndex === -1) {
+      throw new HttpsError("not-found", "That lesson could not be found — the timetable may have changed. Refresh and try again.");
+    }
+
+    assignments[targetIndex] = { ...assignments[targetIndex], locked };
+    await generatedRef.update({ assignments });
+
+    return { success: true };
+  }
+);
+
+// ---------------------------------------------------------------------
 // Home Assignment epic, Stages 5 & 6 (added 2026-09-14) — "Home
 // Assignment: topic & format selection" + "Marking key generation &
 // labeling." One Gemini call produces BOTH the assignment questions and

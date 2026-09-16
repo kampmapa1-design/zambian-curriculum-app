@@ -5,6 +5,7 @@ import '../models/school.dart';
 import '../services/school_service.dart';
 import '../services/teacher_auth_service.dart';
 import 'generated_timetable_screen.dart';
+import 'independent_timetable_list_screen.dart';
 import 'join_school_screen.dart';
 import 'login_screen.dart';
 import 'my_timetable_screen.dart';
@@ -33,6 +34,7 @@ class TimetableHomeScreen extends StatefulWidget {
 class _TimetableHomeScreenState extends State<TimetableHomeScreen> {
   final _schoolService = SchoolService();
   bool _loading = true;
+  String? _error;
   School? _school;
   SchoolRole? _myRole;
   bool _isTimetableOperator = false;
@@ -44,30 +46,41 @@ class _TimetableHomeScreenState extends State<TimetableHomeScreen> {
   }
 
   Future<void> _load() async {
-    setState(() => _loading = true);
-    final user = FirebaseAuth.instance.currentUser;
-    final method = loginMethodOf(user);
-    School? school;
-    SchoolRole? role;
-    var isOperator = false;
-    if (method != TeacherLoginMethod.anonymous) {
-      final claim = await _schoolService.currentSchoolClaim();
-      role = claim.role;
-      if (claim.schoolId != null) {
-        school = await _schoolService.getSchool(claim.schoolId!);
-        if (user != null) {
-          final me = await _schoolService.getMember(claim.schoolId!, user.uid);
-          isOperator = me?.timetableOperator ?? false;
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      final method = loginMethodOf(user);
+      School? school;
+      SchoolRole? role;
+      var isOperator = false;
+      if (method != TeacherLoginMethod.anonymous) {
+        final claim = await _schoolService.currentSchoolClaim();
+        role = claim.role;
+        if (claim.schoolId != null) {
+          school = await _schoolService.getSchool(claim.schoolId!);
+          if (user != null) {
+            final me = await _schoolService.getMember(claim.schoolId!, user.uid);
+            isOperator = me?.timetableOperator ?? false;
+          }
         }
       }
+      if (!mounted) return;
+      setState(() {
+        _school = school;
+        _myRole = role;
+        _isTimetableOperator = isOperator;
+        _loading = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _error = 'Could not load Timetable: $e';
+        _loading = false;
+      });
     }
-    if (!mounted) return;
-    setState(() {
-      _school = school;
-      _myRole = role;
-      _isTimetableOperator = isOperator;
-      _loading = false;
-    });
   }
 
   @override
@@ -79,13 +92,54 @@ class _TimetableHomeScreenState extends State<TimetableHomeScreen> {
       appBar: AppBar(title: const Text('Timetable')),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
-          : method == TeacherLoginMethod.anonymous
-              ? _buildSignUpPrompt(context)
-              : _school == null
-                  ? _buildNoSchool(context)
-                  : _buildHub(context, _school!),
+          : _error != null
+              ? _buildError(context, _error!)
+              : method == TeacherLoginMethod.anonymous
+                  ? _buildSignUpPrompt(context)
+                  : _buildSignedIn(context),
     );
   }
+
+  /// Wraps [_buildNoSchool]/[_buildHub] with the independent-timetable
+  /// entry point, always shown regardless of whether this device is
+  /// connected to a subscribed school at all — see
+  /// [IndependentTimetableListScreen]'s doc comment for why it's
+  /// deliberately never gated by [_school].
+  Widget _buildSignedIn(BuildContext context) => ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          if (_school == null) ...[
+            _buildNoSchool(context),
+            const Divider(height: 40),
+          ],
+          ListTile(
+            leading: const Icon(Icons.apartment_outlined),
+            title: const Text('Build Timetable for Another School'),
+            subtitle: const Text('A fully separate, from-scratch timetable for any other institution'),
+            onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const IndependentTimetableListScreen())),
+          ),
+          if (_school != null) ...[
+            const Divider(height: 32),
+            ..._hubTiles(context, _school!),
+          ],
+        ],
+      );
+
+  Widget _buildError(BuildContext context, String message) => Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.error_outline, size: 56, color: Colors.redAccent),
+              const SizedBox(height: 16),
+              Text(message, textAlign: TextAlign.center),
+              const SizedBox(height: 20),
+              FilledButton.icon(icon: const Icon(Icons.refresh), label: const Text('Retry'), onPressed: _load),
+            ],
+          ),
+        ),
+      );
 
   Widget _buildSignUpPrompt(BuildContext context) => Center(
         child: Padding(
@@ -148,11 +202,9 @@ class _TimetableHomeScreenState extends State<TimetableHomeScreen> {
         ),
       );
 
-  Widget _buildHub(BuildContext context, School school) {
+  List<Widget> _hubTiles(BuildContext context, School school) {
     final canManage = canManageTimetable(_myRole, _isTimetableOperator);
-    return ListView(
-      padding: const EdgeInsets.all(16),
-      children: [
+    return [
         ListTile(
           leading: const Icon(Icons.calendar_view_week_outlined),
           title: const Text('My Timetable'),
@@ -197,7 +249,6 @@ class _TimetableHomeScreenState extends State<TimetableHomeScreen> {
               enabled: false,
             ),
         ],
-      ],
-    );
+    ];
   }
 }

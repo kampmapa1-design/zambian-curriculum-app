@@ -75,6 +75,11 @@ before(async () => {
       ['unmatchedHomeAssignmentSubmissions/unmatched-a', { schoolId: 'school-A', reason: 'sender-not-on-roster' }],
       ['unmatchedHomeAssignmentSubmissions/unmatched-b', { schoolId: 'school-B', reason: 'sender-not-on-roster' }],
       ['unmatchedHomeAssignmentSubmissions/unmatched-no-school', { reason: 'no-reference-code' }],
+
+      ['independentTimetableProjects/project-x', { ownerUid: 'owner-x', institutionName: 'Other School X' }],
+      ['independentTimetableProjects/project-y', { ownerUid: 'owner-y', institutionName: 'Other School Y' }],
+      ['independentTimetableProjects/project-x/classes/class-1', { ownerUid: 'owner-x', classGrade: 'Form 1' }],
+      ['independentTimetableProjects/project-x/timetable/config', { ownerUid: 'owner-x', periodsPerDay: 8 }],
     ];
     for (const [path, data] of seeds) {
       await setDoc(doc(db, path), data);
@@ -173,6 +178,32 @@ describe('Cross-school isolation — unmatchedHomeAssignmentSubmissions (Stage 2
     const db = staffContext(testEnv, 'staff-a', 'school-A', 'teacher');
     await assertFails(setDoc(doc(db, 'unmatchedHomeAssignmentSubmissions/unmatched-a'), { resolved: true }));
     await assertFails(setDoc(doc(db, 'unmatchedHomeAssignmentSubmissions/new-one'), { schoolId: 'school-A' }));
+  });
+});
+
+describe('Cross-user isolation — independentTimetableProjects ("Build Timetable for Another School", 2026-09-16)', () => {
+  it('owner CAN read their own project, class, and config; CANNOT read another owner\'s', async () => {
+    const db = randoContext(testEnv, 'owner-x');
+    await assertSucceeds(getDoc(doc(db, 'independentTimetableProjects/project-x')));
+    await assertSucceeds(getDoc(doc(db, 'independentTimetableProjects/project-x/classes/class-1')));
+    await assertSucceeds(getDoc(doc(db, 'independentTimetableProjects/project-x/timetable/config')));
+    await assertFails(getDoc(doc(db, 'independentTimetableProjects/project-y')));
+  });
+
+  it('a real subscribed-school staff token gains no access — this collection is never claim-gated', async () => {
+    const db = staffContext(testEnv, 'owner-x', 'school-A', 'head_teacher');
+    // Even though this uid IS the real owner, an unrelated schoolId/
+    // schoolRole claim shouldn't be needed for it to still work — the
+    // rule only ever checks request.auth.uid, proving no accidental
+    // claim dependency crept in.
+    await assertSucceeds(getDoc(doc(db, 'independentTimetableProjects/project-x')));
+    await assertFails(getDoc(doc(db, 'independentTimetableProjects/project-y')));
+  });
+
+  it('direct client write always fails, even to the owner\'s own project', async () => {
+    const db = randoContext(testEnv, 'owner-x');
+    await assertFails(setDoc(doc(db, 'independentTimetableProjects/project-x'), { institutionName: 'Hacked' }));
+    await assertFails(setDoc(doc(db, 'independentTimetableProjects/project-x/classes/class-1'), { classGrade: 'Hacked' }));
   });
 });
 
