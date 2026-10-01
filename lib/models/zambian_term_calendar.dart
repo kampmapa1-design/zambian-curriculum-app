@@ -82,6 +82,118 @@ class ZambianSchoolYearCalendar {
 /// Computes the real Zambian 3-term school-year calendar for [year] —
 /// see this file's own doc comment for the verified rule and how it was
 /// derived.
+/// Real Zambian public holidays — added 2026-09-29 to this SAME file
+/// (per explicit request: one calendar data source, not a second dataset
+/// alongside it) after auditing [TermDates]/[computeZambianSchoolYear] and
+/// confirming they only ever tracked term open/close and mid-term-break
+/// WEEKS, never individual public holiday DATES. Sourced from Wikipedia's
+/// "Public holidays in Zambia" (cross-checked against a second source for
+/// the fixed dates, and against the real, independently-verified 2026
+/// Easter Sunday date — 5 April 2026 — for the Easter-weekend rule) rather
+/// than invented: Chapter 272 of Zambia's laws lets the President add/
+/// remove holidays, so treat this as the well-established real set, not a
+/// government-guaranteed-immutable one.
+///
+/// - Fixed dates: New Year's Day (1 Jan), International Women's Day
+///   (8 Mar), Youth Day (12 Mar), Kenneth Kaunda's Birthday (28 Apr),
+///   Labour Day (1 May), Africa Freedom Day (25 May), National Day of
+///   Prayer, Fasting, Repentance and Reconciliation (18 Oct), Independence
+///   Day (24 Oct), Christmas Day (25 Dec). If any of these falls on a
+///   Sunday, the following Monday is the observed holiday too (both dates
+///   are included — the calendar date itself is still genuinely non-
+///   working even if the "official" observance shifts).
+/// - Movable: Heroes' Day (first Monday in July), Unity Day (the Tuesday
+///   immediately after — NOT simply "first Tuesday in July", since in a
+///   year where 1 July is a Tuesday, Heroes' Day is still the FIRST
+///   MONDAY, meaning 7 July, so Unity Day is 8 July, not 1 July), Farmers'
+///   Day (first Monday in August), and all four days of the Easter
+///   weekend (Good Friday, Holy Saturday, Easter Sunday, Easter Monday) —
+///   Zambia observes the full four-day weekend as public holidays, not
+///   just Good Friday/Easter Monday as many countries do.
+List<DateTime> zambianPublicHolidays(int year) {
+  DateTime firstMondayOnOrAfter(DateTime date) {
+    final daysToAdd = (8 - date.weekday) % 7;
+    return date.add(Duration(days: daysToAdd));
+  }
+
+  final easter = _computeEasterSunday(year);
+  final heroesDay = firstMondayOnOrAfter(DateTime(year, 7, 1));
+
+  final fixed = [
+    DateTime(year, 1, 1), // New Year's Day
+    DateTime(year, 3, 8), // International Women's Day
+    DateTime(year, 3, 12), // Youth Day
+    DateTime(year, 4, 28), // Kenneth Kaunda's Birthday
+    DateTime(year, 5, 1), // Labour Day
+    DateTime(year, 5, 25), // Africa Freedom Day
+    DateTime(year, 10, 18), // National Day of Prayer
+    DateTime(year, 10, 24), // Independence Day
+    DateTime(year, 12, 25), // Christmas Day
+  ];
+
+  final holidays = <DateTime>[
+    ...fixed,
+    // A fixed holiday landing on a Sunday is also observed the next
+    // Monday — both are genuinely non-teaching days.
+    for (final h in fixed)
+      if (h.weekday == DateTime.sunday) h.add(const Duration(days: 1)),
+    heroesDay,
+    heroesDay.add(const Duration(days: 1)), // Unity Day
+    firstMondayOnOrAfter(DateTime(year, 8, 1)), // Farmers' Day
+    easter.subtract(const Duration(days: 2)), // Good Friday
+    easter.subtract(const Duration(days: 1)), // Holy Saturday
+    easter, // Easter Sunday
+    easter.add(const Duration(days: 1)), // Easter Monday
+  ];
+  holidays.sort();
+  return holidays;
+}
+
+/// The Anonymous Gregorian algorithm (Meeus/Jones/Butcher) for the date of
+/// Easter Sunday in the Gregorian calendar — standard, verifiable public-
+/// domain math, not a lookup table. Checked against the real, independently
+/// confirmed 2026 Easter Sunday (5 April 2026) before use here.
+DateTime _computeEasterSunday(int year) {
+  final a = year % 19;
+  final b = year ~/ 100;
+  final c = year % 100;
+  final d = b ~/ 4;
+  final e = b % 4;
+  final f = (b + 8) ~/ 25;
+  final g = (b - f + 1) ~/ 3;
+  final h = (19 * a + b - d - g + 15) % 30;
+  final i = c ~/ 4;
+  final k = c % 4;
+  final l = (32 + 2 * e + 2 * i - h - k) % 7;
+  final m = (a + 11 * h + 22 * l) ~/ 451;
+  final month = (h + l - 7 * m + 114) ~/ 31;
+  final day = (h + l - 7 * m + 114) % 31 + 1;
+  return DateTime(year, month, day);
+}
+
+/// Calendar days from [from] to [to] (inclusive of [to], exclusive of
+/// [from] — i.e. "how many days until [to]") with Zambian public holidays
+/// subtracted, per the owner's explicit "public holidays already excluded"
+/// requirement for the countdown features (2026-09-29) — the SAME
+/// [zambianPublicHolidays] data both Fix 4 (term countdown) and the
+/// national exam countdown read from, never two separately-maintained
+/// exclusion lists. Weekends are NOT excluded — only real holiday dates —
+/// matching the requirement literally ("public holidays," not "school
+/// days"). Never negative: if [to] is on/before [from], returns 0.
+int daysUntilExcludingPublicHolidays(DateTime from, DateTime to) {
+  final start = DateTime(from.year, from.month, from.day);
+  final end = DateTime(to.year, to.month, to.day);
+  if (!end.isAfter(start)) return 0;
+
+  final rawDays = end.difference(start).inDays;
+  final holidayDates = <DateTime>{
+    for (var y = start.year; y <= end.year; y++)
+      for (final h in zambianPublicHolidays(y)) DateTime(h.year, h.month, h.day),
+  };
+  final excluded = holidayDates.where((h) => h.isAfter(start) && !h.isAfter(end)).length;
+  return rawDays - excluded;
+}
+
 ZambianSchoolYearCalendar computeZambianSchoolYear(int year) {
   DateTime firstMondayOnOrAfter(DateTime date) {
     // DateTime.weekday: Monday = 1 ... Sunday = 7.

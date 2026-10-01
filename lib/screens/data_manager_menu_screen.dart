@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../widgets/function_button.dart';
 import 'account_settings_screen.dart';
 import 'grade_teacher_home_screen.dart';
+import 'national_exam_timetable_admin_screen.dart';
 import 'notifications_screen.dart';
 import 'school_home_screen.dart';
 import 'subject_teacher_screen.dart';
@@ -58,11 +59,19 @@ class DataManagerMenuScreen extends StatelessWidget {
             ),
           ),
           FunctionButton(
-            icon: Icons.notifications_none,
+            icon: Icons.notifications_none_outlined,
             label: 'Notifications',
             subtitle: "See when someone edits an entry you submitted",
             onTap: () => Navigator.of(context).push(
               MaterialPageRoute(builder: (_) => const NotificationsScreen()),
+            ),
+          ),
+          FunctionButton(
+            icon: Icons.event_available_outlined,
+            label: 'National Exam Timetable',
+            subtitle: 'Official Timetable Upload — sets the dates that unlock the learner countdown to national exams',
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const NationalExamTimetableAdminScreen()),
             ),
           ),
         ],
