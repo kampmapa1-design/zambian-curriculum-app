@@ -84,6 +84,11 @@ class _TestSubmissionScreenState extends State<TestSubmissionScreen> {
   final _emailController = TextEditingController();
   final _whatsAppController = TextEditingController();
 
+  /// The submitting student's OWN contact details (2026-09-28, per explicit
+  /// request) — at least one required before sending, see [_send].
+  final _studentEmailController = TextEditingController();
+  final _studentWhatsAppController = TextEditingController();
+
   List<TestAnswerSegment> _segments = [];
   final List<TextEditingController> _questionControllers = [];
   final List<TextEditingController> _textControllers = [];
@@ -119,6 +124,8 @@ class _TestSubmissionScreenState extends State<TestSubmissionScreen> {
     _testNameController.dispose();
     _emailController.dispose();
     _whatsAppController.dispose();
+    _studentEmailController.dispose();
+    _studentWhatsAppController.dispose();
     for (final c in [..._questionControllers, ..._textControllers]) {
       c.dispose();
     }
@@ -295,6 +302,24 @@ class _TestSubmissionScreenState extends State<TestSubmissionScreen> {
       return;
     }
 
+    // Feedback return-path (2026-09-28, per explicit request): at least one
+    // of the student's OWN contact details is required — without it there
+    // is nowhere for the teacher's later feedback (including via "Send to
+    // Marking Queue", only reachable after this validation passes) to
+    // actually go back to.
+    final studentEmail = _studentEmailController.text.trim();
+    final studentWhatsApp = _studentWhatsAppController.text.trim();
+    if (studentEmail.isEmpty && studentWhatsApp.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Enter your OWN email and/or WhatsApp number, so your teacher can send your feedback back to you.',
+          ),
+        ),
+      );
+      return;
+    }
+
     await _runBusy('Sending…', () async {
       final submission = _submission!;
       final dir = await _repository.submissionDir(submission);
@@ -390,6 +415,8 @@ class _TestSubmissionScreenState extends State<TestSubmissionScreen> {
         whatsAppShared: whatsAppOpened,
         emailMessageId: emailMessageId,
         status: TestSubmissionStatus.sent,
+        studentEmail: studentEmail.isEmpty ? null : studentEmail,
+        studentWhatsApp: studentWhatsApp.isEmpty ? null : studentWhatsApp,
       );
       await _repository.update(updated);
       if (!mounted) return;
@@ -660,6 +687,16 @@ class _TestSubmissionScreenState extends State<TestSubmissionScreen> {
         const SizedBox(height: 16),
         _textField('Lecturer / Teacher Email (optional)', _emailController, keyboardType: TextInputType.emailAddress),
         _textField('Lecturer / Teacher WhatsApp Number (optional)', _whatsAppController, keyboardType: TextInputType.phone),
+        const SizedBox(height: 24),
+        Text('Your own contact details', style: Theme.of(context).textTheme.titleMedium),
+        const SizedBox(height: 8),
+        const Text(
+          'Required — at least one, so your teacher can send your marked feedback back to you once it\'s '
+          'ready. Never shared with anyone besides your own teacher.',
+        ),
+        const SizedBox(height: 16),
+        _textField('Your Email', _studentEmailController, keyboardType: TextInputType.emailAddress),
+        _textField('Your WhatsApp Number', _studentWhatsAppController, keyboardType: TextInputType.phone),
       ],
     );
   }
@@ -669,7 +706,7 @@ class _TestSubmissionScreenState extends State<TestSubmissionScreen> {
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
-        const Icon(Icons.check_circle, color: Colors.green, size: 48),
+        Icon(Icons.check_circle_outlined, color: Colors.green.shade700, size: 48),
         const SizedBox(height: 8),
         Text('Submission Complete', style: Theme.of(context).textTheme.titleLarge),
         const SizedBox(height: 4),
@@ -692,6 +729,9 @@ class _TestSubmissionScreenState extends State<TestSubmissionScreen> {
                   _receiptRow('Email message ID', submission.emailMessageId!),
                 if (submission.teacherWhatsApp != null && submission.whatsAppShared)
                   _receiptRow('Shared to (WhatsApp)', submission.teacherWhatsApp!),
+                if (submission.studentEmail != null) _receiptRow('Feedback email (yours)', submission.studentEmail!),
+                if (submission.studentWhatsApp != null)
+                  _receiptRow('Feedback WhatsApp (yours)', submission.studentWhatsApp!),
               ],
             ),
           ),
@@ -706,7 +746,7 @@ class _TestSubmissionScreenState extends State<TestSubmissionScreen> {
         else
           OutlinedButton.icon(
             onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const MarkingQueueScreen())),
-            icon: const Icon(Icons.check),
+            icon: const Icon(Icons.check_outlined),
             label: const Text('Already in Marking Queue — Open Queue'),
           ),
         const SizedBox(height: 12),

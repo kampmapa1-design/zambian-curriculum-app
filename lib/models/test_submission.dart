@@ -82,6 +82,14 @@ class TestSubmission {
   /// offering to create a duplicate.
   final String? markingScriptId;
 
+  /// The submitting student's OWN contact details (2026-09-28, per
+  /// explicit request — see AssignmentSubmission's identical field for the
+  /// full reasoning). At least one of [studentEmail]/[studentWhatsApp] is
+  /// required before sending, enforced in TestSubmissionScreen's own
+  /// validation.
+  final String? studentEmail;
+  final String? studentWhatsApp;
+
   const TestSubmission({
     required this.id,
     required this.createdAt,
@@ -103,6 +111,8 @@ class TestSubmission {
     this.whatsAppShared = false,
     this.emailMessageId,
     this.markingScriptId,
+    this.studentEmail,
+    this.studentWhatsApp,
   });
 
   TestSubmission copyWith({
@@ -124,6 +134,8 @@ class TestSubmission {
     bool? whatsAppShared,
     String? emailMessageId,
     String? markingScriptId,
+    String? studentEmail,
+    String? studentWhatsApp,
   }) =>
       TestSubmission(
         id: id,
@@ -146,6 +158,8 @@ class TestSubmission {
         whatsAppShared: whatsAppShared ?? this.whatsAppShared,
         emailMessageId: emailMessageId ?? this.emailMessageId,
         markingScriptId: markingScriptId ?? this.markingScriptId,
+        studentEmail: studentEmail ?? this.studentEmail,
+        studentWhatsApp: studentWhatsApp ?? this.studentWhatsApp,
       );
 
   Map<String, dynamic> toJson() => {
@@ -169,6 +183,8 @@ class TestSubmission {
         'whatsAppShared': whatsAppShared,
         'emailMessageId': emailMessageId,
         'markingScriptId': markingScriptId,
+        'studentEmail': studentEmail,
+        'studentWhatsApp': studentWhatsApp,
       };
 
   factory TestSubmission.fromJson(Map<String, dynamic> json) => TestSubmission(
@@ -194,6 +210,8 @@ class TestSubmission {
         whatsAppShared: json['whatsAppShared'] as bool? ?? false,
         emailMessageId: json['emailMessageId'] as String?,
         markingScriptId: json['markingScriptId'] as String?,
+        studentEmail: json['studentEmail'] as String?,
+        studentWhatsApp: json['studentWhatsApp'] as String?,
       );
 }
 

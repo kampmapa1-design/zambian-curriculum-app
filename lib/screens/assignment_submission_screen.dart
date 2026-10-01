@@ -19,8 +19,8 @@ import 'document_pages_capture_screen.dart';
 /// Whether Assignment Submission's rewarded-ad gate is active — Stage 10's
 /// dormant scaffold, off by default so the feature is fully free during
 /// testing. A single toggle activates it later without touching anything
-/// else (see [_maybeShowAd]) — same pattern as `kEntitlementEnforced`/
-/// `kGradingCapEnforced` elsewhere in this app.
+/// else (see [_maybeShowAd]) — same pattern as `kEntitlementEnforced`
+/// elsewhere in this app.
 const bool kAssignmentSubmissionAdGateEnabled = false;
 
 enum _Step { cover, body, referenceSystem, references, review, transmit, receipt }
@@ -89,6 +89,11 @@ class _AssignmentSubmissionScreenState extends State<AssignmentSubmissionScreen>
   final _emailController = TextEditingController();
   final _whatsAppController = TextEditingController();
 
+  /// The submitting student's OWN contact details (2026-09-28, per explicit
+  /// request) — at least one required before sending, see [_send].
+  final _studentEmailController = TextEditingController();
+  final _studentWhatsAppController = TextEditingController();
+
   List<AssignmentBodyBlock> _bodyBlocks = [];
   final List<TextEditingController> _bodyControllers = [];
   List<String> _referenceEntries = [];
@@ -129,6 +134,8 @@ class _AssignmentSubmissionScreenState extends State<AssignmentSubmissionScreen>
       _institutionController,
       _emailController,
       _whatsAppController,
+      _studentEmailController,
+      _studentWhatsAppController,
     ]) {
       c.dispose();
     }
@@ -227,44 +234,68 @@ class _AssignmentSubmissionScreenState extends State<AssignmentSubmissionScreen>
     );
     if (pages == null || pages.isEmpty || !mounted) return;
 
+    TranscribedDocument? transcribed;
     await _runBusy('Transcribing your work…', () async {
       final submission = _submission!;
       final fileNames = <String>[];
       for (var i = 0; i < pages.length; i++) {
         fileNames.add(await _repository.storeFile(submission, pages[i], 'body_${(i + 1).toString().padLeft(2, '0')}.jpg'));
       }
-      var updated = submission.copyWith(bodyPageFileNames: fileNames);
+      final updated = submission.copyWith(bodyPageFileNames: fileNames);
       await _repository.update(updated);
       setState(() => _submission = updated);
 
-      final transcribed = await _bodyService.transcribe(pages);
-      final blocks = [
-        for (final b in transcribed.blocks)
-          AssignmentBodyBlock(
-            type: AssignmentBodyBlockType.values.firstWhere(
-              (t) => t.name == b.type.name,
-              orElse: () => AssignmentBodyBlockType.paragraph,
-            ),
-            text: b.text,
-          ),
-      ];
-      updated = updated.copyWith(transcribedBody: blocks);
-      await _repository.update(updated);
-      if (!mounted) return;
-      setState(() {
-        _submission = updated;
-        _bodyBlocks = blocks;
-        for (final c in _bodyControllers) {
-          c.dispose();
-        }
-        _bodyControllers
-          ..clear()
-          ..addAll([for (final b in blocks) TextEditingController(text: b.text)]);
-      });
-      if (transcribed.notes.isNotEmpty && mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Double-check: ${transcribed.notes}')));
-      }
+      // Paragraph-indentation detection (2026-09-28, per explicit request):
+      // Assignment Submission's own body transcription only — the plain
+      // Handwriting-to-Word-Document feature never sets this.
+      transcribed = await _bodyService.transcribe(pages, detectParagraphIndentation: true);
     });
+    if (transcribed == null || !mounted) return;
+
+    // Ask about each suspected paragraph break now that the busy overlay is
+    // gone — one real Yes/No confirmation per suspected break, sequential,
+    // never silently guessed either way. A clear, consistent indentation
+    // signal was already split for us server-side; only genuinely ambiguous
+    // ones reach here at all.
+    final confirmedSplitsByBlock = <int, List<String>>{};
+    for (final suspected in transcribed!.ambiguousParagraphBreaks) {
+      if (!mounted) return;
+      final confirmed = await showDialog<bool>(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
+          title: const Text('New paragraph?'),
+          content: Text(
+            'It looks like a new paragraph may start here: "${suspected.splitAtText}" — is this correct?',
+          ),
+          actions: [
+            TextButton(onPressed: () => Navigator.of(dialogContext).pop(false), child: const Text('No')),
+            FilledButton(onPressed: () => Navigator.of(dialogContext).pop(true), child: const Text('Yes')),
+          ],
+        ),
+      );
+      if (confirmed == true) {
+        (confirmedSplitsByBlock[suspected.blockIndex] ??= []).add(suspected.splitAtText);
+      }
+    }
+    if (!mounted) return;
+
+    final blocks = buildBodyBlocksWithConfirmedSplits(transcribed!.blocks, confirmedSplitsByBlock);
+    final finalSubmission = _submission!.copyWith(transcribedBody: blocks);
+    await _repository.update(finalSubmission);
+    if (!mounted) return;
+    setState(() {
+      _submission = finalSubmission;
+      _bodyBlocks = blocks;
+      for (final c in _bodyControllers) {
+        c.dispose();
+      }
+      _bodyControllers
+        ..clear()
+        ..addAll([for (final b in blocks) TextEditingController(text: b.text)]);
+    });
+    if (transcribed!.notes.isNotEmpty && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Double-check: ${transcribed!.notes}')));
+    }
   }
 
   void _confirmBody() {
@@ -417,6 +448,22 @@ class _AssignmentSubmissionScreenState extends State<AssignmentSubmissionScreen>
       return;
     }
 
+    // Feedback return-path (2026-09-28, per explicit request): at least one
+    // of the student's OWN contact details is required — without it there
+    // is nowhere for the teacher's later feedback to actually go back to.
+    final studentEmail = _studentEmailController.text.trim();
+    final studentWhatsApp = _studentWhatsAppController.text.trim();
+    if (studentEmail.isEmpty && studentWhatsApp.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Enter your OWN email and/or WhatsApp number, so your teacher can send your feedback back to you.',
+          ),
+        ),
+      );
+      return;
+    }
+
     await _runBusy('Sending…', () async {
       final submission = _submission!;
       final dir = await _repository.submissionDir(submission);
@@ -514,6 +561,8 @@ class _AssignmentSubmissionScreenState extends State<AssignmentSubmissionScreen>
         whatsAppShared: whatsAppOpened,
         emailMessageId: emailMessageId,
         status: AssignmentSubmissionStatus.sent,
+        studentEmail: studentEmail.isEmpty ? null : studentEmail,
+        studentWhatsApp: studentWhatsApp.isEmpty ? null : studentWhatsApp,
       );
       await _repository.update(updated);
       if (!mounted) return;
@@ -770,6 +819,16 @@ class _AssignmentSubmissionScreenState extends State<AssignmentSubmissionScreen>
         const SizedBox(height: 16),
         _textField('Lecturer / Teacher Email (optional)', _emailController, keyboardType: TextInputType.emailAddress),
         _textField('Lecturer / Teacher WhatsApp Number (optional)', _whatsAppController, keyboardType: TextInputType.phone),
+        const SizedBox(height: 24),
+        Text('Your own contact details', style: Theme.of(context).textTheme.titleMedium),
+        const SizedBox(height: 8),
+        const Text(
+          'Required — at least one, so your teacher can send your marked feedback back to you once it\'s '
+          'ready. Never shared with anyone besides your own teacher.',
+        ),
+        const SizedBox(height: 16),
+        _textField('Your Email', _studentEmailController, keyboardType: TextInputType.emailAddress),
+        _textField('Your WhatsApp Number', _studentWhatsAppController, keyboardType: TextInputType.phone),
       ],
     );
   }
@@ -779,7 +838,7 @@ class _AssignmentSubmissionScreenState extends State<AssignmentSubmissionScreen>
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
-        const Icon(Icons.check_circle, color: Colors.green, size: 48),
+        Icon(Icons.check_circle_outlined, color: Colors.green.shade700, size: 48),
         const SizedBox(height: 8),
         Text('Submission Complete', style: Theme.of(context).textTheme.titleLarge),
         const SizedBox(height: 4),
@@ -801,6 +860,9 @@ class _AssignmentSubmissionScreenState extends State<AssignmentSubmissionScreen>
                   _receiptRow('Email message ID', submission.emailMessageId!),
                 if (submission.teacherWhatsApp != null && submission.whatsAppShared)
                   _receiptRow('Shared to (WhatsApp)', submission.teacherWhatsApp!),
+                if (submission.studentEmail != null) _receiptRow('Feedback email (yours)', submission.studentEmail!),
+                if (submission.studentWhatsApp != null)
+                  _receiptRow('Feedback WhatsApp (yours)', submission.studentWhatsApp!),
               ],
             ),
           ),
@@ -857,4 +919,53 @@ class _AssignmentSubmissionScreenState extends State<AssignmentSubmissionScreen>
           decoration: InputDecoration(labelText: label, border: const OutlineInputBorder()),
         ),
       );
+}
+
+/// Paragraph-indentation detection (2026-09-28, per explicit request): only
+/// splits a transcribed block where the student actually confirmed a
+/// suspected paragraph break — a block with none, or whose confirmed
+/// anchor text can no longer genuinely be found in its own text, is kept
+/// exactly as transcribed, never guessed at. This only affects paragraph
+/// STRUCTURE; the wording itself is never altered. Pure — directly
+/// unit-tested without needing to drive the whole screen/dialog flow.
+List<AssignmentBodyBlock> buildBodyBlocksWithConfirmedSplits(
+  List<DocumentBlock> transcribedBlocks,
+  Map<int, List<String>> confirmedSplitsByBlock,
+) {
+  final blocks = <AssignmentBodyBlock>[];
+  for (var i = 0; i < transcribedBlocks.length; i++) {
+    final b = transcribedBlocks[i];
+    final type = AssignmentBodyBlockType.values.firstWhere(
+      (t) => t.name == b.type.name,
+      orElse: () => AssignmentBodyBlockType.paragraph,
+    );
+    final anchors = confirmedSplitsByBlock[i];
+    // Defense-in-depth: indentation only ever splits a 'paragraph' block —
+    // checked again here even though the server response parser already
+    // filters this upstream, same "never trust a single layer" discipline
+    // used throughout this app's AI-response parsing.
+    if (anchors == null || anchors.isEmpty || type != AssignmentBodyBlockType.paragraph) {
+      blocks.add(AssignmentBodyBlock(type: type, text: b.text));
+      continue;
+    }
+    final cutPoints = <int>{};
+    for (final anchor in anchors) {
+      final idx = b.text.indexOf(anchor);
+      if (idx > 0) cutPoints.add(idx);
+    }
+    if (cutPoints.isEmpty) {
+      blocks.add(AssignmentBodyBlock(type: type, text: b.text));
+      continue;
+    }
+    final sortedCuts = cutPoints.toList()..sort();
+    var start = 0;
+    for (final cut in sortedCuts) {
+      final segment = b.text.substring(start, cut).trimRight();
+      if (segment.isNotEmpty) blocks.add(AssignmentBodyBlock(type: AssignmentBodyBlockType.paragraph, text: segment));
+      start = cut;
+    }
+    final lastSegment = b.text.substring(start).trimLeft();
+    if (lastSegment.isNotEmpty) blocks.add(AssignmentBodyBlock(type: AssignmentBodyBlockType.paragraph, text: lastSegment));
+  }
+  return blocks;
 }

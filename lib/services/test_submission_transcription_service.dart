@@ -6,6 +6,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 
 import '../models/test_submission.dart';
 import 'auth_service.dart';
+import 'metered_call.dart';
 
 class TranscribedTestSubmission {
   final List<TestAnswerSegment> segments;
@@ -40,10 +41,12 @@ class TestSubmissionTranscriptionUnavailable implements Exception {
 /// Function, which detects handwritten question-number markers and
 /// structures the transcription by detected question.
 class TestSubmissionTranscriptionService {
-  TestSubmissionTranscriptionService({FirebaseFunctions? functions})
-      : _functions = functions ?? FirebaseFunctions.instance;
+  TestSubmissionTranscriptionService({FirebaseFunctions? functions}) : _providedFunctions = functions;
 
-  final FirebaseFunctions _functions;
+  // Lazy: resolving FirebaseFunctions.instance needs Firebase.initializeApp() to have
+  // succeeded; constructing this service must never throw just because it hasn't.
+  final FirebaseFunctions? _providedFunctions;
+  FirebaseFunctions get _functions => _providedFunctions ?? FirebaseFunctions.instance;
 
   Future<bool> get isOnline async {
     final result = await Connectivity().checkConnectivity();
@@ -83,8 +86,7 @@ class TestSubmissionTranscriptionService {
       images.add(base64Encode(await file.readAsBytes()));
     }
 
-    final callable = _functions.httpsCallable(
-      'transcribeTestSubmission',
+    final callable = meteredCallable(_functions, 'transcribeTestSubmission',
       options: HttpsCallableOptions(timeout: const Duration(seconds: 100)),
     );
 

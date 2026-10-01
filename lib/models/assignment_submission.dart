@@ -123,6 +123,17 @@ class AssignmentSubmission {
   final bool emailSent;
   final bool whatsAppShared;
 
+  /// The submitting student's OWN contact details (2026-09-28, per explicit
+  /// request — closes a real gap: until now nothing captured any way to
+  /// reach the student back once their work was marked). At least one of
+  /// [studentEmail]/[studentWhatsApp] is required before sending — enforced
+  /// in AssignmentSubmissionScreen's own validation, same place the
+  /// existing teacher-contact requirement already lives — never assumed
+  /// optional-with-neither given, since a marked script has nowhere to go
+  /// back to otherwise.
+  final String? studentEmail;
+  final String? studentWhatsApp;
+
   /// The email provider's own id for the sent message (Resend), when
   /// [emailSent] is true via the real automatic-send path. Empty/null for
   /// submissions sent before this existed, or when only WhatsApp was used.
@@ -155,6 +166,8 @@ class AssignmentSubmission {
     this.emailSent = false,
     this.whatsAppShared = false,
     this.emailMessageId,
+    this.studentEmail,
+    this.studentWhatsApp,
   });
 
   AssignmentSubmission copyWith({
@@ -182,6 +195,8 @@ class AssignmentSubmission {
     bool? emailSent,
     bool? whatsAppShared,
     String? emailMessageId,
+    String? studentEmail,
+    String? studentWhatsApp,
   }) =>
       AssignmentSubmission(
         id: id,
@@ -210,6 +225,8 @@ class AssignmentSubmission {
         emailSent: emailSent ?? this.emailSent,
         whatsAppShared: whatsAppShared ?? this.whatsAppShared,
         emailMessageId: emailMessageId ?? this.emailMessageId,
+        studentEmail: studentEmail ?? this.studentEmail,
+        studentWhatsApp: studentWhatsApp ?? this.studentWhatsApp,
       );
 
   Map<String, dynamic> toJson() => {
@@ -239,6 +256,8 @@ class AssignmentSubmission {
         'emailSent': emailSent,
         'whatsAppShared': whatsAppShared,
         'emailMessageId': emailMessageId,
+        'studentEmail': studentEmail,
+        'studentWhatsApp': studentWhatsApp,
       };
 
   factory AssignmentSubmission.fromJson(Map<String, dynamic> json) => AssignmentSubmission(
@@ -272,6 +291,8 @@ class AssignmentSubmission {
         emailSent: json['emailSent'] as bool? ?? false,
         whatsAppShared: json['whatsAppShared'] as bool? ?? false,
         emailMessageId: json['emailMessageId'] as String?,
+        studentEmail: json['studentEmail'] as String?,
+        studentWhatsApp: json['studentWhatsApp'] as String?,
       );
 }
 

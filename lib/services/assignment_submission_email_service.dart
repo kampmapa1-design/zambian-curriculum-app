@@ -41,9 +41,12 @@ class EmailAttachmentFile {
 /// zero-setup shared sender can only email the account owner, confirmed
 /// via a real 403 in production.
 class AssignmentSubmissionEmailService {
-  AssignmentSubmissionEmailService({FirebaseFunctions? functions}) : _functions = functions ?? FirebaseFunctions.instance;
+  AssignmentSubmissionEmailService({FirebaseFunctions? functions}) : _providedFunctions = functions;
 
-  final FirebaseFunctions _functions;
+  // Lazy: resolving FirebaseFunctions.instance needs Firebase.initializeApp() to have
+  // succeeded; constructing this service must never throw just because it hasn't.
+  final FirebaseFunctions? _providedFunctions;
+  FirebaseFunctions get _functions => _providedFunctions ?? FirebaseFunctions.instance;
 
   Future<bool> get isOnline async {
     final result = await Connectivity().checkConnectivity();

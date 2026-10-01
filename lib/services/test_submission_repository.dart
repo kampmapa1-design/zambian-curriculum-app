@@ -74,6 +74,20 @@ class TestSubmissionRepository {
     await _saveCatalog(TestSubmissionCatalog(submissions: updated));
   }
 
+  /// Feedback return-path (2026-09-28, per explicit request): given a
+  /// [MarkingScript]'s own id, finds the ONE [TestSubmission] that created
+  /// it via "Send to Marking" (the reverse direction of
+  /// [TestSubmission.markingScriptId]) — null when this script wasn't
+  /// created from a student submission at all (e.g. captured directly in
+  /// Chief Marker), which is the common case and not an error.
+  Future<TestSubmission?> findByMarkingScriptId(String scriptId) async {
+    final catalog = await loadCatalog();
+    for (final s in catalog.submissions) {
+      if (s.markingScriptId == scriptId) return s;
+    }
+    return null;
+  }
+
   Future<void> remove(TestSubmission submission) async {
     final dir = Directory(p.join((await _rootDir()).path, submission.id));
     if (await dir.exists()) await dir.delete(recursive: true);
