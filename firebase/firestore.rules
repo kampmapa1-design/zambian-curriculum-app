@@ -29,6 +29,119 @@ service cloud.firestore {
       allow read, write: if false;
     }
 
+    // Marking credits (Monetization, added 2026-09-19). Every balance change
+    // is made by Cloud Functions via the Admin SDK (which bypasses these
+    // rules); clients may only READ their own ledger. `allow write: if false`
+    // on all of it is what stops anyone editing their own balance.
+    //
+    // Config: the live weights/bundles/allowance, readable by any signed-in
+    // user so the app can show prices and costs. Only THIS document is
+    // exposed — never add anything sensitive to it.
+    match /appConfig/markingCredits {
+      allow read: if request.auth != null;
+      allow write: if false;
+    }
+
+    // National Exam Timetable (2026-09-29) — a single shared date every
+    // learner reads to unlock "Countdown to [year] National Exams?".
+    // Writable only through the owner-gated saveNationalExamTimetable
+    // Cloud Function, same as every other appConfig doc.
+    match /appConfig/nationalExamTimetable {
+      allow read: if request.auth != null;
+      allow write: if false;
+    }
+
+    // Sugo Library (Stage 1, 2026-09-29) — the manifest of every topic's
+    // current content-version hash, and the topic notes themselves.
+    // Written only by the owner-gated batch generator (saveSugoLibraryTopic
+    // Cloud Function), never client-writable — same shared-content pattern
+    // as nationalExamTimetable above.
+    match /appConfig/sugoLibraryManifest {
+      allow read: if request.auth != null;
+      allow write: if false;
+    }
+
+    match /sugoLibrary/{topicId} {
+      allow read: if request.auth != null;
+      allow write: if false;
+    }
+
+    // A ledger is keyed "user_<uid>", readable only by that uid.
+    match /creditLedgers/{ownerKey} {
+      allow read: if request.auth != null && ownerKey == ('user_' + request.auth.uid);
+      allow write: if false;
+
+      // Transaction history (free grants, spends, purchases) — same owner-only read.
+      match /transactions/{txId} {
+        allow read: if request.auth != null && ownerKey == ('user_' + request.auth.uid);
+        allow write: if false;
+      }
+      // `charges` are internal idempotency markers — never client-visible.
+      match /charges/{chargeId} {
+        allow read, write: if false;
+      }
+    }
+
+    // Individual-teacher subscriptions (owner decision, 2026-09-28) — a
+    // teacher's own personal tier, checked server-side in index.ts
+    // (`meetsTimetableTier`) alongside their school's tier. Set manually via
+    // Firebase Console for now, same as `schools/{id}.subscriptionTier`
+    // itself; a client may only read its own doc, never write one — a real
+    // purchase path credits this the same way `redeemMarkingBundle` credits
+    // creditLedgers, server-side only.
+    match /personalSubscriptions/{uid} {
+      allow read: if request.auth != null && uid == request.auth.uid;
+      allow write: if false;
+    }
+
+    // Owner-only / server-only data — no client access of any kind. (Already
+    // denied by default; listed explicitly so a future broad rule can't
+    // quietly expose them.) The owner's finance screen reads them through the
+    // getOwnerFinanceSummary Cloud Function.
+    match /ownerData/{docId} {
+      allow read, write: if false;
+    }
+    match /markingUsage/{docId} {
+      allow read, write: if false;
+    }
+    // Purchase pipeline (Stage 4): processed purchases (holds a raw Play token until
+    // acknowledged), the audit trail, flagged anomalies and rate counters. Server only.
+    match /processedPurchases/{docId} {
+      allow read, write: if false;
+    }
+    match /purchaseAuditLog/{docId} {
+      allow read, write: if false;
+    }
+    match /purchaseAnomalies/{docId} {
+      allow read, write: if false;
+    }
+    match /purchaseRate/{docId} {
+      allow read, write: if false;
+    }
+    match /revenueEvents/{docId} {
+      allow read, write: if false;
+    }
+    match /featureUsage/{docId} {
+      allow read, write: if false;
+    }
+    match /adPassCounters/{docId} {
+      allow read, write: if false;
+    }
+
+    // Ad passes (earned by a Google-verified rewarded ad; see adPass.ts). A
+    // teacher may READ their own so the app can show "you have an ad pass";
+    // only the server ever creates or consumes one, so a client can never mint
+    // itself a pass.
+    match /adPasses/{passId} {
+      allow read: if request.auth != null && resource.data.uid == request.auth.uid;
+      allow write: if false;
+    }
+
+    // Crawl spend guard for the CDC catalogue (see cdcGuard.ts) — server only.
+    match /system/{docId} {
+      allow read, write: if false;
+    }
+
     // Home Assignment reply-ingestion epic, Stage 2b/3 (added 2026-09-16)
     // — replies the Gmail-polling function (or any future real-time
     // webhook) couldn't confidently match to a roster entry, held for a

@@ -64,6 +64,24 @@ service firebase.storage {
         && request.resource.contentType.matches('image/.*');
     }
 
+    // Cloud Backup (added 2026-09-18, per the app status report's
+    // reliability recommendation) — an off-device copy of DataBackupService's
+    // own zip (same format, same content), scoped strictly to the uploading
+    // teacher's own uid, same client-writes-directly pattern as
+    // photo_batches above. Unlike photo_batches, reads are also allowed
+    // directly to the owning uid (no separate signed-URL Cloud Function):
+    // this is always "a teacher reading their own backup back," never a
+    // cross-user access case, so a server-mediated signed URL buys nothing
+    // extra here. 250MB cap — script photos can make a real backup large
+    // (see DataBackupService's own doc comment on this).
+    match /backups/{uid}/{allPaths=**} {
+      allow read, delete: if request.auth != null && request.auth.uid == uid;
+      allow write: if request.auth != null
+        && request.auth.uid == uid
+        && request.resource.size < 250 * 1024 * 1024
+        && request.resource.contentType == 'application/zip';
+    }
+
     match /schools/{schoolId}/logo {
       allow read: if request.auth != null && request.auth.token.schoolId == schoolId;
       allow write: if request.auth != null

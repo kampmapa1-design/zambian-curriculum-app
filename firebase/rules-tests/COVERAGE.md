@@ -15,7 +15,8 @@ Test files, by concern:
 | `firestore.rules.namespace-separation.test.mjs` | Pupil claims vs staff claims never cross-satisfy each other's checks |
 | `firestore.rules.impersonation.test.mjs` | Self-tamper, cross-user, and authorUid-spoofing attempts |
 | `firestore.rules.role-boundaries.test.mjs` | The handful of real schoolRole checks, exercised across all 6 roles; the Staffroom observer-write finding |
-| `storage.rules.test.mjs` | Storage rules (school logo) — pre-existing, out of this task's scope |
+| `firestore.rules.credits.test.mjs` | Monetization (added 2026-09-19): own-ledger read-only, no client writes to balances/history/charge markers, public pricing config read-only and scoped to one document, owner/revenue/usage/purchase collections closed to every client |
+| `storage.rules.test.mjs` | Storage rules: school logo (pre-existing) and, added 2026-09-18, Cloud Backup `backups/{uid}/` (owner-only read/write/delete, zip-only, cross-teacher and unauthenticated denial) |
 
 ## Coverage matrix
 
@@ -41,6 +42,10 @@ no role-gating to test on writes).
 | `schools/{id}/timetable/{id}` | ✅ | ✅ (always false) | ✅ cross-school | — (schoolId-only, no role check) | core, namespace-separation |
 | `unmatchedHomeAssignmentSubmissions/{id}` | ✅ | ✅ (always false) | ✅ cross-school (readable only once `schoolId` is resolved); an unresolved item (`schoolId` absent) confirmed readable by nobody via the app | — (schoolId-only, no role check) | cross-school |
 | `independentTimetableProjects/{id}` (+ `classes`, `timetable`) | ✅ | ✅ (always false) | ✅ cross-user (`ownerUid` field equality, not the `schoolId` claim — confirmed a real staff token gains no extra access) | — (ownerUid-only, no role check; never gated on School Network membership by design) | cross-school |
+| `appConfig/markingCredits` | ✅ signed-in yes / signed-out no; sibling `appConfig/*` docs NOT exposed | ✅ (always false) | — (config, not user data) | — | credits |
+| `creditLedgers/{user_<uid>}` (+ `transactions`) | ✅ own only; other users, un-prefixed and `school_` keys denied | ✅ (always false: set/update/delete/forge history, create-for-self) | ✅ cross-user | — (uid-gated) | credits |
+| `creditLedgers/{key}/charges/{id}` | ✅ (always false, even for the owner) | ✅ (always false — deleting a marker would enable a double charge) | ✅ | — | credits |
+| `ownerData/*`, `markingUsage/*`, `purchases/*`, `revenueEvents/*` | ✅ (always false, even for the listed owner uid and signed-out) | ✅ (always false — incl. a client trying to add itself to `ownerUids`) | — | — (owner access is via Cloud Functions only) | credits |
 
 Pupil/staff claim-namespace separation (pupilSchoolId/pupilClassId vs.
 schoolId/schoolRole never cross-satisfying each other, including string
@@ -115,6 +120,13 @@ own inline comment describes.
   test suite, a different kind of test than this one; not built here.
 - **`firestore.indexes.json`** — index configuration isn't a security
   boundary and has no rules-relevant behavior to test.
-- **Storage rules beyond the school logo** — `storage.rules.test.mjs`
-  pre-dates this task and wasn't expanded; if Storage gains new paths,
-  it needs its own coverage pass.
+- **Storage rules beyond the school logo and Cloud Backups** —
+  `storage.rules.test.mjs` covers those two paths. Still NOT directly
+  tested: `teacher_submissions/` (deny-all), `photo_batches/{uid}/`, and
+  the Home Assignment `.../submissions/{uploaderUid}/{fileName}` path
+  (the one with custom-claim school/class checks — the most worth
+  covering next). If Storage gains new paths, each needs its own
+  coverage pass.
+- **Cloud Backup's 250MB size cap** — the `backups/{uid}/` rule enforces
+  it, but exercising it needs a >250MB upload, impractical for an
+  emulator unit test; the content-type and ownership checks are tested.

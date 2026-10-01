@@ -1,10 +1,24 @@
+import { setGlobalOptions } from "firebase-functions/v2";
 import { onCall, onRequest, HttpsError } from "firebase-functions/v2/https";
 import { onSchedule } from "firebase-functions/v2/scheduler";
+import { onMessagePublished } from "firebase-functions/v2/pubsub";
 import { defineSecret } from "firebase-functions/params";
 import { GoogleGenAI } from "@google/genai";
 import * as admin from "firebase-admin";
 import { stripKnownWatermarks } from "./watermark";
 import { extractSubjectContentText } from "./subjectContent";
+import { detectEngine } from "./credits";
+import { claimCdcCrawl, decideCdcServe, finishCdcCrawl } from "./cdcGuard";
+import { flushFeatureUsage, generateTracked, newUsageContext, runWithUsage } from "./aiUsage";
+import { metered } from "./featureBilling";
+import { SCHOOL_TIMETABLE_ALLOWANCE } from "./schoolAllowance";
+import { beginMarkingBilling, loadPricing, type CreditsInfo } from "./markingBilling";
+import { handleAdmobCallback } from "./adPass";
+import { getFinanceSummary, refreshRevenueAndNotify, requireOwner, setExchangeRate } from "./monetization";
+import { retryPendingAcknowledgements, verifyBundlePurchase } from "./purchaseVerification";
+import { handlePlayNotification, reconcileVoidedPurchases } from "./purchaseRefunds";
+import { createPlayVerifier } from "./playBilling";
+import { isOwnerUid, loadOwnerSettings } from "./revenue";
 
 // Initialized once at module scope, used by the Teacher Submissions
 // Dashboard functions (requestDashboardAccessCode, verifyDashboardAccessCode,
@@ -14,6 +28,40 @@ import { extractSubjectContentText } from "./subjectContent";
 // firebase/storage.rules by design - those rules lock clients out
 // entirely so this is the only path in or out).
 admin.initializeApp();
+
+// ---------------------------------------------------------------------
+// Firebase App Check — the ONE switch for enforcing it on every callable
+// function below (added 2026-09-18, per the app status report: without
+// it, anyone who extracts this app's public Firebase config can call any
+// of these functions directly and run up the Gemini bill, since
+// anonymous Firebase Auth alone is trivially obtainable by any client).
+//
+// DELIBERATELY `false` for now — the client half is already shipped in
+// the app (lib/main.dart activates App Check on startup) but turning
+// enforcement on before every INSTALLED build sends valid tokens would
+// reject every call from every current tester, across every AI feature.
+// While false, App Check tokens are still verified when present and
+// per-request results show up in Firebase Console > App Check > Metrics
+// — so the real rollout order is:
+//   1. Ship a build containing the client half (Play upload — new
+//      version code) and let testers update to it.
+//   2. Console > App Check: register the Android app with the Play
+//      Integrity provider (needs the app's release-signing SHA-256, and
+//      the Play Integrity API enabled on the Google Cloud project).
+//   3. Watch the Metrics tab until ~all traffic reads "verified".
+//   4. Flip this to `true` and deploy. To exempt one function, give it
+//      `enforceAppCheck: false` in its own options (per-function options
+//      override this global default).
+// Known caveat to check in step 3: Play Integrity attests apps as Google
+// Play recognizes them — a build sideloaded outside Play may read as
+// unverified even though it works today; watch Metrics for exactly that
+// before enforcing. Debug builds use App Check's debug provider instead
+// (register the token the SDK prints to logcat in Console > App Check).
+// The one onSchedule function is unaffected — event handlers don't take
+// this option at all (see EventHandlerOptions in firebase-functions).
+// ---------------------------------------------------------------------
+const APP_CHECK_ENFORCED = false;
+setGlobalOptions({ enforceAppCheck: APP_CHECK_ENFORCED });
 
 // Stopgap while the Anthropic account is blocked on identity verification
 // (started 2026-08-26). ALL THREE functions below now run on a free Gemini
@@ -92,6 +140,8 @@ interface GenerateTeachingNotesRequest {
   // thorough" behavior (see buildPrompt's use of it). Ignored for
   // 'paragraph' format, which already has its own 700-word cap.
   maxLength?: "page";
+  // Grade 10-12 (OBC) document — see SENIOR_SECONDARY_INSTRUCTION.
+  seniorSecondary?: boolean;
 }
 
 interface GenerateTeachingNotesResponse {
@@ -100,6 +150,17 @@ interface GenerateTeachingNotesResponse {
   subtopic: string | null;
   format: NotesFormat;
 }
+
+// Grade 10-12 (OBC) documents (2026-09-27, per explicit request): saved
+// material may come from junior-secondary (Form 1-5) modules; its subject
+// knowledge is fine to use, but it must never be named or labelled, and no
+// placeholder question marks may appear.
+const SENIOR_SECONDARY_INSTRUCTION =
+  "This document is for Grades 10-12. NEVER mention Form 1, 2, 3, 4 or 5 (or any junior-secondary " +
+  "level, module or its content) anywhere in the output — if the material above comes from those " +
+  "levels, use its subject knowledge silently, as ordinary Grade 10-12 content. Never write question " +
+  "marks as placeholders or uncertainty markers (no '?', '??' or '(?)'); where something is unclear, " +
+  "state the standard, established content confidently from the syllabus context instead.";
 
 function buildPrompt(req: GenerateTeachingNotesRequest): string {
   const formatInstruction =
@@ -142,6 +203,7 @@ function buildPrompt(req: GenerateTeachingNotesRequest): string {
       "inventing content.",
     "Write only the teaching notes themselves — no preamble, no meta-commentary about the " +
       "word count or format.",
+    req.seniorSecondary ? SENIOR_SECONDARY_INSTRUCTION : null,
     "Write in plain text only — no Markdown formatting of any kind (no #, ##, ###, **, *, __, " +
       "---, or backticks). This is a professional document a teacher will export and print, " +
       "not a chat reply, so it must never carry visible markup syntax.",
@@ -155,7 +217,7 @@ export const generateTeachingNotes = onCall<GenerateTeachingNotesRequest>(
   // burst of calls running up spend faster than a budget alert would catch
   // it. Low on purpose for a prototype under real testing.
   { secrets: [geminiApiKey], region: "us-central1", maxInstances: 5 },
-  async (request): Promise<GenerateTeachingNotesResponse> => {
+  metered("teachingNotes", async (request): Promise<GenerateTeachingNotesResponse> => {
     // Callable functions verify the Firebase Auth ID token automatically —
     // request.auth is only populated for requests carrying a valid token
     // from THIS Firebase project, which is what keeps arbitrary callers off
@@ -167,7 +229,7 @@ export const generateTeachingNotes = onCall<GenerateTeachingNotesRequest>(
       );
     }
 
-    const { topic, subtopic, subject, grade, syllabusContext, format, maxLength } = request.data ?? {};
+    const { topic, subtopic, subject, grade, syllabusContext, format, maxLength, seniorSecondary } = request.data ?? {};
 
     if (typeof topic !== "string" || topic.trim().length === 0) {
       throw new HttpsError("invalid-argument", "'topic' is required.");
@@ -195,7 +257,16 @@ export const generateTeachingNotes = onCall<GenerateTeachingNotesRequest>(
     }
 
     const ai = new GoogleGenAI({ apiKey: geminiApiKey.value() });
-    const req: GenerateTeachingNotesRequest = { topic, subtopic, subject, grade, syllabusContext, format, maxLength };
+    const req: GenerateTeachingNotesRequest = {
+      topic,
+      subtopic,
+      subject,
+      grade,
+      syllabusContext,
+      format,
+      maxLength,
+      seniorSecondary: seniorSecondary === true ? true : undefined,
+    };
 
     let text: string | undefined;
     try {
@@ -204,7 +275,7 @@ export const generateTeachingNotes = onCall<GenerateTeachingNotesRequest>(
       // context into formatted notes — is well within its strengths. Also
       // the free-tier-eligible model, which matters while this is running
       // on a card-free Google AI Studio key rather than a funded account.
-      const response = await ai.models.generateContent({
+      const response = await generateTracked(ai, {
         model: GEMINI_MODEL,
         contents: buildPrompt(req),
       });
@@ -224,7 +295,7 @@ export const generateTeachingNotes = onCall<GenerateTeachingNotesRequest>(
       subtopic: subtopic ?? null,
       format,
     };
-  }
+  })
 );
 
 // ---------------------------------------------------------------------
@@ -270,10 +341,19 @@ interface GenerateLessonPlanRequest {
   // side). When absent (nothing found on-device), this function does one
   // real online search of its own instead — see resolvePriorityContent.
   priorityContext?: string;
+  // OBC template work (2026-09-26): "column" = the template has a CONTENT /
+  // LEARNING POINTS column, so each stage also returns `content`; "omitted" =
+  // the template has no such column (OBC Social Sciences), so subject
+  // content must NOT be listed anywhere in the role columns. Absent (every
+  // other template) = behave exactly as before.
+  contentColumnMode?: "column" | "omitted";
+  // Grade 10-12 (OBC) document — see SENIOR_SECONDARY_INSTRUCTION.
+  seniorSecondary?: boolean;
 }
 
 interface LessonPlanProgressionRow {
   stage: string;
+  content?: string;
   teacherRole: string;
   learnersRole: string;
   assessmentCriteria: string;
@@ -317,6 +397,14 @@ const generateLessonPlanSchema = {
         type: "object",
         properties: {
           stage: { type: "string", description: "Must exactly match one of the given stage names." },
+          content: {
+            type: "string",
+            description:
+              "ONLY when the prompt asks for a content column: the concrete teaching points / subject " +
+              "content covered at this stage, one short plain-text line per point (a leading dash per " +
+              "line). Exactly SIX lines for the Development stage; 1-2 lines for any other stage. " +
+              "Otherwise omit this field entirely.",
+          },
           teacherRole: {
             type: "string",
             description:
@@ -366,6 +454,39 @@ function buildPriorityContentSection(req: GenerateLessonPlanRequest): string {
   ].join("\n");
 }
 
+const OBC_RATIONALE_INSTRUCTION =
+  "RATIONALE: write at most THREE points (three short sentences or fewer), each beginning with a " +
+  "DIFFERENT action word — never the same opening verb twice (e.g. Explain / Identify / Apply, not " +
+  "Describe / Describe / Describe).";
+
+function buildContentColumnSection(req: GenerateLessonPlanRequest): string | null {
+  if (req.contentColumnMode === "column") {
+    return (
+      OBC_RATIONALE_INSTRUCTION +
+      "\n" +
+      "This lesson plan's progression table has a CONTENT / LEARNING POINTS column. For every stage, " +
+      "also fill `content`. For the Development stage give exactly SIX bullet points (one short line " +
+      "each, a leading dash per line): the actual teaching points of this lesson — the key facts, " +
+      "definitions, processes or steps a teacher would explain, drawn from the syllabus context and any " +
+      "saved lesson material above, and consistent with the Lesson Notes that accompany this plan (which " +
+      "are written from the same material). For the other stages give 1-2 short lines. Keep Teacher's " +
+      "Role and Learners' Role about ACTIVITIES, referring to the Content column rather than " +
+      "restating it."
+    );
+  }
+  if (req.contentColumnMode === "omitted") {
+    return (
+      OBC_RATIONALE_INSTRUCTION +
+      "\n" +
+      "This lesson plan's progression table has NO content / learning-points column. Do NOT return a " +
+      "`content` field, and do NOT list or restate subject content, learning points or facts inside " +
+      "Teacher's Role or Learners' Role or Assessment Criteria — describe only what the teacher and " +
+      "learners DO and how it is assessed."
+    );
+  }
+  return null;
+}
+
 function buildLessonPlanPrompt(req: GenerateLessonPlanRequest): string {
   return [
     "Write a lesson plan for a Zambian secondary-school teacher, for exactly one lesson period, " +
@@ -404,6 +525,8 @@ function buildLessonPlanPrompt(req: GenerateLessonPlanRequest): string {
         `${req.subjectContentExcerpt}\n`
       : null,
     buildPriorityContentSection(req),
+    buildContentColumnSection(req),
+    req.seniorSecondary ? SENIOR_SECONDARY_INSTRUCTION : null,
     `Lesson stages, in order: ${req.progressionStages.join(", ")}. Produce exactly one progression ` +
       "entry per stage, in that order, with Teacher's Role, Learners' Role, and Assessment Criteria " +
       "specific to this lesson's actual content.",
@@ -438,7 +561,7 @@ async function resolvePriorityContentOnline(
   grade?: string
 ): Promise<string | null> {
   try {
-    const response = await ai.models.generateContent({
+    const response = await generateTracked(ai, {
       model: GEMINI_MODEL,
       contents: [
         `Find real, accurate facts about "${phrase}" as it relates to the ${subject} topic "${topic}"` +
@@ -458,7 +581,7 @@ async function resolvePriorityContentOnline(
 
 export const generateLessonPlan = onCall<GenerateLessonPlanRequest>(
   { secrets: [geminiApiKey], region: "us-central1", maxInstances: 5 },
-  async (request): Promise<GenerateLessonPlanResponse> => {
+  metered("lessonPlan", async (request): Promise<GenerateLessonPlanResponse> => {
     if (!request.auth) {
       throw new HttpsError("unauthenticated", "Sign in is required to generate a lesson plan.");
     }
@@ -475,6 +598,8 @@ export const generateLessonPlan = onCall<GenerateLessonPlanRequest>(
       subjectContentExcerpt,
       priorityPhrase,
       priorityContext,
+      contentColumnMode,
+      seniorSecondary,
     } = request.data ?? {};
 
     if (typeof topic !== "string" || topic.trim().length === 0) {
@@ -546,11 +671,13 @@ export const generateLessonPlan = onCall<GenerateLessonPlanRequest>(
       subjectContentExcerpt,
       priorityPhrase,
       priorityContext: resolvedPriorityContext,
+      contentColumnMode: contentColumnMode === "column" || contentColumnMode === "omitted" ? contentColumnMode : undefined,
+      seniorSecondary: seniorSecondary === true ? true : undefined,
     };
 
     let text: string | undefined;
     try {
-      const response = await ai.models.generateContent({
+      const response = await generateTracked(ai, {
         model: GEMINI_MODEL,
         contents: buildLessonPlanPrompt(req),
         config: {
@@ -577,7 +704,7 @@ export const generateLessonPlan = onCall<GenerateLessonPlanRequest>(
     }
 
     return parsed;
-  }
+  })
 );
 
 // ---------------------------------------------------------------------
@@ -663,7 +790,7 @@ const requiredCoreTopicsSchema = {
 
 export const generateRequiredCoreTopics = onCall<GenerateRequiredCoreTopicsRequest>(
   { secrets: [geminiApiKey], region: "us-central1", timeoutSeconds: 180, memory: "512MiB", maxInstances: 5 },
-  async (request): Promise<GenerateRequiredCoreTopicsResponse> => {
+  metered("requiredCoreTopics", async (request): Promise<GenerateRequiredCoreTopicsResponse> => {
     if (!request.auth) {
       throw new HttpsError("unauthenticated", "Sign in is required to add required core topics.");
     }
@@ -688,7 +815,7 @@ export const generateRequiredCoreTopics = onCall<GenerateRequiredCoreTopicsReque
 
     let researchText: string | undefined;
     try {
-      const researchResponse = await ai.models.generateContent({
+      const researchResponse = await generateTracked(ai, {
         model: GEMINI_MODEL,
         contents: [
           `A teacher wants these specific topics added to a ${levelText} scheme of work, because the ` +
@@ -728,7 +855,7 @@ export const generateRequiredCoreTopics = onCall<GenerateRequiredCoreTopicsReque
 
     let text: string | undefined;
     try {
-      const structureResponse = await ai.models.generateContent({
+      const structureResponse = await generateTracked(ai, {
         model: GEMINI_MODEL,
         contents: [
           `Turn the research notes below into ${levelText} scheme-of-work entries — one per topic, in ` +
@@ -768,7 +895,7 @@ export const generateRequiredCoreTopics = onCall<GenerateRequiredCoreTopicsReque
     }
     if (!Array.isArray(parsed.topics)) parsed.topics = [];
     return parsed;
-  }
+  })
 );
 
 // ---------------------------------------------------------------------
@@ -989,7 +1116,7 @@ async function fetchAndCacheCdcCatalog(): Promise<ListCdcResourcesResponse> {
 
   let researchText: string | undefined;
   try {
-    const researchResponse = await ai.models.generateContent({
+    const researchResponse = await generateTracked(ai, {
       model: GEMINI_MODEL,
       contents: CDC_CATALOG_PROMPT,
       config: {
@@ -1008,7 +1135,7 @@ async function fetchAndCacheCdcCatalog(): Promise<ListCdcResourcesResponse> {
 
   let text: string | undefined;
   try {
-    const structureResponse = await ai.models.generateContent({
+    const structureResponse = await generateTracked(ai, {
       model: GEMINI_MODEL,
       contents: [
         "Extract the resources described in the research notes below into the given JSON " +
@@ -1064,15 +1191,44 @@ async function fetchAndCacheCdcCatalog(): Promise<ListCdcResourcesResponse> {
 export const refreshCdcResourcesWeekly = onSchedule(
   { schedule: "0 14 * * 3", timeZone: "Africa/Lusaka", secrets: [geminiApiKey], region: "us-central1", timeoutSeconds: 480, memory: "512MiB" },
   async () => {
-    await fetchAndCacheCdcCatalog();
+    // Goes through the same spend guard as every other crawl (see cdcGuard.ts):
+    // if a crawl is already in flight, or a recent attempt failed and is still
+    // backing off, this week's run is skipped rather than piling on.
+    if (!(await claimCdcCrawl(admin.firestore(), Date.now()))) {
+      console.warn("refreshCdcResourcesWeekly: skipped — the CDC spend guard says a crawl is in flight or backing off");
+      return;
+    }
+    await runGuardedCdcCrawl();
   }
 );
 
-// A cache more than this stale means the Wednesday schedule has silently
-// failed for two cycles running — worth a live emergency fetch rather than
-// leaving the app on a catalog that's gone stale indefinitely. Well above
-// the normal ~7-day cadence so a single missed run is never a problem.
-const CDC_CACHE_STALE_FALLBACK_MS = 10 * 24 * 60 * 60 * 1000;
+// One crawl, with its outcome recorded in the guard: success resets the
+// backoff, failure lengthens it. Callers must have claimed the crawl first.
+async function runGuardedCdcCrawl(): Promise<ListCdcResourcesResponse> {
+  const db = admin.firestore();
+  // Its real token cost is recorded like any other feature's (as "cdcCrawl").
+  const usage = newUsageContext("cdcCrawl", "system:cdc");
+  let ok = false;
+  try {
+    const result = await runWithUsage(usage, () => fetchAndCacheCdcCatalog());
+    ok = true;
+    await finishCdcCrawl(db, Date.now(), null);
+    return result;
+  } catch (err) {
+    await finishCdcCrawl(db, Date.now(), String((err as { message?: unknown })?.message ?? err)).catch((e) =>
+      console.error("runGuardedCdcCrawl: could not record the failure", e)
+    );
+    throw err;
+  } finally {
+    try {
+      const now = Date.now();
+      await flushFeatureUsage(db, usage, ok, now, await loadPricing(db, now));
+    } catch (e) {
+      console.error("runGuardedCdcCrawl: could not log token usage", e);
+    }
+  }
+}
+
 
 export const listCdcResources = onCall<Record<string, never>>(
   // Gemini stopgap (2026-08-27, see top-of-file comment) for the *data*;
@@ -1087,15 +1243,29 @@ export const listCdcResources = onCall<Record<string, never>>(
     }
 
     const cached = await cdcCacheRef().get();
-    if (cached.exists) {
-      const data = cached.data() as { resources?: CdcResource[]; fetchedAt?: string } | undefined;
-      const fetchedAt = data?.fetchedAt ? new Date(data.fetchedAt).getTime() : 0;
-      if (data?.resources && Date.now() - fetchedAt < CDC_CACHE_STALE_FALLBACK_MS) {
-        return { resources: data.resources, fetchedAt: data.fetchedAt! };
-      }
-    }
+    const data = cached.exists ? (cached.data() as { resources?: CdcResource[]; fetchedAt?: string } | undefined) : undefined;
+    const parsedAt = data?.fetchedAt ? Date.parse(data.fetchedAt) : NaN;
+    const cacheAtMs = data?.resources && Number.isFinite(parsedAt) ? parsedAt : null;
+    const cachedResponse = (): ListCdcResourcesResponse => ({ resources: data!.resources!, fetchedAt: data!.fetchedAt! });
 
-    return fetchAndCacheCdcCatalog();
+    // A user request NEVER starts a crawl on its own: the spend guard
+    // (cdcGuard.ts) allows one only when the cache is missing/badly stale AND
+    // no other crawl is in flight AND the last attempt (or its backoff after
+    // failures) is far enough in the past. Everyone else gets the last cached
+    // catalogue, however old.
+    const decision = await decideCdcServe(admin.firestore(), cacheAtMs, Date.now());
+    if (decision === "serve-cache" || decision === "serve-stale") return cachedResponse();
+    if (decision === "unavailable") {
+      throw new HttpsError("unavailable", "The CDC catalogue isn't available yet. Please try again later.");
+    }
+    try {
+      return await runGuardedCdcCrawl();
+    } catch (err) {
+      // A failed emergency crawl must not take the catalogue away from a user
+      // who already has an older copy.
+      if (cacheAtMs !== null) return cachedResponse();
+      throw err;
+    }
   }
 );
 
@@ -1194,7 +1364,7 @@ function buildSlidePrompt(req: GenerateSlideOutlineRequest): string {
 
 export const generateSlideOutline = onCall<GenerateSlideOutlineRequest>(
   { secrets: [geminiApiKey], region: "us-central1", maxInstances: 5 },
-  async (request): Promise<GenerateSlideOutlineResponse> => {
+  metered("slideOutline", async (request): Promise<GenerateSlideOutlineResponse> => {
     if (!request.auth) {
       throw new HttpsError("unauthenticated", "Sign in is required to generate slides.");
     }
@@ -1222,7 +1392,7 @@ export const generateSlideOutline = onCall<GenerateSlideOutlineRequest>(
 
     let text: string | undefined;
     try {
-      const response = await ai.models.generateContent({
+      const response = await generateTracked(ai, {
         model: GEMINI_MODEL,
         contents: buildSlidePrompt(req),
         config: {
@@ -1249,7 +1419,7 @@ export const generateSlideOutline = onCall<GenerateSlideOutlineRequest>(
     }
 
     return parsed;
-  }
+  })
 );
 
 // ---------------------------------------------------------------------
@@ -1349,7 +1519,7 @@ function buildFreeTopicSlidePrompt(topic: string): string {
 
 export const generateFreeTopicNotes = onCall<GenerateFreeTopicNotesRequest>(
   { secrets: [geminiApiKey], region: "us-central1", maxInstances: 5 },
-  async (request): Promise<GenerateFreeTopicNotesResponse> => {
+  metered("freeTopicNotes", async (request): Promise<GenerateFreeTopicNotesResponse> => {
     if (!request.auth) {
       throw new HttpsError("unauthenticated", "Sign in is required to generate notes.");
     }
@@ -1367,7 +1537,7 @@ export const generateFreeTopicNotes = onCall<GenerateFreeTopicNotesRequest>(
     if (format === "slides") {
       let text: string | undefined;
       try {
-        const response = await ai.models.generateContent({
+        const response = await generateTracked(ai, {
           model: GEMINI_MODEL,
           contents: buildFreeTopicSlidePrompt(topic),
           config: {
@@ -1394,7 +1564,7 @@ export const generateFreeTopicNotes = onCall<GenerateFreeTopicNotesRequest>(
 
     let text: string | undefined;
     try {
-      const response = await ai.models.generateContent({
+      const response = await generateTracked(ai, {
         model: GEMINI_MODEL,
         contents: buildFreeTopicPrompt(topic, format),
       });
@@ -1407,7 +1577,7 @@ export const generateFreeTopicNotes = onCall<GenerateFreeTopicNotesRequest>(
       throw new HttpsError("internal", "The AI did not return any text.");
     }
     return { text };
-  }
+  })
 );
 
 // ---------------------------------------------------------------------
@@ -1766,6 +1936,9 @@ interface GradeMarkingScriptRequest {
   subjectName?: string;
   markConventions?: string[];
   examStandard?: "NATIONAL_MOCK" | "SCHOOL_CA" | null;
+  // Monetization: one id per user-initiated marking action, REUSED by the
+  // client when it retries, so a script is charged at most once (see credits.ts).
+  requestId?: string;
 }
 
 interface GradedAnswerResult {
@@ -1784,6 +1957,8 @@ interface GradedAnswerResult {
 interface GradeMarkingScriptResponse {
   answers: GradedAnswerResult[];
   observations: string[];
+  // Present only when the credits system is in shadow/enforced mode.
+  credits?: CreditsInfo;
 }
 
 const gradeMarkingScriptSchema = {
@@ -1953,7 +2128,7 @@ export const gradeMarkingScript = onCall<GradeMarkingScriptRequest>(
       throw new HttpsError("unauthenticated", "Sign in is required to grade a script.");
     }
 
-    const { pageImagesBase64, questions, preSegmentedAnswers, priorCorrections, subjectName, markConventions, examStandard } =
+    const { pageImagesBase64, questions, preSegmentedAnswers, priorCorrections, subjectName, markConventions, examStandard, requestId } =
       request.data ?? {};
     if (!Array.isArray(pageImagesBase64) || pageImagesBase64.length === 0) {
       throw new HttpsError("invalid-argument", "'pageImagesBase64' must be a non-empty array.");
@@ -1961,6 +2136,14 @@ export const gradeMarkingScript = onCall<GradeMarkingScriptRequest>(
     if (!Array.isArray(questions) || questions.length === 0) {
       throw new HttpsError("invalid-argument", "'questions' must be a non-empty array.");
     }
+
+    // Monetization: scheme-based marking always carries a key, so it bills as
+    // "keyed". In enforced mode this refuses BEFORE the paid AI call if the
+    // balance can't cover the script.
+    const billing = await beginMarkingBilling({
+      db: admin.firestore(), fn: "legacy", uid: request.auth.uid, requestId, engine: "keyed",
+      pages: pageImagesBase64.length, questionCount: questions.length,
+    });
     // Same defensive cap already applied to preSegmentedAnswers elsewhere in
     // this app (see generateSchemeOfWorkContent's 20-item cap) — a client
     // bug sending an unbounded list should shrink to nothing usable, not
@@ -1976,8 +2159,10 @@ export const gradeMarkingScript = onCall<GradeMarkingScriptRequest>(
     }));
 
     let text: string | undefined;
+    let geminiResponse: unknown;
+    let geminiFinishReason: string | null = null;
     try {
-      const response = await ai.models.generateContent({
+      const response = await generateTracked(ai, {
         model: GEMINI_MODEL,
         contents: [
           {
@@ -2003,12 +2188,15 @@ export const gradeMarkingScript = onCall<GradeMarkingScriptRequest>(
         },
       });
       text = response.text;
+      geminiResponse = response;
+      geminiFinishReason = response.candidates?.[0]?.finishReason ?? null;
     } catch (err) {
       console.error("gradeMarkingScript: Gemini call failed", err);
       throw quotaExhaustedError(err) ?? new HttpsError("internal", "Failed to grade this script. Please try again.");
     }
 
     if (!text) {
+      await billing.recordAttempt({ model: GEMINI_MODEL, attempt: 1, ok: false, response: geminiResponse, finishReason: geminiFinishReason });
       throw new HttpsError("internal", "The AI did not return any grading results.");
     }
 
@@ -2017,7 +2205,16 @@ export const gradeMarkingScript = onCall<GradeMarkingScriptRequest>(
       parsed = JSON.parse(text);
     } catch (err) {
       console.error("gradeMarkingScript: response was not valid JSON", text);
+      await billing.recordAttempt({ model: GEMINI_MODEL, attempt: 1, ok: false, response: geminiResponse, finishReason: geminiFinishReason });
       throw new HttpsError("internal", "The grading response could not be parsed.");
+    }
+
+    // Charge only for a valid, readable result: at least one answer came back.
+    const usable = Array.isArray(parsed.answers) && parsed.answers.length > 0;
+    await billing.recordAttempt({ model: GEMINI_MODEL, attempt: 1, ok: usable, response: geminiResponse, finishReason: geminiFinishReason });
+    if (usable) {
+      const credits = await billing.settle();
+      if (credits) parsed.credits = credits;
     }
 
     return parsed;
@@ -2121,6 +2318,8 @@ interface GradeMarkingScriptConciseResponse {
   // section/instruction structure to extract.
   rubric: ConciseRubric | null;
   observations: string[];
+  // Present only when the credits system is in shadow/enforced mode.
+  credits?: CreditsInfo;
 }
 
 interface GradeMarkingScriptConciseRequest {
@@ -2151,6 +2350,8 @@ interface GradeMarkingScriptConciseRequest {
   // answer-location work (pageIndex/box always null) and no on-image
   // annotation downstream. Same scoring, same rubric, cheaper engine.
   lightweight?: boolean;
+  // See GradeMarkingScriptRequest.requestId.
+  requestId?: string;
 }
 
 const gradeMarkingScriptConciseSchema = {
@@ -2307,6 +2508,52 @@ function salvageTruncatedConciseJson(text: string): GradeMarkingScriptConciseRes
   return { answers: parsedAnswers, rubric: null, observations: [] };
 }
 
+// Shared between the full grading prompt's own rubric-extraction step and
+// extractConciseCohortStructure's structure-only prompt below (Marking
+// Reliability Stage 3, 2026-09-22) — the exact wording a model is told to
+// use when reading a cover page's section rules must be identical in both
+// places, or the two paths could parse the same paper two different ways.
+function rubricPatternGuidance(): string {
+  return [
+    "",
+    "Zambian exam papers use a handful of recurring patterns for a section's answer instruction — " +
+      "read the section's OWN printed wording carefully and match it to the right one; do not assume " +
+      "every section on one paper follows the same pattern, since mixed papers routinely combine two " +
+      "or more of these across their different sections:",
+    "- \"Answer ALL questions in this section\" (or no restriction is printed at all) -> " +
+      "questionsToAnswer = null (every question in that section counts, nothing is optional).",
+    "- \"Answer ANY [n] of the [m] questions\" / \"Answer [n] out of [m] questions\" -> " +
+      "questionsToAnswer = n (the smaller number — how many the candidate must choose — never m, " +
+      "the number offered).",
+    "- \"Answer ONE question from this section\" / \"Answer only ONE of the following\" -> " +
+      "questionsToAnswer = 1.",
+    "- A paper with MULTIPLE sections, each carrying its OWN different rule (e.g. Section A compulsory, " +
+      "Section B answer any 2 of 4, Section C answer 1 of 3) -> read and record EACH section separately " +
+      "with its own questionsToAnswer and marksAllocated; never let one section's rule leak into another.",
+    "",
+    "Three worked examples of correctly-parsed structures, for the exact pattern of wording that produces each:",
+    "1. Cover page reads \"SECTION A: Answer ALL questions (40 marks). SECTION B: Answer ANY THREE " +
+      "questions (60 marks).\" -> " +
+      "[{\"name\":\"Section A\",\"questionsToAnswer\":null,\"marksAllocated\":40}," +
+      "{\"name\":\"Section B\",\"questionsToAnswer\":3,\"marksAllocated\":60}], paperTotalMarks 100.",
+    "2. Cover page reads \"Answer ONE question from Section C. This section carries 20 marks.\" -> " +
+      "[{\"name\":\"Section C\",\"questionsToAnswer\":1,\"marksAllocated\":20}].",
+    "3. Cover page reads \"There are FOUR sections. Section A (Objective): answer ALL 20 questions, " +
+      "1 mark each. Section B: answer any TWO of the FIVE essay questions, 15 marks each. Section C: " +
+      "compulsory, 30 marks. Section D: answer ONE of THREE questions, 20 marks.\" -> " +
+      "[{\"name\":\"Section A\",\"questionsToAnswer\":null,\"marksAllocated\":20}," +
+      "{\"name\":\"Section B\",\"questionsToAnswer\":2,\"marksAllocated\":30}," +
+      "{\"name\":\"Section C\",\"questionsToAnswer\":null,\"marksAllocated\":30}," +
+      "{\"name\":\"Section D\",\"questionsToAnswer\":1,\"marksAllocated\":20}], paperTotalMarks 100 — " +
+      "note FOUR distinct sections, each keeping its OWN rule, not one rule applied to the whole paper.",
+    "",
+    "If the paper has no sections or instructions at all, set `rubric` to null. Never guess a " +
+      "questionsToAnswer or marksAllocated value the page doesn't actually state — leave that field " +
+      "null rather than invent a number, since a wrong section total is exactly what causes a script's " +
+      "final score to be calculated wrongly.",
+  ].join("\n");
+}
+
 function buildConciseMarkingPrompt(
   questions: GradeMarkingScriptQuestion[],
   subjectName?: string,
@@ -2370,11 +2617,10 @@ function buildConciseMarkingPrompt(
         "",
         "READ THE COVER / INSTRUCTIONS PAGE (normally the FIRST attached image) and populate `rubric` in " +
           "your response: every section label, how many questions the candidate is required to answer " +
-          "from each section (e.g. \"answer any ONE question\" -> questionsToAnswer 1; if a section says " +
-          "nothing, questionsToAnswer null), each section's own allocated marks if the paper states " +
+          "from each section (questionsToAnswer), each section's own allocated marks if the paper states " +
           "them, the paper's stated grand total if any, and a short plain-language `instructionsSummary` " +
-          "of the marking rules that actually mattered. If the paper has no sections or instructions at " +
-          "all, set `rubric` to null.",
+          "of the marking rules that actually mattered.",
+        rubricPatternGuidance(),
       ].join("\n");
 
   const schemeConventionsSection =
@@ -2498,6 +2744,7 @@ export const gradeMarkingScriptConcise = onCall<GradeMarkingScriptConciseRequest
       examStandard,
       knownRubric,
       lightweight,
+      requestId,
     } = request.data ?? {};
     if (!Array.isArray(pageImagesBase64) || pageImagesBase64.length === 0) {
       throw new HttpsError("invalid-argument", "'pageImagesBase64' must be a non-empty array.");
@@ -2506,6 +2753,16 @@ export const gradeMarkingScriptConcise = onCall<GradeMarkingScriptConciseRequest
     const model = isLightweight ? GEMINI_MODEL_LITE : GEMINI_MODEL;
     const keyedQuestions = Array.isArray(questions) && questions.length > 0 ? questions : undefined;
     const pureAi = keyedQuestions === undefined;
+
+    // Monetization: Stable / Concise / Key-based share this function, so the
+    // engine is derived from the request. In enforced mode this refuses BEFORE
+    // the paid AI call if the balance can't cover the script. Only the
+    // answer-script pages are billed (question-paper images are not).
+    const billing = await beginMarkingBilling({
+      db: admin.firestore(), fn: "concise", uid: request.auth.uid, requestId,
+      engine: detectEngine({ lightweight: isLightweight, hasMarkingKey: !pureAi }),
+      pages: pageImagesBase64.length, questionCount: keyedQuestions?.length ?? 0,
+    });
     const refQuestions =
       Array.isArray(referenceQuestions) && referenceQuestions.length > 0
         ? referenceQuestions.slice(0, 200)
@@ -2534,8 +2791,9 @@ export const gradeMarkingScriptConcise = onCall<GradeMarkingScriptConciseRequest
       }
     );
 
-    const callGemini = async (useSchema: boolean): Promise<{ text: string; finishReason?: string }> => {
-      const response = await ai.models.generateContent({
+    type ConciseGeminiResult = { text: string; finishReason?: string; response: unknown };
+    const callGemini = async (useSchema: boolean): Promise<ConciseGeminiResult> => {
+      const response = await generateTracked(ai, {
         model,
         contents: [{ role: "user", parts: [{ text: promptText }, ...imageParts] }],
         config: {
@@ -2552,15 +2810,18 @@ export const gradeMarkingScriptConcise = onCall<GradeMarkingScriptConciseRequest
           temperature: 0.15,
         },
       });
-      return { text: response.text ?? "", finishReason: response.candidates?.[0]?.finishReason };
+      return { text: response.text ?? "", finishReason: response.candidates?.[0]?.finishReason, response };
     };
 
     // Try up to twice — a transient truncation/format slip usually clears
     // on a retry, and grading is expensive enough to be worth one.
+    // Every attempt's token usage is logged (a retry is real cost); the
+    // script is CHARGED once, after the loop, only if a valid result exists.
     let parsed: GradeMarkingScriptConciseResponse | undefined;
+    let chargeable = false;
     let lastText = "";
     for (let attempt = 1; attempt <= 2 && !parsed; attempt++) {
-      let result: { text: string; finishReason?: string };
+      let result: ConciseGeminiResult;
       try {
         result = await callGemini(attempt === 1);
       } catch (err) {
@@ -2582,11 +2843,20 @@ export const gradeMarkingScriptConcise = onCall<GradeMarkingScriptConciseRequest
       if (result.finishReason && result.finishReason !== "STOP") {
         console.warn(`gradeMarkingScriptConcise: finishReason=${result.finishReason} (attempt ${attempt}), len=${result.text.length}`);
       }
-      if (!result.text) continue;
-      try {
-        parsed = JSON.parse(result.text);
-      } catch {
-        // fall through to retry / salvage
+      let attemptParsed: GradeMarkingScriptConciseResponse | undefined;
+      if (result.text) {
+        try {
+          attemptParsed = JSON.parse(result.text);
+        } catch {
+          // fall through to retry / salvage
+        }
+      }
+      // "ok" = a valid, readable result: parsed JSON with at least one answer.
+      const usable = Array.isArray(attemptParsed?.answers) && (attemptParsed?.answers.length ?? 0) > 0;
+      await billing.recordAttempt({ model, attempt, ok: usable, response: result.response, finishReason: result.finishReason ?? null });
+      if (attemptParsed) {
+        parsed = attemptParsed;
+        chargeable = usable;
       }
     }
 
@@ -2594,6 +2864,12 @@ export const gradeMarkingScriptConcise = onCall<GradeMarkingScriptConciseRequest
       const salvaged = salvageTruncatedConciseJson(lastText);
       if (salvaged && salvaged.answers.length > 0) {
         console.warn(`gradeMarkingScriptConcise: salvaged ${salvaged.answers.length} answer(s) from truncated response`);
+        // A partial, recovered-from-truncation result is returned to the
+        // teacher. Owner's rule (2026-09-19): a salvaged result is charged only
+        // if salvaging it incurred FRESH cost. Salvaging is just re-reading text
+        // the model already returned (no further API call), so it costs nothing
+        // extra and is NOT charged. If a future salvage path ever makes an extra
+        // paid call, that is the point to start charging for it here.
         parsed = salvaged;
       } else {
         console.error("gradeMarkingScriptConcise: response was not valid JSON", lastText.slice(0, 2000));
@@ -2618,6 +2894,13 @@ export const gradeMarkingScriptConcise = onCall<GradeMarkingScriptConciseRequest
       if (typeof keyedMax === "number") a.maxMarks = keyedMax;
       if (typeof a.maxMarks !== "number" || !(a.maxMarks > 0)) a.maxMarks = 1;
       a.marksAwarded = Math.max(0, Math.min(a.marksAwarded, a.maxMarks));
+    }
+
+    // Charge exactly once, and only for a complete, valid result — never for a
+    // failed, unreadable (no answers) or salvaged-partial response.
+    if (chargeable && parsed.answers.length > 0) {
+      const credits = await billing.settle();
+      if (credits) parsed.credits = credits;
     }
 
     return parsed;
@@ -2651,16 +2934,50 @@ interface DeriveMarkingKeyRequest {
   pageImagesBase64?: string[];
 }
 
-interface DerivedQuestion {
+// Marking Scheme Structure, Stage 2 (2026-09-22) — the extraction target
+// is now an explicit Section -> Question -> Part -> Sub-part tree, not a
+// flat row per label with a prompt instruction hoping sub-parts don't get
+// double-counted. `parts`/`subParts` cover BOTH real exam conventions:
+// a question split straight into Roman-numeral parts with no letter layer
+// ('2(i)', '2(ii)') AND one split into lettered parts, some of which are
+// further split into Roman-numeral sub-parts ('2(a)(i)') — see
+// TREE_STRUCTURE_INSTRUCTIONS for exactly how a leaf is told apart from a
+// node with real children. Every label here is BARE (just "2", "a", "i"),
+// never pre-composed with its ancestors' labels — the client composes the
+// full "2(a)(i)"-style label itself (see MarkingSchemeNode.fullLabel).
+interface DerivedSubPart {
   label: string;
   expectedAnswerOrKeywords: string;
-  maxMarks: number;
-  sectionName: string;
+  marks: number;
+}
+
+interface DerivedPart {
+  label: string;
+  /** Only meaningful when `subParts` is empty — see TREE_STRUCTURE_INSTRUCTIONS. */
+  expectedAnswerOrKeywords: string;
+  marks: number;
+  subParts: DerivedSubPart[];
+}
+
+interface DerivedQuestionNode {
+  label: string;
+  /** Only meaningful when `parts` is empty — see TREE_STRUCTURE_INSTRUCTIONS. */
+  expectedAnswerOrKeywords: string;
+  marks: number;
+  parts: DerivedPart[];
 }
 
 interface DerivedSection {
   name: string;
   answerInstructions: string;
+  /**
+   * How many of `questions` (top-level Questions only) a candidate must
+   * actually answer, parsed from `answerInstructions` (e.g. "Answer any
+   * ONE question from this section" -> 1) — null when the section states
+   * no such restriction (every listed question must be answered).
+   */
+  requiredAnswerCount: number | null;
+  questions: DerivedQuestionNode[];
 }
 
 // Which real marking regime this assessment is: an ECZ-style national mock
@@ -2671,7 +2988,6 @@ interface DerivedSection {
 type ExamStandardHint = "NATIONAL_MOCK" | "SCHOOL_CA" | "UNSPECIFIED";
 
 interface DeriveMarkingKeyResponse {
-  questions: DerivedQuestion[];
   sections: DerivedSection[];
   notes: string;
   detectedTitle: string;
@@ -2694,33 +3010,65 @@ interface DeriveMarkingKeyResponse {
   detectedTotalMarks: number | null;
 }
 
+// Hand-unrolled 3 levels (Question -> Part -> Sub-part), not a generic
+// recursive $ref — real exam structure is capped at this depth (Marking
+// Scheme Structure Stage 1's own spec), and a fixed shape is far more
+// reliable for a structured-output API than open recursion.
+const derivedSubPartSchema = {
+  type: "object",
+  properties: {
+    label: { type: "string", description: "This sub-part's own BARE label only, e.g. 'i', never '2(a)(i)'." },
+    expectedAnswerOrKeywords: { type: "string" },
+    marks: { type: "number" },
+  },
+  required: ["label", "expectedAnswerOrKeywords", "marks"],
+  additionalProperties: false,
+};
+
+const derivedPartSchema = {
+  type: "object",
+  properties: {
+    label: {
+      type: "string",
+      description:
+        "This part's own BARE label only, e.g. 'a' or, for a question with no lettered layer that splits " +
+        "straight into Roman numerals, 'i' — never a composed label like '2(a)'.",
+    },
+    expectedAnswerOrKeywords: {
+      type: "string",
+      description: "Only meaningful when subParts is empty (this part IS a leaf) — empty string otherwise.",
+    },
+    marks: { type: "number", description: "Only meaningful when subParts is empty — 0 otherwise." },
+    subParts: { type: "array", items: derivedSubPartSchema },
+  },
+  required: ["label", "expectedAnswerOrKeywords", "marks", "subParts"],
+  additionalProperties: false,
+};
+
+const derivedQuestionSchema = {
+  type: "object",
+  properties: {
+    label: { type: "string", description: "This question's own BARE Arabic-numeral label only, e.g. '2'." },
+    expectedAnswerOrKeywords: {
+      type: "string",
+      description: "Only meaningful when parts is empty (this question IS a leaf) — empty string otherwise.",
+    },
+    marks: { type: "number", description: "Only meaningful when parts is empty — 0 otherwise." },
+    parts: { type: "array", items: derivedPartSchema },
+  },
+  required: ["label", "expectedAnswerOrKeywords", "marks", "parts"],
+  additionalProperties: false,
+};
+
 const deriveMarkingKeySchema = {
   type: "object",
   properties: {
-    questions: {
-      type: "array",
-      items: {
-        type: "object",
-        properties: {
-          label: { type: "string" },
-          expectedAnswerOrKeywords: { type: "string" },
-          maxMarks: { type: "number" },
-          sectionName: {
-            type: "string",
-            description:
-              "The heading of the section this question belongs to, exactly as printed (e.g. 'Section A', " +
-              "'Part II'), or an empty string if the paper has no section headings at all.",
-          },
-        },
-        required: ["label", "expectedAnswerOrKeywords", "maxMarks", "sectionName"],
-        additionalProperties: false,
-      },
-    },
     sections: {
       type: "array",
       description:
-        "One entry per distinct section heading found on the document (same order they appear), each " +
-        "paired with that section's own answer instructions - empty array if the paper has no sections.",
+        "One entry per distinct section heading found (same order they appear) — or, if the document has " +
+        "no real section headings at all, exactly ONE entry with name set to an empty string holding " +
+        "every question on the paper.",
       items: {
         type: "object",
         properties: {
@@ -2732,8 +3080,16 @@ const deriveMarkingKeySchema = {
               "'Answer ALL questions in this section', 'Answer any THREE of the following FIVE " +
               "questions') - empty string if the section prints no such instruction of its own.",
           },
+          requiredAnswerCount: {
+            type: ["integer", "null"],
+            description:
+              "How many of this section's own top-level questions a candidate must actually answer, " +
+              "parsed from answerInstructions (e.g. 'Answer any ONE question' -> 1) — null when the " +
+              "section states no such restriction.",
+          },
+          questions: { type: "array", items: derivedQuestionSchema },
         },
-        required: ["name", "answerInstructions"],
+        required: ["name", "answerInstructions", "requiredAnswerCount", "questions"],
         additionalProperties: false,
       },
     },
@@ -2781,7 +3137,6 @@ const deriveMarkingKeySchema = {
     },
   },
   required: [
-    "questions",
     "sections",
     "notes",
     "detectedTitle",
@@ -2812,6 +3167,50 @@ const RULE_EXTRACTION_INSTRUCTIONS = [
     "null if not genuinely stated anywhere; never compute this yourself by summing the questions.",
 ].join("\n");
 
+// Marking Scheme Structure, Stage 2 (2026-09-22) — shared between both
+// source-type branches below: exactly HOW to build the Section -> Question
+// -> Part -> Sub-part tree, regardless of whether the answers are being
+// read from an existing key or written fresh against a bare question
+// paper (that difference is branch-specific; the tree SHAPE is not). This
+// exists because the OLD flat-row extraction let a question's own Roman-
+// numeral sub-parts look like independent top-level questions once
+// flattened, which is exactly the bug class this restructuring closes.
+const TREE_STRUCTURE_INSTRUCTIONS = [
+  "Structure the whole document into this exact tree — never a flat list of rows:",
+  "- One `sections` entry per distinct section heading, in the order they appear. If the document has no " +
+    "real section headings at all, use exactly ONE section entry with name set to an empty string, " +
+    "holding every question on the paper.",
+  "- Each section's own top-level `questions` use the document's own bare Arabic-numeral label ('1', '2', " +
+    "...) — never a section prefix.",
+  "- A question with NO further division is itself a leaf: set its own expectedAnswerOrKeywords and marks " +
+    "directly, and leave `parts` empty.",
+  "- A question split into sub-questions — whether lettered ('2(a)', '2(b)') or, on papers that skip the " +
+    "letter layer entirely, directly Roman-numeral ('2(i)', '2(ii)') — is NOT itself a leaf: leave its own " +
+    "expectedAnswerOrKeywords empty and marks at 0, and list each real immediate sub-question inside " +
+    "`parts`, using just its own bare local label ('a' or, for the no-letter-layer case, 'i' — never a " +
+    "composed label like '2(a)' or '2(i)').",
+  "- Each entry inside `parts` is itself either a leaf (set its own expectedAnswerOrKeywords/marks, leave " +
+    "`subParts` empty — this is the common case, including the no-letter-layer Roman-numeral case above) " +
+    "or, only for a genuinely three-level paper (a lettered part itself further split into Roman-numeral " +
+    "sub-parts, e.g. '2(a)(i)', '2(a)(ii)'), has its own real entries inside `subParts` using the bare " +
+    "Roman numeral as each one's own label.",
+  "- The single most important rule here: NEVER let marks be guessed by giving each leaf the full " +
+    "per-question or per-section allocation on its own. If the document states a section's own total " +
+    "(e.g. 'Section A: 30 marks') or an overall per-question value, distribute marks across that " +
+    "question's real leaves (its parts, or its parts' sub-parts) so they add up to EXACTLY what the " +
+    "document actually states — a section's real total must equal the sum of everything inside it, every " +
+    "time.",
+  "- Set each section's requiredAnswerCount to how many of its own top-level questions a candidate must " +
+    "actually answer, parsed from that section's own answerInstructions (e.g. 'Answer any ONE question " +
+    "from this section' -> 1, 'Answer any THREE of the following FIVE questions' -> 3) - null when the " +
+    "section states no such restriction (every listed question must be answered). A real Zambian exam " +
+    "convention worth knowing: a paper with Section A/B (several questions, some split into sub-parts, " +
+    "ALL answered) and Section C/D (one full essay chosen from several alternatives) typically states each " +
+    "section's own fixed total (e.g. 30/30/20/20 marks summing to 100) rather than a per-question value - " +
+    "read the paper's own stated totals rather than assuming this exact split, but recognise the pattern " +
+    "when it's there.",
+].join("\n");
+
 function buildDeriveMarkingKeyPrompt(sourceType: MarkingKeySourceType, isImageSource: boolean): string {
   const sourceDescription = isImageSource
     ? "The attached images are photos of one document, in page order."
@@ -2824,35 +3223,21 @@ function buildDeriveMarkingKeyPrompt(sourceType: MarkingKeySourceType, isImageSo
         "structure it - do NOT invent, improve, or second-guess an answer the key itself states, even if " +
         "you think a different answer would be more correct; this is a transcription/structuring task, " +
         "not an answering task.",
-      "For EACH question on it:",
-      "1. Use the key's own question label/number (e.g. 'Q1', '1.', '1a)').",
-      "2. Copy the expected answer/keywords as the key itself states them (handwritten or printed) - " +
+      "For EACH leaf question/part/sub-part:",
+      "1. Copy the expected answer/keywords as the key itself states them (handwritten or printed) - " +
         "preserve the key's own wording rather than paraphrasing where practical.",
-      "3. Use the mark allocation the key itself states for that question. If none is shown for a " +
-        "question, make a reasonable estimate and say in notes which questions got an assumed allocation.",
-      "4. If any part of the key is illegible or ambiguous, say so plainly in that question's " +
+      "2. Use the mark allocation the key itself states. If none is shown for a leaf, make a reasonable " +
+        "estimate and say in notes which ones got an assumed allocation.",
+      "3. If any part of the key is illegible or ambiguous, say so plainly in that leaf's " +
         "expectedAnswerOrKeywords AND in notes, rather than guessing at what it might say.",
-      "5. Skip pure page headers/footers/candidate-declaration boilerplate, but do NOT skip section " +
-        "headings or their own answer instructions ('Answer ALL questions in this section', 'Answer any " +
-        "THREE of the following FIVE questions') - capture those via sectionName and sections below rather " +
-        "than discarding them; only actual answerable questions go in the questions array itself.",
-      "6. Set each question's sectionName to the heading of the section it falls under, exactly as printed " +
-        "(e.g. 'Section A', 'Part II'), or an empty string if the document has no section headings at all.",
-      "7. A question split into Roman-numeral/lettered sub-parts (e.g. '2(i)', '2(ii)', '2(iii)') is ONE " +
-        "numbered question, not several - keep its own label exactly as printed for each sub-part (each " +
-        "still needs its own row here, since each sub-part genuinely needs its own expected answer for " +
-        "grading), but do not treat '2(i)'/'2(ii)'/'2(iii)' as three independent top-level questions when " +
-        "estimating marks: if the source states a section's own total (e.g. 'Section A: 30 marks') or an " +
-        "overall per-question value that the sub-parts should sum to, distribute marks across that " +
-        "question's own sub-parts so they add up to what the source actually states for that question - " +
-        "never invent extra marks by treating each Roman-numeral sub-part as if it carried the full " +
-        "per-question or per-section allocation on its own.",
-      "8. Populate sections with one entry per distinct section heading found (in the order they appear), " +
-        "each paired with that section's own real answer-instruction line exactly as printed/written - " +
-        "empty array if there are no sections.",
-      "9. Set detectedTitle to the document's own title/heading exactly as printed or written (e.g. 'Grade " +
+      "4. Skip pure page headers/footers/candidate-declaration boilerplate, but do NOT skip section " +
+        "headings or their own answer instructions - capture those via the section's own name/" +
+        "answerInstructions/requiredAnswerCount rather than discarding them.",
+      "5. Set detectedTitle to the document's own title/heading exactly as printed or written (e.g. 'Grade " +
         "12 Mathematics Final Examination'), or an empty string if none is genuinely visible - never invent " +
         "one.",
+      "",
+      TREE_STRUCTURE_INSTRUCTIONS,
       "",
       RULE_EXTRACTION_INSTRUCTIONS,
       "",
@@ -2863,51 +3248,166 @@ function buildDeriveMarkingKeyPrompt(sourceType: MarkingKeySourceType, isImageSo
 
   return [
     `${sourceDescription} It is an exam/test question paper - it does NOT contain its own answers. For ` +
-      "EACH question on it:",
-    "1. Use the paper's own question label/number (e.g. 'Q1', '1.', '1a)').",
-    "2. Write a concise, accurate model answer or a comma-separated list of key points a correct answer " +
+      "EACH leaf question/part/sub-part:",
+    "1. Write a concise, accurate model answer or a comma-separated list of key points a correct answer " +
       "should include, drawing on your own subject knowledge - the paper itself does not contain the " +
       "answers, so this is you actually answering the question, not transcribing something already there. " +
-      "Be precise and correct; if a question is genuinely ambiguous or you are not confident of the " +
-      "correct answer, say so plainly in that question's expectedAnswerOrKeywords AND mention it in notes, " +
-      "rather than stating an uncertain answer as if it were settled.",
-    "3. Use the mark allocation the paper itself states for that question (e.g. '[5]', '(10 marks)') " +
-      "whenever it's shown. If no mark allocation is shown for a question, make a reasonable estimate " +
-      "based on the question's apparent complexity/length relative to others on the paper, and say in " +
-      "notes which questions got an assumed rather than stated allocation.",
-    "4. Skip pure page headers/footers/candidate-declaration boilerplate, but do NOT skip section headings " +
-      "or their own answer instructions ('Answer ALL questions in Section A', 'Answer any THREE of the " +
-      "following FIVE questions in Section B') - capture those via sectionName and sections below rather " +
-      "than discarding them; only actual answerable questions go in the questions array itself.",
-    "5. Set each question's sectionName to the heading of the section it falls under, exactly as printed " +
-      "(e.g. 'Section A', 'Part II'), or an empty string if the paper has no section headings at all.",
-    "6. A question split into Roman-numeral/lettered sub-parts (e.g. '2(i)', '2(ii)', '2(iii)') is ONE " +
-      "numbered question, not several - keep its own label exactly as printed for each sub-part (each " +
-      "still needs its own row here, since each sub-part genuinely needs its own model answer for " +
-      "grading), but do not treat '2(i)'/'2(ii)'/'2(iii)' as three independent top-level questions when " +
-      "estimating marks: if the paper states a section's own total (e.g. 'Section A: 30 marks') or an " +
-      "overall per-question value that the sub-parts should sum to, distribute marks across that " +
-      "question's own sub-parts so they add up to what the paper actually states for that question - " +
-      "never invent extra marks by treating each Roman-numeral sub-part as if it carried the full " +
-      "per-question or per-section allocation on its own. A real Zambian exam convention worth knowing: " +
-      "a paper with Section A/B (several questions, some split into sub-parts, ALL answered) and Section " +
-      "C/D (one full essay chosen from several alternatives) typically states each section's own fixed " +
-      "total (e.g. 30/30/20/20 marks summing to 100) rather than a per-question value - read the paper's " +
-      "own stated totals rather than assuming this exact split, but recognise the pattern when it's there.",
-    "7. Populate sections with one entry per distinct section heading found (in the order they appear), " +
-      "each paired with that section's own real answer-instruction line exactly as printed/written - empty " +
-      "array if there are no sections.",
-    "8. Set detectedTitle to the document's own title/heading exactly as printed or written (e.g. 'Grade " +
+      "Be precise and correct; if a leaf is genuinely ambiguous or you are not confident of the correct " +
+      "answer, say so plainly in that leaf's expectedAnswerOrKeywords AND mention it in notes, rather than " +
+      "stating an uncertain answer as if it were settled.",
+    "2. Use the mark allocation the paper itself states for that leaf (e.g. '[5]', '(10 marks)') whenever " +
+      "it's shown. If none is shown, make a reasonable estimate based on the leaf's apparent complexity/" +
+      "length relative to others on the paper, and say in notes which ones got an assumed allocation.",
+    "3. Skip pure page headers/footers/candidate-declaration boilerplate, but do NOT skip section headings " +
+      "or their own answer instructions - capture those via the section's own name/answerInstructions/" +
+      "requiredAnswerCount rather than discarding them.",
+    "4. Set detectedTitle to the document's own title/heading exactly as printed or written (e.g. 'Grade " +
       "12 Mathematics Final Examination'), or an empty string if none is genuinely visible - never invent " +
       "one.",
+    "",
+    TREE_STRUCTURE_INSTRUCTIONS,
     "",
     RULE_EXTRACTION_INSTRUCTIONS,
   ].join("\n");
 }
 
+// ---------------------------------------------------------------------
+// extractConciseCohortStructure — Marking Reliability Stage 1 (2026-09-22,
+// per explicit request following a real incident where an AI-derived exam
+// structure was silently wrong and produced an out-of-range score — see
+// ConciseScoreCalculator's own Stage 2 safeguard). Reads ONLY the cover /
+// instructions page of the FIRST script in a Concise Marking cohort and
+// returns the exam's section structure — no grading, no answers, no
+// bounding boxes. The client shows this to the teacher for explicit
+// confirmation or correction BEFORE any script in the cohort is marked
+// (MarkingCohortStructureScreen); the confirmed structure is then sent back
+// as `knownRubric` on every grading call, first script included, so the
+// structure a teacher never saw is never the one actually used to score.
+//
+// Deliberately a SEPARATE, small function rather than a mode flag on
+// gradeMarkingScriptConcise: that function's billing goes through the
+// marking-credit ledger (a per-PAGE charge for an actual marked script);
+// this is a small one-off feature call metered like any other AI feature
+// (see featureBilling.ts) — mixing the two billing models into one
+// handler would make both harder to reason about.
+// ---------------------------------------------------------------------
+
+interface ExtractConciseCohortStructureRequest {
+  /** Normally just the cover page — the client sends at most the first few pages. */
+  pageImagesBase64: string[];
+  subjectName?: string;
+}
+
+interface ExtractConciseCohortStructureResponse {
+  rubric: ConciseRubric | null;
+}
+
+const extractConciseCohortStructureSchema = {
+  type: "object",
+  properties: {
+    rubric: {
+      type: ["object", "null"],
+      description: "The paper's own section/instruction structure read from the cover page - null if the paper has no section structure at all.",
+      properties: {
+        sections: {
+          type: "array",
+          items: {
+            type: "object",
+            properties: {
+              name: { type: "string" },
+              questionsToAnswer: { type: ["integer", "null"] },
+              marksAllocated: { type: ["number", "null"] },
+            },
+            required: ["name", "questionsToAnswer", "marksAllocated"],
+            additionalProperties: false,
+          },
+        },
+        paperTotalMarks: { type: ["number", "null"] },
+        instructionsSummary: { type: "string" },
+      },
+      required: ["sections", "paperTotalMarks", "instructionsSummary"],
+      additionalProperties: false,
+    },
+  },
+  required: ["rubric"],
+  additionalProperties: false,
+};
+
+function buildStructureOnlyPrompt(subjectName?: string): string {
+  return [
+    "The attached image(s) are photo(s) of the FIRST page(s) of a student's exam answer script - " +
+      "specifically the cover / instructions page, which states how this exam is structured (its " +
+      "sections, which questions must be answered from each, and how marks are allocated).",
+    subjectName ? `Subject: ${subjectName}` : "",
+    "",
+    "THIS IS A STRUCTURE-ONLY READ. Do not grade, transcribe, or identify individual answers - read " +
+      "ONLY the exam's own stated structure and populate `rubric`: every section label, how many " +
+      "questions the candidate is required to answer from each section (questionsToAnswer), each " +
+      "section's own allocated marks if the paper states them, the paper's stated grand total if any, " +
+      "and a short plain-language `instructionsSummary` of the marking rules that actually mattered.",
+    rubricPatternGuidance(),
+    "",
+    "Reply with ONLY this JSON object, nothing else:",
+    '{"rubric":{"sections":[{"name":"Section A","questionsToAnswer":1|null,"marksAllocated":20|null}],' +
+      '"paperTotalMarks":100|null,"instructionsSummary":"..."}|null}',
+  ]
+    .filter((line) => line !== "")
+    .join("\n");
+}
+
+export const extractConciseCohortStructure = onCall<ExtractConciseCohortStructureRequest>(
+  { secrets: [geminiApiKey], region: "us-central1", timeoutSeconds: 60, memory: "512MiB", maxInstances: 5 },
+  metered("structurePreview", async (request): Promise<ExtractConciseCohortStructureResponse> => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "Sign in is required to read a script's structure.");
+    }
+    const { pageImagesBase64, subjectName } = request.data ?? {};
+    if (!Array.isArray(pageImagesBase64) || pageImagesBase64.length === 0) {
+      throw new HttpsError("invalid-argument", "'pageImagesBase64' must be a non-empty array.");
+    }
+    // The cover page is (almost) always page 1 — cap what's sent so a client
+    // accidentally passing a whole script doesn't pay for/wait on pages that
+    // can't contain the answer to "what does the cover page say".
+    const cappedImages = pageImagesBase64.slice(0, 3);
+
+    const ai = new GoogleGenAI({ apiKey: geminiApiKey.value() });
+    const imageParts = cappedImages.map((b64) => ({ inlineData: { mimeType: "image/jpeg", data: b64 } }));
+
+    let text: string | undefined;
+    try {
+      const response = await generateTracked(ai, {
+        model: GEMINI_MODEL,
+        contents: [{ role: "user", parts: [{ text: buildStructureOnlyPrompt(subjectName) }, ...imageParts] }],
+        config: {
+          responseMimeType: "application/json",
+          responseJsonSchema: extractConciseCohortStructureSchema,
+          maxOutputTokens: 4096,
+          temperature: 0.1,
+        },
+      });
+      text = response.text;
+    } catch (err) {
+      console.error("extractConciseCohortStructure: Gemini call failed", err);
+      throw quotaExhaustedError(err) ?? new HttpsError("internal", "Could not read this script's structure. Please try again.");
+    }
+    if (!text) {
+      throw new HttpsError("internal", "The AI did not return a result.");
+    }
+    let parsed: ExtractConciseCohortStructureResponse;
+    try {
+      parsed = JSON.parse(text);
+    } catch (err) {
+      console.error("extractConciseCohortStructure: response was not valid JSON", text);
+      throw new HttpsError("internal", "The structure response could not be parsed.");
+    }
+    if (parsed.rubric === undefined) parsed.rubric = null;
+    return parsed;
+  })
+);
+
 export const deriveMarkingKeyFromQuestionPaper = onCall<DeriveMarkingKeyRequest>(
   { secrets: [geminiApiKey], region: "us-central1", timeoutSeconds: 120, memory: "512MiB", maxInstances: 5 },
-  async (request): Promise<DeriveMarkingKeyResponse> => {
+  metered("markingKeyDerivation", async (request): Promise<DeriveMarkingKeyResponse> => {
     if (!request.auth) {
       throw new HttpsError("unauthenticated", "Sign in is required to generate a marking key.");
     }
@@ -2936,7 +3436,7 @@ export const deriveMarkingKeyFromQuestionPaper = onCall<DeriveMarkingKeyRequest>
 
     let text: string | undefined;
     try {
-      const response = await ai.models.generateContent({
+      const response = await generateTracked(ai, {
         model: GEMINI_MODEL,
         contents,
         config: {
@@ -2963,7 +3463,7 @@ export const deriveMarkingKeyFromQuestionPaper = onCall<DeriveMarkingKeyRequest>
     }
 
     return parsed;
-  }
+  })
 );
 
 // ---------------------------------------------------------------------
@@ -3022,7 +3522,7 @@ const transcribeHandwrittenListSchema = {
 
 export const transcribeHandwrittenList = onCall<TranscribeHandwrittenListRequest>(
   { secrets: [geminiApiKey], region: "us-central1", timeoutSeconds: 120, memory: "512MiB", maxInstances: 5 },
-  async (request): Promise<TranscribeHandwrittenListResponse> => {
+  metered("transcription", async (request): Promise<TranscribeHandwrittenListResponse> => {
     if (!request.auth) {
       throw new HttpsError("unauthenticated", "Sign in is required to transcribe a list.");
     }
@@ -3059,7 +3559,7 @@ export const transcribeHandwrittenList = onCall<TranscribeHandwrittenListRequest
 
     let text: string | undefined;
     try {
-      const response = await ai.models.generateContent({
+      const response = await generateTracked(ai, {
         model: GEMINI_MODEL,
         contents: [{ role: "user", parts: [{ text: prompt }, ...imageParts] }],
         config: {
@@ -3083,7 +3583,7 @@ export const transcribeHandwrittenList = onCall<TranscribeHandwrittenListRequest
       console.error("transcribeHandwrittenList: response was not valid JSON", text);
       throw new HttpsError("internal", "The transcription response could not be parsed.");
     }
-  }
+  })
 );
 
 // ---------------------------------------------------------------------
@@ -3098,6 +3598,12 @@ export const transcribeHandwrittenList = onCall<TranscribeHandwrittenListRequest
 
 interface TranscribeHandwrittenDocumentRequest {
   pageImagesBase64: string[];
+  // Assignment Submission's main-body transcription only (2026-09-28, per
+  // explicit request) — the plain Handwriting-to-Word-Document feature
+  // never sets this, so its own schema/prompt/behavior stays byte-for-byte
+  // unchanged. See buildIndentationInstructions and
+  // ambiguousParagraphBreaks below for what this actually turns on.
+  detectParagraphIndentation?: boolean;
 }
 
 type DocumentBlockType = "heading" | "subheading" | "paragraph" | "bullet" | "numbered";
@@ -3107,83 +3613,163 @@ interface DocumentBlock {
   text: string;
 }
 
+interface AmbiguousParagraphBreak {
+  blockIndex: number;
+  splitAtText: string;
+}
+
 interface TranscribeHandwrittenDocumentResponse {
   title: string;
   blocks: DocumentBlock[];
   notes: string;
+  ambiguousParagraphBreaks?: AmbiguousParagraphBreak[];
 }
+
+// Paragraph-indentation detection (2026-09-28, per explicit request,
+// Assignment Submission's main body only - see detectParagraphIndentation's
+// own comment above). Pure and exported so both modes' exact instructions
+// are directly unit-tested, same pattern as buildGenerateMinutesPrompt.
+export function buildTranscribeHandwrittenDocumentPrompt(withIndentation: boolean): string {
+  const lines = [
+    "The attached images are photos of handwritten (or printed) page(s) of a document, in page order - " +
+      "notes, a letter, an essay, a set of instructions, anything. Read everything genuinely written on " +
+      "the page(s) and reproduce it faithfully as structured content, never inventing or paraphrasing away " +
+      "what's actually there.",
+    "1. Give the document a short 'title' - use the page's own heading/title if it has one, otherwise a " +
+      "brief descriptive title.",
+    "2. Break the content into 'blocks' in reading order: 'heading' for a main section title, 'subheading' " +
+      "for a smaller section title, 'paragraph' for ordinary prose (keep a paragraph as one block even if " +
+      "it wraps several lines), 'bullet' for each unordered list item as its own block, 'numbered' for " +
+      "each ordered list item as its own block.",
+    "3. Preserve the actual wording exactly as written, including spelling as the writer wrote it - do not " +
+      "correct spelling/grammar, do not summarize, do not omit content.",
+    "4. If a word or passage is illegible or you're not confident, still include your best reading but say " +
+      "so plainly in notes (which section, what's uncertain) rather than silently guessing without " +
+      "flagging it.",
+    "5. Skip page numbers, margin scribbles, and anything that isn't genuinely part of the document's own " +
+      "content.",
+  ];
+  // A purely structural check - where a paragraph actually starts - never
+  // touches the transcribed wording itself, which rule 3 above already
+  // covers.
+  if (withIndentation) {
+    lines.push(
+      "6. For every 'paragraph' block, look at where each of its lines starts horizontally relative to the " +
+        "lines around it, in the real photographed page - not just the words. A line that starts " +
+        "noticeably further inward (indented) than its neighbors is a signal a NEW paragraph may begin " +
+        "there, even though rule 2 above says to keep one paragraph as one block by default.",
+      "7. When that indentation signal is clear and consistent (a real, visually obvious indent, not just " +
+        "normal line-wrap), split the content into separate 'paragraph' blocks at that point yourself - do " +
+        "not ask about it, just reflect it directly in 'blocks'.",
+      "8. When the signal is weak, inconsistent, or genuinely ambiguous, do NOT split it in 'blocks' - " +
+        "instead add one entry to 'ambiguousParagraphBreaks' naming that block's own index and the exact, " +
+        "verbatim first few words of where the suspected new paragraph would start, so the app can ask the " +
+        "student directly rather than you guessing either way. Never point 'ambiguousParagraphBreaks' at a " +
+        "heading/subheading/bullet/numbered block - indentation only ever splits a 'paragraph' block.",
+      "9. This indentation check only ever affects where one paragraph ends and another begins - continue " +
+        "transcribing the actual wording exactly as written regardless of how you resolve any of it."
+    );
+  }
+  return lines.join("\n");
+}
+
+const transcribeHandwrittenDocumentBaseProperties = {
+  title: {
+    type: "string",
+    description:
+      "A short title for the document - the page's own heading/title if it has one, otherwise a brief " +
+      "descriptive title based on the content. Never leave empty.",
+  },
+  blocks: {
+    type: "array",
+    items: {
+      type: "object",
+      properties: {
+        type: {
+          type: "string",
+          enum: ["heading", "subheading", "paragraph", "bullet", "numbered"],
+          description:
+            "'heading' for a main section title, 'subheading' for a smaller section title, 'paragraph' for " +
+            "normal prose, 'bullet' for one unordered list item, 'numbered' for one ordered list item.",
+        },
+        text: { type: "string", description: "The block's text content, exactly as written." },
+      },
+      required: ["type", "text"],
+      additionalProperties: false,
+    },
+    description: "The document's content, in reading order (top to bottom, page by page).",
+  },
+  notes: {
+    type: "string",
+    description:
+      "Anything a reader should double-check - a word or passage that was hard to read, a section that " +
+      "looked cut off or unclear. Empty string if nothing stood out.",
+  },
+} as const;
 
 const transcribeHandwrittenDocumentSchema = {
   type: "object",
+  properties: transcribeHandwrittenDocumentBaseProperties,
+  required: ["title", "blocks", "notes"],
+  additionalProperties: false,
+};
+
+// Paragraph-indentation detection (2026-09-28, per explicit request,
+// Assignment Submission's main body ONLY - see detectParagraphIndentation
+// above). A separate schema, not a conditionally-extended one, so the
+// default path's schema object is identical to before this change.
+const transcribeHandwrittenDocumentWithIndentationSchema = {
+  type: "object",
   properties: {
-    title: {
-      type: "string",
-      description:
-        "A short title for the document - the page's own heading/title if it has one, otherwise a brief " +
-        "descriptive title based on the content. Never leave empty.",
-    },
-    blocks: {
+    ...transcribeHandwrittenDocumentBaseProperties,
+    ambiguousParagraphBreaks: {
       type: "array",
       items: {
         type: "object",
         properties: {
-          type: {
-            type: "string",
-            enum: ["heading", "subheading", "paragraph", "bullet", "numbered"],
+          blockIndex: {
+            type: "integer",
             description:
-              "'heading' for a main section title, 'subheading' for a smaller section title, 'paragraph' for " +
-              "normal prose, 'bullet' for one unordered list item, 'numbered' for one ordered list item.",
+              "0-based index into THIS response's own 'blocks' array - must point at a block with " +
+              "type 'paragraph'. Never point at a heading/subheading/bullet/numbered block.",
           },
-          text: { type: "string", description: "The block's text content, exactly as written." },
+          splitAtText: {
+            type: "string",
+            description:
+              "The exact, verbatim first few words (as already transcribed in that block's own 'text') of " +
+              "where the suspected new paragraph would start - used to locate the split point in the " +
+              "block's own text. Must be a real substring of that block's 'text', not paraphrased.",
+          },
         },
-        required: ["type", "text"],
+        required: ["blockIndex", "splitAtText"],
         additionalProperties: false,
       },
-      description: "The document's content, in reading order (top to bottom, page by page).",
-    },
-    notes: {
-      type: "string",
       description:
-        "Anything a reader should double-check - a word or passage that was hard to read, a section that " +
-        "looked cut off or unclear. Empty string if nothing stood out.",
+        "Paragraph blocks where an indentation signal suggests a new paragraph might start mid-block, but " +
+        "the signal was too weak/inconsistent to split automatically - one entry per suspected break, left " +
+        "for the app to confirm with the student rather than guessed. Empty array if every indentation " +
+        "signal you saw was clear enough to just split directly in 'blocks' already, or none existed.",
     },
   },
-  required: ["title", "blocks", "notes"],
+  required: ["title", "blocks", "notes", "ambiguousParagraphBreaks"],
   additionalProperties: false,
 };
 
 export const transcribeHandwrittenDocument = onCall<TranscribeHandwrittenDocumentRequest>(
   { secrets: [geminiApiKey], region: "us-central1", timeoutSeconds: 120, memory: "512MiB", maxInstances: 5 },
-  async (request): Promise<TranscribeHandwrittenDocumentResponse> => {
+  metered("transcription", async (request): Promise<TranscribeHandwrittenDocumentResponse> => {
     if (!request.auth) {
       throw new HttpsError("unauthenticated", "Sign in is required to transcribe a document.");
     }
 
-    const { pageImagesBase64 } = request.data ?? {};
+    const { pageImagesBase64, detectParagraphIndentation } = request.data ?? {};
     if (!Array.isArray(pageImagesBase64) || pageImagesBase64.length === 0) {
       throw new HttpsError("invalid-argument", "'pageImagesBase64' must be a non-empty array.");
     }
+    const withIndentation = detectParagraphIndentation === true;
 
     const ai = new GoogleGenAI({ apiKey: geminiApiKey.value() });
-    const prompt = [
-      "The attached images are photos of handwritten (or printed) page(s) of a document, in page order - " +
-        "notes, a letter, an essay, a set of instructions, anything. Read everything genuinely written on " +
-        "the page(s) and reproduce it faithfully as structured content, never inventing or paraphrasing away " +
-        "what's actually there.",
-      "1. Give the document a short 'title' - use the page's own heading/title if it has one, otherwise a " +
-        "brief descriptive title.",
-      "2. Break the content into 'blocks' in reading order: 'heading' for a main section title, 'subheading' " +
-        "for a smaller section title, 'paragraph' for ordinary prose (keep a paragraph as one block even if " +
-        "it wraps several lines), 'bullet' for each unordered list item as its own block, 'numbered' for " +
-        "each ordered list item as its own block.",
-      "3. Preserve the actual wording exactly as written, including spelling as the writer wrote it - do not " +
-        "correct spelling/grammar, do not summarize, do not omit content.",
-      "4. If a word or passage is illegible or you're not confident, still include your best reading but say " +
-        "so plainly in notes (which section, what's uncertain) rather than silently guessing without " +
-        "flagging it.",
-      "5. Skip page numbers, margin scribbles, and anything that isn't genuinely part of the document's own " +
-        "content.",
-    ].join("\n");
+    const prompt = buildTranscribeHandwrittenDocumentPrompt(withIndentation);
 
     const imageParts = pageImagesBase64.map((b64) => ({
       inlineData: { mimeType: "image/jpeg", data: b64 },
@@ -3191,12 +3777,14 @@ export const transcribeHandwrittenDocument = onCall<TranscribeHandwrittenDocumen
 
     let text: string | undefined;
     try {
-      const response = await ai.models.generateContent({
+      const response = await generateTracked(ai, {
         model: GEMINI_MODEL,
         contents: [{ role: "user", parts: [{ text: prompt }, ...imageParts] }],
         config: {
           responseMimeType: "application/json",
-          responseJsonSchema: transcribeHandwrittenDocumentSchema,
+          responseJsonSchema: withIndentation
+            ? transcribeHandwrittenDocumentWithIndentationSchema
+            : transcribeHandwrittenDocumentSchema,
         },
       });
       text = response.text;
@@ -3215,7 +3803,7 @@ export const transcribeHandwrittenDocument = onCall<TranscribeHandwrittenDocumen
       console.error("transcribeHandwrittenDocument: response was not valid JSON", text);
       throw new HttpsError("internal", "The transcription response could not be parsed.");
     }
-  }
+  })
 );
 
 // ---------------------------------------------------------------------
@@ -3271,7 +3859,7 @@ const extractCoverPageFieldsSchema = {
 
 export const extractCoverPageFields = onCall<ExtractCoverPageFieldsRequest>(
   { secrets: [geminiApiKey], region: "us-central1", timeoutSeconds: 60, memory: "512MiB", maxInstances: 5 },
-  async (request): Promise<ExtractCoverPageFieldsResponse> => {
+  metered("transcription", async (request): Promise<ExtractCoverPageFieldsResponse> => {
     if (!request.auth) {
       throw new HttpsError("unauthenticated", "Sign in is required to read a cover page.");
     }
@@ -3293,7 +3881,7 @@ export const extractCoverPageFields = onCall<ExtractCoverPageFieldsRequest>(
 
     let text: string | undefined;
     try {
-      const response = await ai.models.generateContent({
+      const response = await generateTracked(ai, {
         model: GEMINI_MODEL,
         contents: [{ role: "user", parts: [{ text: prompt }, { inlineData: { mimeType: "image/jpeg", data: imageBase64 } }] }],
         config: { responseMimeType: "application/json", responseJsonSchema: extractCoverPageFieldsSchema },
@@ -3313,7 +3901,7 @@ export const extractCoverPageFields = onCall<ExtractCoverPageFieldsRequest>(
       console.error("extractCoverPageFields: response was not valid JSON", text);
       throw new HttpsError("internal", "The cover page response could not be parsed.");
     }
-  }
+  })
 );
 
 // ---------------------------------------------------------------------
@@ -3359,7 +3947,7 @@ const transcribeReferencePageSchema = {
 
 export const transcribeReferencePage = onCall<TranscribeReferencePageRequest>(
   { secrets: [geminiApiKey], region: "us-central1", timeoutSeconds: 120, memory: "512MiB", maxInstances: 5 },
-  async (request): Promise<TranscribeReferencePageResponse> => {
+  metered("transcription", async (request): Promise<TranscribeReferencePageResponse> => {
     if (!request.auth) {
       throw new HttpsError("unauthenticated", "Sign in is required to transcribe a reference page.");
     }
@@ -3389,7 +3977,7 @@ export const transcribeReferencePage = onCall<TranscribeReferencePageRequest>(
 
     let text: string | undefined;
     try {
-      const response = await ai.models.generateContent({
+      const response = await generateTracked(ai, {
         model: GEMINI_MODEL,
         contents: [{ role: "user", parts: [{ text: prompt }, ...imageParts] }],
         config: { responseMimeType: "application/json", responseJsonSchema: transcribeReferencePageSchema },
@@ -3409,7 +3997,7 @@ export const transcribeReferencePage = onCall<TranscribeReferencePageRequest>(
       console.error("transcribeReferencePage: response was not valid JSON", text);
       throw new HttpsError("internal", "The reference page response could not be parsed.");
     }
-  }
+  })
 );
 
 // ---------------------------------------------------------------------
@@ -3475,6 +4063,48 @@ interface SendAssignmentSubmissionEmailResponse {
   messageId: string;
 }
 
+/// Pure — directly unit-tested. "feedback" (2026-09-28, per explicit
+/// request) is the ONLY kind where the recipient is the STUDENT, not the
+/// teacher — the subject/body must say so plainly rather than reusing the
+/// "X has submitted..." framing meant for the teacher-facing kinds
+/// ("assignment"/"test").
+export function buildAssignmentSubmissionEmailContent(opts: {
+  kind: string;
+  studentName?: string;
+  title?: string;
+  hash?: string;
+  submittedAt?: string;
+  attachmentCount: number;
+}): { subject: string; html: string } {
+  const safeStudentName = opts.studentName?.trim() ? opts.studentName.trim() : "A student";
+  const safeTitle = opts.title?.trim() ? opts.title.trim() : "Untitled assignment";
+  const safeHash = opts.hash ?? "";
+  const safeSubmittedAt = opts.submittedAt ?? new Date().toISOString();
+  const isFeedback = opts.kind === "feedback";
+
+  const html = isFeedback
+    ? [
+        `<p>Your marked work is ready - here is your feedback for <strong>${safeTitle}</strong>.</p>`,
+        `<p><strong>Marked:</strong> ${safeSubmittedAt}</p>`,
+        safeHash ? `<p><strong>Original submission hash (SHA-256):</strong> ${safeHash}</p>` : "",
+        `<p>Attached: your marked script and/or your performance report.</p>`,
+      ].join("\n")
+    : [
+        `<p>${safeStudentName} has submitted a${opts.kind === "assignment" ? "n" : ""} ${opts.kind} via Smart Teacher.</p>`,
+        `<p><strong>${opts.kind === "test" ? "Test" : "Assignment"}:</strong> ${safeTitle}</p>`,
+        `<p><strong>Submitted at:</strong> ${safeSubmittedAt}</p>`,
+        safeHash ? `<p><strong>Proof-of-submission hash (SHA-256):</strong> ${safeHash}</p>` : "",
+        `<p>${opts.attachmentCount > 1 ? "Attached: the consolidated document, plus the original captured " +
+          "pages as a viewable backup." : "The consolidated document is attached."}</p>`,
+      ].join("\n");
+
+  const subject = isFeedback
+    ? `Your feedback is ready: ${safeTitle}`
+    : `${opts.kind === "test" ? "Test" : "Assignment"} submission: ${safeTitle} - ${safeStudentName}`;
+
+  return { subject, html };
+}
+
 export const sendAssignmentSubmissionEmail = onCall<SendAssignmentSubmissionEmailRequest>(
   {
     secrets: [brevoApiKey, brevoSenderEmail],
@@ -3517,20 +4147,14 @@ export const sendAssignmentSubmissionEmail = onCall<SendAssignmentSubmissionEmai
       );
     }
 
-    const safeStudentName = typeof studentName === "string" && studentName.trim() ? studentName.trim() : "A student";
-    const safeTitle = typeof assignmentTitle === "string" && assignmentTitle.trim()
-      ? assignmentTitle.trim() : "Untitled assignment";
-    const safeHash = typeof submissionHash === "string" ? submissionHash : "";
-    const safeSubmittedAt = typeof submittedAt === "string" ? submittedAt : new Date().toISOString();
-
-    const html = [
-      `<p>${safeStudentName} has submitted a${kind === "assignment" ? "n" : ""} ${kind} via Smart Teacher.</p>`,
-      `<p><strong>${kind === "test" ? "Test" : "Assignment"}:</strong> ${safeTitle}</p>`,
-      `<p><strong>Submitted at:</strong> ${safeSubmittedAt}</p>`,
-      safeHash ? `<p><strong>Proof-of-submission hash (SHA-256):</strong> ${safeHash}</p>` : "",
-      `<p>${attachments.length > 1 ? "Attached: the consolidated document, plus the original captured " +
-        "pages as a viewable backup." : "The consolidated document is attached."}</p>`,
-    ].join("\n");
+    const { subject, html } = buildAssignmentSubmissionEmailContent({
+      kind,
+      studentName: typeof studentName === "string" ? studentName : undefined,
+      title: typeof assignmentTitle === "string" ? assignmentTitle : undefined,
+      hash: typeof submissionHash === "string" ? submissionHash : undefined,
+      submittedAt: typeof submittedAt === "string" ? submittedAt : undefined,
+      attachmentCount: attachments.length,
+    });
 
     let response: Response;
     try {
@@ -3544,7 +4168,7 @@ export const sendAssignmentSubmissionEmail = onCall<SendAssignmentSubmissionEmai
         body: JSON.stringify({
           sender: { name: "Smart Teacher", email: brevoSenderEmail.value() },
           to: [{ email: recipientEmail.trim() }],
-          subject: `${kind === "test" ? "Test" : "Assignment"} submission: ${safeTitle} - ${safeStudentName}`,
+          subject,
           htmlContent: html,
           attachment: attachments,
         }),
@@ -3629,7 +4253,7 @@ const transcribeTestSubmissionSchema = {
 
 export const transcribeTestSubmission = onCall<TranscribeTestSubmissionRequest>(
   { secrets: [geminiApiKey], region: "us-central1", timeoutSeconds: 120, memory: "512MiB", maxInstances: 5 },
-  async (request): Promise<TranscribeTestSubmissionResponse> => {
+  metered("transcription", async (request): Promise<TranscribeTestSubmissionResponse> => {
     if (!request.auth) {
       throw new HttpsError("unauthenticated", "Sign in is required to transcribe a test submission.");
     }
@@ -3662,7 +4286,7 @@ export const transcribeTestSubmission = onCall<TranscribeTestSubmissionRequest>(
 
     let text: string | undefined;
     try {
-      const response = await ai.models.generateContent({
+      const response = await generateTracked(ai, {
         model: GEMINI_MODEL,
         contents: [{ role: "user", parts: [{ text: prompt }, ...imageParts] }],
         config: { responseMimeType: "application/json", responseJsonSchema: transcribeTestSubmissionSchema },
@@ -3682,7 +4306,7 @@ export const transcribeTestSubmission = onCall<TranscribeTestSubmissionRequest>(
       console.error("transcribeTestSubmission: response was not valid JSON", text);
       throw new HttpsError("internal", "The transcription response could not be parsed.");
     }
-  }
+  })
 );
 
 // ---------------------------------------------------------------------
@@ -4051,7 +4675,7 @@ const matchTopicSearchQuerySchema = {
 
 export const matchTopicSearchQuery = onCall<MatchTopicSearchQueryRequest>(
   { secrets: [geminiApiKey], region: "us-central1", timeoutSeconds: 30, memory: "256MiB", maxInstances: 5 },
-  async (request): Promise<MatchTopicSearchQueryResponse> => {
+  metered("topicSearch", async (request): Promise<MatchTopicSearchQueryResponse> => {
     if (!request.auth) {
       throw new HttpsError("unauthenticated", "Sign in is required to search.");
     }
@@ -4080,7 +4704,7 @@ export const matchTopicSearchQuery = onCall<MatchTopicSearchQueryRequest>(
 
     let text: string | undefined;
     try {
-      const response = await ai.models.generateContent({
+      const response = await generateTracked(ai, {
         model: GEMINI_MODEL,
         contents: [{ role: "user", parts: [{ text: prompt }] }],
         config: { responseMimeType: "application/json", responseJsonSchema: matchTopicSearchQuerySchema },
@@ -4109,7 +4733,7 @@ export const matchTopicSearchQuery = onCall<MatchTopicSearchQueryRequest>(
       return { matchedIndex: null };
     }
     return { matchedIndex: index };
-  }
+  })
 );
 
 // ---------------------------------------------------------------------
@@ -4151,7 +4775,7 @@ const detectCandidateNameSchema = {
 
 export const detectCandidateName = onCall<DetectCandidateNameRequest>(
   { secrets: [geminiApiKey], region: "us-central1", timeoutSeconds: 60, memory: "512MiB", maxInstances: 5 },
-  async (request): Promise<DetectCandidateNameResponse> => {
+  metered("candidateName", async (request): Promise<DetectCandidateNameResponse> => {
     if (!request.auth) {
       throw new HttpsError("unauthenticated", "Sign in is required to use name detection.");
     }
@@ -4172,7 +4796,7 @@ export const detectCandidateName = onCall<DetectCandidateNameRequest>(
 
     let text: string | undefined;
     try {
-      const response = await ai.models.generateContent({
+      const response = await generateTracked(ai, {
         model: GEMINI_MODEL,
         contents: [{ role: "user", parts: [{ text: prompt }, { inlineData: { mimeType: "image/jpeg", data: imageBase64 } }] }],
         config: {
@@ -4196,149 +4820,7 @@ export const detectCandidateName = onCall<DetectCandidateNameRequest>(
       console.error("detectCandidateName: response was not valid JSON", text);
       return { firstName: "", surname: "" };
     }
-  }
-);
-
-// ---------------------------------------------------------------------
-// internalBatchSyllabusExtract — TEMPORARY, one-off use only. Same
-// purpose as the batch extraction function used for the original
-// 18-subject CBC expansion: turns a Teaching Module's raw text into a
-// structured syllabus outline (topics/sub-topics/competencies) via
-// Gemini, for a local batch script to convert into the app's syllabus
-// JSON schema. Not called from the Flutter app. Token-gated (not
-// onCall/auth-gated) because it's driven by a local Node script, not
-// the app. DELETE THIS FUNCTION (and run
-// `firebase functions:delete internalBatchSyllabusExtract --region us-central1 --force`)
-// once the current batch (Stage 2 of the CBC expansion, 2026-08) is done.
-// ---------------------------------------------------------------------
-
-const INTERNAL_BATCH_TOKEN = "3384ee250d75b2f6619317a1850d73de7d3ffb11f271060b";
-
-const syllabusOutlineSchema = {
-  type: "object",
-  properties: {
-    topics: {
-      type: "array",
-      items: {
-        type: "object",
-        properties: {
-          name: { type: "string" },
-          description: { type: "string" },
-          weekNumber: { type: "number" },
-          learningObjectives: { type: "array", items: { type: "string" } },
-          competencies: {
-            type: "array",
-            items: {
-              type: "object",
-              properties: {
-                description: { type: "string" },
-                category: { type: "string" },
-              },
-              required: ["description", "category"],
-              additionalProperties: false,
-            },
-          },
-          subTopics: {
-            type: "array",
-            items: {
-              type: "object",
-              properties: {
-                name: { type: "string" },
-                description: { type: "string" },
-                weekNumber: { type: "number" },
-                learningObjectives: { type: "array", items: { type: "string" } },
-                competencies: {
-                  type: "array",
-                  items: {
-                    type: "object",
-                    properties: {
-                      description: { type: "string" },
-                      category: { type: "string" },
-                    },
-                    required: ["description", "category"],
-                    additionalProperties: false,
-                  },
-                },
-              },
-              required: ["name", "description"],
-              additionalProperties: false,
-            },
-          },
-        },
-        required: ["name", "description"],
-        additionalProperties: false,
-      },
-    },
-    completenessNotes: {
-      type: "string",
-      description:
-        "Anything unclear, missing, ambiguous, or irregular about how this module presents its own " +
-        "content — inconsistent numbering, a topic that seems to start mid-sequence, a section with no " +
-        "explicit competences, etc. Empty string if nothing stood out.",
-    },
-  },
-  required: ["topics", "completenessNotes"],
-  additionalProperties: false,
-};
-
-function buildSyllabusExtractPrompt(moduleText: string): string {
-  return [
-    "The following is the raw extracted text of a CDC (Curriculum Development Centre, Zambia) Teaching " +
-      "Module for one subject/form/term. Extract its topic/sub-topic outline exactly as the module itself " +
-      "presents it — its own topic numbers, its own topic and sub-topic titles, its own stated learning " +
-      "objectives and competencies (labelling each as 'General Competence' or 'Specific Competence' as the " +
-      "module itself labels them, or your best judgement if unlabelled).",
-    "Never invent content that is not genuinely present in the text below. If a topic has no sub-topics, " +
-      "sub-topics may be an empty array. If something about the module's own structure is unclear, " +
-      "ambiguous, or looks incomplete (e.g. it starts mid-sequence, a heading convention changes partway " +
-      "through, a competences section is missing), say so plainly in completenessNotes rather than guessing " +
-      "or silently smoothing it over.",
-    "",
-    "--- MODULE TEXT ---",
-    moduleText,
-  ].join("\n");
-}
-
-export const internalBatchSyllabusExtract = onRequest(
-  { secrets: [geminiApiKey], region: "us-central1", timeoutSeconds: 300, memory: "1GiB" },
-  async (req, res) => {
-    if (req.method !== "POST") {
-      res.status(405).send("POST only");
-      return;
-    }
-    if (req.get("x-batch-token") !== INTERNAL_BATCH_TOKEN) {
-      res.status(403).send("forbidden");
-      return;
-    }
-
-    const moduleText = req.body?.moduleText;
-    if (typeof moduleText !== "string" || moduleText.trim().length === 0) {
-      res.status(400).send("'moduleText' is required");
-      return;
-    }
-
-    const ai = new GoogleGenAI({ apiKey: geminiApiKey.value() });
-
-    try {
-      const response = await ai.models.generateContent({
-        model: GEMINI_MODEL,
-        contents: [{ role: "user", parts: [{ text: buildSyllabusExtractPrompt(moduleText) }] }],
-        config: {
-          responseMimeType: "application/json",
-          responseJsonSchema: syllabusOutlineSchema,
-        },
-      });
-      const text = response.text;
-      if (!text) {
-        res.status(500).send("empty response from Gemini");
-        return;
-      }
-      res.status(200).json(JSON.parse(text));
-    } catch (err) {
-      console.error("internalBatchSyllabusExtract failed", err);
-      res.status(500).send(String(err));
-    }
-  }
+  })
 );
 
 // ---------------------------------------------------------------------
@@ -4353,6 +4835,13 @@ export const internalBatchSyllabusExtract = onRequest(
 
 interface GenerateMinutesRequest {
   pageImagesBase64: string[];
+  // "Matters Arising" cross-check (2026-09-28, per explicit request): when
+  // given, these are photos of the PREVIOUS meeting's own minutes, sent
+  // alongside the new meeting's notes so the AI can cross-check any
+  // unresolved/outstanding items against what the new meeting actually
+  // covers. Omitted (not just empty) means the teacher had no previous
+  // minutes to hand — see buildGenerateMinutesPrompt's two distinct modes.
+  previousMinutesPageImagesBase64?: string[];
 }
 
 interface MinutesSectionResult {
@@ -4384,9 +4873,10 @@ const generateMinutesSchema = {
           heading: {
             type: "string",
             description:
-              "One of: 'Attendees', 'Agenda', 'Discussion Points', 'Decisions Made', 'Action Items'. Only " +
-              "include a section the notes actually give real content for - never include a section with " +
-              "an invented or placeholder line just to complete the set.",
+              "One of: 'Attendees', 'Agenda', 'Discussion Points', 'Decisions Made', 'Action Items', " +
+              "'Matters Arising'. Only include a section the notes actually give real content for - never " +
+              "include a section with an invented or placeholder line just to complete the set. See the " +
+              "prompt's own instructions for exactly when 'Matters Arising' applies and what it may contain.",
           },
           lines: {
             type: "array",
@@ -4394,7 +4884,10 @@ const generateMinutesSchema = {
             description:
               "One entry per line. For Action Items specifically, write each as a single line naming the " +
               "action, and append ' — Owner: <name>' and/or ', Deadline: <date>' only when the notes " +
-              "genuinely state an owner/deadline for that item - never invent either.",
+              "genuinely state an owner/deadline for that item - never invent either. For Matters Arising, " +
+              "write each as the matter itself followed by ' — Addressed', ' — Resolved', or ' — Outstanding' " +
+              "(previous-minutes mode), or state the self-referenced past matter and what the new notes say " +
+              "about it (no-previous-minutes mode) - see the prompt for the exact rule.",
           },
         },
         required: ["heading", "lines"],
@@ -4412,13 +4905,27 @@ const generateMinutesSchema = {
   additionalProperties: false,
 };
 
-function buildGenerateMinutesPrompt(): string {
-  return [
-    "The attached images are photos of one set of handwritten (or partly typed) meeting notes, in page " +
-      "order. The notes may be disordered, non-linear, or jump between topics - your job is to READ every " +
-      "genuine point made in them, then REORGANIZE that real content into a professional minutes " +
-      "structure. This is a transcribe-and-structure task, not a writing task: every fact, decision, and " +
-      "action item in your output must trace back to something actually written in the notes.",
+// "Matters Arising" cross-check (2026-09-28, per explicit request): two
+// genuinely different modes, chosen by whether real previous-minutes images
+// were supplied - never invented either way.
+//   - hasPreviousMinutes=true: the images passed to Gemini are TWO ordered
+//     groups (previous minutes' own pages, then the new meeting's pages);
+//     the prompt tells Gemini exactly where that split falls so it can
+//     cross-check the previous minutes' own unresolved items against what
+//     the new meeting's content actually says about them.
+//   - hasPreviousMinutes=false: only the new meeting's own pages exist, so
+//     the ONLY legitimate source for "Matters Arising" is a self-contained
+//     reference already written in this meeting's own notes (e.g. "following
+//     up on last meeting's decision on X") - never a previous item invented
+//     because none was supplied.
+export function buildGenerateMinutesPrompt(opts: { hasPreviousMinutes: boolean; previousMinutesPageCount: number }): string {
+  const base = [
+    "The LAST set of attached images are photos of one set of handwritten (or partly typed) meeting notes " +
+      "for the NEW meeting, in page order. The notes may be disordered, non-linear, or jump between topics " +
+      "- your job is to READ every genuine point made in them, then REORGANIZE that real content into a " +
+      "professional minutes structure. This is a transcribe-and-structure task, not a writing task: every " +
+      "fact, decision, and action item in your output must trace back to something actually written in the " +
+      "notes.",
     "Sort what you read into these categories, using ONLY sections the notes genuinely support:",
     "1. Attendees - names/roles listed as present, if the notes state any.",
     "2. Agenda - topics the meeting covered, if stated or clearly inferable from the notes' own structure.",
@@ -4427,6 +4934,32 @@ function buildGenerateMinutesPrompt(): string {
     "4. Decisions Made - anything the notes record as agreed/decided/resolved.",
     "5. Action Items - concrete tasks assigned or agreed to be done, each as one line naming the action, " +
       "with owner and/or deadline appended only when the notes genuinely state them.",
+  ];
+
+  const mattersArising = opts.hasPreviousMinutes
+    ? [
+        `6. Matters Arising - the FIRST ${opts.previousMinutesPageCount} image(s) attached are the PREVIOUS ` +
+          "meeting's own minutes, not the new meeting. Read them for any unresolved/outstanding items or " +
+          '"Matters Arising" of their own, then cross-check EACH one against the new meeting\'s actual ' +
+          "content: for every previous item, write one line naming that matter and stating whether the new " +
+          "meeting's own notes show it was Addressed, Resolved, or is still Outstanding - grounded only in " +
+          "what the new notes actually say, never assumed. If the previous minutes had no unresolved items " +
+          "at all, or the new notes say nothing that bears on any of them, omit this section entirely rather " +
+          "than inventing a status.",
+      ]
+    : [
+        "6. Matters Arising - ONLY include this section if the new meeting's OWN notes contain a genuine, " +
+          'self-contained reference to a past decision or prior matter (e.g. "following up on the previous ' +
+          'meeting\'s decision on X", or a matter explicitly marked as already resolved). No previous ' +
+          "minutes were supplied for this meeting, so you have no other source for this section - do NOT " +
+          "invent, assume, or guess at any prior matter that isn't actually written in the new notes " +
+          "themselves. If nothing in the new notes references anything from before, omit this section " +
+          "entirely.",
+      ];
+
+  return [
+    ...base,
+    ...mattersArising,
     "Do not fabricate content for a category the notes don't actually cover - omit that section entirely " +
       "rather than inventing a placeholder. If a passage is illegible or its category is genuinely " +
       "ambiguous, say so in notes rather than guessing silently.",
@@ -4435,26 +4968,36 @@ function buildGenerateMinutesPrompt(): string {
 
 export const generateMinutes = onCall<GenerateMinutesRequest>(
   { secrets: [geminiApiKey], region: "us-central1", timeoutSeconds: 120, memory: "1GiB", maxInstances: 5 },
-  async (request): Promise<GenerateMinutesResponse> => {
+  metered("minutes", async (request): Promise<GenerateMinutesResponse> => {
     if (!request.auth) {
       throw new HttpsError("unauthenticated", "Sign in is required to generate minutes.");
     }
 
-    const { pageImagesBase64 } = request.data ?? {};
+    const { pageImagesBase64, previousMinutesPageImagesBase64 } = request.data ?? {};
     if (!Array.isArray(pageImagesBase64) || pageImagesBase64.length === 0) {
       throw new HttpsError("invalid-argument", "'pageImagesBase64' must be a non-empty array.");
     }
+    const hasPreviousMinutes =
+      Array.isArray(previousMinutesPageImagesBase64) && previousMinutesPageImagesBase64.length > 0;
 
     const ai = new GoogleGenAI({ apiKey: geminiApiKey.value() });
-    const imageParts = pageImagesBase64.map((b64) => ({
-      inlineData: { mimeType: "image/jpeg", data: b64 },
-    }));
+    const toImageParts = (images: string[]) => images.map((b64) => ({ inlineData: { mimeType: "image/jpeg", data: b64 } }));
+    // Previous-minutes images FIRST, new-meeting images LAST — matches
+    // exactly what the prompt tells Gemini about the ordering.
+    const imageParts = [
+      ...(hasPreviousMinutes ? toImageParts(previousMinutesPageImagesBase64) : []),
+      ...toImageParts(pageImagesBase64),
+    ];
 
     let text: string | undefined;
     try {
-      const response = await ai.models.generateContent({
+      const prompt = buildGenerateMinutesPrompt({
+        hasPreviousMinutes,
+        previousMinutesPageCount: hasPreviousMinutes ? previousMinutesPageImagesBase64.length : 0,
+      });
+      const response = await generateTracked(ai, {
         model: GEMINI_MODEL,
-        contents: [{ role: "user", parts: [{ text: buildGenerateMinutesPrompt() }, ...imageParts] }],
+        contents: [{ role: "user", parts: [{ text: prompt }, ...imageParts] }],
         config: {
           responseMimeType: "application/json",
           responseJsonSchema: generateMinutesSchema,
@@ -4476,7 +5019,7 @@ export const generateMinutes = onCall<GenerateMinutesRequest>(
       console.error("generateMinutes: response was not valid JSON", text);
       throw new HttpsError("internal", "The minutes response could not be parsed.");
     }
-  }
+  })
 );
 
 // ---------------------------------------------------------------------
@@ -4591,7 +5134,7 @@ function buildSchemeOfWorkContentPrompt(req: GenerateSchemeOfWorkContentRequest)
 
 export const generateSchemeOfWorkContent = onCall<GenerateSchemeOfWorkContentRequest>(
   { secrets: [geminiApiKey], region: "us-central1", timeoutSeconds: 120, maxInstances: 5 },
-  async (request): Promise<GenerateSchemeOfWorkContentResponse> => {
+  metered("schemeOfWork", async (request): Promise<GenerateSchemeOfWorkContentResponse> => {
     if (!request.auth) {
       throw new HttpsError("unauthenticated", "Sign in is required to generate scheme of work content.");
     }
@@ -4632,7 +5175,7 @@ export const generateSchemeOfWorkContent = onCall<GenerateSchemeOfWorkContentReq
 
     let text: string | undefined;
     try {
-      const response = await ai.models.generateContent({
+      const response = await generateTracked(ai, {
         model: GEMINI_MODEL,
         contents: buildSchemeOfWorkContentPrompt(req),
         config: {
@@ -4659,7 +5202,7 @@ export const generateSchemeOfWorkContent = onCall<GenerateSchemeOfWorkContentReq
     }
 
     return parsed;
-  }
+  })
 );
 
 // ---------------------------------------------------------------------
@@ -4845,7 +5388,7 @@ function buildParseVoiceCommandPrompt(transcript: string): string {
 
 export const parseVoiceCommand = onCall<ParseVoiceCommandRequest>(
   { secrets: [geminiApiKey], region: "us-central1", maxInstances: 5 },
-  async (request): Promise<ParseVoiceCommandResponse> => {
+  metered("voiceCommand", async (request): Promise<ParseVoiceCommandResponse> => {
     if (!request.auth) {
       throw new HttpsError("unauthenticated", "Sign in is required to use voice commands.");
     }
@@ -4859,7 +5402,7 @@ export const parseVoiceCommand = onCall<ParseVoiceCommandRequest>(
 
     let text: string | undefined;
     try {
-      const response = await ai.models.generateContent({
+      const response = await generateTracked(ai, {
         model: GEMINI_MODEL,
         contents: buildParseVoiceCommandPrompt(transcript),
         config: {
@@ -4886,7 +5429,7 @@ export const parseVoiceCommand = onCall<ParseVoiceCommandRequest>(
     }
 
     return parsed;
-  }
+  })
 );
 
 // ---------------------------------------------------------------------
@@ -4939,6 +5482,48 @@ function schoolMeetsTimetableTier(schoolData: FirebaseFirestore.DocumentData | u
   const tier = rawTier ?? (schoolData?.institutionalSubscription === true ? "institutional" : "basic");
   return (SUBSCRIPTION_TIER_ORDER[tier] ?? 0) >= SUBSCRIPTION_TIER_ORDER.gold;
 }
+
+// Individual-teacher subscriptions (owner decision, 2026-09-28): "the
+// infrastructure must allow individual teachers to be able to subscribe on
+// the app individually even without a school wide subscription" — a
+// teacher's OWN personal tier now satisfies a Gold+ gate on its own, ORed
+// with the existing school-tier check, never replacing it. Storage
+// (`personalSubscriptions/{uid}`) is set manually via Firebase Console for
+// now — same "real gate, manual-for-now source of truth" pattern already
+// used for `School.subscriptionTier` itself (see that field's own comment);
+// a real self-serve purchase path (Play real subscriptions, or the
+// PhiloSoft website payment path) is a separate, later integration that
+// writes into this same collection rather than needing a second gate.
+export const PERSONAL_SUBSCRIPTIONS_COLLECTION = "personalSubscriptions";
+
+function personalSubscriptionMeetsGold(personalData: FirebaseFirestore.DocumentData | undefined): boolean {
+  const tier = personalData?.tier as string | undefined;
+  return (SUBSCRIPTION_TIER_ORDER[tier ?? "basic"] ?? 0) >= SUBSCRIPTION_TIER_ORDER.gold;
+}
+
+/** Pure decision, directly unit-tested — school tier OR the caller's own personal tier. */
+export function meetsTimetableTier(
+  schoolData: FirebaseFirestore.DocumentData | undefined,
+  personalData: FirebaseFirestore.DocumentData | undefined
+): boolean {
+  return schoolMeetsTimetableTier(schoolData) || personalSubscriptionMeetsGold(personalData);
+}
+
+/** The I/O half: fetches both docs in parallel, then defers to the pure decision above. */
+async function fetchAndCheckTimetableTier(
+  db: FirebaseFirestore.Firestore,
+  schoolId: string,
+  uid: string
+): Promise<{ schoolSnap: FirebaseFirestore.DocumentSnapshot; meetsTier: boolean }> {
+  const [schoolSnap, personalSnap] = await Promise.all([
+    db.collection("schools").doc(schoolId).get(),
+    db.collection(PERSONAL_SUBSCRIPTIONS_COLLECTION).doc(uid).get(),
+  ]);
+  return { schoolSnap, meetsTier: meetsTimetableTier(schoolSnap.data(), personalSnap.data()) };
+}
+
+const TIMETABLE_TIER_DENIED_MESSAGE =
+  "Timetable Generation requires a Gold subscription or higher (school-wide, or your own personal subscription).";
 // Excludes 0/O and 1/I/L — a human reading this code aloud or retyping it
 // from a whiteboard shouldn't have to guess which character was meant.
 const SCHOOL_CODE_ALPHABET = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
@@ -5757,9 +6342,9 @@ export const saveTimetableConfig = onCall<SaveTimetableConfigRequest>(
     if (!callerCanManageTimetable(memberSnap.data())) {
       throw new HttpsError("permission-denied", "Only school leadership or an appointed Timetable Operator can set up the timetable.");
     }
-    const schoolSnap = await db.collection("schools").doc(schoolId).get();
-    if (!schoolMeetsTimetableTier(schoolSnap.data())) {
-      throw new HttpsError("failed-precondition", "Timetable Generation requires a Gold subscription or higher.");
+    const { meetsTier } = await fetchAndCheckTimetableTier(db, schoolId, request.auth.uid);
+    if (!meetsTier) {
+      throw new HttpsError("failed-precondition", TIMETABLE_TIER_DENIED_MESSAGE);
     }
 
     const cleanSubjectDefaults: Record<string, number> = {};
@@ -6008,7 +6593,7 @@ interface GenerateTimetableRequest {
 
 export const generateTimetable = onCall<GenerateTimetableRequest>(
   { region: "us-central1", timeoutSeconds: 60, maxInstances: 5 },
-  async (request): Promise<{ assignmentCount: number; conflictCount: number }> => {
+  metered("timetable", async (request): Promise<{ assignmentCount: number; conflictCount: number }> => {
     if (!request.auth) {
       throw new HttpsError("unauthenticated", "Sign in is required.");
     }
@@ -6025,9 +6610,9 @@ export const generateTimetable = onCall<GenerateTimetableRequest>(
     if (!callerCanManageTimetable(memberSnap.data())) {
       throw new HttpsError("permission-denied", "Only school leadership or an appointed Timetable Operator can run the timetable generator.");
     }
-    const schoolSnap = await db.collection("schools").doc(schoolId).get();
-    if (!schoolMeetsTimetableTier(schoolSnap.data())) {
-      throw new HttpsError("failed-precondition", "Timetable Generation requires a Gold subscription or higher.");
+    const { meetsTier } = await fetchAndCheckTimetableTier(db, schoolId, request.auth.uid);
+    if (!meetsTier) {
+      throw new HttpsError("failed-precondition", TIMETABLE_TIER_DENIED_MESSAGE);
     }
 
     const configSnap = await db.collection("schools").doc(schoolId).collection("timetable").doc("config").get();
@@ -6073,7 +6658,7 @@ export const generateTimetable = onCall<GenerateTimetableRequest>(
     });
 
     return { assignmentCount: assignments.length, conflictCount: conflicts.length };
-  }
+  }, { schoolAllowance: SCHOOL_TIMETABLE_ALLOWANCE })
 );
 
 // ---------------------------------------------------------------------
@@ -6153,7 +6738,7 @@ interface ExplainTimetableConflictsRequest {
 
 export const explainTimetableConflicts = onCall<ExplainTimetableConflictsRequest>(
   { secrets: [geminiApiKey], region: "us-central1", timeoutSeconds: 60, maxInstances: 5 },
-  async (request): Promise<{ explanations: { conflictIndex: number; explanation: string; suggestedFix: string }[] }> => {
+  metered("timetableAssist", async (request): Promise<{ explanations: { conflictIndex: number; explanation: string; suggestedFix: string }[] }> => {
     if (!request.auth) {
       throw new HttpsError("unauthenticated", "Sign in is required.");
     }
@@ -6168,14 +6753,15 @@ export const explainTimetableConflicts = onCall<ExplainTimetableConflictsRequest
       throw new HttpsError("permission-denied", "You are not a member of this school.");
     }
 
-    const [generatedSnap, configSnap, membersSnap, schoolSnap] = await Promise.all([
+    const [generatedSnap, configSnap, membersSnap, schoolSnap, personalSnap] = await Promise.all([
       db.collection("schools").doc(schoolId).collection("timetable").doc("generated").get(),
       db.collection("schools").doc(schoolId).collection("timetable").doc("config").get(),
       db.collection("schools").doc(schoolId).collection("members").get(),
       db.collection("schools").doc(schoolId).get(),
+      db.collection(PERSONAL_SUBSCRIPTIONS_COLLECTION).doc(request.auth.uid).get(),
     ]);
-    if (!schoolMeetsTimetableTier(schoolSnap.data())) {
-      throw new HttpsError("failed-precondition", "Timetable Generation requires a Gold subscription or higher.");
+    if (!meetsTimetableTier(schoolSnap.data(), personalSnap.data())) {
+      throw new HttpsError("failed-precondition", TIMETABLE_TIER_DENIED_MESSAGE);
     }
     if (!generatedSnap.exists) {
       throw new HttpsError("failed-precondition", "No timetable has been generated yet.");
@@ -6200,7 +6786,7 @@ export const explainTimetableConflicts = onCall<ExplainTimetableConflictsRequest
     const ai = new GoogleGenAI({ apiKey: geminiApiKey.value() });
     let text: string | undefined;
     try {
-      const response = await ai.models.generateContent({
+      const response = await generateTracked(ai, {
         model: GEMINI_MODEL,
         contents: buildTimetableConflictPrompt(conflicts, config, teacherNames),
         config: { responseMimeType: "application/json", responseJsonSchema: timetableConflictExplanationSchema },
@@ -6227,7 +6813,7 @@ export const explainTimetableConflicts = onCall<ExplainTimetableConflictsRequest
     });
 
     return parsed;
-  }
+  }, { schoolAllowance: SCHOOL_TIMETABLE_ALLOWANCE })
 );
 
 // ---------------------------------------------------------------------
@@ -6359,7 +6945,7 @@ interface ParseTimetableConstraintRequest {
 
 export const parseTimetableConstraint = onCall<ParseTimetableConstraintRequest>(
   { secrets: [geminiApiKey], region: "us-central1", timeoutSeconds: 30, maxInstances: 5 },
-  async (
+  metered("timetableAssist", async (
     request
   ): Promise<{
     kind: "availability" | "assignment" | "unrecognized";
@@ -6390,9 +6976,9 @@ export const parseTimetableConstraint = onCall<ParseTimetableConstraintRequest>(
     if (!callerCanManageTimetable(memberSnap.data())) {
       throw new HttpsError("permission-denied", "Only school leadership or an appointed Timetable Operator can set up the timetable.");
     }
-    const schoolSnap = await db.collection("schools").doc(schoolId).get();
-    if (!schoolMeetsTimetableTier(schoolSnap.data())) {
-      throw new HttpsError("failed-precondition", "Timetable Generation requires a Gold subscription or higher.");
+    const { meetsTier } = await fetchAndCheckTimetableTier(db, schoolId, request.auth.uid);
+    if (!meetsTier) {
+      throw new HttpsError("failed-precondition", TIMETABLE_TIER_DENIED_MESSAGE);
     }
 
     const [membersSnap, classesSnap, configSnap] = await Promise.all([
@@ -6407,7 +6993,7 @@ export const parseTimetableConstraint = onCall<ParseTimetableConstraintRequest>(
     const ai = new GoogleGenAI({ apiKey: geminiApiKey.value() });
     let text_: string | undefined;
     try {
-      const response = await ai.models.generateContent({
+      const response = await generateTracked(ai, {
         model: GEMINI_MODEL_LITE,
         contents: buildTimetableConstraintPrompt(
           text,
@@ -6474,7 +7060,7 @@ export const parseTimetableConstraint = onCall<ParseTimetableConstraintRequest>(
       summary: parsed.summary,
       unavailableSlots,
     };
-  }
+  }, { schoolAllowance: SCHOOL_TIMETABLE_ALLOWANCE })
 );
 
 interface SetTeacherAvailabilityRequest {
@@ -6506,9 +7092,9 @@ export const setTeacherAvailability = onCall<SetTeacherAvailabilityRequest>(
     if (!callerCanManageTimetable(callerSnap.data())) {
       throw new HttpsError("permission-denied", "Only school leadership or an appointed Timetable Operator can set up the timetable.");
     }
-    const schoolSnap = await db.collection("schools").doc(schoolId).get();
-    if (!schoolMeetsTimetableTier(schoolSnap.data())) {
-      throw new HttpsError("failed-precondition", "Timetable Generation requires a Gold subscription or higher.");
+    const { meetsTier } = await fetchAndCheckTimetableTier(db, schoolId, request.auth.uid);
+    if (!meetsTier) {
+      throw new HttpsError("failed-precondition", TIMETABLE_TIER_DENIED_MESSAGE);
     }
     if (!teacherSnap.exists) {
       throw new HttpsError("not-found", "That teacher is not a member of this school.");
@@ -6607,7 +7193,7 @@ function buildExtractTimetablePrompt(teacherNames: string[]): string {
 
 export const extractTimetableFromPhoto = onCall<ExtractTimetableFromPhotoRequest>(
   { secrets: [geminiApiKey], region: "us-central1", timeoutSeconds: 120, memory: "512MiB", maxInstances: 5 },
-  async (
+  metered("timetableAssist", async (
     request
   ): Promise<{
     periodsPerDay: number;
@@ -6632,9 +7218,9 @@ export const extractTimetableFromPhoto = onCall<ExtractTimetableFromPhotoRequest
     if (!callerCanManageTimetable(memberSnap.data())) {
       throw new HttpsError("permission-denied", "Only school leadership or an appointed Timetable Operator can set up the timetable.");
     }
-    const schoolSnap = await db.collection("schools").doc(schoolId).get();
-    if (!schoolMeetsTimetableTier(schoolSnap.data())) {
-      throw new HttpsError("failed-precondition", "Timetable Generation requires a Gold subscription or higher.");
+    const { meetsTier } = await fetchAndCheckTimetableTier(db, schoolId, request.auth.uid);
+    if (!meetsTier) {
+      throw new HttpsError("failed-precondition", TIMETABLE_TIER_DENIED_MESSAGE);
     }
 
     const membersSnap = await db.collection("schools").doc(schoolId).collection("members").get();
@@ -6644,7 +7230,7 @@ export const extractTimetableFromPhoto = onCall<ExtractTimetableFromPhotoRequest
     const imageParts = pageImagesBase64.map((b64: string) => ({ inlineData: { mimeType: "image/jpeg", data: b64 } }));
     let text: string | undefined;
     try {
-      const response = await ai.models.generateContent({
+      const response = await generateTracked(ai, {
         model: GEMINI_MODEL,
         contents: [{ role: "user", parts: [{ text: buildExtractTimetablePrompt(members.map((m) => m.name)) }, ...imageParts] }],
         config: { responseMimeType: "application/json", responseJsonSchema: extractTimetableFromPhotoSchema },
@@ -6677,7 +7263,7 @@ export const extractTimetableFromPhoto = onCall<ExtractTimetableFromPhotoRequest
     });
 
     return { ...parsed, subjects: subjectsWithMatches };
-  }
+  }, { schoolAllowance: SCHOOL_TIMETABLE_ALLOWANCE })
 );
 
 // ---------------------------------------------------------------------
@@ -6777,9 +7363,9 @@ export const moveTimetableAssignment = onCall<MoveTimetableAssignmentRequest>(
     if (!callerCanManageTimetable(memberSnap.data())) {
       throw new HttpsError("permission-denied", "Only school leadership or an appointed Timetable Operator can edit the timetable.");
     }
-    const schoolSnap = await db.collection("schools").doc(schoolId).get();
-    if (!schoolMeetsTimetableTier(schoolSnap.data())) {
-      throw new HttpsError("failed-precondition", "Timetable Generation requires a Gold subscription or higher.");
+    const { meetsTier } = await fetchAndCheckTimetableTier(db, schoolId, request.auth.uid);
+    if (!meetsTier) {
+      throw new HttpsError("failed-precondition", TIMETABLE_TIER_DENIED_MESSAGE);
     }
 
     const [generatedSnap, configSnap] = await Promise.all([
@@ -6875,9 +7461,9 @@ export const setTimetableAssignmentLocked = onCall<SetTimetableAssignmentLockedR
     if (!callerCanManageTimetable(memberSnap.data())) {
       throw new HttpsError("permission-denied", "Only school leadership or an appointed Timetable Operator can edit the timetable.");
     }
-    const schoolSnap = await db.collection("schools").doc(schoolId).get();
-    if (!schoolMeetsTimetableTier(schoolSnap.data())) {
-      throw new HttpsError("failed-precondition", "Timetable Generation requires a Gold subscription or higher.");
+    const { meetsTier } = await fetchAndCheckTimetableTier(db, schoolId, request.auth.uid);
+    if (!meetsTier) {
+      throw new HttpsError("failed-precondition", TIMETABLE_TIER_DENIED_MESSAGE);
     }
 
     const generatedRef = db.collection("schools").doc(schoolId).collection("timetable").doc("generated");
@@ -7143,7 +7729,7 @@ interface GenerateIndependentTimetableRequest {
 
 export const generateIndependentTimetable = onCall<GenerateIndependentTimetableRequest>(
   { region: "us-central1", timeoutSeconds: 60, maxInstances: 5 },
-  async (request): Promise<{ assignmentCount: number; conflictCount: number }> => {
+  metered("timetable", async (request): Promise<{ assignmentCount: number; conflictCount: number }> => {
     if (!request.auth) {
       throw new HttpsError("unauthenticated", "Sign in is required.");
     }
@@ -7195,7 +7781,7 @@ export const generateIndependentTimetable = onCall<GenerateIndependentTimetableR
     });
 
     return { assignmentCount: assignments.length, conflictCount: conflicts.length };
-  }
+  })
 );
 
 // Small local helper — every class's subjectTeacherUids values, deduped.
@@ -7218,7 +7804,7 @@ interface ExplainIndependentTimetableConflictsRequest {
 
 export const explainIndependentTimetableConflicts = onCall<ExplainIndependentTimetableConflictsRequest>(
   { secrets: [geminiApiKey], region: "us-central1", timeoutSeconds: 60, maxInstances: 5 },
-  async (request): Promise<{ explanations: { conflictIndex: number; explanation: string; suggestedFix: string }[] }> => {
+  metered("timetableAssist", async (request): Promise<{ explanations: { conflictIndex: number; explanation: string; suggestedFix: string }[] }> => {
     if (!request.auth) {
       throw new HttpsError("unauthenticated", "Sign in is required.");
     }
@@ -7258,7 +7844,7 @@ export const explainIndependentTimetableConflicts = onCall<ExplainIndependentTim
     const ai = new GoogleGenAI({ apiKey: geminiApiKey.value() });
     let text: string | undefined;
     try {
-      const response = await ai.models.generateContent({
+      const response = await generateTracked(ai, {
         model: GEMINI_MODEL,
         contents: buildTimetableConflictPrompt(conflicts, config, teacherNames),
         config: { responseMimeType: "application/json", responseJsonSchema: timetableConflictExplanationSchema },
@@ -7285,7 +7871,7 @@ export const explainIndependentTimetableConflicts = onCall<ExplainIndependentTim
     });
 
     return parsed;
-  }
+  })
 );
 
 interface ParseIndependentTimetableConstraintRequest {
@@ -7295,7 +7881,7 @@ interface ParseIndependentTimetableConstraintRequest {
 
 export const parseIndependentTimetableConstraint = onCall<ParseIndependentTimetableConstraintRequest>(
   { secrets: [geminiApiKey], region: "us-central1", timeoutSeconds: 30, maxInstances: 5 },
-  async (
+  metered("timetableAssist", async (
     request
   ): Promise<{
     kind: "availability" | "assignment" | "unrecognized";
@@ -7337,7 +7923,7 @@ export const parseIndependentTimetableConstraint = onCall<ParseIndependentTimeta
     const ai = new GoogleGenAI({ apiKey: geminiApiKey.value() });
     let text_: string | undefined;
     try {
-      const response = await ai.models.generateContent({
+      const response = await generateTracked(ai, {
         model: GEMINI_MODEL_LITE,
         contents: buildTimetableConstraintPrompt(text, teacherNames, classes.map((c) => c.classGrade), subjectNames),
         config: { responseMimeType: "application/json", responseJsonSchema: timetableConstraintSchema },
@@ -7402,7 +7988,7 @@ export const parseIndependentTimetableConstraint = onCall<ParseIndependentTimeta
       summary: parsed.summary,
       unavailableSlots,
     };
-  }
+  })
 );
 
 interface SetIndependentTeacherAvailabilityRequest {
@@ -7450,7 +8036,7 @@ interface ExtractIndependentTimetableFromPhotoRequest {
 
 export const extractIndependentTimetableFromPhoto = onCall<ExtractIndependentTimetableFromPhotoRequest>(
   { secrets: [geminiApiKey], region: "us-central1", timeoutSeconds: 120, memory: "512MiB", maxInstances: 5 },
-  async (
+  metered("timetableAssist", async (
     request
   ): Promise<{
     periodsPerDay: number;
@@ -7483,7 +8069,7 @@ export const extractIndependentTimetableFromPhoto = onCall<ExtractIndependentTim
     const imageParts = pageImagesBase64.map((b64: string) => ({ inlineData: { mimeType: "image/jpeg", data: b64 } }));
     let text: string | undefined;
     try {
-      const response = await ai.models.generateContent({
+      const response = await generateTracked(ai, {
         model: GEMINI_MODEL,
         contents: [{ role: "user", parts: [{ text: buildExtractTimetablePrompt(teacherNames) }, ...imageParts] }],
         config: { responseMimeType: "application/json", responseJsonSchema: extractTimetableFromPhotoSchema },
@@ -7518,7 +8104,7 @@ export const extractIndependentTimetableFromPhoto = onCall<ExtractIndependentTim
     });
 
     return { ...parsed, subjects: subjectsWithMatches };
-  }
+  })
 );
 
 interface MoveIndependentTimetableAssignmentRequest {
@@ -7784,8 +8370,9 @@ function buildHomeAssignmentPrompt(req: GenerateHomeAssignmentRequest): string {
     typeGuidance,
     "",
     req.references
-      ? "References available for this assignment (cite naturally where relevant, never invent a citation not " +
-        `listed here):\n${req.references}`
+      ? "References available for this assignment, for YOUR OWN grounding only — never invent a citation not " +
+        "listed here, and never turn this list itself into one of the questions (it is not gradable content, " +
+        `just background for you):\n${req.references}`
       : null,
     req.subjectContentExcerpt
       ? "Real material already saved on this teacher's own device for this exact topic — ground the questions in " +
@@ -7806,7 +8393,7 @@ function buildHomeAssignmentPrompt(req: GenerateHomeAssignmentRequest): string {
 
 export const generateHomeAssignment = onCall<GenerateHomeAssignmentRequest>(
   { secrets: [geminiApiKey], region: "us-central1", maxInstances: 5 },
-  async (request): Promise<GenerateHomeAssignmentResponse> => {
+  metered("homeAssignment", async (request): Promise<GenerateHomeAssignmentResponse> => {
     if (!request.auth) {
       throw new HttpsError("unauthenticated", "Sign in is required to generate a home assignment.");
     }
@@ -7851,7 +8438,7 @@ export const generateHomeAssignment = onCall<GenerateHomeAssignmentRequest>(
     const ai = new GoogleGenAI({ apiKey: geminiApiKey.value() });
     let text: string | undefined;
     try {
-      const response = await ai.models.generateContent({
+      const response = await generateTracked(ai, {
         model: GEMINI_MODEL,
         contents: buildHomeAssignmentPrompt(req),
         config: { responseMimeType: "application/json", responseJsonSchema: generateHomeAssignmentSchema },
@@ -7871,7 +8458,7 @@ export const generateHomeAssignment = onCall<GenerateHomeAssignmentRequest>(
       console.error("generateHomeAssignment: response was not valid JSON", text);
       throw new HttpsError("internal", "The response could not be parsed.");
     }
-  }
+  })
 );
 
 // ---------------------------------------------------------------------
@@ -8865,6 +9452,518 @@ export const pollGmailForHomeAssignmentReplies = onSchedule(
         // it's retried next run rather than silently lost.
         console.error(`pollGmailForHomeAssignmentReplies: failed to process message ${messageId}`, err);
       }
+    }
+  }
+);
+
+// ---------------------------------------------------------------------
+// Monetization callables (Stages 4, 5, 7, 8). Logic lives in monetization.ts
+// (unit/emulator-tested with an injected Play verifier); these are thin
+// wrappers. They are registered here, after setGlobalOptions, so they get the
+// same App Check setting as every other function.
+// ---------------------------------------------------------------------
+
+/** Email the app owner (address from ownerData/settings.ownerEmail). Never throws — a failed alert must not fail a purchase. */
+async function notifyOwnerByEmail(subject: string, html: string): Promise<void> {
+  try {
+    const ownerEmail = (await loadOwnerSettings(admin.firestore())).ownerEmail;
+    if (!ownerEmail) {
+      console.error(`OWNER_NOTIFY_SKIPPED: ownerData/settings.ownerEmail is not set. Subject was: ${subject}`);
+      return;
+    }
+    const response = await fetch("https://api.brevo.com/v3/smtp/email", {
+      method: "POST",
+      headers: { "api-key": brevoApiKey.value(), "Content-Type": "application/json", "Accept": "application/json" },
+      body: JSON.stringify({
+        sender: { name: "Smart Teacher", email: brevoSenderEmail.value() },
+        to: [{ email: ownerEmail }],
+        subject,
+        htmlContent: html,
+      }),
+    });
+    if (!response.ok) console.error("notifyOwnerByEmail: Brevo returned", response.status, await response.text().catch(() => ""));
+  } catch (err) {
+    console.error("notifyOwnerByEmail failed", err);
+  }
+}
+
+// Buying credits. Verification, idempotency, acknowledgement, price check and the
+// audit trail all live in purchaseVerification.ts (Stage 4a-4c, 4e, 4f).
+const purchaseCallableOptions = {
+  secrets: [brevoApiKey, brevoSenderEmail],
+  region: "us-central1",
+  timeoutSeconds: 60,
+  memory: "256MiB" as const,
+  maxInstances: 5,
+};
+
+async function verifyPurchaseRequest(request: { auth?: { uid: string; token: object } | undefined; data?: { productId?: string; purchaseToken?: string } }) {
+  if (!request.auth) throw new HttpsError("unauthenticated", "Sign in is required to buy credits.");
+  const provider = (request.auth.token as { firebase?: { sign_in_provider?: string } }).firebase?.sign_in_provider;
+  return verifyBundlePurchase(
+    { db: admin.firestore(), verifier: createPlayVerifier(), notifyOwner: notifyOwnerByEmail, nowMs: Date.now() },
+    {
+      uid: request.auth.uid,
+      isAnonymous: provider === "anonymous",
+      productId: request.data?.productId,
+      purchaseToken: request.data?.purchaseToken,
+    }
+  );
+}
+
+export const verifyMarkingBundlePurchase = onCall<{ productId?: string; purchaseToken?: string }>(purchaseCallableOptions, verifyPurchaseRequest);
+
+/** The original name, kept so app builds already in testers' hands keep working. Same handler. */
+export const redeemMarkingBundle = onCall<{ productId?: string; purchaseToken?: string }>(purchaseCallableOptions, verifyPurchaseRequest);
+
+/**
+ * Google Play Real-time Developer Notifications (Stage 4d). Play publishes to a
+ * Pub/Sub topic (see docs/MONETIZATION_SETUP.md for the one-time setup); a
+ * voided/refunded purchase reverses its credits. IMPORTANT: only Google's Play
+ * notification service account may be allowed to publish to this topic - the
+ * topic's permissions are what authenticate these messages.
+ */
+export const playRealtimeNotifications = onMessagePublished(
+  { topic: "play-billing-notifications", region: "us-central1", secrets: [brevoApiKey, brevoSenderEmail], memory: "256MiB", timeoutSeconds: 60 },
+  async (event) => {
+    let payload: unknown;
+    try {
+      payload = event.data.message.json;
+    } catch {
+      payload = undefined;
+    }
+    // Errors inside are swallowed on purpose (a thrown error makes Pub/Sub redeliver forever);
+    // handlePlayNotification records anything it can't handle in the audit log.
+    try {
+      await handlePlayNotification({ db: admin.firestore(), verifier: createPlayVerifier(), notifyOwner: notifyOwnerByEmail, nowMs: Date.now() }, payload);
+    } catch (err) {
+      console.error("playRealtimeNotifications failed", err);
+      throw err; // a genuine failure (e.g. Firestore down) SHOULD be retried
+    }
+  }
+);
+
+/** Hourly: re-try acknowledging credited purchases whose acknowledgement failed, before Google's 3-day refund. */
+export const retryPurchaseAcknowledgements = onSchedule(
+  { schedule: "every 60 minutes", secrets: [brevoApiKey, brevoSenderEmail], region: "us-central1", timeoutSeconds: 120, memory: "256MiB" },
+  async () => {
+    const r = await retryPendingAcknowledgements({ db: admin.firestore(), verifier: createPlayVerifier(), notifyOwner: notifyOwnerByEmail, nowMs: Date.now() });
+    if (r.attempted > 0 || r.expired > 0) console.log("retryPurchaseAcknowledgements", r);
+  }
+);
+
+/** Daily: the backstop for a missed refund notification - reconcile against Google's list of voided purchases. */
+export const reconcileVoidedPurchasesDaily = onSchedule(
+  { schedule: "30 5 * * *", timeZone: "Africa/Lusaka", secrets: [brevoApiKey, brevoSenderEmail], region: "us-central1", timeoutSeconds: 180, memory: "256MiB" },
+  async () => {
+    const r = await reconcileVoidedPurchases({ db: admin.firestore(), verifier: createPlayVerifier(), notifyOwner: notifyOwnerByEmail, nowMs: Date.now() });
+    console.log("reconcileVoidedPurchasesDaily", r);
+  }
+);
+
+/** Lets the app decide whether to show the owner-only tools. Says nothing else. */
+export const amIOwner = onCall({ region: "us-central1", memory: "256MiB", maxInstances: 5 }, async (request) => {
+  if (!request.auth) return { isOwner: false };
+  return { isOwner: isOwnerUid(await loadOwnerSettings(admin.firestore()), request.auth.uid) };
+});
+
+export const getOwnerFinanceSummary = onCall({ region: "us-central1", memory: "256MiB", maxInstances: 3 }, async (request) =>
+  getFinanceSummary(admin.firestore(), request.auth?.uid, Date.now())
+);
+
+export const updateExchangeRate = onCall<{ rate?: number }>(
+  { region: "us-central1", memory: "256MiB", maxInstances: 3 },
+  async (request) => setExchangeRate(admin.firestore(), request.auth?.uid, request.data?.rate, Date.now())
+);
+
+// ---------------------------------------------------------------------
+// National Exam Timetable (owner request, 2026-09-29, "Fix 6") — a single
+// shared, global date (the national exam PERIOD's own start date) that
+// activates the learner-facing "Countdown to [year] National Exams?"
+// option. One-time, low-cost AI extraction of a soft copy (photo/PDF) of
+// the real official timetable, same OCR-extraction pattern as
+// extractCoverPageFields above — never invents a date; if the start date
+// genuinely isn't legible/present, says so rather than guessing. Only the
+// app owner OR a school's own leadership/administrator with a real
+// Institutional subscription can SAVE (this is global config every learner
+// nationwide sees, so a wrong date here is a real, visible mistake for
+// everyone, not just one account) — see requireOwnerOrInstitutionalAdmin
+// below (widened 2026-09-29, was owner-only via the same requireOwner gate
+// updateExchangeRate uses). Reading the saved date needs no callable at
+// all: `appConfig/nationalExamTimetable`
+// is readable by any signed-in user directly via Firestore (see
+// firestore.rules, mirrors the existing appConfig/markingCredits pattern),
+// writable only through saveNationalExamTimetable below.
+// ---------------------------------------------------------------------
+
+interface ExtractNationalExamStartDateRequest {
+  fileBase64: string;
+  mimeType: string;
+}
+
+interface ExtractNationalExamStartDateResponse {
+  startDateIso: string;
+  endDateIso: string;
+  foundEnd: boolean;
+  examName: string;
+  found: boolean;
+  notes: string;
+}
+
+const extractNationalExamStartDateSchema = {
+  type: "object",
+  properties: {
+    found: { type: "boolean", description: "True only if an exam period start date is genuinely visible on the document." },
+    startDateIso: {
+      type: "string",
+      description: "The exam period's own start date, as an ISO 8601 date (YYYY-MM-DD). Empty string if not found.",
+    },
+    foundEnd: {
+      type: "boolean",
+      description: "True only if the exam period's own END date (the last day any paper is sat) is genuinely visible on the document.",
+    },
+    endDateIso: {
+      type: "string",
+      description: "The exam period's own end date, as an ISO 8601 date (YYYY-MM-DD). Empty string if not found.",
+    },
+    examName: {
+      type: "string",
+      description: "The exam's own name/title exactly as written (e.g. 'Grade 12 ECZ Examinations'). Empty if not present.",
+    },
+    notes: {
+      type: "string",
+      description: "Anything the reader should double-check before trusting this — an unclear scan, an ambiguous " +
+        "date format, more than one candidate date on the page. Empty string if nothing stood out.",
+    },
+  },
+  required: ["found", "startDateIso", "foundEnd", "endDateIso", "examName", "notes"],
+  additionalProperties: false,
+};
+
+export const extractNationalExamStartDate = onCall<ExtractNationalExamStartDateRequest>(
+  { secrets: [geminiApiKey], region: "us-central1", timeoutSeconds: 60, memory: "512MiB", maxInstances: 5 },
+  metered("transcription", async (request): Promise<ExtractNationalExamStartDateResponse> => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "Sign in is required.");
+    }
+    const { fileBase64, mimeType } = request.data ?? {};
+    if (typeof fileBase64 !== "string" || fileBase64.trim().length === 0) {
+      throw new HttpsError("invalid-argument", "'fileBase64' is required.");
+    }
+    if (typeof mimeType !== "string" || mimeType.trim().length === 0) {
+      throw new HttpsError("invalid-argument", "'mimeType' is required.");
+    }
+
+    const ai = new GoogleGenAI({ apiKey: geminiApiKey.value() });
+    const prompt = [
+      "The attached document is an official national examinations timetable. Find ONLY the date the exam " +
+        "PERIOD ITSELF starts — the first day any paper is sat, not a registration deadline, a briefing date, " +
+        "or any other date that might also appear on the page.",
+      "If that start date is genuinely visible on the document, return it as an ISO 8601 date (YYYY-MM-DD) in " +
+        "startDateIso and set found to true. If it is not clearly present, set found to false and leave " +
+        "startDateIso as an empty string — never guess a date or infer one from indirect context.",
+      "Also find the date the exam PERIOD ITSELF ends — the last day any paper is sat. If genuinely visible, " +
+        "return it as an ISO 8601 date (YYYY-MM-DD) in endDateIso and set foundEnd to true. If not clearly " +
+        "present, set foundEnd to false and leave endDateIso as an empty string — never guess or infer it.",
+      "Also return the exam's own name/title exactly as written, if present.",
+    ].join("\n");
+
+    let text: string | undefined;
+    try {
+      const response = await generateTracked(ai, {
+        model: GEMINI_MODEL,
+        contents: [{ role: "user", parts: [{ text: prompt }, { inlineData: { mimeType, data: fileBase64 } }] }],
+        config: { responseMimeType: "application/json", responseJsonSchema: extractNationalExamStartDateSchema },
+      });
+      text = response.text;
+    } catch (err) {
+      console.error("extractNationalExamStartDate: Gemini call failed", err);
+      throw quotaExhaustedError(err) ?? new HttpsError("internal", "Failed to read the timetable. Please try again.");
+    }
+
+    if (!text) {
+      throw new HttpsError("internal", "The AI did not return any content.");
+    }
+    try {
+      return JSON.parse(text) as ExtractNationalExamStartDateResponse;
+    } catch (err) {
+      console.error("extractNationalExamStartDate: response was not valid JSON", text);
+      throw new HttpsError("internal", "The timetable response could not be parsed.");
+    }
+  })
+);
+
+// Widened access (owner request, 2026-09-29, refining Fix 6): originally
+// owner-only; the owner asked that a genuine school be able to self-serve
+// this too, not just the app account — but only that school's OWN
+// leadership/administrator, and only once that school carries a real
+// Institutional subscription (the paid tier, not Gold or Basic). Mirrors
+// the exact same role-lookup + tier-lookup shape every other paid-tier
+// write in this app already uses (client-supplied schoolId, a real read of
+// schools/{schoolId}/members/{uid} for the role — never trusts the
+// caller's own custom-claims token for the actual permission decision,
+// only for client-side "should I show this UI" guidance — see
+// callerCanManageTimetable/schoolMeetsTimetableTier above for Timetable
+// Generation's own Gold+ gate, the closest existing precedent). The app
+// owner can still always save, with no schoolId needed at all.
+async function requireOwnerOrInstitutionalAdmin(
+  db: FirebaseFirestore.Firestore,
+  uid: string | undefined,
+  schoolId: string | undefined
+): Promise<void> {
+  try {
+    await requireOwner(db, uid);
+    return;
+  } catch (err) {
+    if (!(err instanceof HttpsError) || err.code !== "permission-denied") throw err;
+  }
+  if (!schoolId) {
+    throw new HttpsError(
+      "permission-denied",
+      "Only the app owner, or a school's own leadership/administrator with an Institutional subscription, can save this."
+    );
+  }
+  const [memberSnap, schoolSnap] = await Promise.all([
+    db.collection("schools").doc(schoolId).collection("members").doc(uid!).get(),
+    db.collection("schools").doc(schoolId).get(),
+  ]);
+  const role = memberSnap.data()?.role as SchoolRole | undefined;
+  const isSchoolAdmin = !!role && (LEADERSHIP_ROLES.includes(role) || role === "administrator");
+  if (!isSchoolAdmin) {
+    throw new HttpsError("permission-denied", "Only your school's leadership or administrator can save this.");
+  }
+  const schoolData = schoolSnap.data();
+  const tier = (schoolData?.subscriptionTier as string | undefined) ??
+    (schoolData?.institutionalSubscription === true ? "institutional" : "basic");
+  if (tier !== "institutional") {
+    throw new HttpsError("failed-precondition", "This requires your school to have an Institutional subscription.");
+  }
+}
+
+export const saveNationalExamTimetable = onCall<{
+  year?: number;
+  startDateIso?: string;
+  endDateIso?: string;
+  schoolId?: string;
+}>(
+  { region: "us-central1", memory: "256MiB", maxInstances: 3 },
+  async (request) => {
+    const { year, startDateIso, endDateIso, schoolId } = request.data ?? {};
+    await requireOwnerOrInstitutionalAdmin(admin.firestore(), request.auth?.uid, schoolId);
+    if (typeof year !== "number" || !Number.isInteger(year) || year < 2026 || year > 2100) {
+      throw new HttpsError("invalid-argument", "A valid exam year is required.");
+    }
+    const parsedStart = typeof startDateIso === "string" ? new Date(startDateIso) : null;
+    if (!parsedStart || Number.isNaN(parsedStart.getTime())) {
+      throw new HttpsError("invalid-argument", "A valid start date is required.");
+    }
+    const parsedEnd = typeof endDateIso === "string" && endDateIso.trim().length > 0 ? new Date(endDateIso) : null;
+    if (endDateIso && endDateIso.trim().length > 0 && (!parsedEnd || Number.isNaN(parsedEnd.getTime()))) {
+      throw new HttpsError("invalid-argument", "The end date is not valid.");
+    }
+    if (parsedEnd && parsedEnd.getTime() < parsedStart.getTime()) {
+      throw new HttpsError("invalid-argument", "The end date cannot be before the start date.");
+    }
+    await admin.firestore().collection("appConfig").doc("nationalExamTimetable").set({
+      year,
+      startDateIso: parsedStart.toISOString().slice(0, 10),
+      endDateIso: parsedEnd ? parsedEnd.toISOString().slice(0, 10) : null,
+      updatedAt: admin.firestore.Timestamp.now(),
+      updatedByUid: request.auth?.uid ?? null,
+    });
+    return { saved: true };
+  }
+);
+
+// ---------------------------------------------------------------------
+// Sugo Library (owner request, 2026-09-29) — a learner-facing bank of
+// pre-generated bulletin-style topic notes, built ENTIRELY OFFLINE ONCE by
+// a developer-run batch script (tool/generate_sugo_library.dart, not
+// live in the app), never at read time. Two functions, deliberately kept
+// separate: this one is the ONLY one that calls Gemini (and does nothing
+// else — no write), so the AI-cost surface is exactly one function; the
+// other (saveSugoLibraryTopic) is a plain Firestore write with no AI cost
+// at all, used for BOTH the mechanical (no-AI) tier and this one's output.
+// Both owner-gated — same requireOwner as updateExchangeRate/
+// saveNationalExamTimetable above; this is a one-time developer batch job,
+// never something the app itself calls automatically or invokes per-user.
+// ---------------------------------------------------------------------
+
+interface CondenseSugoLibraryTopicRequest {
+  subjectName: string;
+  topicName: string;
+  subTopicName?: string;
+  curriculumLabel: string; // "OBC" or "CBC" — for the prompt only.
+  groundingExcerpt: string; // Real Subject Content Database/pamphlet text.
+  competencies: string[];
+  objectives: string[];
+  wordCap: number; // Up to 600, scaled down by the caller for thin source material.
+}
+
+interface CondenseSugoLibraryTopicResponse {
+  notes: string[]; // Bullet lines.
+  questions: { q: string; a: string }[]; // 3-5 recall/practice questions.
+}
+
+const condenseSugoLibraryTopicSchema = {
+  type: "object",
+  properties: {
+    notes: {
+      type: "array",
+      items: { type: "string" },
+      description: "Bulletin-style bullet lines summarizing this topic, grounded ONLY in the grounding excerpt " +
+        "and the listed competencies/objectives — never inventing content beyond them.",
+    },
+    questions: {
+      type: "array",
+      minItems: 3,
+      maxItems: 5,
+      items: {
+        type: "object",
+        properties: {
+          q: { type: "string", description: "A short recall/practice question about this topic." },
+          a: { type: "string", description: "Its answer, grounded in the same real source." },
+        },
+        required: ["q", "a"],
+        additionalProperties: false,
+      },
+      description: "3-5 short recall/practice questions for self-check, grounded in the same real source.",
+    },
+  },
+  required: ["notes", "questions"],
+  additionalProperties: false,
+};
+
+export const condenseSugoLibraryTopic = onCall<CondenseSugoLibraryTopicRequest>(
+  { secrets: [geminiApiKey], region: "us-central1", timeoutSeconds: 60, memory: "512MiB", maxInstances: 5 },
+  metered("transcription", async (request): Promise<CondenseSugoLibraryTopicResponse> => {
+    await requireOwner(admin.firestore(), request.auth?.uid);
+    const { subjectName, topicName, subTopicName, curriculumLabel, groundingExcerpt, competencies, objectives, wordCap } =
+      request.data ?? {};
+    if (!nonEmptyString(subjectName) || !nonEmptyString(topicName) || !nonEmptyString(groundingExcerpt)) {
+      throw new HttpsError("invalid-argument", "subjectName, topicName and groundingExcerpt are required.");
+    }
+    const cap = typeof wordCap === "number" && wordCap > 0 && wordCap <= 600 ? wordCap : 600;
+
+    const ai = new GoogleGenAI({ apiKey: geminiApiKey.value() });
+    const prompt = [
+      `Subject: ${subjectName} (${curriculumLabel || "OBC/CBC"} curriculum). Topic: ${topicName}` +
+        (subTopicName ? ` — ${subTopicName}` : "") + ".",
+      "Write bulletin-style study notes for this topic, as an array of short bullet lines, up to " +
+        `${cap} words total (scale down if the source material below is thin — never pad with invented content).`,
+      "Ground the notes ONLY in this real source excerpt and the listed competencies/objectives — never invent " +
+        "facts, examples or figures beyond what they state or directly imply.",
+      `Source excerpt:\n${groundingExcerpt}`,
+      competencies && competencies.length > 0 ? `Competencies:\n${competencies.join("\n")}` : "",
+      objectives && objectives.length > 0 ? `Objectives:\n${objectives.join("\n")}` : "",
+      "Also produce 3-5 short recall/practice questions with answers, for a learner to self-check understanding " +
+        "of this topic — grounded in the same real source, never inventing beyond it.",
+    ].filter((s) => s.length > 0).join("\n\n");
+
+    let text: string | undefined;
+    try {
+      const response = await generateTracked(ai, {
+        model: GEMINI_MODEL,
+        contents: [{ role: "user", parts: [{ text: prompt }] }],
+        config: { responseMimeType: "application/json", responseJsonSchema: condenseSugoLibraryTopicSchema },
+      });
+      text = response.text;
+    } catch (err) {
+      console.error("condenseSugoLibraryTopic: Gemini call failed", err);
+      throw quotaExhaustedError(err) ?? new HttpsError("internal", "Failed to generate notes. Please try again.");
+    }
+
+    if (!text) {
+      throw new HttpsError("internal", "The AI did not return any content.");
+    }
+    try {
+      return JSON.parse(text) as CondenseSugoLibraryTopicResponse;
+    } catch (err) {
+      console.error("condenseSugoLibraryTopic: response was not valid JSON", text);
+      throw new HttpsError("internal", "The notes response could not be parsed.");
+    }
+  })
+);
+
+interface SaveSugoLibraryTopicRequest {
+  topicId: string;
+  curriculumCode: string;
+  subjectCode: string;
+  gradeLevel: number;
+  topicName: string;
+  subTopicName?: string;
+  notes: string[];
+  questions?: { q: string; a: string }[];
+  sourceTier: "mechanical" | "ai_condensed" | "unavailable";
+  contentVersion: string;
+}
+
+export const saveSugoLibraryTopic = onCall<SaveSugoLibraryTopicRequest>(
+  { region: "us-central1", memory: "256MiB", maxInstances: 5 },
+  async (request) => {
+    await requireOwner(admin.firestore(), request.auth?.uid);
+    const { topicId, curriculumCode, subjectCode, gradeLevel, topicName, subTopicName, notes, questions, sourceTier, contentVersion } =
+      request.data ?? {};
+    if (!nonEmptyString(topicId) || !nonEmptyString(curriculumCode) || !nonEmptyString(subjectCode) ||
+      !nonEmptyString(topicName) || !nonEmptyString(contentVersion)) {
+      throw new HttpsError("invalid-argument", "topicId, curriculumCode, subjectCode, topicName and contentVersion are required.");
+    }
+    if (typeof gradeLevel !== "number" || !Number.isInteger(gradeLevel)) {
+      throw new HttpsError("invalid-argument", "A valid gradeLevel is required.");
+    }
+    if (!Array.isArray(notes)) {
+      throw new HttpsError("invalid-argument", "notes must be an array.");
+    }
+    if (sourceTier !== "mechanical" && sourceTier !== "ai_condensed" && sourceTier !== "unavailable") {
+      throw new HttpsError("invalid-argument", "A valid sourceTier is required.");
+    }
+
+    const db = admin.firestore();
+    await db.collection("sugoLibrary").doc(topicId).set({
+      curriculumCode,
+      subjectCode,
+      gradeLevel,
+      topicName,
+      subTopicName: subTopicName ?? null,
+      notes,
+      questions: Array.isArray(questions) ? questions : [],
+      sourceTier,
+      contentVersion,
+      updatedAt: admin.firestore.Timestamp.now(),
+    });
+    await db.collection("appConfig").doc("sugoLibraryManifest").set(
+      { hashes: { [topicId]: contentVersion }, updatedAt: admin.firestore.Timestamp.now() },
+      { merge: true }
+    );
+    return { saved: true };
+  }
+);
+
+/** Daily: re-roll the 12-month window (old purchases age out) and alert the owner if the threshold is newly crossed. */
+export const dailyRevenueRecompute = onSchedule(
+  { schedule: "0 6 * * *", timeZone: "Africa/Lusaka", secrets: [brevoApiKey, brevoSenderEmail], region: "us-central1", timeoutSeconds: 120, memory: "256MiB" },
+  async () => {
+    await refreshRevenueAndNotify({ db: admin.firestore(), notifyOwner: notifyOwnerByEmail, nowMs: Date.now() });
+  }
+);
+
+/**
+ * AdMob server-side verification callback. Google's servers call this after a
+ * genuine, completed rewarded ad; the request is signed with Google's key, and
+ * only a request that verifies can mint an ad pass (see adPass.ts). Public on
+ * purpose — the signature, not the caller, is the authentication. Point the
+ * rewarded ad unit's SSV callback URL at this function.
+ */
+export const admobRewardCallback = onRequest(
+  { region: "us-central1", invoker: "public", memory: "256MiB", maxInstances: 5 },
+  async (req, res) => {
+    const rawQuery = req.url.includes("?") ? req.url.slice(req.url.indexOf("?") + 1) : "";
+    try {
+      const { status, body } = await handleAdmobCallback(admin.firestore(), rawQuery, Date.now());
+      res.status(status).send(body);
+    } catch (err) {
+      console.error("admobRewardCallback failed", err);
+      res.status(500).send("error");
     }
   }
 );

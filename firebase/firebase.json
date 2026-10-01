@@ -1,7 +1,14 @@
 {
   "hosting": {
     "public": "hosting/public",
-    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"]
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "rewrites": [{ "source": "/admin/**", "destination": "/admin/index.html" }],
+    "headers": [
+      {
+        "source": "/admin/@(index.html|flutter_service_worker.js|flutter_bootstrap.js|version.json)",
+        "headers": [{ "key": "Cache-Control", "value": "no-cache" }]
+      }
+    ]
   },
   "firestore": {
     "rules": "firestore.rules",

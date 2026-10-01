@@ -12,18 +12,34 @@
     "shell": "npm run build && firebase functions:shell",
     "deploy": "firebase deploy --only functions",
     "logs": "firebase functions:log",
-    "verify:timetable": "npm run build && node scripts/verify_timetable_engine.js"
+    "verify:timetable": "npm run build && node scripts/verify_timetable_engine.js",
+    "test": "jest",
+    "jest:int": "jest --config jest.int.config.js --runInBand",
+    "test:int": "cd .. && npx --yes firebase-tools@13 emulators:exec --only firestore \"npm --prefix functions run jest:int\""
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.119.0",
     "@google/genai": "^2.19.0",
     "firebase-admin": "^13.0.0",
     "firebase-functions": "^6.2.0",
+    "google-auth-library": "^10.9.1",
     "pdf-lib": "^1.17.1",
     "pdfjs-dist": "^4.10.38"
   },
   "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "jest": "^30.5.2",
+    "ts-jest": "^29.4.12",
     "typescript": "^5.7.0"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "/lib/",
+      "\\.int\\.test\\.ts$"
+    ]
   },
   "private": true
 }
