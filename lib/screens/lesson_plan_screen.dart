@@ -1,4 +1,5 @@
 import 'dart:async' show unawaited;
+import 'dart:io' show File;
 
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
@@ -7,7 +8,6 @@ import '../models/embedded_lesson_plan.dart';
 import '../models/lesson_checkpoint.dart';
 import '../models/lesson_plan.dart';
 import '../models/lesson_stage.dart';
-import '../models/marking_scheme.dart';
 import '../models/scheme_of_work.dart';
 import '../models/subject_content_item.dart';
 import '../services/custom_template_repository.dart';
@@ -17,12 +17,20 @@ import '../services/lesson_checkpoint_repository.dart';
 import '../services/lesson_history_repository.dart';
 import '../services/lesson_plan_ai_service.dart';
 import '../services/lesson_plan_document_service.dart';
+import '../services/lesson_prior_knowledge.dart';
 import '../services/lesson_progression_generator.dart';
+import '../services/lesson_rationale.dart';
+import '../services/lesson_references.dart';
+import '../services/lesson_teaching_materials.dart';
+import '../services/lesson_teaching_points.dart';
 import '../services/priority_content_resolver.dart';
+import '../services/senior_secondary_content_filter.dart';
 import '../services/subject_content_index.dart';
 import '../services/teacher_profile_repository.dart';
+import '../services/template_repository.dart';
 import '../services/teaching_notes_document_service.dart';
 import '../services/teaching_notes_service.dart';
+import '../widgets/app_primary_button.dart';
 
 /// Lets a teacher fill in a lesson plan template for one scheme-of-work
 /// entry (topic/sub-topic already known from the syllabus), then export it
@@ -57,6 +65,7 @@ class LessonPlanScreen extends StatefulWidget {
     this.checkpointRepository,
     this.embeddedLessonPlanRepository,
     this.lessonPlanAiService,
+    this.templateRepository,
     this.notesService,
     this.notesDocumentService,
     this.guidedActivitiesText,
@@ -78,6 +87,12 @@ class LessonPlanScreen extends StatefulWidget {
   final LessonCheckpointRepository? checkpointRepository;
   final EmbeddedLessonPlanRepository? embeddedLessonPlanRepository;
   final LessonPlanAiService? lessonPlanAiService;
+
+  /// Used only to auto-fill "4. Prior / Pre-requisite Knowledge" for the OBC
+  /// official layouts (2026-09-27) — the real preceding sub-topic in this
+  /// subject's own syllabus sequence. Injectable for tests; every other
+  /// caller gets the app's real, DB-backed repository.
+  final TemplateRepository? templateRepository;
 
   /// The companion "Lesson Notes" document's AI generation (2026-09-02) —
   /// reuses the same `generateTeachingNotes` pipeline "Generate Teaching
@@ -160,6 +175,7 @@ class _LessonPlanScreenState extends State<LessonPlanScreen> {
   late final TeachingNotesService _notesService = widget.notesService ?? TeachingNotesService();
   late final TeachingNotesDocumentService _notesDocumentService =
       widget.notesDocumentService ?? TeachingNotesDocumentService();
+  late final TemplateRepository _templateRepository = widget.templateRepository ?? TemplateRepository();
 
   List<LessonPlanTemplate> _availableTemplates = const [];
   late LessonPlanTemplate _activeTemplate;
@@ -172,7 +188,42 @@ class _LessonPlanScreenState extends State<LessonPlanScreen> {
   bool _usingEmbedded = false;
   List<SubjectContentItem> _relatedMaterials = const [];
   String? _subjectContentExcerpt;
-  List<MarkingScheme> _relatedMarkingKeys = const [];
+
+  /// The Development stage's Content / Learning Points text exactly as the
+  /// app last generated it (null when unknown — a resumed checkpoint or an
+  /// embedded plan). Lets [_export] tell "still the auto-generated points"
+  /// from "the teacher's own edits", which must never be overwritten.
+  String? _autoDevelopmentContent;
+
+  /// Grade 10-12 (OBC) lessons never mention Form 1-5 or carry placeholder
+  /// question marks (2026-09-27) — see senior_secondary_content_filter.dart.
+  bool get _seniorSecondary => isSeniorSecondaryCurriculum(widget.curriculumCode);
+
+  String _cleanForLevel(String text) => _seniorSecondary ? cleanGeneratedText(text) : text;
+
+  /// The syllabus's own outcomes for this lesson (objectives when present,
+  /// else competencies) — what a short Content list is topped up from.
+  List<String> get _outcomePoints => widget.entry.objectives.isNotEmpty
+      ? [for (final o in widget.entry.objectives) o.description]
+      : [for (final c in widget.entry.competencies) c.description];
+
+  /// Real outcomes from every OTHER sub-topic under this entry's own topic
+  /// (2026-09-27, per explicit request: rationale needs at least 2-3 real
+  /// points) — already loaded on [widget.entry.topic], no extra lookup
+  /// needed. Only ever used to top up a rationale that's short on its own
+  /// sub-topic's outcomes; never mixed in when there are already enough.
+  List<String> get _siblingSubTopicOutcomes => [
+        for (final st in widget.entry.topic.subTopics)
+          if (st.id != widget.entry.subTopic?.id)
+            ...(st.objectives.isNotEmpty ? st.objectives.map((o) => o.description) : st.competencies.map((c) => c.description)),
+      ];
+
+  int get _developmentIndex => _draft.progression.indexWhere((r) => r.stage.toLowerCase().contains('development'));
+
+  String? get _developmentContent {
+    final i = _developmentIndex;
+    return i == -1 ? null : _draft.progression[i].content;
+  }
 
   @override
   void initState() {
@@ -217,7 +268,6 @@ class _LessonPlanScreenState extends State<LessonPlanScreen> {
       setState(() {
         if (resolution.embeddedLessonPlans.isNotEmpty) _embeddedMatches = resolution.embeddedLessonPlans;
         if (resolution.relatedMaterials.isNotEmpty) _relatedMaterials = resolution.relatedMaterials;
-        if (resolution.relatedMarkingKeys.isNotEmpty) _relatedMarkingKeys = resolution.relatedMarkingKeys;
       });
       // Pamphlet-derived grounding (2026-09-15) is folded into the same
       // excerpt string rather than threaded through as a whole separate
@@ -232,8 +282,47 @@ class _LessonPlanScreenState extends State<LessonPlanScreen> {
         _subjectContentExcerpt = combinedExcerpt;
         _mergeExcerptIntoDevelopmentRow(combinedExcerpt);
       }
+      unawaited(_fillObcSupportingSections());
     } catch (_) {
       // Best-effort enrichment only.
+    }
+  }
+
+  /// OBC official layouts only (2026-09-27, per explicit request): fills "4.
+  /// Prior / Pre-requisite Knowledge" from the real preceding sub-topic in
+  /// this subject's own syllabus sequence. Never overwrites a field the
+  /// teacher has already typed into (or a resumed/embedded draft's own real
+  /// value) — same "enrich, don't discard" principle as
+  /// [_mergeExcerptIntoDevelopmentRow].
+  ///
+  /// "6. Teaching and Learning Materials/Resources" used to get a second,
+  /// async top-up here with real bundled material titles once resolved —
+  /// removed 2026-09-28 (same fix as [_rebuildForActiveTemplate]'s sync
+  /// default): naming a specific saved item's own title there had been
+  /// citing it as a genuine reference for a different curriculum/grade,
+  /// which it is not. The sync default's syllabus placeholder is the only
+  /// text section 6 gets now.
+  Future<void> _fillObcSupportingSections() async {
+    if (!_activeTemplate.usesOfficialObcLayout) return;
+    if (_draft.value('priorKnowledge').isNotEmpty) return;
+
+    try {
+      final preceding = await findPrecedingSyllabusEntry(
+        templates: _templateRepository,
+        curriculumCode: widget.curriculumCode,
+        subjectCode: widget.subjectCode,
+        gradeLevel: widget.gradeLevel,
+        current: widget.entry,
+      );
+      final text = buildPriorKnowledgeText(preceding);
+      if (text != null && mounted && _draft.value('priorKnowledge').isEmpty) {
+        setState(() {
+          _draft = _draft.withValue('priorKnowledge', text);
+          _controllers['priorKnowledge']?.text = text;
+        });
+      }
+    } catch (_) {
+      // Best-effort only — the field is left for the teacher to fill.
     }
   }
 
@@ -249,12 +338,15 @@ class _LessonPlanScreenState extends State<LessonPlanScreen> {
       _activeTemplate.progressionStages,
       widget.entry,
       subjectContentExcerpt: excerpt,
+      contentMode: _activeTemplate.progressionContentMode,
     );
     if (devIndex >= regenerated.length) return;
 
     setState(() {
       _draft = _draft.withProgressionRow(devIndex, regenerated[devIndex]);
       _controllers['progression_${devIndex}_teacher']?.text = regenerated[devIndex].teacherRole;
+      _controllers['progression_${devIndex}_content']?.text = regenerated[devIndex].content;
+      _autoDevelopmentContent = regenerated[devIndex].content;
     });
   }
 
@@ -273,7 +365,7 @@ class _LessonPlanScreenState extends State<LessonPlanScreen> {
   void _applyEmbedded(EmbeddedLessonPlan plan) {
     final values = Map<String, String>.from(_draft.values);
     void set(String id, String? value) {
-      if (value != null && value.trim().isNotEmpty) values[id] = value;
+      if (value != null && value.trim().isNotEmpty) values[id] = _cleanForLevel(value);
     }
 
     set('rationale', plan.rationale);
@@ -283,11 +375,15 @@ class _LessonPlanScreenState extends State<LessonPlanScreen> {
     set('majorLearningPoint', plan.majorLearningPoint);
     set('lessonGoal', plan.lessonGoal);
     set('duration', plan.duration);
-    if (plan.objectives.isNotEmpty) values['expectedStandard'] = plan.objectives.join('\n');
+    if (plan.objectives.isNotEmpty) values['expectedStandard'] = _cleanForLevel(plan.objectives.join('\n'));
 
     var progression = [
       for (final row in plan.progression)
-        LessonProgressionRow(stage: row.stage, teacherRole: row.teacherRole ?? '', learnersRole: row.learnersRole ?? ''),
+        LessonProgressionRow(
+          stage: row.stage,
+          teacherRole: _cleanForLevel(row.teacherRole ?? ''),
+          learnersRole: _cleanForLevel(row.learnersRole ?? ''),
+        ),
     ];
     final focus = widget.focusStage;
     if (focus != null && progression.isNotEmpty) {
@@ -341,6 +437,10 @@ class _LessonPlanScreenState extends State<LessonPlanScreen> {
           currentEntry: widget.entry,
         );
         priorityContext = findings.combinedContext;
+        if (_seniorSecondary && priorityContext != null) {
+          final cleaned = cleanSourceText(priorityContext);
+          priorityContext = cleaned.isEmpty ? null : cleaned;
+        }
       }
 
       final result = await _aiService.generate(
@@ -354,6 +454,12 @@ class _LessonPlanScreenState extends State<LessonPlanScreen> {
         progressionStages: _activeTemplate.progressionStages,
         priorityPhrase: priorityPhrase,
         priorityContext: priorityContext,
+        seniorSecondary: _seniorSecondary,
+        contentColumnMode: switch (_activeTemplate.progressionContentMode) {
+          LessonProgressionContentMode.ownColumn => 'column',
+          LessonProgressionContentMode.omitted => 'omitted',
+          LessonProgressionContentMode.foldedIntoTeacherRole => null,
+        },
       );
       if (!mounted) return;
       unawaited(FreeTierEntitlementService.instance.recordUsed(FreeTierFeature.lessonPlan));
@@ -368,13 +474,28 @@ class _LessonPlanScreenState extends State<LessonPlanScreen> {
       set('tlm', result.tlm);
       set('expectedStandard', result.expectedStandard);
 
+      var mergedProgression = result.mergedProgression(
+        _draft.progression,
+        includeContent: _activeTemplate.hasContentColumn,
+      );
+      if (_activeTemplate.hasContentColumn) {
+        // Never fewer than six points under Lesson Development, even if the
+        // AI returned fewer.
+        final dev = mergedProgression.indexWhere((r) => r.stage.toLowerCase().contains('development'));
+        if (dev != -1) {
+          mergedProgression = [...mergedProgression]..[dev] = mergedProgression[dev].copyWith(
+              content: ensureContentText(mergedProgression[dev].content,
+                  outcomes: _outcomePoints, topicLabel: widget.entry.title));
+        }
+      }
       setState(() {
         _rebuildForActiveTemplate(
           seedDraft: LessonPlanDraft(
             values: values,
-            progression: result.mergedProgression(_draft.progression),
+            progression: mergedProgression,
           ),
         );
+        _autoDevelopmentContent = _developmentContent;
       });
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -511,11 +632,51 @@ class _LessonPlanScreenState extends State<LessonPlanScreen> {
             ? widget.entry.objectives.map((o) => o.description)
             : widget.entry.competencies.map((c) => c.description);
         if (rationaleSource.isNotEmpty) {
+          // OBC official layouts: at most three points, each opening with a
+          // different action word (see lesson_rationale.dart). Every other
+          // template keeps its full list exactly as before.
           built = built.withValue(
             'rationale',
-            'This lesson matters because, by the end of it, learners will be able to:\n'
-                '${rationaleSource.map((s) => '•  $s').join('\n')}',
+            (_activeTemplate.usesOfficialObcLayout
+                    ? buildObcRationale(rationaleSource.toList(), topUp: _siblingSubTopicOutcomes)
+                    : null) ??
+                'This lesson matters because, by the end of it, learners will be able to:\n'
+                    '${rationaleSource.map((s) => '•  $s').join('\n')}',
           );
+        }
+      }
+      // Every template, not just OBC (real gap fixed 2026-09-28: References
+      // was blank whenever a topic had no curated entry.references of its
+      // own, which is most topics — see buildLessonPlanReferencesText's own
+      // doc). The syllabus's own curated references (when it has any) are
+      // kept first; the two guaranteed generic ones are always appended
+      // after, so this field is never blank.
+      if (built.value('references').isEmpty) {
+        built = built.withValue(
+          'references',
+          buildLessonPlanReferencesText(
+            curated: widget.entry.references,
+            subjectName: widget.subjectName,
+            isObc: _seniorSecondary,
+          ),
+        );
+      }
+      if (_activeTemplate.usesOfficialObcLayout) {
+        // OBC official layouts only (CBC and every other template stay as
+        // they were): section 11 has no progression row to carry a
+        // homework default, so it gets its default text here.
+        if (built.value('homework').isEmpty) built = built.withValue('homework', defaultObcHomeworkText);
+        // Section 6: a generic syllabus placeholder plus the standard
+        // classroom staples — never a specific saved item's own title (real
+        // bug fixed 2026-09-28: a bundled Form 1 module's title was being
+        // cited as if it were a genuine reference for a Grade 10-12 lesson,
+        // which it is not — see buildTeachingMaterialsText). Section 4
+        // (Prior Knowledge) is filled asynchronously — see
+        // _fillObcSupportingSections — since finding the real preceding
+        // sub-topic needs a repository read.
+        if (built.value('tlm').isEmpty) {
+          final staples = buildTeachingMaterialsText(const [], syllabusPlaceholder: '${widget.subjectName} Grade 10-12 Syllabus');
+          built = built.withValue('tlm', staples);
         }
       }
       if (built.progression.isNotEmpty) {
@@ -527,6 +688,7 @@ class _LessonPlanScreenState extends State<LessonPlanScreen> {
           _activeTemplate.progressionStages,
           widget.entry,
           subjectContentExcerpt: _subjectContentExcerpt,
+          contentMode: _activeTemplate.progressionContentMode,
         );
         for (var i = 0; i < generated.length && i < built.progression.length; i++) {
           built = built.withProgressionRow(i, generated[i]);
@@ -566,10 +728,12 @@ class _LessonPlanScreenState extends State<LessonPlanScreen> {
     for (var i = 0; i < _draft.progression.length; i++) {
       final row = _draft.progression[i];
       _controllers['progression_${i}_duration'] = TextEditingController(text: row.durationMinutes);
+      _controllers['progression_${i}_content'] = TextEditingController(text: row.content);
       _controllers['progression_${i}_teacher'] = TextEditingController(text: row.teacherRole);
       _controllers['progression_${i}_learners'] = TextEditingController(text: row.learnersRole);
       _controllers['progression_${i}_assessment'] = TextEditingController(text: row.assessmentCriteria);
     }
+    _autoDevelopmentContent = seed == null ? _developmentContent : null;
   }
 
   void _onTemplateChanged(LessonPlanTemplate? template) {
@@ -598,6 +762,7 @@ class _LessonPlanScreenState extends State<LessonPlanScreen> {
         i,
         _draft.progression[i].copyWith(
           durationMinutes: _controllers['progression_${i}_duration']!.text,
+          content: _controllers['progression_${i}_content']!.text,
           teacherRole: _controllers['progression_${i}_teacher']!.text,
           learnersRole: _controllers['progression_${i}_learners']!.text,
           assessmentCriteria: _controllers['progression_${i}_assessment']!.text,
@@ -639,9 +804,20 @@ class _LessonPlanScreenState extends State<LessonPlanScreen> {
     _syncDraftFromControllers();
     setState(() => _exporting = true);
     try {
-      final planFile = await _documentService.generateDocx(_activeTemplate, _draft, relatedMarkingKeys: _relatedMarkingKeys);
-      final files = [XFile(planFile.path)];
+      final files = <XFile>[];
       var notesIncluded = false;
+      var contentFollowsNotes = false;
+      String? notesText;
+      File? notesFile;
+      // Real, reported gap (2026-09-28): this used to be a silent `catch (_)`
+      // with no record of WHY notes generation failed, and the SnackBar
+      // below always said "connect to the internet" regardless of the real
+      // reason — actively misleading when the device WAS online and the
+      // failure was something else entirely (e.g. AuthService's own
+      // Firebase-reachability issue). Kept best-effort (a notes failure
+      // still never blocks sharing the plan itself) but the real reason is
+      // now captured and shown, not guessed at or hidden.
+      String? notesFailureReason;
 
       if (await _notesService.isOnline) {
         try {
@@ -652,17 +828,42 @@ class _LessonPlanScreenState extends State<LessonPlanScreen> {
             syllabusContext: _lessonNotesSyllabusContext(),
             format: 'bullet',
             onePage: true,
+            seniorSecondary: _seniorSecondary,
           );
-          final notesFile = await _notesDocumentService.generateDocx(
+          notesText = _cleanForLevel(notesResult.notes);
+          notesFile = await _notesDocumentService.generateDocx(
             title: 'Lesson Notes — ${widget.entry.title}',
-            notes: notesResult.notes,
+            notes: notesText,
           );
-          files.add(XFile(notesFile.path));
           notesIncluded = true;
-        } catch (_) {
+        } catch (error) {
           // Best-effort only — the lesson plan itself still shares below.
+          notesFailureReason = '$error';
         }
       }
+
+      // The Notes are written first (2026-09-26, per explicit request) so a
+      // Content / Learning Points column with its own column can carry the
+      // SAME teaching points the accompanying Lesson Notes make — six of
+      // them — instead of a thinner offline summary. Only touches the
+      // Development cell, and only while it is still the auto-generated text.
+      if (notesText != null && _activeTemplate.hasContentColumn) {
+        final devIndex = _developmentIndex;
+        final points = teachingPointsFromNotes(notesText);
+        if (devIndex != -1 &&
+            points.isNotEmpty &&
+            contentMayBeReplaced(current: _draft.progression[devIndex].content, autoGenerated: _autoDevelopmentContent)) {
+          final text = ensureContentText(bulletLines(points), outcomes: _outcomePoints, topicLabel: widget.entry.title);
+          _draft = _draft.withProgressionRow(devIndex, _draft.progression[devIndex].copyWith(content: text));
+          _autoDevelopmentContent = text;
+          _controllers['progression_${devIndex}_content']?.text = text;
+          contentFollowsNotes = true;
+        }
+      }
+
+      final planFile = await _documentService.generateDocx(_activeTemplate, _draft);
+      files.add(XFile(planFile.path));
+      if (notesFile != null) files.add(XFile(notesFile.path));
 
       if (!mounted) return;
       // The OS share sheet is what actually surfaces WhatsApp, email,
@@ -673,11 +874,40 @@ class _LessonPlanScreenState extends State<LessonPlanScreen> {
         subject: 'Lesson Plan — ${widget.entry.topic.name}',
       ));
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(notesIncluded
-              ? 'Shared the lesson plan with a companion Lesson Notes document.'
-              : "Shared the lesson plan — connect to the internet to also include Lesson Notes next time."),
-        ));
+        if (notesIncluded) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(contentFollowsNotes
+                ? 'Shared the lesson plan with a companion Lesson Notes document — its Content column lists the same teaching points.'
+                : 'Shared the lesson plan with a companion Lesson Notes document.'),
+          ));
+        } else if (notesFailureReason != null) {
+          // A real generation failure (device WAS online) shows a proper
+          // dialog, not a SnackBar — the whole point of capturing the real
+          // reason (2026-09-28) is defeated if it flashes past unread.
+          // Requires an explicit OK so it's actually seen and can be
+          // screenshotted/reported back.
+          await showDialog<void>(
+            context: context,
+            builder: (dialogContext) => AlertDialog(
+              title: const Text('Lesson Notes could not be generated'),
+              // Scrollable — the real underlying error (see
+              // FirebaseUnavailableException's widened truncation) can now
+              // run well past what a plain AlertDialog would fit.
+              content: SingleChildScrollView(
+                child: Text(
+                  'The lesson plan itself was shared normally. The companion Lesson Notes document failed with:\n\n$notesFailureReason',
+                ),
+              ),
+              actions: [
+                TextButton(onPressed: () => Navigator.of(dialogContext).pop(), child: const Text('OK')),
+              ],
+            ),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text("Shared the lesson plan — connect to the internet to also include Lesson Notes next time."),
+          ));
+        }
       }
       // Skipped entirely for a one-off lesson plan — see widget.isOneOff's
       // own doc comment for why (this aggregates by subject+grade only,
@@ -736,7 +966,7 @@ class _LessonPlanScreenState extends State<LessonPlanScreen> {
                     height: 20,
                     child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                   )
-                : const Icon(Icons.auto_awesome),
+                : const Icon(Icons.auto_awesome_outlined),
           ),
         ],
       ),
@@ -891,13 +1121,27 @@ class _LessonPlanScreenState extends State<LessonPlanScreen> {
       ),
       bottomNavigationBar: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: FilledButton.icon(
-            onPressed: _exporting ? null : _export,
-            icon: _exporting
-                ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
-                : const Icon(Icons.description_outlined),
-            label: const Text('Export & Share (Word)'),
+          padding: const EdgeInsets.fromLTRB(12, 8, 12, 12),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // 2026-09-27, per explicit request: this has already generated
+              // both documents together in one action since 2026-09-02 (see
+              // _export) — stated here up front rather than only learned
+              // after the fact from the share-result SnackBar.
+              Text(
+                'Also generates a companion Lesson Notes bulletin for this topic when online.',
+                style: Theme.of(context).textTheme.bodySmall,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 8),
+              AppPrimaryButton(
+                onPressed: _export,
+                loading: _exporting,
+                icon: Icons.description_outlined,
+                label: 'Export & Share (Word)',
+              ),
+            ],
           ),
         ),
       ),
@@ -958,6 +1202,14 @@ class _LessonPlanScreenState extends State<LessonPlanScreen> {
                 ),
               ],
             ),
+            if (_activeTemplate.hasContentColumn) ...[
+              const SizedBox(height: 8),
+              TextFormField(
+                controller: _controllers['progression_${index}_content'],
+                maxLines: 4,
+                decoration: const InputDecoration(labelText: 'Content / Learning Points', border: OutlineInputBorder()),
+              ),
+            ],
             const SizedBox(height: 8),
             TextFormField(
               controller: _controllers['progression_${index}_teacher'],
@@ -974,7 +1226,10 @@ class _LessonPlanScreenState extends State<LessonPlanScreen> {
             TextFormField(
               controller: _controllers['progression_${index}_assessment'],
               maxLines: 2,
-              decoration: const InputDecoration(labelText: 'Assessment Criteria', border: OutlineInputBorder()),
+              decoration: InputDecoration(
+                labelText: _activeTemplate.assessmentColumnLabel,
+                border: const OutlineInputBorder(),
+              ),
             ),
           ],
         ),

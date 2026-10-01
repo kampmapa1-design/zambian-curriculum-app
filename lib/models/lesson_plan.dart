@@ -22,6 +22,13 @@ class LessonPlanFieldDef {
   final bool blankSpaceOnPrint;
   final String? helpText;
 
+  /// How many ruled blank lines the official OBC document layout prints
+  /// when this field is empty (see [LessonPlanTemplate.usesOfficialObcLayout])
+  /// — the real Ministry template leaves 2 lines for the first three
+  /// numbered sections and 1 for the rest. 0 (default) means "use the
+  /// renderer's own default". Ignored by every other layout.
+  final int blankLines;
+
   const LessonPlanFieldDef({
     required this.id,
     required this.label,
@@ -30,6 +37,7 @@ class LessonPlanFieldDef {
     this.autoFilled = false,
     this.blankSpaceOnPrint = false,
     this.helpText,
+    this.blankLines = 0,
   });
 
   Map<String, dynamic> toJson() => {
@@ -40,6 +48,7 @@ class LessonPlanFieldDef {
         'autoFilled': autoFilled,
         'blankSpaceOnPrint': blankSpaceOnPrint,
         'helpText': helpText,
+        'blankLines': blankLines,
       };
 
   factory LessonPlanFieldDef.fromJson(Map<String, dynamic> json) => LessonPlanFieldDef(
@@ -50,6 +59,7 @@ class LessonPlanFieldDef {
         autoFilled: json['autoFilled'] as bool? ?? false,
         blankSpaceOnPrint: json['blankSpaceOnPrint'] as bool? ?? false,
         helpText: json['helpText'] as String?,
+        blankLines: json['blankLines'] as int? ?? 0,
       );
 }
 
@@ -75,6 +85,25 @@ class LessonPlanSectionDef {
       );
 }
 
+/// What a template does with the syllabus-derived "content / learning
+/// points" of a lesson — the material that, in the OBC Natural Sciences &
+/// Mathematics layout, has its own column in the progression table.
+enum LessonProgressionContentMode {
+  /// Legacy behaviour (CDC/OBC-2013 default, CBC, teacher-uploaded
+  /// templates): no content column, and the Development stage's background
+  /// excerpt is summarized inside Teacher's Role.
+  foldedIntoTeacherRole,
+
+  /// Its own "CONTENT / LEARNING POINTS" column (OBC Natural Sciences &
+  /// Mathematics).
+  ownColumn,
+
+  /// No content column AND the content is simply left out — not folded into
+  /// Teacher's Role/Learners' Role, not relocated anywhere else in the
+  /// document (OBC Social Sciences, per explicit instruction 2026-09-26).
+  omitted,
+}
+
 /// A lesson plan template: header/body field definitions plus the ordered
 /// list of "Lesson Progression" stages (Introduction, Lesson Development,
 /// ...). Both are configurable so the template can be corrected without a
@@ -89,13 +118,32 @@ class LessonPlanTemplate {
   final List<LessonPlanSectionDef> sections;
   final List<String> progressionStages;
 
+  /// See [LessonProgressionContentMode]. Defaults to the legacy behaviour so
+  /// every template that predates it (including teacher-uploaded ones
+  /// stored on-device) is unchanged.
+  final LessonProgressionContentMode progressionContentMode;
+
+  /// Header text of the progression table's last column.
+  final String assessmentColumnLabel;
+
+  /// True for the two OBC (2013, Grades 10-12) layouts built from the
+  /// official Ministry template — documents are then produced by filling
+  /// that template itself (see obc_lesson_plan_docx.dart) rather than by
+  /// the generic renderer.
+  final bool usesOfficialObcLayout;
+
   const LessonPlanTemplate({
     required this.id,
     required this.name,
     required this.source,
     required this.sections,
     required this.progressionStages,
+    this.progressionContentMode = LessonProgressionContentMode.foldedIntoTeacherRole,
+    this.assessmentColumnLabel = 'Assessment Criteria',
+    this.usesOfficialObcLayout = false,
   });
+
+  bool get hasContentColumn => progressionContentMode == LessonProgressionContentMode.ownColumn;
 
   Iterable<LessonPlanFieldDef> get allFields => sections.expand((s) => s.fields);
 
@@ -105,6 +153,9 @@ class LessonPlanTemplate {
         'source': source,
         'sections': [for (final s in sections) s.toJson()],
         'progressionStages': progressionStages,
+        'progressionContentMode': progressionContentMode.name,
+        'assessmentColumnLabel': assessmentColumnLabel,
+        'usesOfficialObcLayout': usesOfficialObcLayout,
       };
 
   factory LessonPlanTemplate.fromJson(Map<String, dynamic> json) => LessonPlanTemplate(
@@ -116,6 +167,10 @@ class LessonPlanTemplate {
             LessonPlanSectionDef.fromJson(s)
         ],
         progressionStages: (json['progressionStages'] as List).cast<String>(),
+        progressionContentMode: LessonProgressionContentMode.values.asNameMap()[json['progressionContentMode']] ??
+            LessonProgressionContentMode.foldedIntoTeacherRole,
+        assessmentColumnLabel: json['assessmentColumnLabel'] as String? ?? 'Assessment Criteria',
+        usesOfficialObcLayout: json['usesOfficialObcLayout'] as bool? ?? false,
       );
 }
 
@@ -210,10 +265,18 @@ const defaultCdcLessonPlanTemplate = LessonPlanTemplate(
           blankSpaceOnPrint: true,
           helpText: 'Filled in after teaching — printed with blank ruled lines for a handwritten note.',
         ),
+        // Moved out of the Lesson Progression table and down here (owner
+        // request, 2026-09-28: "the homework and class exercise should be
+        // below the lesson plan... after the teacher and learner evaluation
+        // slots") — previously these were just progression STAGES (mid-table
+        // rows, before Conclusion; see this template's old progressionStages),
+        // not standalone sections at the bottom of the document.
+        LessonPlanFieldDef(id: 'classExercise', label: 'Class Exercise', type: LessonPlanFieldType.multiline),
+        LessonPlanFieldDef(id: 'homework', label: 'Homework', type: LessonPlanFieldType.multiline),
       ],
     ),
   ],
-  progressionStages: ['Introduction', 'Lesson Development', 'Exercise', 'Homework', 'Conclusion'],
+  progressionStages: ['Introduction', 'Lesson Development', 'Conclusion'],
 );
 
 /// The 2023 Competency-Based Curriculum lesson plan template, sourced from
@@ -324,15 +387,172 @@ const defaultCbcLessonPlanTemplate = LessonPlanTemplate(
           blankSpaceOnPrint: true,
           helpText: 'Filled in after teaching — printed with blank ruled lines for a handwritten note.',
         ),
+        // Moved out of the Lesson Progression table and down here (owner
+        // request, 2026-09-28) — see the matching comment on
+        // defaultCdcLessonPlanTemplate's own evaluation section.
+        LessonPlanFieldDef(id: 'classExercise', label: 'Class Exercise', type: LessonPlanFieldType.multiline),
+        LessonPlanFieldDef(id: 'homework', label: 'Homework', type: LessonPlanFieldType.multiline),
       ],
     ),
   ],
-  progressionStages: ['Introduction', 'Development', 'Exercise', 'Homework', 'Conclusion'],
+  progressionStages: ['Introduction', 'Development', 'Conclusion'],
+);
+
+// ---------------------------------------------------------------------
+// OBC (2013 Outcome-Based Curriculum, Grades 10-12) official lesson plan
+// layouts — added 2026-09-26 from the user-supplied "OBC LESSON PLAN
+// TEMPLATE.docx" (Republic of Zambia / Ministry of Education / Senior
+// Secondary School Lesson Plan). Two variants share the same header blocks
+// and ten numbered sections and differ ONLY in the section-7 progression
+// table:
+//   - Natural Sciences & Mathematics: 5 columns — STAGE / TIME, CONTENT /
+//     LEARNING POINTS, TEACHERS' ROLE, LEARNERS' ROLE, ASSESSMENT/EVIDENCE.
+//   - Social Sciences: 4 columns — the Content column removed, last column
+//     renamed "Assessment Criteria". Whatever would fill the Content column
+//     is omitted outright (no folding into other columns).
+// Which one a subject gets is chosen automatically from its category (see
+// lesson_plan_template_selector.dart); CBC templates are untouched.
+// ---------------------------------------------------------------------
+
+const _obcHeaderSection = LessonPlanSectionDef(
+  id: 'header',
+  title: 'Lesson details',
+  fields: [
+    LessonPlanFieldDef(id: 'teacherName', label: 'Name of Teacher', type: LessonPlanFieldType.text),
+    LessonPlanFieldDef(id: 'className', label: 'Grade/Class', type: LessonPlanFieldType.text, required: true),
+    LessonPlanFieldDef(id: 'date', label: 'Date', type: LessonPlanFieldType.text),
+    LessonPlanFieldDef(id: 'school', label: 'Name of School', type: LessonPlanFieldType.text),
+    LessonPlanFieldDef(id: 'subject', label: 'Subject', type: LessonPlanFieldType.text, autoFilled: true),
+    LessonPlanFieldDef(id: 'topic', label: 'Topic', type: LessonPlanFieldType.text, autoFilled: true),
+    LessonPlanFieldDef(id: 'subTopic', label: 'Sub-topic', type: LessonPlanFieldType.text, autoFilled: true),
+    LessonPlanFieldDef(
+        id: 'duration', label: 'Duration/Time', type: LessonPlanFieldType.text, helpText: 'e.g. 80 Minutes, 08:10-09:30'),
+  ],
+);
+
+// Numbered sections 1-6 (section 7 is the progression table itself).
+const _obcPlanningSection = LessonPlanSectionDef(
+  id: 'planning',
+  title: 'Lesson planning',
+  fields: [
+    LessonPlanFieldDef(
+      id: 'specificCompetences',
+      label: '1. Specific Competence / Learning Outcome',
+      type: LessonPlanFieldType.multiline,
+      required: true,
+      blankLines: 2,
+    ),
+    LessonPlanFieldDef(
+      id: 'lessonGoal',
+      label: '2. Lesson Goal',
+      type: LessonPlanFieldType.multiline,
+      required: true,
+      blankLines: 2,
+      helpText: 'By the end of the lesson, learners will be able to... — refine the auto-filled draft.',
+    ),
+    LessonPlanFieldDef(
+      id: 'rationale',
+      label: '3. Rationale',
+      type: LessonPlanFieldType.multiline,
+      required: true,
+      blankLines: 2,
+    ),
+    LessonPlanFieldDef(
+      id: 'priorKnowledge',
+      label: '4. Prior / Pre-requisite Knowledge',
+      type: LessonPlanFieldType.multiline,
+      blankLines: 1,
+    ),
+    LessonPlanFieldDef(id: 'references', label: '5. References', type: LessonPlanFieldType.multiline, blankLines: 1),
+    LessonPlanFieldDef(
+      id: 'tlm',
+      label: '6. Teaching and Learning Materials / Resources',
+      type: LessonPlanFieldType.multiline,
+      required: true,
+      blankLines: 1,
+    ),
+  ],
+);
+
+// Numbered sections 8-11, printed after the progression table.
+const _obcEvaluationSection = LessonPlanSectionDef(
+  id: 'evaluation',
+  title: 'After the lesson',
+  fields: [
+    LessonPlanFieldDef(
+      id: 'teacherEvaluation',
+      label: '8. Teacher Evaluation/Assessment',
+      type: LessonPlanFieldType.multiline,
+      blankSpaceOnPrint: true,
+      blankLines: 3,
+      helpText: 'Filled in after teaching — printed with 3 blank ruled lines for a handwritten note.',
+    ),
+    LessonPlanFieldDef(
+      id: 'learnerEvaluation',
+      label: '9. Learner Evaluation',
+      type: LessonPlanFieldType.multiline,
+      blankSpaceOnPrint: true,
+      blankLines: 3,
+      helpText: 'Filled in after teaching — printed with 3 blank ruled lines for a handwritten note.',
+    ),
+    // Added, and Homework renumbered from 10 to 11 to make room (owner
+    // request, 2026-09-28: "the homework and class exercise should be
+    // below the lesson plan... after the teacher and learner evaluation
+    // slots" — this template already had Homework there; Class Exercise
+    // did not exist as its own section at all before this).
+    LessonPlanFieldDef(
+      id: 'classExercise',
+      label: '10. Class Exercise',
+      type: LessonPlanFieldType.multiline,
+      blankLines: 3,
+    ),
+    LessonPlanFieldDef(
+      id: 'homework',
+      label: '11. Homework / Extension Activity',
+      type: LessonPlanFieldType.multiline,
+      // 2026-09-27, per explicit request: was 1 line, out of step with the
+      // other two "after the lesson" sections — now matches at 3.
+      blankLines: 3,
+    ),
+  ],
+);
+
+/// OBC Natural Sciences & Mathematics — the official template exactly as
+/// supplied, all 5 progression columns.
+const defaultObcNaturalSciencesMathematicsLessonPlanTemplate = LessonPlanTemplate(
+  id: 'obc_natural_sciences_mathematics_lesson_plan_v1',
+  name: 'OBC Lesson Plan — Natural Sciences & Mathematics',
+  source: 'Ministry of Education, Zambia — Senior Secondary School Lesson Plan (OBC, Grades 10-12), '
+      'Natural Sciences & Mathematics layout, as supplied by the user (2026).',
+  sections: [_obcHeaderSection, _obcPlanningSection, _obcEvaluationSection],
+  progressionStages: ['Introduction', 'Development', 'Conclusion'],
+  progressionContentMode: LessonProgressionContentMode.ownColumn,
+  assessmentColumnLabel: 'ASSESSMENT/EVIDENCE',
+  usesOfficialObcLayout: true,
+);
+
+/// OBC Social Sciences — the same template with the CONTENT / LEARNING
+/// POINTS column removed and the last column renamed "Assessment Criteria".
+const defaultObcSocialSciencesLessonPlanTemplate = LessonPlanTemplate(
+  id: 'obc_social_sciences_lesson_plan_v1',
+  name: 'OBC Lesson Plan — Social Sciences',
+  source: 'Ministry of Education, Zambia — Senior Secondary School Lesson Plan (OBC, Grades 10-12), '
+      'Social Sciences variant derived from the same template (no Content column), as specified by the user (2026).',
+  sections: [_obcHeaderSection, _obcPlanningSection, _obcEvaluationSection],
+  progressionStages: ['Introduction', 'Development', 'Conclusion'],
+  progressionContentMode: LessonProgressionContentMode.omitted,
+  assessmentColumnLabel: 'Assessment Criteria',
+  usesOfficialObcLayout: true,
 );
 
 /// One row of the "Lesson Progression" table.
 class LessonProgressionRow {
   final String stage;
+
+  /// "CONTENT / LEARNING POINTS" — only ever populated for a template whose
+  /// [LessonPlanTemplate.progressionContentMode] is
+  /// [LessonProgressionContentMode.ownColumn]; empty everywhere else.
+  final String content;
   final String teacherRole;
   final String learnersRole;
   final String assessmentCriteria;
@@ -340,6 +560,7 @@ class LessonProgressionRow {
 
   const LessonProgressionRow({
     required this.stage,
+    this.content = '',
     this.teacherRole = '',
     this.learnersRole = '',
     this.assessmentCriteria = '',
@@ -347,6 +568,7 @@ class LessonProgressionRow {
   });
 
   LessonProgressionRow copyWith({
+    String? content,
     String? teacherRole,
     String? learnersRole,
     String? assessmentCriteria,
@@ -354,6 +576,7 @@ class LessonProgressionRow {
   }) =>
       LessonProgressionRow(
         stage: stage,
+        content: content ?? this.content,
         teacherRole: teacherRole ?? this.teacherRole,
         learnersRole: learnersRole ?? this.learnersRole,
         assessmentCriteria: assessmentCriteria ?? this.assessmentCriteria,
@@ -362,6 +585,7 @@ class LessonProgressionRow {
 
   Map<String, dynamic> toJson() => {
         'stage': stage,
+        'content': content,
         'teacherRole': teacherRole,
         'learnersRole': learnersRole,
         'assessmentCriteria': assessmentCriteria,
@@ -370,6 +594,7 @@ class LessonProgressionRow {
 
   factory LessonProgressionRow.fromJson(Map<String, dynamic> json) => LessonProgressionRow(
         stage: json['stage'] as String,
+        content: json['content'] as String? ?? '',
         teacherRole: json['teacherRole'] as String? ?? '',
         learnersRole: json['learnersRole'] as String? ?? '',
         assessmentCriteria: json['assessmentCriteria'] as String? ?? '',

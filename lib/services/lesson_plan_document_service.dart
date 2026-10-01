@@ -2,18 +2,28 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:archive/archive.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
 import '../models/lesson_plan.dart';
-import '../models/marking_scheme.dart';
-import 'related_marking_key_section.dart';
+import 'obc_lesson_plan_docx.dart';
 
 /// Renders a [LessonPlanDraft] against a [LessonPlanTemplate] as a PDF or a
 /// Word (.docx) file, entirely on-device — no network, no server round trip.
 class LessonPlanDocumentService {
+  /// [obcTemplateLoader] supplies the bytes of the bundled official OBC
+  /// template ([kObcLessonPlanTemplateAsset]); defaults to the app bundle.
+  LessonPlanDocumentService({Future<List<int>> Function()? obcTemplateLoader})
+      : _obcTemplateLoader = obcTemplateLoader ?? _loadBundledObcTemplate;
+
+  final Future<List<int>> Function() _obcTemplateLoader;
+
+  static Future<List<int>> _loadBundledObcTemplate() async =>
+      (await rootBundle.load(kObcLessonPlanTemplateAsset)).buffer.asUint8List();
+
   String _fileBaseName(LessonPlanDraft draft) {
     final topic = draft.value('topic').trim();
     final safeTopic = topic.isEmpty
@@ -36,9 +46,8 @@ class LessonPlanDocumentService {
 
   Future<File> generatePdf(
     LessonPlanTemplate template,
-    LessonPlanDraft draft, {
-    List<MarkingScheme> relatedMarkingKeys = const [],
-  }) async {
+    LessonPlanDraft draft,
+  ) async {
     final doc = pw.Document();
 
     doc.addPage(
@@ -67,20 +76,29 @@ class LessonPlanDocumentService {
           pw.SizedBox(height: 6),
           pw.Table(
             border: pw.TableBorder.all(width: 0.5),
-            columnWidths: const {
-              0: pw.FlexColumnWidth(1.3),
-              1: pw.FlexColumnWidth(2.5),
-              2: pw.FlexColumnWidth(2.2),
-              3: pw.FlexColumnWidth(2),
-            },
+            columnWidths: template.hasContentColumn
+                ? const {
+                    0: pw.FlexColumnWidth(1.3),
+                    1: pw.FlexColumnWidth(2.2),
+                    2: pw.FlexColumnWidth(2.2),
+                    3: pw.FlexColumnWidth(2),
+                    4: pw.FlexColumnWidth(2),
+                  }
+                : const {
+                    0: pw.FlexColumnWidth(1.3),
+                    1: pw.FlexColumnWidth(2.5),
+                    2: pw.FlexColumnWidth(2.2),
+                    3: pw.FlexColumnWidth(2),
+                  },
             children: [
               pw.TableRow(
                 decoration: const pw.BoxDecoration(color: PdfColors.grey300),
                 children: [
                   _pdfHeaderCell('Stage'),
+                  if (template.hasContentColumn) _pdfHeaderCell('Content / Learning Points'),
                   _pdfHeaderCell("Teacher's Role"),
                   _pdfHeaderCell("Learners' Role"),
-                  _pdfHeaderCell('Assessment Criteria'),
+                  _pdfHeaderCell(template.assessmentColumnLabel),
                 ],
               ),
               for (final row in draft.progression)
@@ -90,6 +108,7 @@ class LessonPlanDocumentService {
                       row.durationMinutes.trim().isEmpty ? row.stage : '${row.stage}\n(${row.durationMinutes})',
                       bold: true,
                     ),
+                    if (template.hasContentColumn) _pdfCell(row.content),
                     _pdfCell(row.teacherRole),
                     _pdfCell(row.learnersRole),
                     _pdfCell(row.assessmentCriteria),
@@ -106,7 +125,6 @@ class LessonPlanDocumentService {
             pw.Divider(thickness: 0.5),
             for (final field in section.fields) _pdfField(field, draft.value(field.id)),
           ],
-          ...buildRelatedMarkingKeyPdfSection(relatedMarkingKeys),
         ],
       ),
     );
@@ -226,9 +244,18 @@ class LessonPlanDocumentService {
 
   Future<File> generateDocx(
     LessonPlanTemplate template,
-    LessonPlanDraft draft, {
-    List<MarkingScheme> relatedMarkingKeys = const [],
-  }) async {
+    LessonPlanDraft draft,
+  ) async {
+    // The two OBC layouts are the official Ministry template itself, filled
+    // in — not the generic hand-built package below.
+    if (template.usesOfficialObcLayout) {
+      final bytes = buildObcLessonPlanDocx(
+        templateBytes: await _obcTemplateLoader(),
+        template: template,
+        draft: draft,
+      );
+      return _writeToTempFile('docx', bytes, draft);
+    }
     final archive = Archive();
     void addXml(String name, String xml) {
       final bytes = utf8.encode(xml);
@@ -240,13 +267,13 @@ class LessonPlanDocumentService {
     addXml('word/_rels/document.xml.rels', _documentRelsXml);
     addXml('docProps/core.xml', _corePropsXml);
     addXml('docProps/app.xml', _appPropsXml);
-    addXml('word/document.xml', _buildDocumentXml(template, draft, relatedMarkingKeys));
+    addXml('word/document.xml', _buildDocumentXml(template, draft));
 
     final zipped = ZipEncoder().encode(archive);
     return _writeToTempFile('docx', zipped, draft);
   }
 
-  String _buildDocumentXml(LessonPlanTemplate template, LessonPlanDraft draft, List<MarkingScheme> relatedMarkingKeys) {
+  String _buildDocumentXml(LessonPlanTemplate template, LessonPlanDraft draft) {
     final buffer = StringBuffer();
     buffer.write(
       '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
@@ -268,7 +295,7 @@ class LessonPlanDocumentService {
     }
 
     buffer.write(_docxHeading('LESSON PROGRESSION', size: 26));
-    buffer.write(_docxProgressionTable(draft));
+    buffer.write(_docxProgressionTable(template, draft));
 
     // No section heading here — per explicit request (2026-09-03), "After
     // the lesson" (this section's title text) is removed entirely from
@@ -278,8 +305,6 @@ class LessonPlanDocumentService {
         buffer.write(_docxField(field, draft.value(field.id)));
       }
     }
-
-    buffer.write(buildRelatedMarkingKeyDocxSection(relatedMarkingKeys));
 
     buffer.write('<w:sectPr/></w:body></w:document>');
     return buffer.toString();
@@ -330,7 +355,7 @@ class LessonPlanDocumentService {
     return buffer.toString();
   }
 
-  String _docxProgressionTable(LessonPlanDraft draft) {
+  String _docxProgressionTable(LessonPlanTemplate template, LessonPlanDraft draft) {
     final buffer = StringBuffer();
     buffer.write(
       '<w:tbl><w:tblPr><w:tblW w:w="0" w:type="auto"/><w:tblBorders>'
@@ -342,10 +367,22 @@ class LessonPlanDocumentService {
       '<w:insideV w:val="single" w:sz="4" w:space="0" w:color="auto"/>'
       '</w:tblBorders></w:tblPr>',
     );
-    buffer.write(_docxTableRow(['Stage', "Teacher's Role", "Learners' Role", 'Assessment Criteria'], bold: true));
+    buffer.write(_docxTableRow([
+      'Stage',
+      if (template.hasContentColumn) 'Content / Learning Points',
+      "Teacher's Role",
+      "Learners' Role",
+      template.assessmentColumnLabel,
+    ], bold: true));
     for (final row in draft.progression) {
       final stageCell = row.durationMinutes.trim().isEmpty ? row.stage : '${row.stage} (${row.durationMinutes})';
-      buffer.write(_docxTableRow([stageCell, row.teacherRole, row.learnersRole, row.assessmentCriteria]));
+      buffer.write(_docxTableRow([
+        stageCell,
+        if (template.hasContentColumn) row.content,
+        row.teacherRole,
+        row.learnersRole,
+        row.assessmentCriteria,
+      ]));
     }
     buffer.write('</w:tbl>');
     return buffer.toString();

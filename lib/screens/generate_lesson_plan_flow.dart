@@ -2,10 +2,10 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 
 import '../models/lesson_checkpoint.dart';
-import '../models/lesson_plan.dart';
 import '../models/scheme_of_work.dart';
 import '../models/syllabus_models.dart';
 import '../services/lesson_checkpoint_repository.dart';
+import '../services/lesson_plan_template_selector.dart';
 import '../services/teacher_profile_repository.dart';
 import 'class_resume_picker_screen.dart';
 import 'lesson_plan_screen.dart';
@@ -89,9 +89,14 @@ Future<void> startGenerateLessonPlanFlow(
   if (choice == null || !context.mounted) return;
 
   // OBC (2013) and CBC (2023) use structurally different real lesson plan
-  // templates — see defaultCbcLessonPlanTemplate's doc comment.
-  final activeTemplate =
-      template.curriculum.code == 'CBC_2023' ? defaultCbcLessonPlanTemplate : defaultCdcLessonPlanTemplate;
+  // templates — see defaultCbcLessonPlanTemplate's doc comment. Within OBC
+  // the template is chosen automatically from the subject's category, no
+  // manual choice (see selectLessonPlanTemplate); CBC never consults it.
+  final activeTemplate = await lessonPlanTemplateForSubject(
+    curriculumCode: template.curriculum.code,
+    subjectCode: template.subject.code,
+  );
+  if (!context.mounted) return;
 
   if (choice == _LessonPlanStart.resume) {
     final checkpoint = await checkpoints.findMostRecentForSubject(
