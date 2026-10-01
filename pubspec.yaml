@@ -1,7 +1,7 @@
 name: zambian_curriculum_app
 description: Offline Zambian curriculum syllabus companion for teachers.
 publish_to: 'none'
-version: 0.1.0+8
+version: 0.1.0+10
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
@@ -18,7 +18,24 @@ dependencies:
   cloud_functions: ^5.1.4
   cloud_firestore: ^5.5.0
   firebase_storage: ^12.3.7
+  # firebase_crashlytics REMOVED (2026-09-28, circuit-breaker): a real,
+  # reported bug — Firebase.initializeApp() itself was throwing a native
+  # `NullPointerException: FirebaseCrashlytics component is not present`
+  # on a real device, deterministically, on the very first (only) init
+  # attempt — blocking every single Firebase-dependent feature (marking,
+  # lesson plans, past papers, home assignment). Removed to find out
+  # whether Crashlytics itself is the culprit; see main.dart's own doc
+  # comment for the full reasoning and what's needed to re-add this.
+  firebase_app_check: ^0.3.1
   pdf: ^3.11.1
+  # Assignment Submission -> AI marking bridge (2026-09-28): the Submissions
+  # Dashboard only ever has the student's ORIGINAL photos as one merged PDF
+  # (see AssignmentSubmissionScreen's own upload — no per-page images are
+  # ever sent to the cloud dashboard), and MarkingScriptRepository needs
+  # real per-page image files, not a PDF — Printing.raster() (same pub
+  # author/family as the `pdf` package already used throughout this app)
+  # renders each PDF page back to a bitmap on-device, no server round trip.
+  printing: ^5.13.4
   archive: ^4.0.9
   share_plus: ^13.3.0
   http: ^1.2.2
@@ -30,6 +47,8 @@ dependencies:
   syncfusion_flutter_pdf: ^33.2.13
   pdf_manipulator: 4.1.0
   crypto: ^3.0.5
+  in_app_purchase: ^3.2.0
+  in_app_purchase_android: ^0.5.3
   url_launcher: ^6.3.1
   speech_to_text: ^7.4.0
   # google_mobile_ads REMOVED (2026-08-30): confirmed root cause of an
@@ -46,10 +65,12 @@ dev_dependencies:
   sqflite_common_ffi: ^2.3.4
   path_provider_platform_interface: ^2.1.3
   plugin_platform_interface: ^2.0.0
+  vector_math: ^2.4.0
 
 flutter:
   uses-material-design: true
   assets:
+    - assets/lesson_plan_templates/obc_lesson_plan_template.docx
     - assets/syllabi/manifest.json
     - assets/syllabi/obc2013_english_form3_placeholder.json
     - assets/syllabi/history_form1.json
@@ -205,6 +226,33 @@ flutter:
     - assets/lesson_plans/hospitality_management_form1.json
     - assets/lesson_plans/hospitality_management_form2.json
     - assets/icon/icon.png
+  # Bundled locally (not the google_fonts package's runtime HTTP fetch) —
+  # this app is offline-first by design, and a first launch with no/weak
+  # connectivity (the realistic case for much of this app's target
+  # audience) must never fall back to the system default font while
+  # waiting on a font download. Both are real variable fonts (single file
+  # covers every weight via the 'wght' axis) sourced from google/fonts.
+  fonts:
+    - family: Lexend
+      fonts:
+        - asset: assets/fonts/Lexend-Variable.ttf
+          weight: 400
+        - asset: assets/fonts/Lexend-Variable.ttf
+          weight: 500
+        - asset: assets/fonts/Lexend-Variable.ttf
+          weight: 600
+        - asset: assets/fonts/Lexend-Variable.ttf
+          weight: 700
+    - family: Inter
+      fonts:
+        - asset: assets/fonts/Inter-Variable.ttf
+          weight: 400
+        - asset: assets/fonts/Inter-Variable.ttf
+          weight: 500
+        - asset: assets/fonts/Inter-Variable.ttf
+          weight: 600
+        - asset: assets/fonts/Inter-Variable.ttf
+          weight: 700
 
 # Run `flutter pub run flutter_launcher_icons` after `flutter create` (see
 # README Setup) to generate android/ios launcher icons from assets/icon/.

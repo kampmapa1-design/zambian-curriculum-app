@@ -28,6 +28,8 @@ if (hasReleaseSigning) {
 // plugins{} block above — see the buildscript classpath comment in the
 // top-level android/build.gradle.kts for why.
 apply(plugin = "com.google.gms.google-services")
+// com.google.firebase.crashlytics plugin REMOVED (2026-09-28, circuit-
+// breaker) — see lib/main.dart's own doc comment.
 
 android {
     namespace = "com.kampmapa1design.smartteacher"
@@ -44,8 +46,13 @@ android {
         applicationId = "com.kampmapa1design.smartteacher"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
+        // Pinned explicitly (not left to flutter.minSdkVersion/targetSdkVersion)
+        // so a future Flutter SDK upgrade can't silently change device
+        // compatibility out from under a live Play Store listing. Current
+        // Flutter SDK defaults match these values as of this pinning
+        // (minSdk 24 = Android 7.0, targetSdk 36) — review before bumping.
+        minSdk = 24
+        targetSdk = 36
         // Uses the version code from pubspec.yaml. When using split APKs, 1000 * ABI_VERSION
         // is added automatically by Flutter. (https://developer.android.com/studio/build/configure-apk-splits#configure-APK-versions)
         // You can force using the value of versionCode by specifying the `-P force-version-code-ignoring-abi=true`

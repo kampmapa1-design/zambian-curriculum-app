@@ -11,6 +11,10 @@ buildscript {
         // there on Google's own Maven repo. Classpath resolution uses
         // normal dependency resolution instead, which works fine.
         classpath("com.google.gms:google-services:4.4.4")
+        // firebase-crashlytics-gradle REMOVED (2026-09-28, circuit-breaker)
+        // — see lib/main.dart's own doc comment for the real bug this is
+        // ruling out (Firebase.initializeApp() itself NPE-ing on a native
+        // "FirebaseCrashlytics component is not present" error).
     }
 }
 
