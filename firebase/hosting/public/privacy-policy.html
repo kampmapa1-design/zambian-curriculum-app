@@ -3,67 +3,125 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Privacy Policy — Smart Teacher</title>
+<title>Smart Teacher — Privacy Policy</title>
 <style>
-  body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; max-width: 720px; margin: 40px auto; padding: 0 20px; line-height: 1.6; color: #1a1a1a; }
-  h1 { font-size: 1.6rem; }
-  h2 { font-size: 1.15rem; margin-top: 2em; }
-  .updated { color: #555; font-size: 0.9rem; }
+  :root { color-scheme: light dark; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 32px 20px 80px;
+    line-height: 1.6;
+    color: #1a1a1a;
+    background: #ffffff;
+  }
+  @media (prefers-color-scheme: dark) {
+    body { color: #e6e6e6; background: #14161a; }
+    a { color: #7db3ff; }
+    .callout { background: #1e2128 !important; }
+  }
+  h1 { font-size: 1.8rem; margin-bottom: 4px; }
+  h2 { font-size: 1.2rem; margin-top: 2.2em; border-bottom: 1px solid rgba(128,128,128,0.3); padding-bottom: 6px; }
+  h3 { font-size: 1.05rem; margin-top: 1.6em; }
+  .effective-date { color: #767676; font-size: 0.95rem; margin-top: 0; }
+  .callout {
+    background: #f4f6f8;
+    border-radius: 10px;
+    padding: 16px 18px;
+    margin: 20px 0;
+  }
   ul { padding-left: 1.3em; }
+  code { background: rgba(128,128,128,0.15); padding: 1px 5px; border-radius: 4px; font-size: 0.92em; }
+  footer { margin-top: 3em; font-size: 0.85rem; color: #8a8a8a; }
 </style>
 </head>
 <body>
+
 <h1>Privacy Policy — Smart Teacher</h1>
-<p class="updated">Last updated: 28 August 2026</p>
+<p class="effective-date">Effective date: September 17, 2026</p>
 
-<p>Smart Teacher is an offline-first curriculum companion app for Zambian teachers. This
-policy explains what data the app handles and why, in plain terms.</p>
+<p>Smart Teacher ("the app") is developed by Kampamba Mashabe ("we", "us"). This policy explains what data the app collects, why, and how it is handled. It applies to the Android app distributed under the package name <code>com.kampmapa1design.smartteacher</code>, used by two kinds of accounts: <strong>teachers/school staff</strong> and <strong>pupils/learners</strong> (secondary-school students).</p>
 
-<h2>What the app stores on your device</h2>
-<p>Smart Teacher's syllabus content, lesson content, and marking data are stored locally on
-your device (in a local SQLite database), not on our servers. This is intentional — the app
-is designed to work fully offline. We do not have access to this local data.</p>
+<div class="callout">
+<strong>Summary:</strong> Smart Teacher is used by teachers to plan lessons, mark work, and run their school's timetable and communication, and by pupils to submit work and download study material. Some data — lesson plans, schemes of work, and locally-generated reports — stays on your device only. Other data — accounts, school/class rosters, marking records, and messages sent to guardians — is stored in our cloud database (Google Firebase) so it can sync across a school's devices and reach the right people. This policy describes both.
+</div>
 
-<h2>Account sign-in</h2>
-<p>Signing in uses Firebase Authentication. We store the identifier your sign-in method
-provides (e.g. an email address) to associate your account with app features that require
-sign-in, such as AI-assisted content generation. We do not sell or share this with third
-parties, and do not use it for advertising.</p>
+<h2>Who uses this app, and what we collect from each</h2>
 
-<h2>AI-assisted features (teaching notes, slide outlines, syllabus tools, AI-assisted marking)</h2>
-<p>Some features send content to Google's Gemini API through our own server-side function
-(Firebase Cloud Functions) to generate a result — for example, syllabus context to generate
-teaching notes, or photos of a student's answer script to generate a first-pass grading
-suggestion for a teacher to review. This content is sent only when you actively use that
-feature, is used to produce the response you asked for, and is not used to build an
-advertising profile. AI-assisted marking is always a first-pass suggestion — a teacher
-reviews and confirms every mark before it is final.</p>
-
-<h2>Camera access</h2>
-<p>The app requests camera access only for features that need it — capturing pages of a
-student's answer script for AI-assisted marking. Captured images are used for that feature
-and are not collected for any other purpose.</p>
-
-<h2>What we don't do</h2>
+<h3>Teachers and school staff</h3>
 <ul>
-  <li>We don't run analytics or advertising SDKs that track you across other apps or
-  websites.</li>
-  <li>We don't sell your data.</li>
-  <li>We don't require an internet connection for core offline features (browsing syllabi,
-  lesson content).</li>
+  <li><strong>Sign-in</strong>: every install starts with an anonymous session. A teacher may later sign in with a <strong>phone number</strong> (verified by SMS code) or an <strong>email address and password</strong>. Whichever you choose becomes part of your account; we don't collect both.</li>
+  <li><strong>Profile</strong>: your name, chosen sign-in method, and (if applicable) phone number or email are stored in our database against your account.</li>
+  <li><strong>School and class setup</strong>: if you register or join a school, we store the school's name, province/district, your role, and — if you set up a class — the class's grade/term, subject list, and a plaintext roster of <strong>your pupils' full names</strong> that you type in yourself.</li>
+  <li><strong>Guardian/parent contact details</strong>: if you choose to enter them, we store each pupil's guardian's <strong>phone number and/or email address</strong>, used only to send that guardian messages you send through the app (see "Guardian communication" below).</li>
+  <li><strong>Marking and scores</strong>: photographs of scripts/tests you capture for AI-assisted marking are sent to Google's Gemini AI for one-time processing (see "AI processing" below) and the resulting scores/comments, tied to a pupil's name, are stored against that class.</li>
+  <li><strong>Voice commands</strong>: if you use tap-to-talk voice commands, your speech is transcribed to text on your device by Android's own speech recognizer — the audio itself is never recorded to a file or uploaded; only the resulting text is sent to Gemini to interpret the command.</li>
 </ul>
 
+<h3>Pupils/learners</h3>
+<ul>
+  <li><strong>Sign-in</strong>: pupils also use an anonymous Firebase account — no phone number or email is collected directly from a pupil to create their account.</li>
+  <li><strong>Joining a class</strong>: to link your account to your class, you tell the app which class and the name you go by; your teacher confirms the match against the roster they already entered.</li>
+  <li><strong>Submitted work</strong>: photographs of your assignment/test answers that you submit are sent to Google's Gemini AI for processing and, for Home Assignments specifically, the photographed pages are also kept in our cloud storage so your teacher can review them.</li>
+  <li><strong>Your own feedback contact details</strong>: when you submit an Assignment or a Test through the app, you're asked for your own email address and/or WhatsApp number — at least one is required — used only so your teacher can send your marked/graded feedback directly back to you once it's ready. Never used for any other purpose, and never shared beyond your own teacher.</li>
+  <li><strong>A pupil may also have work submitted on their behalf</strong> by a teacher (e.g. importing a paper or emailed submission) without ever having opened the app themselves — this is teacher-entered data about that pupil, not data the pupil provided.</li>
+</ul>
+
+<h3>Content that stays on your device only</h3>
+<p>Lesson plans, schemes of work, record-of-work documents, locally captured report-card data, and generated analysis documents are stored in a local database on your device and are not part of our cloud database. Uninstalling the app deletes this local content.</p>
+
+<h2>AI processing (Google Gemini)</h2>
+<p>Features such as AI-assisted marking, marking-key generation, handwritten-text transcription, lesson/assignment content generation, and reading a photographed paper timetable send the relevant photographed page(s) and/or text to our backend (Google Cloud Functions), which forwards them to <strong>Google's Gemini AI</strong> for one-time processing and returns the result. For most of these features, the image data is passed through for processing and is not separately retained by our backend afterward. Google's own handling of data sent to its AI services is governed by <a href="https://policies.google.com/privacy">Google's Privacy Policy</a> and the Gemini API terms.</p>
+
+<h2>Where photos and documents are actually kept</h2>
+<p>Most photographed content (marking scripts, tests, timetables, cover/reference pages) is sent for AI processing and not separately stored by us afterward. A smaller number of specific features do keep uploaded files in our cloud storage, only for the purpose named:</p>
+<ul>
+  <li>Files you explicitly file to your own <strong>Teacher Submissions Dashboard</strong>, for your later access only.</li>
+  <li><strong>Scan Marker</strong> batch PDFs of captured script pages, kept so you can revisit a marking batch.</li>
+  <li><strong>Pupils' Home Assignment answer photos</strong>, kept so the assigning teacher can review and mark them.</li>
+  <li>Your <strong>school's logo</strong>, if you upload one for branding.</li>
+</ul>
+
+<h2>Guardian communication</h2>
+<p>If a teacher enters a guardian's phone/email against a pupil, that contact information is used only to:</p>
+<ul>
+  <li>send that guardian an email (via our email provider, Brevo) — for example, a broadcast message, a Home Assignment being issued, results, or a reminder to submit; and</li>
+  <li>let the teacher open a pre-filled WhatsApp chat to that number — <strong>the app never sends anything to WhatsApp itself</strong>; it only builds a link that opens WhatsApp on the teacher's own phone, for the teacher to review and send manually.</li>
+</ul>
+<p>If a guardian replies by email to a Home Assignment notice, our backend reads that reply (from a dedicated inbox set up for this purpose) to route the attached photos to the right pupil's submission. If the reply can't be matched to a real pupil/class, the sender's email address and message details are kept temporarily so school staff can resolve it by hand.</p>
+
+<h2>Third parties we share data with</h2>
+<ul>
+  <li><strong>Google Gemini AI</strong> — processes photographed documents and text as described above.</li>
+  <li><strong>Brevo</strong> — a third-party email service we use to send the guardian/staff emails described above.</li>
+  <li><strong>Google/Firebase</strong> — our entire backend (accounts, database, file storage, and processing functions) runs on Google Cloud/Firebase infrastructure.</li>
+</ul>
+<p>We do not sell your data, and we do not share it with anyone for their own advertising or marketing purposes.</p>
+
+<h2>Advertising, analytics, and tracking</h2>
+<p>As of this policy's effective date, <strong>the app does not run any advertising SDK, and does not use any analytics or crash-reporting SDK.</strong> Some features are designed to eventually require watching a short video ad to unlock (in place of a paid subscription); until a real ad SDK is integrated and enabled, these unlock immediately with no ad shown and no ad-related data collected. If and when real advertising goes live, we will update this policy first, and the update will be reflected in the app's Play Store listing before that version is released.</p>
+
+<h2>Device permissions</h2>
+<ul>
+  <li><strong>Camera</strong> — to photograph scripts, tests, assignments, and paper timetables for the features described above.</li>
+  <li><strong>Microphone</strong> — only for tap-to-talk voice commands; audio is transcribed on-device and never recorded to a file or uploaded.</li>
+  <li><strong>Internet</strong> — required for any feature described above; the app otherwise works fully offline.</li>
+</ul>
+<p>We do not request location, contacts, or storage-wide permissions.</p>
+
+<h2>Pupils, schools, and guardians</h2>
+<p>This app is used in a school setting and is designed to be set up and administered by teachers and school staff, with pupils using it under their school's guidance. Some pupils using the app will be minors. We rely on the school/teacher to obtain any parental/guardian consent their own policies require before entering a pupil's name or a guardian's contact details into the app. Beyond the class-joining name, the only personal information collected directly from a pupil is the feedback contact detail(s) (email and/or WhatsApp number) described above, entered only when submitting an Assignment or Test and used only to deliver that submission's own feedback. If you are a parent or guardian and have questions about your child's data, contact us using the details below.</p>
+
 <h2>Data retention and deletion</h2>
-<p>Local app data stays on your device until you clear it (e.g. by uninstalling the app or
-clearing app data in your device settings). Account sign-in data is retained while your
-account is active; contact us to request deletion.</p>
+<p>Cloud-stored data (accounts, school/class rosters, scores, submissions, messages) is retained until deleted by the account holder, the school, or on request to us. On-device content is deleted when the app is uninstalled. To request deletion of your account or a specific record, contact us using the details below.</p>
 
 <h2>Changes to this policy</h2>
-<p>If this policy changes — for example, if the app later adds advertising or additional
-cloud features — we will update this page and the "Last updated" date above.</p>
+<p>We may update this policy as the app's features change. The effective date above reflects the most recent update.</p>
 
 <h2>Contact</h2>
-<p>Questions about this policy: <a href="mailto:kampmapa1@gmail.com">kampmapa1@gmail.com</a></p>
+<p>Questions about this policy or your data can be sent to: <strong><a href="mailto:kampmapa1@gmail.com">kampmapa1@gmail.com</a></strong></p>
+
+<footer>Smart Teacher — Zambian Curriculum Companion</footer>
 
 </body>
 </html>

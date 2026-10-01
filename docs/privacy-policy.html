@@ -22,6 +22,7 @@
   }
   h1 { font-size: 1.8rem; margin-bottom: 4px; }
   h2 { font-size: 1.2rem; margin-top: 2.2em; border-bottom: 1px solid rgba(128,128,128,0.3); padding-bottom: 6px; }
+  h3 { font-size: 1.05rem; margin-top: 1.6em; }
   .effective-date { color: #767676; font-size: 0.95rem; margin-top: 0; }
   .callout {
     background: #f4f6f8;
@@ -37,38 +38,82 @@
 <body>
 
 <h1>Privacy Policy — Smart Teacher</h1>
-<p class="effective-date">Effective date: August 29, 2026</p>
+<p class="effective-date">Effective date: September 17, 2026</p>
 
-<p>Smart Teacher ("the app") is developed by Kampamba Mashabe ("we", "us"). This policy explains what data the app collects, why, and how it is handled. It applies to the Android app distributed on Google Play under the package name <code>com.kampmapa1design.smartteacher</code>.</p>
+<p>Smart Teacher ("the app") is developed by Kampamba Mashabe ("we", "us"). This policy explains what data the app collects, why, and how it is handled. It applies to the Android app distributed under the package name <code>com.kampmapa1design.smartteacher</code>, used by two kinds of accounts: <strong>teachers/school staff</strong> and <strong>pupils/learners</strong> (secondary-school students).</p>
 
 <div class="callout">
-<strong>Summary:</strong> Smart Teacher is built offline-first. Lesson plans, schemes of work, captured scripts, and marking records are generated and stored on your device only. The app does not run ads, does not use analytics or tracking SDKs, and does not sell or share your data with advertisers. The only data that ever leaves your device is described below, and only when you actively use an AI-assisted feature.
+<strong>Summary:</strong> Smart Teacher is used by teachers to plan lessons, mark work, and run their school's timetable and communication, and by pupils to submit work and download study material. Some data — lesson plans, schemes of work, and locally-generated reports — stays on your device only. Other data — accounts, school/class rosters, marking records, and messages sent to guardians — is stored in our cloud database (Google Firebase) so it can sync across a school's devices and reach the right people. This policy describes both.
 </div>
 
-<h2>What we collect and why</h2>
+<h2>Who uses this app, and what we collect from each</h2>
 
-<p><strong>1. Camera access.</strong> The app requests camera permission to let you photograph documents — question papers, marking keys, student scripts, and handwritten score lists. Captured photos are processed on-device (cropping, deskewing, contrast enhancement) and stored locally. They are only sent off-device if you choose an AI-assisted feature (see below).</p>
-
-<p><strong>2. AI-assisted features (optional, only when you use them).</strong> Features such as AI-assisted marking, marking-key generation from a photographed paper, and handwritten-list transcription send the relevant photographed page(s) and/or text to our backend (Google Cloud Functions), which forwards them to Google's Gemini AI service for one-time processing and returns the result to your device. We do not store these images or the AI's responses on our servers — they pass through for processing and are not retained by us. Google's own handling of data sent to its AI services is governed by <a href="https://policies.google.com/privacy">Google's Privacy Policy</a> and Gemini API terms.</p>
-
-<p><strong>3. Anonymous app identifier.</strong> To prevent abuse of the AI processing quota, the app signs in anonymously via Firebase Authentication before calling an AI feature. This creates a random device-associated identifier — no name, email address, phone number, or other personal identifier is collected or requested by the app itself.</p>
-
-<p><strong>4. Locally-stored content.</strong> Everything else the app generates or that you enter — lesson plans, schemes of work, record of work, captured scripts, marking schemes, grades, and analysis documents — is stored in a local database on your device and is never transmitted to us. Documents you choose to share (Word/PDF exports) go through your device's own share menu, entirely under your control; we have no visibility into where they end up.</p>
-
-<h2>What we do not do</h2>
+<h3>Teachers and school staff</h3>
 <ul>
-  <li>We do not run advertising or use any advertising SDK in this version of the app.</li>
-  <li>We do not use analytics, crash-reporting, or tracking SDKs.</li>
-  <li>We do not collect your name, email address, location, contacts, or any other personal profile information.</li>
-  <li>We do not sell your data, and we do not share it with third parties for their own marketing purposes.</li>
+  <li><strong>Sign-in</strong>: every install starts with an anonymous session. A teacher may later sign in with a <strong>phone number</strong> (verified by SMS code) or an <strong>email address and password</strong>. Whichever you choose becomes part of your account; we don't collect both.</li>
+  <li><strong>Profile</strong>: your name, chosen sign-in method, and (if applicable) phone number or email are stored in our database against your account.</li>
+  <li><strong>School and class setup</strong>: if you register or join a school, we store the school's name, province/district, your role, and — if you set up a class — the class's grade/term, subject list, and a plaintext roster of <strong>your pupils' full names</strong> that you type in yourself.</li>
+  <li><strong>Guardian/parent contact details</strong>: if you choose to enter them, we store each pupil's guardian's <strong>phone number and/or email address</strong>, used only to send that guardian messages you send through the app (see "Guardian communication" below).</li>
+  <li><strong>Marking and scores</strong>: photographs of scripts/tests you capture for AI-assisted marking are sent to Google's Gemini AI for one-time processing (see "AI processing" below) and the resulting scores/comments, tied to a pupil's name, are stored against that class.</li>
+  <li><strong>Voice commands</strong>: if you use tap-to-talk voice commands, your speech is transcribed to text on your device by Android's own speech recognizer — the audio itself is never recorded to a file or uploaded; only the resulting text is sent to Gemini to interpret the command.</li>
 </ul>
-<p><em>If a future version adds advertising, in-app purchases, or account sign-in, this policy will be updated first, and the update will be reflected in the app's Play Store listing.</em></p>
+
+<h3>Pupils/learners</h3>
+<ul>
+  <li><strong>Sign-in</strong>: pupils also use an anonymous Firebase account — no phone number or email is collected directly from a pupil to create their account.</li>
+  <li><strong>Joining a class</strong>: to link your account to your class, you tell the app which class and the name you go by; your teacher confirms the match against the roster they already entered.</li>
+  <li><strong>Submitted work</strong>: photographs of your assignment/test answers that you submit are sent to Google's Gemini AI for processing and, for Home Assignments specifically, the photographed pages are also kept in our cloud storage so your teacher can review them.</li>
+  <li><strong>Your own feedback contact details</strong>: when you submit an Assignment or a Test through the app, you're asked for your own email address and/or WhatsApp number — at least one is required — used only so your teacher can send your marked/graded feedback directly back to you once it's ready. Never used for any other purpose, and never shared beyond your own teacher.</li>
+  <li><strong>A pupil may also have work submitted on their behalf</strong> by a teacher (e.g. importing a paper or emailed submission) without ever having opened the app themselves — this is teacher-entered data about that pupil, not data the pupil provided.</li>
+</ul>
+
+<h3>Content that stays on your device only</h3>
+<p>Lesson plans, schemes of work, record-of-work documents, locally captured report-card data, and generated analysis documents are stored in a local database on your device and are not part of our cloud database. Uninstalling the app deletes this local content.</p>
+
+<h2>AI processing (Google Gemini)</h2>
+<p>Features such as AI-assisted marking, marking-key generation, handwritten-text transcription, lesson/assignment content generation, and reading a photographed paper timetable send the relevant photographed page(s) and/or text to our backend (Google Cloud Functions), which forwards them to <strong>Google's Gemini AI</strong> for one-time processing and returns the result. For most of these features, the image data is passed through for processing and is not separately retained by our backend afterward. Google's own handling of data sent to its AI services is governed by <a href="https://policies.google.com/privacy">Google's Privacy Policy</a> and the Gemini API terms.</p>
+
+<h2>Where photos and documents are actually kept</h2>
+<p>Most photographed content (marking scripts, tests, timetables, cover/reference pages) is sent for AI processing and not separately stored by us afterward. A smaller number of specific features do keep uploaded files in our cloud storage, only for the purpose named:</p>
+<ul>
+  <li>Files you explicitly file to your own <strong>Teacher Submissions Dashboard</strong>, for your later access only.</li>
+  <li><strong>Scan Marker</strong> batch PDFs of captured script pages, kept so you can revisit a marking batch.</li>
+  <li><strong>Pupils' Home Assignment answer photos</strong>, kept so the assigning teacher can review and mark them.</li>
+  <li>Your <strong>school's logo</strong>, if you upload one for branding.</li>
+</ul>
+
+<h2>Guardian communication</h2>
+<p>If a teacher enters a guardian's phone/email against a pupil, that contact information is used only to:</p>
+<ul>
+  <li>send that guardian an email (via our email provider, Brevo) — for example, a broadcast message, a Home Assignment being issued, results, or a reminder to submit; and</li>
+  <li>let the teacher open a pre-filled WhatsApp chat to that number — <strong>the app never sends anything to WhatsApp itself</strong>; it only builds a link that opens WhatsApp on the teacher's own phone, for the teacher to review and send manually.</li>
+</ul>
+<p>If a guardian replies by email to a Home Assignment notice, our backend reads that reply (from a dedicated inbox set up for this purpose) to route the attached photos to the right pupil's submission. If the reply can't be matched to a real pupil/class, the sender's email address and message details are kept temporarily so school staff can resolve it by hand.</p>
+
+<h2>Third parties we share data with</h2>
+<ul>
+  <li><strong>Google Gemini AI</strong> — processes photographed documents and text as described above.</li>
+  <li><strong>Brevo</strong> — a third-party email service we use to send the guardian/staff emails described above.</li>
+  <li><strong>Google/Firebase</strong> — our entire backend (accounts, database, file storage, and processing functions) runs on Google Cloud/Firebase infrastructure.</li>
+</ul>
+<p>We do not sell your data, and we do not share it with anyone for their own advertising or marketing purposes.</p>
+
+<h2>Advertising, analytics, and tracking</h2>
+<p>As of this policy's effective date, <strong>the app does not run any advertising SDK, and does not use any analytics or crash-reporting SDK.</strong> Some features are designed to eventually require watching a short video ad to unlock (in place of a paid subscription); until a real ad SDK is integrated and enabled, these unlock immediately with no ad shown and no ad-related data collected. If and when real advertising goes live, we will update this policy first, and the update will be reflected in the app's Play Store listing before that version is released.</p>
+
+<h2>Device permissions</h2>
+<ul>
+  <li><strong>Camera</strong> — to photograph scripts, tests, assignments, and paper timetables for the features described above.</li>
+  <li><strong>Microphone</strong> — only for tap-to-talk voice commands; audio is transcribed on-device and never recorded to a file or uploaded.</li>
+  <li><strong>Internet</strong> — required for any feature described above; the app otherwise works fully offline.</li>
+</ul>
+<p>We do not request location, contacts, or storage-wide permissions.</p>
+
+<h2>Pupils, schools, and guardians</h2>
+<p>This app is used in a school setting and is designed to be set up and administered by teachers and school staff, with pupils using it under their school's guidance. Some pupils using the app will be minors. We rely on the school/teacher to obtain any parental/guardian consent their own policies require before entering a pupil's name or a guardian's contact details into the app. Beyond the class-joining name, the only personal information collected directly from a pupil is the feedback contact detail(s) (email and/or WhatsApp number) described above, entered only when submitting an Assignment or Test and used only to deliver that submission's own feedback. If you are a parent or guardian and have questions about your child's data, contact us using the details below.</p>
 
 <h2>Data retention and deletion</h2>
-<p>Since your content is stored on your device, uninstalling the app deletes it. Photos sent for AI processing are not retained by us after the response is returned. If you have questions about a specific processing request, contact us using the details below.</p>
-
-<h2>Children's privacy</h2>
-<p>Smart Teacher is a professional tool intended for teachers and educators, not for use by children. We do not knowingly collect personal information from children.</p>
+<p>Cloud-stored data (accounts, school/class rosters, scores, submissions, messages) is retained until deleted by the account holder, the school, or on request to us. On-device content is deleted when the app is uninstalled. To request deletion of your account or a specific record, contact us using the details below.</p>
 
 <h2>Changes to this policy</h2>
 <p>We may update this policy as the app's features change. The effective date above reflects the most recent update.</p>
