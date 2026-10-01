@@ -215,7 +215,7 @@ class _MinutesCaptureScreenState extends State<MinutesCaptureScreen> {
                         top: 0,
                         right: 0,
                         child: IconButton(
-                          icon: const Icon(Icons.close, color: Colors.white, shadows: [Shadow(blurRadius: 4)]),
+                          icon: const Icon(Icons.close_outlined, color: Colors.white, shadows: [Shadow(blurRadius: 4)]),
                           onPressed: _saving ? null : () => _removePage(index),
                         ),
                       ),
@@ -242,7 +242,7 @@ class _MinutesCaptureScreenState extends State<MinutesCaptureScreen> {
                     onPressed: (_saving || _capturedPages.isEmpty) ? null : _finishAndSave,
                     icon: _saving
                         ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
-                        : const Icon(Icons.check),
+                        : const Icon(Icons.check_outlined),
                     label: Text(_saving ? 'Saving…' : 'Finish & Save'),
                   ),
                 ),

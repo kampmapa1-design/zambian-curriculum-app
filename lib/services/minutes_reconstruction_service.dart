@@ -6,6 +6,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 
 import '../models/minutes_session.dart';
 import 'auth_service.dart';
+import 'metered_call.dart';
 
 /// Thrown for both "can't reach the function" (offline) and "the function
 /// rejected the request", and for a response that doesn't match the
@@ -34,16 +35,30 @@ class ReconstructedMinutes {
 /// reasoning): nothing in [reconstruct] runs outside the timeout, so it
 /// always either finishes or surfaces a clear, actionable error.
 class MinutesReconstructionService {
-  MinutesReconstructionService({FirebaseFunctions? functions}) : _functions = functions ?? FirebaseFunctions.instance;
+  MinutesReconstructionService({FirebaseFunctions? functions}) : _providedFunctions = functions;
 
-  final FirebaseFunctions _functions;
+  // Lazy: resolving FirebaseFunctions.instance needs Firebase.initializeApp() to have
+  // succeeded; constructing this service must never throw just because it hasn't.
+  final FirebaseFunctions? _providedFunctions;
+  FirebaseFunctions get _functions => _providedFunctions ?? FirebaseFunctions.instance;
 
   Future<bool> get isOnline async {
     final result = await Connectivity().checkConnectivity();
     return !result.contains(ConnectivityResult.none);
   }
 
-  Future<ReconstructedMinutes> reconstruct(List<File> pageFiles, {void Function(String status)? onProgress}) async {
+  /// "Matters Arising" cross-check (2026-09-28, per explicit request):
+  /// [previousMinutesPageFiles] is real, teacher-supplied photos of the
+  /// PREVIOUS meeting's own minutes — null/empty (the default) means none
+  /// were supplied, in which case the server falls back to scanning the new
+  /// meeting's own notes for self-contained references to past matters
+  /// only, never inventing a previous item. See MinutesProcessingScreen for
+  /// where the yes/no prompt and optional capture happen.
+  Future<ReconstructedMinutes> reconstruct(
+    List<File> pageFiles, {
+    List<File>? previousMinutesPageFiles,
+    void Function(String status)? onProgress,
+  }) async {
     var lastStatus = 'starting';
     void track(String status) {
       lastStatus = status;
@@ -51,7 +66,7 @@ class MinutesReconstructionService {
     }
 
     try {
-      return await _run(pageFiles, track).timeout(
+      return await _run(pageFiles, previousMinutesPageFiles, track).timeout(
         const Duration(seconds: 100),
         onTimeout: () => throw MinutesReconstructionUnavailable(
           'This is taking too long and may be stuck (last step: "$lastStatus"). Check your mobile data/Wi-Fi '
@@ -66,7 +81,11 @@ class MinutesReconstructionService {
     }
   }
 
-  Future<ReconstructedMinutes> _run(List<File> pageFiles, void Function(String status)? onProgress) async {
+  Future<ReconstructedMinutes> _run(
+    List<File> pageFiles,
+    List<File>? previousMinutesPageFiles,
+    void Function(String status)? onProgress,
+  ) async {
     onProgress?.call('Checking connection…');
     if (!await isOnline) {
       throw const MinutesReconstructionUnavailable("You're offline. Connect to the internet to generate minutes.");
@@ -76,16 +95,21 @@ class MinutesReconstructionService {
     await AuthService.instance.ensureSignedIn();
 
     onProgress?.call('Preparing photos…');
-    final callable = _functions.httpsCallable(
-      'generateMinutes',
+    final callable = meteredCallable(_functions, 'generateMinutes',
       options: HttpsCallableOptions(timeout: const Duration(seconds: 95)),
     );
 
     Object? rawData;
     try {
       final images = [for (final f in pageFiles) base64Encode(await f.readAsBytes())];
+      final previousImages = previousMinutesPageFiles == null
+          ? null
+          : [for (final f in previousMinutesPageFiles) base64Encode(await f.readAsBytes())];
       onProgress?.call('Reading and organizing your notes with AI…');
-      final result = await callable.call<Object?>({'pageImagesBase64': images});
+      final result = await callable.call<Object?>({
+        'pageImagesBase64': images,
+        if (previousImages != null && previousImages.isNotEmpty) 'previousMinutesPageImagesBase64': previousImages,
+      });
       rawData = result.data;
     } on FirebaseFunctionsException catch (e) {
       throw MinutesReconstructionUnavailable(e.message ?? 'Failed to generate minutes from these notes.');

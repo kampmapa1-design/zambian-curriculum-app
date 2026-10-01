@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 
+import 'dart:io';
+
 import '../models/minutes_session.dart';
 import '../services/entitlement_service.dart';
 import '../services/minutes_document_service.dart';
@@ -12,6 +14,7 @@ import '../services/rewarded_ad_service.dart';
 import '../services/school_service.dart';
 import '../services/staffroom_service.dart';
 import '../services/teacher_profile_repository.dart';
+import 'document_pages_capture_screen.dart';
 
 /// Minutes Maker, Stages 6-8 — the ad-gate, the unified ad+processing
 /// progress experience, and export. Kept as one screen (not three)
@@ -53,6 +56,12 @@ class _MinutesProcessingScreenState extends State<MinutesProcessingScreen> {
   ReconstructedMinutes? _result;
   String? _schoolId;
   bool _postedToStaffroom = false;
+
+  /// "Matters Arising" cross-check (2026-09-28, per explicit request): real
+  /// photos of the previous meeting's own minutes, captured via
+  /// [_confirmAndStart]'s yes/no prompt — null until/unless the teacher
+  /// says yes and actually captures something.
+  List<File>? _previousMinutesPages;
 
   @override
   void initState() {
@@ -109,6 +118,50 @@ class _MinutesProcessingScreenState extends State<MinutesProcessingScreen> {
     return 'Ready!';
   }
 
+  /// "Matters Arising" cross-check (2026-09-28, per explicit request): asked
+  /// once, right before AI processing begins, never silently assumed either
+  /// way. A "No" (or backing out of the capture screen without keeping any
+  /// pages) proceeds with [_previousMinutesPages] left null — the server
+  /// then falls back to scanning the new meeting's own notes for
+  /// self-contained references to past matters only, per
+  /// buildGenerateMinutesPrompt's own no-previous-minutes mode.
+  Future<void> _confirmAndStart() async {
+    final hasPrevious = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Previous meeting\'s minutes?'),
+        content: const Text(
+          'Do you have the previous meeting\'s minutes available to reference? '
+          'If so, Smart Teacher can check whether items from that meeting were '
+          'addressed in this one.',
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(dialogContext).pop(false), child: const Text('No')),
+          FilledButton(onPressed: () => Navigator.of(dialogContext).pop(true), child: const Text('Yes')),
+        ],
+      ),
+    );
+    if (!mounted) return;
+
+    if (hasPrevious == true) {
+      final captured = await Navigator.of(context).push<List<File>?>(
+        MaterialPageRoute(
+          builder: (_) => const DocumentPagesCaptureScreen(
+            title: "Capture Previous Meeting's Minutes",
+            instructions: 'Photograph the previous meeting\'s minutes, page by page — '
+                'used only to check which of its items this meeting addressed.',
+          ),
+        ),
+      );
+      if (!mounted) return;
+      if (captured != null && captured.isNotEmpty) {
+        setState(() => _previousMinutesPages = captured);
+      }
+    }
+
+    await _start();
+  }
+
   Future<void> _start() async {
     setState(() {
       _stage = _Stage.running;
@@ -131,7 +184,9 @@ class _MinutesProcessingScreenState extends State<MinutesProcessingScreen> {
             },
           );
 
-    final processingFuture = _reconstructionService.reconstruct(pageFiles).then(
+    final processingFuture = _reconstructionService
+        .reconstruct(pageFiles, previousMinutesPageFiles: _previousMinutesPages)
+        .then(
       (result) {
         if (!mounted) return result;
         setState(() => _processingDone = true);
@@ -230,7 +285,7 @@ class _MinutesProcessingScreenState extends State<MinutesProcessingScreen> {
             ] else
               const SizedBox(height: 12),
             FilledButton.icon(
-              onPressed: _start,
+              onPressed: _confirmAndStart,
               icon: const Icon(Icons.play_circle_outline),
               label: Text(_entitled ? 'Generate Minutes' : 'Watch ads & generate minutes'),
             ),
@@ -247,6 +302,14 @@ class _MinutesProcessingScreenState extends State<MinutesProcessingScreen> {
             ),
             const SizedBox(height: 20),
             Text(_statusLabel, style: Theme.of(context).textTheme.titleMedium),
+            if (_previousMinutesPages != null) ...[
+              const SizedBox(height: 4),
+              Text(
+                'Cross-checking against the previous meeting\'s minutes…',
+                style: Theme.of(context).textTheme.bodySmall,
+                textAlign: TextAlign.center,
+              ),
+            ],
             if (!_entitled) ...[
               const SizedBox(height: 8),
               Text(
