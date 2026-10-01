@@ -1,0 +1,13 @@
+# Test timeout multiplier (added 2026-09-18). The default per-test timeout is
+# 30 seconds. On this project's dev machine (8GB RAM), the four SQLite-backed
+# test files (anything calling setUpTestDatabase — class_progress_repository,
+# report_class_repository, template_repository, and friends) pay a one-time
+# native-SQLite/schema setup cost in their FIRST test, which was observed
+# taking ~21s of that 30s budget whenever anything else heavy was running
+# (e.g. a Gradle release build) — and full-suite runs during such moments
+# failed a handful of those tests intermittently, while the same tests
+# passed every time in isolation and on an idle machine (full suite: 430
+# tests, 0 failures, ~1 minute). A 3x multiplier (90s) gives that setup
+# room to finish under load. It changes nothing for a test that already
+# finishes in time, and a genuinely hung test still fails, just later.
+timeout: 3x

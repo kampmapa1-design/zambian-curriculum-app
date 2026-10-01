@@ -83,7 +83,7 @@ class _CdcNewMaterialsBannerState extends State<CdcNewMaterialsBanner> {
                   style: TextStyle(color: colorScheme.onTertiaryContainer),
                 ),
               ),
-              Icon(Icons.chevron_right, color: colorScheme.onTertiaryContainer),
+              Icon(Icons.chevron_right_outlined, color: colorScheme.onTertiaryContainer),
             ],
           ),
         ),
