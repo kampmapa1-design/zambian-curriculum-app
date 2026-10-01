@@ -4,6 +4,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import '../models/slide_outline.dart';
 import '../utils/text_utils.dart';
 import 'auth_service.dart';
+import 'metered_call.dart';
 
 enum FreeTopicFormat {
   paragraph,
@@ -39,9 +40,12 @@ class FreeTopicNotesUnavailable implements Exception {
 /// path) since there's no bundled data for an arbitrary typed topic to
 /// fall back to.
 class FreeTopicNotesService {
-  FreeTopicNotesService({FirebaseFunctions? functions}) : _functions = functions ?? FirebaseFunctions.instance;
+  FreeTopicNotesService({FirebaseFunctions? functions}) : _providedFunctions = functions;
 
-  final FirebaseFunctions _functions;
+  // Lazy: resolving FirebaseFunctions.instance needs Firebase.initializeApp() to have
+  // succeeded; constructing this service must never throw just because it hasn't.
+  final FirebaseFunctions? _providedFunctions;
+  FirebaseFunctions get _functions => _providedFunctions ?? FirebaseFunctions.instance;
 
   Future<bool> get isOnline async {
     final result = await Connectivity().checkConnectivity();
@@ -55,7 +59,7 @@ class FreeTopicNotesService {
 
     await AuthService.instance.ensureSignedIn();
 
-    final callable = _functions.httpsCallable('generateFreeTopicNotes');
+    final callable = meteredCallable(_functions, 'generateFreeTopicNotes');
     try {
       final result = await callable.call<Map<Object?, Object?>>({
         'topic': topic,

@@ -5,14 +5,18 @@ import 'package:flutter/material.dart';
 
 import '../models/home_assignment.dart';
 import '../services/home_assignment_service.dart';
-import '../widgets/home_assignment_ad_gate.dart';
+import '../services/pupil_ad_gate_service.dart';
 import 'document_pages_capture_screen.dart';
 
 /// Home Assignment epic, Stage 8 — a pupil's own view of one issued
-/// assignment, plus submission (gated by Stage 4's ad-gate — "applies to
-/// submission only, not to receiving/viewing"). A successful submission
-/// queues automatically in the teacher's queue, pre-tagged to this
-/// assignment's marking key, via `recordHomeAssignmentSubmission`.
+/// assignment, plus submission. Entering Home Assignment at all now
+/// already requires the learner-wide 2-ad gate (see [PupilHomeScreen]),
+/// so this screen's own [PupilAdGateService.ensureUnlocked] call is a
+/// no-op in the common case (already unlocked this session) — kept
+/// anyway so a submission can never slip through unlocked in some
+/// future navigation path that skips the home screen. A successful
+/// submission queues automatically in the teacher's queue, pre-tagged
+/// to this assignment's marking key, via `recordHomeAssignmentSubmission`.
 class HomeAssignmentPupilDetailScreen extends StatefulWidget {
   const HomeAssignmentPupilDetailScreen({required this.schoolId, required this.classId, required this.assignment, super.key});
   final String schoolId;
@@ -39,7 +43,7 @@ class _HomeAssignmentPupilDetailScreenState extends State<HomeAssignmentPupilDet
     );
     if (pages == null || pages.isEmpty || !mounted) return;
 
-    final adsWatched = await showHomeAssignmentAdGate(context);
+    final adsWatched = await PupilAdGateService.instance.ensureUnlocked(context);
     if (!adsWatched || !mounted) return;
 
     setState(() => _submitting = true);
@@ -100,11 +104,11 @@ class _HomeAssignmentPupilDetailScreenState extends State<HomeAssignmentPupilDet
             ),
           const SizedBox(height: 24),
           if (_submitted)
-            const Card(
-              color: Colors.green,
+            Card(
+              color: Colors.green.shade700,
               child: Padding(
                 padding: EdgeInsets.all(16),
-                child: Row(children: [Icon(Icons.check_circle, color: Colors.white), SizedBox(width: 12), Text('Submitted', style: TextStyle(color: Colors.white))]),
+                child: Row(children: [Icon(Icons.check_circle_outlined, color: Colors.white), SizedBox(width: 12), Text('Submitted', style: TextStyle(color: Colors.white))]),
               ),
             )
           else

@@ -12,6 +12,9 @@ import '../models/marking_scheme.dart';
 import '../models/school.dart';
 import '../services/concise_marking_service.dart';
 import '../services/home_assignment_service.dart';
+import '../widgets/app_glass_surface.dart';
+import '../widgets/app_primary_button.dart';
+import '../widgets/success_checkmark.dart';
 import 'document_pages_capture_screen.dart';
 import 'home_assignment_batch_review_screen.dart';
 
@@ -42,6 +45,9 @@ class _HomeAssignmentQueueScreenState extends State<HomeAssignmentQueueScreen> {
   bool _importing = false;
   bool _marking = false;
   String _markingStatus = '';
+  // Stage M (micro-interactions, 2026-09-27) — see _startBatchMarking's own
+  // comment on why this brief pause exists.
+  bool _showCompletionCheckmark = false;
 
   // "Once new items exist in an assignment's queue, show the teacher:
   // 'Mark received home assignments using their marking key?'" (2026-09-16,
@@ -86,16 +92,17 @@ class _HomeAssignmentQueueScreenState extends State<HomeAssignmentQueueScreen> {
 
   Future<void> _offerBatchMarking(List<HomeAssignmentSubmission> queued) async {
     if (!mounted) return;
-    final markNow = await showDialog<bool>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: const Text('New submissions'),
-        content: const Text('Mark received home assignments using their marking key?'),
-        actions: [
-          TextButton(onPressed: () => Navigator.of(dialogContext).pop(false), child: const Text('No')),
-          FilledButton(onPressed: () => Navigator.of(dialogContext).pop(true), child: const Text('Yes')),
-        ],
-      ),
+    // Stage J (glassmorphism overlays, 2026-09-27): the confirmation that
+    // leads straight into the batch review flow — the flagship real
+    // example named in that stage's own spec.
+    final markNow = await showAppGlassAlertDialog<bool>(
+      context,
+      title: 'New submissions',
+      content: const Text('Mark received home assignments using their marking key?'),
+      actions: [
+        TextButton(onPressed: () => Navigator.of(context).pop(false), child: const Text('No')),
+        FilledButton(onPressed: () => Navigator.of(context).pop(true), child: const Text('Yes')),
+      ],
     );
     if (markNow == true && mounted) await _startBatchMarking(queued);
   }
@@ -236,9 +243,19 @@ class _HomeAssignmentQueueScreenState extends State<HomeAssignmentQueueScreen> {
     }
 
     if (!mounted) return;
+    if (markedIds.isNotEmpty) {
+      // Stage M (micro-interactions, 2026-09-27): a brief, satisfying
+      // checkmark beat before the review screen appears — this used to
+      // jump straight from "Marking N of M..." to a whole new screen with
+      // no visible success moment at all.
+      setState(() => _showCompletionCheckmark = true);
+      await Future<void>.delayed(const Duration(milliseconds: 550));
+      if (!mounted) return;
+    }
     setState(() {
       _marking = false;
       _markingStatus = '';
+      _showCompletionCheckmark = false;
     });
     if (failures > 0) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$failures submission(s) could not be marked — try them again individually.')));
@@ -275,7 +292,7 @@ class _HomeAssignmentQueueScreenState extends State<HomeAssignmentQueueScreen> {
               // this field exists (2026-09-16). Only null for an
               // assignment sent before the field did.
               if (code != null) ...[
-                Chip(avatar: const Icon(Icons.tag, size: 16), label: Text('Reference code: $code', style: const TextStyle(fontWeight: FontWeight.bold))),
+                Chip(avatar: const Icon(Icons.tag_outlined, size: 16), label: Text('Reference code: $code', style: const TextStyle(fontWeight: FontWeight.bold))),
                 const SizedBox(height: 12),
               ],
               Row(
@@ -294,9 +311,25 @@ class _HomeAssignmentQueueScreenState extends State<HomeAssignmentQueueScreen> {
               if (queued.isNotEmpty) ...[
                 const SizedBox(height: 4),
                 if (_marking)
-                  Card(child: Padding(padding: const EdgeInsets.all(12), child: Row(children: [const SizedBox(height: 16, width: 16, child: CircularProgressIndicator(strokeWidth: 2.4)), const SizedBox(width: 12), Expanded(child: Text(_markingStatus))])))
+                  Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: _showCompletionCheckmark
+                          ? const Row(children: [SuccessCheckmark(), SizedBox(width: 12), Expanded(child: Text('Done!'))])
+                          : Row(children: [
+                              const SizedBox(height: 16, width: 16, child: CircularProgressIndicator(strokeWidth: 2.4)),
+                              const SizedBox(width: 12),
+                              Expanded(child: Text(_markingStatus)),
+                            ]),
+                    ),
+                  )
                 else
-                  FilledButton.icon(icon: const Icon(Icons.auto_awesome_outlined), label: const Text('Mark Batch'), onPressed: () => _startBatchMarking(queued)),
+                  AppPrimaryButton(
+                    icon: Icons.auto_awesome_outlined,
+                    label: 'Mark Batch',
+                    onPressed: () => _startBatchMarking(queued),
+                    expand: false,
+                  ),
               ],
               for (final s in queued) _submissionTile(s),
               const SizedBox(height: 16),
@@ -321,7 +354,7 @@ class _HomeAssignmentQueueScreenState extends State<HomeAssignmentQueueScreen> {
   IconData _sourceIcon(String submittedVia) => switch (submittedVia) {
         'imported' => Icons.upload_file_outlined,
         'email' => Icons.email_outlined,
-        _ => Icons.smartphone,
+        _ => Icons.smartphone_outlined,
       };
 
   String _sourceLabel(String submittedVia) => switch (submittedVia) {
@@ -340,7 +373,7 @@ class _HomeAssignmentQueueScreenState extends State<HomeAssignmentQueueScreen> {
               ? '${s.score!.toStringAsFixed(0)} / ${s.maxScore!.toStringAsFixed(0)} · ${_sourceLabel(s.submittedVia)}${s.hasLowConfidence ? ' · needs review' : ''}'
               : _sourceLabel(s.submittedVia),
         ),
-        trailing: s.hasLowConfidence && s.status != HomeAssignmentSubmissionStatus.queued ? const Icon(Icons.flag_outlined, color: Colors.orange) : null,
+        trailing: s.hasLowConfidence && s.status != HomeAssignmentSubmissionStatus.queued ? Icon(Icons.flag_outlined, color: Colors.orange.shade900) : null,
       ),
     );
   }

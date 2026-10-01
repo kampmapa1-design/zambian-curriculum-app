@@ -180,7 +180,7 @@ class _HomeAssignmentReviewScreenState extends State<HomeAssignmentReviewScreen>
           if (_autoSavedScheme != null) ...[
             Row(
               children: [
-                const Icon(Icons.check_circle_outline, size: 16, color: Colors.green),
+                Icon(Icons.check_circle_outline, size: 16, color: Colors.green.shade700),
                 const SizedBox(width: 6),
                 Expanded(
                   child: Text(

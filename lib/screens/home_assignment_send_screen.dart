@@ -222,7 +222,7 @@ class _HomeAssignmentSendScreenState extends State<HomeAssignmentSendScreen> {
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
-        const Icon(Icons.check_circle_outline, size: 56, color: Colors.green),
+        Icon(Icons.check_circle_outline, size: 56, color: Colors.green.shade700),
         const SizedBox(height: 12),
         Text('Sent — $_emailsSent email(s) delivered${_emailsFailed > 0 ? ', $_emailsFailed failed' : ''}.', textAlign: TextAlign.center),
         const Text('Linked pupils will also see this in their app automatically.', textAlign: TextAlign.center, style: TextStyle(fontSize: 12)),

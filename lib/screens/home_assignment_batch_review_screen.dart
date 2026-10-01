@@ -135,7 +135,7 @@ class _HomeAssignmentBatchReviewScreenState extends State<HomeAssignmentBatchRev
                   leading: CircleAvatar(child: Text(s.learnerName.isNotEmpty ? s.learnerName[0].toUpperCase() : '?')),
                   title: Text(s.learnerName),
                   subtitle: Text('${s.score?.toStringAsFixed(0) ?? '—'} / ${s.maxScore?.toStringAsFixed(0) ?? '—'} · ${s.markingEngine ?? ''}'),
-                  trailing: s.hasLowConfidence ? const Icon(Icons.flag_outlined, color: Colors.orange) : const Icon(Icons.check_circle_outline, color: Colors.green),
+                  trailing: s.hasLowConfidence ? const Icon(Icons.flag_outlined, color: Colors.orange) : Icon(Icons.check_circle_outline, color: Colors.green.shade700),
                 ),
               const SizedBox(height: 16),
               OutlinedButton.icon(
@@ -145,9 +145,9 @@ class _HomeAssignmentBatchReviewScreenState extends State<HomeAssignmentBatchRev
               ),
               const SizedBox(height: 24),
               if (_sent)
-                const Card(
-                  color: Colors.green,
-                  child: Padding(padding: EdgeInsets.all(16), child: Row(children: [Icon(Icons.check_circle, color: Colors.white), SizedBox(width: 12), Text('Sent', style: TextStyle(color: Colors.white))])),
+                Card(
+                  color: Colors.green.shade700,
+                  child: Padding(padding: EdgeInsets.all(16), child: Row(children: [Icon(Icons.check_circle_outlined, color: Colors.white), SizedBox(width: 12), Text('Sent', style: TextStyle(color: Colors.white))])),
                 )
               else
                 FilledButton.icon(

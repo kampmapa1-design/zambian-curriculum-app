@@ -62,7 +62,7 @@ class _HomeAssignmentTeacherClassPickerScreenState extends State<HomeAssignmentT
                         leading: const Icon(Icons.class_outlined),
                         title: Text(c.classGrade),
                         subtitle: Text(c.term),
-                        trailing: const Icon(Icons.chevron_right),
+                        trailing: const Icon(Icons.chevron_right_outlined),
                         onTap: () => Navigator.of(context).push(
                           MaterialPageRoute(builder: (_) => HomeAssignmentTeacherAssignmentListScreen(school: _school!, schoolClass: c)),
                         ),

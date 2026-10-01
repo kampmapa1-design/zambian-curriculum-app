@@ -3,6 +3,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 
 import '../models/home_assignment.dart';
 import 'auth_service.dart';
+import 'metered_call.dart';
 
 class HomeAssignmentAiUnavailable implements Exception {
   final String message;
@@ -16,9 +17,12 @@ class HomeAssignmentAiUnavailable implements Exception {
 /// required-subject discipline (a generic topic name alone isn't enough
 /// to disambiguate against the model's own general knowledge).
 class HomeAssignmentAiService {
-  HomeAssignmentAiService({FirebaseFunctions? functions}) : _functions = functions ?? FirebaseFunctions.instance;
+  HomeAssignmentAiService({FirebaseFunctions? functions}) : _providedFunctions = functions;
 
-  final FirebaseFunctions _functions;
+  // Lazy: resolving FirebaseFunctions.instance needs Firebase.initializeApp() to have
+  // succeeded; constructing this service must never throw just because it hasn't.
+  final FirebaseFunctions? _providedFunctions;
+  FirebaseFunctions get _functions => _providedFunctions ?? FirebaseFunctions.instance;
 
   Future<bool> get isOnline async {
     final result = await Connectivity().checkConnectivity();
@@ -42,7 +46,7 @@ class HomeAssignmentAiService {
     }
     await AuthService.instance.ensureSignedIn();
 
-    final callable = _functions.httpsCallable('generateHomeAssignment');
+    final callable = meteredCallable(_functions, 'generateHomeAssignment');
     try {
       final result = await callable.call<Map<Object?, Object?>>({
         'topic': topic,

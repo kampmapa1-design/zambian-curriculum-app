@@ -44,6 +44,31 @@ class HomeAssignmentQuestion {
       );
 }
 
+/// Real, reported bug (2026-09-28): despite the prompt telling the model
+/// the supplied references are grounding-only, never gradable content
+/// (see `buildHomeAssignmentPrompt` in index.ts), it could still turn a
+/// references list into a spurious extra "question" — which then flowed
+/// straight through to the auto-saved marking key and from there into
+/// Lesson Plan's "Related Marking Keys" section, showing up to the
+/// teacher as junk. Defense-in-depth, not a replacement for the prompt
+/// fix: filters any question whose own number/text is plainly a
+/// references/bibliography heading rather than something answerable.
+/// Deliberately narrow (whole-heading match only) so a real question that
+/// happens to mention "references" mid-sentence is never dropped.
+bool isLikelyReferencesHeading({required String number, required String text}) {
+  final normalizedNumber = number.trim().toLowerCase();
+  if (normalizedNumber == 'references' || normalizedNumber == 'reference' || normalizedNumber == 'bibliography') {
+    return true;
+  }
+  final normalizedText = text.trim().toLowerCase();
+  return normalizedText == 'references' ||
+      normalizedText == 'reference' ||
+      normalizedText == 'bibliography' ||
+      normalizedText.startsWith('references:') ||
+      normalizedText.startsWith('reference:') ||
+      normalizedText.startsWith('bibliography:');
+}
+
 class HomeAssignmentKeyEntry {
   final String number;
   final String expectedAnswerOrKeywords;
@@ -79,8 +104,14 @@ class HomeAssignmentResult {
   factory HomeAssignmentResult.fromMap(Map<Object?, Object?> map) => HomeAssignmentResult(
         title: map['title'] as String? ?? 'Home Assignment',
         instructions: map['instructions'] as String? ?? '',
+        // Filtered here, at the single point every question enters the app
+        // from — see isLikelyReferencesHeading's own doc — so a spurious
+        // references "question" never reaches the teacher's review screen,
+        // never gets sent to a class, and never becomes part of the
+        // auto-saved marking key in the first place.
         questions: ((map['questions'] as List?) ?? const [])
             .map((q) => HomeAssignmentQuestion.fromMap(q as Map<Object?, Object?>))
+            .where((q) => !isLikelyReferencesHeading(number: q.number, text: q.text))
             .toList(),
         markingKey: ((map['markingKey'] as List?) ?? const [])
             .map((k) => HomeAssignmentKeyEntry.fromMap(k as Map<Object?, Object?>))

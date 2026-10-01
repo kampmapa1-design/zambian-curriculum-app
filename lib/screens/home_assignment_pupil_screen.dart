@@ -90,7 +90,7 @@ class _HomeAssignmentPupilScreenState extends State<HomeAssignmentPupilScreen> {
                             leading: const Icon(Icons.home_work_outlined),
                             title: Text(a.title),
                             subtitle: Text('${a.subjectName} · ${a.questions.length} question${a.questions.length == 1 ? '' : 's'}${a.deadline != null ? ' · due ${a.deadline!.day}/${a.deadline!.month}/${a.deadline!.year}' : ''}'),
-                            trailing: const Icon(Icons.chevron_right),
+                            trailing: const Icon(Icons.chevron_right_outlined),
                             onTap: () => Navigator.of(context).push(
                               MaterialPageRoute(builder: (_) => HomeAssignmentPupilDetailScreen(schoolId: _schoolId!, classId: _classId!, assignment: a)),
                             ),
