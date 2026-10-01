@@ -1,6 +1,8 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:crypto/crypto.dart';
+import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
@@ -82,9 +84,14 @@ class ReportClassBackupService {
         submissionKind: 'classBackup',
       );
       return true;
-    } catch (_) {
-      // Silent, deliberately — see this class's own doc comment. The
-      // on-device copy is always safe regardless of whether this succeeds.
+    } catch (e, st) {
+      // Silent to the CALLER, deliberately — see this class's own doc
+      // comment. The on-device copy is always safe regardless of whether
+      // this succeeds; reported as non-fatal so a real regression here
+      // (a teacher's safety-net backup silently not firing) is visible.
+      // Crashlytics reporting removed 2026-09-28 (circuit-breaker, see
+      // main.dart's own doc) — debugPrint is the only trace for now.
+      debugPrint('ReportClassBackupService.maybeBackup: failed for class $classId: $e\n$st');
       return false;
     }
   }

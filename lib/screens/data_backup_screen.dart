@@ -4,6 +4,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../services/cloud_backup_scheduler.dart';
+import '../services/cloud_backup_service.dart';
 import '../services/data_backup_service.dart';
 import '../services/device_downloads_service.dart';
 
@@ -15,10 +17,18 @@ import '../services/device_downloads_service.dart';
 /// what's covered — including, as of the same day, every marking script's
 /// actual photographed pages, not just the marking data around them.
 class DataBackupScreen extends StatefulWidget {
-  const DataBackupScreen({super.key, this.backupService, this.downloadsService});
+  const DataBackupScreen({
+    super.key,
+    this.backupService,
+    this.downloadsService,
+    this.cloudBackupService,
+    this.cloudScheduler,
+  });
 
   final DataBackupService? backupService;
   final DeviceDownloadsService? downloadsService;
+  final CloudBackupService? cloudBackupService;
+  final CloudBackupScheduler? cloudScheduler;
 
   @override
   State<DataBackupScreen> createState() => _DataBackupScreenState();
@@ -27,8 +37,23 @@ class DataBackupScreen extends StatefulWidget {
 class _DataBackupScreenState extends State<DataBackupScreen> {
   late final DataBackupService _backupService = widget.backupService ?? DataBackupService();
   late final DeviceDownloadsService _downloadsService = widget.downloadsService ?? DeviceDownloadsService();
+  late final CloudBackupService _cloudBackupService = widget.cloudBackupService ?? CloudBackupService();
+  late final CloudBackupScheduler _cloudScheduler = widget.cloudScheduler ?? CloudBackupScheduler();
 
   bool _busy = false;
+  DateTime? _lastCloudBackupAt;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadLastCloudBackupTime();
+  }
+
+  Future<void> _loadLastCloudBackupTime() async {
+    final last = await _cloudScheduler.lastSuccessfulBackupAt();
+    if (!mounted) return;
+    setState(() => _lastCloudBackupAt = last);
+  }
 
   Future<void> _backUpNow() async {
     setState(() => _busy = true);
@@ -59,8 +84,14 @@ class _DataBackupScreenState extends State<DataBackupScreen> {
   Future<void> _restoreFromBackup() async {
     final result = await FilePicker.pickFiles(type: FileType.custom, allowedExtensions: ['zip']);
     if (result.isEmpty || !mounted) return;
-    final picked = File(result.single.path!);
+    await _confirmAndRestore(File(result.single.path!));
+  }
 
+  /// Shared by both restore paths (a locally-picked file, or one just
+  /// downloaded from the cloud) — everything from reading the manifest
+  /// through the destructive-confirmation dialog to the actual restore is
+  /// identical either way; only how [picked] was obtained differs.
+  Future<void> _confirmAndRestore(File picked) async {
     setState(() => _busy = true);
     BackupManifest manifest;
     try {
@@ -140,6 +171,80 @@ class _DataBackupScreenState extends State<DataBackupScreen> {
     }
   }
 
+  Future<void> _backUpToCloud() async {
+    setState(() => _busy = true);
+    try {
+      await _cloudScheduler.backUpNowToCloud();
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Backed up to the cloud. Restorable on this or any other signed-in device.')),
+      );
+      await _loadLastCloudBackupTime();
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Cloud backup failed: $error')));
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  Future<void> _restoreFromCloud() async {
+    setState(() => _busy = true);
+    List<CloudBackupEntry> entries;
+    try {
+      entries = await _cloudBackupService.listBackups();
+    } catch (error) {
+      if (!mounted) return;
+      setState(() => _busy = false);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$error')));
+      return;
+    }
+    if (!mounted) return;
+    setState(() => _busy = false);
+
+    if (entries.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('No cloud backups found for this account yet.')));
+      return;
+    }
+
+    final chosen = await showModalBottomSheet<CloudBackupEntry>(
+      context: context,
+      builder: (sheetContext) => SafeArea(
+        child: ListView(
+          shrinkWrap: true,
+          children: [
+            const Padding(
+              padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
+              child: Text('Choose a cloud backup to restore', style: TextStyle(fontWeight: FontWeight.bold)),
+            ),
+            for (final entry in entries)
+              ListTile(
+                leading: const Icon(Icons.cloud_outlined),
+                title: Text(entry.createdAt == null ? entry.name : _formatDateTime(entry.createdAt!)),
+                subtitle: entry.sizeBytes == null ? null : Text(_formatBytes(entry.sizeBytes!)),
+                onTap: () => Navigator.of(sheetContext).pop(entry),
+              ),
+          ],
+        ),
+      ),
+    );
+    if (chosen == null || !mounted) return;
+
+    setState(() => _busy = true);
+    File downloaded;
+    try {
+      downloaded = await _cloudBackupService.downloadBackup(chosen);
+    } catch (error) {
+      if (!mounted) return;
+      setState(() => _busy = false);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$error')));
+      return;
+    }
+    if (!mounted) return;
+    setState(() => _busy = false);
+    await _confirmAndRestore(downloaded);
+  }
+
   String _formatBytes(int bytes) {
     if (bytes < 1024 * 1024) return '${(bytes / 1024).toStringAsFixed(0)} KB';
     return '${(bytes / (1024 * 1024)).toStringAsFixed(1)} MB';
@@ -187,10 +292,32 @@ class _DataBackupScreenState extends State<DataBackupScreen> {
               const SizedBox(height: 8),
               Card(
                 child: ListTile(
-                  leading: Icon(Icons.restore, color: Theme.of(context).colorScheme.error),
+                  leading: const Icon(Icons.cloud_upload_outlined),
+                  title: const Text('Back Up to Cloud'),
+                  subtitle: Text(
+                    _lastCloudBackupAt == null
+                        ? 'Not backed up to the cloud yet — also happens automatically once a day when you open the app'
+                        : 'Last backed up ${_formatDateTime(_lastCloudBackupAt!)} — also happens automatically once a day',
+                  ),
+                  onTap: _busy ? null : _backUpToCloud,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Card(
+                child: ListTile(
+                  leading: Icon(Icons.restore_outlined, color: Theme.of(context).colorScheme.error),
                   title: const Text('Restore from Backup'),
                   subtitle: const Text('Replaces current data on this device with a backup file you pick'),
                   onTap: _busy ? null : _restoreFromBackup,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Card(
+                child: ListTile(
+                  leading: Icon(Icons.cloud_download_outlined, color: Theme.of(context).colorScheme.error),
+                  title: const Text('Restore from Cloud'),
+                  subtitle: const Text('Replaces current data on this device with a backup from your cloud account'),
+                  onTap: _busy ? null : _restoreFromCloud,
                 ),
               ),
             ],

@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:archive/archive.dart';
+import 'package:archive/archive_io.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
@@ -82,13 +82,22 @@ class DataBackupService {
   /// hand it to the user, e.g. DeviceDownloadsService or the share sheet,
   /// same pattern every other generated document in this app already
   /// uses). Returns the written file.
-  Future<File> exportBackup() async {
+  Future<File> exportBackup({bool includeScriptPhotos = true}) async {
+    // Rewritten 2026-09-26 after a real "app crashes 5-10 seconds after
+    // opening, every time" report: the automatic daily cloud backup runs
+    // this on every app open, and the old version read EVERY script photo
+    // fully into memory, then built a second complete copy while
+    // compressing — on the UI isolate, hundreds of MB for a teacher with
+    // many marked scripts, ending in Android killing the process. Photos
+    // are now streamed from disk straight into the zip file (never held
+    // whole in memory), and the automatic backup passes
+    // includeScriptPhotos: false — see CloudBackupScheduler.
     final db = await _dbHelper.database;
-    final archive = Archive();
+    final dir = await getApplicationDocumentsDirectory();
 
+    final jsonEntries = <String, List<int>>{};
     void addJson(String name, Object? value) {
-      final bytes = utf8.encode(jsonEncode(value));
-      archive.addFile(ArchiveFile(name, bytes.length, bytes));
+      jsonEntries[name] = utf8.encode(jsonEncode(value));
     }
 
     var scriptCount = 0;
@@ -99,14 +108,13 @@ class DataBackupService {
       addJson('tables/$table.json', rows);
     }
 
-    final dir = await getApplicationDocumentsDirectory();
     final includedSidecars = <String>[];
     List<dynamic>? scripts;
     for (final fileName in _sidecarFileNames) {
       final file = File(p.join(dir.path, fileName));
       if (!await file.exists()) continue;
       final bytes = await file.readAsBytes();
-      archive.addFile(ArchiveFile('sidecars/$fileName', bytes.length, bytes));
+      jsonEntries['sidecars/$fileName'] = bytes;
       includedSidecars.add(fileName);
       if (fileName == 'marking_scripts_catalog.json') {
         try {
@@ -114,19 +122,17 @@ class DataBackupService {
           scriptCount = scripts?.length ?? 0;
         } catch (_) {
           // Manifest counts are informational only — a malformed catalog
-          // still gets backed up byte-for-byte above, just without a count.
+          // still gets backed up byte-for-byte, just without a count.
         }
       }
     }
 
-    // Script photos — see this class's own doc comment on why these
-    // matter most. Only ever reads files the catalog itself references
-    // (never globs the whole directory), so a script whose photos were
-    // already discarded (MarkingScript.photosDiscarded) is simply skipped,
-    // not treated as an error.
+    // Script photos — only ever the files the catalog itself references
+    // (never a directory glob); a script whose photos were already
+    // discarded is simply skipped.
+    final photoFiles = <(File file, String archiveName)>[];
     var photoBytes = 0;
-    var photoCount = 0;
-    if (scripts != null) {
+    if (includeScriptPhotos && scripts != null) {
       for (final scriptJson in scripts.cast<Map<String, dynamic>>()) {
         final scriptId = scriptJson['id'] as String?;
         final pageFileNames = (scriptJson['pageFileNames'] as List?)?.cast<String>() ?? const [];
@@ -134,10 +140,8 @@ class DataBackupService {
         for (final fileName in pageFileNames) {
           final file = File(p.join(dir.path, _scriptsContentDirName, scriptId, fileName));
           if (!await file.exists()) continue;
-          final bytes = await file.readAsBytes();
-          archive.addFile(ArchiveFile('script_photos/$scriptId/$fileName', bytes.length, bytes));
-          photoBytes += bytes.length;
-          photoCount++;
+          photoBytes += await file.length();
+          photoFiles.add((file, 'script_photos/$scriptId/$fileName'));
         }
       }
     }
@@ -145,18 +149,36 @@ class DataBackupService {
     addJson('manifest.json', {
       'format_version': _formatVersion,
       'exported_at': DateTime.now().toIso8601String(),
-      'includes_script_photos': true,
-      'script_photo_count': photoCount,
+      'includes_script_photos': includeScriptPhotos,
+      'script_photo_count': photoFiles.length,
       'script_photo_bytes': photoBytes,
       'report_class_count': classCount,
       'marking_script_count': scriptCount,
       'included_sidecar_files': includedSidecars,
     });
 
-    final zipBytes = ZipEncoder().encode(archive);
     final timestamp = DateTime.now().toIso8601String().replaceAll(RegExp(r'[:.]'), '-');
     final outFile = File(p.join(dir.path, 'smart_teacher_backup_$timestamp.zip'));
-    await outFile.writeAsBytes(zipBytes, flush: true);
+    final encoder = ZipFileEncoder();
+    encoder.create(outFile.path);
+    try {
+      for (final entry in jsonEntries.entries) {
+        encoder.addArchiveFile(ArchiveFile(entry.key, entry.value.length, entry.value));
+      }
+      for (final (file, archiveName) in photoFiles) {
+        await encoder.addFile(file, archiveName);
+        // Give the UI thread a turn between photos — see the note above
+        // on why this must never run as one uninterrupted block.
+        await Future<void>.delayed(Duration.zero);
+      }
+      await encoder.close();
+    } catch (_) {
+      try {
+        await encoder.close();
+      } catch (_) {}
+      if (await outFile.exists()) await outFile.delete();
+      rethrow;
+    }
     return outFile;
   }
 
@@ -242,8 +264,13 @@ class DataBackupService {
     // directory is removed first, so a script that isn't in THIS backup
     // doesn't keep orphaned photos lying around after its catalog entry
     // has just been overwritten above.
+    // A backup made without photos (the automatic cloud backup — see
+    // exportBackup's includeScriptPhotos) must never delete the photos
+    // already on this device: only a backup that actually includes them
+    // replaces the photo directory.
+    final backupHasPhotos = manifest['includes_script_photos'] as bool? ?? false;
     final scriptsDir = Directory(p.join(dir.path, _scriptsContentDirName));
-    if (await scriptsDir.exists()) await scriptsDir.delete(recursive: true);
+    if (backupHasPhotos && await scriptsDir.exists()) await scriptsDir.delete(recursive: true);
     // Every entry ever added to this archive is a real file (see
     // exportBackup — no directory placeholder entries are ever added), so
     // no separate "is this a file" filter is needed here.
