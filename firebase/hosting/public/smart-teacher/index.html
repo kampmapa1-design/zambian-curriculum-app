@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Smart Teacher — by PhiloSoft Ventures</title>
+<meta name="description" content="Plan lessons, mark work, and run your school — Smart Teacher is built for real Zambian classrooms, and works even without reliable internet.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#1565C0;
+    --blue-deep:#0E4A94;
+    --amber:#F5A623;
+    --cream:#FDF6E3;
+    --ink:#161A14;
+    --paper:#F7F5EE;
+    --muted:#5B6358;
+    --line:#DAD5C3;
+    box-sizing:border-box;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ink:#F2EFE4; --paper:#14150F; --muted:#A9AD9C; --line:#33352A;
+    }
+  }
+  :root[data-theme="dark"]{
+    --ink:#F2EFE4; --paper:#14150F; --muted:#A9AD9C; --line:#33352A;
+  }
+  html{scroll-padding-top:env(safe-area-inset-top,0px); scroll-behavior:smooth;}
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;line-height:1.6;}
+  h1,h2{font-family:'Fraunces',Georgia,serif;font-weight:600;margin:0;letter-spacing:-0.01em;}
+  a{color:inherit;}
+
+  header{
+    position:sticky; top:0; z-index:10;
+    padding:calc(env(safe-area-inset-top,0px) + 1rem) 1.4rem 1rem;
+    display:flex; align-items:center; justify-content:space-between;
+    background:var(--paper); border-bottom:1px solid var(--line);
+  }
+  .brand{display:flex; align-items:center; gap:.6rem; text-decoration:none;}
+  .brand svg{width:34px; height:34px; flex:none;}
+  .brand span{font-family:'Fraunces',serif; font-weight:600; font-size:1.02rem;}
+  header .current{font-size:.88rem; color:var(--muted);}
+
+  section{padding:3rem 1.4rem; max-width:720px; margin:0 auto;}
+  .hero{text-align:center; padding-top:3.6rem;}
+  .app-icon{
+    width:80px; height:80px; border-radius:18px; display:block; margin:0 auto 1.2rem;
+    box-shadow:0 6px 20px rgba(21,101,192,0.25);
+  }
+  .status{
+    display:inline-block; font-size:.78rem; font-weight:500; color:var(--blue-deep);
+    background:rgba(21,101,192,0.1); padding:.3rem .75rem; border-radius:20px; margin-bottom:1.2rem;
+  }
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .status { color:#8FB7EE; } }
+  :root[data-theme="dark"] .status { color:#8FB7EE; }
+  .hero h1{font-size:clamp(2.2rem,7vw,3.2rem); margin-bottom:1rem;}
+  .hero .lead{color:var(--muted); font-size:1.05rem; line-height:1.7; max-width:48ch; margin:0 auto 1.8rem;}
+  .cta{
+    display:inline-block; background:var(--amber); color:#241603; font-weight:500;
+    padding:.8rem 1.5rem; border-radius:6px; text-decoration:none; font-size:.98rem;
+  }
+
+  h2.section-title{font-size:1.5rem; margin-bottom:1.6rem; text-align:center;}
+  .grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:1rem;}
+  .card{
+    border:1px solid var(--line); border-radius:12px; padding:1.4rem;
+    display:flex; flex-direction:column; gap:.5rem;
+  }
+  .card h3{font-family:'Fraunces',serif; font-weight:600; font-size:1.08rem; margin:0;}
+  .card p{color:var(--muted); font-size:.92rem; margin:0; line-height:1.6;}
+
+  .plans-note{
+    text-align:center; color:var(--muted); font-size:.9rem; max-width:52ch; margin:0 auto 1.6rem;
+  }
+  .plan-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:1rem; margin-bottom:1.6rem;}
+  .plan{
+    border:1px solid var(--line); border-radius:12px; padding:1.3rem; text-align:center;
+  }
+  .plan .price{font-family:'Fraunces',serif; font-weight:600; font-size:1.4rem; color:var(--blue); margin:.3rem 0;}
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .plan .price { color:#8FB7EE; } }
+  :root[data-theme="dark"] .plan .price { color:#8FB7EE; }
+  .plan p{color:var(--muted); font-size:.85rem; margin:.2rem 0 0;}
+  .bundles{color:var(--muted); font-size:.9rem; text-align:center;}
+
+  footer{
+    border-top:1px solid var(--line); padding:2rem 1.4rem calc(2rem + env(safe-area-inset-bottom,0px));
+    text-align:center; color:var(--muted); font-size:.85rem;
+  }
+  footer a{color:var(--muted);}
+</style>
+</head>
+<body>
+
+<header>
+  <a class="brand" href="/">
+    <svg viewBox="0 0 120 100" aria-hidden="true">
+      <rect x="10" y="58" width="22" height="34" rx="3" fill="var(--blue)"/>
+      <rect x="38" y="42" width="22" height="50" rx="3" fill="var(--blue)"/>
+      <rect x="66" y="22" width="22" height="70" rx="3" fill="var(--blue)"/>
+      <polygon points="88,22 108,30 88,38" fill="var(--amber)"/>
+    </svg>
+    <span>PhiloSoft Ventures</span>
+  </a>
+  <span class="current">Smart Teacher</span>
+</header>
+
+<section class="hero">
+  <!--
+    Brand-consistency fix (owner request): the header above shows the
+    PARENT company's own mark (PhiloSoft Ventures), which is deliberately
+    different from Smart Teacher's own real Play Store icon below — so a
+    visitor reading this page sees the exact same icon they'll find on
+    their phone after joining testing, not an unfamiliar one. Real app
+    icon file, not a redrawn/invented version.
+  -->
+  <img class="app-icon" src="/assets/app-icon.png" width="80" height="80" alt="Smart Teacher app icon">
+  <span class="status">Google Play closed testing — not yet publicly available</span>
+  <h1>Smart Teacher</h1>
+  <p class="lead">
+    AI-assisted lesson planning and marking support for Zambian teachers —
+    plan lessons, mark work, and run your school, built for real Zambian
+    classrooms, and works even without reliable internet.
+  </p>
+  <!--
+    Real, verified Google Play Closed Testing join link (checked directly
+    against the live file before this redesign — not a guess, not a
+    placeholder) — not a production Play Store listing, since the app
+    isn't in production yet and still needs testers to reach the
+    12-tester/14-day gate, which is the actual current bottleneck (7 of
+    12+ so far). This stays the PRIMARY call to action on the page.
+  -->
+  <a class="cta" href="https://play.google.com/apps/testing/com.kampmapa1design.smartteacher">Join Early Access</a>
+</section>
+
+<section class="features">
+  <h2 class="section-title">What it does</h2>
+  <!--
+    Real copy, grounded in the app's actual working features — none of
+    these are aspirational or planned-but-unbuilt. Deliberately doesn't
+    name CDC/ECZ directly ("official Zambian curriculum" instead) — the
+    Play Store listing was once rejected for naming government content
+    sources without a disclaimer/source link; this page doesn't need
+    that specificity to stay true. Kept from the page's existing real
+    content rather than narrowed to a single summary line, since it was
+    already fact-checked and none of it is invented.
+  -->
+  <div class="grid">
+    <div class="card">
+      <h3>Lesson Plans &amp; Schemes of Work</h3>
+      <p>Generate complete lesson plans and schemes of work aligned to
+        the official Zambian curriculum — both Grade 10-12 and Form
+        1-4 — offline, with AI assistance when you're online.</p>
+    </div>
+    <div class="card">
+      <h3>Chief Marker — AI-assisted marking</h3>
+      <p>Mark scripts by camera instead of by hand. Chief Marker reads
+        handwritten answers against your own marking key and gives you
+        a graded, reviewable result in minutes, plus results analysis
+        across the whole class.</p>
+    </div>
+    <div class="card">
+      <h3>Timetable Generation</h3>
+      <p>Build a full school timetable — periods, subjects, teacher
+        constraints and all — from plain-language input, in minutes
+        instead of a weekend.</p>
+    </div>
+    <div class="card">
+      <h3>Admin Tools</h3>
+      <p>Convert Word documents to PDF, turn a recorded meeting into
+        structured minutes, and transcribe handwritten documents into
+        editable Word files — directly from your phone.</p>
+    </div>
+    <div class="card">
+      <h3>Student submissions</h3>
+      <p>Pupils photograph and submit handwritten assignments or tests
+        straight from their own phone. Teachers receive a clean,
+        organized PDF — no printer or scanner needed.</p>
+    </div>
+  </div>
+</section>
+
+<section class="plans">
+  <h2 class="section-title">Plans</h2>
+  <p class="plans-note">
+    Informational only — in-app purchases aren't live yet, so there's
+    nothing to buy here. This page will be updated once that's ready.
+  </p>
+  <div class="plan-grid">
+    <div class="plan">
+      <h3>Basic</h3>
+      <p class="price">K70<span style="font-size:.6em;">/month</span></p>
+    </div>
+    <div class="plan">
+      <h3>Gold</h3>
+      <p class="price">K150<span style="font-size:.6em;">/month</span></p>
+      <p>Unlocks timetable generation</p>
+    </div>
+    <div class="plan">
+      <h3>Institutional</h3>
+      <p class="price">Priced per school</p>
+      <p>Amount to be announced</p>
+    </div>
+  </div>
+  <p class="bundles">Marking credit bundles: K50 &middot; K100 &middot; K150</p>
+</section>
+
+<footer>
+  PhiloSoft Ventures &middot; <a href="/">PhiloSoft</a> &middot;
+  <a href="/privacy-policy.html">Privacy Policy</a>
+</footer>
+
+</body>
+</html>

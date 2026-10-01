@@ -13,5 +13,11 @@ build/
 firebase-debug.log
 firestore-debug.log
 
+# Generated web build output, reproducible via the documented
+# `flutter build web --base-href /admin/ -o firebase/hosting/public/admin`
+# command (docs/MONETIZATION_SETUP.md) — same reasoning as build/ above.
+firebase/hosting/public/admin/
+firebase/.firebase/
+
 # Crash/heap dumps
 *.hprof
