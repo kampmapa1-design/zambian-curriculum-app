@@ -3,11 +3,14 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import '../models/independent_timetable_project.dart';
 import '../models/timetable.dart';
 import 'school_service.dart' show SchoolException;
+import 'timetable_service.dart' show TimetableOfflineException;
+import 'metered_call.dart';
 
 /// "Build Timetable for Another School" (added 2026-09-16, per explicit
 /// request — "This function should make it possible for this component
@@ -27,13 +30,26 @@ import 'school_service.dart' show SchoolException;
 /// subscribed school's data.
 class IndependentTimetableService {
   IndependentTimetableService({FirebaseFunctions? functions, FirebaseFirestore? firestore, FirebaseAuth? auth})
-      : _functions = functions ?? FirebaseFunctions.instance,
-        _firestore = firestore ?? FirebaseFirestore.instance,
-        _auth = auth ?? FirebaseAuth.instance;
+      : _providedFunctions = functions,
+        _providedFirestore = firestore,
+        _providedAuth = auth;
 
-  final FirebaseFunctions _functions;
-  final FirebaseFirestore _firestore;
-  final FirebaseAuth _auth;
+  // Resolved lazily — see TimetableService's own comment on why.
+  final FirebaseFunctions? _providedFunctions;
+  final FirebaseFirestore? _providedFirestore;
+  final FirebaseAuth? _providedAuth;
+  FirebaseFunctions get _functions => _providedFunctions ?? FirebaseFunctions.instance;
+  FirebaseFirestore get _firestore => _providedFirestore ?? FirebaseFirestore.instance;
+  FirebaseAuth get _auth => _providedAuth ?? FirebaseAuth.instance;
+
+  Future<bool> get isOnline async {
+    final result = await Connectivity().checkConnectivity();
+    return !result.contains(ConnectivityResult.none);
+  }
+
+  Future<void> _requireOnline(String action) async {
+    if (!await isOnline) throw TimetableOfflineException(action);
+  }
 
   CollectionReference<Map<String, dynamic>> get _projects => _firestore.collection('independentTimetableProjects');
 
@@ -142,8 +158,9 @@ class IndependentTimetableService {
   }
 
   Future<({int assignmentCount, int conflictCount})> generate(String projectId) async {
+    await _requireOnline('generate the timetable');
     try {
-      final callable = _functions.httpsCallable('generateIndependentTimetable', options: HttpsCallableOptions(timeout: const Duration(seconds: 60)));
+      final callable = meteredCallable(_functions, 'generateIndependentTimetable', options: HttpsCallableOptions(timeout: const Duration(seconds: 60)));
       final result = await callable.call<Map<String, dynamic>>({'projectId': projectId});
       return (assignmentCount: (result.data['assignmentCount'] as num).toInt(), conflictCount: (result.data['conflictCount'] as num).toInt());
     } on FirebaseFunctionsException catch (e) {
@@ -162,8 +179,9 @@ class IndependentTimetableService {
   /// `explainIndependentTimetableConflicts` in index.ts. [watchGenerated]
   /// picks the result up automatically once it lands.
   Future<void> explainConflicts(String projectId) async {
+    await _requireOnline('get conflict explanations');
     try {
-      final callable = _functions.httpsCallable('explainIndependentTimetableConflicts', options: HttpsCallableOptions(timeout: const Duration(seconds: 60)));
+      final callable = meteredCallable(_functions, 'explainIndependentTimetableConflicts', options: HttpsCallableOptions(timeout: const Duration(seconds: 60)));
       await callable.call<Map<String, dynamic>>({'projectId': projectId});
     } on FirebaseFunctionsException catch (e) {
       throw SchoolException(e.message ?? 'Could not generate explanations right now.');
@@ -176,8 +194,9 @@ class IndependentTimetableService {
   /// on the result is that matched teacher's own NAME (see
   /// [IndependentTimetableClass]'s doc comment), not a real account id.
   Future<ParsedTimetableConstraint> parseConstraint({required String projectId, required String text}) async {
+    await _requireOnline('interpret that instruction');
     try {
-      final callable = _functions.httpsCallable('parseIndependentTimetableConstraint', options: HttpsCallableOptions(timeout: const Duration(seconds: 30)));
+      final callable = meteredCallable(_functions, 'parseIndependentTimetableConstraint', options: HttpsCallableOptions(timeout: const Duration(seconds: 30)));
       final result = await callable.call<Map<String, dynamic>>({'projectId': projectId, 'text': text});
       return ParsedTimetableConstraint.fromMap(result.data.cast<String, dynamic>());
     } on FirebaseFunctionsException catch (e) {
@@ -216,9 +235,10 @@ class IndependentTimetableService {
   /// `extractIndependentTimetableFromPhoto`. Read-only: nothing is
   /// applied until the operator reviews and confirms in the UI.
   Future<ExtractedTimetable> extractFromPhotos({required String projectId, required List<File> pageFiles}) async {
+    await _requireOnline('read this timetable');
     try {
       final images = [for (final f in pageFiles) base64Encode(await f.readAsBytes())];
-      final callable = _functions.httpsCallable('extractIndependentTimetableFromPhoto', options: HttpsCallableOptions(timeout: const Duration(seconds: 115)));
+      final callable = meteredCallable(_functions, 'extractIndependentTimetableFromPhoto', options: HttpsCallableOptions(timeout: const Duration(seconds: 115)));
       final result = await callable.call<Map<String, dynamic>>({'projectId': projectId, 'pageImagesBase64': images});
       return ExtractedTimetable.fromMap(result.data.cast<String, dynamic>());
     } on FirebaseFunctionsException catch (e) {

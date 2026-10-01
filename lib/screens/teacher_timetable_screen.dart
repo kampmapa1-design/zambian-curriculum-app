@@ -127,7 +127,7 @@ class _TeacherTimetableScreenState extends State<TeacherTimetableScreen> {
               if (mine.isEmpty || _config == null) return const SizedBox.shrink();
               return Row(
                 children: [
-                  IconButton(icon: const Icon(Icons.ios_share), tooltip: 'Export', onPressed: _busy ? null : () => _export(mine)),
+                  IconButton(icon: const Icon(Icons.ios_share_outlined), tooltip: 'Export', onPressed: _busy ? null : () => _export(mine)),
                   if (_canPin) IconButton(icon: const Icon(Icons.push_pin_outlined), tooltip: 'Pin to Staffroom', onPressed: _busy ? null : () => _pinToStaffroom(mine)),
                   IconButton(icon: const Icon(Icons.chat_bubble_outline), tooltip: 'Share to WhatsApp', onPressed: _busy ? null : () => _shareToWhatsApp(mine)),
                 ],

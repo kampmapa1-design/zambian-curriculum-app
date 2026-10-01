@@ -32,7 +32,7 @@ class TimetableByTeacherScreen extends StatelessWidget {
                 leading: CircleAvatar(child: Text(member.name.isNotEmpty ? member.name[0].toUpperCase() : '?')),
                 title: Text(member.name),
                 subtitle: Text(member.role.label),
-                trailing: const Icon(Icons.chevron_right),
+                trailing: const Icon(Icons.chevron_right_outlined),
                 onTap: () => Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => TeacherTimetableScreen(school: school, teacherUid: member.uid, teacherName: member.name)),
                 ),

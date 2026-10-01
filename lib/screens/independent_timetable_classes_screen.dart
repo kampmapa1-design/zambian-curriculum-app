@@ -37,7 +37,7 @@ class _IndependentTimetableClassesScreenState extends State<IndependentTimetable
         content: Text('"${cls.classGrade}" and its subject/teacher assignments will be removed.'),
         actions: [
           TextButton(onPressed: () => Navigator.of(dialogContext).pop(false), child: const Text('Cancel')),
-          FilledButton(onPressed: () => Navigator.of(dialogContext).pop(true), style: FilledButton.styleFrom(backgroundColor: Colors.red), child: const Text('Delete')),
+          FilledButton(onPressed: () => Navigator.of(dialogContext).pop(true), style: FilledButton.styleFrom(backgroundColor: Colors.red.shade700), child: const Text('Delete')),
         ],
       ),
     );
@@ -56,7 +56,7 @@ class _IndependentTimetableClassesScreenState extends State<IndependentTimetable
       appBar: AppBar(title: const Text('Classes & Subjects')),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _openEditor(),
-        icon: const Icon(Icons.add),
+        icon: const Icon(Icons.add_outlined),
         label: const Text('Add class'),
       ),
       body: StreamBuilder<List<IndependentTimetableClass>>(
@@ -234,7 +234,7 @@ class _ClassEditorScreenState extends State<_ClassEditorScreen> {
                       decoration: const InputDecoration(labelText: 'Teacher name', isDense: true, border: OutlineInputBorder()),
                     ),
                   ),
-                  IconButton(icon: const Icon(Icons.close, size: 18), onPressed: () => _removeSubject(subject)),
+                  IconButton(icon: const Icon(Icons.close_outlined, size: 18), onPressed: () => _removeSubject(subject)),
                 ],
               ),
             ),
@@ -247,7 +247,7 @@ class _ClassEditorScreenState extends State<_ClassEditorScreen> {
                   onSubmitted: (_) => _addSubject(),
                 ),
               ),
-              IconButton(icon: const Icon(Icons.add), onPressed: _addSubject),
+              IconButton(icon: const Icon(Icons.add_outlined), onPressed: _addSubject),
             ],
           ),
         ],

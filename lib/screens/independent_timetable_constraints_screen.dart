@@ -166,10 +166,10 @@ class _IndependentTimetableConstraintsScreenState extends State<IndependentTimet
       padding: const EdgeInsets.only(top: 2),
       child: Row(
         children: [
-          Icon(matched ? Icons.check_circle : Icons.error_outline, size: 16, color: matched ? Colors.green : Colors.orange),
+          Icon(matched ? Icons.check_circle_outlined : Icons.error_outline, size: 16, color: matched ? Colors.green.shade700 : Colors.orange),
           const SizedBox(width: 6),
           Text('$label: $value', style: const TextStyle(fontSize: 13)),
-          if (!matched) const Text('  (no confident match — won\'t be applied)', style: TextStyle(fontSize: 11, color: Colors.orange)),
+          if (!matched) Text('  (no confident match — won\'t be applied)', style: TextStyle(fontSize: 11, color: Colors.orange.shade900)),
         ],
       ),
     );

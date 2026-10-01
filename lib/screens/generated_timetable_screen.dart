@@ -244,7 +244,7 @@ class _GeneratedTimetableScreenState extends State<GeneratedTimetableScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   TextButton.icon(
-                    icon: _exporting ? const SizedBox(height: 16, width: 16, child: CircularProgressIndicator(strokeWidth: 2.4)) : const Icon(Icons.ios_share),
+                    icon: _exporting ? const SizedBox(height: 16, width: 16, child: CircularProgressIndicator(strokeWidth: 2.4)) : const Icon(Icons.ios_share_outlined),
                     label: const Text('Export'),
                     onPressed: _exporting ? null : () => _export(generated, config),
                   ),
@@ -344,7 +344,7 @@ class _GeneratedTimetableScreenState extends State<GeneratedTimetableScreen> {
                     children: [
                       Expanded(child: Text(classNames[classId] ?? classId, style: Theme.of(context).textTheme.titleMedium)),
                       IconButton(
-                        icon: const Icon(Icons.ios_share, size: 18),
+                        icon: const Icon(Icons.ios_share_outlined, size: 18),
                         tooltip: 'Export',
                         onPressed: _busy ? null : () => _exportClass(classNames[classId] ?? classId, byClass[classId]!),
                       ),

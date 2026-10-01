@@ -61,7 +61,7 @@ class _IndependentTimetableListScreenState extends State<IndependentTimetableLis
         content: Text('"${project.institutionName}" and everything built for it (classes, setup, generated timetable) will be permanently deleted.'),
         actions: [
           TextButton(onPressed: () => Navigator.of(dialogContext).pop(false), child: const Text('Cancel')),
-          FilledButton(onPressed: () => Navigator.of(dialogContext).pop(true), style: FilledButton.styleFrom(backgroundColor: Colors.red), child: const Text('Delete')),
+          FilledButton(onPressed: () => Navigator.of(dialogContext).pop(true), style: FilledButton.styleFrom(backgroundColor: Colors.red.shade700), child: const Text('Delete')),
         ],
       ),
     );
@@ -80,7 +80,7 @@ class _IndependentTimetableListScreenState extends State<IndependentTimetableLis
       appBar: AppBar(title: const Text('Build Timetable for Another School')),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _creating ? null : _createProject,
-        icon: _creating ? const SizedBox(height: 18, width: 18, child: CircularProgressIndicator(strokeWidth: 2.4)) : const Icon(Icons.add),
+        icon: _creating ? const SizedBox(height: 18, width: 18, child: CircularProgressIndicator(strokeWidth: 2.4)) : const Icon(Icons.add_outlined),
         label: const Text('New project'),
       ),
       body: StreamBuilder<List<IndependentTimetableProject>>(

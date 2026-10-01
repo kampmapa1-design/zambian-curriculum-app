@@ -3,9 +3,24 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 import '../models/timetable.dart';
 import 'school_service.dart' show SchoolException;
+import 'metered_call.dart';
+
+/// Thrown by [TimetableService]/`IndependentTimetableService`'s
+/// engine-and-AI-backed operations when there's no connection — the
+/// timetable counterpart to `MarkingGradingUnavailable`'s own offline
+/// message. Before this existed, generating a timetable offline surfaced
+/// whatever raw, opaque message the Cloud Functions plugin happened to
+/// throw for a dead connection. Extends [SchoolException] on purpose so
+/// every existing `on SchoolException catch (e)` call site (all of which
+/// just show `e.message`) picks up the friendly message with no change,
+/// while a caller that wants to treat "offline" specially still can.
+class TimetableOfflineException extends SchoolException {
+  const TimetableOfflineException(String action) : super("You're offline. Connect to the internet to $action.");
+}
 
 /// Timetable Generation, Stage 1 (added 2026-09-14) — client side of the
 /// config save path. Writes go through `saveTimetableConfig` (real
@@ -13,11 +28,26 @@ import 'school_service.dart' show SchoolException;
 /// class only reads and calls that one function.
 class TimetableService {
   TimetableService({FirebaseFunctions? functions, FirebaseFirestore? firestore})
-      : _functions = functions ?? FirebaseFunctions.instance,
-        _firestore = firestore ?? FirebaseFirestore.instance;
+      : _providedFunctions = functions,
+        _providedFirestore = firestore;
 
-  final FirebaseFunctions _functions;
-  final FirebaseFirestore _firestore;
+  // Resolved lazily (same reasoning as MarkingGradingService/
+  // PhotoBatchService): resolving the real Firebase singletons needs
+  // Firebase.initializeApp() to have already run, which the offline check
+  // below has no need for — and which a unit test can't provide.
+  final FirebaseFunctions? _providedFunctions;
+  final FirebaseFirestore? _providedFirestore;
+  FirebaseFunctions get _functions => _providedFunctions ?? FirebaseFunctions.instance;
+  FirebaseFirestore get _firestore => _providedFirestore ?? FirebaseFirestore.instance;
+
+  Future<bool> get isOnline async {
+    final result = await Connectivity().checkConnectivity();
+    return !result.contains(ConnectivityResult.none);
+  }
+
+  Future<void> _requireOnline(String action) async {
+    if (!await isOnline) throw TimetableOfflineException(action);
+  }
 
   DocumentReference<Map<String, dynamic>> _configRef(String schoolId) =>
       _firestore.collection('schools').doc(schoolId).collection('timetable').doc('config');
@@ -54,6 +84,7 @@ class TimetableService {
   /// call itself only reports counts; [watchGenerated] streams the real
   /// assignments/conflicts once they land.
   Future<({int assignmentCount, int conflictCount})> generate(String schoolId) async {
+    await _requireOnline('generate the timetable');
     try {
       final callable = _functions.httpsCallable('generateTimetable', options: HttpsCallableOptions(timeout: const Duration(seconds: 60)));
       final result = await callable.call<Map<String, dynamic>>({'schoolId': schoolId});
@@ -74,8 +105,9 @@ class TimetableService {
   /// doc; [watchGenerated] picks the result up automatically once it
   /// lands, no separate stream needed here.
   Future<void> explainConflicts(String schoolId) async {
+    await _requireOnline('get conflict explanations');
     try {
-      final callable = _functions.httpsCallable('explainTimetableConflicts', options: HttpsCallableOptions(timeout: const Duration(seconds: 60)));
+      final callable = meteredCallable(_functions, 'explainTimetableConflicts', options: HttpsCallableOptions(timeout: const Duration(seconds: 60)));
       await callable.call<Map<String, dynamic>>({'schoolId': schoolId});
     } on FirebaseFunctionsException catch (e) {
       throw SchoolException(e.message ?? 'Could not generate explanations right now.');
@@ -86,8 +118,9 @@ class TimetableService {
   /// Read-only: this never applies anything by itself, see the model doc
   /// comment on [ParsedTimetableConstraint].
   Future<ParsedTimetableConstraint> parseConstraint({required String schoolId, required String text}) async {
+    await _requireOnline('interpret that instruction');
     try {
-      final callable = _functions.httpsCallable('parseTimetableConstraint', options: HttpsCallableOptions(timeout: const Duration(seconds: 30)));
+      final callable = meteredCallable(_functions, 'parseTimetableConstraint', options: HttpsCallableOptions(timeout: const Duration(seconds: 30)));
       final result = await callable.call<Map<String, dynamic>>({'schoolId': schoolId, 'text': text});
       return ParsedTimetableConstraint.fromMap(result.data.cast<String, dynamic>());
     } on FirebaseFunctionsException catch (e) {
@@ -111,9 +144,10 @@ class TimetableService {
   /// `extractTimetableFromPhoto`. Read-only: see
   /// [ExtractedTimetable]'s doc comment for why nothing is applied here.
   Future<ExtractedTimetable> extractFromPhotos({required String schoolId, required List<File> pageFiles}) async {
+    await _requireOnline('read this timetable');
     try {
       final images = [for (final f in pageFiles) base64Encode(await f.readAsBytes())];
-      final callable = _functions.httpsCallable('extractTimetableFromPhoto', options: HttpsCallableOptions(timeout: const Duration(seconds: 115)));
+      final callable = meteredCallable(_functions, 'extractTimetableFromPhoto', options: HttpsCallableOptions(timeout: const Duration(seconds: 115)));
       final result = await callable.call<Map<String, dynamic>>({'schoolId': schoolId, 'pageImagesBase64': images});
       return ExtractedTimetable.fromMap(result.data.cast<String, dynamic>());
     } on FirebaseFunctionsException catch (e) {
