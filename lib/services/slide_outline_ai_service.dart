@@ -4,6 +4,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import '../models/slide_outline.dart';
 import '../utils/text_utils.dart';
 import 'auth_service.dart';
+import 'metered_call.dart';
 
 /// Thrown for both "can't reach the function" (offline) and "the function
 /// rejected the request" — either way there's a user-facing message to show.
@@ -23,9 +24,12 @@ class SlideOutlineUnavailable implements Exception {
 /// until then this fails gracefully and [OfflineSlideOutlineService] remains
 /// the working path.
 class SlideOutlineAiService {
-  SlideOutlineAiService({FirebaseFunctions? functions}) : _functions = functions ?? FirebaseFunctions.instance;
+  SlideOutlineAiService({FirebaseFunctions? functions}) : _providedFunctions = functions;
 
-  final FirebaseFunctions _functions;
+  // Lazy: resolving FirebaseFunctions.instance needs Firebase.initializeApp() to have
+  // succeeded; constructing this service must never throw just because it hasn't.
+  final FirebaseFunctions? _providedFunctions;
+  FirebaseFunctions get _functions => _providedFunctions ?? FirebaseFunctions.instance;
 
   Future<bool> get isOnline async {
     final result = await Connectivity().checkConnectivity();
@@ -50,7 +54,7 @@ class SlideOutlineAiService {
 
     await AuthService.instance.ensureSignedIn();
 
-    final callable = _functions.httpsCallable('generateSlideOutline');
+    final callable = meteredCallable(_functions, 'generateSlideOutline');
     try {
       final result = await callable.call<Map<Object?, Object?>>({
         'topic': topic,

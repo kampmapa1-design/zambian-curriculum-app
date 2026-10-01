@@ -5,6 +5,7 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
 import 'auth_service.dart';
+import 'metered_call.dart';
 
 class CoverPageFields {
   final String studentName;
@@ -53,9 +54,12 @@ class CoverPageExtractionUnavailable implements Exception {
 /// `extractCoverPageFields` Cloud Function. Pure convenience: the caller
 /// always shows the result in an editable form, never treats it as final.
 class CoverPageExtractionService {
-  CoverPageExtractionService({FirebaseFunctions? functions}) : _functions = functions ?? FirebaseFunctions.instance;
+  CoverPageExtractionService({FirebaseFunctions? functions}) : _providedFunctions = functions;
 
-  final FirebaseFunctions _functions;
+  // Lazy: resolving FirebaseFunctions.instance needs Firebase.initializeApp() to have
+  // succeeded; constructing this service must never throw just because it hasn't.
+  final FirebaseFunctions? _providedFunctions;
+  FirebaseFunctions get _functions => _providedFunctions ?? FirebaseFunctions.instance;
 
   Future<bool> get isOnline async {
     final result = await Connectivity().checkConnectivity();
@@ -69,7 +73,7 @@ class CoverPageExtractionService {
     await AuthService.instance.ensureSignedIn();
 
     final bytes = await coverPhoto.readAsBytes();
-    final callable = _functions.httpsCallable('extractCoverPageFields');
+    final callable = meteredCallable(_functions, 'extractCoverPageFields');
     try {
       final result = await callable.call<Map<Object?, Object?>>({'imageBase64': base64Encode(bytes)});
       return CoverPageFields.fromMap(result.data);

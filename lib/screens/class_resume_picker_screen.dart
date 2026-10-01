@@ -187,7 +187,7 @@ class _ClassResumePickerScreenState extends State<ClassResumePickerScreen> {
           padding: const EdgeInsets.all(16),
           child: FilledButton.icon(
             onPressed: _canContinue ? _continue : null,
-            icon: const Icon(Icons.arrow_forward),
+            icon: const Icon(Icons.arrow_forward_outlined),
             label: const Text('Continue'),
           ),
         ),
@@ -267,7 +267,7 @@ class _ChoiceCard extends StatelessWidget {
           padding: const EdgeInsets.all(12),
           child: Row(
             children: [
-              Icon(selected ? Icons.radio_button_checked : Icons.radio_button_unchecked),
+              Icon(selected ? Icons.radio_button_checked_outlined : Icons.radio_button_unchecked_outlined),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(

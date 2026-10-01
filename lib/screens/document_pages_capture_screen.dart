@@ -143,7 +143,7 @@ class _DocumentPagesCaptureScreenState extends State<DocumentPagesCaptureScreen>
                                 top: 0,
                                 right: 0,
                                 child: IconButton(
-                                  icon: const Icon(Icons.close, color: Colors.white, shadows: [Shadow(blurRadius: 4)]),
+                                  icon: const Icon(Icons.close_outlined, color: Colors.white, shadows: [Shadow(blurRadius: 4)]),
                                   onPressed: () => _removePage(index),
                                 ),
                               ),
@@ -169,7 +169,7 @@ class _DocumentPagesCaptureScreenState extends State<DocumentPagesCaptureScreen>
                         Expanded(
                           child: FilledButton.icon(
                             onPressed: _capturedPages.isEmpty ? null : _finish,
-                            icon: const Icon(Icons.check),
+                            icon: const Icon(Icons.check_outlined),
                             label: const Text('Done'),
                           ),
                         ),

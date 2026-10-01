@@ -71,10 +71,14 @@ class MarkedScriptsScreen extends StatefulWidget {
 }
 
 class _MarkedScriptsScreenState extends State<MarkedScriptsScreen> {
-  late final MarkingScriptRepository _repository = widget.repository ?? MarkingScriptRepository();
-  late final MarkingSchemeRepository _schemeRepository = widget.schemeRepository ?? MarkingSchemeRepository();
-  late final MarkedResultsListRepository _listRepository = widget.listRepository ?? MarkedResultsListRepository();
-  late final PhotoBatchService _photoBatchService = widget.photoBatchService ?? PhotoBatchService();
+  late final MarkingScriptRepository _repository =
+      widget.repository ?? MarkingScriptRepository();
+  late final MarkingSchemeRepository _schemeRepository =
+      widget.schemeRepository ?? MarkingSchemeRepository();
+  late final MarkedResultsListRepository _listRepository =
+      widget.listRepository ?? MarkedResultsListRepository();
+  late final PhotoBatchService _photoBatchService =
+      widget.photoBatchService ?? PhotoBatchService();
   final ScriptAnnotationService _annotationService = ScriptAnnotationService();
 
   bool _loading = true;
@@ -106,12 +110,17 @@ class _MarkedScriptsScreenState extends State<MarkedScriptsScreen> {
       final schemes = await _schemeRepository.loadCatalog();
       final lists = await _listRepository.loadCatalog();
       final marked = catalog.scripts
-          .where((s) => s.status == MarkingScriptStatus.graded || s.status == MarkingScriptStatus.reviewed)
+          .where((s) =>
+              s.status == MarkingScriptStatus.graded ||
+              s.status == MarkingScriptStatus.reviewed)
           .where((s) => !lists.allScriptIds.contains(s.id))
           .toList()
         ..sort((a, b) {
-          final bySurname = a.surname.toLowerCase().compareTo(b.surname.toLowerCase());
-          return bySurname != 0 ? bySurname : a.firstName.toLowerCase().compareTo(b.firstName.toLowerCase());
+          final bySurname =
+              a.surname.toLowerCase().compareTo(b.surname.toLowerCase());
+          return bySurname != 0
+              ? bySurname
+              : a.firstName.toLowerCase().compareTo(b.firstName.toLowerCase());
         });
       if (!mounted) return;
       setState(() {
@@ -134,6 +143,41 @@ class _MarkedScriptsScreenState extends State<MarkedScriptsScreen> {
       if (s.id == script.schemeId) return s;
     }
     return null;
+  }
+
+  /// 2026-09-23, per explicit request — this list used to be one flat,
+  /// alphabetical-by-surname list across EVERY cohort/scheme at once, a
+  /// real reported problem once a teacher had marked several classes.
+  /// Groups by cohort instead: the scheme/assessment a script belongs to
+  /// (each MarkingScheme is really one exam/cohort), further split by
+  /// [MarkingScript.classLevel] when the SAME scheme was marked across
+  /// more than one class — e.g. the same test given to Grade 10A and
+  /// 10B. Scripts with no scheme at all (manually-scored) group under
+  /// their own subject name instead, never silently under "(no scheme)".
+  String _cohortKeyFor(MarkingScript script) {
+    final scheme = _schemeFor(script);
+    final base = (scheme != null && scheme.title.trim().isNotEmpty)
+        ? scheme.title.trim()
+        : script.subjectName;
+    return script.classLevel.trim().isEmpty
+        ? base
+        : '$base — ${script.classLevel.trim()}';
+  }
+
+  /// Flattened for [ListView.builder]: a `String` entry is a cohort
+  /// header, a [MarkingScript] entry is a real row — cohorts in
+  /// alphabetical order, scripts within each kept in the same
+  /// surname-then-first-name order [_load] already sorts [_scripts] into.
+  List<Object> get _groupedListItems {
+    final grouped = <String, List<MarkingScript>>{};
+    for (final script in _scripts) {
+      grouped.putIfAbsent(_cohortKeyFor(script), () => []).add(script);
+    }
+    final sortedKeys = grouped.keys.toList()
+      ..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
+    return [
+      for (final key in sortedKeys) ...[key, ...grouped[key]!],
+    ];
   }
 
   double? _percentFor(MarkingScript script) {
@@ -177,8 +221,12 @@ class _MarkedScriptsScreenState extends State<MarkedScriptsScreen> {
           'permanently deleted, including its captured pages and marks.',
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.of(dialogContext).pop(false), child: const Text('Cancel')),
-          FilledButton(onPressed: () => Navigator.of(dialogContext).pop(true), child: const Text('Delete')),
+          TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(false),
+              child: const Text('Cancel')),
+          FilledButton(
+              onPressed: () => Navigator.of(dialogContext).pop(true),
+              child: const Text('Delete')),
         ],
       ),
     );
@@ -195,7 +243,8 @@ class _MarkedScriptsScreenState extends State<MarkedScriptsScreen> {
   /// names how many, not each one individually.
   Future<void> _deleteSelected() async {
     if (_selectedIds.isEmpty) return;
-    final selected = _scripts.where((s) => _selectedIds.contains(s.id)).toList();
+    final selected =
+        _scripts.where((s) => _selectedIds.contains(s.id)).toList();
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
@@ -204,8 +253,12 @@ class _MarkedScriptsScreenState extends State<MarkedScriptsScreen> {
           'These scripts will be permanently deleted, including their captured pages and marks.',
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.of(dialogContext).pop(false), child: const Text('Cancel')),
-          FilledButton(onPressed: () => Navigator.of(dialogContext).pop(true), child: const Text('Delete')),
+          TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(false),
+              child: const Text('Cancel')),
+          FilledButton(
+              onPressed: () => Navigator.of(dialogContext).pop(true),
+              child: const Text('Delete')),
         ],
       ),
     );
@@ -234,12 +287,18 @@ class _MarkedScriptsScreenState extends State<MarkedScriptsScreen> {
         content: TextField(
           controller: nameController,
           autofocus: true,
-          decoration: const InputDecoration(labelText: 'List name', border: OutlineInputBorder(), hintText: 'e.g. "Term 1 Finals"'),
+          decoration: const InputDecoration(
+              labelText: 'List name',
+              border: OutlineInputBorder(),
+              hintText: 'e.g. "Term 1 Finals"'),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.of(dialogContext).pop(), child: const Text('Cancel')),
+          TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: const Text('Cancel')),
           FilledButton(
-            onPressed: () => Navigator.of(dialogContext).pop(nameController.text.trim()),
+            onPressed: () =>
+                Navigator.of(dialogContext).pop(nameController.text.trim()),
             child: const Text('Create'),
           ),
         ],
@@ -250,7 +309,9 @@ class _MarkedScriptsScreenState extends State<MarkedScriptsScreen> {
     await _listRepository.create(name: name, scriptIds: _selectedIds.toList());
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Created "$name" with ${_selectedIds.length} script(s) — moved off this list.')),
+      SnackBar(
+          content: Text(
+              'Created "$name" with ${_selectedIds.length} script(s) — moved off this list.')),
     );
     setState(() {
       _selectMode = false;
@@ -275,7 +336,8 @@ class _MarkedScriptsScreenState extends State<MarkedScriptsScreen> {
   /// and Review/Edit (non-destructive, opens a normal editable screen).
   Future<void> _openBulkActions() async {
     if (_selectedIds.isEmpty) return;
-    final selected = _scripts.where((s) => _selectedIds.contains(s.id)).toList();
+    final selected =
+        _scripts.where((s) => _selectedIds.contains(s.id)).toList();
     final action = await showModalBottomSheet<_BulkAction>(
       context: context,
       builder: (sheetContext) => SafeArea(
@@ -284,37 +346,48 @@ class _MarkedScriptsScreenState extends State<MarkedScriptsScreen> {
           children: [
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
-              child: Text('${selected.length} script(s) selected', style: Theme.of(sheetContext).textTheme.titleMedium),
+              child: Text('${selected.length} script(s) selected',
+                  style: Theme.of(sheetContext).textTheme.titleMedium),
             ),
             ListTile(
               leading: const Icon(Icons.playlist_add_outlined),
               title: const Text('Create a new list'),
-              subtitle: const Text('Move these into a manually-curated, named results list'),
+              subtitle: const Text(
+                  'Move these into a manually-curated, named results list'),
               onTap: () => Navigator.of(sheetContext).pop(_BulkAction.newList),
             ),
             if (selected.length == 1)
               ListTile(
                 leading: const Icon(Icons.rate_review_outlined),
                 title: const Text('Review / edit'),
-                subtitle: const Text('Open this script — every answer stays editable'),
+                subtitle: const Text(
+                    'Open this script — every answer stays editable'),
                 onTap: () => Navigator.of(sheetContext).pop(_BulkAction.review),
               ),
             ListTile(
-              leading: const Icon(Icons.refresh),
+              leading: const Icon(Icons.refresh_outlined),
               title: const Text('Reprocess with AI'),
-              subtitle: const Text("Send them back to AI grading — current marks stay until they're regraded"),
-              onTap: () => Navigator.of(sheetContext).pop(_BulkAction.reprocess),
+              subtitle: const Text(
+                  "Send them back to AI grading — current marks stay until they're regraded"),
+              onTap: () =>
+                  Navigator.of(sheetContext).pop(_BulkAction.reprocess),
             ),
             ListTile(
               leading: const Icon(Icons.photo_library_outlined),
               title: const Text('Share the photo batch'),
-              subtitle: const Text('The captured pages behind these scripts — share the usual way, or get a link'),
-              onTap: () => Navigator.of(sheetContext).pop(_BulkAction.photoBatch),
+              subtitle: const Text(
+                  'The captured pages behind these scripts — share the usual way, or get a link'),
+              onTap: () =>
+                  Navigator.of(sheetContext).pop(_BulkAction.photoBatch),
             ),
             ListTile(
-              leading: Icon(Icons.delete_outline, color: Theme.of(sheetContext).colorScheme.error),
-              title: Text('Delete', style: TextStyle(color: Theme.of(sheetContext).colorScheme.error)),
-              subtitle: const Text('Permanently remove these scripts and their captured pages — asks to confirm first'),
+              leading: Icon(Icons.delete_outline,
+                  color: Theme.of(sheetContext).colorScheme.error),
+              title: Text('Delete',
+                  style: TextStyle(
+                      color: Theme.of(sheetContext).colorScheme.error)),
+              subtitle: const Text(
+                  'Permanently remove these scripts and their captured pages — asks to confirm first'),
               onTap: () => Navigator.of(sheetContext).pop(_BulkAction.delete),
             ),
             const SizedBox(height: 8),
@@ -330,7 +403,10 @@ class _MarkedScriptsScreenState extends State<MarkedScriptsScreen> {
       case _BulkAction.review:
         await Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (_) => MarkingReviewScreen(script: selected.single, scheme: _schemeFor(selected.single), repository: _repository),
+            builder: (_) => MarkingReviewScreen(
+                script: selected.single,
+                scheme: _schemeFor(selected.single),
+                repository: _repository),
           ),
         );
         _load();
@@ -359,18 +435,24 @@ class _MarkedScriptsScreenState extends State<MarkedScriptsScreen> {
           'actually run it. Current marks stay in place until each one is regraded.',
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.of(dialogContext).pop(false), child: const Text('Cancel')),
-          FilledButton(onPressed: () => Navigator.of(dialogContext).pop(true), child: const Text('Reprocess')),
+          TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(false),
+              child: const Text('Cancel')),
+          FilledButton(
+              onPressed: () => Navigator.of(dialogContext).pop(true),
+              child: const Text('Reprocess')),
         ],
       ),
     );
     if (confirmed != true) return;
     for (final script in selected) {
-      await _repository.update(script.copyWith(status: MarkingScriptStatus.queued, clearLastError: true));
+      await _repository.update(script.copyWith(
+          status: MarkingScriptStatus.queued, clearLastError: true));
     }
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Moved ${selected.length} script(s) back to queued.')),
+      SnackBar(
+          content: Text('Moved ${selected.length} script(s) back to queued.')),
     );
     setState(() {
       _selectMode = false;
@@ -393,12 +475,16 @@ class _MarkedScriptsScreenState extends State<MarkedScriptsScreen> {
       if (imageFiles.isEmpty) {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('No captured pages are available for the selected script(s) (photos may already have been discarded to free storage).')),
+          const SnackBar(
+              content: Text(
+                  'No captured pages are available for the selected script(s) (photos may already have been discarded to free storage).')),
         );
         return;
       }
 
-      final title = selected.length == 1 ? selected.single.fullName : '${selected.length} scripts';
+      final title = selected.length == 1
+          ? selected.single.fullName
+          : '${selected.length} scripts';
       final pdf = await _photoBatchService.composePdf(imageFiles, title: title);
       if (!mounted) return;
 
@@ -418,14 +504,18 @@ class _MarkedScriptsScreenState extends State<MarkedScriptsScreen> {
               ListTile(
                 leading: const Icon(Icons.share_outlined),
                 title: const Text('Share via…'),
-                subtitle: const Text('The usual sharing means — WhatsApp, email, Drive, and anything else installed'),
-                onTap: () => Navigator.of(sheetContext).pop(_PhotoBatchShareAction.share),
+                subtitle: const Text(
+                    'The usual sharing means — WhatsApp, email, Drive, and anything else installed'),
+                onTap: () => Navigator.of(sheetContext)
+                    .pop(_PhotoBatchShareAction.share),
               ),
               ListTile(
-                leading: const Icon(Icons.link),
+                leading: const Icon(Icons.link_outlined),
                 title: const Text('Get a shareable link'),
-                subtitle: const Text('Paste it into another AI platform, or anywhere else — stays valid for 30 days'),
-                onTap: () => Navigator.of(sheetContext).pop(_PhotoBatchShareAction.link),
+                subtitle: const Text(
+                    'Paste it into another AI platform, or anywhere else — stays valid for 30 days'),
+                onTap: () =>
+                    Navigator.of(sheetContext).pop(_PhotoBatchShareAction.link),
               ),
               const SizedBox(height: 8),
             ],
@@ -436,7 +526,8 @@ class _MarkedScriptsScreenState extends State<MarkedScriptsScreen> {
 
       switch (choice) {
         case _PhotoBatchShareAction.share:
-          await SharePlus.instance.share(ShareParams(files: [XFile(pdf.path)], subject: '$title — Photo Batch'));
+          await SharePlus.instance.share(ShareParams(
+              files: [XFile(pdf.path)], subject: '$title — Photo Batch'));
         case _PhotoBatchShareAction.link:
           try {
             final url = await _photoBatchService.uploadAndGetLink(pdf);
@@ -449,13 +540,16 @@ class _MarkedScriptsScreenState extends State<MarkedScriptsScreen> {
                 title: const Text('Link copied'),
                 content: SelectableText(url),
                 actions: [
-                  FilledButton(onPressed: () => Navigator.of(dialogContext).pop(), child: const Text('Done')),
+                  FilledButton(
+                      onPressed: () => Navigator.of(dialogContext).pop(),
+                      child: const Text('Done')),
                 ],
               ),
             );
           } on PhotoBatchUnavailable catch (error) {
             if (!mounted) return;
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$error')));
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text('$error')));
           }
       }
     } catch (error) {
@@ -471,15 +565,20 @@ class _MarkedScriptsScreenState extends State<MarkedScriptsScreen> {
   /// sheet. Works any time after the marking session, unlike the in-app
   /// session view which is lost once you leave it.
   Future<void> _shareMarkedScript(MarkingScript script) async {
-    if (script.photosDiscarded && (script.conciseMarking?.isStable ?? false) == false) {
+    if (script.photosDiscarded &&
+        (script.conciseMarking?.isStable ?? false) == false) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('This script\'s photos were discarded, so the ticked pages can\'t be '
-            'rebuilt. The report can still be shared from the review screen.')),
+        const SnackBar(
+            content: Text(
+                'This script\'s photos were discarded, so the ticked pages can\'t be '
+                'rebuilt. The report can still be shared from the review screen.')),
       );
       return;
     }
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Rebuilding the marked script…'), duration: Duration(seconds: 1)),
+      const SnackBar(
+          content: Text('Rebuilding the marked script…'),
+          duration: Duration(seconds: 1)),
     );
     try {
       final pageFiles = await _repository.pageFilesFor(script);
@@ -499,7 +598,9 @@ class _MarkedScriptsScreenState extends State<MarkedScriptsScreen> {
       ];
       if (!mounted || files.isEmpty) return;
       await SharePlus.instance.share(
-        ShareParams(files: files, subject: '${script.fullName} — marked ${script.subjectName}'),
+        ShareParams(
+            files: files,
+            subject: '${script.fullName} — marked ${script.subjectName}'),
       );
     } catch (error) {
       if (!mounted) return;
@@ -519,12 +620,14 @@ class _MarkedScriptsScreenState extends State<MarkedScriptsScreen> {
           children: [
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
-              child: Text(script.fullName, style: Theme.of(sheetContext).textTheme.titleMedium),
+              child: Text(script.fullName,
+                  style: Theme.of(sheetContext).textTheme.titleMedium),
             ),
             ListTile(
               leading: const Icon(Icons.rate_review_outlined),
               title: const Text('Review / edit'),
-              subtitle: const Text('Open this script — every answer stays editable'),
+              subtitle:
+                  const Text('Open this script — every answer stays editable'),
               onTap: () => Navigator.of(sheetContext).pop(_ScriptAction.review),
             ),
             if (script.conciseMarking != null)
@@ -536,25 +639,34 @@ class _MarkedScriptsScreenState extends State<MarkedScriptsScreen> {
                 subtitle: Text(script.conciseMarking!.isStable
                     ? 'Rebuild and share this candidate\'s report'
                     : 'Rebuild and share the dated pages with ticks/crosses + the report'),
-                onTap: () => Navigator.of(sheetContext).pop(_ScriptAction.markedScript),
+                onTap: () =>
+                    Navigator.of(sheetContext).pop(_ScriptAction.markedScript),
               ),
             ListTile(
-              leading: const Icon(Icons.refresh),
+              leading: const Icon(Icons.refresh_outlined),
               title: const Text('Reprocess with AI'),
-              subtitle: const Text("Send it back to AI grading — current marks stay until it's regraded"),
-              onTap: () => Navigator.of(sheetContext).pop(_ScriptAction.reprocess),
+              subtitle: const Text(
+                  "Send it back to AI grading — current marks stay until it's regraded"),
+              onTap: () =>
+                  Navigator.of(sheetContext).pop(_ScriptAction.reprocess),
             ),
             if (script.status != MarkingScriptStatus.reviewed)
               ListTile(
                 leading: const Icon(Icons.check_circle_outline),
                 title: const Text('Mark as reviewed'),
-                subtitle: const Text('Confirm the current AI marks as final, without reopening the full review'),
-                onTap: () => Navigator.of(sheetContext).pop(_ScriptAction.markReviewed),
+                subtitle: const Text(
+                    'Confirm the current AI marks as final, without reopening the full review'),
+                onTap: () =>
+                    Navigator.of(sheetContext).pop(_ScriptAction.markReviewed),
               ),
             ListTile(
-              leading: Icon(Icons.delete_outline, color: Theme.of(sheetContext).colorScheme.error),
-              title: Text('Delete', style: TextStyle(color: Theme.of(sheetContext).colorScheme.error)),
-              subtitle: const Text('Permanently remove this script and its captured pages — asks to confirm first'),
+              leading: Icon(Icons.delete_outline,
+                  color: Theme.of(sheetContext).colorScheme.error),
+              title: Text('Delete',
+                  style: TextStyle(
+                      color: Theme.of(sheetContext).colorScheme.error)),
+              subtitle: const Text(
+                  'Permanently remove this script and its captured pages — asks to confirm first'),
               onTap: () => Navigator.of(sheetContext).pop(_ScriptAction.delete),
             ),
             const SizedBox(height: 8),
@@ -568,21 +680,26 @@ class _MarkedScriptsScreenState extends State<MarkedScriptsScreen> {
       case _ScriptAction.review:
         await Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (_) => MarkingReviewScreen(script: script, scheme: scheme, repository: _repository),
+            builder: (_) => MarkingReviewScreen(
+                script: script, scheme: scheme, repository: _repository),
           ),
         );
         _load();
       case _ScriptAction.markedScript:
         await _shareMarkedScript(script);
       case _ScriptAction.reprocess:
-        await _repository.update(script.copyWith(status: MarkingScriptStatus.queued, clearLastError: true));
+        await _repository.update(script.copyWith(
+            status: MarkingScriptStatus.queued, clearLastError: true));
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Moved back to queued — process its batch again from the hub to reprocess it.')),
+          const SnackBar(
+              content: Text(
+                  'Moved back to queued — process its batch again from the hub to reprocess it.')),
         );
         _load();
       case _ScriptAction.markReviewed:
-        await _repository.update(script.copyWith(status: MarkingScriptStatus.reviewed));
+        await _repository
+            .update(script.copyWith(status: MarkingScriptStatus.reviewed));
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Marked as reviewed.')),
@@ -597,7 +714,8 @@ class _MarkedScriptsScreenState extends State<MarkedScriptsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_selectMode ? '${_selectedIds.length} selected' : 'Marked Scripts'),
+        title: Text(
+            _selectMode ? '${_selectedIds.length} selected' : 'Marked Scripts'),
         actions: [
           if (_selectMode) ...[
             // Real, reported gap (2026-09-11): this used to be two bare
@@ -608,21 +726,24 @@ class _MarkedScriptsScreenState extends State<MarkedScriptsScreen> {
             // comment).
             TextButton.icon(
               onPressed: _selectedIds.isEmpty ? null : _openBulkActions,
-              icon: const Icon(Icons.more_horiz),
+              icon: const Icon(Icons.more_horiz_outlined),
               label: const Text('Actions'),
               style: TextButton.styleFrom(foregroundColor: Colors.white),
             ),
           ] else ...[
             IconButton(
               onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const ConsolidateMarkedScriptsScreen()),
+                MaterialPageRoute(
+                    builder: (_) => const ConsolidateMarkedScriptsScreen()),
               ),
-              icon: const Icon(Icons.merge_type),
+              icon: const Icon(Icons.merge_type_outlined),
               tooltip: 'Consolidate into a class\'s Broad Mark Sheet',
             ),
             IconButton(
               onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => MarkedResultsListsScreen(listRepository: _listRepository)),
+                MaterialPageRoute(
+                    builder: (_) => MarkedResultsListsScreen(
+                        listRepository: _listRepository)),
               ),
               icon: const Icon(Icons.folder_outlined),
               tooltip: 'My results lists',
@@ -635,7 +756,10 @@ class _MarkedScriptsScreenState extends State<MarkedScriptsScreen> {
               ),
           ],
           if (_selectMode)
-            IconButton(onPressed: _toggleSelectMode, icon: const Icon(Icons.close), tooltip: 'Cancel'),
+            IconButton(
+                onPressed: _toggleSelectMode,
+                icon: const Icon(Icons.close_outlined),
+                tooltip: 'Cancel'),
         ],
       ),
       body: _loading
@@ -647,73 +771,121 @@ class _MarkedScriptsScreenState extends State<MarkedScriptsScreen> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.error_outline, size: 48, color: Theme.of(context).colorScheme.error),
+                        Icon(Icons.error_outline,
+                            size: 48,
+                            color: Theme.of(context).colorScheme.error),
                         const SizedBox(height: 12),
                         Text(_loadError!, textAlign: TextAlign.center),
                         const SizedBox(height: 16),
-                        FilledButton(onPressed: _load, child: const Text('Try Again')),
+                        FilledButton(
+                            onPressed: _load, child: const Text('Try Again')),
                       ],
                     ),
                   ),
                 )
               : _scripts.isEmpty
-              ? Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(24),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.fact_check_outlined, size: 48, color: Theme.of(context).colorScheme.outline),
-                        const SizedBox(height: 12),
-                        const Text('No marked scripts yet.', textAlign: TextAlign.center),
-                      ],
-                    ),
-                  ),
-                )
-              : ListView.builder(
-                  itemCount: _scripts.length,
-                  itemBuilder: (context, index) {
-                    final script = _scripts[index];
-                    final scheme = _schemeFor(script);
-                    final percent = _percentFor(script);
-                    final reviewed = script.status == MarkingScriptStatus.reviewed;
-                    final selected = _selectedIds.contains(script.id);
-                    return ListTile(
-                      leading: _selectMode
-                          ? Checkbox(value: selected, onChanged: (_) => _toggleSelected(script.id))
-                          : CircleAvatar(
-                              backgroundColor: reviewed
-                                  ? Theme.of(context).colorScheme.primaryContainer
-                                  : Theme.of(context).colorScheme.surfaceContainerHighest,
-                              child: Icon(reviewed ? Icons.check : Icons.hourglass_top_outlined, size: 18),
-                            ),
-                      title: Text(script.fullName),
-                      subtitle: Text(
-                        '${scheme?.title ?? script.subjectName} · ${script.gradeName}'
-                        '${script.classLevel.isEmpty ? '' : ' · ${script.classLevel}'}'
-                        '\n${reviewed ? 'Reviewed' : 'Graded — needs review'}',
+                  ? Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(24),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.fact_check_outlined,
+                                size: 48,
+                                color: Theme.of(context).colorScheme.outline),
+                            const SizedBox(height: 12),
+                            const Text('No marked scripts yet.',
+                                textAlign: TextAlign.center),
+                          ],
+                        ),
                       ),
-                      isThreeLine: true,
-                      trailing: percent == null ? null : Text('${percent.toStringAsFixed(1)}%', style: const TextStyle(fontWeight: FontWeight.bold)),
-                      selected: selected,
-                      selectedTileColor: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.3),
-                      onTap: _selectMode ? () => _toggleSelected(script.id) : () => _openActions(script),
-                      onLongPress: _selectMode
-                          ? null
-                          : () {
-                              // Long-press to enter select mode already
-                              // highlighted on this one entry (2026-09-10,
-                              // per explicit request: "highlightable") —
-                              // quicker than tapping the AppBar checklist
-                              // icon first, then finding this row again.
-                              setState(() {
-                                _selectMode = true;
-                                _selectedIds.add(script.id);
-                              });
-                            },
-                    );
-                  },
-                ),
+                    )
+                  : Builder(builder: (context) {
+                      final items = _groupedListItems;
+                      return ListView.builder(
+                        itemCount: items.length,
+                        itemBuilder: (context, index) {
+                          final item = items[index];
+                          if (item is String) {
+                            return Container(
+                              width: double.infinity,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .surfaceContainerHighest,
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 8),
+                              child: Text(
+                                item,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .labelLarge
+                                    ?.copyWith(fontWeight: FontWeight.bold),
+                              ),
+                            );
+                          }
+                          final script = item as MarkingScript;
+                          final scheme = _schemeFor(script);
+                          final percent = _percentFor(script);
+                          final reviewed =
+                              script.status == MarkingScriptStatus.reviewed;
+                          final selected = _selectedIds.contains(script.id);
+                          return ListTile(
+                            leading: _selectMode
+                                ? Checkbox(
+                                    value: selected,
+                                    onChanged: (_) =>
+                                        _toggleSelected(script.id))
+                                : CircleAvatar(
+                                    backgroundColor: reviewed
+                                        ? Theme.of(context)
+                                            .colorScheme
+                                            .primaryContainer
+                                        : Theme.of(context)
+                                            .colorScheme
+                                            .surfaceContainerHighest,
+                                    child: Icon(
+                                        reviewed
+                                            ? Icons.check_outlined
+                                            : Icons.hourglass_top_outlined,
+                                        size: 18),
+                                  ),
+                            title: Text(script.fullName),
+                            subtitle: Text(
+                              '${scheme?.title ?? script.subjectName} · ${script.gradeName}'
+                              '${script.classLevel.isEmpty ? '' : ' · ${script.classLevel}'}'
+                              '\n${reviewed ? 'Reviewed' : 'Graded — needs review'}',
+                            ),
+                            isThreeLine: true,
+                            trailing: percent == null
+                                ? null
+                                : Text('${percent.toStringAsFixed(1)}%',
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold)),
+                            selected: selected,
+                            selectedTileColor: Theme.of(context)
+                                .colorScheme
+                                .primaryContainer
+                                .withValues(alpha: 0.3),
+                            onTap: _selectMode
+                                ? () => _toggleSelected(script.id)
+                                : () => _openActions(script),
+                            onLongPress: _selectMode
+                                ? null
+                                : () {
+                                    // Long-press to enter select mode already
+                                    // highlighted on this one entry (2026-09-10,
+                                    // per explicit request: "highlightable") —
+                                    // quicker than tapping the AppBar checklist
+                                    // icon first, then finding this row again.
+                                    setState(() {
+                                      _selectMode = true;
+                                      _selectedIds.add(script.id);
+                                    });
+                                  },
+                          );
+                        },
+                      );
+                    }),
     );
   }
 }

@@ -101,7 +101,7 @@ class _GenerateNotesByTopicScreenState extends State<GenerateNotesByTopicScreen>
           const SizedBox(height: 20),
           _formatTile(
             format: FreeTopicFormat.bulletin,
-            icon: Icons.format_list_bulleted,
+            icon: Icons.format_list_bulleted_outlined,
             title: 'Bulletin',
             subtitle: 'Bullet points in a Word document — up to 6 pages, less if the topic wraps up sooner.',
           ),
@@ -139,7 +139,7 @@ class _GenerateNotesByTopicScreenState extends State<GenerateNotesByTopicScreen>
             : CircleAvatar(child: Icon(icon)),
         title: Text(title),
         subtitle: Text(subtitle),
-        trailing: const Icon(Icons.chevron_right),
+        trailing: const Icon(Icons.chevron_right_outlined),
         enabled: !disabled,
         onTap: disabled || busy ? null : () => _generate(format),
       ),

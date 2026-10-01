@@ -4,6 +4,7 @@ import 'package:document_camera_frame/document_camera_frame.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../models/marking_credits.dart';
 import '../models/marking_scheme.dart';
 import '../models/marking_script.dart';
 import '../models/marking_session.dart';
@@ -18,6 +19,7 @@ import '../services/marking_script_repository.dart';
 import '../services/marking_session_repository.dart';
 import '../services/template_repository.dart';
 import 'marked_scripts_screen.dart';
+import 'marking_credits_screen.dart';
 import 'marking_key_upload_flow.dart';
 import 'subject_grade_topic_picker_screen.dart';
 import '../widgets/score_pop_badge.dart';
@@ -961,14 +963,18 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
     }
 
     setState(() => _finishing = true);
-    var ranOutOfFreeGradings = false;
+    var ranOutOfCredits = false;
+    InsufficientCreditsException? outOfCreditsReason;
     final scheme = _scheme!;
     await runBatchGrading(
       scripts: [_savedScript!],
       scheme: scheme,
       repository: _repository,
       gradingService: _gradingService,
-      onOutOfFreeGradings: () => ranOutOfFreeGradings = true,
+      onOutOfCredits: (reason) {
+        ranOutOfCredits = true;
+        outOfCreditsReason = reason;
+      },
       onScriptGraded: (graded) {
         if (!mounted || graded.status != MarkingScriptStatus.graded) return;
         final total = scheme.totalMarks;
@@ -981,16 +987,9 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
     );
     if (!mounted) return;
 
-    if (ranOutOfFreeGradings) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            "You've used this month's free AI-graded scripts this month — this script stays queued until "
-            'next month (or an upgrade, once available).',
-          ),
-          duration: Duration(seconds: 6),
-        ),
-      );
+    if (ranOutOfCredits) {
+      await showOutOfCreditsDialog(context, outOfCreditsReason);
+      if (!mounted) return;
     }
 
     // Give the score pop-up its full ~3.5s before leaving this screen —
@@ -1188,7 +1187,7 @@ class _ScriptBatchCaptureScreenState extends State<ScriptBatchCaptureScreen> {
                                 top: 0,
                                 right: 0,
                                 child: IconButton(
-                                  icon: const Icon(Icons.close, color: Colors.white, shadows: [Shadow(blurRadius: 4)]),
+                                  icon: const Icon(Icons.close_outlined, color: Colors.white, shadows: [Shadow(blurRadius: 4)]),
                                   onPressed: () => _removePage(index),
                                 ),
                               ),

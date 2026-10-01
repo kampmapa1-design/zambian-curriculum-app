@@ -3,9 +3,12 @@ import 'package:flutter/material.dart';
 import '../models/activity_bank.dart';
 import '../models/cdc_constraint_rules.dart';
 import '../models/guided_answers.dart';
+import '../models/lesson_plan.dart';
 import '../models/scheme_of_work.dart';
 import '../services/guided_planning_engine.dart';
 import '../services/guided_planning_repository.dart';
+import '../services/lesson_plan_template_selector.dart';
+import '../widgets/app_primary_button.dart';
 import 'lesson_plan_screen.dart';
 
 /// Stage 5: the offline guided Q&A. After picking topic/sub-topic (already
@@ -100,9 +103,19 @@ class _GuidedPlanningScreenState extends State<GuidedPlanningScreen> {
     setState(() => _result = result);
   }
 
-  void _useInLessonPlan() {
+  /// OBC subjects get their automatically-selected official template (see
+  /// selectLessonPlanTemplate). CBC is deliberately left exactly as it was
+  /// here — the OBC template work must not change any CBC behaviour.
+  Future<LessonPlanTemplate> _templateForSubject() async {
+    if (widget.curriculumCode == 'CBC_2023') return defaultCdcLessonPlanTemplate;
+    return lessonPlanTemplateForSubject(curriculumCode: widget.curriculumCode, subjectCode: widget.subjectCode);
+  }
+
+  Future<void> _useInLessonPlan() async {
     final result = _result;
     if (result == null) return;
+    final template = await _templateForSubject();
+    if (!mounted) return;
     final activitiesText = result.selectedActivities
         .map((a) => '${a.description}\nMaterials: ${a.materials}')
         .join('\n\n');
@@ -118,13 +131,16 @@ class _GuidedPlanningScreenState extends State<GuidedPlanningScreen> {
         subjectCode: widget.subjectCode,
         gradeLevel: widget.gradeLevel,
         entry: widget.entry,
+        template: template,
         guidedActivitiesText: activitiesText,
         guidedNoteText: noteLines.isEmpty ? null : noteLines.join('\n'),
       ),
     ));
   }
 
-  void _openPlainLessonPlan() {
+  Future<void> _openPlainLessonPlan() async {
+    final template = await _templateForSubject();
+    if (!mounted) return;
     Navigator.of(context).push(MaterialPageRoute(
       builder: (_) => LessonPlanScreen(
         subjectName: widget.subjectName,
@@ -132,6 +148,7 @@ class _GuidedPlanningScreenState extends State<GuidedPlanningScreen> {
         subjectCode: widget.subjectCode,
         gradeLevel: widget.gradeLevel,
         entry: widget.entry,
+        template: template,
       ),
     ));
   }
@@ -211,10 +228,11 @@ class _GuidedPlanningScreenState extends State<GuidedPlanningScreen> {
           onSelectionChanged: (s) => setState(() => _preferredStyle = s.first),
         ),
         const SizedBox(height: 20),
-        FilledButton.icon(
+        AppPrimaryButton(
           onPressed: _generate,
-          icon: const Icon(Icons.rule),
-          label: const Text('Generate suggestions'),
+          icon: Icons.rule_outlined,
+          label: 'Generate suggestions',
+          expand: false,
         ),
         if (_result != null) ..._buildResult(context, _result!),
       ],
@@ -257,7 +275,7 @@ class _GuidedPlanningScreenState extends State<GuidedPlanningScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Icon(
-                  n.severity == PlanningNoticeSeverity.block ? Icons.block : Icons.info_outline,
+                  n.severity == PlanningNoticeSeverity.block ? Icons.block_outlined : Icons.info_outline,
                   size: 18,
                   color: n.severity == PlanningNoticeSeverity.block
                       ? Theme.of(context).colorScheme.error

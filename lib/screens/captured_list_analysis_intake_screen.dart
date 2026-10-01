@@ -404,7 +404,7 @@ class _CapturedListAnalysisIntakeScreenState extends State<CapturedListAnalysisI
               for (var i = 0; i < _rows.length; i++) _buildRowCard(context, i),
               OutlinedButton.icon(
                 onPressed: _addRow,
-                icon: const Icon(Icons.add),
+                icon: const Icon(Icons.add_outlined),
                 label: const Text('Add Row'),
               ),
             ],

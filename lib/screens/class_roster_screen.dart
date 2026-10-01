@@ -361,7 +361,7 @@ class _ClassRosterScreenState extends State<ClassRosterScreen> {
                       ] else ...[
                         Row(
                           children: [
-                            const Icon(Icons.verified, color: Colors.green, size: 18),
+                            Icon(Icons.verified_outlined, color: Colors.green.shade700, size: 18),
                             const SizedBox(width: 6),
                             Expanded(
                               child: Text(

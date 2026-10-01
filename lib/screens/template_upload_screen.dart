@@ -157,7 +157,7 @@ class _TemplateUploadScreenState extends State<TemplateUploadScreen> {
           const SizedBox(height: 16),
           OutlinedButton.icon(
             onPressed: _busy ? null : _pickFile,
-            icon: const Icon(Icons.upload_file),
+            icon: const Icon(Icons.upload_file_outlined),
             label: Text(_fileName == null ? 'Choose .docx file' : 'Chosen: $_fileName'),
           ),
           if (_error != null)

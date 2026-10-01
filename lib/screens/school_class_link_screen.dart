@@ -291,8 +291,8 @@ class _SchoolClassLinkScreenState extends State<SchoolClassLinkScreen> {
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            IconButton(icon: const Icon(Icons.check, color: Colors.green), onPressed: () => _respondToPupilLink(schoolClass, req, true)),
-                            IconButton(icon: const Icon(Icons.close, color: Colors.red), onPressed: () => _respondToPupilLink(schoolClass, req, false)),
+                            IconButton(icon: Icon(Icons.check_outlined, color: Colors.green.shade700), onPressed: () => _respondToPupilLink(schoolClass, req, true)),
+                            IconButton(icon: Icon(Icons.close_outlined, color: Colors.red.shade700), onPressed: () => _respondToPupilLink(schoolClass, req, false)),
                           ],
                         ),
                       ),
@@ -306,7 +306,7 @@ class _SchoolClassLinkScreenState extends State<SchoolClassLinkScreen> {
         OutlinedButton.icon(
           icon: _syncing
               ? const SizedBox(height: 16, width: 16, child: CircularProgressIndicator(strokeWidth: 2.4))
-              : const Icon(Icons.sync),
+              : const Icon(Icons.sync_outlined),
           label: const Text('Sync scores from subject teachers'),
           onPressed: _syncing ? null : _syncScores,
         ),

@@ -10,6 +10,11 @@ import '../models/scheme_of_work_template.dart';
 import '../models/syllabus_models.dart';
 import '../models/zambian_term_calendar.dart';
 import '../services/class_progress_repository.dart';
+import '../services/embedded_content_index_builder.dart' show normalizeHeadingKey;
+import '../services/embedded_content_index_service.dart';
+import '../services/embedded_lesson_plan_repository.dart';
+import '../services/fine_tune_candidate_finder.dart';
+import '../services/fine_tune_topic_builder.dart';
 import '../services/free_tier_entitlement_service.dart';
 import '../services/lesson_history_repository.dart';
 import '../services/required_core_topic_resolver.dart';
@@ -17,6 +22,8 @@ import '../services/required_core_topic_service.dart' show RequiredCoreTopicUnav
 import '../services/scheme_of_work_ai_content_service.dart';
 import '../services/scheme_of_work_document_service.dart';
 import '../services/syllabus_document_service.dart';
+import '../widgets/gradient_app_bar.dart';
+import 'fine_tune_suggestions_screen.dart';
 
 /// Lets a teacher fill in whichever scheme-of-work columns aren't part of
 /// the app's syllabus data — which columns those are depends on the
@@ -72,11 +79,22 @@ class _SchemeOfWorkDocumentScreenState extends State<SchemeOfWorkDocumentScreen>
   final _classProgressRepository = ClassProgressRepository();
   final _aiContentService = SchemeOfWorkAiContentService();
   late final RequiredCoreTopicResolver _requiredCoreTopicResolver = RequiredCoreTopicResolver();
+  final EmbeddedContentIndexService _embeddedContentIndex = EmbeddedContentIndexService();
+  final EmbeddedLessonPlanRepository _embeddedLessonPlanRepository = EmbeddedLessonPlanRepository();
+  static const _fineTuneTopicBuilder = FineTuneTopicBuilder();
   bool _exporting = false;
   bool _sharingSyllabus = false;
   bool _enrichingAi = false;
   bool _addingRequiredTopics = false;
+  bool _fineTuning = false;
   final Set<int> _markedTaughtTopicIds = {};
+
+  // Fine Tune's own synthetic-id range, kept clearly separate from
+  // RequiredCoreTopicResolver's own (-900000 and down) so the two
+  // features' synthetic topics/competencies/objectives — neither is ever a
+  // real database row — can never collide on id within one session.
+  int _fineTuneSyntheticIdCounter = -800000;
+  int _nextFineTuneSyntheticId() => _fineTuneSyntheticIdCounter--;
 
   /// This term's real, current entry list — starts as [widget.entries] but
   /// mutated by "Required Core Topics" (2026-09-12, per explicit request):
@@ -92,6 +110,11 @@ class _SchemeOfWorkDocumentScreenState extends State<SchemeOfWorkDocumentScreen>
   /// would need its own layout work).
   final List<RequiredCoreTopicResult> _appliedRequiredTopics = [];
   final List<SchemeOfWorkEntry> _pushedOffEntries = [];
+
+  /// Every "Fine Tune" (Stage 6-9) insertion applied so far this session —
+  /// shown to the teacher the same way [_appliedRequiredTopics] is, never
+  /// inside the exported document itself.
+  final List<SchemeOfWorkEntry> _appliedFineTuneEntries = [];
 
   Iterable<SchemeOfWorkColumnDef> get _manualColumns => _activeTemplate.columns.where((c) => c.manualEntry);
 
@@ -303,30 +326,18 @@ class _SchemeOfWorkDocumentScreenState extends State<SchemeOfWorkDocumentScreen>
       // Insert the resolved topics at the front (this term's first weeks —
       // "required"/"core" topics teach first) and push the same number of
       // topics off the end of the current list to next term — see
-      // requiredCoreTopicPushCount's own doc comment for why this is
-      // capped rather than a blind 1:1.
-      final pushCount = requiredCoreTopicPushCount(results.length, _currentEntries.length);
-      final floorApplied = pushCount < results.length && _currentEntries.isNotEmpty;
-      final pushedOff = pushCount == 0 ? <SchemeOfWorkEntry>[] : _currentEntries.sublist(_currentEntries.length - pushCount);
-      final kept = pushCount == 0 ? _currentEntries : _currentEntries.sublist(0, _currentEntries.length - pushCount);
-
+      // _insertAtFrontPushingOffEnd's own doc comment (shared with "Fine
+      // Tune", Stage 8's own explicit reuse requirement).
+      final insertion = _insertAtFrontPushingOffEnd([for (final r in results) r.entry]);
       setState(() {
-        _currentEntries = [for (final r in results) r.entry, ...kept];
         _appliedRequiredTopics.addAll(results);
-        _pushedOffEntries.addAll(pushedOff);
-        _draft = SchemeOfWorkDocumentDraft.fromEntries(
-          _currentEntries,
-          curriculumCode: widget.template.curriculum.code,
-          subjectName: widget.template.subject.name,
-        );
-        _rebuildRowControllers();
         _addingRequiredTopics = false;
       });
       unawaited(_enrichThinRows());
 
       if (!mounted) return;
       final addedNames = results.map((r) => r.entry.title).join('; ');
-      final pushedNames = pushedOff.map((e) => e.title).join('; ');
+      final pushedNames = insertion.pushedOff.map((e) => e.title).join('; ');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           duration: const Duration(seconds: 6),
@@ -334,7 +345,7 @@ class _SchemeOfWorkDocumentScreenState extends State<SchemeOfWorkDocumentScreen>
             'Added: $addedNames.'
             '${pushedNames.isNotEmpty ? ' Moved to next term: $pushedNames.' : ''}'
             '${overflow ? ' Only the first 3 topics were used.' : ''}'
-            '${floorApplied ? ' Only $pushCount topic(s) could be moved — not enough remained to move them all, so this term now has a few extra.' : ''}',
+            '${insertion.floorApplied ? ' Only ${insertion.pushCount} topic(s) could be moved — not enough remained to move them all, so this term now has a few extra.' : ''}',
           ),
         ),
       );
@@ -348,6 +359,140 @@ class _SchemeOfWorkDocumentScreenState extends State<SchemeOfWorkDocumentScreen>
       );
     } finally {
       if (mounted) setState(() => _addingRequiredTopics = false);
+    }
+  }
+
+  /// Inserts [newEntries] at the front of this term's current list (this
+  /// term's first weeks) and pushes the same number of the CURRENT list's
+  /// own entries off the end to next term — the one real scheme-editing
+  /// operation both "Required Core Topics" and "Fine Tune" use, called
+  /// from nowhere else (Stage 8's own explicit request: feed Fine Tune's
+  /// confirmed selections into the EXACT SAME insertion logic, no new
+  /// scheme-editing logic). See requiredCoreTopicPushCount's own doc
+  /// comment for why the push count is capped rather than a blind 1:1.
+  ({int pushCount, bool floorApplied, List<SchemeOfWorkEntry> pushedOff}) _insertAtFrontPushingOffEnd(
+    List<SchemeOfWorkEntry> newEntries,
+  ) {
+    final pushCount = requiredCoreTopicPushCount(newEntries.length, _currentEntries.length);
+    final floorApplied = pushCount < newEntries.length && _currentEntries.isNotEmpty;
+    final pushedOff = pushCount == 0 ? <SchemeOfWorkEntry>[] : _currentEntries.sublist(_currentEntries.length - pushCount);
+    final kept = pushCount == 0 ? _currentEntries : _currentEntries.sublist(0, _currentEntries.length - pushCount);
+
+    setState(() {
+      _currentEntries = [...newEntries, ...kept];
+      _pushedOffEntries.addAll(pushedOff);
+      _draft = SchemeOfWorkDocumentDraft.fromEntries(
+        _currentEntries,
+        curriculumCode: widget.template.curriculum.code,
+        subjectName: widget.template.subject.name,
+      );
+      _rebuildRowControllers();
+    });
+
+    return (pushCount: pushCount, floorApplied: floorApplied, pushedOff: pushedOff);
+  }
+
+  // -------------------------------------------------------------------
+  // "Fine Tune" (Embedded Content Search Stages 6-9, 2026-09-22) — an
+  // on-demand check of every broad topic already on this generated
+  // scheme against the real body content of the bundled embedded lesson
+  // plans, surfacing genuine, more specific sub-topics "hidden" inside
+  // one of them that aren't already their own scheme entry. Entirely
+  // offline, no AI call — every suggestion is built straight from real,
+  // already-authored lesson content (see FineTuneTopicBuilder).
+  // -------------------------------------------------------------------
+  Future<void> _openFineTune() async {
+    setState(() => _fineTuning = true);
+    try {
+      final existingNames = {
+        for (final e in _currentEntries) normalizeHeadingKey(e.topic.name),
+        for (final e in _currentEntries)
+          if (e.subTopic != null) normalizeHeadingKey(e.subTopic!.name),
+      };
+
+      final byTopic = <String, List<FineTuneCandidate>>{};
+      final seenTopics = <String>{};
+      for (final entry in _currentEntries) {
+        final topicName = entry.topic.name;
+        if (!seenTopics.add(topicName)) continue;
+        final candidates = await _embeddedContentIndex.fineTuneCandidatesForTopic(
+          curriculumCode: widget.template.curriculum.code,
+          subjectCode: widget.template.subject.code,
+          gradeLevel: widget.template.grade.level,
+          topicName: topicName,
+          existingEntryNames: existingNames,
+        );
+        if (candidates.isNotEmpty) byTopic[topicName] = candidates;
+      }
+
+      if (!mounted) return;
+      if (byTopic.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'No additional structural signals found in your embedded lesson plans for the topics in this scheme.',
+            ),
+          ),
+        );
+        return;
+      }
+
+      final selected = await Navigator.of(context).push<List<FineTuneCandidate>>(
+        MaterialPageRoute(builder: (_) => FineTuneSuggestionsScreen(candidatesByTopic: byTopic)),
+      );
+      if (selected == null || selected.isEmpty || !mounted) return;
+
+      final newEntries = <SchemeOfWorkEntry>[];
+      for (final candidate in selected) {
+        // Re-fetch the real underlying lesson plans rather than trusting
+        // anything cached in the candidate itself — cheap (on-device,
+        // no network), and means a candidate can never go stale between
+        // being surfaced and being confirmed.
+        final plans = await _embeddedLessonPlanRepository.find(
+          curriculumCode: candidate.curriculumCode,
+          subjectCode: candidate.subjectCode,
+          gradeLevel: candidate.gradeLevel,
+          topicName: candidate.topicName,
+          subtopicName: candidate.subtopicName,
+        );
+        if (plans.isEmpty) continue; // stale candidate — skip rather than crash
+        final topic = _fineTuneTopicBuilder.build(
+          topicName: candidate.topicName,
+          subtopicName: candidate.subtopicName,
+          plans: plans,
+          nextSyntheticId: _nextFineTuneSyntheticId,
+        );
+        newEntries.add(SchemeOfWorkEntry(
+          weekNumber: 0,
+          topic: topic,
+          objectives: topic.objectives,
+          competencies: topic.competencies,
+        ));
+      }
+      if (newEntries.isEmpty) return;
+
+      final insertion = _insertAtFrontPushingOffEnd(newEntries);
+      setState(() => _appliedFineTuneEntries.addAll(newEntries));
+      unawaited(_enrichThinRows());
+
+      if (!mounted) return;
+      final addedNames = newEntries.map((e) => e.title).join('; ');
+      final pushedNames = insertion.pushedOff.map((e) => e.title).join('; ');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          duration: const Duration(seconds: 6),
+          content: Text(
+            'Added: $addedNames.'
+            '${pushedNames.isNotEmpty ? ' Moved to next term: $pushedNames.' : ''}'
+            '${insertion.floorApplied ? ' Only ${insertion.pushCount} topic(s) could be moved — not enough remained to move them all, so this term now has a few extra.' : ''}',
+          ),
+        ),
+      );
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Could not run Fine Tune: $error')));
+    } finally {
+      if (mounted) setState(() => _fineTuning = false);
     }
   }
 
@@ -510,8 +655,8 @@ class _SchemeOfWorkDocumentScreenState extends State<SchemeOfWorkDocumentScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Scheme of Work'),
+      appBar: GradientAppBar(
+        title: 'Scheme of Work',
         actions: [
           _sharingSyllabus
               ? const Padding(
@@ -583,6 +728,27 @@ class _SchemeOfWorkDocumentScreenState extends State<SchemeOfWorkDocumentScreen>
               child: Text(
                 'Added: ${_appliedRequiredTopics.map((r) => r.entry.title).join('; ')}.'
                 '${_pushedOffEntries.isNotEmpty ? ' Moved to next term: ${_pushedOffEntries.map((e) => e.title).join('; ')}.' : ''}',
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+            ),
+          // "Fine Tune" (2026-09-22, Embedded Content Search Stage 6) —
+          // same subtle placement as "Required Core Topics" above.
+          Align(
+            alignment: Alignment.centerLeft,
+            child: TextButton.icon(
+              onPressed: _fineTuning ? null : _openFineTune,
+              icon: _fineTuning
+                  ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
+                  : const Icon(Icons.auto_fix_high_outlined, size: 18),
+              label: Text(_fineTuning ? 'Checking your embedded lesson plans…' : 'Fine Tune'),
+              style: TextButton.styleFrom(visualDensity: VisualDensity.compact),
+            ),
+          ),
+          if (_appliedFineTuneEntries.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 4),
+              child: Text(
+                'Added: ${_appliedFineTuneEntries.map((e) => e.title).join('; ')}.',
                 style: Theme.of(context).textTheme.bodySmall,
               ),
             ),
@@ -688,8 +854,8 @@ class _SchemeOfWorkDocumentScreenState extends State<SchemeOfWorkDocumentScreen>
             ? null
             : IconButton(
                 icon: Icon(
-                  taught ? Icons.check_circle : Icons.check_circle_outline,
-                  color: taught ? Colors.green : null,
+                  taught ? Icons.check_circle_outlined : Icons.check_circle_outline,
+                  color: taught ? Colors.green.shade700 : null,
                 ),
                 tooltip: taught ? 'Marked as taught' : 'Mark as taught',
                 onPressed: taught ? null : () => _markTaught(entries),

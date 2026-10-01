@@ -35,7 +35,7 @@ class DatabaseHelper {
   DatabaseHelper._internal();
   static final DatabaseHelper instance = DatabaseHelper._internal();
 
-  static const _schemaVersion = 10;
+  static const _schemaVersion = 11;
 
   Database? _db;
 
@@ -67,6 +67,18 @@ class DatabaseHelper {
           }
           return;
         }
+        // v10 -> v11 (Embedded Content Search, 2026-09-22) — same
+        // reasoning as v9 -> v10 above, and now non-optional: the app has
+        // since reached Closed Testing with real testers, who may already
+        // have real report_classes/report_learners/report_scores data on
+        // device. This only ADDS two brand-new, independent tables (see
+        // _createEmbeddedContentIndexTables) — CREATE TABLE IF NOT EXISTS,
+        // so it's safe to re-run on an already-migrated device too. Every
+        // existing table is left completely untouched.
+        if (oldVersion == 10 && newVersion == 11) {
+          await _createEmbeddedContentIndexTables(db);
+          return;
+        }
         // Every other transition: this app had no released user base as
         // of schema v9, and the only local state worth preserving (which
         // topic a teacher last marked concluded) is trivial to re-enter.
@@ -85,6 +97,8 @@ class DatabaseHelper {
 
   // Drop order matters for foreign keys: children before parents.
   static const _tableNamesNewestFirst = [
+    'embedded_content_meta',
+    'embedded_content_segments',
     'report_scores',
     'report_subjects',
     'report_learners',
@@ -327,6 +341,48 @@ class DatabaseHelper {
     await db.execute(
       'CREATE INDEX idx_report_scores_learner ON report_scores (learner_id)',
     );
+
+    await _createEmbeddedContentIndexTables(db);
+  }
+
+  // ---------------------------------------------------------------------
+  // Embedded Content Search (2026-09-22) — real body content of every
+  // bundled lesson plan, structured for full-text search. See
+  // EmbeddedContentIndexService for how these are populated/queried, and
+  // EmbeddedContentSegment for what each row represents. Independent of
+  // every other table here (matched by name, not id), since embedded
+  // content is keyed by curriculum/subject/grade/topic CODE, not by a
+  // syllabus row.
+  // ---------------------------------------------------------------------
+  Future<void> _createEmbeddedContentIndexTables(Database db) async {
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS embedded_content_segments (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        group_key TEXT NOT NULL,
+        curriculum_code TEXT NOT NULL,
+        subject_code TEXT NOT NULL,
+        grade_level INTEGER NOT NULL,
+        topic_name TEXT NOT NULL,
+        subtopic_name TEXT,
+        kind TEXT NOT NULL,
+        stage TEXT,
+        segment_order INTEGER NOT NULL,
+        text TEXT NOT NULL
+      )
+    ''');
+    await db.execute(
+      'CREATE INDEX IF NOT EXISTS idx_embedded_content_segments_scope '
+      'ON embedded_content_segments (curriculum_code, subject_code, grade_level)',
+    );
+    await db.execute(
+      'CREATE INDEX IF NOT EXISTS idx_embedded_content_segments_group ON embedded_content_segments (group_key)',
+    );
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS embedded_content_meta (
+        key TEXT PRIMARY KEY,
+        value TEXT NOT NULL
+      )
+    ''');
   }
 
   Future<int> _getOrCreate(

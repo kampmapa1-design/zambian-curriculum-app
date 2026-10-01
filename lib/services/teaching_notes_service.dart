@@ -2,6 +2,7 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
 import 'auth_service.dart';
+import 'metered_call.dart';
 
 class TeachingNotesResult {
   final String notes;
@@ -39,10 +40,12 @@ class TeachingNotesUnavailable implements Exception {
 /// every call checks connectivity first and fails fast with a clear
 /// message instead of hanging.
 class TeachingNotesService {
-  TeachingNotesService({FirebaseFunctions? functions})
-      : _functions = functions ?? FirebaseFunctions.instance;
+  TeachingNotesService({FirebaseFunctions? functions}) : _providedFunctions = functions;
 
-  final FirebaseFunctions _functions;
+  // Lazy: resolving FirebaseFunctions.instance needs Firebase.initializeApp() to have
+  // succeeded; constructing this service must never throw just because it hasn't.
+  final FirebaseFunctions? _providedFunctions;
+  FirebaseFunctions get _functions => _providedFunctions ?? FirebaseFunctions.instance;
 
   Future<bool> get isOnline async {
     final result = await Connectivity().checkConnectivity();
@@ -63,6 +66,9 @@ class TeachingNotesService {
     required String syllabusContext,
     required String format,
     bool onePage = false,
+    // Grade 10-12 (OBC) documents: tells the model never to mention Form
+    // 1-5 or its content and never to leave question marks (2026-09-27).
+    bool seniorSecondary = false,
   }) async {
     if (!await isOnline) {
       throw const TeachingNotesUnavailable(
@@ -72,7 +78,7 @@ class TeachingNotesService {
 
     await AuthService.instance.ensureSignedIn();
 
-    final callable = _functions.httpsCallable('generateTeachingNotes');
+    final callable = meteredCallable(_functions, 'generateTeachingNotes');
     try {
       final result = await callable.call<Map<Object?, Object?>>({
         'topic': topic,
@@ -82,6 +88,7 @@ class TeachingNotesService {
         'syllabusContext': syllabusContext,
         'format': format,
         if (onePage) 'maxLength': 'page',
+        if (seniorSecondary) 'seniorSecondary': true,
       });
       return TeachingNotesResult.fromMap(result.data);
     } on FirebaseFunctionsException catch (e) {

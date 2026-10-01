@@ -7,6 +7,7 @@ import '../models/syllabus_models.dart';
 import '../services/offline_slide_outline_service.dart';
 import '../services/offline_teaching_notes_service.dart';
 import '../services/pptx_document_service.dart';
+import '../services/senior_secondary_content_filter.dart';
 import '../services/slide_outline_ai_service.dart';
 import '../services/pamphlet_repository.dart';
 import '../services/subject_content_repository.dart';
@@ -94,6 +95,10 @@ class _TeachingNotesSheetState extends State<_TeachingNotesSheet> {
   String? _subjectContentExcerpt;
   bool _excerptLoadAttempted = false;
 
+  /// Grade 10-12 (OBC) notes never mention Form 1-5 or carry stray question
+  /// marks — see senior_secondary_content_filter.dart.
+  bool get _seniorSecondary => isSeniorSecondaryCurriculum(widget.template.curriculum.code);
+
   late String _format = widget.initialFormat;
   String _notes = '';
   bool _isAiGenerated = false;
@@ -147,6 +152,7 @@ class _TeachingNotesSheetState extends State<_TeachingNotesSheet> {
         subjectName: widget.template.subject.name,
         topicName: widget.entry.topic.name,
         subTopicName: widget.entry.subTopic?.name,
+        seniorSecondary: _seniorSecondary,
       );
       // Bundled reference pamphlets (2026-09-15) — same grounding role as
       // the Subject Content Database excerpt above, just sourced from
@@ -158,8 +164,12 @@ class _TeachingNotesSheetState extends State<_TeachingNotesSheet> {
         subTopicName: widget.entry.subTopic?.name,
       );
       final excerpt = await excerptFuture;
-      final pamphletExcerpt = await pamphletFuture;
-      final combined = [if (excerpt != null) excerpt, if (pamphletExcerpt != null) pamphletExcerpt].join('\n\n');
+      var pamphletExcerpt = await pamphletFuture;
+      if (_seniorSecondary && pamphletExcerpt != null) pamphletExcerpt = cleanSourceText(pamphletExcerpt);
+      final combined = [
+        if (excerpt != null) excerpt,
+        if (pamphletExcerpt != null && pamphletExcerpt.isNotEmpty) pamphletExcerpt,
+      ].join('\n\n');
       if (combined.isEmpty || !mounted || _isAiGenerated) return;
       setState(() => _subjectContentExcerpt = combined);
       if (!_isAiGenerated) _regenerateOffline();
@@ -182,13 +192,16 @@ class _TeachingNotesSheetState extends State<_TeachingNotesSheet> {
         grade: widget.template.grade.name,
         syllabusContext: _syllabusContext(widget.entry, widget.template),
         format: _format,
+        seniorSecondary: _seniorSecondary,
       );
       if (!mounted) return;
       setState(() {
         // Safety nets: strip any Markdown the model slipped in despite the
         // plain-text instruction, then enforce the 700-word essay cap (AI
         // output can occasionally run over on either).
-        final cleaned = stripMarkdownArtifacts(result.notes);
+        final cleaned = _seniorSecondary
+            ? cleanGeneratedText(stripMarkdownArtifacts(result.notes))
+            : stripMarkdownArtifacts(result.notes);
         _notes = _format == 'paragraph'
             ? capWords(cleaned, 700, trailingNote: '(Trimmed to stay within the 700-word essay limit.)')
             : cleaned;
@@ -304,7 +317,7 @@ class _TeachingNotesSheetState extends State<_TeachingNotesSheet> {
                 onPressed: _loadingAi ? null : _tryAiVersion,
                 icon: _loadingAi
                     ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
-                    : const Icon(Icons.auto_awesome),
+                    : const Icon(Icons.auto_awesome_outlined),
                 label: Text(_loadingAi ? 'Researching…' : 'Research'),
               ),
               const SizedBox(height: 8),

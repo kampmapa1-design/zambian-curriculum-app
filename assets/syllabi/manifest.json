@@ -142,6 +142,7 @@
       "subject_name": "Geography",
       "grade_level": 10,
       "grade_name": "Grade 10",
+      "subject_category": "social_sciences",
       "file": "geography_grade10.json"
     },
     {
@@ -151,6 +152,7 @@
       "subject_name": "Geography",
       "grade_level": 11,
       "grade_name": "Grade 11",
+      "subject_category": "social_sciences",
       "file": "geography_grade11.json"
     },
     {
@@ -160,6 +162,7 @@
       "subject_name": "Geography",
       "grade_level": 12,
       "grade_name": "Grade 12",
+      "subject_category": "social_sciences",
       "file": "geography_grade12.json"
     },
     {
@@ -169,6 +172,7 @@
       "subject_name": "Civic Education",
       "grade_level": 10,
       "grade_name": "Grade 10",
+      "subject_category": "social_sciences",
       "file": "civic_education_grade10.json"
     },
     {
@@ -178,6 +182,7 @@
       "subject_name": "Civic Education",
       "grade_level": 11,
       "grade_name": "Grade 11",
+      "subject_category": "social_sciences",
       "file": "civic_education_grade11.json"
     },
     {
@@ -187,6 +192,7 @@
       "subject_name": "Civic Education",
       "grade_level": 12,
       "grade_name": "Grade 12",
+      "subject_category": "social_sciences",
       "file": "civic_education_grade12.json"
     },
     {
@@ -196,6 +202,7 @@
       "subject_name": "Religious Education (2046)",
       "grade_level": 10,
       "grade_name": "Grade 10",
+      "subject_category": "social_sciences",
       "file": "religious_education_grade10.json"
     },
     {
@@ -205,6 +212,7 @@
       "subject_name": "Religious Education (2046)",
       "grade_level": 11,
       "grade_name": "Grade 11",
+      "subject_category": "social_sciences",
       "file": "religious_education_grade11.json"
     },
     {
@@ -214,6 +222,7 @@
       "subject_name": "Religious Education (2046)",
       "grade_level": 12,
       "grade_name": "Grade 12",
+      "subject_category": "social_sciences",
       "file": "religious_education_grade12.json"
     },
     {
@@ -223,6 +232,7 @@
       "subject_name": "Religious Education (2044)",
       "grade_level": 10,
       "grade_name": "Grade 10",
+      "subject_category": "social_sciences",
       "file": "religious_education_2044_grade10.json"
     },
     {
@@ -232,6 +242,7 @@
       "subject_name": "Religious Education (2044)",
       "grade_level": 11,
       "grade_name": "Grade 11",
+      "subject_category": "social_sciences",
       "file": "religious_education_2044_grade11.json"
     },
     {
@@ -241,6 +252,7 @@
       "subject_name": "Religious Education (2044)",
       "grade_level": 12,
       "grade_name": "Grade 12",
+      "subject_category": "social_sciences",
       "file": "religious_education_2044_grade12.json"
     },
     {
@@ -250,6 +262,7 @@
       "subject_name": "History",
       "grade_level": 10,
       "grade_name": "Grade 10",
+      "subject_category": "social_sciences",
       "file": "history_grade10.json"
     },
     {
@@ -259,6 +272,7 @@
       "subject_name": "History",
       "grade_level": 11,
       "grade_name": "Grade 11",
+      "subject_category": "social_sciences",
       "file": "history_grade11.json"
     },
     {
@@ -268,6 +282,7 @@
       "subject_name": "History",
       "grade_level": 12,
       "grade_name": "Grade 12",
+      "subject_category": "social_sciences",
       "file": "history_grade12.json"
     },
     {
@@ -277,6 +292,7 @@
       "subject_name": "Biology",
       "grade_level": 10,
       "grade_name": "Grade 10",
+      "subject_category": "natural_sciences_mathematics",
       "file": "biology_grade10.json"
     },
     {
@@ -286,6 +302,7 @@
       "subject_name": "Biology",
       "grade_level": 11,
       "grade_name": "Grade 11",
+      "subject_category": "natural_sciences_mathematics",
       "file": "biology_grade11.json"
     },
     {
@@ -295,6 +312,7 @@
       "subject_name": "Biology",
       "grade_level": 12,
       "grade_name": "Grade 12",
+      "subject_category": "natural_sciences_mathematics",
       "file": "biology_grade12.json"
     },
     {
@@ -304,6 +322,7 @@
       "subject_name": "Mathematics",
       "grade_level": 10,
       "grade_name": "Grade 10",
+      "subject_category": "natural_sciences_mathematics",
       "file": "mathematics_grade10.json"
     },
     {
@@ -313,6 +332,7 @@
       "subject_name": "Mathematics",
       "grade_level": 11,
       "grade_name": "Grade 11",
+      "subject_category": "natural_sciences_mathematics",
       "file": "mathematics_grade11.json"
     },
     {
@@ -322,6 +342,7 @@
       "subject_name": "Mathematics",
       "grade_level": 12,
       "grade_name": "Grade 12",
+      "subject_category": "natural_sciences_mathematics",
       "file": "mathematics_grade12.json"
     },
     {
@@ -331,6 +352,7 @@
       "subject_name": "Physics",
       "grade_level": 10,
       "grade_name": "Grade 10",
+      "subject_category": "natural_sciences_mathematics",
       "file": "physics_grade10.json"
     },
     {
@@ -340,6 +362,7 @@
       "subject_name": "Physics",
       "grade_level": 11,
       "grade_name": "Grade 11",
+      "subject_category": "natural_sciences_mathematics",
       "file": "physics_grade11.json"
     },
     {
@@ -349,6 +372,7 @@
       "subject_name": "Physics",
       "grade_level": 12,
       "grade_name": "Grade 12",
+      "subject_category": "natural_sciences_mathematics",
       "file": "physics_grade12.json"
     },
     {
@@ -358,6 +382,7 @@
       "subject_name": "Chemistry",
       "grade_level": 10,
       "grade_name": "Grade 10",
+      "subject_category": "natural_sciences_mathematics",
       "file": "chemistry_grade10.json"
     },
     {
@@ -367,6 +392,7 @@
       "subject_name": "Chemistry",
       "grade_level": 11,
       "grade_name": "Grade 11",
+      "subject_category": "natural_sciences_mathematics",
       "file": "chemistry_grade11.json"
     },
     {
@@ -376,6 +402,7 @@
       "subject_name": "Chemistry",
       "grade_level": 12,
       "grade_name": "Grade 12",
+      "subject_category": "natural_sciences_mathematics",
       "file": "chemistry_grade12.json"
     },
     {
@@ -817,6 +844,7 @@
       "subject_name": "Agricultural Science",
       "grade_level": 10,
       "grade_name": "Grade 10",
+      "subject_category": "natural_sciences_mathematics",
       "file": "agricultural_science_grade10.json"
     },
     {
@@ -826,6 +854,7 @@
       "subject_name": "Agricultural Science",
       "grade_level": 11,
       "grade_name": "Grade 11",
+      "subject_category": "natural_sciences_mathematics",
       "file": "agricultural_science_grade11.json"
     },
     {
@@ -835,6 +864,7 @@
       "subject_name": "Agricultural Science",
       "grade_level": 12,
       "grade_name": "Grade 12",
+      "subject_category": "natural_sciences_mathematics",
       "file": "agricultural_science_grade12.json"
     }
   ]

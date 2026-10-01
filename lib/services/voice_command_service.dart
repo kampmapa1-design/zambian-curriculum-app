@@ -87,9 +87,12 @@ class ParsedVoiceCommand {
 /// `parseVoiceCommand` Cloud Function for intent parsing. No audio is
 /// ever recorded to a file or uploaded anywhere.
 class VoiceCommandService {
-  VoiceCommandService({FirebaseFunctions? functions}) : _functions = functions ?? FirebaseFunctions.instance;
+  VoiceCommandService({FirebaseFunctions? functions}) : _providedFunctions = functions;
 
-  final FirebaseFunctions _functions;
+  // Lazy: resolving FirebaseFunctions.instance needs Firebase.initializeApp() to have
+  // succeeded; constructing this service must never throw just because it hasn't.
+  final FirebaseFunctions? _providedFunctions;
+  FirebaseFunctions get _functions => _providedFunctions ?? FirebaseFunctions.instance;
 
   /// Throws on failure (offline, timeout, malformed response) — unlike
   /// the silent-best-effort AI enrichment services elsewhere in this app,

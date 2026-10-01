@@ -180,7 +180,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
                 const SizedBox(height: 12),
                 ListTile(
-                  leading: const Icon(Icons.upload_file),
+                  leading: const Icon(Icons.upload_file_outlined),
                   title: const Text('Upload My Own Template'),
                   subtitle: const Text('.docx — extract section headings and map them to app fields'),
                   onTap: _openUpload,

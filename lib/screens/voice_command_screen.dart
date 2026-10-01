@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 
-import '../models/lesson_plan.dart';
 import '../models/record_of_work.dart';
 import '../models/report_class.dart';
 import '../models/scheme_of_work.dart';
 import '../services/lesson_checkpoint_repository.dart';
+import '../services/lesson_plan_template_selector.dart';
 import '../services/topic_search_service.dart';
 import '../services/voice_command_resolver.dart';
 import '../services/voice_command_service.dart';
@@ -329,8 +329,11 @@ class _VoiceCommandScreenState extends State<VoiceCommandScreen> {
       _showCouldNotFullyResolve("Found a paused lesson, but its subject/topic couldn't be loaded anymore.");
       return;
     }
-    final activeTemplate =
-        template.curriculum.code == 'CBC_2023' ? defaultCbcLessonPlanTemplate : defaultCdcLessonPlanTemplate;
+    final activeTemplate = await lessonPlanTemplateForSubject(
+      curriculumCode: template.curriculum.code,
+      subjectCode: template.subject.code,
+    );
+    if (!mounted) return;
     Navigator.of(context).pop();
     // LessonPlanScreen's own initState finds this same checkpoint again
     // (by curriculum/subject/grade/topic) and asks "Resume this lesson?",
@@ -477,7 +480,7 @@ class _VoiceCommandScreenState extends State<VoiceCommandScreen> {
             child: ListTile(
               title: Text(candidate.entry.title),
               subtitle: Text(candidate.term.name),
-              trailing: const Icon(Icons.chevron_right),
+              trailing: const Icon(Icons.chevron_right_outlined),
               onTap: () => _pickCandidate(candidate),
             ),
           ),
@@ -590,7 +593,7 @@ class _MicPrompt extends StatelessWidget {
             backgroundColor:
                 listening ? Theme.of(context).colorScheme.errorContainer : Theme.of(context).colorScheme.primaryContainer,
             child: Icon(
-              listening ? Icons.mic : Icons.mic_none,
+              listening ? Icons.mic_outlined : Icons.mic_none_outlined,
               size: 44,
               color: listening ? Theme.of(context).colorScheme.onErrorContainer : Theme.of(context).colorScheme.onPrimaryContainer,
             ),

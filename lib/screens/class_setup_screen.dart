@@ -108,12 +108,12 @@ class _ClassSetupScreenState extends State<ClassSetupScreen> {
               ButtonSegment(
                 value: ReportAssessmentSystem.continuousAssessment,
                 label: Text('Continuous Assessment'),
-                icon: Icon(Icons.stacked_line_chart),
+                icon: Icon(Icons.stacked_line_chart_outlined),
               ),
               ButtonSegment(
                 value: ReportAssessmentSystem.standaloneTest,
                 label: Text('Standalone Test'),
-                icon: Icon(Icons.edit_note),
+                icon: Icon(Icons.edit_note_outlined),
               ),
             ],
             selected: {_assessmentSystem},
@@ -142,7 +142,7 @@ class _ClassSetupScreenState extends State<ClassSetupScreen> {
             onPressed: _canSave && !_saving ? _save : null,
             icon: _saving
                 ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
-                : const Icon(Icons.check),
+                : const Icon(Icons.check_outlined),
             label: Text(_saving ? 'Setting up…' : 'Create Class'),
           ),
         ),

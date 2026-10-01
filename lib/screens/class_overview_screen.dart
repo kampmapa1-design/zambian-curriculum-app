@@ -164,7 +164,7 @@ class _ClassOverviewScreenState extends State<ClassOverviewScreen> {
         leading: CircleAvatar(child: Icon(icon)),
         title: Text(title),
         subtitle: Text(subtitle),
-        trailing: onTap == null ? null : const Icon(Icons.chevron_right),
+        trailing: onTap == null ? null : const Icon(Icons.chevron_right_outlined),
         onTap: onTap,
         enabled: onTap != null,
       ),

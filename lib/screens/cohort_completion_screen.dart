@@ -263,7 +263,7 @@ class _CohortCompletionScreenState extends State<CohortCompletionScreen> {
                 onTap: () => Navigator.of(sheetContext).pop(_PhotoBatchAction.share),
               ),
               ListTile(
-                leading: const Icon(Icons.link),
+                leading: const Icon(Icons.link_outlined),
                 title: const Text('Get a shareable link'),
                 subtitle: const Text('Paste it into another AI platform, or anywhere else — stays valid for 30 days'),
                 onTap: () => Navigator.of(sheetContext).pop(_PhotoBatchAction.link),
@@ -405,7 +405,7 @@ class _CohortCompletionScreenState extends State<CohortCompletionScreen> {
               tooltip: 'Delete — already corrected with a fresh entry',
               onPressed: () => _deleteFlaggedScript(script),
             ),
-            const Icon(Icons.chevron_right),
+            const Icon(Icons.chevron_right_outlined),
           ],
         ),
         onTap: () => _openForFix(script),

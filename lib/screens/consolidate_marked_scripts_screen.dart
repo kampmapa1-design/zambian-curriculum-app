@@ -180,7 +180,7 @@ class _ConsolidateMarkedScriptsScreenState extends State<ConsolidateMarkedScript
                       onTap: () => Navigator.of(sheetContext).pop(c),
                     ),
                   ListTile(
-                    leading: const Icon(Icons.add),
+                    leading: const Icon(Icons.add_outlined),
                     title: const Text('New Class'),
                     onTap: () => Navigator.of(sheetContext).pop(_newClassChoice),
                   ),
@@ -213,7 +213,7 @@ class _ConsolidateMarkedScriptsScreenState extends State<ConsolidateMarkedScript
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.merge_type, size: 48, color: Theme.of(context).colorScheme.outline),
+                        Icon(Icons.merge_type_outlined, size: 48, color: Theme.of(context).colorScheme.outline),
                         const SizedBox(height: 12),
                         const Text(
                           'No marked scripts yet. Once scripts are graded, they\'ll be grouped here by subject, '

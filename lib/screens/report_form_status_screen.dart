@@ -88,7 +88,7 @@ class _ReportFormStatusScreenState extends State<ReportFormStatusScreen> {
                     Text(
                       windowIsOpen ? 'Open now' : (now.isBefore(windowStart) ? 'Not started yet' : 'Closed'),
                       style: TextStyle(
-                        color: windowIsOpen ? Colors.green : Colors.grey,
+                        color: windowIsOpen ? Colors.green.shade700 : Colors.grey,
                         fontWeight: FontWeight.w600,
                       ),
                     ),

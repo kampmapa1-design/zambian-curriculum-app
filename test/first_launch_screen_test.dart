@@ -58,6 +58,6 @@ void main() {
 
     // Both check icons would only appear if selection state leaked between
     // cards — exactly one "check_circle" should be showing.
-    expect(find.byIcon(Icons.check_circle), findsOneWidget);
+    expect(find.byIcon(Icons.check_circle_outlined), findsOneWidget);
   });
 }

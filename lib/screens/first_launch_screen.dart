@@ -25,8 +25,15 @@ import '../services/teacher_profile_repository.dart';
 /// shape `_WebAuthGate` already uses for the web dashboard's own
 /// signed-out root.
 class FirstLaunchScreen extends StatefulWidget {
-  const FirstLaunchScreen({required this.onDone, super.key});
+  const FirstLaunchScreen({required this.onDone, this.initialRole, super.key});
   final ValueChanged<AccountRole> onDone;
+
+  /// Pre-selects this role (e.g. whatever was picked last time this
+  /// device opened the app) so a returning user can just tap Continue
+  /// — without it ever skipping this screen outright, which is the
+  /// real bug this parameter exists to avoid (see main.dart's
+  /// `_RoleGate`).
+  final AccountRole? initialRole;
 
   @override
   State<FirstLaunchScreen> createState() => _FirstLaunchScreenState();
@@ -35,7 +42,7 @@ class FirstLaunchScreen extends StatefulWidget {
 class _FirstLaunchScreenState extends State<FirstLaunchScreen> {
   final _profileRepository = TeacherProfileRepository();
   bool _busy = false;
-  AccountRole? _selectedRole;
+  late AccountRole? _selectedRole = widget.initialRole;
 
   Future<void> _finish() async {
     final role = _selectedRole;
@@ -129,7 +136,7 @@ class _RoleCard extends StatelessWidget {
                   ],
                 ),
               ),
-              if (selected) Icon(Icons.check_circle, color: scheme.primary),
+              if (selected) Icon(Icons.check_circle_outlined, color: scheme.primary),
             ],
           ),
         ),

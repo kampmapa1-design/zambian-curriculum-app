@@ -109,6 +109,11 @@ class _SelectOwnTopicsSubjectPickerScreenState extends State<SelectOwnTopicsSubj
         gradeLevel: entry.gradeLevel,
       );
       if (template != null) templates.add(template);
+      // Same "app isn't responding" fix as TemplateRepository
+      // .ensureAllSeeded's own loop — a subject spanning several
+      // grades/forms otherwise runs several SQLite reads back-to-back
+      // with no guaranteed gap for Flutter to draw a frame in between.
+      await Future<void>.delayed(Duration.zero);
     }
     if (!mounted) return;
     setState(() => _loadingSubject = false);

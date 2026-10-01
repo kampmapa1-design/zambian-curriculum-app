@@ -3,7 +3,10 @@ import 'package:flutter/material.dart';
 import '../models/record_of_work.dart';
 import '../models/scheme_of_work.dart';
 import '../models/syllabus_models.dart';
+import '../theme/app_spacing.dart';
 import '../widgets/cdc_new_materials_banner.dart';
+import '../widgets/cloud_backup_trigger.dart';
+import '../widgets/firebase_unavailable_banner.dart';
 import '../widgets/function_button.dart';
 import 'assignments_tests_menu_screen.dart';
 import 'class_resume_picker_screen.dart';
@@ -38,7 +41,8 @@ class HomeScreen extends StatelessWidget {
   Future<void> _openLessonPlan(BuildContext context) async {
     final template = await Navigator.of(context).push<SyllabusTemplate>(
       MaterialPageRoute(
-        builder: (_) => const SubjectGradeTopicPickerScreen(title: 'Generate Lesson Plan'),
+        builder: (_) =>
+            const SubjectGradeTopicPickerScreen(title: 'Generate Lesson Plan'),
       ),
     );
     if (template == null || !context.mounted) return;
@@ -89,7 +93,7 @@ class HomeScreen extends StatelessWidget {
           SimpleDialogOption(
             onPressed: () => Navigator.of(dialogContext).pop('own_topics'),
             child: const ListTile(
-              leading: Icon(Icons.playlist_add_check),
+              leading: Icon(Icons.playlist_add_check_outlined),
               title: Text('Select Own Topics Scheme'),
               subtitle: Text(
                 'Pick any topics or sub-topics from anywhere across the whole subject — '
@@ -108,7 +112,8 @@ class HomeScreen extends StatelessWidget {
 
     final selection = await Navigator.of(context).push<TermSelection>(
       MaterialPageRoute(
-        builder: (_) => const SubjectGradeTopicPickerScreen(title: 'Generate Scheme of Work', pickTerm: true),
+        builder: (_) => const SubjectGradeTopicPickerScreen(
+            title: 'Generate Scheme of Work', pickTerm: true),
       ),
     );
     if (selection == null || !context.mounted) return;
@@ -139,10 +144,13 @@ class HomeScreen extends StatelessWidget {
 
     if (isOneOff) {
       final picked = await Navigator.of(context).push<SchemeOfWorkEntry>(
-        MaterialPageRoute(builder: (_) => TermTopicPickerScreen(template: selection.template)),
+        MaterialPageRoute(
+            builder: (_) =>
+                TermTopicPickerScreen(template: selection.template)),
       );
       if (picked == null || !context.mounted) return;
-      final entries = generateSchemeOfWorkStartingAt(selection.template, picked);
+      final entries =
+          generateSchemeOfWorkStartingAt(selection.template, picked);
       await Navigator.of(context).push(MaterialPageRoute(
         builder: (_) => SchemeOfWorkDocumentScreen(
           template: selection.template,
@@ -154,7 +162,9 @@ class HomeScreen extends StatelessWidget {
     }
 
     final resume = await Navigator.of(context).push<ClassResumeSelection>(
-      MaterialPageRoute(builder: (_) => ClassResumePickerScreen(template: selection.template)),
+      MaterialPageRoute(
+          builder: (_) =>
+              ClassResumePickerScreen(template: selection.template)),
     );
     if (resume == null || !context.mounted) return;
 
@@ -201,16 +211,19 @@ class HomeScreen extends StatelessWidget {
   /// looked up/shared by curriculum+code, never duplicated per grade file).
   Future<void> _openSelectOwnTopicsScheme(BuildContext context) async {
     final templates = await Navigator.of(context).push<List<SyllabusTemplate>>(
-      MaterialPageRoute(builder: (_) => const SelectOwnTopicsSubjectPickerScreen()),
+      MaterialPageRoute(
+          builder: (_) => const SelectOwnTopicsSubjectPickerScreen()),
     );
     if (templates == null || templates.isEmpty || !context.mounted) return;
 
     final entries = await Navigator.of(context).push<List<SchemeOfWorkEntry>>(
-      MaterialPageRoute(builder: (_) => SelectOwnTopicsScreen(templates: templates)),
+      MaterialPageRoute(
+          builder: (_) => SelectOwnTopicsScreen(templates: templates)),
     );
     if (entries == null || entries.isEmpty || !context.mounted) return;
 
-    final sorted = [...templates]..sort((a, b) => a.grade.level.compareTo(b.grade.level));
+    final sorted = [...templates]
+      ..sort((a, b) => a.grade.level.compareTo(b.grade.level));
     final gradeLabel = sorted.length == 1
         ? '${sorted.first.grade.name} (Selected Topics)'
         : '${sorted.first.grade.name}–${sorted.last.grade.name} (Selected Topics)';
@@ -243,7 +256,9 @@ class HomeScreen extends StatelessWidget {
     // path that never grouped by real week and hardcoded weekNumber: 1 on
     // every result; see that screen's own doc comment for the fix.
     final result = await Navigator.of(context).push<TopicPickResult>(
-      MaterialPageRoute(builder: (_) => const TopicSearchScreen(title: 'Generate Teaching Notes & Slides')),
+      MaterialPageRoute(
+          builder: (_) => const TopicSearchScreen(
+              title: 'Generate Teaching Notes & Slides')),
     );
     if (result == null || !context.mounted) return;
 
@@ -268,7 +283,7 @@ class HomeScreen extends StatelessWidget {
           SimpleDialogOption(
             onPressed: () => Navigator.of(dialogContext).pop('bullet'),
             child: const ListTile(
-              leading: Icon(Icons.format_list_bulleted),
+              leading: Icon(Icons.format_list_bulleted_outlined),
               title: Text('Bulletin'),
               subtitle: Text('Concise bullet points'),
             ),
@@ -312,13 +327,16 @@ class HomeScreen extends StatelessWidget {
 
     final template = await Navigator.of(context).push<SyllabusTemplate>(
       MaterialPageRoute(
-        builder: (_) => const SubjectGradeTopicPickerScreen(title: 'Generate Record of Work'),
+        builder: (_) => const SubjectGradeTopicPickerScreen(
+            title: 'Generate Record of Work'),
       ),
     );
     if (template == null || !context.mounted) return;
 
     await Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => RecordOfWorkScreen(template: template, period: period)),
+      MaterialPageRoute(
+          builder: (_) =>
+              RecordOfWorkScreen(template: template, period: period)),
     );
   }
 
@@ -344,12 +362,11 @@ class HomeScreen extends StatelessWidget {
             ],
             flexibleSpace: FlexibleSpaceBar(
               background: Container(
+                // Stage I (gradients, 2026-09-27): the token version of
+                // this same hero gradient (now 3 stops instead of 2) — see
+                // AppGradients.hero's own doc comment.
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [colorScheme.primary, colorScheme.primaryContainer],
-                  ),
+                  gradient: AppGradients.hero(colorScheme),
                 ),
                 child: SafeArea(
                   child: Center(
@@ -357,23 +374,32 @@ class HomeScreen extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         ClipRRect(
+                          // Intentionally not on the AppRadius scale — a
+                          // one-off brand shape for the app icon itself,
+                          // not interchangeable UI chrome.
                           borderRadius: BorderRadius.circular(20),
-                          child: Image.asset('assets/icon/icon.png', width: 72, height: 72),
+                          child: Image.asset('assets/icon/icon.png',
+                              width: 72, height: 72),
                         ),
-                        const SizedBox(height: 12),
+                        const SizedBox(height: AppSpacing.sm),
                         Text(
                           'Smart Teacher',
-                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                          style: Theme.of(context)
+                              .textTheme
+                              .headlineSmall
+                              ?.copyWith(
                                 color: colorScheme.onPrimary,
                                 fontWeight: FontWeight.bold,
                               ),
                         ),
-                        const SizedBox(height: 4),
+                        const SizedBox(height: AppSpacing.xs),
                         Text(
                           'Zambian Curriculum Companion',
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                color: colorScheme.onPrimary.withValues(alpha: 0.85),
-                              ),
+                          style:
+                              Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    color: colorScheme.onPrimary
+                                        .withValues(alpha: 0.85),
+                                  ),
                         ),
                       ],
                     ),
@@ -383,9 +409,11 @@ class HomeScreen extends StatelessWidget {
             ),
           ),
           SliverPadding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(AppSpacing.md),
             sliver: SliverList.list(
               children: [
+                const FirebaseUnavailableBanner(),
+                const CloudBackupTrigger(),
                 const CdcNewMaterialsBanner(),
                 // Home button order (2026-09-08, per explicit request):
                 // Data Manager / Scan Marker / Assignments, Exams & Test
@@ -406,51 +434,62 @@ class HomeScreen extends StatelessWidget {
                 FunctionButton(
                   icon: Icons.event_note_outlined,
                   label: 'Generate Scheme of Work',
-                  subtitle: 'Pick a subject, grade/form, and term — or select your own topics',
+                  subtitle:
+                      'Pick a subject, grade/form, and term — or select your own topics',
                   onTap: () => _openSchemeOfWork(context),
                 ),
                 FunctionButton(
                   icon: Icons.folder_shared_outlined,
                   label: 'Data Manager',
-                  subtitle: 'Grade Teacher — class roster, Broad Mark Sheet, and report forms',
+                  subtitle:
+                      'Grade Teacher — class roster, Broad Mark Sheet, and report forms',
                   onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const DataManagerMenuScreen()),
+                    MaterialPageRoute(
+                        builder: (_) => const DataManagerMenuScreen()),
                   ),
                 ),
                 FunctionButton(
                   icon: Icons.document_scanner_outlined,
                   label: 'Scan Marker',
-                  subtitle: 'Marking assistant — capture and queue student scripts for AI-assisted grading (early build)',
+                  subtitle:
+                      'Marking assistant — capture and queue student scripts for AI-assisted grading (early build)',
                   onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const MarkingQueueScreen()),
+                    MaterialPageRoute(
+                        builder: (_) => const MarkingQueueScreen()),
                   ),
                 ),
                 FunctionButton(
                   icon: Icons.assignment_turned_in_outlined,
                   label: 'Assignments, Exams & Test Submissions',
-                  subtitle: 'Send a handwritten assignment or test to your teacher',
+                  subtitle:
+                      'Send a handwritten assignment or test to your teacher',
                   onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const AssignmentsTestsMenuScreen()),
+                    MaterialPageRoute(
+                        builder: (_) => const AssignmentsTestsMenuScreen()),
                   ),
                 ),
                 FunctionButton(
                   icon: Icons.calendar_view_week_outlined,
                   label: 'School Timetable Maker',
-                  subtitle: 'Your schedule, browse by teacher, or manage School Network setup',
+                  subtitle:
+                      'Your schedule, browse by teacher, or manage School Network setup',
                   onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const TimetableHomeScreen()),
+                    MaterialPageRoute(
+                        builder: (_) => const TimetableHomeScreen()),
                   ),
                 ),
                 FunctionButton(
                   icon: Icons.auto_awesome_outlined,
                   label: 'Generate Teaching Notes & Slides',
-                  subtitle: 'Bulletin, essay, or PowerPoint slides, for one topic',
+                  subtitle:
+                      'Bulletin, essay, or PowerPoint slides, for one topic',
                   onTap: () => _openTeachingNotes(context),
                 ),
                 FunctionButton(
                   icon: Icons.fact_check_outlined,
                   label: 'Generate Record of Work',
-                  subtitle: 'Weekly or fortnightly, pulled from what you\'ve already generated',
+                  subtitle:
+                      'Weekly or fortnightly, pulled from what you\'ve already generated',
                   onTap: () => _openRecordOfWork(context),
                 ),
                 // Combined (2026-09-02) — CDC Teaching Modules, CDC Syllabi,
@@ -463,17 +502,21 @@ class HomeScreen extends StatelessWidget {
                 FunctionButton(
                   icon: Icons.menu_book_outlined,
                   label: 'Teaching Modules, Syllabi & Past Papers',
-                  subtitle: 'CDC Teaching Modules, CDC Syllabi, and ECZ Past Papers',
+                  subtitle:
+                      'CDC Teaching Modules, CDC Syllabi, and ECZ Past Papers',
                   onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const TeachingResourcesMenuScreen()),
+                    MaterialPageRoute(
+                        builder: (_) => const TeachingResourcesMenuScreen()),
                   ),
                 ),
                 FunctionButton(
                   icon: Icons.edit_document,
                   label: 'Handwriting to Word Document Conversion',
-                  subtitle: 'Photograph or upload a handwritten page, get back an editable Word document',
+                  subtitle:
+                      'Photograph or upload a handwritten page, get back an editable Word document',
                   onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const HandwritingToWordScreen()),
+                    MaterialPageRoute(
+                        builder: (_) => const HandwritingToWordScreen()),
                   ),
                 ),
                 // Combined (2026-09-08, per explicit request) — Minutes
@@ -485,9 +528,11 @@ class HomeScreen extends StatelessWidget {
                 FunctionButton(
                   icon: Icons.groups_outlined,
                   label: 'Minutes Maker & Word ↔ PDF Converter',
-                  subtitle: 'Meeting minutes from handwritten notes, and .docx ↔ PDF conversion',
+                  subtitle:
+                      'Meeting minutes from handwritten notes, and .docx ↔ PDF conversion',
                   onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const OfficeToolsMenuScreen()),
+                    MaterialPageRoute(
+                        builder: (_) => const OfficeToolsMenuScreen()),
                   ),
                 ),
                 // "Standby" voice command (2026-09-08, per explicit
@@ -498,11 +543,12 @@ class HomeScreen extends StatelessWidget {
                 // being refined to cover more of the app's own functions
                 // (see VoiceCommandScreen's own doc comment).
                 FunctionButton(
-                  icon: Icons.mic_none,
+                  icon: Icons.mic_none_outlined,
                   label: 'Voice Command',
                   subtitle: 'Tap and speak a command',
                   onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const VoiceCommandScreen()),
+                    MaterialPageRoute(
+                        builder: (_) => const VoiceCommandScreen()),
                   ),
                 ),
               ],

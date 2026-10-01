@@ -160,7 +160,7 @@ class _BroadMarkSheetScreenState extends State<BroadMarkSheetScreen> {
     Color? color;
     if (localScore != null) {
       status = 'Recorded';
-      color = Colors.green;
+      color = Colors.green.shade700;
     } else {
       ScoreEntry? remote;
       for (final e in remoteEntries) {
@@ -339,7 +339,7 @@ class _BroadMarkSheetScreenState extends State<BroadMarkSheetScreen> {
         child: InkWell(
           onTap: () => ScaffoldMessenger.of(context)
               .showSnackBar(SnackBar(content: Text('Edited after completion: $formatted'))),
-          child: Text(text, style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+          child: Text(text, style: TextStyle(color: Colors.red.shade700, fontWeight: FontWeight.bold)),
         ),
       ),
     );
@@ -371,7 +371,7 @@ class _BroadMarkSheetScreenState extends State<BroadMarkSheetScreen> {
               },
             ),
           IconButton(
-            icon: const Icon(Icons.call_merge),
+            icon: const Icon(Icons.call_merge_outlined),
             tooltip: 'Consolidate with another list',
             onPressed: _openConsolidate,
           ),
@@ -383,7 +383,7 @@ class _BroadMarkSheetScreenState extends State<BroadMarkSheetScreen> {
                     onPressed: _openAnalysis,
                   )
                 : IconButton(
-                    icon: const Icon(Icons.task_alt),
+                    icon: const Icon(Icons.task_alt_outlined),
                     tooltip: 'Mark Report Forms Complete',
                     onPressed: _markComplete,
                   ),
@@ -453,14 +453,14 @@ class _BroadMarkSheetScreenState extends State<BroadMarkSheetScreen> {
           FloatingActionButton.extended(
             heroTag: 'proceed',
             onPressed: _proceed,
-            icon: const Icon(Icons.arrow_forward),
+            icon: const Icon(Icons.arrow_forward_outlined),
             label: const Text('Proceed'),
           ),
           const SizedBox(height: 12),
           FloatingActionButton.extended(
             heroTag: 'omittedEntry',
             onPressed: _omittedEntry,
-            icon: const Icon(Icons.person_add_alt_1),
+            icon: const Icon(Icons.person_add_alt_1_outlined),
             label: const Text('Omitted Entry'),
           ),
         ],

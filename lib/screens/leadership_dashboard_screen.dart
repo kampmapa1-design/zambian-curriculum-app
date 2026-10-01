@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../models/school.dart';
+import '../services/masonry_layout.dart';
 import '../services/school_score_entry_service.dart';
 import '../services/school_service.dart';
 import 'broadcast_screen.dart';
@@ -84,16 +85,75 @@ class ClassProgressBoard extends StatelessWidget {
                       ),
                     );
                   }
-                  return ListView.builder(
-                    padding: const EdgeInsets.all(16),
-                    itemCount: classes.length,
-                    itemBuilder: (context, index) =>
-                        _ClassProgressCard(school: school, schoolClass: classes[index], scoreEntryService: scoreEntryService, nameByUid: nameByUid),
+                  return _ClassProgressGrid(
+                    school: school,
+                    classes: classes,
+                    scoreEntryService: scoreEntryService,
+                    nameByUid: nameByUid,
                   );
                 },
               ),
             ),
           ],
+        );
+      },
+    );
+  }
+}
+
+/// Bento-grid masonry (Stage K, 2026-09-27): each class's progress card is
+/// a genuinely different height (it grows with how many subjects that
+/// class has — real varying content, not an artificial size difference),
+/// and this board runs on a web dashboard where a single column wastes
+/// most of a wide browser window's width. A single-column phone/narrow
+/// browser view is completely unchanged (see [masonryColumnCountFor]) —
+/// only wide viewports switch to a multi-column, height-balanced layout.
+class _ClassProgressGrid extends StatelessWidget {
+  const _ClassProgressGrid({required this.school, required this.classes, required this.scoreEntryService, required this.nameByUid});
+
+  final School school;
+  final List<SchoolClass> classes;
+  final SchoolScoreEntryService scoreEntryService;
+  final Map<String, String> nameByUid;
+
+  Widget _cardFor(int index) =>
+      _ClassProgressCard(school: school, schoolClass: classes[index], scoreEntryService: scoreEntryService, nameByUid: nameByUid);
+
+  /// A class with more subjects renders a taller card (one row per
+  /// subject, see `_ClassProgressCard._subjectProgressRow`) — a cheap,
+  /// real proxy for actual pixel height, good enough to balance columns
+  /// without needing to measure real widgets.
+  double _estimatedHeight(int index) => 90 + classes[index].subjectNames.length * 22;
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final columnCount = masonryColumnCountFor(constraints.maxWidth);
+        if (columnCount == 1) {
+          return ListView.builder(
+            padding: const EdgeInsets.all(16),
+            itemCount: classes.length,
+            itemBuilder: (context, index) => _cardFor(index),
+          );
+        }
+
+        final columns = assignMasonryColumns(itemCount: classes.length, columnCount: columnCount, estimatedHeight: _estimatedHeight);
+        return SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              for (var c = 0; c < columnCount; c++) ...[
+                if (c > 0) const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    children: [for (final index in columns[c]) _cardFor(index)],
+                  ),
+                ),
+              ],
+            ],
+          ),
         );
       },
     );

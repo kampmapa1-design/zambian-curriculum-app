@@ -198,7 +198,7 @@ class _JoinClassPupilScreenState extends State<JoinClassPupilScreen> {
       ];
 
   List<Widget> _buildRequestedStep() => [
-        const Icon(Icons.check_circle_outline, size: 56, color: Colors.green),
+        Icon(Icons.check_circle_outline, size: 56, color: Colors.green.shade700),
         const SizedBox(height: 16),
         const Text('Request sent — ask your teacher to confirm it, then come back here.', textAlign: TextAlign.center),
         const SizedBox(height: 20),

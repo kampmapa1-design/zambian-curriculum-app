@@ -9,6 +9,7 @@ import '../services/generated_report_form_repository.dart';
 import '../services/head_teacher_signature_service.dart';
 import '../services/report_class_repository.dart';
 import '../services/report_form_document_service.dart';
+import '../widgets/app_primary_button.dart';
 
 /// Report Form Pipeline, Stage 12 — "Approve & Sign". First use on a
 /// device sets up a local password + stores a real signature image (see
@@ -260,10 +261,10 @@ class _HeadTeacherApprovalScreenState extends State<HeadTeacherApprovalScreen> {
           Text(_error!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
         ],
         const SizedBox(height: 20),
-        FilledButton.icon(
+        AppPrimaryButton(
           onPressed: _approveAndSign,
-          icon: const Icon(Icons.verified_outlined),
-          label: const Text('Approve & Sign'),
+          icon: Icons.verified_outlined,
+          label: 'Approve & Sign',
         ),
       ],
     );

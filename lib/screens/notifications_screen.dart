@@ -39,7 +39,7 @@ class NotificationsScreen extends StatelessWidget {
               final read = data['read'] as bool? ?? false;
               final createdAt = (data['createdAt'] as Timestamp?)?.toDate();
               return ListTile(
-                leading: Icon(read ? Icons.notifications_none : Icons.notifications_active, color: read ? null : Theme.of(context).colorScheme.primary),
+                leading: Icon(read ? Icons.notifications_none_outlined : Icons.notifications_active_outlined, color: read ? null : Theme.of(context).colorScheme.primary),
                 title: Text(
                   data['message'] as String? ?? '',
                   style: TextStyle(fontWeight: read ? FontWeight.normal : FontWeight.bold),

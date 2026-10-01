@@ -154,7 +154,7 @@ class _StaffroomScreenState extends State<StaffroomScreen> {
                                     children: [
                                       Row(
                                         children: [
-                                          if (post.pinned) const Padding(padding: EdgeInsets.only(right: 6), child: Icon(Icons.push_pin, size: 14)),
+                                          if (post.pinned) const Padding(padding: EdgeInsets.only(right: 6), child: Icon(Icons.push_pin_outlined, size: 14)),
                                           Expanded(
                                             child: Text(post.authorName, style: const TextStyle(fontWeight: FontWeight.bold)),
                                           ),
@@ -188,7 +188,7 @@ class _StaffroomScreenState extends State<StaffroomScreen> {
           );
         },
       ),
-      floatingActionButton: FloatingActionButton(onPressed: _compose, child: const Icon(Icons.add)),
+      floatingActionButton: FloatingActionButton(onPressed: _compose, child: const Icon(Icons.add_outlined)),
     );
   }
 }

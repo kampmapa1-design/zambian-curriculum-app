@@ -1,6 +1,8 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
@@ -27,7 +29,11 @@ class SubjectTeacherRepository {
     if (!await file.exists()) return {};
     try {
       return (jsonDecode(await file.readAsString()) as Map).cast<String, String>();
-    } catch (_) {
+    } catch (e, st) {
+      // Non-fatal — this previously returned {} with zero trace of a real
+      // parsing/corruption failure. Crashlytics reporting removed
+      // 2026-09-28 (circuit-breaker, see main.dart's own doc).
+      debugPrint('SubjectTeacherRepository._all: failed to read/parse $e\n$st');
       return {};
     }
   }

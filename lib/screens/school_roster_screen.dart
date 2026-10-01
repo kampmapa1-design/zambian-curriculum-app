@@ -160,7 +160,7 @@ class _SchoolRosterScreenState extends State<SchoolRosterScreen> {
                           if (_canManageOperators)
                             IconButton(
                               icon: Icon(member.timetableOperator
-                                  ? Icons.event_available
+                                  ? Icons.event_available_outlined
                                   : Icons.event_available_outlined),
                               tooltip: member.timetableOperator
                                   ? 'Revoke Timetable Operator'

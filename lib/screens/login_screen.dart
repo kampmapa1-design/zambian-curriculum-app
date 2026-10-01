@@ -234,7 +234,7 @@ class _LoginScreenState extends State<LoginScreen> {
   List<Widget> _buildPhoneNumber() => [
         IconButton(
           alignment: Alignment.centerLeft,
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back_outlined),
           onPressed: () => setState(() {
             _view = _LoginView.choice;
             _error = null;
@@ -262,7 +262,7 @@ class _LoginScreenState extends State<LoginScreen> {
   List<Widget> _buildPhoneCode() => [
         IconButton(
           alignment: Alignment.centerLeft,
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back_outlined),
           onPressed: () => setState(() {
             _view = _LoginView.phoneNumber;
             _error = null;
@@ -292,7 +292,7 @@ class _LoginScreenState extends State<LoginScreen> {
   List<Widget> _buildEmailForm() => [
         IconButton(
           alignment: Alignment.centerLeft,
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back_outlined),
           onPressed: () => setState(() {
             _view = _LoginView.choice;
             _error = null;

@@ -186,7 +186,7 @@ class _ManageSubjectsScreenState extends State<ManageSubjectsScreen> {
               Expanded(
                 child: OutlinedButton.icon(
                   onPressed: _subjects.length >= ReportClassRepository.maxSubjects ? null : _addPlainSubject,
-                  icon: const Icon(Icons.add),
+                  icon: const Icon(Icons.add_outlined),
                   label: const Text('Add Subject'),
                 ),
               ),

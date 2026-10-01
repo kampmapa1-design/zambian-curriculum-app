@@ -3,9 +3,15 @@
   "configurations": [
     {
       "name": "web-admin-dashboard",
-      "runtimeExecutable": "C:\\flutter\\bin\\flutter.bat",
-      "runtimeArgs": ["run", "-d", "web-server", "--web-port", "8765", "-t", "lib/main_web.dart"],
+      "runtimeExecutable": "C:\\Users\\user\\AppData\\Local\\Programs\\Python\\Launcher\\py.exe",
+      "runtimeArgs": ["-3", "-m", "http.server", "8765", "--directory", "build/web"],
       "port": 8765
+    },
+    {
+      "name": "web-admin-dashboard-dev",
+      "runtimeExecutable": "C:\\flutter\\bin\\flutter.bat",
+      "runtimeArgs": ["run", "-d", "web-server", "--web-port", "8766", "-t", "lib/main_web.dart"],
+      "port": 8766
     }
   ]
 }

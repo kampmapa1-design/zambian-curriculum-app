@@ -191,7 +191,7 @@ class _OmittedEntryScreenState extends State<OmittedEntryScreen> {
             onPressed: _canSave && !_saving ? _save : null,
             icon: _saving
                 ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
-                : const Icon(Icons.person_add_alt_1),
+                : const Icon(Icons.person_add_alt_1_outlined),
             label: Text(_saving ? 'Saving…' : 'Add Learner'),
           ),
         ),

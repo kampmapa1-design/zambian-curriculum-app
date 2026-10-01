@@ -164,7 +164,7 @@ class _TeacherSubmissionsDashboardScreenState extends State<TeacherSubmissionsDa
       appBar: AppBar(
         title: const Text('Submissions Dashboard'),
         actions: [
-          if (_verifiedEmail != null) IconButton(onPressed: _signOut, icon: const Icon(Icons.logout), tooltip: 'Switch email'),
+          if (_verifiedEmail != null) IconButton(onPressed: _signOut, icon: const Icon(Icons.logout_outlined), tooltip: 'Switch email'),
         ],
       ),
       body: _loading && _verifiedEmail == null
@@ -263,7 +263,7 @@ class _TeacherSubmissionsDashboardScreenState extends State<TeacherSubmissionsDa
               child: ListTile(
                 title: Text(s.title.isEmpty ? '(untitled)' : s.title),
                 subtitle: Text('${s.studentName} · ${s.className} · ${s.submittedAt.toLocal().toString().split('.').first}'),
-                trailing: const Icon(Icons.chevron_right),
+                trailing: const Icon(Icons.chevron_right_outlined),
                 onTap: () => Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => SubmissionDetailScreen(submission: s, dashboardService: _service)),
                 ),

@@ -161,7 +161,7 @@ class _ConsolidateClassesScreenState extends State<ConsolidateClassesScreen> {
             onPressed: (_selectedIds.isEmpty || _consolidating) ? null : _consolidate,
             icon: _consolidating
                 ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
-                : const Icon(Icons.call_merge),
+                : const Icon(Icons.call_merge_outlined),
             label: Text(_selectedIds.isEmpty
                 ? 'Pick at least one other list'
                 : 'Consolidate ${_selectedIds.length + 1} lists'),

@@ -143,12 +143,12 @@ class _SelectOwnTopicsScreenState extends State<SelectOwnTopicsScreen> {
               decoration: InputDecoration(
                 labelText: 'Jump to a topic/sub-topic by name or number',
                 helperText: 'e.g. "1.7" or "10.2.4" — matches any bundled topic starting with it',
-                prefixIcon: const Icon(Icons.search),
+                prefixIcon: const Icon(Icons.search_outlined),
                 border: const OutlineInputBorder(),
                 suffixIcon: _filter.isEmpty
                     ? null
                     : IconButton(
-                        icon: const Icon(Icons.clear),
+                        icon: const Icon(Icons.clear_outlined),
                         onPressed: () {
                           _filterController.clear();
                           setState(() => _filter = '');
@@ -168,7 +168,7 @@ class _SelectOwnTopicsScreenState extends State<SelectOwnTopicsScreen> {
           padding: const EdgeInsets.all(12),
           child: FilledButton.icon(
             onPressed: _selected.isEmpty ? null : _openReview,
-            icon: const Icon(Icons.playlist_add_check),
+            icon: const Icon(Icons.playlist_add_check_outlined),
             label: Text(_selected.isEmpty ? 'Pick at least one topic' : 'Review selection (${_selected.length})'),
           ),
         ),
@@ -303,7 +303,7 @@ class _SelectOwnTopicsReviewScreenState extends State<_SelectOwnTopicsReviewScre
                     title: Text(item.title, style: const TextStyle(fontSize: 13)),
                     subtitle: Text('${item.template.grade.name} · ${item.term.name}', style: const TextStyle(fontSize: 10.5)),
                     trailing: IconButton(
-                      icon: const Icon(Icons.close),
+                      icon: const Icon(Icons.close_outlined),
                       tooltip: 'Remove',
                       onPressed: () => _remove(index),
                     ),

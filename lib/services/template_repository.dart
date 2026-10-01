@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/syllabus_models.dart';
 import 'database_helper.dart';
@@ -73,10 +74,19 @@ class TemplateRepository {
   /// unseeded too and surface as a raw error on every screen that opens
   /// the subject/grade picker — far too broad a blast radius for one bad
   /// file.
+  /// Bump whenever a bundled syllabus asset changes in a way that needs
+  /// re-importing (new subject/grade file, corrected content) — see
+  /// [ensureAllSeeded]'s persisted-skip check below. `importTemplate` is
+  /// get-or-create per row, so re-running the full import is always safe
+  /// (never duplicates); this version number only controls whether it's
+  /// SKIPPED, never whether it would be correct to run.
+  static const _seedSchemaVersion = 1;
+  static const _seedVersionPrefsKey = 'template_repository_seeded_schema_version';
+
   Future<void> ensureAllSeeded() async {
     if (_seededThisProcess) return;
     if (_seedingInFlight case final inFlight?) return inFlight;
-    final future = _doEnsureAllSeeded();
+    final future = _ensureAllSeededOncePerVersion();
     _seedingInFlight = future;
     try {
       await future;
@@ -84,6 +94,40 @@ class TemplateRepository {
     } finally {
       _seedingInFlight = null;
     }
+  }
+
+  /// Real, reported "subject list takes too long to appear" complaint
+  /// (2026-09-28): [_seededThisProcess] only ever avoided re-seeding
+  /// WITHIN one running app process — every fresh cold start is a new
+  /// process, so the full ~60-file import (see [_doEnsureAllSeeded]'s own
+  /// doc on why it's paced, not just slow) ran again on literally every
+  /// single app launch, even though the bundled assets are byte-identical
+  /// to the previous launch. Persisted across launches now: skip the full
+  /// import when a PRIOR launch already completed it at this exact
+  /// [_seedSchemaVersion] AND the database still genuinely has that data —
+  /// never trust the persisted flag alone, since a cleared/corrupted local
+  /// DB with a stale flag would otherwise leave every subject picker
+  /// silently empty with no re-import to recover it.
+  Future<void> _ensureAllSeededOncePerVersion() async {
+    // SharedPreferences itself is optional here, not load-bearing: a real
+    // app always has it, but the existing test suite calls
+    // ensureAllSeeded() directly against a real SQLite DB with no platform
+    // channel available for it (no test in this codebase ever needed to
+    // mock it before this optimization) — falling back to always-reseed
+    // (the exact prior behavior, just slower) is always safe/correct, so
+    // a missing/unavailable prefs plugin is never treated as a hard error.
+    SharedPreferences? prefs;
+    try {
+      prefs = await SharedPreferences.getInstance();
+    } catch (_) {
+      prefs = null;
+    }
+    if (prefs != null && prefs.getInt(_seedVersionPrefsKey) == _seedSchemaVersion) {
+      final curricula = await _db.listCurricula();
+      if (curricula.isNotEmpty) return;
+    }
+    await _doEnsureAllSeeded();
+    await prefs?.setInt(_seedVersionPrefsKey, _seedSchemaVersion);
   }
 
   Future<void> _doEnsureAllSeeded() async {
@@ -98,6 +142,24 @@ class TemplateRepository {
         // ignore: avoid_print
         print('TemplateRepository.ensureAllSeeded: skipping ${entry.file} — $error');
       }
+      // A real, reported "app isn't responding" freeze (2026-09-23) — on a
+      // fresh install/first launch, this loop runs for every one of the
+      // ~60 bundled files back to back. Each iteration's own work
+      // (jsonDecode on a real syllabus file, then dozens of small SQLite
+      // calls in importTemplate) is individually quick, but async/await
+      // does NOT hand control back to Flutter's own frame/input scheduler
+      // between iterations unless something actually suspends — and every
+      // step here (rootBundle.loadString, sqflite calls) can resolve
+      // near-instantly from cache/small files, meaning the loop can run
+      // dozens of iterations essentially back-to-back with no real
+      // scheduler gap, long enough on a modest device to trip Android's
+      // ANR watchdog even though the Dart side was always "making
+      // progress". This explicit yield (a real microtask/event-loop gap
+      // even when the loop body itself resolved instantly) guarantees
+      // Flutter gets a turn to draw a frame / handle a pending touch
+      // between every file, not just when the file's own work happens to
+      // be slow.
+      await Future<void>.delayed(Duration.zero);
     }
   }
 

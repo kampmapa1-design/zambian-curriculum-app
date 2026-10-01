@@ -68,6 +68,25 @@ class _TeachingResourcesMenuScreenState extends State<TeachingResourcesMenuScree
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          // Play Store Misleading Claims policy fix, 2026-09-22 — same
+          // disclosure now added to the store listing's own description:
+          // this app itself is never the source of this material, only a
+          // downloader/organizer of it, and isn't affiliated with either
+          // real body it names.
+          Card(
+            color: Theme.of(context).colorScheme.surfaceContainerHighest,
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Text(
+                'Syllabi and Teaching Modules are sourced from the Ministry of Education, Zambia — Curriculum '
+                'Development Centre (edu.gov.zm). Past papers are sourced from the Examinations Council of Zambia '
+                '(exams-council.org.zm). Smart Teacher is independently developed and is not affiliated with, '
+                'endorsed by, or an official representative of either body.',
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
           FunctionButton(
             icon: Icons.description_outlined,
             label: 'ECZ Past Papers',

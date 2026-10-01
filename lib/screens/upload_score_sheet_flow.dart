@@ -10,6 +10,7 @@ import '../services/handwritten_list_transcription_service.dart';
 import '../services/report_class_backup_service.dart';
 import '../services/report_class_repository.dart';
 import '../services/report_comment_engine.dart';
+import '../widgets/app_glass_surface.dart';
 import 'document_pages_capture_screen.dart';
 
 /// Report Form Pipeline, Stages 2-4 in one flow (they're inseparable to
@@ -204,8 +205,11 @@ class _UploadScoreSheetFlowState extends State<UploadScoreSheetFlow> {
       _caComponent = component;
     }
 
-    final method = await showModalBottomSheet<_CaptureMethod>(
-      context: context,
+    // Stage J (glassmorphism overlays, 2026-09-27): a real, plain
+    // picker-style bottom sheet — the concrete "bottom sheets" example
+    // named in that stage's own spec.
+    final method = await showAppGlassBottomSheet<_CaptureMethod>(
+      context,
       builder: (sheetContext) => SafeArea(
         child: Wrap(
           children: [
@@ -649,7 +653,7 @@ class _UploadScoreSheetFlowState extends State<UploadScoreSheetFlow> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(Icons.edit_note, size: 18, color: Theme.of(context).colorScheme.onErrorContainer),
+                Icon(Icons.edit_note_outlined, size: 18, color: Theme.of(context).colorScheme.onErrorContainer),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
@@ -699,7 +703,7 @@ class _UploadScoreSheetFlowState extends State<UploadScoreSheetFlow> {
               onPressed: _saving || !_allResolved ? null : _confirmAndSave,
               icon: _saving
                   ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
-                  : const Icon(Icons.check),
+                  : const Icon(Icons.check_outlined),
               label: Text(_saving
                   ? 'Saving…'
                   : _allResolved
@@ -759,7 +763,7 @@ class _UploadScoreSheetFlowState extends State<UploadScoreSheetFlow> {
             if (row.matchedLearner != null)
               Row(
                 children: [
-                  const Icon(Icons.check_circle, size: 16, color: Colors.green),
+                  Icon(Icons.check_circle_outlined, size: 16, color: Colors.green.shade700),
                   const SizedBox(width: 4),
                   Expanded(child: Text('Matched to ${row.matchedLearner!.fullName}', style: Theme.of(context).textTheme.bodySmall)),
                 ],
@@ -771,9 +775,9 @@ class _UploadScoreSheetFlowState extends State<UploadScoreSheetFlow> {
                 crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
                   Icon(
-                    row.confirmedAsNew ? Icons.person_add_alt_1 : Icons.warning_amber_rounded,
+                    row.confirmedAsNew ? Icons.person_add_alt_1_outlined : Icons.warning_amber_rounded,
                     size: 16,
-                    color: row.confirmedAsNew ? Colors.green : Theme.of(context).colorScheme.error,
+                    color: row.confirmedAsNew ? Colors.green.shade700 : Theme.of(context).colorScheme.error,
                   ),
                   Text(
                     row.confirmedAsNew ? 'Confirmed as a new roster learner' : 'No roster match found',

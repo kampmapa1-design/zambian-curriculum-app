@@ -2,6 +2,7 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
 import 'auth_service.dart';
+import 'metered_call.dart';
 
 /// One row of a Scheme of Work draft that genuinely has no real sourced
 /// content for one or both of its Specific Competence/Outcome and
@@ -58,9 +59,12 @@ class SchemeOfWorkAiContent {
 ///   (a blank cell, or the topic/sub-topic's own description) to show
 ///   when this returns nothing.
 class SchemeOfWorkAiContentService {
-  SchemeOfWorkAiContentService({FirebaseFunctions? functions}) : _functions = functions ?? FirebaseFunctions.instance;
+  SchemeOfWorkAiContentService({FirebaseFunctions? functions}) : _providedFunctions = functions;
 
-  final FirebaseFunctions _functions;
+  // Lazy: resolving FirebaseFunctions.instance needs Firebase.initializeApp() to have
+  // succeeded; constructing this service must never throw just because it hasn't.
+  final FirebaseFunctions? _providedFunctions;
+  FirebaseFunctions get _functions => _providedFunctions ?? FirebaseFunctions.instance;
 
   Future<bool> get isOnline async {
     final result = await Connectivity().checkConnectivity();
@@ -82,8 +86,7 @@ class SchemeOfWorkAiContentService {
       if (!await isOnline) return const {};
       await AuthService.instance.ensureSignedIn();
 
-      final callable = _functions.httpsCallable(
-        'generateSchemeOfWorkContent',
+      final callable = meteredCallable(_functions, 'generateSchemeOfWorkContent',
         options: HttpsCallableOptions(timeout: const Duration(seconds: 110)),
       );
       final result = await callable.call<Object?>({

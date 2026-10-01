@@ -131,7 +131,7 @@ class _MarkedResultsListsScreenState extends State<MarkedResultsListsScreen> {
                         '${list.scriptIds.length} script(s)'
                         '${list.exported ? ' · Exported/shared — scores locked' : ' · Scores still editable'}',
                       ),
-                      trailing: const Icon(Icons.chevron_right),
+                      trailing: const Icon(Icons.chevron_right_outlined),
                       onTap: () => _openList(list),
                     );
                   },

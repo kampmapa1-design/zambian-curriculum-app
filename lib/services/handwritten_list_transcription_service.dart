@@ -5,6 +5,7 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
 import 'auth_service.dart';
+import 'metered_call.dart';
 
 /// Thrown for both "can't reach the function" (offline) and "the function
 /// rejected the request", and for a response that doesn't match the
@@ -62,10 +63,12 @@ class TranscribedTable {
 /// turns into an actual editable .docx reproducing it — reviewed and
 /// corrected by the teacher in Word itself, not inside this app.
 class HandwrittenListTranscriptionService {
-  HandwrittenListTranscriptionService({FirebaseFunctions? functions})
-      : _functions = functions ?? FirebaseFunctions.instance;
+  HandwrittenListTranscriptionService({FirebaseFunctions? functions}) : _providedFunctions = functions;
 
-  final FirebaseFunctions _functions;
+  // Lazy: resolving FirebaseFunctions.instance needs Firebase.initializeApp() to have
+  // succeeded; constructing this service must never throw just because it hasn't.
+  final FirebaseFunctions? _providedFunctions;
+  FirebaseFunctions get _functions => _providedFunctions ?? FirebaseFunctions.instance;
 
   Future<bool> get isOnline async {
     final result = await Connectivity().checkConnectivity();
@@ -119,8 +122,7 @@ class HandwrittenListTranscriptionService {
     await AuthService.instance.ensureSignedIn();
 
     onProgress?.call('Preparing photos…');
-    final callable = _functions.httpsCallable(
-      'transcribeHandwrittenList',
+    final callable = meteredCallable(_functions, 'transcribeHandwrittenList',
       options: HttpsCallableOptions(timeout: const Duration(seconds: 70)),
     );
 

@@ -97,7 +97,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
             ),
           const Divider(),
           ListTile(
-            leading: const Icon(Icons.logout),
+            leading: const Icon(Icons.logout_outlined),
             title: const Text('Sign out'),
             onTap: () async {
               final confirmed = await showDialog<bool>(

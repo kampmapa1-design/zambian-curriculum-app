@@ -61,12 +61,12 @@ class _GradeTeacherHomeScreenState extends State<GradeTeacherHomeScreen> {
   /// was long since settled), which outranks "still in progress".
   ({String label, Color color, IconData icon}) _statusFor(ReportClass reportClass) {
     if (reportClass.isReportFormsCompleted) {
-      return (label: 'Report Forms Complete', color: Colors.green, icon: Icons.verified);
+      return (label: 'Report Forms Complete', color: Colors.green.shade700, icon: Icons.verified_outlined);
     }
     if (_rosterCompletedByClass[reportClass.id] != null) {
       return (label: 'Roster Upload Complete', color: Colors.amber.shade800, icon: Icons.check_circle_outline);
     }
-    return (label: 'In Progress', color: Colors.grey, icon: Icons.hourglass_empty);
+    return (label: 'In Progress', color: Colors.grey, icon: Icons.hourglass_empty_outlined);
   }
 
   Future<void> _newClass() async {
@@ -144,7 +144,7 @@ class _GradeTeacherHomeScreenState extends State<GradeTeacherHomeScreen> {
                           ],
                         ),
                         isThreeLine: true,
-                        trailing: const Icon(Icons.chevron_right),
+                        trailing: const Icon(Icons.chevron_right_outlined),
                         onTap: () => _openClass(reportClass),
                         onLongPress: () => _previewReport(reportClass),
                       ),
@@ -153,7 +153,7 @@ class _GradeTeacherHomeScreenState extends State<GradeTeacherHomeScreen> {
                 ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _newClass,
-        icon: const Icon(Icons.add),
+        icon: const Icon(Icons.add_outlined),
         label: const Text('Class Setup'),
       ),
     );

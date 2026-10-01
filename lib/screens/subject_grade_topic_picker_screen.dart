@@ -218,7 +218,7 @@ class _SubjectGradeTopicPickerScreenState extends State<SubjectGradeTopicPickerS
               children: [
                 for (final entry in _quickPicks)
                   ActionChip(
-                    avatar: const Icon(Icons.bolt, size: 16),
+                    avatar: const Icon(Icons.bolt_outlined, size: 16),
                     label: Text('${entry.subjectName} · ${entry.gradeName}', style: const TextStyle(fontSize: 12.5)),
                     onPressed: _quickPickLoading ? null : () => _onQuickPickTap(entry),
                   ),
@@ -396,7 +396,7 @@ class _GradeTileState extends State<_GradeTile> {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.block, size: 13, color: Theme.of(context).colorScheme.onErrorContainer),
+            Icon(Icons.block_outlined, size: 13, color: Theme.of(context).colorScheme.onErrorContainer),
             const SizedBox(width: 4),
             Text(
               'Not Ready',

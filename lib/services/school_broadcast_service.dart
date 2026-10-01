@@ -29,9 +29,12 @@ class BroadcastResult {
 /// every other WhatsApp send in this app already uses (see
 /// BroadcastScreen).
 class SchoolBroadcastService {
-  SchoolBroadcastService({FirebaseFunctions? functions}) : _functions = functions ?? FirebaseFunctions.instance;
+  SchoolBroadcastService({FirebaseFunctions? functions}) : _providedFunctions = functions;
 
-  final FirebaseFunctions _functions;
+  // Lazy: resolving FirebaseFunctions.instance needs Firebase.initializeApp() to have
+  // succeeded; constructing this service must never throw just because it hasn't.
+  final FirebaseFunctions? _providedFunctions;
+  FirebaseFunctions get _functions => _providedFunctions ?? FirebaseFunctions.instance;
 
   Future<BroadcastResult> broadcast({
     required String schoolId,

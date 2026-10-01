@@ -7,6 +7,7 @@ import '../models/report_class.dart';
 import '../services/assignment_submission_email_service.dart';
 import '../services/generated_report_form_repository.dart';
 import '../services/report_class_repository.dart';
+import '../widgets/gradient_app_bar.dart';
 import 'head_teacher_approval_screen.dart';
 import 'report_form_generation_screen.dart';
 
@@ -198,8 +199,8 @@ class _ReportFormListScreenState extends State<ReportFormListScreen> {
   Widget build(BuildContext context) {
     final unsignedCount = _reports.where((r) => !r.signed).length;
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Report Forms'),
+      appBar: GradientAppBar(
+        title: 'Report Forms',
         actions: [
           if (unsignedCount > 0)
             TextButton.icon(
@@ -239,8 +240,8 @@ class _ReportFormListScreenState extends State<ReportFormListScreen> {
                       margin: const EdgeInsets.only(bottom: 8),
                       child: ListTile(
                         leading: Icon(
-                          report.signed ? Icons.verified : Icons.hourglass_empty,
-                          color: report.signed ? Colors.green : null,
+                          report.signed ? Icons.verified_outlined : Icons.hourglass_empty_outlined,
+                          color: report.signed ? Colors.green.shade700 : null,
                         ),
                         title: Text(report.learnerName),
                         subtitle: Text(report.signed ? 'Signed by ${report.signedByName}' : 'Not yet approved'),
@@ -249,8 +250,16 @@ class _ReportFormListScreenState extends State<ReportFormListScreen> {
                             : Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  IconButton(icon: const Icon(Icons.print_outlined), onPressed: () => _print(report)),
-                                  IconButton(icon: const Icon(Icons.send_outlined), onPressed: () => _send(report)),
+                                  IconButton(
+                                    icon: const Icon(Icons.print_outlined),
+                                    tooltip: 'Print ${report.learnerName}\'s report',
+                                    onPressed: () => _print(report),
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(Icons.send_outlined),
+                                    tooltip: 'Send ${report.learnerName}\'s report',
+                                    onPressed: () => _send(report),
+                                  ),
                                 ],
                               ),
                       ),
@@ -261,7 +270,7 @@ class _ReportFormListScreenState extends State<ReportFormListScreen> {
           ? null
           : FloatingActionButton.extended(
               onPressed: _generateOrRegenerate,
-              icon: const Icon(Icons.refresh),
+              icon: const Icon(Icons.refresh_outlined),
               label: const Text('Re-generate All'),
             ),
     );

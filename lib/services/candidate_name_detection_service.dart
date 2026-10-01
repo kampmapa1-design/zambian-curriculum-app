@@ -1,8 +1,10 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/foundation.dart';
 
 import 'auth_service.dart';
 
@@ -39,9 +41,12 @@ class DetectedCandidateName {
 /// "nothing detected" rather than interrupting the capture session a
 /// teacher is mid-way through.
 class CandidateNameDetectionService {
-  CandidateNameDetectionService({FirebaseFunctions? functions}) : _functions = functions ?? FirebaseFunctions.instance;
+  CandidateNameDetectionService({FirebaseFunctions? functions}) : _providedFunctions = functions;
 
-  final FirebaseFunctions _functions;
+  // Lazy: resolving FirebaseFunctions.instance needs Firebase.initializeApp() to have
+  // succeeded; constructing this service must never throw just because it hasn't.
+  final FirebaseFunctions? _providedFunctions;
+  FirebaseFunctions get _functions => _providedFunctions ?? FirebaseFunctions.instance;
 
   Future<bool> get isOnline async {
     final result = await Connectivity().checkConnectivity();
@@ -58,9 +63,15 @@ class CandidateNameDetectionService {
         const Duration(seconds: 60),
         onTimeout: () => const DetectedCandidateName(firstName: '', surname: ''),
       );
-    } catch (_) {
+    } catch (e, st) {
       // Convenience feature only - never block or alarm the teacher over
-      // a failed auto-detect attempt, they can just type the name.
+      // a failed auto-detect attempt, they can just type the name. Reported
+      // as non-fatal so a real regression is visible without alarming the
+      // teacher (this service is SUSPENDED/unreferenced right now — see
+      // class doc — but kept correct in case it's reactivated later).
+      // Crashlytics reporting removed 2026-09-28 (circuit-breaker, see
+      // main.dart's own doc) — debugPrint is the only trace for now.
+      debugPrint('CandidateNameDetectionService.detect: failed $e\n$st');
       return const DetectedCandidateName(firstName: '', surname: '');
     }
   }
