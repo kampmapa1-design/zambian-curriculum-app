@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/scheme_of_work.dart';
+import '../services/match_confidence_scorer.dart';
 import '../services/subject_content_repository.dart';
 import '../services/topic_search_service.dart';
 import 'generate_notes_by_topic_screen.dart';
@@ -47,6 +48,7 @@ class _TopicSearchScreenState extends State<TopicSearchScreen> {
   bool _searchedOnce = false;
   List<TopicSearchResult> _results = [];
   List<SubjectContentSearchHit> _contentHits = [];
+  List<ContentMatch> _embeddedMatches = [];
   String? _error;
 
   @override
@@ -64,17 +66,20 @@ class _TopicSearchScreenState extends State<TopicSearchScreen> {
       _error = null;
     });
     try {
-      // Both entirely offline, run together — the syllabus-topic search
-      // (titles only) and the Subject Content Database's own full-text
-      // search (real stored material) are complementary, not a fallback
-      // chain; a query can genuinely have real hits in either, both, or
-      // neither.
+      // All three entirely offline, run together — the syllabus-topic
+      // search (titles only), the Subject Content Database's full-text
+      // search (real stored material), and the embedded-lesson-plan
+      // content search (Stage 3) are complementary, not a fallback chain;
+      // a query can genuinely have real hits in any, all, or none of
+      // them. "Ask AI" only appears once all three come up empty.
       final results = await _searchService.searchLocal(query);
       final contentHits = await _contentRepository.searchContent(query);
+      final embeddedMatches = await _searchService.searchEmbeddedContent(query);
       if (!mounted) return;
       setState(() {
         _results = results;
         _contentHits = contentHits;
+        _embeddedMatches = embeddedMatches;
       });
     } finally {
       if (mounted) setState(() => _searching = false);
@@ -94,6 +99,32 @@ class _TopicSearchScreenState extends State<TopicSearchScreen> {
               Text(hit.item.subjectName, style: Theme.of(dialogContext).textTheme.labelLarge),
               const SizedBox(height: 12),
               Text(hit.excerpt),
+            ],
+          ),
+        ),
+        actions: [
+          FilledButton(onPressed: () => Navigator.of(dialogContext).pop(), child: const Text('Close')),
+        ],
+      ),
+    );
+  }
+
+  void _showEmbeddedExcerpt(ContentMatch match) {
+    showDialog<void>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text('Found within: ${match.sourceTitle}'),
+        content: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                match.tier == MatchConfidenceTier.strong ? 'Strong match' : 'Possible match',
+                style: Theme.of(dialogContext).textTheme.labelLarge,
+              ),
+              const SizedBox(height: 12),
+              Text(match.excerpt),
             ],
           ),
         ),
@@ -168,7 +199,7 @@ class _TopicSearchScreenState extends State<TopicSearchScreen> {
               Expanded(
                 child: FilledButton.icon(
                   onPressed: _searching ? null : _search,
-                  icon: const Icon(Icons.search),
+                  icon: const Icon(Icons.search_outlined),
                   label: const Text('Search'),
                 ),
               ),
@@ -194,7 +225,7 @@ class _TopicSearchScreenState extends State<TopicSearchScreen> {
             padding: const EdgeInsets.only(bottom: 12),
             child: Text(_error!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
           ),
-          if (!_searching && _searchedOnce && _results.isEmpty && _contentHits.isEmpty) ...[
+          if (!_searching && _searchedOnce && _results.isEmpty && _contentHits.isEmpty && _shownEmbeddedMatches.isEmpty) ...[
             const Text("Nothing on-device shares that wording. Ask AI to help, or browse by Grade/Term/Week instead."),
             const SizedBox(height: 12),
             OutlinedButton.icon(
@@ -234,8 +265,34 @@ class _TopicSearchScreenState extends State<TopicSearchScreen> {
                 ),
               ),
           ],
+          if (_shownEmbeddedMatches.isNotEmpty) ...[
+            const SizedBox(height: 8),
+            Text('Found within your embedded lesson plans', style: Theme.of(context).textTheme.titleSmall),
+            const SizedBox(height: 4),
+            Text(
+              'Real lesson content bundled with the app, matched on the topic itself — not just its title. '
+              'Tap one to read the matching passage.',
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+            const SizedBox(height: 8),
+            for (final match in _shownEmbeddedMatches)
+              Card(
+                child: ListTile(
+                  leading: Icon(match.tier == MatchConfidenceTier.strong ? Icons.bolt_outlined : Icons.search_outlined),
+                  title: Text(match.sourceTitle),
+                  subtitle: Text(match.tier == MatchConfidenceTier.strong ? 'Strong match' : 'Possible match'),
+                  onTap: () => _showEmbeddedExcerpt(match),
+                ),
+              ),
+          ],
         ],
       ),
     );
   }
+
+  // Stage 3: only Strong/Moderate are worth surfacing here — a Weak,
+  // scattered-mention hit isn't a real answer to "what am I teaching",
+  // just noise.
+  List<ContentMatch> get _shownEmbeddedMatches =>
+      _embeddedMatches.where((m) => m.tier != MatchConfidenceTier.weak).toList();
 }

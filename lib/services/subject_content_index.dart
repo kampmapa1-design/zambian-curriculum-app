@@ -6,6 +6,7 @@ import '../models/subject_content_item.dart';
 import 'embedded_lesson_plan_repository.dart';
 import 'pamphlet_repository.dart';
 import 'related_marking_key_finder.dart';
+import 'senior_secondary_content_filter.dart';
 import 'subject_content_repository.dart';
 
 /// Everything this app already knows on-device about one topic/sub-topic,
@@ -97,10 +98,15 @@ class SubjectContentIndex {
       subtopicName: subTopicName,
     );
     final catalogFuture = _subjectContent.loadCatalog();
+    // Grade 10-12 (OBC): source text is cleaned of Form-level mentions,
+    // questions and exam/module scaffolding — used silently, never quoted
+    // with its junior-level labels (see senior_secondary_content_filter.dart).
+    final seniorSecondary = isSeniorSecondaryCurriculum(curriculumCode);
     final excerptFuture = _subjectContent.findRelevantExcerpt(
       subjectName: subjectName,
       topicName: topicName,
       subTopicName: subTopicName,
+      seniorSecondary: seniorSecondary,
     );
     final markingKeyFuture = _markingKeys.find(subjectName, topicName: topicName, subTopicName: subTopicName);
     final pamphletFuture = _pamphlets.findRelevantExcerpt(
@@ -114,7 +120,11 @@ class SubjectContentIndex {
     final catalog = await catalogFuture;
     final excerpt = await excerptFuture;
     final markingKeys = await markingKeyFuture;
-    final pamphletExcerpt = await pamphletFuture;
+    var pamphletExcerpt = await pamphletFuture;
+    if (seniorSecondary && pamphletExcerpt != null) {
+      final cleaned = cleanSourceText(pamphletExcerpt);
+      pamphletExcerpt = cleaned.isEmpty ? null : cleaned;
+    }
 
     final relatedMaterials =
         catalog.items.where((i) => i.subjectName.toLowerCase() == subjectName.toLowerCase()).toList();

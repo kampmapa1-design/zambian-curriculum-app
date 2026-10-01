@@ -2,6 +2,7 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
 import 'auth_service.dart';
+import 'metered_call.dart';
 
 /// One AI-researched topic for "Required Core Topics" — only produced for
 /// a phrase [RequiredCoreTopicResolver] found nothing for on-device.
@@ -63,8 +64,7 @@ class RequiredCoreTopicService {
     }
     await AuthService.instance.ensureSignedIn();
 
-    final callable = _functions.httpsCallable(
-      'generateRequiredCoreTopics',
+    final callable = meteredCallable(_functions, 'generateRequiredCoreTopics',
       options: HttpsCallableOptions(timeout: const Duration(seconds: 170)),
     );
     Object? rawData;

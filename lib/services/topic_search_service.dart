@@ -4,6 +4,8 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import '../models/scheme_of_work.dart';
 import '../models/syllabus_models.dart';
 import 'auth_service.dart';
+import 'embedded_content_index_service.dart';
+import 'match_confidence_scorer.dart';
 import 'template_repository.dart';
 import 'text_excerpt_matching.dart';
 
@@ -52,11 +54,13 @@ class WithinSubjectTopicSearch {
 /// `matchTopicSearchQuery`'s own comment for why), after which the normal
 /// real on-device topic list takes over again.
 class TopicSearchService {
-  TopicSearchService({TemplateRepository? repository, FirebaseFunctions? functions})
+  TopicSearchService({TemplateRepository? repository, FirebaseFunctions? functions, EmbeddedContentIndexService? embeddedContentIndex})
       : _repository = repository ?? TemplateRepository(),
+        _embeddedContentIndex = embeddedContentIndex ?? EmbeddedContentIndexService(),
         _providedFunctions = functions;
 
   final TemplateRepository _repository;
+  final EmbeddedContentIndexService _embeddedContentIndex;
 
   // Lazy (2026-09-08): touching FirebaseFunctions.instance requires
   // Firebase.initializeApp() to have already run, which every other
@@ -223,6 +227,29 @@ class TopicSearchService {
                 competencies: subTopic.competencies,
               ),
       ];
+
+  /// Searches the real body content of every embedded lesson plan
+  /// (Embedded Content Search, Stage 1) for [query] — entirely offline,
+  /// no AI. Called after [searchLocal] (which only matches bundled topic/
+  /// sub-topic TITLES) and before any AI/online fallback, per Stage 3's
+  /// own explicit ordering: a search term that shares no wording with any
+  /// syllabus title might still be covered inside a real lesson plan's
+  /// body, under a topic/sub-topic titled quite differently.
+  Future<List<ContentMatch>> searchEmbeddedContent(
+    String query, {
+    String? curriculumCode,
+    String? subjectCode,
+    int? gradeLevel,
+    int limit = 5,
+  }) {
+    return _embeddedContentIndex.search(
+      query: query,
+      curriculumCode: curriculumCode,
+      subjectCode: subjectCode,
+      gradeLevel: gradeLevel,
+      limit: limit,
+    );
+  }
 
   /// Called only when [searchLocal] finds nothing — asks Gemini to narrow
   /// [query] down to one real bundled subject/grade (never a topic), then

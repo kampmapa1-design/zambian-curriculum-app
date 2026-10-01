@@ -32,6 +32,12 @@ class EmbeddedLessonPlanRepository {
     return sets;
   }
 
+  /// Every bundled set, exactly as loaded — the raw material
+  /// [EmbeddedContentIndexService] (Embedded Content Search, Stage 1)
+  /// builds its full-text index from, rather than the name-matched-only
+  /// view [find] offers.
+  Future<List<EmbeddedLessonPlanSet>> allSets() => _loadAll();
+
   String _normalize(String s) => s.toLowerCase().trim().replaceAll(RegExp(r'\s+'), ' ');
 
   /// Every embedded lesson plan matching this exact curriculum/subject/grade

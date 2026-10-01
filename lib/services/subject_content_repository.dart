@@ -8,6 +8,7 @@ import 'package:path_provider/path_provider.dart';
 
 import '../models/subject_content_item.dart';
 import 'on_device_pdf_text_extraction_service.dart';
+import 'senior_secondary_content_filter.dart';
 import 'subject_content_extraction_service.dart';
 import 'text_excerpt_matching.dart';
 
@@ -339,10 +340,17 @@ class SubjectContentRepository {
   /// stored actually mentions the topic — callers should treat that as
   /// "no enrichment available", not an error, and fall back to their
   /// existing syllabus-only content exactly as before this existed.
+  ///
+  /// [seniorSecondary] (2026-09-27) — for Grade 10-12 (OBC) callers: the
+  /// stored text is cleaned FIRST (see senior_secondary_content_filter.dart —
+  /// Form-level mentions, questions and exam/module scaffolding removed) so
+  /// the best excerpt is chosen among usable paragraphs, not just the
+  /// highest-scoring raw one.
   Future<String?> findRelevantExcerpt({
     String? subjectName,
     required String topicName,
     String? subTopicName,
+    bool seniorSecondary = false,
   }) async {
     final catalog = await loadCatalog();
     final candidates = catalog.items.where(
@@ -357,8 +365,10 @@ class SubjectContentRepository {
     var bestScore = 0;
 
     for (final item in candidates) {
-      final text = await readText(item);
-      if (text == null || text.isEmpty) continue;
+      final raw = await readText(item);
+      if (raw == null || raw.isEmpty) continue;
+      final text = seniorSecondary ? cleanSourceText(raw) : raw;
+      if (text.isEmpty) continue;
       final found = bestExcerptFor(text, keywords);
       if (found != null && found.score > bestScore) {
         bestScore = found.score;

@@ -1,6 +1,9 @@
 import '../models/scheme_of_work.dart';
 import '../models/syllabus_models.dart';
+import 'embedded_content_index_service.dart';
+import 'match_confidence_scorer.dart';
 import 'required_core_topic_service.dart';
+import 'senior_secondary_content_filter.dart';
 import 'subject_content_repository.dart';
 import 'topic_search_service.dart';
 
@@ -48,6 +51,13 @@ enum RequiredCoreTopicSource {
   /// researched it online and wrote proper syllabus-style competencies/
   /// objectives from that research.
   aiResearchedOnline,
+
+  /// Not in the syllabus — AI wrote proper syllabus-style competencies/
+  /// objectives grounded in a specific real passage found by Embedded
+  /// Content Search (Stage 4, 2026-09-22), a stronger source than the
+  /// generic keyword-matched Subject Content Database excerpt since it's a
+  /// structurally-confirmed (Strong/Moderate) match for the phrase itself.
+  aiGroundedInEmbeddedContent,
 }
 
 /// How many of the CURRENT scheme's own entries "Required Core Topics"
@@ -67,6 +77,41 @@ int requiredCoreTopicPushCount(int requestedCount, int currentEntryCount) {
   return requestedCount.clamp(0, maxPushable);
 }
 
+/// What to pass as AI grounding, and where it came from — the decision
+/// behind Embedded Content Search Stages 4/5 (2026-09-22), pulled out as a
+/// pure function (same reasoning as [requiredCoreTopicPushCount] above:
+/// the interesting decision, directly unit-testable, separate from the
+/// I/O around it). A Strong/Moderate [embeddedMatch] wins over
+/// [scdExcerpt] — it's a structurally-confirmed match for the phrase
+/// itself, not just a keyword-overlap excerpt — and Stage 5's narrowing
+/// instruction (and, for Moderate, an explicit "limited source material"
+/// disclosure to the AI) is baked into the returned localContext text
+/// itself, since the server-side prompt already forwards localContext
+/// verbatim as the primary source. A Weak match is never used as
+/// grounding: a scattered, low-confidence mention would make the AI's
+/// writing look more authoritative than the real source justifies.
+class RequiredCoreTopicGrounding {
+  final String? localContext;
+  final bool usedEmbeddedContent;
+  const RequiredCoreTopicGrounding({required this.localContext, required this.usedEmbeddedContent});
+}
+
+RequiredCoreTopicGrounding chooseRequiredCoreTopicGrounding({
+  required ContentMatch? embeddedMatch,
+  required String? scdExcerpt,
+}) {
+  if (embeddedMatch != null && embeddedMatch.tier != MatchConfidenceTier.weak) {
+    final limitedNote = embeddedMatch.tier == MatchConfidenceTier.moderate
+        ? ' This is real but LIMITED source material — write conservatively and don\'t invent detail beyond it.'
+        : '';
+    final localContext = 'A specific real lesson passage found under "${embeddedMatch.sourceTitle}", which this '
+        'phrase should be narrowed to rather than the broader topic it sits under.$limitedNote\n\n'
+        '${embeddedMatch.excerpt}';
+    return RequiredCoreTopicGrounding(localContext: localContext, usedEmbeddedContent: true);
+  }
+  return RequiredCoreTopicGrounding(localContext: scdExcerpt, usedEmbeddedContent: false);
+}
+
 /// Searches, for each phrase, in order — cheapest and most trustworthy
 /// first: this subject's WHOLE syllabus (every term, not just the one
 /// being scheduled — the whole point is surfacing content "hidden" inside
@@ -79,13 +124,16 @@ class RequiredCoreTopicResolver {
     TopicSearchService? topicSearchService,
     SubjectContentRepository? subjectContentRepository,
     RequiredCoreTopicService? aiService,
+    EmbeddedContentIndexService? embeddedContentIndex,
   })  : _topicSearch = topicSearchService ?? TopicSearchService(),
         _subjectContent = subjectContentRepository ?? SubjectContentRepository(),
-        _aiService = aiService ?? RequiredCoreTopicService();
+        _aiService = aiService ?? RequiredCoreTopicService(),
+        _embeddedContentIndex = embeddedContentIndex ?? EmbeddedContentIndexService();
 
   final TopicSearchService _topicSearch;
   final SubjectContentRepository _subjectContent;
   final RequiredCoreTopicService _aiService;
+  final EmbeddedContentIndexService _embeddedContentIndex;
 
   int _syntheticIdCounter = -900000;
   int _nextSyntheticId() => _syntheticIdCounter--;
@@ -112,6 +160,11 @@ class RequiredCoreTopicResolver {
     // material or fresh research.
     final aiQueue = <int>[];
     final localContexts = <String?>[for (final _ in phrases) null];
+    // Which phrases got their localContext from Embedded Content Search
+    // (Stage 4) rather than the generic Subject Content Database keyword
+    // match — drives the more specific RequiredCoreTopicResult.source
+    // below.
+    final embeddedGroundedIndices = <int>{};
 
     final existingIds = {for (final e in existingEntries) (e.topic.id, e.subTopic?.id)};
 
@@ -139,12 +192,41 @@ class RequiredCoreTopicResolver {
       // real material to ground the AI's writing in (cheaper and more
       // reliable than a fresh online search, but never a substitute for
       // actually generating a proper outcome statement).
+      String? scdExcerpt;
       try {
         final hits = await _subjectContent.searchContent(phrase, maxResults: 3);
-        if (hits.isNotEmpty) localContexts[i] = hits.first.excerpt;
+        if (hits.isNotEmpty) scdExcerpt = hits.first.excerpt;
+        // Grade 10-12 (OBC): used silently — Form-level mentions, questions and
+        // exam/module scaffolding removed (senior_secondary_content_filter.dart).
+        if (scdExcerpt != null && isSeniorSecondaryCurriculum(template.curriculum.code)) {
+          final cleaned = cleanSourceText(scdExcerpt);
+          scdExcerpt = cleaned.isEmpty ? null : cleaned;
+        }
       } catch (_) {
         // Just means no local grounding for this one — AI still runs.
       }
+
+      // 2b. Embedded Content Search (Stage 4, 2026-09-22) — inserted right
+      // after the Subject Content Database and before AI/online research.
+      ContentMatch? embeddedMatch;
+      try {
+        final matches = await _embeddedContentIndex.search(
+          query: phrase,
+          curriculumCode: template.curriculum.code,
+          subjectCode: template.subject.code,
+          gradeLevel: template.grade.level,
+          limit: 1,
+        );
+        if (matches.isNotEmpty) embeddedMatch = matches.first;
+      } catch (_) {
+        // Just means no embedded grounding for this one — falls through
+        // to whatever the Subject Content Database found, if anything.
+      }
+
+      final grounding = chooseRequiredCoreTopicGrounding(embeddedMatch: embeddedMatch, scdExcerpt: scdExcerpt);
+      localContexts[i] = grounding.localContext;
+      if (grounding.usedEmbeddedContent) embeddedGroundedIndices.add(i);
+
       aiQueue.add(i);
     }
 
@@ -205,9 +287,11 @@ class RequiredCoreTopicResolver {
             competencies: topic.competencies,
           ),
           isRealSyllabusTopic: false,
-          source: localContexts[i] != null
-              ? RequiredCoreTopicSource.aiGroundedInSavedMaterial
-              : RequiredCoreTopicSource.aiResearchedOnline,
+          source: embeddedGroundedIndices.contains(i)
+              ? RequiredCoreTopicSource.aiGroundedInEmbeddedContent
+              : (localContexts[i] != null
+                  ? RequiredCoreTopicSource.aiGroundedInSavedMaterial
+                  : RequiredCoreTopicSource.aiResearchedOnline),
         );
       }
     }
