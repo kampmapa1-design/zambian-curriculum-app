@@ -1,0 +1,63 @@
+{
+  "_readme": "Firestore document appConfig/markingCredits. Change values here (or in the Firebase console) - no app rebuild needed. mode: off = marking is not charged (today's behaviour), shadow = record what WOULD be charged but change no balance, enforced = real charging. featuresMode is the same three states for the OTHER AI features (lesson plan, scheme of work, transcription, ...) and is separate so marking can go live first. Weight sets switch automatically by SERVER time at effectiveFrom. `features` are credits charged per SUCCESSFUL use (0 = not charged, still usage-logged); the numbers below are STARTING ESTIMATES - correct them from the measured cost shown on the Owner finance screen. Bundle credits and prices are per Scenario 1 (below the VAT threshold); define scenario2 and set activeScenario to \"scenario2\" once registered. Product ids must match the in-app products created in Play Console. schoolAllowancesUsd is the real AI cost (USD) a Gold or Institutional school's timetable work is INCLUDED for each month, after which timetable uses are charged in credits. adPasses stays disabled until a real rewarded-ad SDK and AdMob server-side verification are live.",
+  "mode": "off",
+  "featuresMode": "off",
+  "freeMonthlyCredits": 10,
+  "adPasses": { "enabled": false, "perDayCap": 5, "ttlHours": 24 },
+  "schoolAllowancesUsd": { "timetable": 1 },
+  "weightSets": [
+    {
+      "effectiveFrom": "2026-09-19T00:00:00+02:00",
+      "weights": { "stable": 1, "concise": 3.2, "keyed": 3.3 },
+      "features": {
+        "lessonPlan": 10,
+        "requiredCoreTopics": 20,
+        "schemeOfWork": 10,
+        "teachingNotes": 8,
+        "slideOutline": 6,
+        "freeTopicNotes": 8,
+        "transcription": 4,
+        "markingKeyDerivation": 8,
+        "homeAssignment": 8,
+        "minutes": 8,
+        "timetable": 2,
+        "timetableAssist": 3,
+        "voiceCommand": 0,
+        "topicSearch": 0,
+        "candidateName": 0
+      }
+    },
+    {
+      "effectiveFrom": "2027-01-01T00:00:00+02:00",
+      "weights": { "stable": 1, "concise": 6.4, "keyed": 6.5 },
+      "features": {
+        "lessonPlan": 20,
+        "requiredCoreTopics": 40,
+        "schemeOfWork": 20,
+        "teachingNotes": 16,
+        "slideOutline": 12,
+        "freeTopicNotes": 16,
+        "transcription": 8,
+        "markingKeyDerivation": 16,
+        "homeAssignment": 16,
+        "minutes": 16,
+        "timetable": 2,
+        "timetableAssist": 5,
+        "voiceCommand": 0,
+        "topicSearch": 0,
+        "candidateName": 0
+      }
+    }
+  ],
+  "bundles": {
+    "activeScenario": "scenario1",
+    "scenarios": {
+      "scenario1": {
+        "marking_bundle_k50": { "credits": 87, "listPrice": { "amount": 50, "currency": "ZMW" } },
+        "marking_bundle_k100": { "credits": 178, "listPrice": { "amount": 100, "currency": "ZMW" } },
+        "marking_bundle_k150": { "credits": 268, "listPrice": { "amount": 150, "currency": "ZMW" } }
+      },
+      "scenario2": null
+    }
+  }
+}

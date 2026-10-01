@@ -1,13 +1,18 @@
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../models/school.dart';
+import '../models/web_dashboard_access.dart';
+import '../services/personal_subscription_service.dart';
 import '../services/school_service.dart';
 import '../services/teacher_auth_service.dart';
 import 'broadcast_screen.dart';
 import 'generated_timetable_screen.dart';
 import 'join_school_screen.dart';
 import 'leadership_dashboard_screen.dart';
+import 'owner_finance_screen.dart';
 import 'register_school_screen.dart';
 import 'report_form_status_screen.dart';
 import 'school_roster_screen.dart';
@@ -33,15 +38,20 @@ class WebDashboardHomeScreen extends StatefulWidget {
   State<WebDashboardHomeScreen> createState() => _WebDashboardHomeScreenState();
 }
 
-enum _WebSection { dashboard, reportFormStatus, timetable, timetableConstraints, generatedTimetable, timetableByTeacher, staff, staffroom, broadcast }
-
 class _WebDashboardHomeScreenState extends State<WebDashboardHomeScreen> {
   final _schoolService = SchoolService();
+  final _personalSubscriptionService = PersonalSubscriptionService();
   bool _loading = true;
   School? _school;
   SchoolRole? _myRole;
   bool _isTimetableOperator = false;
-  _WebSection _section = _WebSection.dashboard;
+  SubscriptionTier _personalTier = SubscriptionTier.basic;
+
+  bool _hasTimetableAccess(School school) => School.meetsTimetableTier(school: school, personalTier: _personalTier);
+  // The app OWNER (listed in the server-side ownerData/settings) gets the Owner
+  // finance section here. Asked of the server, never decided by this screen.
+  bool _isOwner = false;
+  WebDashboardSection? _section;
 
   @override
   void initState() {
@@ -62,17 +72,32 @@ class _WebDashboardHomeScreenState extends State<WebDashboardHomeScreen> {
         isTimetableOperator = me?.timetableOperator ?? false;
       }
     }
+    var isOwner = false;
+    try {
+      final result = await FirebaseFunctions.instance.httpsCallable('amIOwner').call<Object?>();
+      final data = result.data;
+      isOwner = data is Map && data['isOwner'] == true;
+    } catch (_) {
+      // Not the owner, offline, or the function isn't deployed yet - no owner section.
+    }
+    final personalTier = await _personalSubscriptionService.fetchTier();
     if (!mounted) return;
     setState(() {
       _school = school;
       _myRole = claim.role;
       _isTimetableOperator = isTimetableOperator;
+      _isOwner = isOwner;
+      _personalTier = personalTier;
+      _section = null; // re-pick the default section for whoever just signed in
       _loading = false;
     });
   }
 
-  bool get _isLeadership => _myRole?.isLeadership == true || _myRole == SchoolRole.administrator;
-  bool get _canManageTimetable => canManageTimetable(_myRole, _isTimetableOperator);
+  WebDashboardAccess _accessFor(School school) => webDashboardAccess(
+        role: _myRole,
+        isTimetableOperator: _isTimetableOperator,
+        institutionalSchool: schoolIsInstitutional(school),
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -80,7 +105,26 @@ class _WebDashboardHomeScreenState extends State<WebDashboardHomeScreen> {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
     final school = _school;
+
     if (school == null) {
+      if (_isOwner) {
+        // The owner doesn't need a school to use the owner tools.
+        return Scaffold(
+          body: Row(
+            children: [
+              _Sidebar(
+                schoolName: null,
+                sections: const [WebDashboardSection.ownerFinance],
+                showTimetableNotice: false,
+                selected: WebDashboardSection.ownerFinance,
+                onSelect: (_) {},
+                onSignedOut: _load,
+              ),
+              const Expanded(child: OwnerFinanceScreen(embedded: true)),
+            ],
+          ),
+        );
+      }
       return Scaffold(
         appBar: AppBar(title: const Text('My School')),
         body: Center(
@@ -108,6 +152,8 @@ class _WebDashboardHomeScreenState extends State<WebDashboardHomeScreen> {
                     if (mounted) _load();
                   },
                 ),
+                const SizedBox(height: 24),
+                const _AccountIdTile(),
               ],
             ),
           ),
@@ -115,78 +161,187 @@ class _WebDashboardHomeScreenState extends State<WebDashboardHomeScreen> {
       );
     }
 
+    final access = _accessFor(school);
+    final hasTimetableAccess = _hasTimetableAccess(school);
+    final sections = webDashboardSections(
+      access: access,
+      role: _myRole,
+      institutionalSchool: schoolIsInstitutional(school),
+      hasTimetableAccess: hasTimetableAccess,
+      isOwner: _isOwner,
+    );
+    final showNotice = showTimetableUpgradeNotice(access: access, hasTimetableAccess: hasTimetableAccess);
+
+    // Nothing to offer this person: not an administrator, not the timetable
+    // operator, not the owner. Say so plainly rather than show an empty shell.
+    if (sections.isEmpty && !showNotice) {
+      return _NoAccessView(schoolName: school.name, onSignedOut: _load);
+    }
+
+    final selected = (_section != null && sections.contains(_section)) ? _section : (sections.isNotEmpty ? sections.first : null);
     return Scaffold(
       body: Row(
         children: [
           _Sidebar(
-            school: school,
-            isLeadership: _isLeadership,
-            canManageTimetable: _canManageTimetable,
-            institutionalSubscription: school.institutionalSubscription,
-            section: _section,
+            schoolName: school.name,
+            sections: sections,
+            showTimetableNotice: showNotice,
+            selected: selected,
             onSelect: (s) => setState(() => _section = s),
-            onSignedOut: () => _load(),
+            onSignedOut: _load,
           ),
-          Expanded(child: _buildContent(school)),
+          Expanded(child: selected == null ? const _TimetableUpgradeNotice() : _buildContent(school, selected)),
         ],
       ),
     );
   }
 
-  Widget _buildContent(School school) {
-    switch (_section) {
-      case _WebSection.dashboard:
-        return _isLeadership
-            ? ClassProgressBoard(school: school)
-            : Padding(
-                padding: const EdgeInsets.all(24),
-                child: Text(
-                  "You're signed in to ${school.name}. The school-wide class dashboard is only shown to Head "
-                  'Teacher, Deputy, or an appointed Administrator — use the sidebar to reach Staff & Roles or the '
-                  'Staffroom instead.',
-                ),
-              );
-      case _WebSection.reportFormStatus:
+  Widget _buildContent(School school, WebDashboardSection section) {
+    switch (section) {
+      case WebDashboardSection.dashboard:
+        return ClassProgressBoard(school: school);
+      case WebDashboardSection.reportFormStatus:
         return ReportFormStatusScreen(school: school, canEditWindow: _myRole == SchoolRole.headTeacher || _myRole == SchoolRole.deputy);
-      case _WebSection.timetable:
+      case WebDashboardSection.timetable:
         return TimetableSetupScreen(school: school);
-      case _WebSection.timetableConstraints:
+      case WebDashboardSection.timetableConstraints:
         return TimetableConstraintsScreen(school: school);
-      case _WebSection.generatedTimetable:
+      case WebDashboardSection.generatedTimetable:
         return GeneratedTimetableScreen(school: school);
-      case _WebSection.timetableByTeacher:
+      case WebDashboardSection.timetableByTeacher:
         return TimetableByTeacherScreen(school: school);
-      case _WebSection.staff:
+      case WebDashboardSection.staff:
         return SchoolRosterScreen(school: school);
-      case _WebSection.staffroom:
+      case WebDashboardSection.staffroom:
         return StaffroomScreen(school: school);
-      case _WebSection.broadcast:
+      case WebDashboardSection.broadcast:
         return BroadcastScreen(school: school);
+      case WebDashboardSection.ownerFinance:
+        // Defence in depth only: the server refuses anyone who isn't the owner.
+        return _isOwner ? const OwnerFinanceScreen(embedded: true) : const SizedBox.shrink();
     }
+  }
+}
+
+/// Signed in to a school, but not an administrator, the timetable operator or the owner.
+class _NoAccessView extends StatelessWidget {
+  const _NoAccessView({required this.schoolName, required this.onSignedOut});
+
+  final String schoolName;
+  final VoidCallback onSignedOut;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text(schoolName)),
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 520),
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.lock_outline, size: 40),
+                const SizedBox(height: 16),
+                Text(
+                  'The web dashboard is for school administrators',
+                  key: const Key('no-access-title'),
+                  style: Theme.of(context).textTheme.titleLarge,
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 12),
+                const Text(
+                  'It is available to the Head Teacher, the Deputy, an appointed Administrator, and the school\'s '
+                  'timetable operator. Everything else is in the Smart Teacher app on your phone.',
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 24),
+                OutlinedButton.icon(
+                  icon: const Icon(Icons.logout_outlined),
+                  label: const Text('Sign out'),
+                  onPressed: () async {
+                    await TeacherAuthService().signOut();
+                    onSignedOut();
+                  },
+                ),
+                const SizedBox(height: 16),
+                const _AccountIdTile(),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// An administrator (or the operator) whose school's plan doesn't include timetable creation.
+class _TimetableUpgradeNotice extends StatelessWidget {
+  const _TimetableUpgradeNotice();
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 520),
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.calendar_view_week_outlined, size: 40),
+              const SizedBox(height: 16),
+              Text('Timetable creation needs a Gold subscription or higher',
+                  key: const Key('timetable-upgrade-title'), style: Theme.of(context).textTheme.titleLarge, textAlign: TextAlign.center),
+              const SizedBox(height: 12),
+              const Text(
+                'On the web dashboard, schools without the Institutional subscription can use timetable creation only, '
+                'and your school\'s current plan doesn\'t include it yet.',
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
 
 class _Sidebar extends StatelessWidget {
   const _Sidebar({
-    required this.school,
-    required this.isLeadership,
-    required this.canManageTimetable,
-    required this.institutionalSubscription,
-    required this.section,
+    required this.schoolName,
+    required this.sections,
+    required this.showTimetableNotice,
+    required this.selected,
     required this.onSelect,
     required this.onSignedOut,
   });
 
-  final School school;
-  final bool isLeadership;
-  final bool canManageTimetable;
-  final bool institutionalSubscription;
-  final _WebSection section;
-  final ValueChanged<_WebSection> onSelect;
+  /// Null for an owner who isn't part of any school.
+  final String? schoolName;
+  final List<WebDashboardSection> sections;
+  final bool showTimetableNotice;
+  final WebDashboardSection? selected;
+  final ValueChanged<WebDashboardSection> onSelect;
   final VoidCallback onSignedOut;
+
+  static (IconData, String) _look(WebDashboardSection s) => switch (s) {
+        WebDashboardSection.dashboard => (Icons.dashboard_outlined, 'Dashboard'),
+        WebDashboardSection.reportFormStatus => (Icons.fact_check_outlined, 'Report Form Status'),
+        WebDashboardSection.timetable => (Icons.calendar_view_week_outlined, 'Timetable Setup'),
+        WebDashboardSection.timetableConstraints => (Icons.chat_outlined, 'Timetable Constraints'),
+        WebDashboardSection.generatedTimetable => (Icons.grid_view_outlined, 'Generated Timetable'),
+        WebDashboardSection.timetableByTeacher => (Icons.person_search_outlined, 'Timetable — By Teacher'),
+        WebDashboardSection.staff => (Icons.groups_outlined, 'Staff & Roles'),
+        WebDashboardSection.staffroom => (Icons.forum_outlined, 'Staffroom'),
+        WebDashboardSection.broadcast => (Icons.campaign_outlined, 'Broadcast to Guardians'),
+        WebDashboardSection.ownerFinance => (Icons.insights_outlined, 'Owner finance'),
+      };
 
   @override
   Widget build(BuildContext context) {
+    final schoolSections = sections.where((s) => s != WebDashboardSection.ownerFinance);
     return Container(
       width: 260,
       color: Theme.of(context).colorScheme.surfaceContainerHigh,
@@ -200,34 +355,28 @@ class _Sidebar extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text('Smart Teacher', style: Theme.of(context).textTheme.labelMedium),
-                  Text(school.name, style: Theme.of(context).textTheme.titleMedium, maxLines: 2, overflow: TextOverflow.ellipsis),
+                  Text(schoolName ?? 'Owner', style: Theme.of(context).textTheme.titleMedium, maxLines: 2, overflow: TextOverflow.ellipsis),
                 ],
               ),
             ),
             const Divider(height: 1),
-            _navTile(context, icon: Icons.dashboard_outlined, label: 'Dashboard', value: _WebSection.dashboard),
-            if (isLeadership)
-              _navTile(context, icon: Icons.fact_check_outlined, label: 'Report Form Status', value: _WebSection.reportFormStatus),
-            if (canManageTimetable && school.hasTimetableAccess) ...[
-              _navTile(context, icon: Icons.calendar_view_week_outlined, label: 'Timetable Setup', value: _WebSection.timetable),
-              _navTile(context, icon: Icons.chat_outlined, label: 'Timetable Constraints', value: _WebSection.timetableConstraints),
-              _navTile(context, icon: Icons.grid_view_outlined, label: 'Generated Timetable', value: _WebSection.generatedTimetable),
-            ] else if (canManageTimetable)
+            for (final s in schoolSections) _navTile(context, s),
+            if (showTimetableNotice)
               const ListTile(
                 leading: Icon(Icons.calendar_view_week_outlined),
                 title: Text('Timetable'),
                 subtitle: Text('Needs Gold subscription or higher', style: TextStyle(fontSize: 11)),
                 enabled: false,
               ),
-            _navTile(context, icon: Icons.person_search_outlined, label: 'Timetable — By Teacher', value: _WebSection.timetableByTeacher),
-            _navTile(context, icon: Icons.groups_outlined, label: 'Staff & Roles', value: _WebSection.staff),
-            _navTile(context, icon: Icons.forum_outlined, label: 'Staffroom', value: _WebSection.staffroom),
-            if (isLeadership && institutionalSubscription)
-              _navTile(context, icon: Icons.campaign_outlined, label: 'Broadcast to Guardians', value: _WebSection.broadcast),
+            if (sections.contains(WebDashboardSection.ownerFinance)) ...[
+              if (schoolSections.isNotEmpty || showTimetableNotice) const Divider(height: 1),
+              _navTile(context, WebDashboardSection.ownerFinance),
+            ],
             const Spacer(),
+            const _AccountIdTile(),
             const Divider(height: 1),
             ListTile(
-              leading: const Icon(Icons.logout),
+              leading: const Icon(Icons.logout_outlined),
               title: const Text('Sign out'),
               onTap: () async {
                 await TeacherAuthService().signOut();
@@ -240,16 +389,40 @@ class _Sidebar extends StatelessWidget {
     );
   }
 
-  Widget _navTile(BuildContext context, {required IconData icon, required String label, required _WebSection value}) {
-    final selected = section == value;
+  Widget _navTile(BuildContext context, WebDashboardSection value) {
+    final (icon, label) = _look(value);
+    final isSelected = selected == value;
     return Material(
-      color: selected ? Theme.of(context).colorScheme.primaryContainer : Colors.transparent,
+      color: isSelected ? Theme.of(context).colorScheme.primaryContainer : Colors.transparent,
       child: ListTile(
         leading: Icon(icon),
         title: Text(label),
-        selected: selected,
+        selected: isSelected,
         onTap: () => onSelect(value),
       ),
+    );
+  }
+}
+
+/// The signed-in Firebase user id, tap to copy - what the app owner pastes into
+/// `ownerUids` in the owner-only settings to unlock the Owner finance section
+/// (see docs/MONETIZATION_SETUP.md). Harmless to show: it is not a secret.
+class _AccountIdTile extends StatelessWidget {
+  const _AccountIdTile();
+
+  @override
+  Widget build(BuildContext context) {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid == null) return const SizedBox.shrink();
+    return ListTile(
+      dense: true,
+      title: Text('Account ID (tap to copy)', style: Theme.of(context).textTheme.bodySmall),
+      subtitle: Text(uid, key: const Key('web-account-id'), style: Theme.of(context).textTheme.bodySmall, maxLines: 2, overflow: TextOverflow.ellipsis),
+      onTap: () async {
+        await Clipboard.setData(ClipboardData(text: uid));
+        if (!context.mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Account ID copied')));
+      },
     );
   }
 }

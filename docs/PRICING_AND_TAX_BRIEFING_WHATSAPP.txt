@@ -1,0 +1,357 @@
+PART 1 of 12
+*SMART TEACHER - PRICING, MARKING BUNDLES AND ZAMBIAN TAX BRIEFING*
+
+For: the accountant / finance assistant working with the owner in Zambia
+Prepared: 19 Sep 2026. DRAFT for accountant review. Nothing is charged yet and no figure is final.
+
+*What this is*
+The owner needs to (a) price three marking bundles (K50, K100, K150), (b) finalise subscription tiers, and (c) price an Institutional tier per school, all under Zambian tax reality and a strict profit rule. This briefing gives every fact we have, says how sure we are, and lists what we need back.
+
+*How sure are we? Tags used*
+VERIFIED = read from the provider's own documentation on 19 Sep 2026
+CODE = read from the app's source code
+OWNER = a decision or figure the owner stated
+BELIEVED = our understanding, NOT checked. Please verify.
+ASSUMED = our own estimate. Replace with real figures.
+UNKNOWN = we do not know. We are asking you.
+
+*Most important caveat*
+The app records NO token usage today. So the per-page AI costs are modelled, not measured. Only Google's prices are verified. Cost per page could plausibly be up to 5 times higher or lower than the best guess. Treat all bundle sizes as a first draft. This replaces an earlier informal estimate.
+
+*Headline result*
+(Best-guess costs, 2026 prices, Play fee 15%, 16% VAT inside the price.)
+One page = one photographed page of a pupil's script. A typical script is about 4 pages (ASSUMED).
+
+K50 ($2.50): Concise 61 pages (about 15 scripts) | Key-based 60 | Stable 193 (about 48 scripts)
+K100 ($5.00): Concise 124 pages (about 31 scripts) | Key-based 122 | Stable 394 (about 98 scripts)
+K150 ($7.50): Concise 188 pages (about 47 scripts) | Key-based 185 | Stable 595 (about 149 scripts)
+
+Cascade: 1 Concise page = about 0.99 Key-based pages = about 3.16 Stable pages (2026). From 1 Jan 2027, Concise and Key-based roughly double in cost but Stable does not, so 1 Concise page = about 6.3 Stable pages.
+
+Read the ranges before quoting any of this. K100 Concise runs from 25 to 331 pages depending on the tax reading and cost scenario. A class of 40 pupils is about 160 pages, so even the K100 Concise bundle marks less than one class.
+
+======================================================================
+
+PART 2 of 12
+*1. WHAT WE NEED BACK FROM YOU*
+
+1. Real Zambian tax treatment for each item in section 8. Actual rates, thresholds, and which apply to this business. Then give the two numbers the model needs: "t" (share of the customer's payment that goes to revenue-based tax) and "tau" (income tax rate on profit, if applicable).
+
+2. Which reading of the profit rule (section 3) is correct, and confirm the target: net profit at least 100% of total costs (at least 50% net margin on revenue).
+
+3. Recommended bundle sizes for K50, K100 and K150, per engine, with a stated safety margin. Size them on a pessimistic cost, not the average.
+
+4. A credit-weight scheme (for example 1 Stable page = 1 credit, Concise = ?, Key-based = ?), including how to handle the 1 Jan 2027 Gemini price change.
+
+5. A metering decision: buy-as-you-go bundles, monthly cap per tier, or a mix. Plus validity or expiry, refunds, and revenue recognition.
+
+6. An Institutional price formula by number of teachers and learners, with worked prices for the three school sizes in section 9, and the right billing cycle (schools budget per term).
+
+7. Channel viability: can we receive Google Play payouts in Zambia, can Zambians pay through Play, and is mobile-money billing allowed for an app distributed on Play (section 8d and 8e)? This may change the whole plan.
+
+8. A currency policy. Our costs are in US dollars but prices are in kwacha. When do we re-price?
+
+9. A compliance checklist with costs (registrations, data protection).
+
+10. A break-even model that includes fixed costs. The per-unit tables here deliberately leave fixed costs out.
+
+======================================================================
+
+PART 3 of 12
+*2. THE BUSINESS IN BRIEF*
+
+- Product: Android app "Smart Teacher" for Zambian teachers and pupils, covering both curricula (CBC 2023 and OBC 2013). It offers lesson plans, schemes of work, records of work, report forms, AI-assisted marking (the teacher photographs pupils' scripts), Home Assignment (pupils submit answer photos), school-wide timetable generation, and a School Network for staff. Most planning tools work offline. AI features call Firebase Cloud Functions, which call Google Gemini. (CODE)
+- Stage today: closed testing with about 7 testers. The first Google app review was submitted on 18 Sep 2026 and typically takes up to 7 days. NO paying users. Every paywall switch in the code is OFF. Usage is tracked on the phone only. (CODE)
+- Names on accounts: Play developer account display name "Sonic Labs". App-signing certificate organisation "Kampmapa1 Design", Lusaka. Legal form, TPIN and VAT registration status: UNKNOWN to us.
+- Currency: prices are in kwacha. The owner converts at K20 = US$1 (K70 = $3.50, K50 = $2.50). (OWNER) The real rate moves.
+- Taxes are expected to be paid in Zambia. (OWNER)
+
+*3. THE PROFIT RULE*
+The owner's words (OWNER): for every $10 of ALL costs and obligations, including taxes, the business should make $10 or more in NET profit.
+
+In plain terms: net profit must be at least equal to total costs including taxes. That means revenue must be at least 2 times total costs, or a net margin of at least 50% of revenue.
+
+"Taxes" can be read two ways and the difference is large. PLEASE CHOOSE.
+
+Reading A: taxes are a share of the payment (VAT taken out of a VAT-inclusive price, or a turnover tax).
+AI budget per unit = price x (1 - 2 x channel fee - 2 x tax share) / 2 - infrastructure
+
+Reading B: income tax at rate "tau" on profit.
+Total operating costs must be at most: price x (1 - 2 x tau) / (2 x (1 - tau))
+
+======================================================================
+
+PART 4 of 12
+*What the profit rule means in practice*
+- Under Reading A with no tax, total per-unit costs (fee + AI + infrastructure) can be at most 50% of the price.
+- Under Reading B with tau = 30% (BELIEVED), they can be at most 28.6% of the price. That is a big drop. The channel fee alone must then be below 28.6% of the price. A 30% Play fee makes every bundle fail the rule outright.
+- Fixed costs are NOT in the tables. They are per-unit only. Please add an allocation.
+- Decision needed: is the owner's own labour a "cost" under this rule? It changes everything and is currently excluded.
+
+*4. PRODUCTS AND PRICES: DECIDED VS OPEN*
+
+Basic ("Access") tier for teachers: K70 per month (about $3.50). (OWNER) What it includes is undecided.
+
+Gold tier: K150 per month, exactly double Basic. (OWNER) Inclusions undecided beyond the timetable rule below.
+
+Institutional (Platinum): price undecided. Rule (OWNER, 19 Sep 2026): it has ALL functions of the app. Price differs ONLY by the number of teachers and learners. Priced per school, not per teacher.
+
+Timetable creation engine: available ONLY on Gold and Institutional. (OWNER, 19 Sep 2026)
+
+Marking bundles: proposed K50 ($2.50), K100 ($5.00), K150 ($7.50). (OWNER) Whether tiers also carry a free monthly marking allowance is undecided. Code today gives 5 free scripts per month.
+
+Metering: open. Bundles, monthly caps, or a mix.
+
+*Where the code does not yet match these decisions (developer work, not for you)*
+1. The code gives every device a free allowance of 1 timetable generation per month. This contradicts "Gold and Institutional only".
+2. The "Build Timetable for Another School" tool has no tier gate at all.
+3. A school's tier (basic, gold, institutional) is set by hand in the Firebase Console. There is no payment flow, no receipt check and no Play Billing yet.
+4. Free quotas in code today, none enforced: lesson plans 4 per month, schemes of work 2 per month, timetable generation 1 per month, marking 5 scripts per month.
+
+======================================================================
+
+PART 5 of 12
+*5. COST INVENTORY*
+
+- Gemini API: cost per token, in USD. Prices VERIFIED (see section 6). Volumes ASSUMED.
+- Google Play service fee: 15% on subscriptions. 15% on the first $1M per year of other digital sales for eligible developers, 30% above that. (BELIEVED, please verify eligibility and enrolment)
+- Taxes: UNKNOWN (section 8).
+- Firebase (Firestore, Functions, Storage, Logging): cost per read and write, compute time, GB stored, network. Real spend UNKNOWN. Assumed pay-as-you-go.
+- Cloud backups (new feature): up to 250 MB x 14 retained backups per teacher, worst case 3.5 GB each. Storage is roughly $0.02 to $0.03 per GB per month (BELIEVED). Typical backup size UNKNOWN.
+- SMS for phone sign-in (Firebase Phone Auth): one SMS per verification. UNKNOWN. This can be expensive in some countries. Please find Zambia's rate.
+- Transactional email (Brevo): UNKNOWN plan and limits.
+- Crashlytics and App Check: free at this scale (BELIEVED).
+- Play developer registration: one-off, about $25 (BELIEVED). Probably already paid.
+- Payout, banking and currency conversion: UNKNOWN.
+- Compliance (registrations, filings): UNKNOWN (section 8f and 8g).
+- Owner and developer labour, devices: excluded pending the decision in section 3.
+
+*Real-world burn data (from the owner's billing history)*
+Gemini uses MANDATORY PREPAY on this account ("Paid 1" tier with a $250 cap). A $15 top-up was fully spent in about 11 days of heavy feature testing. A $21 top-up was spent in about 4 days, mostly because of a bug since fixed (an uncached web-crawl function). The app currently logs no per-user cost.
+
+======================================================================
+
+PART 6 of 12
+*6. AI MARKING ECONOMICS*
+
+*6.1 The three engines (from the code)*
+All three run through one Cloud Function, gradeMarkingScriptConcise. Names below are as the teacher sees them under Scan Marker.
+
+1. CONCISE MARKING. Model: gemini-3.6-flash. "Pure AI": it reads the paper's own rules, identifies the questions, and marks from subject knowledge. It may also receive question-paper images (up to 10, re-sent with EVERY script) and an optional reference key. Output: per-question marks PLUS page number and bounding box (so ticks and crosses can be drawn on the photo), a rubric, and 3 to 8 observations.
+
+2. STABLE MARKER. Model: gemini-3.5-flash-lite (cheaper, about 4 seconds vs 16 to 20). Same pure-AI approach on a lighter model. Output: marks only, NO boxes, plus rubric and observations.
+
+3. UPLOADED MARKING KEY BASED MARKING. Model: gemini-3.6-flash. Strictly bound to a marking key the teacher uploaded. The key text is sent with each call. Output like Concise, including boxes.
+
+Also present but not modelled separately: an older scheme-based path (gradeMarkingScript, economically similar to Key-based) and one-off marking-key creation from a question paper. Home Assignment marking of pupil photos reuses Concise and Stable.
+
+*6.2 Verified pricing (Google, read 19 Sep 2026)*
+Per 1 million tokens. Output INCLUDES thinking tokens.
+- gemini-3.6-flash, through 31 Dec 2026: input $0.75, output $3.75. Batch (50% off): $0.375 / $1.875.
+- gemini-3.6-flash, FROM 1 JAN 2027: input $1.50, output $7.50. Batch: $0.75 / $3.75.
+- gemini-3.5-flash-lite: input $0.30, output $2.50. Batch: $0.15 / $1.25. No 2027 change announced.
+Context caching exists for 3.6 Flash only.
+
+*6.3 How a call is billed*
+- Images: Google's default for Gemini 3 models is 1,120 tokens per image (low 280, medium 560, high 1,120, ultra-high 2,240). VERIFIED for "Gemini 3 models". Google's page does NOT confirm it for the 3.5 and 3.6 models, so we treat it as ASSUMED. The older method (258 tokens per 768 x 768 tile, about 6,192 tokens for a 3000 x 4000 photo) is kept as the "Heavy" scenario.
+- Thinking is ON by default and billed as output. gemini-3.6-flash defaults to "medium" and gemini-3.5-flash-lite to "minimal". (VERIFIED) The app sets NO thinking level anywhere, so it pays the default.
+- Retries: the server tries a call up to twice (a second attempt without the JSON schema if the first fails or is unreadable), and the marking queue retries a failed script once more. Every retry re-sends and re-bills all images. Modelled as 1.05 to 1.25 times (ASSUMED). Real failure rate UNKNOWN.
+
+======================================================================
+
+PART 7 of 12
+*6.4 Token model for one 4-page script (Base scenario, all ASSUMED)*
+Input: 3,000 tokens of instructions, conventions and subject text + 4 pages x 1,120 image tokens = 4,480 + (Key-based only) about 1,280 tokens of key text.
+Output: per question about 100 tokens (Concise, Key-based) or 70 (Stable), with 32 questions per script (8 per page) = 3,200 or 2,240. Plus about 400 for observations, rubric and wrapper. Plus THINKING: about 3,000 (3.6 Flash) or 300 (Flash-Lite).
+
+Totals (Base, 2026):
+- Concise: 7,480 in / 6,600 out
+- Stable: 7,480 in / 2,940 out
+- Key-based: 8,760 in / 6,450 out
+
+*What drives the cost:* at Base, about 80% of a Concise page's cost is OUTPUT (about 37% thinking, about 40% the per-question answers) and only about 18% is input and images. This follows from our assumptions and is not measured. If it holds, the biggest savings come from the thinking level, not image size.
+
+*6.5 Scenarios*
+LEAN: 1,120 image tokens per page, 6 questions per page, thinking 1,000 (Flash) / 0 (Lite), retry factor 1.05, no question-paper pages re-sent.
+BASE: 1,120, 8 questions per page, thinking 3,000 / 300, retry 1.10, no question-paper pages.
+HEAVY: 6,192 image tokens per page, 12 questions per page, thinking 8,000 / 1,500, retry 1.25, 3 question-paper pages re-sent (Concise).
+
+*6.6 Cost per marked PAGE (USD)*
+2026 prices (Lean / Base / Heavy):
+- Concise: $0.0052 / $0.0083 / $0.0263. Base = K0.17
+- Stable: $0.0020 / $0.0026 / $0.0067. Base = K0.05
+- Key-based: $0.0053 / $0.0085 / $0.0223. Base = K0.17
+
+2027 prices (Stable unchanged):
+- Concise: $0.0104 / $0.0167 / $0.0527. Base = K0.33
+- Stable: $0.0020 / $0.0026 / $0.0067. Base = K0.05
+- Key-based: $0.0105 / $0.0169 / $0.0445. Base = K0.34
+
+======================================================================
+
+PART 8 of 12
+*6.7 PAGES PER BUNDLE: 2026 PRICES*
+Format: Base (Heavy to Lean range). Play fee 15%. Infrastructure $0.02 per bundle (ASSUMED).
+The four tax readings use UNVERIFIED rates: (1) no revenue tax; (2) 4% turnover-tax-like placeholder (BELIEVED); (3) 16% VAT contained in the price, which is 13.8% of it (BELIEVED); (4) 30% income tax on profit (BELIEVED).
+
+*CONCISE, 2026*
+K50: no tax 102 (32-164) | 4% 90 (28-144) | VAT 61 (19-97) | income tax 38 (12-61)
+K100: no tax 207 (65-331) | 4% 183 (58-293) | VAT 124 (39-199) | income tax 78 (25-126)
+K150: no tax 312 (98-499) | 4% 276 (87-442) | VAT 188 (59-301) | income tax 119 (37-191)
+
+*STABLE, 2026*
+K50: no tax 324 (127-437) | 4% 286 (112-386) | VAT 193 (76-261) | income tax 121 (47-163)
+K100: no tax 655 (257-885) | 4% 579 (227-782) | VAT 394 (154-532) | income tax 249 (98-337)
+K150: no tax 987 (388-1333) | 4% 873 (343-1179) | VAT 595 (233-803) | income tax 378 (148-510)
+
+*KEY-BASED, 2026*
+K50: no tax 101 (38-162) | 4% 89 (33-143) | VAT 60 (22-97) | income tax 37 (14-60)
+K100: no tax 204 (77-329) | 4% 180 (68-291) | VAT 122 (46-197) | income tax 77 (29-125)
+K150: no tax 307 (117-495) | 4% 272 (103-438) | VAT 185 (70-298) | income tax 117 (44-189)
+
+======================================================================
+
+PART 9 of 12
+*PAGES PER BUNDLE: 2027 PRICES*
+Stable is identical to 2026 because no price change is announced for gemini-3.5-flash-lite.
+
+*CONCISE, 2027*
+K50: no tax 51 (16-82) | 4% 45 (14-72) | VAT 30 (9-48) | income tax 19 (6-30)
+K100: no tax 103 (32-165) | 4% 91 (29-146) | VAT 62 (19-99) | income tax 39 (12-63)
+K150: no tax 156 (49-249) | 4% 138 (43-221) | VAT 94 (29-150) | income tax 59 (18-95)
+
+*KEY-BASED, 2027*
+K50: no tax 50 (19-81) | 4% 44 (16-71) | VAT 30 (11-48) | income tax 18 (7-30)
+K100: no tax 102 (38-164) | 4% 90 (34-145) | VAT 61 (23-98) | income tax 38 (14-62)
+K150: no tax 153 (58-247) | 4% 136 (51-219) | VAT 92 (35-149) | income tax 58 (22-94)
+
+*SENSITIVITY: CHANNEL FEE* (K100 bundle, Concise, Base, 2026). Columns: no tax / 4% / VAT / income tax.
+- 3% fee (mobile-money aggregator, placeholder, ASSUMED): 279 / 255 / 196 / 150
+- 15% fee (Play): 207 / 183 / 124 / 78
+- 30% fee (Play standard rate): 117 / 93 / 34 / 0. The last one FAILS the profit rule.
+
+*SENSITIVITY: CURRENCY* (K100, Concise, Base, 2026, Play 15%, 16% VAT in price). Our costs are in US dollars; the bundle is priced in kwacha.
+- K20 per dollar: K100 = $5.00. Concise 124 pages, Stable 394
+- K22 per dollar: $4.55. Concise 113, Stable 357
+- K25 per dollar: $4.00. Concise 99, Stable 313
+- K30 per dollar: $3.33. Concise 82, Stable 260
+
+*6.8 IF MARKING WERE INSIDE SUBSCRIPTIONS: PAGES PER MONTH* (Play 15%, Base, 2026). Columns: no tax / 4% / VAT / income tax.
+- Basic K70, Concise: 140 / 123 / 82 / 50
+- Basic K70, Stable: 445 / 392 / 262 / 161
+- Basic K70, Key-based: 138 / 122 / 81 / 50
+- Gold K150, Concise: 308 / 272 / 184 / 115
+- Gold K150, Stable: 975 / 862 / 583 / 366
+- Gold K150, Key-based: 304 / 268 / 182 / 114
+In 2027 the Concise and Key-based lines roughly halve (Basic Concise, VAT case: 41 pages per month). One class of 40 scripts is about 160 pages, so UNLIMITED AI marking cannot be bundled into K70 or K150. This is the main argument for metering.
+
+======================================================================
+
+PART 10 of 12
+*6.9 COST LEVERS, RANKED BY LIKELY IMPACT*
+Each needs testing against marking accuracy.
+1. Lower the thinking level for marking. Output is about 80% of cost at Base and thinking is the largest single unknown.
+2. Make Stable the default engine. About 3 times cheaper per page in 2026 and about 6 times from 2027.
+3. Use the Batch API (50% off) for non-urgent marking. Home Assignment marking of pupil submissions could run overnight.
+4. Drop bounding boxes where the teacher does not need ticks drawn on the photo (about 30 fewer output tokens per question).
+5. Stop re-sending question-paper images with every script (Concise): up to 10 images x 1,120 tokens each. Context caching could also help.
+6. Image resolution setting: "medium" is 560 tokens. Minor if images are only 18% of cost, and it risks handwriting accuracy.
+7. Reduce retries. Measure the real failure rate first.
+
+*7. BUNDLE DESIGN QUESTIONS FOR YOU*
+1. Unit of sale. We recommend PAGES, expressed as credits: 1 Stable page = 1 credit, Concise and Key-based about 3 credits (2026). Review on 1 Jan 2027 when Concise and Key-based roughly double.
+2. Size on a pessimistic cost. Aim at about the 80th-percentile cost (between Base and Heavy), not the average, once measured. A cost overrun on a fixed-price bundle comes straight out of margin.
+3. Validity and expiry. How long is a bundle valid? What happens to unused credits? (Deferred-revenue treatment is your call.)
+4. Play semantics. Bundles would be consumable in-app purchases. On refunds and chargebacks, who bears the AI cost already spent?
+5. Failed pages. We propose never charging credits for a failed or unreadable result. Please confirm.
+6. Free allowance. Keep a small free monthly allowance (code today: 5 scripts)? It is a cost of acquisition, so cap it explicitly.
+7. Who pays for pupil submissions in Home Assignment: the teacher's bundle or the school's pooled credits?
+8. Fair-use rules for shared accounts.
+
+======================================================================
+
+PART 11 of 12
+*8. ZAMBIAN TAX AND REGULATORY QUESTIONS*
+For each we need the actual rule and the number. Where we hold a belief it is marked. Please correct it.
+
+*a) VAT*
+- Standard rate: we believe 16% (BELIEVED). Does it apply to a Zambian developer selling an app subscription or credits to Zambian users? Registration threshold: we believe roughly K800,000 annual turnover (BELIEVED). What is the current figure?
+- Are K70, K150, K50, K100 and K150 VAT-INCLUSIVE prices? This moves the model a lot.
+- Does Google collect and pay over VAT on Play sales in Zambia, or are we responsible?
+- Input VAT and reverse charge on imported services (Google, Firebase).
+- Are schools exempt or zero-rated for education software? This affects the Institutional invoice.
+
+*b) Income tax regime*
+- Turnover tax vs corporate income tax vs presumptive: which applies to a business of our size and legal form? We believe a turnover tax of about 4% exists for small turnover and corporate tax is 30% (BELIEVED). What are the thresholds?
+- Sole proprietor vs company (legal form unknown). Provisional tax dates. Deductibility of Gemini, Firebase and Play fees. Treatment of US-dollar expenses.
+
+*c) Cross-border payments*
+- Who is Google's paying entity? Is there withholding tax on payments from a non-resident? Are payouts in USD or ZMW? Bank charges. Bank of Zambia rules on foreign-currency receipts. Exchange gains and losses.
+
+*d) Google Play in Zambia (a viability question)*
+- Can a Zambian developer receive Play payouts (is Zambia a supported payment-profile country)? If not, what is the workaround?
+- Which payment methods can Zambian users actually use on Play (cards, carrier billing, gift cards)? Is kwacha pricing supported?
+
+*e) Mobile money*
+- MTN MoMo and Airtel Money through an aggregator: fees, availability, any transaction levies or excise.
+- Google Play policy: digital goods and subscriptions used inside a Play app generally must use Play Billing. Is mobile-money billing allowed for us, or would it breach the payments policy? We must NOT assume it is allowed. This directly affects the channel-fee assumption (3% vs 15% or 30%).
+
+*f) Data protection and consumer law*
+- Data Protection Act No. 3 of 2021 (BELIEVED): must we register as a data controller or processor, and at what cost? The app handles pupils' (minors') data and photos of answer scripts, and sends data to Google and Firebase outside Zambia. What are the consent and cross-border transfer rules?
+- Cyber-security and cyber-crime legislation, ZICTA obligations, consumer-protection rules on refunds and terms.
+
+*g) Business registration and employment*
+- PACRA registration, TPIN, licences, NAPSA and other payroll duties if we ever employ anyone, other levies.
+
+*h) Selling to schools*
+- Invoicing rules, purchase orders, public-school procurement and payment terms, withholding tax on payments by large or public payers. Schools work in three terms a year, so should billing be per term instead of per month? (The app already carries the Ministry's 2026 to 2030 term calendar.)
+
+======================================================================
+
+PART 12 of 12
+*9. INSTITUTIONAL (PLATINUM) PRICING FRAMEWORK*
+Owner's rule (OWNER): all app functions included. Price varies ONLY with the number of teachers and learners. Priced per school.
+
+Cost drivers to model (per school, per term):
+- Per teacher: normal Gold-level use (planning tools are offline and cheap to run); their own marking (section 6); timetable generation (a deterministic engine plus one small AI call to explain conflicts, so low cost); cloud backups (up to 3.5 GB worst case); School Network storage and reads.
+- Per learner: pupil accounts; Home Assignment submissions (answer photos stored, up to 10 MB each); AI marking of those submissions, which is likely the DOMINANT cost; possibly SMS for sign-in (UNKNOWN).
+- Per school: logo, staffroom posts, dashboards. Negligible.
+
+Structure to test (the numbers are yours to set):
+Price per term = Base fee + a x teachers + b x learners, with volume bands, a pooled AI-page allowance per learner per term, and overage sold as marking bundles.
+
+Please price these three sizes (ASSUMED, adjust freely):
+- Small: 10 teachers, 300 learners
+- Medium: 30 teachers, 1,000 learners
+- Large: 80 teachers, 3,000 learners
+
+Open questions: discount for term or annual prepayment; public vs private schools; minimum contract; what happens to a school's pooled pages at the end of a term.
+
+*10. MEASURE FIRST (before final pricing, and before 1 Jan 2027)*
+1. Instrument the marking functions to log, per call: engine, model, page count, question count, attempt number, prompt tokens, output tokens, thinking tokens, image tokens and finish reason. Optionally tie it to a hashed user id for per-user cost. (Owner's decision. Not yet built.)
+2. Calibration run: about 30 real scripts across subjects, through the 3 engines, at different thinking levels (default, low, minimal) and image settings (default, medium). Record cost AND accuracy against the teacher's own marks. A cheaper setting that mis-marks is not a saving.
+3. Re-run the cost model with measured token counts, then size bundles on the pessimistic figure.
+4. Repeat every quarter, and immediately after any Google price change.
+
+*11. KEY ASSUMPTIONS (and what happens if wrong)*
+- Kwacha per dollar: K20 (OWNER). A weaker kwacha shrinks every bundle.
+- Pages per script: 4 (ASSUMED).
+- Image tokens per page: 1,120 (VERIFIED for Gemini 3, ASSUMED for 3.5 and 3.6). Heavy case is about 6,192, up to about 3 times on input.
+- Thinking tokens per script: 3,000 Flash, 300 Lite (ASSUMED). THE LARGEST SINGLE UNCERTAINTY. Heavy case is 8,000 and 1,500.
+- Output per question: 100 (Concise, Key-based), 70 (Stable) (ASSUMED).
+- Questions per page: 8 (ASSUMED).
+- Retry overhead: 1.10 times (ASSUMED).
+- Play fee: 15% (BELIEVED). At 30% bundles can fail the rule.
+- Tax rates: 0, 4%, 13.8% VAT-in-price, 30% income tax (BELIEVED). Moves capacity by about 2 times.
+- Infrastructure: $0.02 per bundle, $0.05 per subscriber-month (ASSUMED). Real Firebase spend unknown.
+- Other AI features (lesson plans, notes, timetable explanations): ignored (ASSUMED). Low volume, not zero.
+
+*12. SOURCES (Google documentation read 19 Sep 2026)*
+Pricing: https://ai.google.dev/gemini-api/docs/pricing
+Thinking defaults and billing: https://ai.google.dev/gemini-api/docs/thinking
+Image token counts: https://ai.google.dev/gemini-api/docs/media-resolution
+Older image tile method: https://ai.google.dev/gemini-api/docs/image-understanding
+
+The cost model itself is a small program (Python file: marking pricing model). It produced every number in section 6. Send it as a file, not as text.
+
+END OF BRIEFING

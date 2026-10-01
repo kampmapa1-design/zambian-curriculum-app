@@ -1,0 +1,7 @@
+{
+  "_readme": "Firestore document ownerData/settings (owner-only; no client can read or write it — only Cloud Functions and the Firebase console). Fill in ownerUids with YOUR Firebase uid (shown in the app: Settings > Account ID) to unlock the owner finance screen and the exchange-rate editor. Remove this _readme key when you paste it in. fxUsdToZmw.updatedAtMs is set by the app's exchange-rate screen; leave it out until then (the screen flags 'never updated').",
+  "ownerUids": ["PASTE-YOUR-FIREBASE-UID-HERE"],
+  "ownerEmail": "kampmapa1@gmail.com",
+  "vatThresholdKwacha": 800000,
+  "fxUsdToZmw": { "rate": 20 }
+}

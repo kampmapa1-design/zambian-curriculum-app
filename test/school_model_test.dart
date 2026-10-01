@@ -58,6 +58,38 @@ void main() {
     });
   });
 
+  group('School.meetsTimetableTier — individual-teacher subscriptions (owner decision, 2026-09-28)', () {
+    test('a Basic school with no personal subscription does NOT meet the gate', () {
+      expect(
+        School.meetsTimetableTier(school: _schoolWithTier(SubscriptionTier.basic), personalTier: SubscriptionTier.basic),
+        isFalse,
+      );
+    });
+
+    test('a Gold or Institutional school meets the gate on its own, personal tier aside', () {
+      expect(
+        School.meetsTimetableTier(school: _schoolWithTier(SubscriptionTier.gold), personalTier: SubscriptionTier.basic),
+        isTrue,
+      );
+      expect(
+        School.meetsTimetableTier(school: _schoolWithTier(SubscriptionTier.institutional), personalTier: SubscriptionTier.basic),
+        isTrue,
+      );
+    });
+
+    test("a teacher's own Gold+ personal subscription meets the gate even at a Basic (or no) school", () {
+      expect(
+        School.meetsTimetableTier(school: _schoolWithTier(SubscriptionTier.basic), personalTier: SubscriptionTier.gold),
+        isTrue,
+      );
+      expect(School.meetsTimetableTier(school: null, personalTier: SubscriptionTier.institutional), isTrue);
+    });
+
+    test('a Basic personal tier does NOT meet the gate on its own', () {
+      expect(School.meetsTimetableTier(school: null, personalTier: SubscriptionTier.basic), isFalse);
+    });
+  });
+
   group('canManageTimetable', () {
     test('head teacher and deputy can manage', () {
       expect(canManageTimetable(SchoolRole.headTeacher, false), isTrue);

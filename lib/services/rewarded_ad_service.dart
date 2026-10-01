@@ -31,3 +31,37 @@ class RewardedAdService {
     return true;
   }
 }
+
+/// How an attempt to earn an ad pass ended.
+enum AdPassResult {
+  /// The ad played to completion; the server will mint the pass once AdMob's
+  /// signed callback reaches it (usually within seconds).
+  earned,
+
+  /// The teacher closed the ad early — no reward.
+  dismissed,
+
+  /// Ads can't be shown in this build/on this device.
+  unavailable,
+}
+
+/// The seam through which an ad pass is earned. A pass can ONLY be created by
+/// Google's signed AdMob server-side callback (see firebase/functions/src/adPass.ts),
+/// never by this client saying "the ad played" — so a real implementation must
+/// attach the Firebase uid as the ad's server-side-verification user id, and
+/// the stub below deliberately does NOT claim success.
+///
+/// Currently a stub: no ad SDK is in the app (see [RewardedAdService]'s header
+/// for why), so [supportsAdPasses] is false, the "watch an ad" option is never
+/// offered, and no generation can be paid for with an ad. Re-integrating a real
+/// SDK means implementing this and nothing else about the flow.
+class AdPassEarner {
+  AdPassEarner._();
+  static final AdPassEarner instance = AdPassEarner._();
+
+  /// Whether the "watch an ad" option can be offered at all.
+  bool get supportsAdPasses => false;
+
+  /// Shows one rewarded ad for [uid]. See the class comment.
+  Future<AdPassResult> showForPass({required String uid}) async => AdPassResult.unavailable;
+}

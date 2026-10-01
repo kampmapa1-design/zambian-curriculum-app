@@ -103,6 +103,17 @@ class School {
 
   bool get hasTimetableAccess => subscriptionTier.index >= SubscriptionTier.gold.index;
 
+  /// Individual-teacher subscriptions (owner decision, 2026-09-28): "the
+  /// infrastructure must allow individual teachers to be able to subscribe
+  /// on the app individually even without a school wide subscription" —
+  /// mirrors the server's own `meetsTimetableTier` OR-logic in
+  /// firebase/functions/src/index.ts exactly. Pure, so it's directly
+  /// unit-tested without a Firestore fake — see
+  /// PersonalSubscriptionService for where [personalTier] actually comes
+  /// from client-side.
+  static bool meetsTimetableTier({required School? school, required SubscriptionTier personalTier}) =>
+      (school?.hasTimetableAccess ?? false) || personalTier.index >= SubscriptionTier.gold.index;
+
   /// Stage 5's Mid-Term Results Window (minimal version, added
   /// 2026-09-14) — null means no Head Teacher/Deputy has set one yet.
   /// Duration is fixed at the brief's own default (2 weeks) for now; see

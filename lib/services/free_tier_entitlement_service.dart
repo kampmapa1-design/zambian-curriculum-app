@@ -4,8 +4,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 /// Whether the free-tier monthly caps actually block generation. **Off**
 /// by explicit decision (2026-09-14, same call as this app's other
-/// entitlement flags — see MarkingEntitlementService.kGradingCapEnforced
-/// for the standing rationale): usage is tracked for real starting now,
+/// entitlement flags; the marking cap it was modelled on has since been
+/// replaced by the server-side credit ledger — see MarkingEntitlementService): usage is tracked for real starting now,
 /// nothing is blocked until a real payment path exists and this is
 /// flipped to `true`.
 const bool kFreeTierCapEnforced = false;
@@ -64,8 +64,7 @@ class FreeTierEntitlementService {
   }
 
   /// Call only after generation has actually succeeded — not
-  /// speculatively, same discipline as MarkingEntitlementService's own
-  /// recordGradingUsed.
+  /// speculatively, so a failed generation never burns part of the allowance.
   Future<void> recordUsed(FreeTierFeature feature) async {
     final prefs = await SharedPreferences.getInstance();
     final period = _currentPeriodKey();

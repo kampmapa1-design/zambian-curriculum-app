@@ -2,8 +2,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../models/school.dart';
+import '../services/personal_subscription_service.dart';
 import '../services/school_service.dart';
 import '../services/teacher_auth_service.dart';
+import '../widgets/gradient_app_bar.dart';
 import 'generated_timetable_screen.dart';
 import 'independent_timetable_list_screen.dart';
 import 'join_school_screen.dart';
@@ -33,11 +35,15 @@ class TimetableHomeScreen extends StatefulWidget {
 
 class _TimetableHomeScreenState extends State<TimetableHomeScreen> {
   final _schoolService = SchoolService();
+  final _personalSubscriptionService = PersonalSubscriptionService();
   bool _loading = true;
   String? _error;
   School? _school;
   SchoolRole? _myRole;
   bool _isTimetableOperator = false;
+  SubscriptionTier _personalTier = SubscriptionTier.basic;
+
+  bool get _hasTimetableAccess => School.meetsTimetableTier(school: _school, personalTier: _personalTier);
 
   @override
   void initState() {
@@ -56,9 +62,11 @@ class _TimetableHomeScreenState extends State<TimetableHomeScreen> {
       School? school;
       SchoolRole? role;
       var isOperator = false;
+      var personalTier = SubscriptionTier.basic;
       if (method != TeacherLoginMethod.anonymous) {
         final claim = await _schoolService.currentSchoolClaim();
         role = claim.role;
+        personalTier = await _personalSubscriptionService.fetchTier();
         if (claim.schoolId != null) {
           school = await _schoolService.getSchool(claim.schoolId!);
           if (user != null) {
@@ -72,6 +80,7 @@ class _TimetableHomeScreenState extends State<TimetableHomeScreen> {
         _school = school;
         _myRole = role;
         _isTimetableOperator = isOperator;
+        _personalTier = personalTier;
         _loading = false;
       });
     } catch (e) {
@@ -89,7 +98,7 @@ class _TimetableHomeScreenState extends State<TimetableHomeScreen> {
     final method = loginMethodOf(user);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Timetable')),
+      appBar: const GradientAppBar(title: 'Timetable'),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : _error != null
@@ -135,7 +144,7 @@ class _TimetableHomeScreenState extends State<TimetableHomeScreen> {
               const SizedBox(height: 16),
               Text(message, textAlign: TextAlign.center),
               const SizedBox(height: 20),
-              FilledButton.icon(icon: const Icon(Icons.refresh), label: const Text('Retry'), onPressed: _load),
+              FilledButton.icon(icon: const Icon(Icons.refresh_outlined), label: const Text('Retry'), onPressed: _load),
             ],
           ),
         ),
@@ -222,7 +231,7 @@ class _TimetableHomeScreenState extends State<TimetableHomeScreen> {
             padding: EdgeInsets.fromLTRB(16, 20, 16, 4),
             child: Text('Leadership / Timetable Operator', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey)),
           ),
-          if (school.hasTimetableAccess) ...[
+          if (_hasTimetableAccess) ...[
             ListTile(
               leading: const Icon(Icons.tune_outlined),
               title: const Text('Timetable Setup'),
@@ -245,7 +254,7 @@ class _TimetableHomeScreenState extends State<TimetableHomeScreen> {
             const ListTile(
               leading: Icon(Icons.lock_outline),
               title: Text('Timetable Setup & Generation'),
-              subtitle: Text('Needs a Gold subscription or higher for this school'),
+              subtitle: Text('Needs a Gold subscription or higher — school-wide, or your own personal subscription'),
               enabled: false,
             ),
         ],
