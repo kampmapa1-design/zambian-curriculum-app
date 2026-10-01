@@ -5,6 +5,7 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
 import '../models/marking_scheme.dart';
+import '../models/marking_scheme_node.dart';
 import 'marking_key_generation_service.dart';
 
 /// Persists the ONE most-expensive, hardest-to-repeat step of the marking-
@@ -35,6 +36,13 @@ class PendingMarkingKeyDraft {
   final MarkingExamStandard? examStandardHint;
   final double? detectedTotalMarks;
 
+  /// The real Section -> Question -> Part -> Sub-part tree (Marking Scheme
+  /// Structure Stage 2, 2026-09-22) — see [DerivedMarkingKey.sectionTree]'s
+  /// own doc comment. Empty for a draft saved before this field existed,
+  /// in which case a resumed draft degrades to the flat [questions]/
+  /// [sections] view only (no worse than before this field existed).
+  final List<MarkingSchemeSection> sectionTree;
+
   const PendingMarkingKeyDraft({
     required this.questions,
     this.sections = const [],
@@ -44,6 +52,7 @@ class PendingMarkingKeyDraft {
     this.markConventions = const [],
     this.examStandardHint,
     this.detectedTotalMarks,
+    this.sectionTree = const [],
   });
 
   DerivedMarkingKey get asDerivedMarkingKey => DerivedMarkingKey(
@@ -54,6 +63,7 @@ class PendingMarkingKeyDraft {
         markConventions: markConventions,
         examStandardHint: examStandardHint,
         detectedTotalMarks: detectedTotalMarks,
+        sectionTree: sectionTree,
       );
 
   Map<String, dynamic> toJson() => {
@@ -75,6 +85,7 @@ class PendingMarkingKeyDraft {
         if (markConventions.isNotEmpty) 'markConventions': markConventions,
         if (examStandardHint != null) 'examStandardHint': examStandardHint!.dbValue,
         if (detectedTotalMarks != null) 'detectedTotalMarks': detectedTotalMarks,
+        if (sectionTree.isNotEmpty) 'sectionTree': [for (final s in sectionTree) s.toJson()],
       };
 
   static PendingMarkingKeyDraft? fromJson(Map<String, dynamic> json) {
@@ -123,6 +134,11 @@ class PendingMarkingKeyDraft {
     final detectedTotalMarksRaw = json['detectedTotalMarks'];
     final detectedTotalMarks = detectedTotalMarksRaw is num ? detectedTotalMarksRaw.toDouble() : null;
 
+    final sectionTreeRaw = json['sectionTree'];
+    final sectionTree = sectionTreeRaw is List
+        ? sectionTreeRaw.whereType<Map>().map((m) => MarkingSchemeSection.fromJson(m.cast<String, dynamic>())).toList()
+        : <MarkingSchemeSection>[];
+
     return PendingMarkingKeyDraft(
       questions: questions,
       sections: sections,
@@ -132,6 +148,7 @@ class PendingMarkingKeyDraft {
       markConventions: markConventions,
       examStandardHint: examStandardHint,
       detectedTotalMarks: detectedTotalMarks,
+      sectionTree: sectionTree,
     );
   }
 }
@@ -154,6 +171,7 @@ class PendingMarkingKeyDraftRepository {
       examStandardHint: derived.examStandardHint,
       detectedTotalMarks: derived.detectedTotalMarks,
       savedAt: DateTime.now(),
+      sectionTree: derived.sectionTree,
     );
     final file = await _file();
     await file.writeAsString(jsonEncode(draft.toJson()));

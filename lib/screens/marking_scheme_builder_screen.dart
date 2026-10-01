@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../models/marking_scheme.dart';
+import '../models/marking_scheme_node.dart';
 import '../services/marking_key_generation_service.dart';
 import '../services/marking_scheme_repository.dart';
 import 'marking_scheme_paper_structure_screen.dart';
@@ -34,6 +35,7 @@ class MarkingSchemeBuilderScreen extends StatefulWidget {
     this.aiDetectedTotalMarks,
     this.repository,
     this.initialTitle,
+    this.confirmedSectionTree,
   });
 
   final String subjectName;
@@ -74,6 +76,20 @@ class MarkingSchemeBuilderScreen extends StatefulWidget {
   final double? aiDetectedTotalMarks;
 
   final MarkingSchemeRepository? repository;
+
+  /// Marking Scheme Structure Stages 3-5 (2026-09-22) — the real Section ->
+  /// Question -> Part -> Sub-part tree, already confirmed (and possibly
+  /// mark-corrected) on MarkingSchemeStructureConfirmationScreen before
+  /// this screen even opened. When set, [_save] skips the OLD
+  /// MarkingSchemePaperStructureScreen confirmation step entirely (Stage
+  /// 3/4 already did that job, more precisely — re-asking would just be a
+  /// confusing second confirmation of the same thing) and reconciles
+  /// whatever the teacher edits here (answer text, marks) back onto this
+  /// tree before saving, so the saved MarkingScheme.sections stays the
+  /// real source of truth for Stage 6's section-aware scoring. Null for
+  /// manual entry or a pre-Stage-1 AI draft with no tree at all — the
+  /// original flat flow is completely unchanged in that case.
+  final List<MarkingSchemeSection>? confirmedSectionTree;
 
   @override
   State<MarkingSchemeBuilderScreen> createState() => _MarkingSchemeBuilderScreenState();
@@ -200,6 +216,30 @@ class _MarkingSchemeBuilderScreenState extends State<MarkingSchemeBuilderScreen>
     );
 
     if (!mounted) return;
+
+    final tree = widget.confirmedSectionTree;
+    if (tree != null && tree.isNotEmpty) {
+      // Stage 3/4 already confirmed this scheme's real structure (and any
+      // mark corrections) before this screen opened — re-apply only what
+      // the teacher may have further edited HERE (answer text, marks) onto
+      // that same tree, rather than re-asking the old per-section
+      // confirmation question a second time.
+      final marksByLabel = <String, double>{};
+      final answersByLabel = <String, String>{};
+      for (final q in draft.questions) {
+        final mark = double.tryParse(q.maxMarks.toString());
+        if (mark != null) marksByLabel[q.label] = mark;
+        answersByLabel[q.label] = q.expectedAnswerOrKeywords;
+      }
+      final reconciledTree = [
+        for (final s in tree) s.withUpdatedLeafMarks(marksByLabel).withUpdatedLeafAnswers(answersByLabel),
+      ];
+      final saved = await _repository.save(draft.copyWith(sections: reconciledTree));
+      if (!mounted) return;
+      Navigator.of(context).pop<MarkingScheme>(saved);
+      return;
+    }
+
     // Always routed through here before persisting — see that screen's own
     // doc comment for why a flat sum of every listed question can be the
     // wrong total for a paper with an "answer N of M" structure.
@@ -313,7 +353,7 @@ class _MarkingSchemeBuilderScreenState extends State<MarkingSchemeBuilderScreen>
           const SizedBox(height: 8),
           OutlinedButton.icon(
             onPressed: _addRow,
-            icon: const Icon(Icons.add),
+            icon: const Icon(Icons.add_outlined),
             label: const Text('Add Question'),
           ),
         ],

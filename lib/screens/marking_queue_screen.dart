@@ -4,12 +4,14 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../models/marking_credits.dart';
 import '../models/marking_scheme.dart';
 import '../models/marking_script.dart';
 import '../models/marking_session.dart';
 import '../models/syllabus_models.dart';
 import '../services/batch_grading_runner.dart';
 import '../services/marking_cohort_grouping.dart';
+import '../services/marking_credits_service.dart';
 import '../services/marking_entitlement_service.dart';
 import '../services/marking_gap_report_document_service.dart';
 import '../services/marking_gap_report_service.dart';
@@ -27,10 +29,12 @@ import 'cohort_completion_screen.dart';
 import 'concise_marking_screen.dart';
 import 'marked_scripts_screen.dart';
 import 'marking_analysis_screen.dart';
+import 'marking_credits_screen.dart';
 import 'marking_key_upload_flow.dart';
 import 'marking_review_screen.dart';
 import 'marking_scheme_list_screen.dart';
 import 'script_batch_capture_screen.dart';
+import '../widgets/gradient_app_bar.dart';
 import '../widgets/score_pop_badge.dart';
 
 /// AI-Assisted Marking, Stage 2 hub — every captured script sits here,
@@ -40,7 +44,8 @@ import '../widgets/score_pop_badge.dart';
 /// [_processBatch]'s per-script entitlement check), and a first-pass
 /// Stage 8 (retry handling — see [_processBatch]).
 class MarkingQueueScreen extends StatefulWidget {
-  const MarkingQueueScreen({super.key, this.repository, this.schemeRepository, this.gradingService});
+  const MarkingQueueScreen(
+      {super.key, this.repository, this.schemeRepository, this.gradingService});
 
   final MarkingScriptRepository? repository;
   final MarkingSchemeRepository? schemeRepository;
@@ -51,9 +56,12 @@ class MarkingQueueScreen extends StatefulWidget {
 }
 
 class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
-  late final MarkingScriptRepository _repository = widget.repository ?? MarkingScriptRepository();
-  late final MarkingSchemeRepository _schemeRepository = widget.schemeRepository ?? MarkingSchemeRepository();
-  final MarkedResultsListRepository _listRepository = MarkedResultsListRepository();
+  late final MarkingScriptRepository _repository =
+      widget.repository ?? MarkingScriptRepository();
+  late final MarkingSchemeRepository _schemeRepository =
+      widget.schemeRepository ?? MarkingSchemeRepository();
+  final MarkedResultsListRepository _listRepository =
+      MarkedResultsListRepository();
 
   /// Every script id belonging to an already-exported manual results list
   /// (added 2026-09-02) — checked here too, not just on MarkedScriptsScreen/
@@ -62,9 +70,12 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
   /// [_openScript]). The lock has to hold regardless of which screen
   /// reaches [MarkingReviewScreen].
   Set<String> _lockedScriptIds = {};
-  late final MarkingGradingService _gradingService = widget.gradingService ?? MarkingGradingService();
-  late final MarkingGapReportService _gapReportService = MarkingGapReportService(schemeRepository: _schemeRepository);
-  final MarkingGapReportDocumentService _gapReportDocumentService = MarkingGapReportDocumentService();
+  late final MarkingGradingService _gradingService =
+      widget.gradingService ?? MarkingGradingService();
+  late final MarkingGapReportService _gapReportService =
+      MarkingGapReportService(schemeRepository: _schemeRepository);
+  final MarkingGapReportDocumentService _gapReportDocumentService =
+      MarkingGapReportDocumentService();
 
   /// How many marked (graded or reviewed) students form one "batch reports"
   /// checkpoint — see [_buildMarkedStudentsSummary]. Scripts are still
@@ -76,7 +87,8 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
 
   MarkingScriptCatalog _catalog = MarkingScriptCatalog.empty();
   MarkingSchemeCatalog _schemes = MarkingSchemeCatalog.empty();
-  final MarkingSessionRepository _sessionRepository = MarkingSessionRepository();
+  final MarkingSessionRepository _sessionRepository =
+      MarkingSessionRepository();
   final TemplateRepository _templateRepository = TemplateRepository();
 
   /// The active AI-Assisted Marking session, if any (2026-09-03) — see
@@ -96,7 +108,8 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
   int _processedCount = 0;
   int _batchTotal = 0;
 
-  int? _remainingFreeGradings;
+  // Spendable marking credits when credits are enforced; null while unknown or switched off.
+  double? _spendableCredits;
 
   // The "score just came in" pop-and-fade — see [_ScorePopBadge]. Keyed so
   // a fresh score restarts the animation even if it fires again before the
@@ -111,7 +124,8 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
     super.initState();
     _load();
     _loadRemainingFreeGradings();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _checkForResumableMarkingKey());
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => _checkForResumableMarkingKey());
   }
 
   /// A real fix for a real reported problem: Android can (and, on many
@@ -133,8 +147,12 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
           '(from ${_formatDraftTime(draft.savedAt)}). Continue with it?',
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.of(dialogContext).pop(false), child: const Text('Discard')),
-          FilledButton(onPressed: () => Navigator.of(dialogContext).pop(true), child: const Text('Continue')),
+          TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(false),
+              child: const Text('Discard')),
+          FilledButton(
+              onPressed: () => Navigator.of(dialogContext).pop(true),
+              child: const Text('Continue')),
         ],
       ),
     );
@@ -143,7 +161,8 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
       await PendingMarkingKeyDraftRepository().clear();
       return;
     }
-    final saved = await resumeMarkingKeyFlow(context: context, draft: draft, schemeRepository: _schemeRepository);
+    final saved = await resumeMarkingKeyFlow(
+        context: context, draft: draft, schemeRepository: _schemeRepository);
     if (saved != null) _load();
   }
 
@@ -156,8 +175,14 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
   }
 
   Future<void> _loadRemainingFreeGradings() async {
-    final remaining = await MarkingEntitlementService.instance.remainingFreeGradings();
-    if (mounted) setState(() => _remainingFreeGradings = remaining);
+    try {
+      await MarkingCreditsService.instance.refresh();
+    } catch (_) {
+      // Offline etc. — keep whatever was last known; the server is the real gate.
+    }
+    if (mounted)
+      setState(() => _spendableCredits =
+          MarkingEntitlementService.instance.spendableCreditsIfEnforced());
   }
 
   Future<void> _load() async {
@@ -169,7 +194,10 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
     setState(() {
       _catalog = catalog;
       _schemes = schemes;
-      _lockedScriptIds = {for (final l in lists.lists) if (l.exported) ...l.scriptIds};
+      _lockedScriptIds = {
+        for (final l in lists.lists)
+          if (l.exported) ...l.scriptIds
+      };
       _activeSession = activeSession;
       _loading = false;
     });
@@ -193,7 +221,10 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
     );
     if (results.isEmpty || !mounted) return;
 
-    final files = [for (final f in results) if (f.path != null) File(f.path!)];
+    final files = [
+      for (final f in results)
+        if (f.path != null) File(f.path!)
+    ];
     if (files.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Could not read the selected file(s).')),
@@ -207,7 +238,9 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
     // object (see MarkingSession's own doc comment).
     SyllabusTemplate? carriedTemplate;
     if (_activeSession case final session?
-        when session.curriculumCode != null && session.subjectCode != null && session.gradeLevel != null) {
+        when session.curriculumCode != null &&
+            session.subjectCode != null &&
+            session.gradeLevel != null) {
       carriedTemplate = await _templateRepository.loadSyllabus(
         curriculumCode: session.curriculumCode!,
         subjectCode: session.subjectCode!,
@@ -221,7 +254,9 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
     // pre-fill the same "Subject / course" field a fresh tertiary setup
     // would ask for, same convenience the secondary path already had.
     final carriedTertiarySubjectName =
-        _activeSession != null && _activeSession!.curriculumCode == null ? _activeSession!.subjectName : null;
+        _activeSession != null && _activeSession!.curriculumCode == null
+            ? _activeSession!.subjectName
+            : null;
 
     final result = await Navigator.of(context).push<MarkingScript>(
       MaterialPageRoute(
@@ -279,9 +314,12 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
   /// explicit request that tapping it "should open by giving a drop down
   /// list of 'Upload from device', 'Upload from Camera', 'upload a list
   /// from cued lists'".
-  Future<void> _openConcise(ConciseMarkingSource source, MarkingEngine engine) async {
+  Future<void> _openConcise(
+      ConciseMarkingSource source, MarkingEngine engine) async {
     await Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => ConciseMarkingScreen(initialSource: source, engine: engine)),
+      MaterialPageRoute(
+          builder: (_) =>
+              ConciseMarkingScreen(initialSource: source, engine: engine)),
     );
     _load();
     _loadRemainingFreeGradings();
@@ -298,7 +336,8 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
         title: const Text('Analyze Results'),
         children: [
           SimpleDialogOption(
-            onPressed: () => Navigator.of(dialogContext).pop(_AnalyzeSource.captureOnPaper),
+            onPressed: () =>
+                Navigator.of(dialogContext).pop(_AnalyzeSource.captureOnPaper),
             child: const Row(
               children: [
                 Icon(Icons.camera_alt_outlined),
@@ -308,7 +347,8 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
             ),
           ),
           SimpleDialogOption(
-            onPressed: () => Navigator.of(dialogContext).pop(_AnalyzeSource.previousScripts),
+            onPressed: () =>
+                Navigator.of(dialogContext).pop(_AnalyzeSource.previousScripts),
             child: const Row(
               children: [
                 Icon(Icons.fact_check_outlined),
@@ -325,21 +365,27 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
     if (choice == _AnalyzeSource.captureOnPaper) {
       final scheme = await Navigator.of(context).push<MarkingScheme>(
         MaterialPageRoute(
-          builder: (_) => CapturedListAnalysisIntakeScreen(schemeRepository: _schemeRepository, scriptRepository: _repository),
+          builder: (_) => CapturedListAnalysisIntakeScreen(
+              schemeRepository: _schemeRepository,
+              scriptRepository: _repository),
         ),
       );
       if (scheme == null || !mounted) return;
       await _load();
       if (!mounted) return;
       await Navigator.of(context).push(
-        MaterialPageRoute(builder: (_) => MarkingAnalysisScreen(scheme: scheme, scriptRepository: _repository)),
+        MaterialPageRoute(
+            builder: (_) => MarkingAnalysisScreen(
+                scheme: scheme, scriptRepository: _repository)),
       );
       return;
     }
 
     if (_schemes.schemes.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No marking schemes yet — upload or build one first.')),
+        const SnackBar(
+            content:
+                Text('No marking schemes yet — upload or build one first.')),
       );
       return;
     }
@@ -362,7 +408,9 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
     if (scheme == null || !mounted) return;
 
     await Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => MarkingAnalysisScreen(scheme: scheme, scriptRepository: _repository)),
+      MaterialPageRoute(
+          builder: (_) => MarkingAnalysisScreen(
+              scheme: scheme, scriptRepository: _repository)),
     );
   }
 
@@ -398,13 +446,18 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
             'against. Build one first.',
           ),
           actions: [
-            TextButton(onPressed: () => Navigator.of(dialogContext).pop(false), child: const Text('Cancel')),
-            FilledButton(onPressed: () => Navigator.of(dialogContext).pop(true), child: const Text('Build One')),
+            TextButton(
+                onPressed: () => Navigator.of(dialogContext).pop(false),
+                child: const Text('Cancel')),
+            FilledButton(
+                onPressed: () => Navigator.of(dialogContext).pop(true),
+                child: const Text('Build One')),
           ],
         ),
       );
       if (go == true && mounted) {
-        await Navigator.of(context).push(MaterialPageRoute(builder: (_) => const MarkingSchemeListScreen()));
+        await Navigator.of(context).push(
+            MaterialPageRoute(builder: (_) => const MarkingSchemeListScreen()));
         await _load();
       }
       return;
@@ -425,7 +478,9 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
               children: [
                 Icon(Icons.bolt_outlined),
                 SizedBox(width: 12),
-                Expanded(child: Text('Concise Marker — mark now (ticks on script + score out of 100)')),
+                Expanded(
+                    child: Text(
+                        'Concise Marker — mark now (ticks on script + score out of 100)')),
               ],
             ),
           ),
@@ -435,7 +490,9 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
               children: [
                 Icon(Icons.savings_outlined),
                 SizedBox(width: 12),
-                Expanded(child: Text('Stable Marker — affordable AI, score list only (no marks on script)')),
+                Expanded(
+                    child: Text(
+                        'Stable Marker — affordable AI, score list only (no marks on script)')),
               ],
             ),
           ),
@@ -451,7 +508,8 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
     if (selection == null || !mounted) return;
 
     if (selection == '__concise__' || selection == '__stable__') {
-      final picked = _catalog.scripts.where((s) => _selectedIds.contains(s.id)).toList();
+      final picked =
+          _catalog.scripts.where((s) => _selectedIds.contains(s.id)).toList();
       setState(() {
         _selecting = false;
         _selectedIds.clear();
@@ -460,7 +518,9 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
         MaterialPageRoute(
           builder: (_) => ConciseMarkingScreen(
             pendingScripts: picked,
-            engine: selection == '__stable__' ? MarkingEngine.stable : MarkingEngine.concise,
+            engine: selection == '__stable__'
+                ? MarkingEngine.stable
+                : MarkingEngine.concise,
           ),
         ),
       );
@@ -471,7 +531,8 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
     final scheme = selection as MarkingScheme;
     final scripts = _catalog.scripts.where((s) => _selectedIds.contains(s.id));
     for (final script in scripts) {
-      await _repository.update(script.copyWith(status: MarkingScriptStatus.queued, schemeId: scheme.id));
+      await _repository.update(script.copyWith(
+          status: MarkingScriptStatus.queued, schemeId: scheme.id));
     }
     setState(() {
       _selecting = false;
@@ -480,7 +541,9 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
     await _load();
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('${scripts.length} script(s) queued against "${scheme.title}".')),
+      SnackBar(
+          content: Text(
+              '${scripts.length} script(s) queued against "${scheme.title}".')),
     );
   }
 
@@ -495,7 +558,10 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
   /// exists.
   Future<void> _processBatch(String schemeId) async {
     final scheme = _schemes.schemes.firstWhere((s) => s.id == schemeId);
-    final batch = _catalog.scripts.where((s) => s.status == MarkingScriptStatus.queued && s.schemeId == schemeId).toList();
+    final batch = _catalog.scripts
+        .where((s) =>
+            s.status == MarkingScriptStatus.queued && s.schemeId == schemeId)
+        .toList();
     if (batch.isEmpty) return;
 
     setState(() {
@@ -504,7 +570,8 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
       _batchTotal = batch.length;
     });
 
-    var ranOutOfFreeGradings = false;
+    var ranOutOfCredits = false;
+    InsufficientCreditsException? outOfCreditsReason;
     await runBatchGrading(
       scripts: batch,
       scheme: scheme,
@@ -513,28 +580,24 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
       onProgress: (done, total) {
         if (mounted) setState(() => _processedCount = done);
       },
-      onOutOfFreeGradings: () => ranOutOfFreeGradings = true,
+      onOutOfCredits: (reason) {
+        ranOutOfCredits = true;
+        outOfCreditsReason = reason;
+      },
       onScriptGraded: (graded) {
         if (!mounted || graded.status != MarkingScriptStatus.graded) return;
         final total = scheme.totalMarks;
         setState(() {
           _justGradedScript = graded;
-          _justGradedPercent = total <= 0 ? 0 : ((graded.totalAwarded ?? 0) / total) * 100;
+          _justGradedPercent =
+              total <= 0 ? 0 : ((graded.totalAwarded ?? 0) / total) * 100;
           _scorePopKey++;
         });
       },
     );
 
-    if (ranOutOfFreeGradings && mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            "You've used this month's free AI-graded scripts. The rest of this batch stays queued "
-            'until next month (or an upgrade, once that\'s available).',
-          ),
-          duration: Duration(seconds: 6),
-        ),
-      );
+    if (ranOutOfCredits && mounted) {
+      await showOutOfCreditsDialog(context, outOfCreditsReason);
     }
 
     setState(() => _processingBatchLabel = null);
@@ -549,11 +612,14 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
   /// (keeping its scheme link) so the next "Process" run for that scheme
   /// picks it up again alongside anything else queued.
   Future<void> _retryScript(MarkingScript script) async {
-    await _repository.update(script.copyWith(status: MarkingScriptStatus.queued, clearLastError: true));
+    await _repository.update(script.copyWith(
+        status: MarkingScriptStatus.queued, clearLastError: true));
     await _load();
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Moved back to queued — process its batch again to retry.')),
+      const SnackBar(
+          content:
+              Text('Moved back to queued — process its batch again to retry.')),
     );
   }
 
@@ -571,8 +637,12 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
           'script are kept and remain fully viewable — only the photos themselves are removed.',
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.of(dialogContext).pop(false), child: const Text('Cancel')),
-          FilledButton(onPressed: () => Navigator.of(dialogContext).pop(true), child: const Text('Discard Photos')),
+          TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(false),
+              child: const Text('Cancel')),
+          FilledButton(
+              onPressed: () => Navigator.of(dialogContext).pop(true),
+              child: const Text('Discard Photos')),
         ],
       ),
     );
@@ -586,11 +656,16 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
       context: context,
       builder: (dialogContext) => AlertDialog(
         title: const Text('Delete this script?'),
-        content: Text('${script.fullName} — Script ${script.scriptNumber} (${script.pageCount} page(s)) '
+        content: Text(
+            '${script.fullName} — Script ${script.scriptNumber} (${script.pageCount} page(s)) '
             'will be permanently deleted, including its captured pages.'),
         actions: [
-          TextButton(onPressed: () => Navigator.of(dialogContext).pop(false), child: const Text('Cancel')),
-          FilledButton(onPressed: () => Navigator.of(dialogContext).pop(true), child: const Text('Delete')),
+          TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(false),
+              child: const Text('Cancel')),
+          FilledButton(
+              onPressed: () => Navigator.of(dialogContext).pop(true),
+              child: const Text('Delete')),
         ],
       ),
     );
@@ -607,13 +682,15 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
   /// the loop actually ends, so the queue never shows stale data from
   /// partway through a chain.
   Future<void> _openScript(MarkingScript script) async {
-    if (script.status != MarkingScriptStatus.graded && script.status != MarkingScriptStatus.reviewed) return;
+    if (script.status != MarkingScriptStatus.graded &&
+        script.status != MarkingScriptStatus.reviewed) return;
 
     // The rest of this scheme's still-graded scripts, in the same order
     // the "Marked Students" list uses — computed once up front so the
     // chain doesn't shift under the teacher's feet if something else
     // changes the underlying data mid-review.
-    final queue = (_byStatus[MarkingScriptStatus.graded] ?? const <MarkingScript>[])
+    final queue = (_byStatus[MarkingScriptStatus.graded] ??
+            const <MarkingScript>[])
         .where((s) => s.schemeId == script.schemeId && s.id != script.id)
         .toList()
       ..sort((a, b) => a.scriptNumber.compareTo(b.scriptNumber));
@@ -623,7 +700,10 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
     while (current != null) {
       final scheme = current.schemeId == null
           ? null
-          : _schemes.schemes.where((s) => s.id == current!.schemeId).cast<MarkingScheme?>().firstWhere((s) => true, orElse: () => null);
+          : _schemes.schemes
+              .where((s) => s.id == current!.schemeId)
+              .cast<MarkingScheme?>()
+              .firstWhere((s) => true, orElse: () => null);
       final next = remaining.isEmpty ? null : remaining.first;
       final rest = remaining.isEmpty ? remaining : remaining.skip(1).toList();
 
@@ -654,7 +734,8 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
       ...(_byStatus[MarkingScriptStatus.graded] ?? const []),
       ...(_byStatus[MarkingScriptStatus.reviewed] ?? const []),
     ];
-    scripts.sort((a, b) => a.surname.toLowerCase().compareTo(b.surname.toLowerCase()));
+    scripts.sort(
+        (a, b) => a.surname.toLowerCase().compareTo(b.surname.toLowerCase()));
     return scripts;
   }
 
@@ -669,7 +750,9 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
       final file = await _gapReportDocumentService.generateDocx(report);
       if (!mounted) return;
       await SharePlus.instance.share(
-        ShareParams(files: [XFile(file.path)], subject: 'Report on ${report.studentName}'),
+        ShareParams(
+            files: [XFile(file.path)],
+            subject: 'Report on ${report.studentName}'),
       );
     } catch (error) {
       if (!mounted) return;
@@ -703,11 +786,15 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
       return;
     }
     await SharePlus.instance.share(
-      ShareParams(files: files, subject: 'Marking reports (${files.length} student(s))'),
+      ShareParams(
+          files: files,
+          subject: 'Marking reports (${files.length} student(s))'),
     );
     if (failed.isNotEmpty && mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('${failed.length} report(s) could not be built: ${failed.join(', ')}')),
+        SnackBar(
+            content: Text(
+                '${failed.length} report(s) could not be built: ${failed.join(', ')}')),
       );
     }
   }
@@ -732,7 +819,9 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
     final candidates = activeMarkingCohorts(_catalog.scripts, _schemes.schemes);
     if (candidates.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No scripts have been queued or marked yet for any class.')),
+        const SnackBar(
+            content: Text(
+                'No scripts have been queued or marked yet for any class.')),
       );
       return;
     }
@@ -811,15 +900,17 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('${graded.length} script(s) graded, awaiting review', style: Theme.of(context).textTheme.titleSmall),
+            Text('${graded.length} script(s) graded, awaiting review',
+                style: Theme.of(context).textTheme.titleSmall),
             const SizedBox(height: 6),
             Wrap(
               spacing: 8,
               runSpacing: 4,
               children: [
-                _confidenceChip(context, '$high ready to accept', Colors.green),
-                _confidenceChip(context, '$medium need a glance', Colors.orange),
-                _confidenceChip(context, '$low need review', Colors.red),
+                _confidenceChip(context, '$high ready to accept', Colors.green.shade700),
+                _confidenceChip(
+                    context, '$medium need a glance', Colors.orange.shade900),
+                _confidenceChip(context, '$low need review', Colors.red.shade700),
               ],
             ),
           ],
@@ -837,39 +928,58 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
     );
   }
 
-  Color _statusColor(MarkingScriptStatus status, BuildContext context) => switch (status) {
-        MarkingScriptStatus.captured => Theme.of(context).colorScheme.secondaryContainer,
-        MarkingScriptStatus.queued => Theme.of(context).colorScheme.tertiaryContainer,
-        MarkingScriptStatus.processing => Theme.of(context).colorScheme.primaryContainer,
+  Color _statusColor(MarkingScriptStatus status, BuildContext context) =>
+      switch (status) {
+        MarkingScriptStatus.captured =>
+          Theme.of(context).colorScheme.secondaryContainer,
+        MarkingScriptStatus.queued =>
+          Theme.of(context).colorScheme.tertiaryContainer,
+        MarkingScriptStatus.processing =>
+          Theme.of(context).colorScheme.primaryContainer,
         MarkingScriptStatus.graded => Colors.amber.shade200,
-        MarkingScriptStatus.reviewed => Theme.of(context).colorScheme.surfaceContainerHighest,
-        MarkingScriptStatus.needsRetry => Theme.of(context).colorScheme.errorContainer,
+        MarkingScriptStatus.reviewed =>
+          Theme.of(context).colorScheme.surfaceContainerHighest,
+        MarkingScriptStatus.needsRetry =>
+          Theme.of(context).colorScheme.errorContainer,
       };
 
   @override
   Widget build(BuildContext context) {
     final captured = _byStatus[MarkingScriptStatus.captured] ?? const [];
     final queuedByScheme = <String, List<MarkingScript>>{};
-    for (final s in _byStatus[MarkingScriptStatus.queued] ?? const <MarkingScript>[]) {
-      if (s.schemeId != null) queuedByScheme.putIfAbsent(s.schemeId!, () => []).add(s);
+    for (final s
+        in _byStatus[MarkingScriptStatus.queued] ?? const <MarkingScript>[]) {
+      if (s.schemeId != null)
+        queuedByScheme.putIfAbsent(s.schemeId!, () => []).add(s);
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Scan Marker'),
+      appBar: GradientAppBar(
+        title: 'Scan Marker',
         actions: [
+          IconButton(
+            icon: const Icon(Icons.toll_outlined),
+            tooltip: 'Marking Credits',
+            onPressed: () async {
+              await Navigator.of(context).push(MaterialPageRoute(
+                  builder: (_) => const MarkingCreditsScreen()));
+              _loadRemainingFreeGradings();
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.fact_check_outlined),
             tooltip: 'Marking Schemes',
             onPressed: () async {
-              await Navigator.of(context).push(MaterialPageRoute(builder: (_) => const MarkingSchemeListScreen()));
+              await Navigator.of(context).push(MaterialPageRoute(
+                  builder: (_) => const MarkingSchemeListScreen()));
               _load();
             },
           ),
           if (captured.isNotEmpty)
             TextButton(
               onPressed: _toggleSelecting,
-              child: Text(_selecting ? 'Cancel' : 'Select', style: const TextStyle(color: Colors.white)),
+              child: Text(_selecting ? 'Cancel' : 'Select',
+                  style: const TextStyle(color: Colors.white)),
             ),
         ],
       ),
@@ -913,8 +1023,9 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
                 padding: const EdgeInsets.all(16),
                 child: FilledButton.icon(
                   onPressed: _queueSelected,
-                  icon: const Icon(Icons.playlist_add_check),
-                  label: Text('Queue ${_selectedIds.length} Script(s) for Processing'),
+                  icon: const Icon(Icons.playlist_add_check_outlined),
+                  label: Text(
+                      'Queue ${_selectedIds.length} Script(s) for Processing'),
                 ),
               ),
             )
@@ -922,9 +1033,15 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
     );
   }
 
-  /// Left: "Upload Marking Key" and "Upload Script", each with a
-  /// device/camera dropdown. Right: "Capture Manual Scores", for
-  /// teachers who mark entirely by hand.
+  /// Rebalanced 2026-09-23, per explicit request — the marking-mode
+  /// buttons used to be split awkwardly (2 left / 5 right, the right
+  /// column visibly crowded). Now grouped by what they actually DO rather
+  /// than by when they were added: LEFT is every "start/feed a marking
+  /// session" action (the three real marking engines — Uploaded Marking
+  /// Key, Concise, Stable — plus Upload Script), RIGHT is every "manage an
+  /// already-marked cohort" action (Capture Manual Scores, Analyze
+  /// Results, Completed Marking Cohort). 4 left / 3 right — no column is
+  /// left crowded relative to the other.
   Widget _buildActionButtons(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(12, 12, 12, 4),
@@ -938,18 +1055,26 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
                 // explicit request — renamed and repurposed from the old
                 // "Upload Marking Key" button, which only ever uploaded a
                 // NEW key; that's still available via "Marking Schemes" ->
-                // "New Scheme"). Now a third marking engine alongside
-                // Concise/Stable: strictly bound to one key the teacher
-                // picks from those already uploaded — see
-                // ConciseMarkingScreen's MarkingEngine.keyed.
+                // "New Scheme"). The one marking engine that genuinely
+                // parses TWO separate documents (the uploaded marking key
+                // itself, then each script against it) rather than
+                // deriving structure from a script's own cover page —
+                // costs more credits per script than Concise/Stable
+                // accordingly. Strictly bound to one key the teacher picks
+                // from those already uploaded — see ConciseMarkingScreen's
+                // MarkingEngine.keyed.
                 _buildDropdownActionButton(
                   context,
                   label: 'Uploaded Marking Key Based Marking',
                   icon: Icons.fact_check_outlined,
                   items: const [
-                    PopupMenuItem(value: 'device', child: Text('Upload from device')),
-                    PopupMenuItem(value: 'camera', child: Text('Upload through camera')),
-                    PopupMenuItem(value: 'queue', child: Text('Upload a list from queued lists')),
+                    PopupMenuItem(
+                        value: 'device', child: Text('Upload from device')),
+                    PopupMenuItem(
+                        value: 'camera', child: Text('Upload through camera')),
+                    PopupMenuItem(
+                        value: 'queue',
+                        child: Text('Upload a list from queued lists')),
                   ],
                   onSelected: (value) => _openConcise(
                     switch (value) {
@@ -960,14 +1085,88 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
                     MarkingEngine.keyed,
                   ),
                 ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 2, bottom: 6),
+                  child: Text(
+                    'Parses your uploaded key AND every script — uses more credits per script than the options below.',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Theme.of(context).colorScheme.outline),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                // "Concise Marking" (2026-09-11, per explicit request) —
+                // AI marking that draws a real tick/cross directly onto a
+                // copy of the actual photographed script page, right at
+                // each answer's own location (see ConciseMarkingScreen's
+                // own doc comment).
+                PopupMenuButton<ConciseMarkingSource>(
+                  onSelected: (s) => _openConcise(s, MarkingEngine.concise),
+                  itemBuilder: (context) => const [
+                    PopupMenuItem(
+                        value: ConciseMarkingSource.device,
+                        child: Text('Upload from device')),
+                    PopupMenuItem(
+                        value: ConciseMarkingSource.camera,
+                        child: Text('Upload from camera')),
+                    PopupMenuItem(
+                        value: ConciseMarkingSource.queue,
+                        child: Text('Upload a list from queued lists')),
+                  ],
+                  child: IgnorePointer(
+                    child: OutlinedButton.icon(
+                      onPressed: () {},
+                      icon: const Icon(Icons.fact_check_outlined),
+                      label: const Text('Concise Marking',
+                          textAlign: TextAlign.center),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        minimumSize: const Size.fromHeight(0),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                // "Stable Marker" (2026-09-10, per explicit request) — the
+                // same session and marking as Concise Marking but on a much
+                // cheaper AI model, and it never draws on the script image:
+                // the deliverable is just the Word/PDF score list. For
+                // simple class tests that don't need heavy AI.
+                PopupMenuButton<ConciseMarkingSource>(
+                  onSelected: (s) => _openConcise(s, MarkingEngine.stable),
+                  itemBuilder: (context) => const [
+                    PopupMenuItem(
+                        value: ConciseMarkingSource.device,
+                        child: Text('Upload from device')),
+                    PopupMenuItem(
+                        value: ConciseMarkingSource.camera,
+                        child: Text('Upload from camera')),
+                    PopupMenuItem(
+                        value: ConciseMarkingSource.queue,
+                        child: Text('Upload a list from queued lists')),
+                  ],
+                  child: IgnorePointer(
+                    child: OutlinedButton.icon(
+                      onPressed: () {},
+                      icon: const Icon(Icons.savings_outlined),
+                      label: const Text('Stable Marker',
+                          textAlign: TextAlign.center),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        minimumSize: const Size.fromHeight(0),
+                      ),
+                    ),
+                  ),
+                ),
                 const SizedBox(height: 8),
                 _buildDropdownActionButton(
                   context,
                   label: 'Upload Script',
                   icon: Icons.description_outlined,
                   items: [
-                    const PopupMenuItem(value: 'device', child: Text('Upload from device')),
-                    const PopupMenuItem(value: 'camera', child: Text('Upload through camera')),
+                    const PopupMenuItem(
+                        value: 'device', child: Text('Upload from device')),
+                    const PopupMenuItem(
+                        value: 'camera', child: Text('Upload through camera')),
                     if (_activeSession != null)
                       PopupMenuItem(
                         value: 'change',
@@ -993,7 +1192,8 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
                 OutlinedButton.icon(
                   onPressed: _captureManualScores,
                   icon: const Icon(Icons.edit_note_outlined),
-                  label: const Text('Capture Manual Scores', textAlign: TextAlign.center),
+                  label: const Text('Capture Manual Scores',
+                      textAlign: TextAlign.center),
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     minimumSize: const Size.fromHeight(0),
@@ -1003,7 +1203,8 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
                 OutlinedButton.icon(
                   onPressed: _analyzeResults,
                   icon: const Icon(Icons.query_stats_outlined),
-                  label: const Text('Analyze Results', textAlign: TextAlign.center),
+                  label: const Text('Analyze Results',
+                      textAlign: TextAlign.center),
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     minimumSize: const Size.fromHeight(0),
@@ -1018,61 +1219,11 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
                 OutlinedButton.icon(
                   onPressed: _completeMarkingCohort,
                   icon: const Icon(Icons.flag_outlined),
-                  label: const Text('Completed Marking Cohort', textAlign: TextAlign.center),
+                  label: const Text('Completed Marking Cohort',
+                      textAlign: TextAlign.center),
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     minimumSize: const Size.fromHeight(0),
-                  ),
-                ),
-                // "Concise Marking" (2026-09-11, per explicit request) —
-                // AI marking that draws a real tick/cross directly onto a
-                // copy of the actual photographed script page, right at
-                // each answer's own location (see ConciseMarkingScreen's
-                // own doc comment). A separate, additive entry point —
-                // every other marking flow here is unchanged.
-                const SizedBox(height: 8),
-                PopupMenuButton<ConciseMarkingSource>(
-                  onSelected: (s) => _openConcise(s, MarkingEngine.concise),
-                  itemBuilder: (context) => const [
-                    PopupMenuItem(value: ConciseMarkingSource.device, child: Text('Upload from device')),
-                    PopupMenuItem(value: ConciseMarkingSource.camera, child: Text('Upload from camera')),
-                    PopupMenuItem(value: ConciseMarkingSource.queue, child: Text('Upload a list from queued lists')),
-                  ],
-                  child: IgnorePointer(
-                    child: OutlinedButton.icon(
-                      onPressed: () {},
-                      icon: const Icon(Icons.fact_check_outlined),
-                      label: const Text('Concise Marking', textAlign: TextAlign.center),
-                      style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        minimumSize: const Size.fromHeight(0),
-                      ),
-                    ),
-                  ),
-                ),
-                // "Stable Marker" (2026-09-10, per explicit request) — the
-                // same session and marking as Concise Marking but on a much
-                // cheaper AI model, and it never draws on the script image:
-                // the deliverable is just the Word/PDF score list. For
-                // simple class tests that don't need heavy AI.
-                const SizedBox(height: 8),
-                PopupMenuButton<ConciseMarkingSource>(
-                  onSelected: (s) => _openConcise(s, MarkingEngine.stable),
-                  itemBuilder: (context) => const [
-                    PopupMenuItem(value: ConciseMarkingSource.device, child: Text('Upload from device')),
-                    PopupMenuItem(value: ConciseMarkingSource.camera, child: Text('Upload from camera')),
-                    PopupMenuItem(value: ConciseMarkingSource.queue, child: Text('Upload a list from queued lists')),
-                  ],
-                  child: IgnorePointer(
-                    child: OutlinedButton.icon(
-                      onPressed: () {},
-                      icon: const Icon(Icons.savings_outlined),
-                      label: const Text('Stable Marker', textAlign: TextAlign.center),
-                      style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        minimumSize: const Size.fromHeight(0),
-                      ),
-                    ),
                   ),
                 ),
               ],
@@ -1103,10 +1254,14 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
         child: FilledButton.icon(
           onPressed: () {},
           icon: busy
-              ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
+              ? const SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: CircularProgressIndicator(strokeWidth: 2))
               : Icon(icon),
           label: Expanded(child: Text(label, overflow: TextOverflow.ellipsis)),
-          style: FilledButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 12)),
+          style: FilledButton.styleFrom(
+              padding: const EdgeInsets.symmetric(vertical: 12)),
         ),
       ),
     );
@@ -1131,10 +1286,12 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
           children: [
             Row(
               children: [
-                Icon(Icons.groups_outlined, color: Theme.of(context).colorScheme.primary),
+                Icon(Icons.groups_outlined,
+                    color: Theme.of(context).colorScheme.primary),
                 const SizedBox(width: 8),
                 Expanded(
-                  child: Text('Marked Students ($count)', style: Theme.of(context).textTheme.titleMedium),
+                  child: Text('Marked Students ($count)',
+                      style: Theme.of(context).textTheme.titleMedium),
                 ),
                 // Real, reported gap (2026-09-10): this inline summary has
                 // never offered selecting, consolidating into a list,
@@ -1146,7 +1303,10 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
                 TextButton.icon(
                   onPressed: () async {
                     await Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => MarkedScriptsScreen(repository: _repository, schemeRepository: _schemeRepository)),
+                      MaterialPageRoute(
+                          builder: (_) => MarkedScriptsScreen(
+                              repository: _repository,
+                              schemeRepository: _schemeRepository)),
                     );
                     _load();
                   },
@@ -1200,7 +1360,8 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.document_scanner_outlined, size: 48, color: Theme.of(context).colorScheme.outline),
+            Icon(Icons.document_scanner_outlined,
+                size: 48, color: Theme.of(context).colorScheme.outline),
             const SizedBox(height: 12),
             const Text(
               'No scripts captured yet. Use "Upload Script" above to photograph or upload a student\'s '
@@ -1213,7 +1374,8 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
     );
   }
 
-  Widget _buildQueueList(BuildContext context, Map<String, List<MarkingScript>> queuedByScheme) {
+  Widget _buildQueueList(
+      BuildContext context, Map<String, List<MarkingScript>> queuedByScheme) {
     final byStatus = _byStatus;
     final order = [
       MarkingScriptStatus.needsRetry,
@@ -1227,16 +1389,25 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 96),
       children: [
-        if (_remainingFreeGradings case final remaining?)
+        if (_spendableCredits case final credits?)
           Padding(
             padding: const EdgeInsets.only(bottom: 12),
-            child: Text(
-              remaining > 0
-                  ? '$remaining free AI-graded script(s) left this month.'
-                  : "You've used this month's free AI-graded scripts — more become available next month.",
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: remaining > 0 ? null : Theme.of(context).colorScheme.error,
-                  ),
+            child: InkWell(
+              onTap: () async {
+                await Navigator.of(context).push(MaterialPageRoute(
+                    builder: (_) => const MarkingCreditsScreen()));
+                _loadRemainingFreeGradings();
+              },
+              child: Text(
+                credits > 0
+                    ? 'Marking credits: ${credits == credits.roundToDouble() ? credits.toStringAsFixed(0) : credits.toStringAsFixed(1)} — tap to manage.'
+                    : "You're out of marking credits — tap to get more.",
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: credits > 0
+                          ? null
+                          : Theme.of(context).colorScheme.error,
+                    ),
+              ),
             ),
           ),
         if (_buildConfidenceSummary(context) case final summary?) summary,
@@ -1251,7 +1422,10 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
                 children: [
                   Text('Grading "$label"… ($_processedCount of $_batchTotal)'),
                   const SizedBox(height: 6),
-                  LinearProgressIndicator(value: _batchTotal == 0 ? null : _processedCount / _batchTotal),
+                  LinearProgressIndicator(
+                      value: _batchTotal == 0
+                          ? null
+                          : _processedCount / _batchTotal),
                 ],
               ),
             ),
@@ -1272,33 +1446,38 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
                     padding: const EdgeInsets.only(bottom: 8),
                     child: OutlinedButton.icon(
                       onPressed: () => _processBatch(entry.key),
-                      icon: const Icon(Icons.play_arrow),
+                      icon: const Icon(Icons.play_arrow_outlined),
                       label: Text(
                         'Process ${entry.value.length} script(s) — '
                         '${_schemes.schemes.where((s) => s.id == entry.key).map((s) => s.title).firstOrNull ?? 'Unknown scheme'}',
                       ),
                     ),
                   ),
-                for (final script in entry.value) _buildScriptTile(context, script),
+                for (final script in entry.value)
+                  _buildScriptTile(context, script),
               ]
             else
-              for (final script in byStatus[status]!) _buildScriptTile(context, script),
+              for (final script in byStatus[status]!)
+                _buildScriptTile(context, script),
           ],
       ],
     );
   }
 
   Widget _buildScriptTile(BuildContext context, MarkingScript script) {
-    final selectable = _selecting && script.status == MarkingScriptStatus.captured;
+    final selectable =
+        _selecting && script.status == MarkingScriptStatus.captured;
     final selected = _selectedIds.contains(script.id);
-    final openable = script.status == MarkingScriptStatus.graded || script.status == MarkingScriptStatus.reviewed;
+    final openable = script.status == MarkingScriptStatus.graded ||
+        script.status == MarkingScriptStatus.reviewed;
 
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
         leading: CircleAvatar(
           backgroundColor: _statusColor(script.status, context),
-          child: Text('${script.scriptNumber}', style: const TextStyle(fontSize: 13)),
+          child: Text('${script.scriptNumber}',
+              style: const TextStyle(fontSize: 13)),
         ),
         // First name on top, surname below.
         title: Column(
@@ -1325,17 +1504,19 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
                 ? () => _openScript(script)
                 : null,
         trailing: selectable
-            ? Checkbox(value: selected, onChanged: (_) => _toggleSelected(script))
+            ? Checkbox(
+                value: selected, onChanged: (_) => _toggleSelected(script))
             : Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   if (script.status == MarkingScriptStatus.needsRetry)
                     IconButton(
-                      icon: const Icon(Icons.refresh),
+                      icon: const Icon(Icons.refresh_outlined),
                       tooltip: 'Retry',
                       onPressed: () => _retryScript(script),
                     ),
-                  if (script.status == MarkingScriptStatus.reviewed && !script.photosDiscarded)
+                  if (script.status == MarkingScriptStatus.reviewed &&
+                      !script.photosDiscarded)
                     IconButton(
                       icon: const Icon(Icons.image_not_supported_outlined),
                       tooltip: 'Discard photos (keep results)',
@@ -1354,4 +1535,3 @@ class _MarkingQueueScreenState extends State<MarkingQueueScreen> {
 }
 
 enum _AnalyzeSource { captureOnPaper, previousScripts }
-

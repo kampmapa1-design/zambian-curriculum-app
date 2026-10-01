@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../models/marking_scheme.dart';
+import '../models/marking_scheme_node.dart';
 import '../services/marking_key_generation_service.dart';
 import '../services/marking_scheme_repository.dart';
 import '../services/pending_marking_key_draft_repository.dart';
@@ -12,6 +13,7 @@ import '../services/subject_content_extraction_service.dart';
 import 'document_pages_capture_screen.dart';
 import 'marking_key_details_form_screen.dart';
 import 'marking_scheme_builder_screen.dart';
+import 'marking_scheme_structure_confirmation_screen.dart';
 
 enum MarkingKeyUploadMethod { uploadFromDevice, camera }
 
@@ -208,6 +210,37 @@ Future<MarkingScheme?> _finishMarkingKeyFlow({
   );
   if (proceed != true || !context.mounted) return null;
 
+  // Marking Scheme Structure Stages 3-5 (2026-09-22) — for a document that
+  // actually parsed into a real tree, confirm its structure (and let the
+  // teacher correct any wrong mark/required-count) BEFORE asking for
+  // subject/level/exam-type, same "confirm the expensive/error-prone part
+  // first" ordering as the rest of this flow. A scheme with no tree at all
+  // (a rare malformed response, or a resumed pre-Stage-1 draft) falls
+  // through unchanged to the original flat flow below.
+  var effectiveDerived = derived;
+  if (derived.sectionTree.isNotEmpty) {
+    final confirmedTree = await Navigator.of(context).push<List<MarkingSchemeSection>>(
+      MaterialPageRoute(
+        builder: (_) => MarkingSchemeStructureConfirmationScreen(
+          sectionTree: derived.sectionTree,
+          detectedTotalMarks: derived.detectedTotalMarks,
+        ),
+      ),
+    );
+    if (confirmedTree == null || !context.mounted) return null; // backed out — abandon, same as any other step here
+    final legacy = deriveLegacyMarkingKeyView(confirmedTree);
+    effectiveDerived = DerivedMarkingKey(
+      questions: legacy.questions,
+      sections: legacy.sections,
+      notes: derived.notes,
+      detectedTitle: derived.detectedTitle,
+      markConventions: derived.markConventions,
+      examStandardHint: derived.examStandardHint,
+      detectedTotalMarks: derived.detectedTotalMarks,
+      sectionTree: confirmedTree,
+    );
+  }
+
   // Manual entry — subject name, level, and type of exam are plain text
   // the teacher types themselves, not picked from the app's bundled
   // syllabus data. A full mock exam/past paper doesn't map to one topic,
@@ -215,8 +248,8 @@ Future<MarkingScheme?> _finishMarkingKeyFlow({
   final details = await Navigator.of(context).push<MarkingKeyDetails>(
     MaterialPageRoute(
       builder: (_) => MarkingKeyDetailsFormScreen(
-        detectedTitle: derived.detectedTitle,
-        questionCount: derived.questions.length,
+        detectedTitle: effectiveDerived.detectedTitle,
+        questionCount: effectiveDerived.questions.length,
       ),
     ),
   );
@@ -228,12 +261,13 @@ Future<MarkingScheme?> _finishMarkingKeyFlow({
         subjectName: details.subjectName,
         gradeName: details.level,
         topicName: details.examType,
-        initialQuestions: derived.questions,
-        aiNotes: derived.notes,
-        aiDetectedSections: derived.sections,
-        aiMarkConventions: derived.markConventions,
-        aiExamStandardHint: derived.examStandardHint,
-        aiDetectedTotalMarks: derived.detectedTotalMarks,
+        initialQuestions: effectiveDerived.questions,
+        aiNotes: effectiveDerived.notes,
+        aiDetectedSections: effectiveDerived.sections,
+        aiMarkConventions: effectiveDerived.markConventions,
+        aiExamStandardHint: effectiveDerived.examStandardHint,
+        aiDetectedTotalMarks: effectiveDerived.detectedTotalMarks,
+        confirmedSectionTree: effectiveDerived.sectionTree,
         repository: schemeRepository,
       ),
     ),

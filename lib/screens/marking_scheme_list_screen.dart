@@ -324,7 +324,7 @@ class _MarkingSchemeListScreenState extends State<MarkingSchemeListScreen> {
         onPressed: _generatingKey ? null : _createNew,
         icon: _generatingKey
             ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
-            : const Icon(Icons.add),
+            : const Icon(Icons.add_outlined),
         label: Text(_generatingKey ? 'Generating…' : 'New Scheme'),
       ),
     );

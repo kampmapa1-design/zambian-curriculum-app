@@ -298,7 +298,7 @@ class _MarkingAnalysisScreenState extends State<MarkingAnalysisScreen> {
             Text('${_system!.label} grading', style: Theme.of(context).textTheme.titleMedium),
             TextButton.icon(
               onPressed: _changeGradingSystem,
-              icon: const Icon(Icons.swap_horiz, size: 16),
+              icon: const Icon(Icons.swap_horiz_outlined, size: 16),
               label: const Text('Change'),
             ),
           ],
@@ -320,7 +320,7 @@ class _MarkingAnalysisScreenState extends State<MarkingAnalysisScreen> {
                 ButtonSegment(
                   value: _SortMode.alphabetical,
                   label: Text('A–Z'),
-                  icon: Icon(Icons.sort_by_alpha, size: 16),
+                  icon: Icon(Icons.sort_by_alpha_outlined, size: 16),
                 ),
               ],
               selected: {_sortMode},

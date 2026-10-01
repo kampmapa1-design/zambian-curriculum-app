@@ -4,12 +4,17 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../models/marking_scheme.dart';
 import '../models/marking_script.dart';
+import '../models/test_submission.dart';
+import '../services/assignment_submission_email_service.dart';
+import '../services/concise_score_calculator.dart';
 import '../services/marking_correction_repository.dart';
 import '../services/marking_script_repository.dart';
 import '../services/student_performance_report_service.dart';
+import '../services/test_submission_repository.dart';
 
 /// AI-Assisted Marking, Stage 6 — the review screen. Every AI-graded
 /// answer (Stage 4) is shown next to the page it came from, fully
@@ -100,27 +105,57 @@ class _AnswerControllers {
 class _MarkingReviewScreenState extends State<MarkingReviewScreen> {
   late final MarkingScriptRepository _repository = widget.repository ?? MarkingScriptRepository();
   final StudentPerformanceReportService _reportService = StudentPerformanceReportService();
+  final TestSubmissionRepository _testSubmissionRepository = TestSubmissionRepository();
+  final AssignmentSubmissionEmailService _feedbackEmailService = AssignmentSubmissionEmailService();
   late final List<_AnswerControllers> _rows;
   late CandidateGender _gender = widget.script.gender;
   late bool _genderConfirmed = widget.script.genderConfirmed;
   List<File> _pageFiles = [];
+
+  /// The tick/cross-annotated, stamped copy of [_pageFiles] (2026-09-28, per
+  /// explicit request) — populated only when Concise Marking actually
+  /// produced one (see MarkingScript.annotatedPageFileNames); empty for a
+  /// script marked another way. [_feedbackPages] is what callers should
+  /// actually use: it prefers this stamped copy and only falls back to the
+  /// plain original pages when there isn't one.
+  List<File> _annotatedPageFiles = [];
+  List<File> get _feedbackPages => _annotatedPageFiles.isNotEmpty ? _annotatedPageFiles : _pageFiles;
   bool _loadingPages = true;
   bool _saving = false;
   bool _sharingReport = false;
   int _viewerIndex = 0;
+
+  /// Feedback return-path (2026-09-28, per explicit request): the ONE real
+  /// [TestSubmission] this script was created from via "Send to Marking",
+  /// if any — null for a script captured directly in Chief Marker (the
+  /// common case), in which case there is no learner to send feedback back
+  /// to and the action is hidden entirely. Scoped by this exact script's
+  /// own id, never a class-wide lookup — see
+  /// TestSubmissionRepository.findByMarkingScriptId.
+  TestSubmission? _linkedSubmission;
+  bool _sendingFeedback = false;
 
   @override
   void initState() {
     super.initState();
     _rows = [for (final a in widget.script.gradedAnswers ?? const <GradedAnswer>[]) _AnswerControllers(a)];
     _loadPages();
+    _loadLinkedSubmission();
+  }
+
+  Future<void> _loadLinkedSubmission() async {
+    final submission = await _testSubmissionRepository.findByMarkingScriptId(widget.script.id);
+    if (!mounted) return;
+    setState(() => _linkedSubmission = submission);
   }
 
   Future<void> _loadPages() async {
     final files = await _repository.pageFilesFor(widget.script);
+    final annotated = await _repository.annotatedPageFilesFor(widget.script);
     if (!mounted) return;
     setState(() {
       _pageFiles = files;
+      _annotatedPageFiles = annotated;
       _loadingPages = false;
     });
   }
@@ -141,7 +176,39 @@ class _MarkingReviewScreenState extends State<MarkingReviewScreen> {
   double _awardedFor(_AnswerControllers r) =>
       (double.tryParse(r.marks.text.trim()) ?? 0).clamp(0, r.maxMarks);
 
+  /// Marking Scheme Structure Stage 6 (2026-09-22) — when [widget.scheme]
+  /// has a real Section -> Question -> Part -> Sub-part tree, the total is
+  /// no longer a plain flat sum: it goes through
+  /// [ConciseScoreCalculator.computeForSections], which applies each
+  /// section's own "answer any N" rule correctly at the TOP-LEVEL-QUESTION
+  /// level (never letting a question's own sub-parts count as extra
+  /// independent questions — see that method's own doc comment). Rebuilt
+  /// from the CURRENT editor state every time (same values [_awardedFor]/
+  /// [_AnswerControllers] already hold), so a live edit is reflected
+  /// immediately, same as the flat sum always was. Null for a scheme with
+  /// no tree (or no scheme at all) — [_totalAwarded]/[_totalPossible] then
+  /// fall back to the original flat sum, unchanged from before this field
+  /// existed.
+  ConciseScore? get _sectionAwareScore {
+    final scheme = widget.scheme;
+    if (scheme == null || !scheme.hasSectionTree) return null;
+    final currentAnswers = [
+      for (final r in _rows)
+        GradedAnswer(
+          questionLabel: r.questionLabel,
+          maxMarks: r.maxMarks,
+          transcribedAnswer: r.answer.text,
+          marksAwarded: _awardedFor(r),
+          confidence: r.confidence,
+          markingBasis: r.markingBasis,
+        ),
+    ];
+    return const ConciseScoreCalculator().computeForSections(answers: currentAnswers, sections: scheme.sections);
+  }
+
   double get _totalAwarded {
+    final scored = _sectionAwareScore;
+    if (scored != null) return scored.awardedMarks;
     var total = 0.0;
     for (final r in _rows) {
       total += _awardedFor(r);
@@ -149,7 +216,7 @@ class _MarkingReviewScreenState extends State<MarkingReviewScreen> {
     return total;
   }
 
-  double get _totalPossible => _rows.fold(0, (sum, r) => sum + r.maxMarks);
+  double get _totalPossible => _sectionAwareScore?.possibleMarks ?? _rows.fold(0, (sum, r) => sum + r.maxMarks);
 
   /// Rules Engine Review Queue sorting (2026-09-08, per explicit request:
   /// "sort amber/red items to the top so the teacher's attention goes
@@ -192,6 +259,12 @@ class _MarkingReviewScreenState extends State<MarkingReviewScreen> {
   String get _percentLabel => '${_percentAwarded.toStringAsFixed(1)}%';
 
   Future<void> _confirmAndFinish() async {
+    if (_sectionAwareScore?.structureError == true) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('The marks don\'t add up: ${_sectionAwareScore!.structureErrorReason}. Fix the flagged mark(s) before finishing.')),
+      );
+      return;
+    }
     if (!_genderConfirmed) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Confirm this candidate's gender before finishing — it wasn't collected during batch capture.")),
@@ -312,6 +385,22 @@ class _MarkingReviewScreenState extends State<MarkingReviewScreen> {
                     icon: const Icon(Icons.share_outlined),
                     tooltip: 'Share performance report (PDF)',
                   ),
+          // Feedback return-path — only shown when this script was created
+          // from a real student submission (via "Send to Marking") that
+          // left at least one contact detail on file; hidden entirely
+          // otherwise, never a dead/disabled button with nothing to do.
+          if (_rows.isNotEmpty &&
+              (_linkedSubmission?.studentEmail != null || _linkedSubmission?.studentWhatsApp != null))
+            _sendingFeedback
+                ? const Padding(
+                    padding: EdgeInsets.all(16),
+                    child: SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2)),
+                  )
+                : IconButton(
+                    onPressed: _sendFeedbackToStudent,
+                    icon: const Icon(Icons.reply_outlined),
+                    tooltip: 'Send feedback to ${widget.script.fullName}',
+                  ),
         ],
       ),
       body: _loadingPages
@@ -400,23 +489,37 @@ class _MarkingReviewScreenState extends State<MarkingReviewScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(
-                      'Result: $_percentLabel',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
-                    ),
-                    Text(
-                      '${_totalAwarded.toStringAsFixed(_totalAwarded == _totalAwarded.roundToDouble() ? 0 : 1)} of '
-                      '${_totalPossible.toStringAsFixed(_totalPossible == _totalPossible.roundToDouble() ? 0 : 1)} marks',
-                      style: Theme.of(context).textTheme.bodySmall,
-                    ),
+                    if (_sectionAwareScore?.structureError == true) ...[
+                      Text(
+                        'Result: Needs review',
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleMedium
+                            ?.copyWith(fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.error),
+                      ),
+                      Text(
+                        'The marks don\'t add up — check the flagged question(s) above.',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).colorScheme.error),
+                      ),
+                    ] else ...[
+                      Text(
+                        'Result: $_percentLabel',
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        '${_totalAwarded.toStringAsFixed(_totalAwarded == _totalAwarded.roundToDouble() ? 0 : 1)} of '
+                        '${_totalPossible.toStringAsFixed(_totalPossible == _totalPossible.roundToDouble() ? 0 : 1)} marks',
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                    ],
                   ],
                 ),
               ),
               FilledButton.icon(
-                onPressed: _saving || widget.locked ? null : _confirmAndFinish,
+                onPressed: _saving || widget.locked || _sectionAwareScore?.structureError == true ? null : _confirmAndFinish,
                 icon: _saving
                     ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
-                    : const Icon(Icons.check),
+                    : const Icon(Icons.check_outlined),
                 label: Text(_saving ? 'Saving…' : (widget.locked ? 'Locked' : 'Confirm & Finish')),
               ),
             ],
@@ -444,6 +547,90 @@ class _MarkingReviewScreenState extends State<MarkingReviewScreen> {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Could not create the report: $error')));
     } finally {
       if (mounted) setState(() => _sharingReport = false);
+    }
+  }
+
+  /// Feedback return-path (2026-09-28, per explicit request): delivers this
+  /// SPECIFIC script's own feedback back to the ONE learner
+  /// [_linkedSubmission] identifies — never a class-wide broadcast, never
+  /// the wrong recipient, since it's looked up by this exact script's own
+  /// id (see [_loadLinkedSubmission]). Sends the student's real performance
+  /// report (marks, per-question breakdown, AI observations) together with
+  /// the visually tick/cross-STAMPED script (see [_feedbackPages]) whenever
+  /// Concise Marking produced one — falling back to the plain original
+  /// pages only for a script marked another way, which never had a stamped
+  /// copy to begin with.
+  Future<void> _sendFeedbackToStudent() async {
+    final submission = _linkedSubmission;
+    if (submission == null) return;
+    final email = submission.studentEmail;
+    final whatsApp = submission.studentWhatsApp;
+    if (email == null && whatsApp == null) return;
+
+    setState(() => _sendingFeedback = true);
+    try {
+      // Prefer Concise Marking's own persisted performance report (already
+      // scored against its own rubric) when this script has one; only
+      // regenerate the generic report for a script marked another way.
+      final reportFile = await _repository.reportPdfFileFor(widget.script) ??
+          await _reportService.generatePdf(widget.script, widget.scheme);
+      final feedbackPages = _feedbackPages;
+      final subject = 'Feedback — ${widget.script.fullName}';
+
+      var emailSent = false;
+      if (email != null) {
+        try {
+          await _feedbackEmailService.send(
+            recipientEmail: email,
+            studentName: widget.script.fullName,
+            assignmentTitle: submission.testName.isEmpty ? submission.subjectName : submission.testName,
+            submissionHash: submission.sha256Hash ?? '',
+            submittedAt: DateTime.now(),
+            attachments: [
+              EmailAttachmentFile(file: reportFile, filename: 'performance_report.pdf'),
+              for (var i = 0; i < feedbackPages.length; i++)
+                EmailAttachmentFile(file: feedbackPages[i], filename: 'script_page_${(i + 1).toString().padLeft(2, '0')}.jpg'),
+            ],
+            submissionKind: 'feedback',
+          );
+          emailSent = true;
+        } on AssignmentSubmissionEmailUnavailable catch (e) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Feedback email not sent: $e')));
+          }
+        }
+      }
+
+      var whatsAppOpened = false;
+      if (whatsApp != null) {
+        final digits = whatsApp.replaceAll(RegExp(r'[^0-9+]'), '').replaceAll('+', '');
+        if (digits.length >= 7) {
+          final waUri =
+              Uri.parse('https://wa.me/$digits?text=${Uri.encodeComponent('$subject — attaching your feedback next.')}');
+          whatsAppOpened = await launchUrl(waUri, mode: LaunchMode.externalApplication);
+        }
+        if (whatsAppOpened && mounted) {
+          await SharePlus.instance.share(
+            ShareParams(
+              files: [XFile(reportFile.path), for (final f in feedbackPages) XFile(f.path)],
+              subject: subject,
+              text: 'Attach to the WhatsApp chat that just opened.',
+            ),
+          );
+        }
+      }
+
+      if (!mounted) return;
+      if (emailSent || whatsAppOpened) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Feedback sent to the student.')),
+        );
+      }
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Could not send feedback: $error')));
+    } finally {
+      if (mounted) setState(() => _sendingFeedback = false);
     }
   }
 
@@ -577,9 +764,9 @@ class _MarkingReviewScreenState extends State<MarkingReviewScreen> {
   }
 
   Color _confidenceColor(MarkingConfidence c) => switch (c) {
-        MarkingConfidence.high => Colors.green,
-        MarkingConfidence.medium => Colors.orange,
-        MarkingConfidence.low => Colors.red,
+        MarkingConfidence.high => Colors.green.shade700,
+        MarkingConfidence.medium => Colors.orange.shade900,
+        MarkingConfidence.low => Colors.red.shade700,
       };
 
   Widget _buildAnswerCard(BuildContext context, int index) {

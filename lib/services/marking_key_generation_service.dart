@@ -5,7 +5,10 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
 import '../models/marking_scheme.dart';
+import '../models/marking_scheme_node.dart';
 import 'auth_service.dart';
+import 'marking_key_tree_parser.dart';
+import 'metered_call.dart';
 
 /// Thrown for both "can't reach the function" (offline) and "the function
 /// rejected the request".
@@ -79,6 +82,15 @@ class DerivedMarkingKey {
   /// without ever silently overriding what the teacher enters.
   final double? detectedTotalMarks;
 
+  /// The real Section -> Question -> Part -> Sub-part tree (Marking Scheme
+  /// Structure Stage 2, 2026-09-22) — the source of truth going forward.
+  /// [questions]/[sections] above are kept as DERIVED flat views (built
+  /// from this tree at parse time — see [parseMarkingKeySectionTree] and
+  /// [_deriveLegacyView] below) purely so every screen written before this
+  /// field existed keeps working unchanged; a new caller should read
+  /// [sectionTree] directly rather than the flattened view.
+  final List<MarkingSchemeSection> sectionTree;
+
   const DerivedMarkingKey({
     required this.questions,
     this.sections = const [],
@@ -87,8 +99,24 @@ class DerivedMarkingKey {
     this.markConventions = const [],
     this.examStandardHint,
     this.detectedTotalMarks,
+    this.sectionTree = const [],
   });
 }
+
+/// Builds the legacy flat [DerivedMarkingKey.questions]/[.sections] view
+/// from a real [sectionTree] — shared by the live Cloud Function response
+/// parser and [PendingMarkingKeyDraft]'s own JSON round-trip, so both stay
+/// in sync with the same derivation rule.
+({List<MarkingSchemeQuestion> questions, List<DerivedMarkingKeySection> sections}) deriveLegacyMarkingKeyView(
+  List<MarkingSchemeSection> sectionTree,
+) =>
+    (
+      questions: [for (final s in sectionTree) ...s.flattenedQuestions()],
+      sections: [
+        for (final s in sectionTree)
+          DerivedMarkingKeySection(name: s.name, answerInstructions: s.answerInstructions ?? ''),
+      ],
+    );
 
 /// AI-Assisted Marking, Stage B — calls `deriveMarkingKeyFromQuestionPaper`
 /// with either already-extracted text (PDF path — see
@@ -98,9 +126,12 @@ class DerivedMarkingKey {
 /// MarkingSchemeBuilderScreen for a teacher to review and edit, never
 /// saved directly — see the Cloud Function's own comment for why.
 class MarkingKeyGenerationService {
-  MarkingKeyGenerationService({FirebaseFunctions? functions}) : _functions = functions ?? FirebaseFunctions.instance;
+  MarkingKeyGenerationService({FirebaseFunctions? functions}) : _providedFunctions = functions;
 
-  final FirebaseFunctions _functions;
+  // Lazy: resolving FirebaseFunctions.instance needs Firebase.initializeApp() to have
+  // succeeded; constructing this service must never throw just because it hasn't.
+  final FirebaseFunctions? _providedFunctions;
+  FirebaseFunctions get _functions => _providedFunctions ?? FirebaseFunctions.instance;
 
   Future<bool> get isOnline async {
     final result = await Connectivity().checkConnectivity();
@@ -170,8 +201,7 @@ class MarkingKeyGenerationService {
     onProgress('Signing in…');
     await AuthService.instance.ensureSignedIn();
 
-    final callable = _functions.httpsCallable(
-      'deriveMarkingKeyFromQuestionPaper',
+    final callable = meteredCallable(_functions, 'deriveMarkingKeyFromQuestionPaper',
       options: HttpsCallableOptions(timeout: const Duration(seconds: 110)),
     );
 
@@ -193,43 +223,10 @@ class MarkingKeyGenerationService {
       throw const MarkingKeyGenerationUnavailable('The marking key response was in an unexpected format.');
     }
     final responseData = rawData;
-    final questionsRaw = responseData['questions'];
-    if (questionsRaw is! List) {
-      throw const MarkingKeyGenerationUnavailable('The marking key response was in an unexpected format.');
-    }
-
-    final questions = <MarkingSchemeQuestion>[];
-    for (final q in questionsRaw) {
-      if (q is! Map) continue;
-      final label = q['label'];
-      final expected = q['expectedAnswerOrKeywords'];
-      final maxMarks = q['maxMarks'];
-      final sectionNameRaw = q['sectionName'];
-      final sectionName = sectionNameRaw is String && sectionNameRaw.trim().isNotEmpty ? sectionNameRaw.trim() : null;
-      questions.add(MarkingSchemeQuestion(
-        label: label is String ? label : '',
-        expectedAnswerOrKeywords: expected is String ? expected : '',
-        maxMarks: maxMarks is num ? maxMarks.toDouble() : 0,
-        sectionName: sectionName,
-      ));
-    }
-    if (questions.isEmpty) {
+    final sectionTree = parseMarkingKeySectionTree(responseData['sections']);
+    final legacy = deriveLegacyMarkingKeyView(sectionTree);
+    if (legacy.questions.isEmpty) {
       throw const MarkingKeyGenerationUnavailable('No questions could be found on that document.');
-    }
-
-    final sections = <DerivedMarkingKeySection>[];
-    final sectionsRaw = responseData['sections'];
-    if (sectionsRaw is List) {
-      for (final s in sectionsRaw) {
-        if (s is! Map) continue;
-        final name = s['name'];
-        if (name is! String || name.trim().isEmpty) continue;
-        final instructions = s['answerInstructions'];
-        sections.add(DerivedMarkingKeySection(
-          name: name.trim(),
-          answerInstructions: instructions is String ? instructions.trim() : '',
-        ));
-      }
     }
 
     final notes = responseData['notes'];
@@ -249,13 +246,14 @@ class MarkingKeyGenerationService {
     final detectedTotalMarks = detectedTotalMarksRaw is num ? detectedTotalMarksRaw.toDouble() : null;
 
     return DerivedMarkingKey(
-      questions: questions,
-      sections: sections,
+      questions: legacy.questions,
+      sections: legacy.sections,
       notes: notes is String ? notes : '',
       detectedTitle: detectedTitle is String ? detectedTitle : '',
       markConventions: markConventions,
       examStandardHint: examStandardHint,
       detectedTotalMarks: detectedTotalMarks,
+      sectionTree: sectionTree,
     );
   }
 }

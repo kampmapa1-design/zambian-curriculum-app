@@ -1,3 +1,5 @@
+import 'marking_scheme_node.dart';
+
 /// Which real marking regime a [MarkingScheme] follows — Rules Engine
 /// (2026-09-08, per explicit request, see the user's own
 /// Smart_Teacher_AI_Marking_Rules_Engine-1.md design doc). Set from
@@ -177,6 +179,16 @@ class MarkingScheme {
   /// existed.
   final List<String> markConventions;
 
+  /// The paper's real Section → Question → Part → Sub-part structure
+  /// (Marking Scheme Structure, Stage 1, 2026-09-22) — empty for every
+  /// scheme built before this field existed, or one whose source paper
+  /// genuinely has no section structure at all. When non-empty, this is
+  /// the source of truth for grading dispatch and section-aware scoring
+  /// (see [effectiveQuestions] and ConciseScoreCalculator's tree-aware
+  /// path) — [questions] is then a DERIVED flat view kept in sync at
+  /// construction time, not independently authored.
+  final List<MarkingSchemeSection> sections;
+
   const MarkingScheme({
     required this.id,
     required this.title,
@@ -192,19 +204,39 @@ class MarkingScheme {
     this.gradingGuidance,
     this.examStandard = MarkingExamStandard.unspecified,
     this.markConventions = const [],
+    this.sections = const [],
   });
+
+  bool get hasSectionTree => sections.isNotEmpty;
+
+  /// The flat, per-question view every existing grading-dispatch/review
+  /// consumer already expects — [questions] itself for a scheme with no
+  /// tree (unchanged, pre-Stage-1 behaviour), or every section's own
+  /// [MarkingSchemeSection.flattenedQuestions] in section order when a
+  /// tree is present. Always prefer this over reading [questions] directly
+  /// once a scheme might have a tree, so a Stage-1 scheme's real
+  /// Part/Sub-part structure is never silently ignored.
+  List<MarkingSchemeQuestion> get effectiveQuestions =>
+      hasSectionTree ? [for (final s in sections) ...s.flattenedQuestions()] : questions;
 
   /// The paper's total marks — [confirmedPaperTotalMarks] when a teacher
   /// has confirmed it (see MarkingSchemePaperStructureScreen), otherwise a
   /// plain sum of every listed question's `maxMarks` (the only option
   /// before that confirmation step existed, and still a reasonable
   /// fallback for a paper with no "answer N of M" structure at all).
-  double get totalMarks => confirmedPaperTotalMarks ?? questions.fold(0, (sum, q) => sum + q.maxMarks);
+  double get totalMarks =>
+      confirmedPaperTotalMarks ??
+      (hasSectionTree
+          ? sections.fold(0.0, (sum, s) => sum + s.totalMarksIfAllAnswered)
+          : questions.fold(0, (sum, q) => sum + q.maxMarks));
 
-  /// Every distinct section name across [questions], in first-appearance
-  /// order, skipping questions with no section at all. Empty when the
-  /// paper has no section structure.
+  /// Every distinct section name, in first-appearance order — read
+  /// straight from [sections] when a tree exists (which also correctly
+  /// includes a section with zero questions confirmed so far), otherwise
+  /// derived from [questions] as before Stage 1. Empty when the paper has
+  /// no section structure.
   List<String> get sectionNames {
+    if (hasSectionTree) return [for (final s in sections) s.name];
     final seen = <String>{};
     final ordered = <String>[];
     for (final q in questions) {
@@ -225,6 +257,7 @@ class MarkingScheme {
     String? gradingGuidance,
     MarkingExamStandard? examStandard,
     List<String>? markConventions,
+    List<MarkingSchemeSection>? sections,
   }) =>
       MarkingScheme(
         id: id,
@@ -241,6 +274,7 @@ class MarkingScheme {
         gradingGuidance: gradingGuidance ?? this.gradingGuidance,
         examStandard: examStandard ?? this.examStandard,
         markConventions: markConventions ?? this.markConventions,
+        sections: sections ?? this.sections,
       );
 
   factory MarkingScheme.fromJson(Map<String, dynamic> json) => MarkingScheme(
@@ -261,6 +295,11 @@ class MarkingScheme {
         gradingGuidance: json['gradingGuidance'] as String?,
         examStandard: MarkingExamStandard.fromValue(json['examStandard'] as String?),
         markConventions: (json['markConventions'] as List?)?.cast<String>() ?? const [],
+        sections: (json['sections'] as List?)
+                ?.whereType<Map>()
+                .map((m) => MarkingSchemeSection.fromJson(m.cast<String, dynamic>()))
+                .toList() ??
+            const [],
       );
 
   Map<String, dynamic> toJson() => {
@@ -278,6 +317,7 @@ class MarkingScheme {
         if (gradingGuidance != null) 'gradingGuidance': gradingGuidance,
         'examStandard': examStandard.dbValue,
         if (markConventions.isNotEmpty) 'markConventions': markConventions,
+        if (sections.isNotEmpty) 'sections': [for (final s in sections) s.toJson()],
       };
 }
 

@@ -1,6 +1,8 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
@@ -34,7 +36,11 @@ class MarkingSessionRepository {
     if (!await file.exists()) return null;
     try {
       return MarkingSession.fromJson(jsonDecode(await file.readAsString()) as Map<String, dynamic>);
-    } catch (_) {
+    } catch (e, st) {
+      // Non-fatal — this previously returned null with zero trace of a
+      // real parsing/corruption failure. Crashlytics reporting removed
+      // 2026-09-28 (circuit-breaker, see main.dart's own doc).
+      debugPrint('MarkingSessionRepository.getActive: failed to read/parse $e\n$st');
       return null;
     }
   }

@@ -136,4 +136,130 @@ void main() {
     expect(restored.sections.last.ignoredExcessQuestions, original.sections.last.ignoredExcessQuestions);
     expect(restored.outOf100Label, original.outOf100Label);
   });
+
+  // -------------------------------------------------------------------
+  // Stage 2 / Stage 4 (2026-09-22): the hard sanity-check safeguard, and a
+  // permanent regression test reproducing the real incident it exists for —
+  // a Zambian History paper where one miskeyed/misread mark (900 recorded
+  // against a question worth 10) produced a "900 / 100" result that was
+  // shown to a teacher as a real score. The scorer must now refuse to
+  // output that, flag it for manual review, and still surface the raw
+  // section-by-section breakdown so the teacher can find the miscount.
+  // -------------------------------------------------------------------
+  group('Stage 2 safeguard — never output an out-of-range score', () {
+    test('THE HISTORY BUG: one miskeyed mark (900 of a possible 10) on an otherwise normal 100-mark paper '
+        'is flagged, not silently shown as a real score', () {
+      // A typical Zambian History paper: Section A short-answer questions
+      // (no rubric-driven scaling — a plain sum), stated grand total 100.
+      // Q7's mark was miskeyed as 900 (an extra zero) instead of 9.
+      const rubric = MarkingRubric(sections: [], paperTotalMarks: 100, instructionsSummary: 'Answer all questions.');
+      final score = calc.compute(
+        answers: [
+          ans('1', 8, 10), ans('2', 9, 10), ans('3', 7, 10), ans('4', 10, 10),
+          ans('5', 6, 10), ans('6', 8, 10), ans('7', 900, 10), // <- the miskeyed mark
+          ans('8', 9, 10), ans('9', 7, 10), ans('10', 8, 10),
+        ],
+        sectionByLabel: const {
+          '1': null, '2': null, '3': null, '4': null, '5': null,
+          '6': null, '7': null, '8': null, '9': null, '10': null,
+        },
+        rubric: rubric,
+      );
+
+      expect(score.structureError, isTrue);
+      expect(score.structureErrorReason, contains('7'));
+      expect(score.structureErrorReason, contains('900'));
+
+      // Never a trustworthy number — never shown to a teacher as a real score.
+      expect(score.outOf100Label, 'Needs review');
+      expect(score.rawFractionLabel, 'Needs review');
+      expect(score.roundedPercent, 0);
+
+      // ...but the raw section-by-section breakdown IS still there, so the
+      // teacher can actually find and fix the miscount.
+      expect(score.sections, isNotEmpty);
+      expect(score.sections.single.countedLabels, contains('7'));
+    });
+
+    test('a well-formed paper anywhere near this shape is completely unaffected (no false positive)', () {
+      const rubric = MarkingRubric(sections: [], paperTotalMarks: 100, instructionsSummary: '');
+      final score = calc.compute(
+        answers: [for (var i = 1; i <= 10; i++) ans('$i', 8, 10)],
+        sectionByLabel: {for (var i = 1; i <= 10; i++) '$i': null},
+        rubric: rubric,
+      );
+      expect(score.structureError, isFalse);
+      expect(score.structureErrorReason, isNull);
+      expect(score.outOf100Label, '80 / 100');
+    });
+
+    test('a negative total is flagged, never shown as a negative score', () {
+      final score = calc.compute(
+        answers: [ans('1', -5, 10), ans('2', 3, 10)],
+        sectionByLabel: const {'1': null, '2': null},
+        rubric: null,
+      );
+      expect(score.structureError, isTrue);
+      expect(score.structureErrorReason, contains('negative'));
+    });
+
+    test('marks awarded against a paper whose total comes out as zero is flagged, not silently shown as 0%', () {
+      // maxMarks 0 keeps possible at 0 (a malformed/degenerate question), but
+      // marksAwarded nonzero is still an impossible combination worth flagging.
+      final score = calc.compute(
+        answers: [ans('1', 5, 0)],
+        sectionByLabel: const {'1': null},
+        rubric: null,
+      );
+      expect(score.structureError, isTrue);
+      expect(score.structureErrorReason, contains('zero'));
+    });
+
+    test('the 2% tolerance: right at the edge is fine, a hair beyond it is flagged', () {
+      const rubric = MarkingRubric(sections: [], paperTotalMarks: 100, instructionsSummary: '');
+      final atEdge = calc.compute(
+        answers: [ans('1', 102, 100)], // exactly +2%
+        sectionByLabel: const {'1': null},
+        rubric: rubric,
+      );
+      expect(atEdge.structureError, isFalse);
+
+      final beyondEdge = calc.compute(
+        answers: [ans('1', 102.5, 100)], // +2.5%
+        sectionByLabel: const {'1': null},
+        rubric: rubric,
+      );
+      expect(beyondEdge.structureError, isTrue);
+    });
+
+    test('legitimate paper-total scaling of a normal, well-formed script never trips the safeguard', () {
+      // Section maxMarks sum to 25 but the paper allocates 20 (a routine,
+      // correct rescale) — this must never be mistaken for the bug.
+      const rubric = MarkingRubric(
+        sections: [RubricSection(name: 'Section B', questionsToAnswer: null, marksAllocated: 20)],
+        paperTotalMarks: 20,
+        instructionsSummary: '',
+      );
+      final score = calc.compute(
+        answers: [ans('B1', 15, 15), ans('B2', 10, 10)], // 25/25 raw -> scaled to 20/20
+        sectionByLabel: const {'B1': 'Section B', 'B2': 'Section B'},
+        rubric: rubric,
+      );
+      expect(score.structureError, isFalse);
+      expect(score.percentage, closeTo(100, 0.001));
+    });
+
+    test('ConciseScore survives a JSON round-trip with structureError set', () {
+      const rubric = MarkingRubric(sections: [], paperTotalMarks: 100, instructionsSummary: '');
+      final original = calc.compute(
+        answers: [ans('1', 900, 10)],
+        sectionByLabel: const {'1': null},
+        rubric: rubric,
+      );
+      final restored = ConciseScore.fromJson(original.toJson());
+      expect(restored.structureError, isTrue);
+      expect(restored.structureErrorReason, original.structureErrorReason);
+      expect(restored.outOf100Label, 'Needs review');
+    });
+  });
 }

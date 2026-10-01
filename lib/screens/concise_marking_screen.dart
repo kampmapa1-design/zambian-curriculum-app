@@ -7,17 +7,24 @@ import 'package:share_plus/share_plus.dart';
 
 import '../models/concise_marking_record.dart';
 import '../models/marking_rubric.dart';
+import '../models/marking_credits.dart';
 import '../models/marking_scheme.dart';
 import '../models/marking_script.dart';
 import '../services/concise_cohort_score_list_document_service.dart';
 import '../services/concise_marking_service.dart';
 import '../services/concise_score_calculator.dart';
+import '../services/marking_credits_service.dart';
 import '../services/marking_entitlement_service.dart';
 import '../services/marking_scheme_repository.dart';
 import '../services/marking_script_repository.dart';
 import '../services/script_annotation_service.dart';
+import '../widgets/app_animated_progress.dart';
+import '../widgets/app_primary_button.dart';
 import 'burst_capture_screen.dart';
 import 'document_pages_capture_screen.dart';
+import 'marking_cohort_structure_screen.dart';
+import 'marking_review_comparison_screen.dart';
+import 'marking_credits_screen.dart';
 
 /// "Concise Marking" (Scan Marker) — a whole marking SESSION for one exam,
 /// run as a PURE AI marking engine (2026-09-10, per explicit request:
@@ -164,8 +171,21 @@ class _ConciseMarkingScreenState extends State<ConciseMarkingScreen> {
   /// The examination's section rules — captured from the FIRST script that
   /// grades successfully, then reused for every following script in this
   /// session ("just pay attention to the marking instructions on the first
-  /// page of the first script that you mark per cohort").
+  /// page of the first script that you mark per cohort"). For a non-keyed
+  /// engine this is now set ONLY by the Stage 1 confirmation screen (see
+  /// [_confirmCohortStructure]) — never silently re-derived from a later
+  /// grading response, which is exactly what let an unconfirmed, wrong
+  /// structure drive scoring before this safeguard existed. Null is itself
+  /// a valid, teacher-confirmed answer ("no sections — plain sum"), which
+  /// is why [_structureConfirmed] exists as a separate flag: this field
+  /// being null no longer means "not asked yet".
   MarkingRubric? _cohortRubric;
+
+  /// Whether the Stage 1 structure-confirmation step has run for this
+  /// cohort (whatever the teacher decided) — see [_cohortRubric]'s own doc
+  /// comment for why this can't just be inferred from [_cohortRubric] being
+  /// non-null. Irrelevant for keyed marking, which never uses this gate.
+  bool _structureConfirmed = false;
 
   /// A saved marking key whose subject matches this session's subject —
   /// auto-detected, sent to the AI as reference only, and shown to the
@@ -654,21 +674,46 @@ class _ConciseMarkingScreenState extends State<ConciseMarkingScreen> {
       return;
     }
 
+    // Marking Reliability Stage 1 (2026-09-22, per explicit request following
+    // a real incident where an AI-derived exam structure was silently wrong
+    // and produced an out-of-range score): before ANY script in this cohort
+    // is marked, the exam structure must be shown to and confirmed by the
+    // teacher — never silently derived and applied. Keyed marking uses an
+    // actual teacher-authored MarkingScheme (already confirmed at
+    // scheme-creation time via MarkingSchemePaperStructureScreen), so this
+    // gate is scoped to the AI-derived engines only, and runs once per cohort.
+    if (!_keyed && !_structureConfirmed) {
+      final confirmed = await _confirmCohortStructure(pending.first);
+      if (!confirmed) return; // teacher backed out — nothing was marked
+    }
+
     setState(() {
       _marking = true;
       _markDone = 0;
       _markTotal = pending.length;
     });
 
+    var outOfCredits = false;
+    InsufficientCreditsException? outOfCreditsReason;
     for (final item in pending) {
       if (!mounted) return;
       setState(() => item.status = _ItemStatus.marking);
       try {
-        if (!await MarkingEntitlementService.instance.canGradeAnother()) {
+        // Courtesy pre-check only — the server is the real gate and the only
+        // thing that charges (once, after a valid result; see MarkingRequestIds).
+        final linkedSchemeForBilling = item.referenceScheme ?? _referenceScheme;
+        final billedEngine = _stable
+            ? MarkingEngineKind.stable
+            : (_keyed && linkedSchemeForBilling != null ? MarkingEngineKind.keyed : MarkingEngineKind.concise);
+        if (!await MarkingEntitlementService.instance.canGradeAnother(
+          engine: billedEngine,
+          pages: item.script.pageFileNames.length,
+        )) {
           setState(() {
-            item.status = _ItemStatus.failed;
-            item.error = "You've used this month's free AI gradings (the same allowance normal marking uses).";
+            item.status = _ItemStatus.pending; // not a failure — nothing was tried, nothing was charged
+            item.error = null;
           });
+          outOfCredits = true;
           break;
         }
 
@@ -691,10 +736,24 @@ class _ConciseMarkingScreenState extends State<ConciseMarkingScreen> {
           subjectName: _subject,
           knownRubric: _cohortRubric,
           lightweight: _stable,
+          // Same id on every retry of this script, so it is charged at most once.
+          requestId: MarkingRequestIds.forKey('script:${item.script.id}'),
         );
-        await MarkingEntitlementService.instance.recordGradingUsed();
-        _cohortRubric ??= result.rubric;
-        final effectiveRubric = _cohortRubric ?? result.rubric;
+        MarkingRequestIds.clear('script:${item.script.id}');
+        // Keyed marking never went through the Stage 1 confirmation gate, so
+        // it keeps the old auto-derive-on-first-success behaviour (harmless —
+        // a teacher-authored key rarely returns its own AI rubric anyway).
+        // Every OTHER engine's rubric is ONLY EVER the teacher-confirmed one
+        // once Stage 1 has run — including a confirmed "no sections" (null),
+        // which must NOT then fall back to whatever this same call's own
+        // result.rubric says: the server has no way to know "no sections"
+        // was an explicit teacher decision rather than simply unset, so it
+        // may still derive its own (unconfirmed) rubric per script, and that
+        // must never be allowed to silently drive scoring.
+        if (_keyed) {
+          _cohortRubric ??= result.rubric;
+        }
+        final effectiveRubric = (!_keyed && _structureConfirmed) ? _cohortRubric : (_cohortRubric ?? result.rubric);
 
         final score = const ConciseScoreCalculator().compute(
           answers: result.answers,
@@ -719,6 +778,10 @@ class _ConciseMarkingScreenState extends State<ConciseMarkingScreen> {
           ],
           scoreJson: score.toJson(),
           sectionByLabel: result.sectionByLabel,
+          // Persisted so a later mark correction (the review comparison
+          // screen) can recompute the score against the SAME section rules
+          // — see ConciseMarkingRecord.rubric's own doc comment.
+          rubric: effectiveRubric,
         );
 
         final updated = item.script.copyWith(
@@ -769,9 +832,22 @@ class _ConciseMarkingScreenState extends State<ConciseMarkingScreen> {
                 title: title,
               );
 
+        // Persist the stamped script + report onto the script itself, not
+        // just this screen's own transient widget state — owner request,
+        // 2026-09-28: a later screen (e.g. sending feedback to the learner)
+        // must always be able to find and reuse the SAME stamped copy,
+        // without needing Concise Marking's own session still open. See
+        // MarkingScriptRepository.saveAnnotatedArtifacts.
+        final persisted = await _repository.saveAnnotatedArtifacts(
+          script: updated,
+          annotatedPages: annotated,
+          reportPdf: report,
+          fallbackPdf: fallback,
+        );
+
         if (!mounted) return;
         setState(() {
-          item.script = updated;
+          item.script = persisted;
           item.status = _ItemStatus.marked;
           item.score = score;
           item.annotatedPages = annotated;
@@ -780,6 +856,17 @@ class _ConciseMarkingScreenState extends State<ConciseMarkingScreen> {
           item.observations = result.observations;
           item.error = null;
         });
+      } on InsufficientCreditsException catch (e) {
+        // The server refused BEFORE marking: nothing was charged. Leave the
+        // script pending (not failed) and stop the run.
+        if (!mounted) return;
+        setState(() {
+          item.status = _ItemStatus.pending;
+          item.error = null;
+        });
+        outOfCredits = true;
+        outOfCreditsReason = e;
+        break;
       } catch (error) {
         if (!mounted) return;
         setState(() {
@@ -795,9 +882,31 @@ class _ConciseMarkingScreenState extends State<ConciseMarkingScreen> {
     await _load();
     if (!mounted) return;
 
+    if (outOfCredits) {
+      await showOutOfCreditsDialog(context, outOfCreditsReason);
+      if (!mounted) return;
+    }
+
     final markedNow = _items.where((i) => i.status == _ItemStatus.marked).length;
     final stillPending = _items.where((i) => i.status == _ItemStatus.pending || i.status == _ItemStatus.failed).length;
-    if (markedNow > 0 && stillPending == 0) {
+
+    // Marking Reliability Stage 12: a script THIS run just flagged is
+    // offered straight away — the most useful moment to catch it, while
+    // the teacher is already looking at this cohort.
+    final flaggedThisRun = [for (final item in pending) if (_isFlagged(item)) item];
+    if (flaggedThisRun.isNotEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            flaggedThisRun.length == 1
+                ? '${flaggedThisRun.single.candidateName.isEmpty ? 'One script' : flaggedThisRun.single.candidateName} needs a closer look before its score can be trusted.'
+                : '${flaggedThisRun.length} scripts need a closer look before their scores can be trusted.',
+          ),
+          duration: const Duration(seconds: 8),
+          action: SnackBarAction(label: 'Review', onPressed: () => _openItemResult(flaggedThisRun.first)),
+        ),
+      );
+    } else if (markedNow > 0 && stillPending == 0) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('$markedNow script(s) marked. Ready to share the cohort score list.'),
@@ -808,8 +917,89 @@ class _ConciseMarkingScreenState extends State<ConciseMarkingScreen> {
     }
   }
 
+  /// Marking Reliability Stage 1: reads the first script's cover page,
+  /// shows the result to the teacher on [MarkingCohortStructureScreen] for
+  /// confirmation/correction, and sets [_cohortRubric] from what they
+  /// confirm — never from what the AI alone said. Returns false (and marks
+  /// nothing) if the teacher backs out of the screen without confirming.
+  Future<bool> _confirmCohortStructure(_SessionItem firstItem) async {
+    MarkingRubric? extracted;
+    try {
+      final pageFiles = await _repository.pageFilesFor(firstItem.script);
+      if (pageFiles.isNotEmpty) {
+        extracted = await _gradingService.extractCohortStructure(pageFiles: pageFiles, subjectName: _subject);
+      }
+    } on InsufficientCreditsException catch (e) {
+      if (!mounted) return false;
+      await showOutOfCreditsDialog(context, e);
+      return false;
+    } catch (error) {
+      // Offline, or the AI call failed: never let a network hiccup block
+      // marking outright — the teacher can still confirm the structure by
+      // hand on the next screen, starting from "nothing detected".
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Couldn't read the exam structure automatically ($error) — you can enter it by hand next.")),
+        );
+      }
+    }
+    if (!mounted) return false;
+
+    final result = await Navigator.of(context).push<CohortStructureConfirmation>(
+      MaterialPageRoute(builder: (_) => MarkingCohortStructureScreen(initialRubric: extracted, subjectName: _subject)),
+    );
+    if (result == null) return false; // backed out without confirming — nothing marked
+    setState(() {
+      _cohortRubric = result.rubric;
+      _structureConfirmed = true;
+    });
+    return true;
+  }
+
+  static String? _firstLabelWhere(List<GradedAnswer> answers, bool Function(GradedAnswer) test) {
+    for (final a in answers) {
+      if (test(a)) return a.questionLabel;
+    }
+    return null;
+  }
+
+  /// Marking Reliability Stage 12: whether [item] needs a closer look —
+  /// either it failed the Stage 2 structure safeguard, or the AI itself
+  /// flagged an answer as low-confidence. Shared by the item-tile icon and
+  /// by the routing decision below, so the two can never disagree about
+  /// which scripts are "flagged".
+  bool _isFlagged(_SessionItem item) {
+    if (item.status != _ItemStatus.marked) return false;
+    if (item.score?.structureError == true) return true;
+    return item.script.gradedAnswers?.any((a) => a.confidence == MarkingConfidence.low) ?? false;
+  }
+
+  /// Marking Reliability Stage 12: a flagged script opens straight into the
+  /// Stage 6 side-by-side review screen — the exact tool built to resolve
+  /// this — rather than the plain read-only result view.
   Future<void> _openItemResult(_SessionItem item) async {
     if (item.status != _ItemStatus.marked) return;
+    if (_isFlagged(item)) {
+      final pageFiles = await _repository.pageFilesFor(item.script);
+      if (!mounted) return;
+      final answers = item.script.gradedAnswers ?? const <GradedAnswer>[];
+      final initialLabel = (item.score?.structureError == true ? _firstLabelWhere(answers, (a) => a.marksAwarded > a.maxMarks) : null) ??
+          _firstLabelWhere(answers, (a) => a.confidence == MarkingConfidence.low);
+      await Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) => MarkingReviewComparisonScreen(
+            script: item.script,
+            scriptPageFiles: pageFiles,
+            questionPaperFiles: item.questionPaperFiles,
+            scheme: _keyed ? (item.referenceScheme ?? _referenceScheme) : null,
+            repository: _repository,
+            initialQuestionLabel: initialLabel,
+          ),
+        ),
+      );
+      if (mounted) setState(() {}); // the comparison screen may have edited this item's score/answers in place
+      return;
+    }
     await Navigator.of(context).push(
       MaterialPageRoute(builder: (_) => _ConciseResultScreen(item: item, subject: _subject, stable: _stable)),
     );
@@ -1085,7 +1275,11 @@ class _ConciseMarkingScreenState extends State<ConciseMarkingScreen> {
                 ],
                 if (_marking) ...[
                   const SizedBox(height: 10),
-                  LinearProgressIndicator(value: _markTotal == 0 ? null : _markDone / _markTotal),
+                  // Stage M (micro-interactions, 2026-09-27): "a gentle
+                  // progress-bar fill rather than an instant jump" — this
+                  // used to snap straight to each new fraction as scripts
+                  // finished marking one by one.
+                  AppAnimatedLinearProgress(value: _markTotal == 0 ? null : _markDone / _markTotal),
                   const SizedBox(height: 4),
                   Text('Marking $_markDone of $_markTotal…', style: Theme.of(context).textTheme.bodySmall),
                 ],
@@ -1124,16 +1318,16 @@ class _ConciseMarkingScreenState extends State<ConciseMarkingScreen> {
                     Expanded(
                       child: OutlinedButton.icon(
                         onPressed: _marking ? null : _showAddSources,
-                        icon: const Icon(Icons.add),
+                        icon: const Icon(Icons.add_outlined),
                         label: const Text('Add script(s)'),
                       ),
                     ),
                     const SizedBox(width: 8),
                     Expanded(
-                      child: FilledButton.icon(
+                      child: AppPrimaryButton(
                         onPressed: (_marking || pending == 0) ? null : _submitForMarking,
-                        icon: const Icon(Icons.grading),
-                        label: Text('Submit $pending for marking'),
+                        icon: Icons.grading_outlined,
+                        label: 'Submit $pending for marking',
                       ),
                     ),
                   ],
@@ -1153,10 +1347,16 @@ class _ConciseMarkingScreenState extends State<ConciseMarkingScreen> {
   }
 
   Widget _buildItemTile(BuildContext context, _SessionItem item) {
+    // A flagged script is NOT "done" in the way a green checkmark implies —
+    // it needs a teacher's eyes before its score/marks mean anything, so it
+    // gets the same warning treatment as a failure. See _isFlagged's own
+    // doc comment for exactly what counts.
+    final needsReview = _isFlagged(item);
     final (icon, iconColor) = switch (item.status) {
-      _ItemStatus.pending => (Icons.hourglass_empty, Theme.of(context).colorScheme.outline),
-      _ItemStatus.marking => (Icons.autorenew, Theme.of(context).colorScheme.primary),
-      _ItemStatus.marked => (Icons.check_circle, Colors.green),
+      _ItemStatus.pending => (Icons.hourglass_empty_outlined, Theme.of(context).colorScheme.outline),
+      _ItemStatus.marking => (Icons.autorenew_outlined, Theme.of(context).colorScheme.primary),
+      _ItemStatus.marked when needsReview => (Icons.warning_amber_rounded, Colors.amber.shade800),
+      _ItemStatus.marked => (Icons.check_circle_outlined, Colors.green.shade700),
       _ItemStatus.failed => (Icons.error_outline, Theme.of(context).colorScheme.error),
     };
     final refLabel = _keyed
@@ -1169,6 +1369,13 @@ class _ConciseMarkingScreenState extends State<ConciseMarkingScreen> {
     ];
     if (item.status == _ItemStatus.marked && item.score != null) {
       subtitleParts.add('${item.score!.outOf100Label}  (${item.score!.rawFractionLabel} raw)');
+      if (needsReview) {
+        subtitleParts.add(
+          item.score?.structureError == true
+              ? 'Structure error: ${item.score!.structureErrorReason ?? 'see breakdown'} — tap to review'
+              : 'A low-confidence answer needs a closer look — tap to review',
+        );
+      }
     } else if (item.status == _ItemStatus.failed && item.error != null) {
       subtitleParts.add(item.error!);
     } else {
@@ -1181,7 +1388,7 @@ class _ConciseMarkingScreenState extends State<ConciseMarkingScreen> {
         leading: Icon(icon, color: iconColor),
         title: Text(item.candidateName.isEmpty ? '(no name)' : item.candidateName),
         subtitle: Text(subtitleParts.join('\n')),
-        isThreeLine: item.status == _ItemStatus.failed,
+        isThreeLine: item.status == _ItemStatus.failed || needsReview,
         onTap: item.status == _ItemStatus.marked ? () => _openItemResult(item) : null,
         trailing: _marking
             ? null
@@ -1236,6 +1443,36 @@ class _ConciseResultScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         children: [
           if (score != null) ...[
+            if (score.structureError)
+              Card(
+                color: Colors.amber.shade100,
+                margin: const EdgeInsets.only(bottom: 12),
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Icon(Icons.warning_amber_rounded, color: Colors.amber.shade900),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Structure error — needs manual review',
+                                style: TextStyle(fontWeight: FontWeight.bold, color: Colors.amber.shade900)),
+                            const SizedBox(height: 4),
+                            Text(
+                              "This script's total didn't add up correctly, so no score is shown. "
+                              '${score.structureErrorReason ?? ''} Check the section breakdown below against '
+                              "the student's actual script to find and fix the miscounted answer.",
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             Text('Score: ${score.outOf100Label}', style: Theme.of(context).textTheme.headlineSmall),
             Text('${score.rawFractionLabel} raw marks  ·  ${score.roundedPercent}%'
                 '${score.rubricApplied ? '' : '  · no section rules found'}'),

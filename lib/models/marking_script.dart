@@ -319,6 +319,33 @@ class MarkingScript {
   /// no further AI call. Null for scripts marked the normal way.
   final ConciseMarkingRecord? conciseMarking;
 
+  /// File names only (relative to this script's own annotated-artifacts
+  /// subdirectory — see MarkingScriptRepository.annotatedPageFilesFor),
+  /// for the visually tick/cross-stamped copy of the pages Concise
+  /// Marking produced (owner request, 2026-09-28: this must always be
+  /// persisted, not just held transiently in the marking screen's own
+  /// widget state, so a later screen — e.g. sending feedback to the
+  /// learner — can always find and reuse the stamped script). Empty
+  /// until Concise Marking actually runs, and stays empty for Stable
+  /// Marker (which does no on-image annotation at all) or any script
+  /// marked another way.
+  ///
+  /// Deliberately stored in a SEPARATE directory from [pageFileNames]
+  /// (not alongside the raw captures) so Stage H's [photosDiscarded]
+  /// storage cleanup — which recursively deletes the raw-capture
+  /// directory once a script is reviewed — can never silently wipe out
+  /// the stamped/marked artifacts along with it.
+  final List<String> annotatedPageFileNames;
+
+  /// File name (relative to the same annotated-artifacts subdirectory)
+  /// of the marked performance-report PDF — persisted alongside
+  /// [annotatedPageFileNames] for the same reason.
+  final String? reportPdfFileName;
+
+  /// File name of the fallback text reproduction PDF (only ever produced
+  /// for engines that do visual annotation — see [annotatedPageFileNames]).
+  final String? fallbackPdfFileName;
+
   const MarkingScript({
     required this.id,
     required this.firstName,
@@ -341,6 +368,9 @@ class MarkingScript {
     this.lastError,
     this.preSegmentedAnswers,
     this.conciseMarking,
+    this.annotatedPageFileNames = const [],
+    this.reportPdfFileName,
+    this.fallbackPdfFileName,
   });
 
   int get pageCount => pageFileNames.length;
@@ -378,6 +408,10 @@ class MarkingScript {
     String? lastError,
     bool clearLastError = false,
     ConciseMarkingRecord? conciseMarking,
+    List<String>? annotatedPageFileNames,
+    String? reportPdfFileName,
+    String? fallbackPdfFileName,
+    bool clearFallbackPdfFileName = false,
   }) =>
       MarkingScript(
         id: id,
@@ -404,6 +438,9 @@ class MarkingScript {
         lastError: clearLastError ? null : (lastError ?? this.lastError),
         preSegmentedAnswers: preSegmentedAnswers,
         conciseMarking: conciseMarking ?? this.conciseMarking,
+        annotatedPageFileNames: annotatedPageFileNames ?? this.annotatedPageFileNames,
+        reportPdfFileName: reportPdfFileName ?? this.reportPdfFileName,
+        fallbackPdfFileName: clearFallbackPdfFileName ? null : (fallbackPdfFileName ?? this.fallbackPdfFileName),
       );
 
   factory MarkingScript.fromJson(Map<String, dynamic> json) {
@@ -463,6 +500,9 @@ class MarkingScript {
       conciseMarking: json['conciseMarking'] is Map
           ? ConciseMarkingRecord.fromJson((json['conciseMarking'] as Map).cast<String, dynamic>())
           : null,
+      annotatedPageFileNames: (json['annotatedPageFileNames'] as List?)?.cast<String>() ?? const [],
+      reportPdfFileName: json['reportPdfFileName'] as String?,
+      fallbackPdfFileName: json['fallbackPdfFileName'] as String?,
     );
   }
 
@@ -488,6 +528,9 @@ class MarkingScript {
         'lastError': lastError,
         'preSegmentedAnswers': preSegmentedAnswers?.map((s) => s.toJson()).toList(),
         'conciseMarking': conciseMarking?.toJson(),
+        'annotatedPageFileNames': annotatedPageFileNames,
+        'reportPdfFileName': reportPdfFileName,
+        'fallbackPdfFileName': fallbackPdfFileName,
       };
 }
 

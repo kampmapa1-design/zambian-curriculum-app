@@ -4,10 +4,13 @@ import 'dart:io';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
+import '../models/marking_credits.dart';
 import '../models/marking_rubric.dart';
 import '../models/marking_scheme.dart';
 import '../models/marking_script.dart';
 import 'auth_service.dart';
+import 'marking_credits_service.dart';
+import 'metered_call.dart';
 
 /// Where, on one of a script's own photographed pages, one answer's real
 /// handwritten response sits — Gemini's own best-effort location, never a
@@ -99,6 +102,62 @@ class ConciseMarkingService {
     return !result.contains(ConnectivityResult.none);
   }
 
+  /// Marking Reliability Stage 1 (2026-09-22, per explicit request following
+  /// a real incident where an AI-derived exam structure was silently wrong
+  /// and produced an out-of-range score): reads ONLY the cover/instructions
+  /// page(s) of the FIRST script in a cohort and returns the exam's section
+  /// structure — no grading. The caller shows this to the teacher for
+  /// explicit confirmation/correction BEFORE marking any script in the
+  /// cohort; see [MarkingCohortStructureScreen].
+  ///
+  /// Returns null when the paper genuinely has no section structure (not an
+  /// error) — the caller then proceeds with plain-sum scoring as normal.
+  /// Throws [ConciseMarkingUnavailable] on a real failure (offline, AI
+  /// error) — the caller decides whether to let the teacher retry or
+  /// proceed without a confirmed structure.
+  Future<MarkingRubric?> extractCohortStructure({
+    required List<File> pageFiles,
+    String? subjectName,
+  }) async {
+    if (!await isOnline) {
+      throw const ConciseMarkingUnavailable("You're offline. Connect to the internet to read this script's structure.");
+    }
+    await AuthService.instance.ensureSignedIn();
+
+    // Cover/instructions pages are (almost) always the first page or two —
+    // the server also caps this, but capping here too avoids uploading a
+    // whole script's worth of images just to read the first one.
+    final coverPages = pageFiles.take(2).toList();
+    final pageImagesBase64 = [for (final file in coverPages) base64Encode(await file.readAsBytes())];
+
+    final callable = meteredCallable(
+      _functions,
+      'extractConciseCohortStructure',
+      options: HttpsCallableOptions(timeout: const Duration(seconds: 60)),
+    );
+
+    Object? rawData;
+    try {
+      final result = await callable.call<Object?>({
+        'pageImagesBase64': pageImagesBase64,
+        if (subjectName != null && subjectName.trim().isNotEmpty) 'subjectName': subjectName.trim(),
+      });
+      rawData = result.data;
+    } on InsufficientCreditsException {
+      rethrow;
+    } on FirebaseFunctionsException catch (e) {
+      throw ConciseMarkingUnavailable(e.message ?? "Could not read this script's structure.");
+    }
+
+    if (rawData is! Map) {
+      throw const ConciseMarkingUnavailable('The structure response was in an unexpected format.');
+    }
+    final rubricRaw = rawData['rubric'];
+    if (rubricRaw is! Map) return null; // a paper with no section structure — not an error
+    final parsed = MarkingRubric.fromJson(rubricRaw.cast<String, dynamic>());
+    return parsed.isEmpty ? null : parsed;
+  }
+
   /// Grades one script.
   ///
   /// Pure-AI is the default (2026-09-10, per explicit request): pass no
@@ -118,6 +177,9 @@ class ConciseMarkingService {
     String? subjectName,
     MarkingRubric? knownRubric,
     bool lightweight = false,
+    // Monetization: one id per marking ACTION, reused on every retry of it,
+    // so the server charges a script at most once (see MarkingRequestIds).
+    String? requestId,
   }) async {
     try {
       return await _doGrade(
@@ -128,6 +190,7 @@ class ConciseMarkingService {
         subjectName,
         knownRubric,
         lightweight,
+        requestId,
       ).timeout(
         const Duration(seconds: 330),
         onTimeout: () => throw const ConciseMarkingUnavailable(
@@ -135,6 +198,8 @@ class ConciseMarkingService {
         ),
       );
     } on ConciseMarkingUnavailable {
+      rethrow;
+    } on InsufficientCreditsException {
       rethrow;
     } catch (error) {
       throw ConciseMarkingUnavailable('Could not grade this script: $error');
@@ -158,6 +223,7 @@ class ConciseMarkingService {
     String? subjectName,
     MarkingRubric? knownRubric,
     bool lightweight,
+    String? requestId,
   ) async {
     if (!await isOnline) {
       throw const ConciseMarkingUnavailable("You're offline. Connect to the internet to grade this script.");
@@ -194,9 +260,13 @@ class ConciseMarkingService {
         if (examStandardWire != null) 'examStandard': examStandardWire,
         if (knownRubric != null && !knownRubric.isEmpty) 'knownRubric': knownRubric.toJson(),
         if (lightweight) 'lightweight': true,
+        if (requestId != null) 'requestId': requestId,
       });
       rawData = result.data;
     } on FirebaseFunctionsException catch (e) {
+      // "Not enough credits" is not a failure to retry — surface it typed.
+      final noCredits = insufficientCreditsFromException(e);
+      if (noCredits != null) throw noCredits;
       throw ConciseMarkingUnavailable(e.message ?? 'Failed to grade this script.');
     }
 
@@ -303,6 +373,9 @@ class ConciseMarkingService {
       final parsed = MarkingRubric.fromJson(rubricRaw.cast<String, dynamic>());
       if (!parsed.isEmpty) rubric = parsed;
     }
+
+    final charged = CreditsCharged.fromResponse(responseData['credits']);
+    if (charged?.balance case final balance?) MarkingCreditsService.instance.noteSpendableBalance(balance);
 
     return ConciseMarkingResult(
       answers: answers,

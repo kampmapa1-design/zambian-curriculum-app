@@ -15,9 +15,23 @@ class MarkingScriptRepository {
   static const _catalogFileName = 'marking_scripts_catalog.json';
   static const _contentDirName = 'marking_scripts';
 
+  /// Separate top-level directory from [_contentDirName] (not a
+  /// subdirectory of a script's own raw-capture folder) — deliberately, so
+  /// [discardPhotos]'s recursive delete of the raw-capture directory can
+  /// never silently take the stamped/marked artifacts with it. See
+  /// [MarkingScript.annotatedPageFileNames].
+  static const _annotatedContentDirName = 'marking_scripts_annotated';
+
   Future<Directory> _rootDir() async {
     final dir = await getApplicationDocumentsDirectory();
     final contentDir = Directory(p.join(dir.path, _contentDirName));
+    if (!await contentDir.exists()) await contentDir.create(recursive: true);
+    return contentDir;
+  }
+
+  Future<Directory> _annotatedRootDir() async {
+    final dir = await getApplicationDocumentsDirectory();
+    final contentDir = Directory(p.join(dir.path, _annotatedContentDirName));
     if (!await contentDir.exists()) await contentDir.create(recursive: true);
     return contentDir;
   }
@@ -161,8 +175,75 @@ class MarkingScriptRepository {
     final root = await getApplicationDocumentsDirectory();
     final scriptDir = Directory(p.join(root.path, _contentDirName, script.id));
     if (await scriptDir.exists()) await scriptDir.delete(recursive: true);
+    final annotatedDir = Directory(p.join((await _annotatedRootDir()).path, script.id));
+    if (await annotatedDir.exists()) await annotatedDir.delete(recursive: true);
 
     final catalog = await loadCatalog();
     await _saveCatalog(MarkingScriptCatalog(scripts: catalog.scripts.where((s) => s.id != script.id).toList()));
+  }
+
+  /// Copies Concise Marking's freshly-generated tick/cross-annotated pages,
+  /// performance-report PDF and (when the engine produced one) fallback
+  /// reproduction PDF into this script's own PERMANENT annotated-artifacts
+  /// directory, and persists the resulting file names onto the script
+  /// (owner request, 2026-09-28 — see [MarkingScript.annotatedPageFileNames]
+  /// for why this is a separate directory from the raw captures). [source]
+  /// files themselves are left untouched — the caller's own temp copies, if
+  /// any, are still the caller's to clean up.
+  Future<MarkingScript> saveAnnotatedArtifacts({
+    required MarkingScript script,
+    required List<File> annotatedPages,
+    required File reportPdf,
+    File? fallbackPdf,
+  }) async {
+    final scriptDir = Directory(p.join((await _annotatedRootDir()).path, script.id));
+    if (!await scriptDir.exists()) await scriptDir.create(recursive: true);
+
+    final annotatedFileNames = <String>[];
+    for (var i = 0; i < annotatedPages.length; i++) {
+      final fileName = 'annotated_${(i + 1).toString().padLeft(2, '0')}.jpg';
+      await annotatedPages[i].copy(p.join(scriptDir.path, fileName));
+      annotatedFileNames.add(fileName);
+    }
+
+    const reportFileName = 'report.pdf';
+    await reportPdf.copy(p.join(scriptDir.path, reportFileName));
+
+    String? fallbackFileName;
+    if (fallbackPdf != null) {
+      fallbackFileName = 'fallback.pdf';
+      await fallbackPdf.copy(p.join(scriptDir.path, fallbackFileName));
+    }
+
+    final updated = script.copyWith(
+      annotatedPageFileNames: annotatedFileNames,
+      reportPdfFileName: reportFileName,
+      fallbackPdfFileName: fallbackFileName,
+      clearFallbackPdfFileName: fallbackFileName == null,
+    );
+    await update(updated);
+    return updated;
+  }
+
+  /// The stamped/marked copy of a script's pages, reconstructed from
+  /// [MarkingScript.annotatedPageFileNames] — empty until Concise Marking
+  /// has run (or for a script marked another way). Never affected by
+  /// [MarkingScript.photosDiscarded]: that flag only ever concerns the raw
+  /// captures in [pageFilesFor], not these separately-stored artifacts.
+  Future<List<File>> annotatedPageFilesFor(MarkingScript script) async {
+    final scriptDir = p.join((await _annotatedRootDir()).path, script.id);
+    return [for (final name in script.annotatedPageFileNames) File(p.join(scriptDir, name))];
+  }
+
+  Future<File?> reportPdfFileFor(MarkingScript script) async {
+    final name = script.reportPdfFileName;
+    if (name == null) return null;
+    return File(p.join((await _annotatedRootDir()).path, script.id, name));
+  }
+
+  Future<File?> fallbackPdfFileFor(MarkingScript script) async {
+    final name = script.fallbackPdfFileName;
+    if (name == null) return null;
+    return File(p.join((await _annotatedRootDir()).path, script.id, name));
   }
 }

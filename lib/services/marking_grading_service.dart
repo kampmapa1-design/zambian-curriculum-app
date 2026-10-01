@@ -4,10 +4,12 @@ import 'dart:io';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
+import '../models/marking_credits.dart';
 import '../models/marking_scheme.dart';
 import '../models/marking_script.dart';
 import 'auth_service.dart';
 import 'marking_correction_repository.dart';
+import 'marking_credits_service.dart';
 
 /// [MarkingGradingService.grade]'s result — the per-question answers plus
 /// the 3-5 script-level performance observations, kept together since
@@ -37,9 +39,16 @@ class MarkingGradingUnavailable implements Exception {
 /// a final mark (Stage 6 requires teacher review before anything is
 /// final).
 class MarkingGradingService {
-  MarkingGradingService({FirebaseFunctions? functions}) : _functions = functions ?? FirebaseFunctions.instance;
+  MarkingGradingService({FirebaseFunctions? functions}) : _functionsOverride = functions;
 
-  final FirebaseFunctions _functions;
+  final FirebaseFunctions? _functionsOverride;
+
+  // Resolved lazily (not in the constructor) so a test subclass that
+  // overrides `grade()` entirely — and so never touches this getter — can
+  // be constructed without a real Firebase app existing. Real callers see
+  // no behavior change: this still resolves FirebaseFunctions.instance,
+  // just at first use instead of at construction time.
+  FirebaseFunctions get _functions => _functionsOverride ?? FirebaseFunctions.instance;
 
   Future<bool> get isOnline async {
     final result = await Connectivity().checkConnectivity();
@@ -58,19 +67,24 @@ class MarkingGradingService {
     // and silently skipped when null/empty — no subject known, or no real
     // corrections recorded for it yet.
     String? subjectName,
+    // Monetization: one id per marking ACTION, reused on every retry of it,
+    // so the server charges a script at most once (see MarkingRequestIds).
+    String? requestId,
   }) async {
     // Hard backstop covering EVERYTHING, including the connectivity check
     // itself — see HandwrittenListTranscriptionService.transcribe for the
     // full reasoning: a connectivity-plugin call that stalls ahead of the
     // timeout wrapper defeats it entirely, so nothing runs outside this.
     try {
-      return await _doGrade(pageFiles, scheme, preSegmentedAnswers, subjectName).timeout(
+      return await _doGrade(pageFiles, scheme, preSegmentedAnswers, subjectName, requestId).timeout(
         const Duration(seconds: 200),
         onTimeout: () => throw const MarkingGradingUnavailable(
           'Grading this script is taking too long and may be stuck. Check your connection and try again.',
         ),
       );
     } on MarkingGradingUnavailable {
+      rethrow;
+    } on InsufficientCreditsException {
       rethrow;
     } catch (error) {
       throw MarkingGradingUnavailable('Could not grade this script: $error');
@@ -82,6 +96,7 @@ class MarkingGradingService {
     MarkingScheme scheme,
     List<PreSegmentedAnswer>? preSegmentedAnswers,
     String? subjectName,
+    String? requestId,
   ) async {
     if (!await isOnline) {
       throw const MarkingGradingUnavailable("You're offline. Connect to the internet to grade this script.");
@@ -123,9 +138,13 @@ class MarkingGradingService {
         'subjectName': scheme.subjectName,
         if (scheme.markConventions.isNotEmpty) 'markConventions': scheme.markConventions,
         if (scheme.examStandard.wireValue != null) 'examStandard': scheme.examStandard.wireValue,
+        if (requestId != null) 'requestId': requestId,
       });
       rawData = result.data;
     } on FirebaseFunctionsException catch (e) {
+      // "Not enough credits" is not a failure to retry — surface it typed.
+      final noCredits = insufficientCreditsFromException(e);
+      if (noCredits != null) throw noCredits;
       throw MarkingGradingUnavailable(e.message ?? 'Failed to grade this script.');
     }
 
@@ -179,6 +198,8 @@ class MarkingGradingService {
 
     final observationsRaw = responseData['observations'];
     final observations = observationsRaw is List ? observationsRaw.whereType<String>().toList() : <String>[];
+    final charged = CreditsCharged.fromResponse(responseData['credits']);
+    if (charged?.balance case final balance?) MarkingCreditsService.instance.noteSpendableBalance(balance);
     return MarkingGradingResult(answers: answers, observations: observations);
   }
 }

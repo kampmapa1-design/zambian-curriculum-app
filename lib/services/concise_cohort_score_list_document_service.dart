@@ -54,12 +54,22 @@ class ConciseCohortScoreListDocumentService {
     return file;
   }
 
-  String _fmt(double n) => n == n.roundToDouble() ? n.toInt().toString() : n.toStringAsFixed(1);
-
-  String _scoreText(ConciseCohortEntry e) =>
-      e.marked ? '${_fmt(e.score.percentage.clamp(0, 100))} / 100' : 'not marked';
+  // Delegates to ConciseScore's own outOf100Label — which is what refuses to
+  // show a number for a Stage-2-flagged script (see concise_score_calculator.dart)
+  // — rather than reimplementing the formatting here and risking it drift out
+  // of sync with that safeguard.
+  String _scoreText(ConciseCohortEntry e) => e.marked ? e.score.outOf100Label : 'not marked';
 
   String _rawText(ConciseCohortEntry e) => e.marked ? e.score.rawFractionLabel : '-';
+
+  /// Sort priority for ranking: a real, trustworthy score first, then a
+  /// script flagged by the Stage 2 safeguard (its number can't be ranked —
+  /// it isn't a real score), then anything never marked at all.
+  int _rankPriority(ConciseCohortEntry e) {
+    if (!e.marked) return 2;
+    if (e.score.structureError) return 1;
+    return 0;
+  }
 
   List<ConciseCohortEntry> _ordered(List<ConciseCohortEntry> entries, ScoreListOrder order) {
     final list = [...entries];
@@ -68,15 +78,34 @@ class ConciseCohortScoreListDocumentService {
         list.sort((a, b) => a.candidateName.toLowerCase().compareTo(b.candidateName.toLowerCase()));
       case ScoreListOrder.highestFirst:
         list.sort((a, b) {
-          // Unmarked entries sink to the bottom; otherwise by percentage
-          // descending, then name for a stable tie-break.
-          if (a.marked != b.marked) return a.marked ? -1 : 1;
-          final byScore = b.score.percentage.compareTo(a.score.percentage);
-          if (byScore != 0) return byScore;
+          final byPriority = _rankPriority(a).compareTo(_rankPriority(b));
+          if (byPriority != 0) return byPriority;
+          // Only two genuinely-ranked (marked, non-flagged) entries are ever
+          // compared by percentage — a flagged script's percentage is not a
+          // real number and must never influence ranking.
+          if (_rankPriority(a) == 0) {
+            final byScore = b.score.percentage.compareTo(a.score.percentage);
+            if (byScore != 0) return byScore;
+          }
           return a.candidateName.toLowerCase().compareTo(b.candidateName.toLowerCase());
         });
     }
     return list;
+  }
+
+  /// Marked scripts whose score is actually trustworthy — what the class
+  /// average must be built from. A Stage-2-flagged script is excluded: even
+  /// though its displayed percentage is clamped to 0-100 for display safety
+  /// elsewhere, silently averaging it in would still hide a real problem
+  /// behind a plausible-looking class average instead of surfacing it.
+  List<ConciseCohortEntry> _reliablyMarked(List<ConciseCohortEntry> entries) =>
+      entries.where((e) => e.marked && !e.score.structureError).toList();
+
+  /// "3 flagged for manual review, excluded from the average" — empty string
+  /// when nothing was flagged, so normal cohorts show nothing extra.
+  String _flaggedNote(List<ConciseCohortEntry> marked, List<ConciseCohortEntry> reliable) {
+    final flagged = marked.length - reliable.length;
+    return flagged > 0 ? '  ·  $flagged flagged for manual review, excluded from the average' : '';
   }
 
   // -------------------------------------------------------------------
@@ -92,9 +121,10 @@ class ConciseCohortScoreListDocumentService {
     final ordered = _ordered(entries, order);
     final rankCol = order == ScoreListOrder.highestFirst;
     final marked = ordered.where((e) => e.marked).toList();
-    final classAvg = marked.isEmpty
+    final reliable = _reliablyMarked(ordered);
+    final classAvg = reliable.isEmpty
         ? null
-        : marked.fold<double>(0, (s, e) => s + e.score.percentage.clamp(0, 100)) / marked.length;
+        : reliable.fold<double>(0, (s, e) => s + e.score.percentage.clamp(0, 100)) / reliable.length;
 
     final doc = pw.Document();
     doc.addPage(
@@ -141,7 +171,8 @@ class ConciseCohortScoreListDocumentService {
           pw.Text(
             '${marked.length} candidate(s) marked'
             '${ordered.length - marked.length > 0 ? ' - ${ordered.length - marked.length} added but not marked' : ''}'
-            '${classAvg != null ? '  ·  class average ${classAvg.toStringAsFixed(1)}%' : ''}',
+            '${classAvg != null ? '  ·  class average ${classAvg.toStringAsFixed(1)}%' : ''}'
+            '${_flaggedNote(marked, reliable)}',
             style: const pw.TextStyle(fontSize: 10, color: PdfColors.grey800),
           ),
         ],
@@ -223,8 +254,11 @@ class ConciseCohortScoreListDocumentService {
       ]));
     }
     b.write('</w:tbl>');
+    final marked = ordered.where((e) => e.marked).toList();
+    final reliable = _reliablyMarked(ordered);
     b.write(_para('$markedCount candidate(s) marked'
-        '${ordered.length - markedCount > 0 ? ' - ${ordered.length - markedCount} added but not marked' : ''}'));
+        '${ordered.length - markedCount > 0 ? ' - ${ordered.length - markedCount} added but not marked' : ''}'
+        '${_flaggedNote(marked, reliable)}'));
     b.write('<w:sectPr/></w:body></w:document>');
     return b.toString();
   }

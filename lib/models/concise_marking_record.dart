@@ -1,3 +1,5 @@
+import 'marking_rubric.dart';
+
 /// One answer's mark location on the real script, as Concise Marking's AI
 /// placed it — persisted so the ticked/crossed marked script can be
 /// regenerated at any time from the saved photos, with NO new AI call.
@@ -62,12 +64,23 @@ class ConciseMarkingRecord {
   /// kept so a regenerated report can still show the section breakdown.
   final Map<String, String?> sectionByLabel;
 
+  /// The exact rubric that was actually used to compute [scoreJson] — added
+  /// 2026-09-22 (Marking Reliability Stage 10) so a mark can be corrected
+  /// later (from the review comparison screen) with the score genuinely
+  /// RECOMPUTED against the same section rules, instead of either losing
+  /// section-allocation scaling entirely or guessing. Null for a record
+  /// saved before this field existed, or for a script with no section
+  /// structure at all (a plain-sum score) — both are real, honest states,
+  /// not an error.
+  final MarkingRubric? rubric;
+
   const ConciseMarkingRecord({
     required this.markedAt,
     required this.engine,
     required this.annotations,
     required this.scoreJson,
     this.sectionByLabel = const {},
+    this.rubric,
   });
 
   bool get isStable => engine == 'stable';
@@ -78,6 +91,7 @@ class ConciseMarkingRecord {
         'annotations': [for (final a in annotations) a.toJson()],
         'score': scoreJson,
         'sectionByLabel': sectionByLabel,
+        if (rubric != null) 'rubric': rubric!.toJson(),
       };
 
   factory ConciseMarkingRecord.fromJson(Map<String, dynamic> json) => ConciseMarkingRecord(
@@ -92,5 +106,6 @@ class ConciseMarkingRecord {
         sectionByLabel: (json['sectionByLabel'] as Map?)
                 ?.map((k, v) => MapEntry(k as String, v as String?)) ??
             const {},
+        rubric: (json['rubric'] as Map?) == null ? null : MarkingRubric.fromJson((json['rubric'] as Map).cast<String, dynamic>()),
       );
 }
