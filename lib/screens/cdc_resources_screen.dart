@@ -32,6 +32,7 @@ class CdcResourcesScreen extends StatefulWidget {
     this.resourceType,
     this.sections,
     this.title = 'CDC Resources',
+    this.showDatabaseOption = true,
   });
 
   final CdcResourcesService? service;
@@ -46,6 +47,14 @@ class CdcResourcesScreen extends StatefulWidget {
   /// precedence over [resourceType] when both are given.
   final List<CdcResourceSection>? sections;
   final String title;
+
+  /// Whether downloading offers "Subject Content Database" as a
+  /// destination (added 2026-09-17, for the learner-facing ECZ Past
+  /// Papers entry point) — that destination only matters for teacher
+  /// features (lesson plan/teaching notes grounding), so a pupil caller
+  /// passes `false` to skip straight to "Save to device" without ever
+  /// showing a meaningless choice.
+  final bool showDatabaseOption;
 
   @override
   State<CdcResourcesScreen> createState() => _CdcResourcesScreenState();
@@ -227,7 +236,7 @@ class _CdcResourcesScreenState extends State<CdcResourcesScreen> {
   }
 
   Future<void> _downloadAndShare(CdcResource resource) async {
-    final destination = await _askDownloadDestination(resource);
+    final destination = widget.showDatabaseOption ? await _askDownloadDestination(resource) : _DownloadDestination.device;
     if (destination == null || !mounted) return;
 
     setState(() => _downloadingUrls.add(resource.url));
@@ -298,7 +307,7 @@ class _CdcResourcesScreenState extends State<CdcResourcesScreen> {
           IconButton(
             icon: _refreshing
                 ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2))
-                : const Icon(Icons.refresh),
+                : const Icon(Icons.refresh_outlined),
             tooltip: 'Check for updates',
             onPressed: _refreshing ? null : () => _refresh(force: true),
           ),
