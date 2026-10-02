@@ -226,6 +226,7 @@ flutter:
     - assets/lesson_plans/hospitality_management_form1.json
     - assets/lesson_plans/hospitality_management_form2.json
     - assets/icon/icon.png
+    - assets/sugo_library/bundled_content.json
   # Bundled locally (not the google_fonts package's runtime HTTP fetch) —
   # this app is offline-first by design, and a first launch with no/weak
   # connectivity (the realistic case for much of this app's target
