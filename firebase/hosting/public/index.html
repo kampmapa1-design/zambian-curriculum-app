@@ -86,6 +86,18 @@
   }
   @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .status { color:#8FB7EE; } }
   :root[data-theme="dark"] .status { color:#8FB7EE; }
+  .apps{text-align:center;}
+  .apps-title{font-size:1.5rem; margin-bottom:1.4rem;}
+  .app-list{display:flex; flex-direction:column; align-items:center; gap:1.2rem; width:100%;}
+  .app-list>*{width:100%; max-width:520px; min-width:0;}
+  .app{align-items:center; text-align:center;}
+  .app .status{align-self:center;}
+  .app p{margin-left:auto; margin-right:auto;}
+  .buttons{display:flex; flex-wrap:wrap; justify-content:center; gap:.7rem; width:100%;}
+  .btn{display:inline-block; background:var(--blue); color:#fff; font-weight:500; padding:.7rem 1.1rem; border-radius:6px; text-decoration:none; font-size:.92rem;}
+  .btn.alt{background:transparent; color:var(--blue); border:1px solid var(--blue);}
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .btn.alt { color:#8FB7EE; border-color:#8FB7EE; } }
+  :root[data-theme="dark"] .btn.alt { color:#8FB7EE; border-color:#8FB7EE; }
   .card h2{font-size:1.3rem;}
   .card p{color:var(--muted); margin:0; max-width:56ch;}
   .card .more{color:var(--blue); font-size:.9rem; font-weight:500;}
@@ -117,28 +129,36 @@
 <div class="hero">
   <div class="hero-inner">
     <h1>Software that bridges gaps</h1>
-    <p>PhiloSoft Ventures builds software for educational institutions, communities, and everyday life — starting in Zambia.</p>
+    <p>PhiloSoft Ventures builds software for educational institutions, communities, and everyday life.</p>
     <a class="cta" href="/smart-teacher/">See what we're building</a>
   </div>
 </div>
 
-<section class="about">
-  <p>We're a new software company based in Zambia. Our first product, Smart Teacher, is in closed testing now — more ventures are in the works.</p>
-</section>
-
-<section id="smart-teacher">
-  <a class="card-link" href="/smart-teacher/">
-    <div class="card">
-      <span class="status">Closed testing</span>
-      <h2>Smart Teacher</h2>
-      <p>AI-assisted lesson planning and marking support, built for Zambian teachers and schools.</p>
-      <span class="more">Learn more →</span>
+<section id="apps" class="apps">
+  <h2 class="apps-title">Our apps</h2>
+  <div class="app-list">
+    <div class="card app" id="zerocurse">
+      <h2>ZeroCurse</h2>
+      <p>Removes profanity from your videos by bleeping or muting the words. Works on your phone and on your computer.</p>
+      <div class="buttons">
+        <a class="btn" href="/zerocurse/#android">Google Play (Android)</a>
+        <a class="btn alt" href="/zerocurse/#windows">Download for Windows</a>
+      </div>
+      <a class="more" href="/zerocurse/">Learn more →</a>
     </div>
-  </a>
+    <a class="card-link" href="/smart-teacher/">
+      <div class="card app">
+        <span class="status">Closed testing</span>
+        <h2>Smart Teacher</h2>
+        <p>AI-assisted lesson planning and marking support, built for teachers and schools.</p>
+        <span class="more">Learn more →</span>
+      </div>
+    </a>
+  </div>
 </section>
 
 <footer>
-  PhiloSoft Ventures &middot; more ventures coming &middot; <a href="/privacy-policy.html">Privacy Policy</a>
+  PhiloSoft Ventures &middot; <a href="/privacy-policy.html">Privacy Policy</a>
 </footer>
 
 </body>
