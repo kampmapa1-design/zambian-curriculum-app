@@ -16,7 +16,14 @@ window.ZC = {
     zc_clean_150: "",
     zc_clean_200: "",
     zc_clean_250: "",
-    zc_clean_300: ""
+    zc_clean_300: "",
+    zc_clean_350: "",
+    zc_clean_400: "",
+    zc_clean_450: "",
+    zc_clean_500: "",
+    zc_clean_550: "",
+    zc_clean_600: "",
+    zc_clean_650: ""
   },
   supportEmail: "support@philosoftventures.com"
 };
