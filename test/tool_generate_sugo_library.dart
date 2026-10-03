@@ -33,8 +33,14 @@ import 'support/sqlite_test_setup.dart';
 
 const _outDir = r'C:\Users\user\Documents\SugoLibrary_Factory\_data';
 
-String _slugify(String s) =>
-    s.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]+'), '_').replaceAll(RegExp(r'^_+|_+$'), '');
+/// "Religious Education (2046)" -> religious_education, "Mathematics II" -> mathematics:
+/// the syllabus names carry a syllabus code or a paper number the content folders don't.
+String _slugify(String s) => s
+    .replaceAll(RegExp(r'\s*\([^)]*\)'), '')
+    .replaceAll(RegExp(r'\s+(II|III|IV|2|3)$'), '')
+    .toLowerCase()
+    .replaceAll(RegExp(r'[^a-z0-9]+'), '_')
+    .replaceAll(RegExp(r'^_+|_+$'), '');
 
 final Map<String, List<String>?> _contentCache = {};
 
@@ -136,6 +142,12 @@ void main() {
           'lessonPlanPoints': lessonPlanPoints,
           'competencies': competencies,
           'objectives': objectives,
+          'topicDescription': entry.topic.description,
+          'subTopicDescription': entry.subTopic?.description,
+          'siblingSubTopics': [
+            for (final st in entry.topic.subTopics)
+              if (st.name != entry.subTopic?.name) st.name,
+          ],
           'wordCap': scaledSugoLibraryWordCap('${excerpt ?? ''} ${lessonPlanPoints.join(' ')}'),
         };
         if (excerpt != null || lessonPlanPoints.isNotEmpty) {
