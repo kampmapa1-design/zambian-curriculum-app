@@ -3,46 +3,208 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>ZeroCurse</title>
-<meta name="description" content="ZeroCurse removes profanity from your videos by bleeping or muting the words.">
-<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+<title>ZeroCurse — by PhiloSoft Ventures</title>
+<meta name="description" content="ZeroCurse removes profanity from your videos by bleeping or muting the words. It works on your phone and your computer, and everything is cleaned on your own device.">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/zerocurse-favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/zerocurse-favicon-180.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root{--blue:#1565C0;--blue-deep:#0E4A94;--ink:#161A14;--paper:#F7F5EE;--muted:#5B6358;--line:#DAD5C3;}
-  @media (prefers-color-scheme: dark){:root{--ink:#F2EFE4;--paper:#14150F;--muted:#A9AD9C;--line:#33352A;}}
+  :root{
+    --blue:#1565C0;
+    --blue-deep:#0E4A94;
+    --amber:#F5A623;
+    --cream:#FDF6E3;
+    --ink:#161A14;
+    --paper:#F7F5EE;
+    --muted:#5B6358;
+    --line:#DAD5C3;
+    box-sizing:border-box;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ink:#F2EFE4; --paper:#14150F; --muted:#A9AD9C; --line:#33352A;
+    }
+  }
+  :root[data-theme="dark"]{
+    --ink:#F2EFE4; --paper:#14150F; --muted:#A9AD9C; --line:#33352A;
+  }
+  html{scroll-padding-top:env(safe-area-inset-top,0px); scroll-behavior:smooth;}
   *{box-sizing:border-box;}
-  body{margin:0;background:var(--paper);color:var(--ink);font-family:'Inter',-apple-system,sans-serif;line-height:1.6;}
-  h1,h2{font-family:'Fraunces',Georgia,serif;font-weight:600;margin:0;}
-  header{padding:calc(env(safe-area-inset-top,0px) + 1rem) 1.4rem 1rem;border-bottom:1px solid var(--line);}
-  header a{color:var(--muted);text-decoration:none;font-size:.9rem;}
-  main{max-width:720px;margin:0 auto;padding:2.5rem 1.4rem 3rem;text-align:center;}
-  h1{font-size:clamp(2rem,7vw,2.8rem);}
-  p{color:var(--muted);max-width:56ch;margin:.9rem auto;}
-  .card{border:1px solid var(--line);border-radius:12px;padding:1.6rem;margin:1.4rem auto;max-width:520px;}
-  .btn{display:inline-block;background:var(--blue);color:#fff;font-weight:500;padding:.7rem 1.1rem;border-radius:6px;text-decoration:none;font-size:.92rem;}
-  .btn.off{background:transparent;color:var(--muted);border:1px solid var(--line);}
-  footer{border-top:1px solid var(--line);padding:2rem 1.4rem;text-align:center;color:var(--muted);font-size:.85rem;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;line-height:1.6;}
+  h1,h2{font-family:'Fraunces',Georgia,serif;font-weight:600;margin:0;letter-spacing:-0.01em;}
+  a{color:inherit;}
+
+  header{
+    position:sticky; top:0; z-index:10;
+    padding:calc(env(safe-area-inset-top,0px) + 1rem) 1.4rem 1rem;
+    display:flex; align-items:center; justify-content:space-between;
+    background:var(--paper); border-bottom:1px solid var(--line);
+  }
+  .brand{display:flex; align-items:center; gap:.6rem; text-decoration:none;}
+  .brand svg{width:34px; height:34px; flex:none;}
+  .brand span{font-family:'Fraunces',serif; font-weight:600; font-size:1.02rem;}
+  header .current{font-size:.88rem; color:var(--muted);}
+
+  section{padding:3rem 1.4rem; max-width:720px; margin:0 auto;}
+  .hero{text-align:center; padding-top:3.6rem;}
+  .app-icon{
+    width:80px; height:80px; border-radius:18px; display:block; margin:0 auto 1.2rem;
+    box-shadow:0 6px 20px rgba(21,101,192,0.25);
+  }
+  .status{
+    display:inline-block; font-size:.78rem; font-weight:500; color:var(--blue-deep);
+    background:rgba(21,101,192,0.1); padding:.3rem .75rem; border-radius:20px; margin-bottom:1.2rem;
+  }
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .status { color:#8FB7EE; } }
+  :root[data-theme="dark"] .status { color:#8FB7EE; }
+  .hero h1{font-size:clamp(2.2rem,7vw,3.2rem); margin-bottom:1rem;}
+  .hero .lead{color:var(--muted); font-size:1.05rem; line-height:1.7; max-width:48ch; margin:0 auto 1.8rem;}
+  .cta{
+    display:inline-block; background:var(--amber); color:#241603; font-weight:500;
+    padding:.8rem 1.5rem; border-radius:6px; text-decoration:none; font-size:.98rem;
+  }
+
+  h2.section-title{font-size:1.5rem; margin-bottom:1.6rem; text-align:center;}
+  .grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:1rem;}
+  .card{
+    border:1px solid var(--line); border-radius:12px; padding:1.4rem;
+    display:flex; flex-direction:column; gap:.5rem;
+  }
+  .card h3{font-family:'Fraunces',serif; font-weight:600; font-size:1.08rem; margin:0;}
+  .card p{color:var(--muted); font-size:.92rem; margin:0; line-height:1.6;}
+
+  .plans-note{
+    text-align:center; color:var(--muted); font-size:.9rem; max-width:52ch; margin:0 auto 1.6rem;
+  }
+  .plan-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:1rem; margin-bottom:1.6rem;}
+  .plan{
+    border:1px solid var(--line); border-radius:12px; padding:1.3rem; text-align:center;
+  }
+  .plan .price{font-family:'Fraunces',serif; font-weight:600; font-size:1.4rem; color:var(--blue); margin:.3rem 0;}
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .plan .price { color:#8FB7EE; } }
+  :root[data-theme="dark"] .plan .price { color:#8FB7EE; }
+  .plan p{color:var(--muted); font-size:.85rem; margin:.2rem 0 0;}
+  .bundles{color:var(--muted); font-size:.9rem; text-align:center;}
+
+  footer{
+    border-top:1px solid var(--line); padding:2rem 1.4rem calc(2rem + env(safe-area-inset-bottom,0px));
+    text-align:center; color:var(--muted); font-size:.85rem;
+  }
   footer a{color:var(--muted);}
+  .cta.off{background:transparent; color:var(--muted); border:1px solid var(--line); cursor:default;}
+  .cta.alt{background:transparent; color:var(--blue); border:1px solid var(--blue);}
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .cta.alt { color:#8FB7EE; border-color:#8FB7EE; } }
+  :root[data-theme="dark"] .cta.alt { color:#8FB7EE; border-color:#8FB7EE; }
+  .ctas{display:flex; flex-wrap:wrap; gap:.8rem; justify-content:center;}
+  .plan .more{display:inline-block; margin-top:.6rem; color:var(--blue); font-size:.9rem; font-weight:500; text-decoration:none;}
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .plan .more { color:#8FB7EE; } }
+  :root[data-theme="dark"] .plan .more { color:#8FB7EE; }
 </style>
 </head>
 <body>
-<header><a href="/">← PhiloSoft Ventures</a></header>
-<main>
+
+<header>
+  <a class="brand" href="/">
+    <svg viewBox="0 0 120 100" aria-hidden="true">
+      <rect x="10" y="58" width="22" height="34" rx="3" fill="var(--blue)"/>
+      <rect x="38" y="42" width="22" height="50" rx="3" fill="var(--blue)"/>
+      <rect x="66" y="22" width="22" height="70" rx="3" fill="var(--blue)"/>
+      <polygon points="88,22 108,30 88,38" fill="var(--amber)"/>
+    </svg>
+    <span>PhiloSoft Ventures</span>
+  </a>
+  <span class="current">ZeroCurse</span>
+</header>
+
+<section class="hero">
+  <img class="app-icon" src="/assets/zerocurse-icon.png" width="80" height="80" alt="ZeroCurse app icon">
+  <span class="status">For Android and Windows</span>
   <h1>ZeroCurse</h1>
-  <p>Removes profanity from your videos by bleeping or muting the words. Everything is cleaned on your own device, and it works offline.</p>
-  <div class="card" id="android">
-    <h2>Android</h2>
-    <p>Free for videos up to 10 minutes. Longer videos are paid per video.</p>
-    <span class="btn off">Google Play: coming soon</span>
+  <p class="lead">
+    Remove swear words from your videos. ZeroCurse finds every one and
+    bleeps or mutes it, so you can share a video with family, school or
+    church. Your video is cleaned on your own device and the app works
+    offline.
+  </p>
+  <div class="ctas" id="android">
+    <a class="cta off" id="play" href="#">Google Play: coming soon</a>
+    <a class="cta alt" id="win" href="/zerocurse/pricing.html">Download for Windows</a>
   </div>
-  <div class="card" id="windows">
-    <h2>Windows</h2>
-    <p>The computer version is a separate product: free up to 10 minutes, then pay per video or go Pro.</p>
-    <p><a class="btn" href="/zerocurse/pricing.html">Pricing and download</a></p>
+</section>
+
+<section class="features">
+  <h2 class="section-title">What it does</h2>
+  <div class="grid">
+    <div class="card">
+      <h3>Bleep or mute</h3>
+      <p>Choose a bleep or silence over every swear word. The picture is
+        never touched, only the sound at those exact moments.</p>
+    </div>
+    <div class="card">
+      <h3>Catches what others miss</h3>
+      <p>It listens to the whole video twice and then re-listens to every
+        cut, so quick, mumbled or slurred words are caught too.</p>
+    </div>
+    <div class="card">
+      <h3>Your rules</h3>
+      <p>Pick how strict it is, and add your own words to always
+        censor or to never censor, such as a name that sounds like a
+        swear word.</p>
+    </div>
+    <div class="card">
+      <h3>Private by design</h3>
+      <p>Your video stays on your device. Short videos never leave it, and
+        you can keep long ones on your device too.</p>
+    </div>
+    <div class="card">
+      <h3>Long videos and films</h3>
+      <p>Handles hours of video. You can pause, stop, or close the app
+        and carry on later from where it stopped.</p>
+    </div>
+    <div class="card">
+      <h3>More on Windows</h3>
+      <p>Hawk Eye lets you read every word, listen and fix cuts by hand.
+        Pro adds reports, subtitles, a batch queue and fast cloud
+        speed.</p>
+    </div>
   </div>
-</main>
-<footer>PhiloSoft Ventures &middot; <a href="/privacy-policy.html">Privacy Policy</a></footer>
+</section>
+
+<section class="plans" id="plans">
+  <h2 class="section-title">Prices</h2>
+  <p class="plans-note">
+    Videos up to 10 minutes are free on both. Longer videos are paid per video.
+  </p>
+  <div class="plan-grid">
+    <div class="plan">
+      <h3>Android</h3>
+      <p class="price">Free to 10 min</p>
+      <p>Longer videos from $1.00 each, paid through Google Play</p>
+    </div>
+    <div class="plan">
+      <h3>Windows</h3>
+      <p class="price">Free to 10 min</p>
+      <p>Pay per video, or ZeroCurse Pro at $20 a month</p>
+      <a class="more" href="/zerocurse/pricing.html">See Windows pricing →</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  PhiloSoft Ventures &middot; <a href="/">PhiloSoft</a> &middot;
+  <a href="/privacy-policy.html">Privacy Policy</a>
+</footer>
+
+<script src="config.js"></script>
+<script>
+  var z = window.ZC || {};
+  var play = document.getElementById("play");
+  if (z.playStore) { play.href = z.playStore; play.className = "cta"; play.textContent = "Get it on Google Play"; }
+  else { play.removeAttribute("href"); }
+</script>
 </body>
 </html>
