@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ZeroCurse</title>
+<meta name="description" content="ZeroCurse removes profanity from your videos by bleeping or muting the words.">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--blue:#1565C0;--blue-deep:#0E4A94;--ink:#161A14;--paper:#F7F5EE;--muted:#5B6358;--line:#DAD5C3;}
+  @media (prefers-color-scheme: dark){:root{--ink:#F2EFE4;--paper:#14150F;--muted:#A9AD9C;--line:#33352A;}}
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:'Inter',-apple-system,sans-serif;line-height:1.6;}
+  h1,h2{font-family:'Fraunces',Georgia,serif;font-weight:600;margin:0;}
+  header{padding:calc(env(safe-area-inset-top,0px) + 1rem) 1.4rem 1rem;border-bottom:1px solid var(--line);}
+  header a{color:var(--muted);text-decoration:none;font-size:.9rem;}
+  main{max-width:720px;margin:0 auto;padding:2.5rem 1.4rem 3rem;text-align:center;}
+  h1{font-size:clamp(2rem,7vw,2.8rem);}
+  p{color:var(--muted);max-width:56ch;margin:.9rem auto;}
+  .card{border:1px solid var(--line);border-radius:12px;padding:1.6rem;margin:1.4rem auto;max-width:520px;}
+  .btn{display:inline-block;background:var(--blue);color:#fff;font-weight:500;padding:.7rem 1.1rem;border-radius:6px;text-decoration:none;font-size:.92rem;}
+  .btn.off{background:transparent;color:var(--muted);border:1px solid var(--line);}
+  footer{border-top:1px solid var(--line);padding:2rem 1.4rem;text-align:center;color:var(--muted);font-size:.85rem;}
+  footer a{color:var(--muted);}
+</style>
+</head>
+<body>
+<header><a href="/">← PhiloSoft Ventures</a></header>
+<main>
+  <h1>ZeroCurse</h1>
+  <p>Removes profanity from your videos by bleeping or muting the words. Everything is cleaned on your own device, and it works offline.</p>
+  <div class="card" id="android">
+    <h2>Android</h2>
+    <p>Free for videos up to 10 minutes. Longer videos are paid per video.</p>
+    <span class="btn off">Google Play: coming soon</span>
+  </div>
+  <div class="card" id="windows">
+    <h2>Windows</h2>
+    <p>The computer version is a separate product, with pricing and downloads on this site. Details are coming soon.</p>
+    <span class="btn off">Download: coming soon</span>
+  </div>
+</main>
+<footer>PhiloSoft Ventures &middot; <a href="/privacy-policy.html">Privacy Policy</a></footer>
+</body>
+</html>
