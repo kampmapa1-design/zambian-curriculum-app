@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ZeroCurse for Windows: pricing</title>
+<meta name="description" content="ZeroCurse for Windows: free up to 10 minutes, pay per video, or go Pro.">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="zc.css">
+</head>
+<body>
+<header>
+  <a href="/zerocurse/">← ZeroCurse</a>
+  <nav><a href="/zerocurse/pricing.html">Pricing</a><a href="/privacy-policy.html">Privacy</a></nav>
+</header>
+<main>
+  <div class="center">
+    <h1>ZeroCurse for Windows</h1>
+    <p class="lead">Removes profanity from your videos by bleeping or muting the words. Free for short videos, pay per video for longer ones, or go Pro. Everything is cleaned on your own computer, and it works offline.</p>
+    <p><a class="btn" id="download" href="#">Download for Windows</a></p>
+  </div>
+
+  <div class="grid">
+    <section class="plan">
+      <h2>Free</h2>
+      <div class="price">$0</div>
+      <ul>
+        <li>Videos up to 10 minutes</li>
+        <li>Your own word list</li>
+        <li>Works offline</li>
+        <li>With internet, a few short adverts play while it cleans</li>
+      </ul>
+    </section>
+
+    <section class="plan" id="per-video">
+      <h2>Per video</h2>
+      <div class="price">from $1.00 <small>per video</small></div>
+      <ul>
+        <li>For videos over 10 minutes</li>
+        <li>One payment, no subscription</li>
+        <li>Buy a video credit here; the app uses it when you clean a video of that length</li>
+        <li>Cleaning the same file again is free</li>
+      </ul>
+      <table aria-label="Price by video length">
+        <tr><th>Video length</th><th>Price</th><th></th></tr>
+        <tr><td>Up to 30 min</td><td>$1.00</td><td><button class="btn alt buy" data-product="zc_clean_100">Buy</button></td></tr>
+        <tr><td>Up to 50 min</td><td>$1.50</td><td><button class="btn alt buy" data-product="zc_clean_150">Buy</button></td></tr>
+        <tr><td>Up to 90 min</td><td>$2.00</td><td><button class="btn alt buy" data-product="zc_clean_200">Buy</button></td></tr>
+        <tr><td>Up to 2 h</td><td>$2.50</td><td><button class="btn alt buy" data-product="zc_clean_250">Buy</button></td></tr>
+        <tr><td>Up to 2 h 30</td><td>$3.00</td><td><button class="btn alt buy" data-product="zc_clean_300">Buy</button></td></tr>
+        <tr><td>Up to 3 h</td><td>$3.50</td><td><button class="btn alt buy" data-product="zc_clean_350">Buy</button></td></tr>
+        <tr><td>Up to 3 h 30</td><td>$4.00</td><td><button class="btn alt buy" data-product="zc_clean_400">Buy</button></td></tr>
+        <tr><td>Up to 4 h</td><td>$4.50</td><td><button class="btn alt buy" data-product="zc_clean_450">Buy</button></td></tr>
+        <tr><td>Up to 4 h 30</td><td>$5.00</td><td><button class="btn alt buy" data-product="zc_clean_500">Buy</button></td></tr>
+        <tr><td>Up to 5 h</td><td>$5.50</td><td><button class="btn alt buy" data-product="zc_clean_550">Buy</button></td></tr>
+        <tr><td>Up to 5 h 30</td><td>$6.00</td><td><button class="btn alt buy" data-product="zc_clean_600">Buy</button></td></tr>
+        <tr><td>Up to 6 h</td><td>$6.50</td><td><button class="btn alt buy" data-product="zc_clean_650">Buy</button></td></tr>
+      </table>
+      <p class="note">Videos up to 6 hours are supported. Every extra 30 minutes costs $0.50 more.</p>
+    </section>
+
+    <section class="plan pro" id="pro">
+      <h2>ZeroCurse Pro</h2>
+      <div class="price">$20 <small>per month</small></div>
+      <ul>
+        <li>Videos of any length, included</li>
+        <li>30 hours of cloud speed each month: much faster on long videos</li>
+        <li>Hawk Eye: read every word, listen, fix cuts by hand</li>
+        <li>Reports of what was cleaned</li>
+        <li>Subtitles (.srt) with the swear words masked, for any video</li>
+        <li>Batch queue: clean many videos in a row</li>
+        <li>Priority support: an answer within 48 hours by email</li>
+        <li>3-hour free trial for every new account</li>
+      </ul>
+      <button class="btn buy" data-product="pro">Get Pro</button>
+    </section>
+  </div>
+
+  <div class="center">
+    <p class="note" id="status"></p>
+    <p class="note">How it works: install the app, press the account button and sign in with the code it shows. Your purchases and Pro appear in the app on their own; the app checks about once a week and keeps working offline for 5 days in between. Payments are handled by our payment provider, who is the seller of record and sends your receipt.</p>
+    <p class="note">Questions: <a id="mail" href="#">support</a></p>
+  </div>
+</main>
+<footer>PhiloSoft Ventures &middot; <a href="/privacy-policy.html">Privacy Policy</a></footer>
+
+<script src="config.js"></script>
+<script type="module">
+  import { ready, signIn, checkoutUrl } from "./account.js";
+  const Z = window.ZC, status = document.getElementById("status");
+  const dl = document.getElementById("download");
+  if (Z.windowsDownload) dl.href = Z.windowsDownload; else { dl.classList.add("off"); dl.textContent = "Download: coming soon"; dl.removeAttribute("href"); }
+  const mail = document.getElementById("mail"); mail.href = "mailto:" + Z.supportEmail; mail.textContent = Z.supportEmail;
+  for (const b of document.querySelectorAll(".buy")) {
+    const on = ready() && Z.checkout[b.dataset.product];
+    if (!on) { b.disabled = true; b.title = "Coming soon"; if (b.textContent === "Buy") b.textContent = "Soon"; else b.textContent = "Coming soon"; continue; }
+    b.addEventListener("click", async () => {
+      status.textContent = "Signing you in...";
+      try {
+        const who = await signIn();
+        status.textContent = "Taking you to the payment page for " + who.email + "...";
+        window.location.href = checkoutUrl(b.dataset.product, who);
+      } catch (e) { status.textContent = "Could not sign in: " + (e.message || e); }
+    });
+  }
+</script>
+</body>
+</html>

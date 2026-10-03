@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sign in to ZeroCurse</title>
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="zc.css">
+</head>
+<body>
+<header><a href="/zerocurse/">← ZeroCurse</a></header>
+<main class="center">
+  <h1>Sign in to the app</h1>
+  <p class="lead">Check that this code is the one shown in the ZeroCurse app on your computer, then sign in with Google.</p>
+  <div class="box">
+    <div class="code" id="code">----</div>
+    <p><button class="btn" id="go">Sign in with Google</button></p>
+    <p class="note">Only press this if you started the sign-in yourself, in the app. Never share this code.</p>
+    <div class="msg" id="msg"></div>
+  </div>
+</main>
+<footer>PhiloSoft Ventures &middot; <a href="/privacy-policy.html">Privacy Policy</a></footer>
+<script src="config.js"></script>
+<script type="module">
+  import { ready, signIn, approveDevice } from "./account.js";
+  const msg = document.getElementById("msg"), go = document.getElementById("go"), codeEl = document.getElementById("code");
+  const code = (new URLSearchParams(location.search).get("code") || "").toUpperCase().replace(/[^A-Z0-9-]/g, "").slice(0, 9);
+  codeEl.textContent = code || "----";
+  const say = (t, cls) => { msg.textContent = t; msg.className = "msg " + (cls || ""); };
+  if (!ready()) { go.disabled = true; say("Sign-in is not switched on yet. Please try again soon.", "err"); }
+  else if (!/^[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(code)) { go.disabled = true; say("This page needs the code from the app. Open the link the app showed you.", "err"); }
+  go.addEventListener("click", async () => {
+    go.disabled = true; say("Signing in...");
+    try {
+      const who = await signIn();
+      await approveDevice(code, who.idToken);
+      say("Done. You are signed in as " + who.email + ". You can close this page and go back to the app.", "ok");
+    } catch (e) { go.disabled = false; say(e.message || String(e), "err"); }
+  });
+</script>
+</body>
+</html>
