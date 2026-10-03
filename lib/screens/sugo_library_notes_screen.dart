@@ -93,7 +93,7 @@ class _SugoLibraryNotesScreenState extends State<SugoLibraryNotesScreen> {
   }
 
   Widget _buildContent(BuildContext context, SugoLibraryNote note) {
-    if (note.sourceTier == SugoLibrarySourceTier.unavailable || note.notes.isEmpty) {
+    if (note.sourceTier == SugoLibrarySourceTier.unavailable || !note.hasContent) {
       return const Center(
         child: Padding(
           padding: EdgeInsets.all(24),
@@ -102,23 +102,31 @@ class _SugoLibraryNotesScreenState extends State<SugoLibraryNotesScreen> {
       );
     }
 
+    Widget bullet(String line) => Padding(
+          padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Padding(padding: EdgeInsets.only(right: 8), child: Text('•')),
+              Expanded(child: Text(line)),
+            ],
+          ),
+        );
+
     return ListView(
       padding: const EdgeInsets.all(AppSpacing.md),
       children: [
-        for (final line in note.notes)
+        for (final section in note.sections) ...[
           Padding(
-            padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Padding(padding: EdgeInsets.only(right: 8), child: Text('•')),
-                Expanded(child: Text(line)),
-              ],
-            ),
+            padding: const EdgeInsets.only(top: AppSpacing.sm, bottom: AppSpacing.xs),
+            child: Text(section.heading, style: Theme.of(context).textTheme.titleMedium),
           ),
+          for (final point in section.points) bullet(point),
+        ],
+        for (final line in note.notes) bullet(line),
         if (note.questions.isNotEmpty) ...[
           const SizedBox(height: AppSpacing.lg),
-          Text('Quick Recall', style: Theme.of(context).textTheme.titleMedium),
+          Text('Test Yourself', style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: AppSpacing.sm),
           for (final q in note.questions) _RecallQuestionTile(question: q),
         ],
@@ -147,6 +155,17 @@ class _RecallQuestionTileState extends State<_RecallQuestionTile> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Text(
+              widget.question.isPastPaper ? 'Past paper — ${widget.question.source}' : 'Practice question',
+              style: TextStyle(
+                fontSize: 11.5,
+                fontWeight: FontWeight.bold,
+                color: widget.question.isPastPaper
+                    ? Theme.of(context).colorScheme.primary
+                    : Theme.of(context).colorScheme.outline,
+              ),
+            ),
+            const SizedBox(height: 4),
             Text(widget.question.question, style: const TextStyle(fontWeight: FontWeight.w600)),
             const SizedBox(height: 6),
             if (_revealed)

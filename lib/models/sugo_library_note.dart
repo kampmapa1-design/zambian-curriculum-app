@@ -48,13 +48,36 @@ class SugoLibraryQuestion {
   final String question;
   final String answer;
 
-  const SugoLibraryQuestion({required this.question, required this.answer});
+  /// Where a real past-paper question came from (e.g. "ECZ Biology Paper 2,
+  /// 2017"). Null for an exam-style practice question written for this
+  /// library — those are never attributed to a past paper.
+  final String? source;
 
-  Map<String, Object?> toMap() => {'q': question, 'a': answer};
+  const SugoLibraryQuestion({required this.question, required this.answer, this.source});
+
+  bool get isPastPaper => source != null && source!.trim().isNotEmpty;
+
+  Map<String, Object?> toMap() => {'q': question, 'a': answer, if (isPastPaper) 's': source};
 
   factory SugoLibraryQuestion.fromMap(Map<String, Object?> map) => SugoLibraryQuestion(
         question: map['q'] as String? ?? '',
         answer: map['a'] as String? ?? '',
+        source: map['s'] as String?,
+      );
+}
+
+/// One headed group of short learner-facing points within a topic's notes.
+class SugoLibrarySection {
+  final String heading;
+  final List<String> points;
+
+  const SugoLibrarySection({required this.heading, required this.points});
+
+  Map<String, Object?> toMap() => {'h': heading, 'p': points};
+
+  factory SugoLibrarySection.fromMap(Map<String, Object?> map) => SugoLibrarySection(
+        heading: map['h'] as String? ?? '',
+        points: (map['p'] as List?)?.cast<String>() ?? const [],
       );
 }
 
@@ -97,6 +120,10 @@ class SugoLibraryNote {
   final String topicName;
   final String? subTopicName;
   final List<String> notes;
+
+  /// Learner-facing notes grouped under short headings (the format every
+  /// newly generated topic uses). [notes] stays for older flat content.
+  final List<SugoLibrarySection> sections;
   final List<SugoLibraryQuestion> questions;
   final SugoLibrarySourceTier sourceTier;
 
@@ -110,17 +137,21 @@ class SugoLibraryNote {
   const SugoLibraryNote({
     required this.topicName,
     this.subTopicName,
-    required this.notes,
+    this.notes = const [],
+    this.sections = const [],
     this.questions = const [],
     required this.sourceTier,
     required this.contentVersion,
     this.updatedAt,
   });
 
+  bool get hasContent => notes.isNotEmpty || sections.any((s) => s.points.isNotEmpty);
+
   Map<String, Object?> toMap() => {
         'topicName': topicName,
         if (subTopicName != null) 'subTopicName': subTopicName,
         'notes': notes,
+        if (sections.isNotEmpty) 'sections': [for (final s in sections) s.toMap()],
         'questions': [for (final q in questions) q.toMap()],
         'sourceTier': sourceTier.wireValue,
         'contentVersion': contentVersion,
@@ -134,6 +165,10 @@ class SugoLibraryNote {
         topicName: map['topicName'] as String? ?? '',
         subTopicName: map['subTopicName'] as String?,
         notes: (map['notes'] as List?)?.cast<String>() ?? const [],
+        sections: (map['sections'] as List?)
+                ?.map((s) => SugoLibrarySection.fromMap((s as Map).cast<String, Object?>()))
+                .toList() ??
+            const [],
         questions: (map['questions'] as List?)
                 ?.map((q) => SugoLibraryQuestion.fromMap((q as Map).cast<String, Object?>()))
                 .toList() ??
