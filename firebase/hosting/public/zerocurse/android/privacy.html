@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ZeroCurse for Android: Privacy Policy - PhiloSoft Ventures</title>
+<meta name="description" content="How ZeroCurse for Android handles your videos, audio and information.">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/zerocurse-favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/zerocurse-favicon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#1565C0;
+    --blue-deep:#0E4A94;
+    --amber:#F5A623;
+    --cream:#FDF6E3;
+    --ink:#161A14;
+    --paper:#F7F5EE;
+    --muted:#5B6358;
+    --line:#DAD5C3;
+    box-sizing:border-box;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ink:#F2EFE4; --paper:#14150F; --muted:#A9AD9C; --line:#33352A;
+    }
+  }
+  :root[data-theme="dark"]{
+    --ink:#F2EFE4; --paper:#14150F; --muted:#A9AD9C; --line:#33352A;
+  }
+  html{scroll-padding-top:env(safe-area-inset-top,0px); scroll-behavior:smooth;}
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;line-height:1.6;}
+  h1,h2{font-family:'Fraunces',Georgia,serif;font-weight:600;margin:0;letter-spacing:-0.01em;}
+  a{color:inherit;}
+
+  header{
+    position:sticky; top:0; z-index:10;
+    padding:calc(env(safe-area-inset-top,0px) + 1rem) 1.4rem 1rem;
+    display:flex; align-items:center; justify-content:space-between;
+    background:var(--paper); border-bottom:1px solid var(--line);
+  }
+  .brand{display:flex; align-items:center; gap:.6rem; text-decoration:none;}
+  .brand svg{width:34px; height:34px; flex:none;}
+  .brand span{font-family:'Fraunces',serif; font-weight:600; font-size:1.02rem;}
+  header .current{font-size:.88rem; color:var(--muted);}
+
+  section{padding:3rem 1.4rem; max-width:720px; margin:0 auto;}
+  .hero{text-align:center; padding-top:3.6rem;}
+  .app-icon{
+    width:80px; height:80px; border-radius:18px; display:block; margin:0 auto 1.2rem;
+    box-shadow:0 6px 20px rgba(21,101,192,0.25);
+  }
+  .status{
+    display:inline-block; font-size:.78rem; font-weight:500; color:var(--blue-deep);
+    background:rgba(21,101,192,0.1); padding:.3rem .75rem; border-radius:20px; margin-bottom:1.2rem;
+  }
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .status { color:#8FB7EE; } }
+  :root[data-theme="dark"] .status { color:#8FB7EE; }
+  .hero h1{font-size:clamp(2.2rem,7vw,3.2rem); margin-bottom:1rem;}
+  .hero .lead{color:var(--muted); font-size:1.05rem; line-height:1.7; max-width:48ch; margin:0 auto 1.8rem;}
+  .cta{
+    display:inline-block; background:var(--amber); color:#241603; font-weight:500;
+    padding:.8rem 1.5rem; border-radius:6px; text-decoration:none; font-size:.98rem;
+  }
+
+  h2.section-title{font-size:1.5rem; margin-bottom:1.6rem; text-align:center;}
+  .grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:1rem;}
+  .card{
+    border:1px solid var(--line); border-radius:12px; padding:1.4rem;
+    display:flex; flex-direction:column; gap:.5rem;
+  }
+  .card h3{font-family:'Fraunces',serif; font-weight:600; font-size:1.08rem; margin:0;}
+  .card p{color:var(--muted); font-size:.92rem; margin:0; line-height:1.6;}
+
+  .plans-note{
+    text-align:center; color:var(--muted); font-size:.9rem; max-width:52ch; margin:0 auto 1.6rem;
+  }
+  .plan-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:1rem; margin-bottom:1.6rem;}
+  .plan{
+    border:1px solid var(--line); border-radius:12px; padding:1.3rem; text-align:center;
+  }
+  .plan .price{font-family:'Fraunces',serif; font-weight:600; font-size:1.4rem; color:var(--blue); margin:.3rem 0;}
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .plan .price { color:#8FB7EE; } }
+  :root[data-theme="dark"] .plan .price { color:#8FB7EE; }
+  .plan p{color:var(--muted); font-size:.85rem; margin:.2rem 0 0;}
+  .bundles{color:var(--muted); font-size:.9rem; text-align:center;}
+
+  footer{
+    border-top:1px solid var(--line); padding:2rem 1.4rem calc(2rem + env(safe-area-inset-bottom,0px));
+    text-align:center; color:var(--muted); font-size:.85rem;
+  }
+  footer a{color:var(--muted);}
+  .cta.off{background:transparent; color:var(--muted); border:1px solid var(--line); cursor:default;}
+  .cta.alt{background:transparent; color:var(--blue); border:1px solid var(--blue);}
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .cta.alt { color:#8FB7EE; border-color:#8FB7EE; } }
+  :root[data-theme="dark"] .cta.alt { color:#8FB7EE; border-color:#8FB7EE; }
+  .ctas{display:flex; flex-wrap:wrap; gap:.8rem; justify-content:center;}
+  .plan .more{display:inline-block; margin-top:.6rem; color:var(--blue); font-size:.9rem; font-weight:500; text-decoration:none;}
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .plan .more { color:#8FB7EE; } }
+  :root[data-theme="dark"] .plan .more { color:#8FB7EE; }
+  .doc{max-width:720px; margin:0 auto; padding:2.6rem 1.4rem 3rem;}
+  .doc h1{font-size:clamp(1.8rem,6vw,2.4rem); margin-bottom:.4rem;}
+  .doc h2{font-size:1.25rem; margin:2rem 0 .6rem;}
+  .doc p, .doc li{color:var(--muted); line-height:1.7;}
+  .doc ul{padding-left:1.2rem;}
+  .doc .updated{font-size:.9rem;}
+  .doc table{border-collapse:collapse; width:100%; margin:1rem 0; font-size:.92rem;}
+  .doc th,.doc td{border-bottom:1px solid var(--line); padding:.5rem .6rem; text-align:left; vertical-align:top; color:var(--muted);}
+  .doc th{color:var(--ink); font-weight:600;}
+</style>
+</head>
+<body>
+
+<header>
+  <span class="brand">
+    <svg viewBox="0 0 120 100" aria-hidden="true">
+      <rect x="10" y="58" width="22" height="34" rx="3" fill="var(--blue)"/>
+      <rect x="38" y="42" width="22" height="50" rx="3" fill="var(--blue)"/>
+      <rect x="66" y="22" width="22" height="70" rx="3" fill="var(--blue)"/>
+      <polygon points="88,22 108,30 88,38" fill="var(--amber)"/>
+    </svg>
+    <span>PhiloSoft Ventures</span>
+  </span>
+  <span class="current">ZeroCurse for Android</span>
+</header>
+
+<main class="doc">
+<h1>ZeroCurse for Android: Privacy Policy</h1>
+<p class="updated">Last updated: 5 October 2026 (draft for owner and legal review). Applies to the ZeroCurse app for Android. ZeroCurse is supplied by Kampamba Mashabe, an individual carrying on business as a sole trader under the name PhiloSoft Ventures ("we", "us"), of Senior Teachers Compound, House Number 3, Mbala 10101, Zambia. Telephone: +260 777 352 775. Email: <a href="mailto:support@philosoftventures.com">support@philosoftventures.com</a>. Business registration number: none (sole trader). We are the person responsible for the personal data described here (the "data controller").</p>
+
+<h2>The short version</h2>
+<ul>
+  <li>Your video file stays on your phone. We never upload a video file, and the picture is never sent.</li>
+  <li>By default, cleaning, recording and transcribing happen on your phone. A small audio file is sent to our cloud service only in the case listed under "When audio leaves your phone", and you can keep it on your phone instead.</li>
+  <li>The app can record from your microphone if you choose Record To Transcribe. Recordings stay on your phone until you delete them.</li>
+  <li>There is no sign-in and no account. We do not know your name or email.</li>
+  <li>Free jobs show adverts from Google AdMob, which uses your phone's advertising ID.</li>
+  <li>We do not sell your data and we do not use your audio to train anything.</li>
+</ul>
+
+<h2>What the app does with your video and sound</h2>
+<p>ZeroCurse listens to the sound of a video, recording or sound file to find swear words, then bleeps or mutes those moments. By default recognition runs on your phone. The app needs access to the files you choose and permission to keep working in the background while it works.</p>
+<p><strong>Microphone.</strong> If you use Record To Transcribe, the app asks for the microphone and keeps recording while the screen is off, with a notification showing. The recording is stored in the app's private storage on your phone, with noise reduction applied, until you delete it (for example with Record again or Cancel) or clear the app's data. It is only sent to us in the case below.</p>
+<p><strong>What is saved on your phone.</strong> Cleaned videos and sound files, and any transcripts, subtitles and audit files you create, are saved in your Downloads folder, in a folder called "Cleaned Up by ZeroCurse". Other apps that have storage access can read that folder. The optional audit file records the file names, checksums of the original and cleaned files, the cut times, and the words only if you choose to include them. It is not a guarantee that every word was removed.</p>
+
+<h2>When audio leaves your phone</h2>
+<p>Audio leaves your phone only when you ask us to clean or transcribe a video, recording or sound file longer than 10 minutes, and you have not chosen to keep it on your phone. The app extracts a speech-only audio file (the picture is never included) and sends it over an encrypted connection to our cloud service. The service finds the swear words and returns the times to censor plus the transcript of the speech, which is used for the result screen and the optional diagnostics report. The service keeps the audio, the result and the transcript only in memory, not in a database. The app asks the service to delete the job as soon as it has the result. A job that is never collected is removed when the service next clears jobs older than one hour, or when the service restarts or shuts down. If you add your own words to the always-censor list, the job stays on your phone.</p>
+
+<h2>Information we handle</h2>
+<table>
+<tr><th>Information</th><th>Why</th><th>Where / how long</th></tr>
+<tr><td>Audio sent to the cloud (only in the case above)</td><td>To find the words to censor or make the transcript</td><td>Our cloud service's memory; deleted when the job ends</td></tr>
+<tr><td>Recordings and sound files you make or choose</td><td>So you can clean or transcribe them</td><td>On your phone (the app's private storage) until you delete them or clear the app's data</td></tr>
+<tr><td>Cleaned files, transcripts, subtitles and audit files you save</td><td>Your results</td><td>On your phone, in Downloads / "Cleaned Up by ZeroCurse", until you delete them</td></tr>
+<tr><td>Your own word list, settings, unfinished job progress, recognised words kept so a stopped job can resume (up to 14 days), run log</td><td>So the app works as you set it up and can resume</td><td>On your phone only</td></tr>
+<tr><td>Purchase information</td><td>To unlock what you bought</td><td>Google Play handles payment. We receive a purchase token that we confirm with Google Play, once, when your job starts. We never see your card details</td></tr>
+<tr><td>Technical request data (IP address, time, request type)</td><td>To run and protect the cloud service, and limit abuse</td><td>Standard server logs at our cloud provider, kept for a short period</td></tr>
+<tr><td>Speech models: if a model is not already in the app, it is downloaded from huggingface.co (or hf-mirror.com)</td><td>So the app can recognise speech</td><td>Those sites can see your IP address and handle it under their own policies</td></tr>
+<tr><td>Advert information (see Adverts)</td><td>To show adverts and measure them</td><td>Collected by Google AdMob under Google's policies</td></tr>
+</table>
+
+<h2>Adverts</h2>
+<p>Videos of up to 10 minutes are free in exchange for watching short adverts. The adverts are supplied by <strong>Google AdMob</strong>. To show them, AdMob and its partners may collect and use your phone's advertising ID, IP address, device and app information, and information about how you interact with an advert, as described in <a href="https://policies.google.com/technologies/ads">Google's advertising policies</a>. Where the law requires it (for example in the European Economic Area and the United Kingdom) the app first shows Google's consent form and only shows adverts if you agree. You can reset your advertising ID or opt out of ad personalisation in your Android settings (Settings, Google, Ads). We do not receive your advertising ID, and the adverts never see your files.</p>
+
+<h2>Diagnostics reports</h2>
+<p>The app can create a diagnostics report (settings, timings, the name of the video file, and a transcript of the speech that was heard) to help us fix a problem. It is created on your phone and is only sent if you choose to share it.</p>
+
+<h2>Who we share information with</h2>
+<p>We use these service providers to run ZeroCurse: Google (Google Cloud, for our cloud service; Google Play, for payments; Google AdMob, for adverts). They process data only to provide those services. We do not sell your information and do not share it for their own marketing.</p>
+
+<h2>Where it is processed, and security</h2>
+<p>Our cloud service runs in data centres operated by Google, outside Zambia (currently in Europe). Connections are encrypted. The service holds audio only in memory while a job runs. No system is perfectly secure, but we design ZeroCurse so that it holds as little about you as possible.</p>
+
+<h2>Your choices and rights</h2>
+<ul>
+  <li>Keep everything on your phone: turn on "Keep it on this device", or keep videos, recordings and sound files to 10 minutes or less.</li>
+  <li>Delete recordings with Record again or Cancel, or by deleting the files. Uninstalling the app or clearing its data removes what it stores privately. Files you saved to Downloads stay until you delete them.</li>
+  <li>Because there is no account, we normally hold no information that identifies you. Depending on where you live, you may have rights over your information (access, correction, deletion, objection). Email us and we will respond.</li>
+</ul>
+
+<h2>Children</h2>
+<p>ZeroCurse is not designed for children and is for people aged 18 or over, or younger people with a parent's or guardian's permission. We do not knowingly collect information from children.</p>
+
+<h2>Changes</h2>
+<p>If we change this policy we will change the date above and, for important changes, tell you in the app before they apply.</p>
+
+<h2>Contact</h2>
+<p>Kampamba Mashabe, trading as PhiloSoft Ventures, Senior Teachers Compound, House Number 3, Mbala 10101, Zambia. Telephone +260 777 352 775. Email <a href="mailto:support@philosoftventures.com">support@philosoftventures.com</a>. Questions about your information, requests to see or delete it, and complaints about how we handle it go to this address. You may also complain to the Data Protection Commissioner of Zambia.</p>
+</main>
+
+<footer>
+  PhiloSoft Ventures &middot;
+  <a href="/zerocurse/android/privacy.html">Privacy Policy</a> &middot;
+  <a href="/zerocurse/android/terms.html">Terms of Use</a>
+</footer>
+
+</body>
+</html>
