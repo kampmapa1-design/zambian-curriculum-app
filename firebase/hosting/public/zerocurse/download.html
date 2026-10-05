@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Install ZeroCurse for Windows</title>
+<meta name="description" content="ZeroCurse for Windows: free up to 10 minutes, pay per video, or go Pro.">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/zerocurse-favicon-32.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="zc.css">
+</head>
+<body>
+<header>
+  <a href="/zerocurse/">← ZeroCurse</a>
+  <nav><a href="/zerocurse/pricing.html">Pricing</a><a href="/privacy-policy.html">Privacy</a></nav>
+</header>
+<main>
+  <section class="hero" style="text-align:center">
+    <h1>Install ZeroCurse on Windows</h1>
+    <p class="lead">Free to install. For Windows 10 and 11 (64-bit).</p>
+    <p><a class="btn" id="dl" href="#">Download ZeroCurse (Windows)</a></p>
+  </section>
+  <section>
+    <ol>
+      <li>Right-click the downloaded file and choose <strong>Extract All</strong>, into a folder such as <code>C:\ZeroCurse</code>.</li>
+      <li>Open the folder and double-click <strong>zerocurse.exe</strong>.</li>
+      <li>If Windows shows "Windows protected your PC", click <strong>More info</strong>, then <strong>Run anyway</strong>. (The app is not yet signed with a Windows publisher certificate, so Windows warns about every new program.)</li>
+      <li>Cleaned videos are saved in your Downloads folder, in "Cleaned Up by ZeroCurse".</li>
+    </ol>
+    <p class="note">Prices and what is free: see <a href="/zerocurse/pricing.html">pricing</a>. How your data is handled: see the <a href="/zerocurse/privacy.html">privacy policy</a>.</p>
+  </section>
+</main>
+<footer>PhiloSoft Ventures &middot; <a href="/zerocurse/pricing.html">Pricing</a> &middot; <a href="/zerocurse/privacy.html">Privacy Policy</a></footer>
+
+<script src="config.js"></script>
+<script>
+  var Z = window.ZC || {};
+  var dl = document.getElementById("dl");
+  if (Z.windowsDownload) { dl.href = Z.windowsDownload; }
+  else { dl.classList.add("off"); dl.textContent = "Download: coming soon"; dl.removeAttribute("href"); }
+</script>
+</body>
+</html>

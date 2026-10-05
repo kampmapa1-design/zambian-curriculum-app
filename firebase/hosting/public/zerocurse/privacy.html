@@ -131,40 +131,52 @@
 
 <main class="doc">
 <h1>ZeroCurse Privacy Policy</h1>
-<p class="updated">Last updated: 3 October 2026. Applies to the ZeroCurse app for Android and the ZeroCurse app for Windows, and the ZeroCurse pages of this website. ZeroCurse is made by PhiloSoft Ventures ("we", "us").</p>
+<p class="updated">Last updated: 5 October 2026 (draft for owner and legal review). Applies to the ZeroCurse app for Android and the ZeroCurse app for Windows, and the ZeroCurse pages of this website. ZeroCurse is made by PhiloSoft Ventures ("we", "us").</p>
 
 <h2>The short version</h2>
 <ul>
-  <li>Your video stays on your device. We never upload a video file.</li>
-  <li>Videos up to 10 minutes are cleaned entirely on your device and nothing is sent to us.</li>
-  <li>For longer videos, the app can send only a small <strong>audio</strong> file to our cloud service so it can be processed faster. You can switch this off ("keep it on this device"). The audio is deleted when the job ends.</li>
+  <li>Your video file stays on your device. We never upload a video file, and the picture is never sent.</li>
+  <li>By default, cleaning, recording and transcribing happen on your device. A small <strong>audio</strong> file can be sent to our cloud service only in the cases listed under "When audio leaves your device", and you can switch most of that off ("keep it on this device").</li>
+  <li>The Android app can record from your microphone if you choose Record To Transcribe. Recordings stay on your phone until you delete them.</li>
   <li>The Windows app has an optional account (Google sign-in) for the free trial, Pro and purchases.</li>
   <li>We do not sell your data and we do not use your audio to train anything.</li>
 </ul>
 
-<h2>What the app does with your video</h2>
-<p>ZeroCurse listens to the sound of a video to find swear words, then bleeps or mutes those moments. The cleaned video is saved on your device (in your Downloads folder, in a folder called "Cleaned Up by ZeroCurse"). Recognition runs on your device. The app needs access to the video you choose and permission to run in the background while it works.</p>
+<h2>What the app does with your video and sound</h2>
+<p>ZeroCurse listens to the sound of a video, recording or sound file to find swear words, then bleeps or mutes those moments. By default recognition runs on your device (the next section says when it does not). The app needs access to the files you choose and permission to keep working in the background while it works.</p>
+<p><strong>Microphone (Android).</strong> If you use Record To Transcribe, the app asks for the microphone and keeps recording while the screen is off, with a notification showing. The recording is stored in the app's private storage on your phone, with noise reduction applied, until you delete it (for example with Record again or Cancel) or clear the app's data. It is only sent to us in the cases below.</p>
+<p><strong>What is saved on your device.</strong> Cleaned videos and sound files, and any transcripts, subtitles and audit files you create, are saved in your Downloads folder, in a folder called "Cleaned Up by ZeroCurse". Other apps that have storage access can read that folder. The optional audit file records the file names, checksums of the original and cleaned files, the cut times, and the words only if you choose to include them. It is not a guarantee that every word was removed.</p>
 
 <h2>When audio leaves your device</h2>
-<p>Only when a video is longer than 10 minutes <em>and</em> you have not chosen to keep it on your device (and, on Windows, only with a Pro plan or free trial): the app extracts a speech-only audio file (the picture is never included) and sends it over an encrypted connection to our cloud service. The service finds the swear words and returns only the times to censor, plus the transcript of the speech, which is used only for the result screen and the optional diagnostics report. The uploaded audio is deleted as soon as the job ends, and any result is deleted within about an hour. If you add your own words to the always-censor list, the job stays on your device.</p>
+<p>Audio leaves your device only in these cases, and only if you have not chosen to keep it on your device:</p>
+<ul>
+  <li><strong>Android:</strong> a video, recording or sound file longer than 10 minutes that you ask us to clean or transcribe.</li>
+  <li><strong>Windows with a Pro plan or the free trial:</strong> the audio of a video longer than 2 minutes, and audio you ask us to transcribe, of any length.</li>
+</ul>
+<p>In each case the app extracts a speech-only audio file (the picture is never included) and sends it over an encrypted connection to our cloud service. The service finds the swear words and returns the times to censor plus the transcript of the speech, which is used for the result screen and the optional diagnostics report. The service keeps the audio, the result and the transcript only in memory, not in a database. The app asks the service to delete the job as soon as it has the result, and an automatic clean-up removes anything left behind. If you add your own words to the always-censor list, the job stays on your device.</p>
 
 <h2>Information we handle</h2>
 <table>
 <tr><th>Information</th><th>Why</th><th>Where / how long</th></tr>
-<tr><td>Audio of long videos (only if sent, see above)</td><td>To find the words to censor</td><td>Our cloud service; deleted when the job ends</td></tr>
-<tr><td>Your own word list, settings, unfinished job progress, run log</td><td>So the app works as you set it up and can resume a stopped job</td><td>On your device only</td></tr>
+<tr><td>Audio sent to the cloud (only in the cases above)</td><td>To find the words to censor or make the transcript</td><td>Our cloud service's memory; deleted when the job ends</td></tr>
+<tr><td>Recordings and sound files you make or choose</td><td>So you can clean or transcribe them</td><td>On your device (Android: the app's private storage) until you delete them or clear the app's data</td></tr>
+<tr><td>Cleaned files, transcripts, subtitles and audit files you save</td><td>Your results</td><td>On your device, in Downloads / "Cleaned Up by ZeroCurse", until you delete them</td></tr>
+<tr><td>Your own word list, settings, unfinished job progress, recognised words kept so a stopped job can resume (up to 14 days), run log</td><td>So the app works as you set it up and can resume</td><td>On your device only</td></tr>
 <tr><td>Windows account: email address and an account identifier from your Google sign-in</td><td>To give you the trial, Pro and your purchases</td><td>Our database (Google Cloud) until you ask us to delete the account</td></tr>
-<tr><td>Windows: an anonymous code for your computer (a one-way hash of the system's machine id, not the id itself)</td><td>To tie a licence to one computer and to give the free trial once per computer</td><td>Our database and your computer</td></tr>
-<tr><td>Windows: licence checks (about once a week), purchases, cloud time used</td><td>To keep your plan, credits and allowance correct</td><td>Our database until the account is deleted</td></tr>
+<tr><td>Windows: an anonymous code for your computer (a one-way hash of the system's machine id, not the id itself)</td><td>To tie a licence to one computer and to give the free trial once per person and computer</td><td>Our database and your computer. It stays after you uninstall until the account is deleted</td></tr>
+<tr><td>Windows: sign-in sessions (up to 180 days), licence checks (about once a week), credits and cloud time used, a one-way fingerprint of files you have paid to clean again, subscription reference, the day your free daily allowance was last used, and, for a purchase made before sign-in, the buyer's email until they sign in</td><td>To keep your plan, credits and allowance correct</td><td>Our database until the account is deleted</td></tr>
+<tr><td>Windows update check: at every start the app requests a small file (version.json) from our website</td><td>To tell you when a new version exists</td><td>No account data is sent; our website host can see your IP address and the app's user agent in its logs</td></tr>
+<tr><td>Windows crash reports (off unless you turn them on): a random install code, app version, edition, operating system, the error message and a stack trace, and the time. Software removes names and emails, but it can miss some</td><td>To fix bugs</td><td>Our database; deleted automatically after 30 days</td></tr>
+<tr><td>Speech models: if a model is not already in the app, it is downloaded from huggingface.co (or hf-mirror.com)</td><td>So the app can recognise speech</td><td>Those sites can see your IP address and handle it under their own policies</td></tr>
 <tr><td>Technical request data (IP address, time, request type)</td><td>To run and protect the service, and limit abuse</td><td>Standard server logs at our cloud provider, kept for a short period</td></tr>
-<tr><td>Purchase information</td><td>To unlock what you bought</td><td>Android: Google Play handles payment and we receive only a purchase confirmation. Windows: our payment provider handles payment and sends us the order, product and your email; we never see your card details</td></tr>
+<tr><td>Purchase information</td><td>To unlock what you bought</td><td>Android: Google Play handles payment and we receive a purchase token that we confirm with Google Play. Windows: our payment provider handles payment and sends us the order, product and your email; we never see your card details</td></tr>
 </table>
 
 <h2>Diagnostics reports</h2>
-<p>The app can create a diagnostics report (settings, timings, and a transcript of the speech that was heard) to help us fix a problem. It is created on your device and is only sent if <strong>you</strong> choose to share it.</p>
+<p>The app can create a diagnostics report (settings, timings, the name of the video file, and a transcript of the speech that was heard) to help us fix a problem. It is created on your device and is only sent if <strong>you</strong> choose to share it.</p>
 
 <h2>Adverts</h2>
-<p>Videos up to 10 minutes are free in exchange for watching short adverts. On Windows, adverts are shown only while you are online and only on the free plan. Adverts are supplied by a third-party advertising service, which may collect device and usage information under its own privacy policy. Pro users see no adverts.</p>
+<p>Videos up to 10 minutes are free in exchange for watching short adverts. On Windows, adverts are shown only while you are online and only on the free plan. Adverts are supplied by a third-party advertising service, which may collect device and usage information under its own privacy policy. We will name the service on this page before adverts go live. Pro users see no adverts.</p>
 
 <h2>Who we share information with</h2>
 <p>We use these service providers to run ZeroCurse: Google (Google Cloud and Firebase, for hosting, sign-in and our database; Google Play for Android payments), and, for Windows payments, our payment provider (which acts as seller and handles tax and receipts). They process data only to provide those services. We do not sell your information and do not share it for their own marketing.</p>
@@ -172,11 +184,14 @@
 <h2>Where it is processed, and security</h2>
 <p>Our cloud service runs in data centres operated by Google. Connections are encrypted. The database cannot be reached directly from the apps or the website; only our service can read or write it, and licences are digitally signed. No system is perfectly secure, but we design ZeroCurse so that it holds as little about you as possible.</p>
 
+<h2>This website</h2>
+<p>The ZeroCurse pages load fonts from Google Fonts, and the sign-in page loads Google and Firebase scripts, so Google receives your IP address when you visit them. We do not run analytics or advertising trackers on these pages.</p>
+
 <h2>Your choices and rights</h2>
 <ul>
-  <li>Keep everything on your device: turn on "Keep it on this device" (Android) or use videos of 10 minutes or less.</li>
-  <li>Delete your data on your device by uninstalling the app or clearing its data.</li>
-  <li>Windows account: email us to see or delete your account data. Deleting the account ends your Pro plan and unused credits.</li>
+  <li>Keep everything on your device: turn on "Keep it on this device", or on Android keep videos, recordings and sound files to 10 minutes or less.</li>
+  <li>Delete recordings with Record again or Cancel, or by deleting the files. Uninstalling the app or clearing its data removes what it stores privately. Files you saved to Downloads stay until you delete them.</li>
+  <li>Windows account: there is no delete button yet, so email us to see or delete your account data. Deleting the account ends your Pro plan and unused credits and removes the computer code.</li>
   <li>Depending on where you live, you may have further rights over your information (access, correction, deletion, objection). Email us and we will respond.</li>
 </ul>
 
