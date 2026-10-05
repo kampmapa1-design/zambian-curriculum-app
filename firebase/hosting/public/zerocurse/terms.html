@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ZeroCurse Terms of Use - PhiloSoft Ventures</title>
+<meta name="description" content="How ZeroCurse handles your videos, audio and account information.">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/zerocurse-favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/zerocurse-favicon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#1565C0;
+    --blue-deep:#0E4A94;
+    --amber:#F5A623;
+    --cream:#FDF6E3;
+    --ink:#161A14;
+    --paper:#F7F5EE;
+    --muted:#5B6358;
+    --line:#DAD5C3;
+    box-sizing:border-box;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ink:#F2EFE4; --paper:#14150F; --muted:#A9AD9C; --line:#33352A;
+    }
+  }
+  :root[data-theme="dark"]{
+    --ink:#F2EFE4; --paper:#14150F; --muted:#A9AD9C; --line:#33352A;
+  }
+  html{scroll-padding-top:env(safe-area-inset-top,0px); scroll-behavior:smooth;}
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;line-height:1.6;}
+  h1,h2{font-family:'Fraunces',Georgia,serif;font-weight:600;margin:0;letter-spacing:-0.01em;}
+  a{color:inherit;}
+
+  header{
+    position:sticky; top:0; z-index:10;
+    padding:calc(env(safe-area-inset-top,0px) + 1rem) 1.4rem 1rem;
+    display:flex; align-items:center; justify-content:space-between;
+    background:var(--paper); border-bottom:1px solid var(--line);
+  }
+  .brand{display:flex; align-items:center; gap:.6rem; text-decoration:none;}
+  .brand svg{width:34px; height:34px; flex:none;}
+  .brand span{font-family:'Fraunces',serif; font-weight:600; font-size:1.02rem;}
+  header .current{font-size:.88rem; color:var(--muted);}
+
+  section{padding:3rem 1.4rem; max-width:720px; margin:0 auto;}
+  .hero{text-align:center; padding-top:3.6rem;}
+  .app-icon{
+    width:80px; height:80px; border-radius:18px; display:block; margin:0 auto 1.2rem;
+    box-shadow:0 6px 20px rgba(21,101,192,0.25);
+  }
+  .status{
+    display:inline-block; font-size:.78rem; font-weight:500; color:var(--blue-deep);
+    background:rgba(21,101,192,0.1); padding:.3rem .75rem; border-radius:20px; margin-bottom:1.2rem;
+  }
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .status { color:#8FB7EE; } }
+  :root[data-theme="dark"] .status { color:#8FB7EE; }
+  .hero h1{font-size:clamp(2.2rem,7vw,3.2rem); margin-bottom:1rem;}
+  .hero .lead{color:var(--muted); font-size:1.05rem; line-height:1.7; max-width:48ch; margin:0 auto 1.8rem;}
+  .cta{
+    display:inline-block; background:var(--amber); color:#241603; font-weight:500;
+    padding:.8rem 1.5rem; border-radius:6px; text-decoration:none; font-size:.98rem;
+  }
+
+  h2.section-title{font-size:1.5rem; margin-bottom:1.6rem; text-align:center;}
+  .grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:1rem;}
+  .card{
+    border:1px solid var(--line); border-radius:12px; padding:1.4rem;
+    display:flex; flex-direction:column; gap:.5rem;
+  }
+  .card h3{font-family:'Fraunces',serif; font-weight:600; font-size:1.08rem; margin:0;}
+  .card p{color:var(--muted); font-size:.92rem; margin:0; line-height:1.6;}
+
+  .plans-note{
+    text-align:center; color:var(--muted); font-size:.9rem; max-width:52ch; margin:0 auto 1.6rem;
+  }
+  .plan-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:1rem; margin-bottom:1.6rem;}
+  .plan{
+    border:1px solid var(--line); border-radius:12px; padding:1.3rem; text-align:center;
+  }
+  .plan .price{font-family:'Fraunces',serif; font-weight:600; font-size:1.4rem; color:var(--blue); margin:.3rem 0;}
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .plan .price { color:#8FB7EE; } }
+  :root[data-theme="dark"] .plan .price { color:#8FB7EE; }
+  .plan p{color:var(--muted); font-size:.85rem; margin:.2rem 0 0;}
+  .bundles{color:var(--muted); font-size:.9rem; text-align:center;}
+
+  footer{
+    border-top:1px solid var(--line); padding:2rem 1.4rem calc(2rem + env(safe-area-inset-bottom,0px));
+    text-align:center; color:var(--muted); font-size:.85rem;
+  }
+  footer a{color:var(--muted);}
+  .cta.off{background:transparent; color:var(--muted); border:1px solid var(--line); cursor:default;}
+  .cta.alt{background:transparent; color:var(--blue); border:1px solid var(--blue);}
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .cta.alt { color:#8FB7EE; border-color:#8FB7EE; } }
+  :root[data-theme="dark"] .cta.alt { color:#8FB7EE; border-color:#8FB7EE; }
+  .ctas{display:flex; flex-wrap:wrap; gap:.8rem; justify-content:center;}
+  .plan .more{display:inline-block; margin-top:.6rem; color:var(--blue); font-size:.9rem; font-weight:500; text-decoration:none;}
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .plan .more { color:#8FB7EE; } }
+  :root[data-theme="dark"] .plan .more { color:#8FB7EE; }
+  .doc{max-width:720px; margin:0 auto; padding:2.6rem 1.4rem 3rem;}
+  .doc h1{font-size:clamp(1.8rem,6vw,2.4rem); margin-bottom:.4rem;}
+  .doc h2{font-size:1.25rem; margin:2rem 0 .6rem;}
+  .doc p, .doc li{color:var(--muted); line-height:1.7;}
+  .doc ul{padding-left:1.2rem;}
+  .doc .updated{font-size:.9rem;}
+  .doc table{border-collapse:collapse; width:100%; margin:1rem 0; font-size:.92rem;}
+  .doc th,.doc td{border-bottom:1px solid var(--line); padding:.5rem .6rem; text-align:left; vertical-align:top; color:var(--muted);}
+  .doc th{color:var(--ink); font-weight:600;}
+</style>
+</head>
+<body>
+
+<header>
+  <a class="brand" href="/">
+    <svg viewBox="0 0 120 100" aria-hidden="true">
+      <rect x="10" y="58" width="22" height="34" rx="3" fill="var(--blue)"/>
+      <rect x="38" y="42" width="22" height="50" rx="3" fill="var(--blue)"/>
+      <rect x="66" y="22" width="22" height="70" rx="3" fill="var(--blue)"/>
+      <polygon points="88,22 108,30 88,38" fill="var(--amber)"/>
+    </svg>
+    <span>PhiloSoft Ventures</span>
+  </a>
+  <span class="current">ZeroCurse</span>
+</header>
+
+<main class="doc">
+<h1>ZeroCurse Terms of Use</h1>
+<p class="updated">Version 1.0, published 5 October 2026. These terms apply to the ZeroCurse app for Android, the ZeroCurse app for Windows, and the ZeroCurse pages of this website.</p>
+
+<h2>1. Who we are</h2>
+<p>ZeroCurse is supplied by Kampamba Mashabe, an individual carrying on business as a sole trader under the name PhiloSoft Ventures ("we", "us"), of Senior Teachers Compound, House Number 3, Mbala 10101, Zambia. Telephone: +260 777 352 775. Email: <a href="mailto:support@philosoftventures.com">support@philosoftventures.com</a>. Website: philosoftventures.com/zerocurse. Business registration number: none (sole trader).</p>
+
+<h2>2. Agreeing to these terms</h2>
+<p>By installing or using ZeroCurse, by creating an account, or by buying anything, you agree to these terms and to our <a href="/zerocurse/privacy.html">Privacy Policy</a>. If you do not agree, do not use ZeroCurse. You must be at least 18, or have the permission of a parent or guardian. These terms are an electronic contract, and you can keep a copy by saving or printing this page.</p>
+
+<h2>3. What ZeroCurse does</h2>
+<p>ZeroCurse listens to the sound of a video, recording or sound file, finds words from a word list, and bleeps or mutes them. Where offered, it also makes transcripts and subtitles. By default the work happens on your device. In the cases described in the Privacy Policy, audio (never the picture) is sent to our cloud service.</p>
+
+<h2>4. Your files, and your responsibilities</h2>
+<ul>
+  <li>Use ZeroCurse only on files you own, or that you have the right or permission to change. You are responsible for the files you process and for what you do with the results.</li>
+  <li>We do not claim any ownership of your files or results. You give us only the permission needed to process them to provide the service you asked for.</li>
+  <li><strong>Recording people.</strong> If you record with the microphone, you are responsible for getting the consent of the people you record wherever the law requires it. Do not use ZeroCurse to record private conversations unlawfully.</li>
+  <li><strong>Songs and other copyrighted works.</strong> Changing a song or film can infringe the owner's copyright unless you own it or have permission, or the law allows it. Many countries allow only narrow private-use exceptions. Use ZeroCurse on such works only where you have the right to do so. We do not supply or check content and are not responsible for infringement by users.</li>
+  <li>Do not use ZeroCurse to break any law, to overload or attack the service, to get around limits, trials or payments, to resell access, or to copy, modify, reverse-engineer or extract the app, except where the law says you may.</li>
+</ul>
+
+<h2>5. No guarantee of results</h2>
+<p>Speech recognition is not perfect. ZeroCurse can miss words, mishear words, or bleep words that are not swear words. It is not a parental-control, ratings or content-safety service and does not guarantee that a cleaned file is suitable for any audience. Always check the result before you share or play it. The optional audit file records what the app did and is not a guarantee. Transcripts and subtitles may contain mistakes.</p>
+
+<h2>6. Free plan, trial and adverts</h2>
+<p>The free plan covers videos up to 10 minutes and may show adverts while a file is processed. The Windows app has a free trial of 3 hours, once per person and per computer. Adverts are supplied by a third party (see the Privacy Policy). Pro has no adverts. We may refuse or end a trial or account that is used to get around these limits.</p>
+
+<h2>7. Prices, Pro and credits</h2>
+<ul>
+  <li>Prices are shown in US dollars on the pricing page before you pay. The amount charged, and any currency conversion, is shown at checkout before you pay. Applicable taxes are shown at checkout where they apply.</li>
+  <li><strong>Credits</strong> are one-time purchases for one video, sound file, transcript or songs batch of the stated length. Cleaning the same file again is free.</li>
+  <li><strong>Pro</strong> is a prepaid pass for 30 days from the time you buy it. It does not renew automatically: to keep Pro you buy another pass.</li>
+  <li><strong>Android</strong> purchases are made through Google Play and are governed by Google's payment terms and refund rules. <strong>Windows</strong> purchases are made on this website through our payment provider, a payment company licensed in Zambia, which collects the payment for us. We are the seller. You receive a confirmation of your purchase, and we never see your card details. Windows and Android purchases are separate: credits and Pro bought for one cannot be used on the other.</li>
+</ul>
+
+<h2>8. Refunds and cancellations</h2>
+<ul>
+  <li>If a paid job fails or the result is unusable because of a fault in ZeroCurse, we will give you a free retry. If it still fails, we will refund that purchase.</li>
+  <li>Because credits and Pro passes are digital services that start as soon as you use them, we do not refund a credit that has been used successfully, or a Pro pass after you have started to use it, except where the law gives you that right. Nothing in these terms limits your rights under the consumer-protection law that applies to you.</li>
+  <li>If you are in the European Union or the United Kingdom, you ask us to start the service immediately when you start a job, and you accept that once the service has been fully provided you lose the right to withdraw.</li>
+  <li>Ask for a refund by emailing support@philosoftventures.com within 30 days of the purchase, with the email you bought with. We aim to reply within 5 working days.</li>
+</ul>
+
+<h2>9. Your account (Windows)</h2>
+<p>You sign in with Google. One account, one free trial. Keep your sign-in secure; you are responsible for use of your account. You can ask us to delete your account by email, which ends Pro and unused credits and has no refund unless section 8 applies.</p>
+
+<h2>10. Our rights in ZeroCurse</h2>
+<p>ZeroCurse, its code, design and brand belong to us or our licensors. We give you a personal, non-exclusive, non-transferable licence to use the app for your own use under these terms. ZeroCurse includes open-source software (for example the Whisper speech engine and FFmpeg) that is licensed under its own terms, which apply to those parts. Licence notices are in the app or available from us on request. The names and brands of other companies belong to them.</p>
+
+<h2>11. Service changes and availability</h2>
+<p>The cloud service may be unavailable from time to time and we may change, limit or stop features. We will try to give notice of changes that matter to you. If we stop a paid feature you have already paid for and cannot provide an equivalent, we will refund the unused part.</p>
+
+<h2>12. Disclaimer</h2>
+<p>To the extent the law allows, ZeroCurse is provided "as is" and "as available" without promises that it will be error-free, uninterrupted, or fit for a particular purpose, and we do not promise that it will find every word. This does not remove any right that the law says cannot be excluded.</p>
+
+<h2>13. Limit of our liability</h2>
+<p>To the extent the law allows: (a) we are not liable for loss of profit, loss of data or files, loss of reputation, or indirect or consequential loss; (b) we are not liable for what you or others do with a file you processed, including copyright infringement or recording without consent; and (c) our total liability to you for any claim about the service is limited to the amount you paid us for it in the 12 months before the claim, or US$20 if you paid nothing. Nothing in these terms limits liability that cannot lawfully be limited, including for fraud, or for death or personal injury caused by negligence, or removes your rights under consumer-protection law.</p>
+
+<h2>14. Your responsibility to us</h2>
+<p>If you use ZeroCurse in breach of section 4 and that causes a claim or loss to us, you agree to cover that loss to the extent the law allows.</p>
+
+<h2>15. Ending</h2>
+<p>You can stop using ZeroCurse at any time. We can suspend or end your access if you seriously or repeatedly break these terms or the law, or put the service or others at risk; we will tell you why where we can and refund any unused paid period if the problem was not your fault. Sections that by their nature should continue (for example 4, 10, 12 to 14 and 17) continue after the end.</p>
+
+<h2>16. Changes to these terms</h2>
+<p>We may update these terms. We will change the date above and show material changes in the app or on this page before they apply. If you keep using ZeroCurse after a change takes effect, you accept it. A change applies to future use and purchases. It never reduces the refund rights you had when you bought, and purchases you have already made are not affected by a later price change.</p>
+
+<h2>17. Law and disputes</h2>
+<p>These terms are governed by the laws of Zambia. Before starting any legal action, please email us and give us 30 days to put things right. Disputes that cannot be resolved can be brought in the courts of Zambia. If you are a consumer, this does not take away any mandatory protection of the country where you live, or your right to bring a claim in the courts there where the law gives you that right. You may not use ZeroCurse where doing so would breach sanctions or export-control laws that apply to you or to us.</p>
+
+<h2>18. Contact and complaints</h2>
+<p>Questions, refund requests, rights-holder concerns or complaints: <a href="mailto:support@philosoftventures.com">support@philosoftventures.com</a>. If we cannot resolve a consumer complaint you may also contact the Competition and Consumer Protection Commission of Zambia.</p>
+</main>
+
+<footer>
+  PhiloSoft Ventures &middot; <a href="/">PhiloSoft</a> &middot;
+  <a href="/zerocurse/">ZeroCurse</a> &middot;
+  <a href="/zerocurse/privacy.html">Privacy Policy</a>
+</footer>
+
+</body>
+</html>
