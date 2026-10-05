@@ -153,7 +153,7 @@
   <li><strong>Android:</strong> a video, recording or sound file longer than 10 minutes that you ask us to clean or transcribe.</li>
   <li><strong>Windows with a Pro plan or the free trial:</strong> the audio of a video longer than 2 minutes, and audio you ask us to transcribe, of any length.</li>
 </ul>
-<p>In each case the app extracts a speech-only audio file (the picture is never included) and sends it over an encrypted connection to our cloud service. The service finds the swear words and returns the times to censor plus the transcript of the speech, which is used for the result screen and the optional diagnostics report. The service keeps the audio, the result and the transcript only in memory, not in a database. The app asks the service to delete the job as soon as it has the result, and an automatic clean-up removes anything left behind. If you add your own words to the always-censor list, the job stays on your device.</p>
+<p>In each case the app extracts a speech-only audio file (the picture is never included) and sends it over an encrypted connection to our cloud service. The service finds the swear words and returns the times to censor plus the transcript of the speech, which is used for the result screen and the optional diagnostics report. The service keeps the audio, the result and the transcript only in memory, not in a database. The app asks the service to delete the job as soon as it has the result. A job that is never collected is removed when the service next clears jobs older than one hour, or when the service restarts or shuts down; after a restart, any leftover audio is removed at start-up. If you add your own words to the always-censor list, the job stays on your device.</p>
 
 <h2>Information we handle</h2>
 <table>
